@@ -14,7 +14,7 @@ from datetime import datetime
 
 
 class GeminiClient:
-    def __init__(self, api_key: Optional[str] = None, model_name: str = "gemini-1.5-flash", enable_logging: bool = True):
+    def __init__(self, api_key: Optional[str] = None, model_name: str = "gemini-2.5-flash", enable_logging: bool = True):
         """
         Initialize Gemini client
         

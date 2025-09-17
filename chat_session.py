@@ -79,29 +79,33 @@ class ChatSession:
         return "\n".join(context_lines)
     
     def _extract_context_summary(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Extract key information from context"""
+        """Extract key information from context (handles both old and new JSON formats)"""
         summary = {}
         
-        # Extract mentioned users
-        if 'similar_conversations' in context:
+        # Handle new JSON format
+        if 'similar_conversations' in context and isinstance(context['similar_conversations'], list):
             users_mentioned = set()
+            topics = []
+            
             for conv in context['similar_conversations'][:3]:
+                # Extract participants
                 if 'participants' in conv:
                     users_mentioned.update(conv['participants'])
-                if 'author' in conv:
-                    users_mentioned.add(conv['author'])
+                
+                # Extract topics from messages
+                messages = conv.get('messages', [])
+                for msg in messages:
+                    message_text = msg.get('message', '')
+                    words = message_text.lower().split()
+                    topics.extend([w for w in words if len(w) > 5 and w.isalpha()])
+            
             summary['users_mentioned'] = list(users_mentioned)
+            summary['topics'] = list(set(topics))[:10]
         
-        # Extract key topics/entities from top similar conversations
-        topics = []
-        if 'similar_conversations' in context:
-            for conv in context['similar_conversations'][:2]:
-                content = conv.get('content', '')
-                # Simple keyword extraction (could be enhanced)
-                words = content.lower().split()
-                topics.extend([w for w in words if len(w) > 5 and w.isalpha()])
-        
-        summary['topics'] = list(set(topics))[:10]  # Top 10 unique topics
+        # Handle legacy format (for backward compatibility)
+        elif 'similar_conversations' in context:
+            # This might be a count or other format
+            summary['conversation_count'] = context.get('similar_conversations', 0)
         
         return summary
     
