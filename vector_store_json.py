@@ -199,7 +199,7 @@ class JSONVectorStore:
         return vector_count
     
     def search_similar_conversations(self, query: str, k: int = 5) -> List[Dict[str, Any]]:
-        """Search for similar conversations and return complete JSON data"""
+        """Search for similar conversations and return raw JSON file content"""
         # Create embedding for query
         query_embedding = self.model.encode([query])[0]
         
@@ -214,34 +214,46 @@ class JSONVectorStore:
             print(f"Error querying Pinecone: {e}")
             return []
         
-        # Load complete conversation JSON files
-        conversations = []
+        # Load raw JSON file content
+        conversation_files = []
         
         for match in search_results.matches:
             file_name = match.metadata.get('file')
             similarity_score = float(match.score)
             
             if file_name:
-                # Load complete conversation JSON
+                # Load raw JSON content as string
                 json_path = os.path.join(self.json_dir, file_name)
                 
                 try:
                     with open(json_path, 'r', encoding='utf-8') as f:
-                        conversation_data = json.load(f)
+                        raw_json_content = f.read()
                     
-                    # Add similarity score
-                    conversation_data['similarity_score'] = similarity_score
-                    conversations.append(conversation_data)
+                    # Return file info with raw JSON content
+                    conversation_files.append({
+                        'file_name': file_name,
+                        'similarity_score': similarity_score,
+                        'raw_json_content': raw_json_content,
+                        'json_path': json_path
+                    })
                     
                 except Exception as e:
                     print(f"Error loading {json_path}: {e}")
                     continue
         
-        # Log the query and results
+        # Log the query and results (parse JSON just for logging)
         if self.enable_logging:
-            self._log_query_and_results(query, conversations)
+            conversations_for_logging = []
+            for file_info in conversation_files:
+                try:
+                    parsed_data = json.loads(file_info['raw_json_content'])
+                    parsed_data['similarity_score'] = file_info['similarity_score']
+                    conversations_for_logging.append(parsed_data)
+                except:
+                    pass
+            self._log_query_and_results(query, conversations_for_logging)
         
-        return conversations
+        return conversation_files
     
     def get_user_conversations(self, user_name: str, limit: int = 10) -> List[Dict[str, Any]]:
         """Get recent conversations for a specific user"""

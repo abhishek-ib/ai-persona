@@ -178,7 +178,11 @@ class AIPersonaBotJSON:
         print(f"   Similar conversations found: {len(similar_conversations)}")
         
         if similar_conversations:
-            print(f"   Top similar conversations Adupa:")
+            print(f"   Top similar conversation files:")
+            for i, file_info in enumerate(similar_conversations[:3], 1):
+                score = file_info.get('similarity_score', 0)
+                file_name = file_info.get('file_name', 'unknown')
+                print(f"     {i}. [{score:.3f}] {file_name}")
         
         # Generate response using Gemini chat session with attached conversations
         result = self.gemini_client.generate_response(

@@ -9,7 +9,8 @@ import os
 import json
 import logging
 from typing import Dict, List, Any, Optional
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from datetime import datetime
 
 # Load environment variables
@@ -41,12 +42,14 @@ class JSONGeminiClient:
         if enable_logging:
             self._setup_logging()
 
-        # Configure Gemini
-        genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel(model_name)
+        # Configure Gemini client with new SDK
+        self.client = genai.Client(api_key=self.api_key)
 
-        # # Generation config
-        self.generation_config = genai.types.GenerationConfig(
+        # Generation config
+        self.generation_config = types.GenerateContentConfig(
+            temperature=0.7,
+            top_p=0.9,
+            max_output_tokens=1024
         )
 
         # Chat sessions per user (user_name -> chat_session)
@@ -82,16 +85,21 @@ class JSONGeminiClient:
 
         if user_name not in self.chat_sessions:
             # Create new chat session with helpful coworker context
-            chat = self.model.start_chat()
-
-            # Send initial helpful coworker setup message
             initial_prompt = self._create_initial_prompt()
 
             try:
-                # Initialize the chat with helpful coworker context
-                initial_response = chat.send_message(initial_prompt)
+                # Initialize the chat with helpful coworker context using new SDK
+                initial_response = self.client.models.generate_content(
+                    model=self.model_name,
+                    contents=initial_prompt,
+                    config=self.generation_config
+                )
 
-                self.chat_sessions[user_name] = chat
+                # Store the conversation history for this session
+                self.chat_sessions[user_name] = [
+                    types.Content(role="user", parts=[types.Part.from_text(text=initial_prompt)]),
+                    types.Content(role="model", parts=[types.Part.from_text(text=initial_response.text)])
+                ]
 
             except Exception as e:
                 print(f"❌ Failed to initialize chat session: {e}")
@@ -126,22 +134,26 @@ class JSONGeminiClient:
         try:
             # Get or create chat session for this user
             if is_first_message or user_name not in self.chat_sessions:
-                chat = self.get_or_create_chat_session(user_name)
-                if not chat:
+                conversation_history = self.get_or_create_chat_session(user_name)
+                if not conversation_history:
                     raise Exception("Failed to create chat session")
             else:
-                chat = self.chat_sessions[user_name]
+                conversation_history = self.chat_sessions[user_name]
 
             # Create message with attached relevant conversations (1-2 most relevant)
-            message_with_context = self._create_message_with_attachments(
-                query, similar_conversations
+            message_content = self._create_message_with_attachments(
+                query, similar_conversations  # Limit to top 2 for token management
             )
-            print(f"   [GeminiClient] Query: {message_with_context}")
+            print(f"   [GeminiClient] Query parts: {len(message_content.parts)} parts")
 
-            # Send the query with attached conversations to the chat session
-            response = chat.send_message(
-                message_with_context,
-                generation_config=self.generation_config
+            # Add the new user message to conversation history
+            conversation_history.append(message_content)
+
+            # Send the conversation history to generate response using new SDK
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=conversation_history,
+                config=self.generation_config
             )
 
             # Check if response has valid content
@@ -206,24 +218,34 @@ Respond with 'Ready' to confirm you understand."""
         return prompt
 
     def _create_message_with_attachments(self, query: str,
-                                       relevant_conversations: List[Dict[str, Any]]) -> str:
-        """Create message with attached relevant conversations as raw JSON"""
-
-        message_parts = [
-            f"{query}",
-            "",
-            ""
-        ]
-
-        if relevant_conversations:
-            # Dump the entire JSON structure directly
-            import json
-            json_dump = json.dumps(relevant_conversations, indent=4)
-            message_parts.append(json_dump)
+                                       conversation_files: List[Dict[str, Any]]) -> types.Content:
+        """Create message with attached relevant conversations using new SDK types"""
+        
+        
+        # Create parts list starting with the query
+        parts = [types.Part.from_text(text=query)]
+        
+        if conversation_files:
+            # Add each JSON file as a separate part
+            for i, file_info in enumerate(conversation_files, 1):
+                raw_json = file_info.get('raw_json_content', '')
+                file_name = file_info.get('file_name', 'unknown')
+                similarity_score = file_info.get('similarity_score', 0)
+                
+                # Add a header for each conversation
+                header_text = f"\n--- Conversation {i} (Score: {similarity_score:.3f}, File: {file_name}) ---\n"
+                parts.append(types.Part.from_text(text=header_text))
+                
+                # Add the raw JSON content as a separate part
+                parts.append(types.Part.from_text(text=raw_json))
         else:
-            message_parts.append("No relevant conversations found.")
-
-        return "\n".join(message_parts)
+            parts.append(types.Part.from_text(text="\nNo relevant conversations found."))
+        
+        # Return the Content object with all parts
+        return types.Content(
+            role="user",
+            parts=parts
+        )
 
     def _create_json_prompt(self, target_user: Dict[str, Any], query: str,
                            similar_conversations: List[Dict[str, Any]],
@@ -326,7 +348,7 @@ Respond with 'Ready' to confirm you understand."""
             return
 
         # Extract JSON file names for logging
-        json_files_sent = [conv.get('id', 'unknown') + '.json' for conv in similar_conversations[:2]]
+        json_files_sent = [file_info.get('file_name', 'unknown') for file_info in similar_conversations[:2]]
 
         log_entry = {
             'timestamp': datetime.now().isoformat(),
@@ -351,21 +373,21 @@ Respond with 'Ready' to confirm you understand."""
         print(f"   First message: {is_first_message}")
 
         if similar_conversations:
-            print("   Top similar conversations (COMPLETE DATA):")
-            for i, conv in enumerate(similar_conversations[:3], 1):
-                score = conv.get('similarity_score', 0)
-                conv_type = conv.get('conversation_type', 'single')
-                channel_name = conv.get('channel_name', 'DM')
-                message_count = len(conv.get('messages', []))
-                participants = ', '.join(conv.get('participants', [])[:3])
-                json_file = conv.get('id', 'unknown') + '.json'
-                print(f"     {i}. [{score:.3f}] {channel_name} - {conv_type} ({message_count} msgs) - {participants}")
-                print(f"        📄 JSON file: {json_file}")
+            print("   Top similar conversations (RAW JSON FILES):")
+            for i, file_info in enumerate(similar_conversations[:3], 1):
+                score = file_info.get('similarity_score', 0)
+                file_name = file_info.get('file_name', 'unknown')
+                json_path = file_info.get('json_path', 'unknown')
+                print(f"     {i}. [{score:.3f}] File: {file_name}")
+                print(f"        📄 Path: {json_path}")
 
     def test_connection(self) -> bool:
         """Test Gemini API connection"""
         try:
-            response = self.model.generate_content("Hello, this is a test message.")
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents="Hello, this is a test message."
+            )
             return bool(response.text)
         except Exception as e:
             print(f"Gemini API test failed: {e}")
