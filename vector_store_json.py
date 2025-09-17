@@ -116,6 +116,121 @@ class JSONVectorStore:
         with open(index_file, 'r', encoding='utf-8') as f:
             return json.load(f)
     
+    def _extract_error_messages(self, text: str) -> List[str]:
+        """Extract key error messages from technical content"""
+        import re
+        
+        errors = []
+        
+        # Common error patterns (case insensitive)
+        patterns = [
+            r'ERROR:.*?(?=\n|$)',
+            r'FATAL:.*?(?=\n|$)',
+            r'Exception:.*?(?=\n|$)',
+            r'Error:.*?(?=\n|$)',
+            r'\[ERROR\].*?(?=\n|$)',
+            r'failed with exit status \d+.*?(?=\n|$)',
+            r'provided hosts list is empty.*?(?=\n|$)',
+            r'No inventory was parsed.*?(?=\n|$)',
+            r'.*not found.*?(?=\n|$)',
+            r'.*failed.*?(?=\n|$)',
+            r'.*error.*?(?=\n|$)',
+            r'Traceback.*?(?=\n|$)',
+            r'.*Exception.*?(?=\n|$)',
+        ]
+        
+        for pattern in patterns:
+            matches = re.findall(pattern, text, re.IGNORECASE | re.MULTILINE)
+            # Take first 1000 chars of each error message
+            errors.extend([match[:1000] for match in matches[:2]])  # Max 2 matches per pattern
+        
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_errors = []
+        for error in errors:
+            error_key = error.lower()[:100]  # Use first 100 chars as key for dedup
+            if error_key not in seen:
+                seen.add(error_key)
+                unique_errors.append(error)
+        
+        return unique_errors[:5]  # Max 5 error messages
+    
+    def _extract_tech_keywords(self, text: str) -> List[str]:
+        """Extract technical keywords from content"""
+        import re
+        
+        keywords = []
+        
+        # Technical keyword patterns
+        patterns = [
+            r'\b(ansible|docker|kubernetes|k8s|jenkins|gitlab|github)\b',
+            r'\b(python|java|javascript|node|npm|pip|maven|gradle)\b',
+            r'\b(mysql|postgres|mongodb|redis|elasticsearch)\b',
+            r'\b(aws|azure|gcp|s3|ec2|lambda|api)\b',
+            r'\b(localhost|127\.0\.0\.1|deployment|build|test|prod)\b',
+            r'\b(error|failed|timeout|connection|network|permission)\b',
+        ]
+        
+        for pattern in patterns:
+            matches = re.findall(pattern, text, re.IGNORECASE)
+            keywords.extend(matches)
+        
+        # Remove duplicates and return unique keywords
+        return list(set([kw.lower() for kw in keywords]))[:10]  # Max 10 keywords
+    
+    def _create_enhanced_search_text(self, conv: Dict[str, Any]) -> str:
+        """Create enhanced search text focusing on first message and error extraction"""
+        first_message = conv.get('first_message', '')
+        
+        # Start with the complete first message (this is the primary content)
+        search_parts = [first_message]
+        
+        # Extract and add error messages (first 1000 chars each)
+        error_messages = self._extract_error_messages(first_message)
+        search_parts.extend(error_messages)
+        
+        # Extract and add technical keywords
+        tech_keywords = self._extract_tech_keywords(first_message)
+        if tech_keywords:
+            search_parts.append(' '.join(tech_keywords))
+        
+        # Join all parts with separator to maintain context
+        search_text = ' | '.join(filter(None, search_parts))
+        
+        return search_text.strip()
+    
+    def _keyword_search(self, query: str) -> List[Dict[str, Any]]:
+        """Search for exact keyword matches in conversations"""
+        conversations = self.load_conversation_index()
+        matches = []
+        
+        query_lower = query.lower().strip()
+        
+        for conv in conversations:
+            first_message = conv.get('first_message', '').lower()
+            
+            # Check for exact substring match
+            if query_lower in first_message:
+                # Load full conversation JSON
+                json_path = os.path.join(self.json_dir, conv['file'])
+                try:
+                    with open(json_path, 'r', encoding='utf-8') as f:
+                        raw_json_content = f.read()
+                    
+                    matches.append({
+                        'file_name': conv['file'],
+                        'similarity_score': 1.0,  # Max score for exact match
+                        'raw_json_content': raw_json_content,
+                        'json_path': json_path,
+                        'match_type': 'exact_keyword',
+                        'conversation_id': conv['id']
+                    })
+                except Exception as e:
+                    print(f"Error loading {json_path}: {e}")
+                    continue
+        
+        return matches
+    
     def build_index(self, batch_size: int = 100):
         """Build Pinecone index from conversation JSON files"""
         print("🔍 Building JSON-based Pinecone index...")
@@ -141,10 +256,8 @@ class JSONVectorStore:
             # Create embeddings for this batch
             texts = []
             for conv in batch:
-                # Create searchable text from conversation summary and complete first message
-                summary = conv.get('summary', '')
-                first_message = conv.get('first_message', '')
-                search_text = f"{summary} {first_message}"
+                # Create enhanced search text with error extraction and keywords
+                search_text = self._create_enhanced_search_text(conv)
                 texts.append(search_text)
             
             try:
@@ -154,15 +267,23 @@ class JSONVectorStore:
                 for conv, embedding in zip(batch, embeddings):
                     vector_id = conv['id']
                     
-                    # Prepare metadata (store JSON file reference)
+                    first_message = conv.get('first_message', '')
+                    
+                    # Enhanced metadata with technical indicators
                     metadata = {
                         'file': conv['file'],
                         'type': conv['type'],
                         'conversation_type': conv.get('conversation_type', 'single'),
                         'participants': conv['participants'][:5],  # Limit for metadata size
                         'message_count': conv['message_count'],
-                        'summary': conv['summary'][:200],  # Limit for metadata size
-                        'channel_name': conv.get('channel_name', '')[:50] if conv.get('channel_name') else ''
+                        'channel_name': conv.get('channel_name', '')[:50] if conv.get('channel_name') else '',
+                        
+                        # Technical indicators for better filtering
+                        'has_error': any(keyword in first_message.lower() for keyword in ['error', 'failed', 'exception', 'fatal']),
+                        'has_stack_trace': 'traceback' in first_message.lower() or 'stack trace' in first_message.lower(),
+                        'message_length': len(first_message),
+                        'tech_keywords': ' '.join(self._extract_tech_keywords(first_message)[:5]),  # Top 5 keywords
+                        'first_100_chars': first_message[:100].replace('\n', ' ').strip()  # Preview for debugging
                     }
                     
                     vectors_to_upsert.append({
@@ -199,7 +320,37 @@ class JSONVectorStore:
         return vector_count
     
     def search_similar_conversations(self, query: str, k: int = 5) -> List[Dict[str, Any]]:
-        """Search for similar conversations and return raw JSON file content"""
+        """Hybrid search combining semantic and keyword matching"""
+        print(f"🔍 Hybrid search for: '{query}'")
+        
+        # 1. Keyword search for exact matches (high priority)
+        keyword_matches = self._keyword_search(query)
+        print(f"   Found {len(keyword_matches)} exact keyword matches")
+        
+        # 2. Semantic search via Pinecone
+        semantic_matches = self._semantic_search(query, k * 2)  # Get more for deduplication
+        print(f"   Found {len(semantic_matches)} semantic matches")
+        
+        # 3. Merge results and remove duplicates
+        merged_results = self._merge_search_results(keyword_matches, semantic_matches, k)
+        
+        # Log the combined results
+        if self.enable_logging:
+            conversations_for_logging = []
+            for file_info in merged_results:
+                try:
+                    parsed_data = json.loads(file_info['raw_json_content'])
+                    parsed_data['similarity_score'] = file_info['similarity_score']
+                    parsed_data['match_type'] = file_info.get('match_type', 'semantic')
+                    conversations_for_logging.append(parsed_data)
+                except:
+                    pass
+            self._log_query_and_results(query, conversations_for_logging)
+        
+        return merged_results
+    
+    def _semantic_search(self, query: str, k: int = 10) -> List[Dict[str, Any]]:
+        """Perform semantic search using Pinecone"""
         # Create embedding for query
         query_embedding = self.model.encode([query])[0]
         
@@ -234,26 +385,56 @@ class JSONVectorStore:
                         'file_name': file_name,
                         'similarity_score': similarity_score,
                         'raw_json_content': raw_json_content,
-                        'json_path': json_path
+                        'json_path': json_path,
+                        'match_type': 'semantic'
                     })
                     
                 except Exception as e:
                     print(f"Error loading {json_path}: {e}")
                     continue
         
-        # Log the query and results (parse JSON just for logging)
-        if self.enable_logging:
-            conversations_for_logging = []
-            for file_info in conversation_files:
-                try:
-                    parsed_data = json.loads(file_info['raw_json_content'])
-                    parsed_data['similarity_score'] = file_info['similarity_score']
-                    conversations_for_logging.append(parsed_data)
-                except:
-                    pass
-            self._log_query_and_results(query, conversations_for_logging)
-        
         return conversation_files
+    
+    def _merge_search_results(self, keyword_matches: List[Dict[str, Any]], 
+                            semantic_matches: List[Dict[str, Any]], k: int) -> List[Dict[str, Any]]:
+        """Merge keyword and semantic search results, avoiding duplicates"""
+        # Use conversation ID to track unique results
+        seen_ids = set()
+        merged_results = []
+        
+        # 1. Add keyword matches first (highest priority)
+        for match in keyword_matches:
+            conv_id = match.get('conversation_id')
+            if conv_id and conv_id not in seen_ids:
+                seen_ids.add(conv_id)
+                merged_results.append(match)
+                if len(merged_results) >= k:
+                    break
+        
+        # 2. Add semantic matches that aren't already included
+        for match in semantic_matches:
+            if len(merged_results) >= k:
+                break
+                
+            # Extract conversation ID from file name or JSON content
+            try:
+                parsed_json = json.loads(match['raw_json_content'])
+                conv_id = parsed_json.get('id')
+                
+                if conv_id and conv_id not in seen_ids:
+                    seen_ids.add(conv_id)
+                    merged_results.append(match)
+            except:
+                # If we can't parse JSON, use file name as fallback
+                file_name = match.get('file_name', '')
+                if file_name not in [m.get('file_name', '') for m in merged_results]:
+                    merged_results.append(match)
+        
+        # Sort by similarity score (keyword matches already have score 1.0)
+        merged_results.sort(key=lambda x: x.get('similarity_score', 0), reverse=True)
+        
+        print(f"   Merged to {len(merged_results)} unique results")
+        return merged_results[:k]
     
     def get_user_conversations(self, user_name: str, limit: int = 10) -> List[Dict[str, Any]]:
         """Get recent conversations for a specific user"""

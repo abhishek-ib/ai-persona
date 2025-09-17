@@ -195,6 +195,96 @@ class AIPersonaBotJSON:
         
         return result
     
+    def search_mode(self):
+        """Start search mode for finding relevant conversations"""
+        print("🔍 Conversation Search Mode")
+        print("=" * 60)
+        print("🎯 Search through Slack conversations to find relevant information")
+        print("📚 Get detailed results with conversation context and sources")
+        print("Commands:")
+        print("  'quit' - Exit search mode")
+        print("  'help' - Show this help")
+        print("=" * 60)
+        
+        print(f"\n🔍 Search through {len(self.vector_store.load_conversation_index())} conversations")
+        print(f"   💡 Enter your search query to find relevant discussions")
+        print(f"   📄 Results will show conversation files and similarity scores")
+        
+        while True:
+            # Get user input
+            try:
+                user_input = input(f"\n[Search] > ").strip()
+            except KeyboardInterrupt:
+                print("\n👋 Goodbye!")
+                break
+            
+            if not user_input:
+                continue
+            
+            # Handle commands
+            if user_input.lower() == 'quit':
+                break
+            elif user_input.lower() == 'help':
+                print("\nSearch Commands:")
+                print("  'quit' - Exit search mode")
+                print("  'help' - Show this help")
+                print("\nTips:")
+                print("  - Use specific keywords for better results")
+                print("  - Try different phrasings if you don't find what you need")
+                print("  - Results show similarity scores (higher = more relevant)")
+                continue
+            
+            # Perform search
+            print(f"🔍 Searching for: '{user_input}'...")
+            
+            # Get similar conversations with higher limit for search mode
+            similar_conversations = self.vector_store.search_similar_conversations(user_input, k=10)
+            
+            if similar_conversations:
+                print(f"\n📋 Found {len(similar_conversations)} relevant conversations:")
+                print("=" * 60)
+                
+                for i, file_info in enumerate(similar_conversations, 1):
+                    score = file_info.get('similarity_score', 0)
+                    file_name = file_info.get('file_name', 'unknown')
+                    
+                    # Try to load the JSON to get more details
+                    try:
+                        import json
+                        raw_json = file_info.get('raw_json_content', '')
+                        if raw_json:
+                            conv_data = json.loads(raw_json)
+                            channel_name = conv_data.get('channel_name', 'Unknown')
+                            conv_type = conv_data.get('conversation_type', 'single')
+                            participants = conv_data.get('participants', [])
+                            message_count = len(conv_data.get('messages', []))
+                            
+                            # Get first message preview
+                            messages = conv_data.get('messages', [])
+                            first_msg_preview = ""
+                            if messages:
+                                first_msg = messages[0].get('message', '')
+                                first_msg_preview = (first_msg[:100] + '...') if len(first_msg) > 100 else first_msg
+                            
+                            print(f"\n{i}. [{score:.3f}] {channel_name} - {conv_type}")
+                            print(f"   👥 Participants: {', '.join(participants[:3])}")
+                            print(f"   💬 Messages: {message_count}")
+                            print(f"   📄 File: {file_name}")
+                            if first_msg_preview:
+                                print(f"   📝 Preview: {first_msg_preview}")
+                    except:
+                        # Fallback to basic info if JSON parsing fails
+                        print(f"\n{i}. [{score:.3f}] {file_name}")
+                
+                print("\n" + "=" * 60)
+                print(f"💡 Tip: Use these results to ask more specific questions!")
+            else:
+                print(f"\n❌ No conversations found for: '{user_input}'")
+                print("💡 Try:")
+                print("   - Different keywords or phrases")
+                print("   - More general terms")
+                print("   - Check spelling")
+
     def interactive_chat(self):
         """Start interactive chat as helpful coworker"""
         print("🤖 Helpful Coworker AI - Interactive Chat")
@@ -272,6 +362,7 @@ def main():
     parser.add_argument("--data-dir", default="data", help="Directory containing Slack dumps")
     parser.add_argument("--rebuild-index", action="store_true", help="Rebuild index from scratch")
     parser.add_argument("--interactive", action="store_true", help="Start interactive chat")
+    parser.add_argument("--search", action="store_true", help="Start search mode")
     parser.add_argument("--user", help="User to respond as")
     parser.add_argument("--query", help="Query to respond to")
     
@@ -280,11 +371,14 @@ def main():
     # Initialize bot
     bot = AIPersonaBotJSON(args.data_dir, args.rebuild_index)
     
-    # Initialize Gemini
-    bot.initialize_gemini()
+    # Initialize Gemini (only if not in search-only mode)
+    if not args.search:
+        bot.initialize_gemini()
     
     if args.interactive:
         bot.interactive_chat()
+    elif args.search:
+        bot.search_mode()
     elif args.query:
         result = bot.chat(args.query, is_first_message=True)
         if result['success']:
@@ -294,7 +388,7 @@ def main():
     else:
         print("🤖 Helpful Coworker AI")
         print(f"📚 {len(bot.vector_store.load_conversation_index())} conversations available")
-        print("\nUse --interactive for chat mode or --help for more options.")
+        print("\nUse --interactive for chat mode, --search for search mode, or --help for more options.")
 
 
 if __name__ == "__main__":
