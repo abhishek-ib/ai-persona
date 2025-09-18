@@ -143,7 +143,7 @@ class JSONGeminiClient:
                 conversation_history = self.chat_sessions[user_name]
 
             # Retry mechanism: start with all conversations, trim if 400 error (too many tokens)
-            max_retries = 3
+            max_retries = 8
             conversations_to_send = similar_conversations
             response = None
 
