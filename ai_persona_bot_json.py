@@ -18,6 +18,7 @@ import argparse
 import re
 from typing import Dict, List, Any, Optional
 from datetime import datetime
+import uuid
 
 # Load environment variables
 try:
@@ -228,6 +229,11 @@ class AIPersonaBotJSON:
                 'query': query,
                 'timestamp': datetime.now().isoformat()
             }
+        # If the query ends with '??', only use the top similar_conversation
+        print(f"   [GeminiClient] Query: {query}")
+        if query.strip().endswith('??'):
+            similar_conversations = similar_conversations[:1]
+        print(f"   [GeminiClient] Similar conversations: {len(similar_conversations)}")
 
         # Prepare target user info for search session
         target_user = {
@@ -260,7 +266,7 @@ class AIPersonaBotJSON:
         if result['success']:
             # Parse the structured response from chat session
             references = self._build_references(similar_conversations)
-            
+
             return {
                 'success': True,
                 'response': result.get('response', 'No response found'),
@@ -282,24 +288,24 @@ class AIPersonaBotJSON:
     def _build_references(self, similar_conversations: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Build references from similar conversations data."""
         references = []
-        
+
         for conv in similar_conversations:
             metadata = conv.get('metadata', {})
-            
+
             # Extract timestamp from conversation ID
             # Format: ch_C05L87V014J_2025-03-07_1741374080.130969_thread
             conversation_id = metadata.get('id', '')
             timestamp = None
-            
+
             # Extract timestamp from the ID (last numeric part before _thread or similar)
             # Handle both formats: _timestamp_thread and _timestamp (for DMs)
             timestamp_match = re.search(r'_(\d+\.\d+)(?:_thread)?$', conversation_id)
             if timestamp_match:
                 timestamp = float(timestamp_match.group(1))
-            
+
             # Build Slack URL from conversation ID
             url = self._build_slack_url(conversation_id, timestamp)
-            
+
             reference = {
                 'conversation_id': metadata.get('id', ''),
                 'text': metadata.get('first_message_text', ''),
@@ -309,31 +315,31 @@ class AIPersonaBotJSON:
                 'channel_name': metadata.get('channel_name', '') if metadata.get('channel_name') else None,
                 'url': url
             }
-            
+
             references.append(reference)
-        
+
         return references
 
     def _build_slack_url(self, conversation_id: str, timestamp: float) -> str:
         """Build Slack URL from conversation ID and timestamp."""
         if not conversation_id or timestamp is None:
             return ""
-        
+
         # Extract channel/DM ID from conversation ID
         # Format examples:
         # ch_C05L87V014J_2025-03-07_1741374080.130969_thread -> C05L87V014J
         # dm_D03LK3XUJUA_2025-07-24_1753379643.878389 -> D03LK3XUJUA
-        
+
         # Match pattern: ch_<ID>_ or dm_<ID>_
         id_match = re.search(r'^(ch|dm)_([A-Z0-9]+)_', conversation_id)
         if not id_match:
             return ""
-        
+
         channel_id = id_match.group(2)
-        
+
         # Convert timestamp to Slack format (remove decimal point)
         slack_timestamp = str(int(timestamp * 1000000))  # Convert to microseconds
-        
+
         return f"https://instabase.slack.com/archives/{channel_id}/p{slack_timestamp}"
 
     def _parse_structured_response(self, response_text: str, conversations: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -457,6 +463,7 @@ class AIPersonaBotJSON:
                 'conversation_id': conversation_data.get('id', 'unknown'),
                 'timestamp': datetime.now().isoformat()
             }
+
 
     def summarize_mode(self):
         """Start summarize mode for summarizing Slack conversations"""
@@ -756,7 +763,9 @@ class AIPersonaBotJSON:
             else:
                 print("🤔 Looking for relevant conversations...")
 
-            result = self.chat(user_input, session_id, is_first_message)
+            # result = self.chat(user_input, session_id, is_first_message)
+            session_id = "session_" + str(uuid.uuid4())
+            result = self.search_with_gemini(user_input, mode="interactive")
 
             if result['success']:
                 response = result['response']

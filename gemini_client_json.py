@@ -154,7 +154,7 @@ class JSONGeminiClient:
                     message_content = self._create_message_with_attachments(
                         query, conversations_to_send
                     )
-                    print(f"   [GeminiClient] Attempt {attempt + 1}: Query parts: {len(message_content.parts)} parts")
+                    print(f"   [GeminiClient] Attempt {attempt + 1}: Query parts: {len(message_content.parts)} parts | conversations_to_send: {len(conversations_to_send)}")
 
                     # Add the new user message to conversation history
                     conversation_history.append(message_content)
@@ -396,7 +396,7 @@ Abhishek Kalyan Adupa
 :computer:  10:41 AM
 good luck for presentation
 ```
-Keep responses conversational, short and concise, helpful, and reference the conversations when relevant. Respond in Paul's voice and style.
+Keep responses conversational, short and concise, helpful, and reference the conversations when relevant. Respond in Paul's voice and style. Important: Make the response as short and concise as possible, 1 or 2 sentences max.
 
 Respond with 'Ready' to confirm you understand."""
 
