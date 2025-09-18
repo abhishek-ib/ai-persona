@@ -144,7 +144,7 @@ class JSONGeminiClient:
 
             # Retry mechanism: start with all conversations, trim if 400 error (too many tokens)
             max_conversations = 8
-            max_retries = len(similar_conversations[:max_conversations]) - 1
+            max_retries = max(1, len(similar_conversations[:max_conversations]) - 1)
             conversations_to_send = similar_conversations[:max_conversations]
             response = None
 
