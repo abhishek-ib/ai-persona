@@ -196,13 +196,14 @@ class AIPersonaBotJSON:
 
         return result
 
-    def search_with_gemini(self, query: str, session_id: str = "search_session") -> Dict[str, Any]:
+    def search_with_gemini(self, query: str, session_id: str = "search_session", mode: str = "search") -> Dict[str, Any]:
         """
         Search and generate structured response with references using Gemini chat sessions
         
         Args:
             query: Search query
             session_id: Chat session identifier for search mode
+            mode: Mode for the response ("search" for structured JSON, "interactive" for Paul's persona)
             
         Returns:
             Structured response with answer and references
@@ -246,14 +247,14 @@ class AIPersonaBotJSON:
                 file_name = file_info.get('file_name', 'unknown')
                 print(f"     {i}. [{score:.3f}] {file_name}")
 
-        # Use Gemini chat session with search mode for structured responses
+        # Use Gemini chat session with specified mode
         result = self.gemini_client.generate_response(
             target_user=target_user,
             query=query,
             similar_conversations=similar_conversations,
             user_conversations=[],  # Not needed for search mode
             is_first_message=session_id not in self.gemini_client.chat_sessions,
-            mode="search"
+            mode=mode
         )
 
         if result['success']:

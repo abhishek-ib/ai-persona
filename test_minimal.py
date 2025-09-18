@@ -6,6 +6,7 @@ This script demonstrates how to use the search and clear functions
 from the AI Persona Bot programmatically.
 """
 
+import uuid
 from ai_persona_bot_json import AIPersonaBotJSON
 
 def main():
@@ -28,7 +29,9 @@ def main():
     # Step 2: Test search function
     print("\n2. Testing search function...")
     query = "How to get started with the crafting?"
-    result = bot.search_with_gemini(query)
+    session_id = str(uuid.uuid4())
+    print(f"🆔 Generated random session ID: {session_id}")
+    result = bot.search_with_gemini(query, session_id=session_id)
     
     if result['success']:
         print(f"✅ Search successful!")
@@ -45,12 +48,12 @@ def main():
     print("\n3. Testing clear function...")
     print(f"   Sessions before clear: {len(bot.gemini_client.chat_sessions)}")
     
-    # Clear all sessions
-    for session_id in list(bot.gemini_client.chat_sessions.keys()):
-        bot.gemini_client.clear_chat_session(session_id)
+    # Clear the specific session we created
+    print(f"🧹 Cleaning up session: {session_id}")
+    bot.gemini_client.clear_chat_session(session_id)
     
     print(f"   Sessions after clear: {len(bot.gemini_client.chat_sessions)}")
-    print("✅ Clear function works")
+    print("✅ Session cleaned up successfully")
     
     print("\n🎉 All tests completed!")
 

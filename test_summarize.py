@@ -4,6 +4,7 @@ Test script for the new summarize functionality
 """
 
 import json
+import uuid
 from ai_persona_bot_json import AIPersonaBotJSON
 
 def test_summarize_functionality():
@@ -58,7 +59,9 @@ def test_summarize_functionality():
         
         # Test summarize_chat method
         print("\n📝 Testing summarize_chat method...")
-        result = bot.summarize_chat(sample_conversation)
+        session_id = str(uuid.uuid4())
+        print(f"🆔 Generated random session ID: {session_id}")
+        result = bot.summarize_chat(sample_conversation, session_id)
         
         if result['success']:
             print("✅ Summarize successful!")
@@ -72,6 +75,11 @@ def test_summarize_functionality():
             print(f"   ⏰ Timestamp: {result['timestamp']}")
         else:
             print(f"❌ Summarize failed: {result.get('error', 'Unknown error')}")
+        
+        # Clean up: delete the specific session we created
+        print(f"\n🧹 Cleaning up session: {session_id}")
+        bot.gemini_client.clear_chat_session(session_id)
+        print("✅ Session cleaned up successfully")                    
             
     except Exception as e:
         print(f"❌ Test failed: {e}")
