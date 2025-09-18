@@ -111,10 +111,15 @@ class JSONVectorStore:
         index_file = os.path.join(self.json_dir, 'conversation_index.json')
         
         if not os.path.exists(index_file):
-            raise FileNotFoundError(f"Conversation index not found: {index_file}")
+            print(f"Warning: Conversation index not found: {index_file}")
+            return []
         
-        with open(index_file, 'r', encoding='utf-8') as f:
-            return json.load(f)
+        try:
+            with open(index_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading conversation index {index_file}: {e}")
+            return []
     
     def _extract_error_messages(self, text: str) -> List[str]:
         """Extract key error messages from technical content"""

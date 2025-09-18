@@ -1,0 +1,1204 @@
+Oh yeah! Here are the screenshots. Hopefully, your JIRA issues will be fixed before you actually work on these but here they are if you wanna do some light reading lol
+Approved!
+Yes! Websockets. I had that in the slides but not enough time to talk about it lol
+Haha, it was actually really easy! But then again, we were just hacking away, not thinking about maintainability
+`ib-hack5` is the branch name
+Ahh, I see
+Give me one second to pull up someting
+Here’s the backend pull request
+I might be able to replicate it. I think it might be a different path to the dialog you mentioned
+Yeah I’m having issues too
+I can’t upload files
+Let’s see if anyone else is having the issue. I’ll post in the eng channel
+Oh wait, the file system is working. Maybe it’s something to do with our code then :thinking_face:
+Oh wait, it’s a job server issue. I’m definitely posting it in eng
+Yeah, I can’t replicate it rn but judging from the PR, it seems to be a race condition where you upload two folders at the same time, which is causing concurrent writes to the same `metadata_mappings.json` file
+Which is why Naveen’s PR is batching all the writes from separate HTTP requests into a single HTTP request
+If I had dogfood, I could confirm exactly how it’s broken right now though…
+I talked to Naveen about his PR and he needs some frontend work done. I can show you where that is
+Do you have time for a zoom call?
+Haha, thanks!
+I got a kitchenaid mixer so now I’m going to be a baker
+LOL
+I was purposely trying to avoid the sourdough trend because I’m a hipster
+but I _was_ reading a sourdough recipe earlier this week so I think I might give in and do it lol
+Oh man, that sounds dope. Aite, I’m going to make sourdough now
+And if anyone asks, I’ll name drop you
+“Weiming made me do it”
+Thanks Weiming, I’m glad I can rely on you to fight off the hipsters
+LOL
+Sure, taking a look now
+Oh haha ok. Let me know if there’s anything else I should review. I tend to miss PRs so ping me anytime when you got one
+Ah, Eric got there first again!
+He’s too :sonic:
+approved
+Approved!
+Haha, I was halfway looking at this code before getting pulled into meetings
+Let me take another look
+:flag-au: :lgtm:
+One comment
+Approved
+Approved.
+Looking at it now!
+Approved with some comments
+Approved
+Ohh, I like the defensive/offensive analysis
+That’s definitely something I haven’t seen before
+So this is like a analysis tool for teams you make in a Pokemon game/online
+haha oh man
+I was thinking about picking it up myself
+But then I haven’t finished pokemon arceus yet =(
+Instead, I downloaded a ROM hack called Pokemon Radical Red, which is super hard lol
+They basically took Fire Red, added pokemon all the way to gen 8, gave all gym leaders really good teams
+AKA hard mode
+Would recommend if you’re wanting a hard pokemon game lol
+Which rom hacks did you play for the DS? I'm almost done with this one so I'm keen on checking out others
+It's fun!
+Lol
+I'm out rn but I'll be back in about 4 hours to take a look
+Approved btw =)
+Approved
+Yo I’m doing SB Validations UAT atm. Do you have any Validations that I can import?
+How do I create a Validations file with Classification as input on UAT? All I see is Refiner or Extraction input:
+Ah ok, thank you
+I ran a Validations file with a Ground Truth set attached, but the Truth column seems to be empty. Is this expected?
+Oh haha
+Okay I guess I’ll wait for that to get merged in before I test it again
+Approved
+Haha, that’s ok. I can create another refiner project to import.
+
+Can you send me a link to one of your validations project on dogfood? I want to see what a script set looks like in this context.
+Thanks! I was able to use your project as an example and got it working on UAT
+Sorta
+That is indeed a weird position for the always_fail step haha.
+
+&gt;  You’ll need to add
+&gt; *args: Any[]
+&gt; In front of the kwargs in always_fail function definition
+Interesting. Here’s the definition for `always_fail` atm:
+```def always_fail(**kwargs: Any) -&gt; ValidationTuple:
+  return False, 'Always fail'```
+I need to add `*args: Any[]` as a second param to this function? I want to confirm because it didn’t know the behavior would change if I were to add another argument — it’s as if it was doing some code spying or reflection lol.
+Haha same. I played around with the type annotation and found that `List[Any]` didn’t break. But I’m still getting passing results =(
+Same PASS result as before
+Oh wait, actually using a field results in fail
+LOL
+ok
+nvm I misread your earlier message
+okok
+Interesting. So the Python code knows you’re passing in a field vs a static argument
+I wonder if I can pass in a static argument of the same value as one of the fields
+Neat, ok. It passes, which is fine I guess lol
+Thanks for clearing this up for me on your day off
+Approved both
+<#C047ST1SUPP|> :dancing-penguin:
+Sorry, not the feedback channel
+<#C027EPGM2UQ|>
+<@U03GD4N24SK> is the person who helped me apply the patches manually to dogfood/uat! He’s also the creator of Patch Professor =) He can help you too
+Oops, I accidentally invited you to the model-service channel. Feel free to ignore that
+(But the issue I tagged you on is still relevant!)
+Invited you to a meeting at 2pm today for an hour. We probably don’t need the entire hour, but just in case. Let me know if you prefer a different time =)
+No problem, take your time
+Ok I’m back and ready to go
+Added a few comments!
+Approved!
+Hmm, you might need to change the backend API for the /prep_publish endpoint, because that’s hardcoded to use the `0.0.x` format. It should be simple though — you’re able to extend that API to accept a version string to use. You can still keep the `/next_version` endpoint to prepopulate the form.
+I reviewed your PRs! Sorry for the delay.
+Sure thing! Are you looking for an example of how to create a model with a pruning job or code examples of using pruning jobs as the job type?
+(I can give both)
+Oh yeah! I actually asked Serena earlier this month. Let me copy and paste her response:
+&gt;  Model pruning is currently in Private Preview, so you’ll have to enable the feature for yourself
+&gt; 1. Click on your profile picture in the top bar
+&gt; 2. Click “View profile”
+&gt; 3. Click the toggle for “Enable model pruning in ML Studio”
+Also, you can only prune jobs that have already been published. So after you train your model and publish it, you should see a button to prune it next to the publish button in ML Studio
+Let me know if you can’t find it.
+Approved
+Approved
+Reviews
+Reviewed*
+One of my UATs says “Create a validation from Validations”. Do you know where I go to do that? I can’t seem to find it in Solution Builder
+
+Ah got it! I’ll give that a shot
+IIRC, there were issues running preview locally so we had to test using a sandbox
+Either that, or run preview on dogfood, copy the response from the network tab, and paste it as a stub in your fetch call locally
+Which is what I do
+(and constantly remind yourself to not commit the change lol)
+Yeah, it does. Which means you’ll have to do all the set up
+Which is why I like to stub things locally haha
+But if the issue is the OCR, perhaps you can try a reader profile that uses Google OCR? I think that uses their cloud version
+Yep!
+You’ll also need to install ibformers. If you haven’t done it before, I can show you via call
+Is this related to the ticket where previewing models sometimes doesn’t work depending on the model?
+Ah yeah, so heads up that the model object is different depending on the version of ibformers
+IIRC, there’s 2 possible object shapes atm
+If a model is trained on dogfood right now, it’ll be using the new shape, which I believe is breaking Marketplace Preview.
+If you manage to find an old model on dogfood, it’ll return the old shape, which is supported
+(or vice versa lol)
+Regardless, if you go with the sandbox approach, you’ll have to test two models using two different versions of ibformers.
+Which sounds like a pain tbh
+Oh shoots
+Jumping into standup
+Let me think about this some more :thinking_face:
+Try Google OCR locally and see if that works
+Ah true
+Let me look into the code
+There’s two possible options here, which may be used in tandem:
+• `useQuery()` supports `refetchOnWindowFocus` option, which is true by default. You can try setting this to false to prevent query 1 from refetching on focus.
+• `useQuery()` supports `enabled` flag, which maybe you can do `enabled: Boolean(dataFromQuery2)` maybe? Might be an issue with variable order declaration.
+But I think the root cause of the issue is that when you refocus the window, react query refetches by default. So the first option might be the most applicable here to prevent query1 AND query2 from refetching.
+Also, after that change, the idea that “query1 refetching getting a jobId, which re-triggers query2” which should not happen unless your cache keys do not have jobId in it. So it’s best to double check that too.
+I’m glad it worked out for you! Messy solutions are always painful to write haha.
+Approved
+Hmm, not off the top of my head. Let me check if I have an old screenshot or something lol
+Try `Driver_License_v1_0`
+Oh wait, that hasn’t been converted into a model accelerator so you can’t test it on Marketplace Preview, right?
+Okay, sounds like a plan!
+Haha, you should be able to do a redeploy to the sandbox via admiral
+I think as long as you redeploy nginx, your code should be there
+(or if you redeploy everything)
+Yep, that’s exactly it!
+I also like the bajillion zeroes in the sandbox name lol
+I hope you don’t need to make use of all of those zeroes in the future
+Nice! What did you need to do to make it work?
+Wow that was easy haha
+Glad it worked out
+Ah, good question. This would be good for the e2e eng channel as either <@U01269AT5SN> or <@U039ZHK0MQF> would know better
+Hmm, that’s a good question.
+Or even Eric
+Approved one, added comments on another!
+Approved
+Are you still working on the Preview feature on Marketplace? I figured out a hacky way to get OCR working locally (sorta).
+I couldn’t get Microsoft OCR working so I ended up copying the Google OCR reader profile and hard-coding that locally while I test.
+Basically, replace the default reader profile in `webserver/shared/src/js/webpacked/apps/src/reader/constants/app.ts`  with this
+```{
+            "name": "Read - Default",
+            "readSettings": {
+                "process_type": "auto_to_txt",
+                "document_mapping": "document_is_record_skip_empty_page",
+                "layout_algorithm": "layout_algo_spatial",
+                "output_format_layout": "layout_per_page",
+                "page_range_str": "",
+                "encryption_config": null,
+                "produce_word_metadata": true,
+                "produce_metadata_list": true,
+                "remove_space_wordpolys": true,
+                "remove_boxes": false,
+                "remove_boxes_over_height_percent": null,
+                "remove_boxes_over_width_percent": null,
+                "detect_blurry_files": false,
+                "image_filters": "",
+                "repair_pdfs": false,
+                "dewarp_page": false,
+                "scripts_dir": "",
+                "remove_vertical_text": false,
+                "correct_orientation_fine": false,
+                "ocr_page_type": "low_quality_doc",
+                "ocr_timeout": null,
+                "write_converted_image": true,
+                "force_image_ocr": false,
+                "extract_all_pdf_layers": false,
+                "cache_pdf_results": false,
+                "find_lines": false,
+                "model_specific_settings": {
+                    "lq_v1": {
+                        "feature_type": "general",
+                        "model_version": "stable"
+                    }
+                },
+                "output_formats": null,
+                "entity_models": null,
+                "write_thumbnail": true
+            },
+            "entitySettings": []
+}```
+I hope it helps if you’re still doing preview stuff =X
+Yep! It's Elan
+He'll be a good point of call for that issue
+Approved
+Let me know when you’ve merged it in! I think I need to rebase my work off yours since I’m redesigning the Script Set cards.
+Tyty
+Haha, thanks for sending me the links. It’s hard for me to keep track of PRs in github so I prefer them in Slack
+Looking at them now
+ty
+Yeah, we’re going to use the old query hooks for the non-supported endpoints. There’s actually 5 “modules” that are not bulkified (including the imported modules) so I’ll bring those back
+Can you send me a link to a page that uses the module picker that gets that error? I think I fixed it locally and I want to test it
+Done and done. Thanks for the reminder =)
+LOL I was just replying to Danny since he also asked if I was looking for partners. I am looking for partners! But I need to finalize the idea first before I start recruiting
+I think I’ll be done by the end of today. I’ll let you know when it’s up so you can decide whether you want to join or not =)
+I think it’s okay for writing simple stuff. Like given an existing test and a prompt, it can modify the test
+Anything larger I’d expect it to be worse
+This project is going to be a lot of exploratory work, so I expect some things to fail and we may need to pivot
+Let me set up a meeting with everyone haha
+Sorry, I forgot to set one up on Thursday
+Do you have a SB validation module that is not in the new version format? I’m trying to debug a particular issue and I don’t have one TT
+Awesome, thank you!
+Oh, I made a similar change to refiner but I forgot to add it to validations hah. Thanks for fixing this issue
+And yeah, I’ll check if this fixes this bug as well
+No, I took a quick look at that and couldn't figure it out. I think Jessica looked at it and couldn't figure it out either
+I know how to reproduce the issue semi reliably, but I don't know why
+(if that helps)
+Interesting. Why do you think it's react-query related?
+Okay yeah, that'll be interesting to debug! Send them over whenever you're
+Tomorrow*
+Approved
+Approved
+Haha that’s a good idea. Serena will be coming back next week so I can definitely take a chill day off =)
+I don’t think we have CRUD endpoints for documents. What kind of operations are you looking to perform?
+We might be able to use the old endpoints for now
+depending on what you’re doing
+Hm, let me check real quick
+You might need to confirm with Naveen if they’re available
+Approved and added one comment for you to test out
+Did you restart apps-server when you changed the flag to true?
+(and are you running apps-server on docker or locally?)
+Interesting. Can you confirm that `window.context.*enable_aihub_build_latest` is false? Or is it `undefined`?*
+What’s the URL that you’re visiting?
+ok that sounds good. let me know if that doesn’t work
+What commit hash are you on atm?
+(just double checking)
+so weird
+why do you think that?
+lol
+Is there a value for `window.context.*enable_aihub_gtm_tracking` at least?*
+oh that’ll be a problem lol
+I use `make build runlocal` to start my services locally, not sure if that helps
+yeah i’m stumped
+my only possible suggestion is to restart your computer. i can’t think of any other reason why it might be broken
+Ohh haha, I'm glad it's not some random, obscure bug. I guess taking a step back really does help lol
+Approved
+Haha, I feel like whenever you jump into a new project that’s already been around for a while, you end up refactoring a lot of it
+The refactor king
+lol
+It’s a good habit!
+I definitely worked at a place that was a lot slower too, and refactoring/writing correct code was heavily emphasized
+To the point where it got a little too “slow” since we had deadlines looming and our PRs are blocked on getting approval from some very tough reviewers =(
+Looks like you’ve already merged it! Let me know if there’s other PRs I need to look at
+Approved
+I don’t see any changes since the last review haha
+Did you forget to push?
+Approved
+Which doc endpoints are you referring to?
+I think we created a hook for the doc list endpoint :thinking_face:
+oh haha
+I thought it’s using the old docs endpoint
+Lemme check on my end, I’m pretty sure it’s using the v1 endpoints
+I don’t think anyone has done work for the frontend side yet
+Is it because we’re also using the old endpoint to fetch the docs as well? We’re basically still using v1 for uploading docs, and listing docs, which makes sense
+If we switch the upload docs to v2, then the v1 list docs call will break
+Interesting
+How did you untangle the hooks exactly anyway?
+Ah, that seems like a good strategy. It’s weird that the build docs hook wouldn’t work if you’re just re-arranging the old hooks
+The hook I was looking at to debug the above was the `useUpload()` hook in `store/queries.ts`, so I can confirm that’s working atm
+But yeah, the only new endpoints we’ve added so far (related to build) are `getProjectDocumentFilters()` and `getBuildProjectDocuments()` , both of which are not (or barely) being used (for now)
+Everything else _should_ be using the old `zero-shot-idp/` endpoints because we haven’t touched them
+Thanks
+LOL
+I’m glad it’s working out for you
+I was equally amazing when I first turned it on too. wowzers
+Crafting is basically a service that creates a backend cluster that we can connect a frontend to. So instead of running the whole of instabase locally, we run the backend on a cluster, and crafting hosts the frontend service for us — complete with an IDE/terminal to edit the frontend code
+It was presented at the hackathon I believe, and now it’s taking shape
+Yeah, it’s pretty neat if it works out. We just need to figure out how it works rofl
+Yeah, it really is
+Oh damn, you’re right
+Maybe I can actually switch back to linux again :raised_hands:
+Now I’m doubly motivated
+Just talked to Xindi and it seems like you’ll be responsible for this, since you’re working on My Hub things already!
+Which means I don’t need to do anything
+Except my UATs :sobbadobbasob:
+I choose trick
+heh
+Though, there’s some caveats to that endpoint. The one that (I think?) affects you is that if no one is currently holds the lock, the `username` in the payload would be `null`
+What do you need it for?
+Ah
+Then I think that’ll work, since you’ll always get a populated timestamp (if no entry exists, it’ll return -1)
+Yeah, unfortunately, unless we change how the lock works
+But I thought we already had updated_at in the main tables?
+dang
+The thing is, this intentions table was supposed to be a stand-alone table without any joins to any of the main tables. The reason being is that we want it to be small and performant.
+But if we want to use it with the main tables (e.g. do joins), then I suppose we can do that — I’ll just have to let Elan know
+He needs to add back foreign keys, I asked him to remove them
+hmm
+Oh, instead of using a bulk endpoint (which doesn’t exist), right?
+I see I see
+I think for 1, perhaps we can add pagination for projects? Or at least, lazy load the “modified at” time?
+I can talk to Elan about the last person who grabbed the lock
+We can add an additional payload prop
+or re-use the `username` one
+ofo
+oof
+When do you need this by?
+Maybe we an add a bulk endpoint which given a list of project IDs, returns the last_updated timestamp + username.
+which will only be used by the myhub page I guess
+How about you go with the naive approach for now, and hope that no one creates 100 projects in the next 2 weeks. Then we can look to add the bulk endpoint in 47?
+okay, let me pull you into a chat with elan to add in a new prop for the last user to hold the lock
+Oh, I did on my local dev
+let me just push up the API file
+as a PR for you to review
+Unfortunately, I don’t have RQ hooks in my implemenation
+Which actually sounds like a good thing for you lol, since you don’t need to work around me
+Yeah, you won’t need it
+I can merge it in soon.
+I’m not using any query keys though
+I am, but I’m calling them directly beacuse I need to store the result in redux
+(because I’m also going to prevent some redux actions based on that redux state)
+Interesting. I only grab locks in the AIHub Build app. Do you make plan to make queries there too?
+Ahh, makes sense
+Perhaps I can invalidate the query when I grab the lock then
+Let me see…
+Perhaps we just do `queryClient.invalidateQueries()` for your query key
+Yeah I agree
+Oh that’s good too
+Do you have a ticket for the above change btw? Or even a PR. I just need to link it in the collab bug bash doc =)
+ty
+oh dang
+Well, if I see the issue pop up again, I’ll let you know
+haha, i totally for got that was a thing. I’m glad I don’t have to remember that terrible experience
+macbook fingerprint reader for life
+Particularly, the API keys and enabling aihub
+oh
+haha, i just need to pull i guess
+Yep, that’s by design. Personal workspaces won’t need to check for locks since only a single user will ever work on them
+&gt;  is it ever possible for a user to try to save (like for a schema change) but find that someone else took their lock? And what happens in the UI for that scenario?
+When this happens in the Build App, we show a toast saying “The project is in read only mode” and stop the action. They can keep trying to click on the “save” button, but the same thing happens.
+
+&gt;  Alternatively I grab the lock when they select the move project option, at the end of step 1?
+Grabbing the lock in step 3/4 is fine, but may be a bad ux since the user has done all this effort and is blocked last minute. End to step 1 is also good, but runs into the risk of the following:
+1. User1 grabs the lock, picks a new workspace, but does *not* click to confirm to move project. They go AFK
+2. After 5 minutes, another user grabs the lock.
+3. User1 now clicks to confirm move project.
+User1 will be able to move the project despite another user holding the lock.
+
+So ideally, you’d have checks in both end of step 1 and in step 3/4 to get correctness and good UX. But if that’s too much work (which I can see it is), then doing either one is fine, because it’s a very small edge-case.
+awesome, sounds good
+Yeah, `undefined` is fine. the timestamp controls the `needs_refresh` value, which you can ignore for now
+Hmm, I don’t have access to that conversation to see any of the other context. But even from this message, there’s a lot going on
+So just to confirm: this is referring to the drives that projects/conversations are living in. It’s not related to the “Import files from Google Drive” feature, right?
+ty
+And you said you didn’t have capacity to work on this for 49? Or only partial capacity?
+hang on, maybe I’m getting confused with what Elan’s said he’s working on in the standup…
+okay, let’s talk about it on Monday. Thanks for the reading material
+I still need to wrap my head around it haha
+Yeah, it seems like it was quite a journey to get to this solution
+Hard to believe this is the optimal solution hah
+Ahahaha, I apologize and will offer nothing in compensation :smiling_imp:
+But seriously, I’m glad the query/loading/data sync code is all cleaner and easier to read. The library is doing it’s job!
+How is Vue compared to React anyway? I haven’t heard many people use it (maybe one company? My very first workplace converted to Vue recently.)
+Oh that is really clean! I really like the simplicity of it
+Maybe I’ll consider using Vue in my next side project haha
+I can review it!
+Done
+Yeah, you do this:
+1. Enable split classification in your account settings
+2. Create a new build project
+3. In the project settings, enable split classification
+At this point, it should be enabled for that project. To actually use it:
+1. Create two classes
+2. Upload a PDF that has multiple pages, where one page is class1 and another is class2
+The pages should be classified differently. It should look like as if they're two separate documents in the side list.
+haha, no worries. I fell asleep as soon as the meeting ended so it’s good you figured it out before I woke up lol
+haha no worries, let me pull it up
+But if you’re working on cookies, then that’s controlled by one of our services, right?
+Is it webapp…?
+I ask because Crafting only allows interception of certain services atm. It supports webpacked, nginx, webapp and app-server
+hmm
+then you may be okay then
+yeah
+Yep exactly. Once you’ve set up crafting, you should be able to edit the files in webapp, ssh into the Crafting server to rebuild the docker container + restart the daemon (dw it’s super easy)
+Once you finished setting up Crafting, take a look at the Crafting info in the left navbar. That should be enough to get it up and running =)
+it’ll have it’s own db and everything
+if you need user credentials, there’s some shared accounts in 1password
+IT is pretty fast on these so might as well send them an email.
+Now is the time to use Crafting!
+ahaha
+one day, it’ll be more than a handful of people who use crafting
+a man can dream, right?
+LOL
+Yeah, you’re definitely the chill uncle
+Keep it like that. You won’t be disturbed every hour then :joy:
+Haha no worries
+approved
+I miss my AEST time :sad-pikachu:
+
+yeah yeah that
+This one, right?
+the ones in my photo are also open sides
+they were just squished and badly handled lol
+Here is the link to access the UI (it’s greyed out for me because I’m still spinning up the box):
+&gt;  Also did I need to put in anything to make it run AI Hub
+Nope,  I think it defaults to aihub if you’re using the `ibdev` crafting template
+So if you’re following the confluence instructions, you’re good to go
+It should automatically have one
+Let me take a look at your sandbox
+oops
+that’s a jira ticket
+does that load for you?
+Oh wait, your sandbox is busted
+It doesn’t have a template
+Ohhh
+ok
+yeah
+and then after you finish that confluence page, the sidebar has links (in order, thankfully) of what you should do next
+ok cool
+run those cli commands
+Hmm, if your changes are in webpacked, api-server, apps-server, nginx, or webapp, then you’re able to rebuild the docker containers from within the Crafting instance and restart them
+If they the changes are elsewhere, like in celery-app-tasks, then you may need a different strategy
+What kind of changes do you need?
+oof
+Okay, so we may be able to get that running on the Crafting sandbox by using provisioner
+let me see if there’s any docs on this
+Yeah, it’s not a nice workflow, but hopefully should be easier than running provisioner locally?
+Ah lol
+localhost — always broken
+=(
+I created these shared accounts on Crafting
+But it uses the crafting DB, which I’m not sure you’re using if you’re doing ppy
+It should automatically update
+Since you’re running webpack locally
+But backend services need a restart
+Yeah, it looks like it’ll work
+dang
+oh
+uh
+are you accessing the crafting URL or localhost when you’re viewing your changes
+because I think if you’re using ppy, you’re supposed to use the localhost url (after you forward the port to your laptop)
+&gt; For the final step open a terminal *on your laptop…*
+Yeah, just to be clear, since you have changes in celery-app-tasks, you can’t use the regular crafting setup. So that above link is the workaround, where you run ppy on the Crafting sandbox as if it was a laptop
+oh ok coool
+You might also need to stop all the crafting services on your box via `cs down` so you free up the ports (I think)
+Also, do you have a link to Elan’s prompt based validation PR?
+Hmm, I took a look his open PRs in github, he may have merged it onto master
+which means we don’t need this workaround lol
+Sorry, I was under the assumption that you were working off his branch that had outstanding changes you needed to compile
+But if his changes are already merged onto master, then you can use crafting normally
+brb doctor call
+ok im back
+Yeah, so continuing on — since his changes are already on master, you should good to go without the ppy stuff
+sorry!
+ahaha
+ok
+Is this after starting ppy?
+Just so I understand correctly, you’re currently running ppy, right?
+Probably need quotes after the `-W` flag
+single quotes*
+I’ve never done the ppy setup on Crafting, so I haven’t encountered this issue =(
+
+BUT, I think we should take a step back and go with the regular Crafting setup. It’ll be easier without this ppy stuff
+I misunderstood and led you down the ppy path but I realize now you don’t need it
+I used the regular crafting setup as opposed to the ppy one
+let me get the instructions for you again
+Ok, here are the steps:
+1. Kill your current crafting sandbox via the UI
+2. Run the following command in your laptop:
+```cs sandbox create &lt;UNIQUE-SANDBOX-NAME&gt; \
+  -t ibdev \
+  -D 'dev/checkout[instabase].repo=git:git@github.com:instabase/instabase.git' \
+  -D 'dev/checkout[instabase].version=master'```
+Then you’re done
+Yeah
+those above steps basically creates a new one from scratch lol
+After that, you should be able to view aihub with the crafting URL and make frontend changes
+Yes, for example:
+```cs sandbox create &lt;UNIQUE-SANDBOX-NAME&gt; \
+  -t ibdev \
+  -D 'dev/checkout[instabase].repo=git:git@github.com:seanDoJo/instabase.git' \
+  -D 'dev/checkout[instabase].version=some_new_feature'```
+for the `seanDoJo/instabase.git` repo and the `some_new_feature` branch
+No, you won’t need that command anymore
+After that’s done, go to the UI and click on the endpoint link to view the new aihub website
+Yep!
+yep, correct
+Oh no, let me visit your sandbox and debug
+Weird, your sandbox isn’t using a template
+
+Ah, it’s because none of the services are running, which is causing the request to be forwarded directly to the cluster
+which is why your changes aren’t being picked up
+But when you have webpack running, it’ll intercept the GRPC request, forward that to your crafting webpack and return that value to the frontend.
+&gt;  How did you manage to figure all this out the first time!?
+I actually don’t know rofl. I think Sean helped me understand it I guess?
+Anyway, let me continue debugging on my side
+Yeah, give that a shot
+Can’t hurt
+Hmm, it’s broken for me too
+This is weird, let me post in the pilot channel
+Okay, figured out the issue if you were following that thread
+So we used the wrong template lol. We should use the `frontend` template since that does everything for us
+sweet nice
+You should see something like this (it’s normal for api-server to be unknown or off, since we rarely touch it)
+Nope, nothing you have to do yourself. It should automatically suspend after a few hours iirc
+uh oh
+Well, I’m looking at the logs for webpack on your box and it seems to be compiling just fine:
+```
+assets by info 1.28 MiB [immutable]
+  assets by chunk 1.17 MiB (id hint: vendors)
+    asset vendors-node_modules_monaco-editor_esm_vs_language_json_jsonMode_js.ffa2dc1bce.bundle.js 1020 KiB [emitted] [immutable] (id hint: vendors)
+    asset vendors-node_modules_monaco-editor_esm_vs_language_typescript_tsMode_js.014a7fd228.bundle.js 149 KiB [emitted] [immutable] (id hint: vendors)
+    asset vendors-node_modules_monaco-editor_esm_vs_basic-languages_javascript_javascript_js.b252b8fb01.bundle.js 30.2 KiB [emitted] [immutable] (id hint: vendors)
+  asset 9242107df7da7c6ad3ca.ttf 55.2 KiB [emitted] [immutable] [from: node_modules/monaco-editor/esm/vs/base/browser/ui/codiconLabel/codicon/codicon.ttf] (auxiliary name: monaco)
+  asset node_modules_monaco-editor_esm_vs_basic-languages_typescript_typescript_js.fbdd8ed3ca.bundle.js 24 KiB [emitted] [immutable]
+  asset node_modules_monaco-editor_esm_vs_basic-languages_markdown_markdown_js.12ecdd4fe5.bundle.js 21.4 KiB [emitted] [immutable]
+  asset node_modules_monaco-editor_esm_vs_basic-languages_python_python_js.f3c2ee2851.bundle.js 19.4 KiB [emitted] [immutable]
+asset ts.worker.js 22.2 MiB [emitted]
+asset monaco.bundle.js 17.9 MiB [emitted] (name: monaco)
+asset json.worker.js 1.93 MiB [emitted]
+asset editor.worker.js 1.01 MiB [emitted]
+runtime modules 6.81 KiB 12 modules
+modules by path ./node_modules/monaco-editor/esm/vs/ 6.4 MiB (javascript) 55.2 KiB (asset) 649 modules
+modules by path ./node_modules/webpack-dev-server/client/ 53.5 KiB 12 modules
+modules by mime type image/svg+xml 5.77 KiB 10 modules
+modules by path ./node_modules/style-loader/dist/runtime/*.js 5.75 KiB 6 modules
+modules by path ./node_modules/html-entities/lib/*.js 81.3 KiB 4 modules
+modules by mime type image/png 1.09 KiB 4 modules
+modules by path ./node_modules/css-loader/dist/runtime/*.js 3.52 KiB
+  ./node_modules/css-loader/dist/runtime/sourceMaps.js 688 bytes [built] [code generated]
+  + 2 modules
+modules by path ./node_modules/webpack/hot/*.js 1.42 KiB
+  ./node_modules/webpack/hot/log.js 1.34 KiB [built] [code generated]
+  ./node_modules/webpack/hot/emitter.js 75 bytes [built] [code generated]
++ 5 modules
+webpack 5.74.0 compiled successfully in 6607 ms```
+Oh!
+Ahahaha
+yay
+awesome, let me know if you have any issues or questions
+I guess that’s faster than localhost debugging
+Give me a couple of hours and I can review it =)
+Approved with comments
+it’s great that it’s so reliable
+Approved
+I see Arjun’s comments but I don’t see the code updated to address them
+Did you push the latest commit?
+I see the addition of the `confidence` key in `putClassLabelBatched()`, which sends the confidence value to the PUT `/class-labels` endpoint:
+```    putClassLabelBatched({
+      projectId,
+      docId,
+      classId: parseInt(result.cls, 10),
+      confidence: result.confidence,
+    })```
+But I don’t see it in `updateCachedData()`, which optimistically updates the react-query internal state before the refetch resolves:
+```    updateCachedData(
+      { type: QueryKeys.GET_BUILD_DOCUMENTS, id: docId },
+      doc =&gt; ({
+        ...doc,
+        class_id: result,
+        class_updated_at: Date.now() / 1000, // seconds
+      })
+    );```
+oh wait, we don’t have `confidence` in the document type
+so we don’t need to update it huh
+oh my, I think you’re right
+for some reason, I’m looking at a range of commits
+I missed out on your latest
+Let me take another look, soz
+Approved
+Looks like Arjun got there before I did!
+Approved with one comment
+Oh nice, that PR got approved and merged before I got a look at it
+Yeah, I actually do need some help on Advanced OCR. Let me pull up a few items
+Updated PR. Also, when do you plan to do that ticket? I plan to move the entire component directory out of `buildApp/` to use in Converse, but I don’t want you to rebase if you’re already done.
+ah, that sounds rough
+no problem. it means I can move the code around without affecting you. tyty
+btw I’ve merged in the PR to move the code so feel free to make changes to adv. ocr
+But this week’s UAT has been pretty rough so no rush if you’re busy with that hah
+awesome
+Approved — thanks for getting this in! Let’s see if we can cherry-pick this into `release/24.18.0-aihub`
+Nope, all the major work has been done!
+You can help Udit. Thanks for your help =)
+Haha, thanks! I’m glad it all worked out in the end. There was a chance that react-query would not have caught on and we’d have to stay in the dark ages. That would have been bad :grimacing:
+Yo, I’m adding a new validation rule (OCR confidence). Since you worked on validations, I scheduled 30 minutes on Tuesday for some knowledge transfer + pitfalls I should be wary about. Let me know if you prefer a different time.
+getting on now
+Oops, yeah. It's the Eevee one
+First PR of many for OCR validations: Adding OCR confidence to the validations sidebar
+Sweet. I got confused because the `nonConfidenceGlobalRules` also filtered out `CLASS_CONFIDENCE` and it threw me off track
+But I think I got enough of an idea to add the logic for `OCR_CONFIDENCE`
+ty for reviewing, addressing that comment now
+approved!
+approved with comment
+Ah, I just left the house but I can review it when I get back this evening if it's still up!
+Sorry for the delay. Looks like Udit’s got it!
+approved
+Sounds good, I can pick this up!
+Awesome, thanks for the pointers! This is very helpful
+Ah, I was about to review this but it seems like Jessica put a comment on it!
+I feel like I’m always late to the party :sweat_smile:
+oke
+approved
+approved
+One question on the PR
+Instead of `const enabled = options?.enabled !== undefined &amp;&amp; options.enabled;`, shouldn’t it be `const enabled = options?.enabled === undefined || options.enabled;`?
+I had to sanity check because boolean statements are confusing
+Approved!
+approved
+Haha no worries, not time sensitive. No pressure
+Haha okay, thanks for the heads up
+lol
+Is TJ the designer for the App UX refresh work?
+approved
+LOL
+it’s not that bad, I promise
+Oh yeah, no worries. Get your changes in for the bug bash!
+Lol no problem, I’ll switch with you!
+I’ve updated the doc and Google calendar btw
+Haha yeah, we definitely need help on all of this work
+Thank you for your service for the app store page =))
+approved!
+Oh, and you need this feature flag “Enable new user interface for apps”
+Feel free to drop if you want =(
+okay
+let me set up a huddle real quick
+Also, let me know when you’re starting the above tasks — I may need to refactor some things to get routes within tabs working.
+and I don’t want to conflict with you
+okay no problem — I can do the refactor later anyway when things quiet down
+Yeah, not directly — but we do have app -&gt; projectId -&gt; validation rules (I’m guessing)
+it’ll be an issue if a user deletes their project, thus an app no longer has ties to the project for the schema
+Hmm, actually, that probably needs to be investigated out huh. I’ll have to take a look tomorrow
+Yep, 24.50
+sorry, just saw this message
+Oh that’s clean
+Ahaha, Typescript errors are the worst
+Sometimes, it’s so cryptic, ChatGPT can hardly help
+I cry once now for you, and once again when I have to review the code :sobbadobbasob:
+Oh, btw I misread this message way back, and I switched the entire week with you lol. You’re on during Dec 9th. (I also switched this week with Udit because I last minute booked ticked to SK on Thursday)
+We’re also on <!subteam^S05BKH20B4K> this week =) You’re out Monday (today) and I’ll be out Thursday and Friday. Andy added himself to <!subteam^S05BKH20B4K> so he can help us out when we’re out.
+Oh, and we can merge in your app validation PR in first if there’s going to be merge conflicts — I can fix my PR after
+haha np, let me know if you need someone to bounce ideas off
+approved
+Approved, ty!
+ty for that, let me merge in my PR that changes the routes a bit
+Oh wait, you already merged it. tyty
+We don’t have a bulk download though
+approved! Woo, good job
+Sorta, let me grab the screenshot/links
+I updated the tickets with links + screenshots. The first ticket doesn’t have any designs for loading indicators — it’s more that we go through and find places where loading indicators + errors states could appear and either add them ourselves or ask design for some help.
+Haha, sounds good. I’ll take a look at the calendar and add one
+Thanks for bringing this over the line! It’s been smooth sailing!
+haha ok, looking now
+Approved. May the Cypress gods look favorably at your offering
+approved with comment
+Yes! Please do, I forgot that was a dummy button.
+Can you also fix the “Info?” string as well? I put that in as a placeholder but forgot to update it as well
+approved!
+I’ll put some of the stuff I have for the topnav in a PR shortly, which should fix some of bugs
+Oh huh, that’s a good question. The new designs have it in the top right, but that has the nav pills. Let me put it in the dropdown for now
+In here
+Not the most ideal, let me raise this with TJ
+Yeah, I am
+Ah I see
+I approved the refactor PR btw!
+oof
+Cypress :angry-skeletor:
+Is it possible to create an app and by default, it has the lowest visibility until they click on the Update Access button? I think this saves us from having a creation flow in build
+Okay sweet, then I should be able to tackle it as part of this PR I’m working on.
+If not, I’ll loop you in
+Yup, that makes sense!
+true true
+okay I’ll put it in
+and I’ll message TJ/Siya on making the “Create app” CTA more prominent than just in the dropdown.
+Okay, let me just get what I have in a PR and do this separately
+I believe that “Add version” modal is similar to what we already have.
+yeah
+I’ll move the “Create/Update app” to the proper place in the navpills in another PR, but this is fine for now.
+Dang, how were you able to get the Crafting sandbox to work? I haven’t been able to spin a new one up at all
+That’s with the new navbar setting turned on? I’ll try to replicate
+sending over a zoom link
+Approved both
+sounds good!
+Approved with a comment!
+True true, hopefully this bug bash goes better than last lol
+I’m also adding you as a peer reviewer, heads up
+Yup, makes sense. Thanks for taking on these bugs
+Yeah, most of the feedback is on the nav but it seems like it’s all smaller items. The navigation pills might be the biggest item, but we should be okay once the designs are out =)
+Yeah, I’m technically on PTO and it’s been hard for me to find some a chunk of time to sit down and do work.
+It seems like you finished all your tasks, right?
+If so, I think I should hand stuff over to you to get this over the line
+I think the only relevant item in P1 ticket is the first bullet point, with creating a deployment in the wrong workspace. I think I know what the issue is there
+As for P2 and P3, I’ve yet to create a ticket for it but I can scan through the bug bash doc and make one rn.
+I actually blocked some time tonight to work on P1 items, so I can do that. If you’re taking on the nav pills redesign, I can do some P2 items.
+But if you’d rather focus on writing peer feedback, then I can take the nav pills tonight as well. Up to you based on your capacity/preference!
+LOL
+fair fair
+aite, I’ll do the P1 and P2 items tonight then. I think that will address most of the feedback from the bug bash
+btw, the new design looks great based on the video in your last PR
+less white space, much more concise
+Approved
+Imma update the ticket to let them know you’re handling it. Is that ok with you?
+haha
+Hopefully you can recreate the issue
+approved
+I did not actually. It’s different from the new designs so I’m assuming its from the old search bar? Nevertheless, thanks for letting me know
+
+its happening
+tomorrow
+get ready &gt;=)
+oh, i forgot to quiz you on your chinese
+turns out I’m not ready
+okay, how many of these phrases can you say in chinese?
+• “yes”
+• “no”
+• “I don’t know”
+• “delicious”
+• “I don’t know how to speak chinese”
+• “I am American”
+Also, have you set up WeChat/Alipay in preparation for your Chinese trip?
+Glad you got someone there to help you if things go wrong. I had to rely on Daniel Gu when my WeChat/Alipay failed.
+Also, you never answered the first question &gt;=)
+out of 6, how many can you get?
+(you can’t escape the Chinese quiz)
+
+Google Lens translate basically confirms 100%
+wow
+Even the Chinese characters! I was going to accept pinyin lol
+oh yeah, definitely in China. It’s easy to rely on a native speaker haha
+lol
+damnnn
+okay, you definitely studied hard
+v impressive
+honestly, you might do well when you get there
+rofl
+at least you can read signs and menus easily
+you’re the opposite of illiterate — you can read/write but not speak/listen lol
+LOL
+30 characters is crazy
+this is the power of every day practice
+for what? 3 months?
+4 months
+yeah, i wonder how this text book chinese carries over to every day China
+I wil wait earnestly for your demo when you come back from China
+ohhh nice
+super easy to coordinate
+no need to navigate the subway system to meet up lol
+hah
+I’m sure there’s exciting things to see in her city
+Which city are you going to again?
+oh it’s next to the water
+that means it has to have good seafood
+Apparently there’s a Tsingtao Brewery Museum there lol
+haha fair enough
+apparently they got lots of beaches, good place to go for a walk =)
+haha
+maybe jog and dog with her dog???
+old habits die hard heh
+welp, I hope you have a good time in China
+I heard from Andy you’re leaving next week
+I’ll try to hold down the fort until you come back =)
+oh yeah, for sure. no expectation for you to even be on Slack
+yeah lol
+I had to send my laptop to Malaysia
+They didn’t let me bring it
+even if I keep it off
+mailed it to a friend who lived there
+Yeah, they really didn’t want me to bring the laptop into China
+so this was my only option
+I guess you’re lucky that you can just leave it at home
+But I would even uninstall Slack. Not because of security reasons but because you’re on vacation!
+Nothing worse than seeing a Slack notification on your phone when you’re chilling
+HAHA
+I forgot about that
+you got me
+Sounds good! Feel free to put time on my calendar
+Also, welcome back from vacation =) I hope you had a good time in China.
+I look forward to the Friday demo lol
+Taking a look now!
+approved
+Sure, I'm out today but feel free to put some time on Monday
+Feel free to assign them to yourself when you’re working on it
+Ah okay, then you can leave that one to me then. I’ll ask them if they can still replicate the issue
+Thanks for tackling all the other tickets!
+Also, now that Siya(?) is back, you’re getting started with Billing, right?
+Let me know if you need extra work, the SDLC (aka production workspaces) project is picking up and you’re always welcome to join =)
+oh no
+are you using the frontend/ibdev template? Apparently, the cluster is bad atm
+I’ve been using the ibdev-backend template lately and it’s been pretty stable
+=((
+=(((
+Yeah at this rate, the ibdev-backend template would become standard
+fingers crossed for <@U04JYSDMV63> our crafting savior to fix things like always
+Naw, we don’t. You have to create one yourself unfortunately
+But it should be a one time setup, as long as you keep the sandbox around
+if you don’t have them, the admin credentials are:
+<mailto:noreply+admin@instabase.com|noreply+admin@instabase.com>
+changeme123
+oh yeah, no way to share across those envs
+definitely a downside
+i already did the setuppppp
+so now it’s just freeeedom
+(until my setup breaks and I have to recreate it lol_
+Damn, maybe you can throw and error manually in the UDF?
+oh no
+hmm
+Yeah, the only thing I can think of is mocking out the error
+Good question
+Let me try to replicate real quick on your box
+I just thought of a possible way to do it
+(also, I think we want to take what’s in `result_metadata` but I actually don’t recall exactly what the backend returns
+Hmm, it looks like the UDFs in your sandbox is failing
+Which makes sense, since I think you need to do something special to get UDFs working
+Lemme ask if Sayan has a special sandbox with working UDFs we can use
+He’s right next to me
+ok i got this from him
+Set this in env-local-overrides.json
+```{
+    "base": {
+        "AIHUB_UDF_EXECUTION": "LOCAL"
+    }
+}```
+[2:51 PM] Sayan Bhattacharjee
+
+Restart api-server and celery-app-tasks
+Do you mind doing that in your sandbox? I’ll do some more testing once it’s done
+but hopefully, we can get actual stack traces from UDFs after it’s enabled
+oooh it works
+huh, I swear the issue was that `msg` was truncated after 1000 chars or something
+that doesn’t look long enough
+Yeah, that sounds like a good first step
+lemme test on your box and see if I can trigger a bigger stack traace
+oh yeah, I remember now, I think we want to use `msg` instead of `metadata` because of our frontend code’s handling of errors — it’s hard to get the `metadata` value if it errors out iirc
+So if we’re using `msg`, then replacing the “\n” with breaks should be okay? with possibly JSON pretty printing for the stuff after “METADATA:“?
+&gt;  Ah, so we’ll just split the `msg` value by newline then?
+ye
+Oof fair enough
+not even if we wrap it with `&lt;pre&gt;&lt;/pre&gt;` tags?
+fair fair
+ahahah
+love it
+awful hacks volume 12
+approved ty
+let me look for some tickets lol
+And I created some SDLC tickets, but we got a sync later today so we can divide it up then
+oh dang lol
+thanks anyway
+what endpoint payload do you need? I can paste it for oyu
+yeah thats the same one lol
+here, have the schema one as well if you need it
+There’s no details in the ticket but I did attach a screenshot to show what I mean
+It’s basically the entire tab for the diff feature where we compare the existing app to the new changes
+This will require some coordination with the backend, and maybe some influence on the API design too
+but yeah, I’ll let you decide on what you need from the backend
+and yeah, I agree with your assessment, looks reasonable
+For the APIs in the tech spec right now, have you already created the RQ hooks + TS API functions? If not, I can create them with some mock data if you want
+Ok sweet, I’ll knock out the api hooks then
+hah ok
+Oh, and I’ll review your PR shortly — I got an interview rn
+approved
+Oh right, you’re not working on the modal atm — you’re on the tab. ok ok. no real change on your side, but good to have your opinion for tomrrow
+approved with some comments
+Ah found it, it’s in the `deployments.api.ts` file lol
+I’m assuming you don’t have other projects pulling you away from SDLC :sweat_smile:
+but if you do, let me know
+Oh ok, do you want to commit it? I can build off my mock responses off yours
+oh no
+lol
+the downsides of easy sandboxes — it’s too easy to delete them rip
+that’s ok, I can create mocks. go AI
+I’ll tag you in the PR when I’m done
+oh sweet
+nice nice
+ahaha
+sweet, I can use this
+tyty
+approved, sorry for the delay
+I can create JIRA tickets for these if you want too
+Thanks for handling all of this
+I wish I could give you a dog as a present
+:dog-roll:
+close enough
+aww v cute
+Loool
+I don’t remember the last two sketchy dudes
+Oh, one of them was James P, right?
+anyway, I just interviewed him today
+Sherif
+He didn’t seem sketchy as if using ChatGPT because he actually struggled in part 3
+so yeah, I’m reading the feedback for him now actually
+yeah, he seems to like the `function() {}` way of creating functions
+he did that in mine when defining handlers
+I actually don’t know lol
+but yeah, I gave file systems
+I get this error when I try to promote changes (video and screenshot). Is this something you’re looking at or should I dig into it?
+yeah, I’ll look into it!
+just wanted to make sure we’re not doubling on work =)
+thanks
+npnp
+have fun on the usage page, SDLC will miss you
+I’ll explicitly check for `isError` and if it’s present, we do a no-op.
+I had the same concerns as well but I tested it locally and the “delete item if we get a 200 and the project isn’t in the list” still works
+aka I deleted a project in an incognito window and observed that in a regular window, the project disappears in recents
+I’ll ahve a PR up soon
+Yo, welcome to Instabase!
+I’ll set up a call tomorrow to say hello and chit chat. I’m sure you’re currently busy setting up your laptop
+Feel free to send me any questions or if there’s any issues onboarding — sometimes our docs can be a little out of date
+You’re located on the east coast, right? I’ll look for a good time for us then
+I tried playing Expedition 33 over the weekend but my PC can't handle it =(
+I get lag spikes during the action events in combat lol
+It will stay on my wishlist until I upgrade my PC :sob:
+I built it a long time ago. Ryzen 3600 + GTX 1660 TI
+To be fair, I rarely play AAA games. This is the first time I heard my PC fans spin so loudly
+I could build a new one but graphics cards these days are so expensive
+Damn you AI
+Oh wait, we work in AI oops
+Hmm, interesting
+I’ve been using cursor
+I think it’s v good
+the autocomplete is miles better than the inbuilt one because the code it writes is pretty decent, and it logically follows along from what you were trying to do. for example, I delete a prop from a component and the autocomplete automatically removes usages in the component
+small things like that
+Sorta, you can grab the api key from 1pass
+but aside from that, I think you’re good to go
+`cs vscode`
+on your local machine
+`webserver/shared/src/js/webpacked/`
+`webserver/shared/src/js/webpacked/apps/src/aihub/`
+```cd webserver/shared/src/js/webpacked/
+yarn e2e:open```
+```no-backport no-testmo```
+github PR labels^
+There’s some default credentials you can use, yeah
+lemme pull them up
+```username: <mailto:noreply+admin@instabase.com|noreply+admin@instabase.com>
+password: changeme123```
+But we don’t have any staging data. it’s a completely blank DB
+For that, you can actually spin up a new sandbox with a different template: `frontend`
+this is an older template but I think it still works?
+But for now, you can use your current sandbox with the default login and play around, create a project and so on
+related question: did you find any documentation on getting started with Cursor for Instabase?
+I might send it to Sherif if he needs it
+rofl np
+I’ll look for it
+and send it to you if I find it
+Yo, did your sandbox resume without issue today?
+I ask because it’s sometimes flaky
+nice nice, glad to hear it
+oh yeah, there’s also a frontend guild meeting tomorrow. if there’s any issues in onboarding or confusion, please document it and share it with us tomorrow. we’re always looking to improve/simplify our processes =)
+to us, everything makes sense but its nice to have a fresh set of eyes
+qq: I need to create a field of type `OBJECT_LIST` in the frontend to debug something, but I don’t see the option in the list of field types (they’re `DataType.TABLE`, or `DataType.TEXT_LIST`, etc.) Do you know how to create a field that’s an `OBJECT_LIST`?
+nvm I figured it out. It’s a “List extraction” with attributes, using the “Add attribute” button.
+
+Pretty familiar!
+Are you referring to the component from Pollen?
+yeah sure
+npnp take your time
+Wrapping container to modify with the `title`  attribute: `SRowContainer`
+oh yeah, feel free to add me as a reviewer for that long name PR
+approved
+congrats on your first PR
+haha
+looks like Cypress has been broken for a few days now so you’ll have to get Serena to force merge your change
+You should message her on slack and ask her to force merge it (assuming all other tests pass)
+Yes it does, eventually
+Merged tickets can be moved to “Done”
+For EPD tickets (like this one), it may force you to write a release note. You can write a small sentence or two — the docs team will use it to write a proper user facing release note
+I forgot to ask you on Friday, but how was your first week?
+I’m hoping there weren’t any hiccups or blockers on getting you onboarded
+It seemed like you’re progressing nicely though =)
+yeah, I’m down for a huddle. One second
+you ready?
+Yeah, I’ve been having sandbox issues too
+what
+what’s your sandbox name? I can try to debug a little
+I’ll also share screen if you’re free for a huddle
+I would suggest try adding this:
+```{
+    "base": {
+        "AIHUB_UDF_EXECUTION": "LOCAL"
+    }
+}```
+to `env-local-overrides.json`, as Sayan suggested. Then restart api-server + core-platform. Then test if UDFs are working in build.
+~If that doesn’t work, then you can go through the steps in the doc~ nvm, see below. local execution should be fine, we don’t need aws
+The reason I suggest that is because it’s a lot of steps in the doc
+Ah, Sayan mentions in the thread “The Google doc setup is for using aws which is a bit more involved.” — I don’t think we want to run UDFs on AWS Lambda so the `"AIHUB_UDF_EXECUTION": "LOCAL"` should be fine for now
+let me know if you got questions! I know UDFs are kinda weird
+Dang, ok let me know if you find anything during your investigtion
+I think that SystemConfig pending thing is an error on the Crafting platform actually. A few people have reported having this same issue
+where it spins forever
+let me see
+Ok, the devs have a thread about this — they ask for us to report them this issue asap so they can debug on their side (they don’t know what the root cause is).
+
+You’re free to open and read files but hold off on performing any sandbox actions until they get back
+oh, we don’t use license-service anymore so that can be ignored lol
+or at least I hope we don’t
+I just added you to <#C03B865Q74K|> (a channel to talk to the crafting dev team) so you have visibility
+Not to be confused with <#C05L87V014J|> , which is the go-to channel for crafting issues
+Yeah, I didn’t realize it would take this long for the Crafting devs to look at the issue
+Good idea, create a new sandbox and unblock yourself =)
+oh yeah, it’s nearly 6pm over there. haha definitely sign off, see you tomorrow
+Ok no worries, I'll take another look at the PR when I get back from lunch
+Thanks for investigating
+approved! Added some comments on the PR too
+Oh, I put some time on the calendar tomorrow for case management. We’ll get you ramped up for milestone 2 tasks =)
+lemme know if that doens’t work
+(It’s also possible that the Cypress tests in your PR are a false positive, so re-running the github action will solve this)
+fair fair, I have PTSD when looking at Cypress code so I’m glad someone is
+Oh yeah, thanks for taking the inititive
+Those make sense
+&gt;  (also make sure something happens when you hit run... but I don’t remember what exactly)
+Just confirm that the run POST call is called with all files in the batch, as opposed to running a single file.
+I’m pretty sure we don’t
+Hmm interesting. Let me see if I can debug your sandbox
+(also, it’s past 5pm so feel free to log off lol)
+I’m looking at the `sherifelmetwally` sandbox and it’s so weird. It’s apparently missing some default drive or drives
+was this box recently created, or had some manual scripts run against it?
+ok I’m going to rebuild the sandbox (and keep your local work), and hopefully it’s fine by tomorrow lol
+nvm, it’s actually because I’m using the admin account and not a user account. Creating a user account works
+So I’m pretty sure this was an error on master that’s been fixed, so I’m going to pull the latest master, run `cs restart` and see if that fixes things
+Ok, it works now haha
+Just needed to pull master
+you’ll probably need to rebase your branch onto master and you’re good to go!
+Oh I was get free dinner in the office LOL
+Oh yeah, you mentioned this in the sync today
+Let me do some digging around first real quick
+got time for a quick huddle?
+
+Added comments! Looking good so far
+Thanks! I'll take a look in a couple of hours
+Okay, yeah! If you can take that off from me, that’ll be good
+I’m still trying to fix my sandbox and it sounds like yours is working already
+Oh, actually, I kinda dug a little deeper despite my box being broken and I think I have an answer to those questions
+Lemme post my findings in <#C08L4K42H9C|> and feel free to add stuff if you wanna do some investigation too
+Good question: that’s probably an oversight
+we should probably fix that haha
+good catch!
+sure thing :dog-roll:
+(I’m actively looking in fixing that test on master)
+ahaha, np. I think I found the solution. I’ll update the doc =)
+Yo, I’ve set up a time tomrrow to catch up. Let me know if you prefer a differnt time!
+give me 5 minutes
+Ok, I’m in
+thanks for waiting
+haha good catch
+Do you mind if we move our 1 on 1 to 4pm your time? Just 30 minutes later.
+no problem, take your time
+give me 10 minutes
+```    cy.login({
+      xhr: true,
+      user: CyUser.COMMERCIAL_AIHUB_ADMIN,
+      usePreExistingUser: true,
+    });```
+modify `webserver/shared/src/js/webpacked/cypress/configs/crafting-cyp.js`
+```git fetch
+git checkout mynranch
+ENVIRONMENT=crafting-cyp yarn e2e:open```
+omg I figured it out, why schema gets updated
+I totally forgot, redux toolkit uses immer under the hood
+it all makes sense now
+i can now sleep peacefully
+yep, because immer ensures a new reference is created when you mutate an object
+Yeah, sometimes running `cs stop` just hangs on my sandboxes too
+Usually, I just kill it and re-run it again. I kill it within 1-2 seconds which seems to be enough time for the second run to pass normally
+that should be enough for you to run your `make clean` command and restart the service, at least for me
+Yup, provided it doesn’t crash the page =)
+and doesn’t affect customer demos
+oops, I missed the meeting notification. I’m coming on soon
+Sorry, I missed this message. I haven’t seen this issue before :thinking_face:
+Given that your changes are behind a feature flag, I would ask <@U01CZ3LBFU4> to force merge it
+If she’s already OOO, then <@U01BH8XBR55> would be your next best bet
+Added comments to your PR!
+done
+Yo, I moved our one on one to tomorrow morning. Let me know if you prefer a different time
+one second, need to login to my zoom
+the zoom link is in the calendar invite
+how much capacity do you have over the next week or so? lol
+i'm currently in Vegas atm and it's hot af
+I dunno how you live here man LOL
+yeah, that seems like it's the plan, but you go jog and dog every weekend so clearly you're built different
+my gf is here for a conference between wednesday to friday, so I'm just tagging along
+I'm here to briefly experience the Vegas life, then I'll scurry back home to California
+mad respect
+okay, I'll assign some of these bugs to you but not too many so you'll be free by the 28th
+Okay, I've assigned a few to you. Feel free to reassign to me if you need to
+Also, do you have a link of the JIRA epic you created for case management frontend?
+Ah got it, I'll create a new one for the bug bash then
+Yes it was
+thanks! I'll review your PR shortly =)
+Yeah, mine is stuck on customize home too
+I think it's because we have AWS issues atm
+Hoping that it'll be fixed next time I log in
+oh, it's `~/instabase/.sandbox`
+but actually, that work around isn't working for me PR sandbox either =(
+I guess I posted prematurely lol
+Let's see if there's an alternative fix
+One of the easiest reviews of my life
+also, the cypress tests on your PR passed. Did you have to do the work around posted in <#CSY11CK7T|> or is it fixed now?
+Hah, you can take the next set of Crafting issues when they crop up then =)
+jkjk they're a pain to debug
+Glad to know the fix is working =)
+Oh yeah, shoots. I was meant to send that over this morning
+Okay, I assigned you 3 bugs for now. Let me know if you have any questions!
+and the bug bash doc has been updated with your name next to each bug
+Put this in `shared-utils/build-utils/shared/env-local-overrides.json`:
+```{
+    "base": {
+        "AIHUB_UDF_EXECUTION": "LOCAL"
+    }
+}```
+
+Then you restart celery app tasks and maybe api-server and it should work =)
+&gt;  We have drag and drop now!?
+When uploading files? We always had that :joy:
+Oh yeah haha, that's pretty neat
+Looking at it now!
+Approved. Thanks for waiting
+You'll create a new Crafting sandbox with your PR checked out basically. Once you've confirmed it's working, you can pin the sandbox (to prevent suspension breaking things) and schedule a bug bash on the calendar + send a message to <#C08L4K42H9C|>
+You'll also want to create a dummy account for people to use during the bug bash
+and create a bug bash doc (which I think we have a shared template in Google Docs)
+other than that, it should be pretty straight forward!
+The alternative to creating a Crafting sandbox to bugbash is to spin up an IB cluster, but in most cases, that's overkill unless you have a good reason for it (infra changes, env variable updates)
+You can re-use your existing Crafting sandbox!
+The cases where you wouldn't want to use your existing sandbox:
+1. It's your dev sandbox and you're in the middle of working on something else.
+2. It's your dev sandbox and it's an async bug bash, and you don't want to be blocked.
+It's automatically pinging me as usual =)
+that's fair, I didn't know either until now lol
+I'm done bug bashing on your sandbox! Let me know if I should review the PR now or when you've added your bug fixes on it
+yeah sure, thanks!
+Reviewing now!
+I just approved that one ^
+added comments to your PR btw
+approvedd!
+npnp it was v annoying =(
+Oh sorry, just realized we have a meeting. Will be there in 2 mins
+That's a good question. Weiming worked on validations for single class fields, so he'll know best
+I haven't worked on it at all so I'd be in the same boat as you :sweat_smile:
+LOL, I'm working on that right now.
+
+Here's the full bug report:
+```If I open up the organize packets view, then upload a new file, and view organize packets again, if i don't refresh then i don't see the new packet ```
+Sorry, I just realized that ticket was assigned to you but I already finished it TT
+LGTM!
+Thanks for expanding the comment
+Hmm, I think I've handled or close to handled the tickets assigned to me. You can get started on Jianqi's bug fixes
+(If you blitz through latest bug bash fixes, I have a separate ticket that you can take. Let just me know)
+Let me know if you're waiting on reviews on any other PR
+approved, ty
+Sorry, I will have to look at this next week! I had to leave early to prepare for a flight to Arizona =)
+Thanks for the reminder, looking at it now!
+approved
+haha approved
+1 minute
+approved
+5 mins late
+Approved
+PDFs for everyone!
+(for some, slowly)
+Hopefully that doesn't involve us maintaining a fork of pdfjs
+But yeah, I'm surprised webpack doesn't handle mjs files as input
+especially I'm assuming it supports mjs as ouptut :joy:
+Ah
+That sounds simple enough
+Can't wait to get off webpack
+doesn't matter what the destination is, as long as it's not webpack
+LOL
+Vite sounds cool though
+Maybe I should pivot my hackathon to that ahaha
+done!
+haha approved
+This is an AI response from a hackathon project.
+omg
+ignore this
+This is an AI response from a hackathon project.
+ah gee, it's spreading
+This is an AI response from a hackathon project.
+hopefully I only have to put up with this until the hackathon is over
+and yes, it is a sneak peak
+LOL
+This is an AI response from a hackathon project.
+oh yeah, it's super confusing
+ahh okay, thanks for debugging that
