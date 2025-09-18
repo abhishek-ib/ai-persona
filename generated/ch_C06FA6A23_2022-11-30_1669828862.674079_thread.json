@@ -1,0 +1,335 @@
+{
+  "id": "ch_C06FA6A23_2022-11-30_1669828862.674079_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "lenny",
+    "Heymian",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Heymian, I just merged this PR (https://github.com/instabase/instabase/pull/33496) which suppresses superfluous logs in Python unit test output (it’ll only show logs if the test fails). While I was working on that, @lenny mentioned that the go runner would fail unit tests that log lines with `FAILED` in it (cc @Abhishek), since the go runner checks (https://github.com/instabase/instabase/blob/master/shared-utils/test-utils/src/runtest/runtest.go#L114) for that keyword for test failure. My PR should address Abhishek’s issue, but I was wondering why checkIfSuccess checks for these failure keywords? If the unit test fails, the run command returns an error code, so that should be sufficient. Were there particular cases you were trying to cover? I think it’ll less error prone for developers to just remove that additional check.",
+      "time": "09:21",
+      "timestamp": "1669828862.674079",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Hrm, this was a long while ago, but iirc I was trying to work around python not outputting errors to stderr, and it would go to stdout?",
+      "time": "09:38",
+      "timestamp": "1669829891.902139",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "If you can do some more testing to make sure the test properly errors out without the “FAILED” string check, then please do remove it. But in the past it didn’t work. This could also be outdated, since I wrote this script when we were still on py2.",
+      "time": "09:39",
+      "timestamp": "1669829969.335929",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Just curious - has the log output from py unit test causes significant problems before?\n\nI think a nuance here is that muting all logs when tests pass could make it difficult for developers to verify unit tests they are writing. For instance, if I write a unit test and I placed some logs in the test and I expect to hit them, and if I have a bug in the test itself that makes it a false positive (i.e. the test could be passing, but you may not really test what you want to test), then not seeing any logs make it harder for me to detect this. I did have this experience when developing unit tests for things like file client retries.\n\nIMO Ideally if we could have a flag to keep the logs even if the tests are passing that'd be great.",
+      "time": "12:07",
+      "timestamp": "1669838874.473669",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "we could add a flag to show the logs as well - maybe I will let the next person that cares to add that :smile:",
+      "time": "12:09",
+      "timestamp": "1669838976.410809",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Xi Cheng Lenny mentioned you also got coverage reporting on Python unit tests some time ago. Does that sound familiar? Is it something we added to a Jenkins pipeline, or did you just run it locally?",
+      "time": "12:10",
+      "timestamp": "1669839058.883149",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Heymian I briefly tested and failed python tests return a non-nil error code, so the go test runner does mark it correctly as failed. I can do some more testing before updating!",
+      "time": "12:12",
+      "timestamp": "1669839121.060819",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "as an idea, maybe we can keep all test logs if we run with `TEST_NAMES` arg? would that solve your use case @Xi Cheng?",
+      "time": "12:31",
+      "timestamp": "1669840281.552859",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "> Just curious - has the log output from py unit test causes significant problems before?\nit causes problems because of how we check for failing tests. for example if your test logs the string `FAILED`, the test will be reported as failed even if that is the expected behavior of your test",
+      "time": "12:32",
+      "timestamp": "1669840345.794639",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Ah that’s a good idea. one thing I don’t love about our python setup is it kind of feels like we’re using make to wrap the python test CLI. it feels a bit silly?",
+      "time": "12:32",
+      "timestamp": "1669840355.080589",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I think its kind of necessary bc of how we do python dependencies? like we need to do the `make build` step to copy in all of the dependent python code into the `build/` folder and then we trigger the tests from there",
+      "time": "12:33",
+      "timestamp": "1669840430.639949",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I’ve used nose in the past (though outdated now), and it had a bunch of cli options for how much logs to output: https://nose.readthedocs.io/en/latest/usage.html#extended-usage",
+      "time": "12:34",
+      "timestamp": "1669840465.450309",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "used --nocapture a lot for debugging!",
+      "time": "12:34",
+      "timestamp": "1669840484.518929",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "> I think its kind of necessary bc of how we do python dependencies? like we need to do the `make build` step to copy in all of the dependent python code into the `build/` folder and then we trigger the tests from there\nah yea that’s true, we need to run the `make build` step :disappointed:",
+      "time": "12:35",
+      "timestamp": "1669840521.330229",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "We can add an option to output logs if tests are successful, they are just extremely large. I enabled this for some debugging earlier (when Lenny found the segfault in mypy) and my vscode died trying to pull open the test logs. Maybe after Lydia prunes the logs this is more possible.",
+      "time": "12:52",
+      "timestamp": "1669841524.978499",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "well there are 2 levels of log pruning that we do: `runtest.go`  will only pipe out the test run stdout/stderr for modules who’s test run is reported as failure. the second level if what lydia just added that will hide stdout for tests that pass when running python tests. correct me if I’m wrong @Xi Cheng, I think the second one is the one you have a problem with? or do you prefer to have all module test logs outputted in jenkins runs?",
+      "time": "12:54",
+      "timestamp": "1669841652.067239",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yup, the way we do `make build` and how we tie all our python modules together via copying files makes this really hard to use external tooling. :disappointed: Someone looked into bazel in the past — which would require us doing a ridiculous amount of work to convert for every python folder into it’s own module + go and patch every import statement",
+      "time": "12:54",
+      "timestamp": "1669841656.401039",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "the first one only affects CI, the second one also affects `make test` locally",
+      "time": "12:54",
+      "timestamp": "1669841663.381809",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@lydia @lenny I don't think I've done coverage for python unit test before :slightly_smiling_face:",
+      "time": "13:18",
+      "timestamp": "1669843086.096169",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "@Victor Zeng I think you sent me a python coverage report at some point?",
+      "time": "13:18",
+      "timestamp": "1669843118.411389",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@lenny Hmm, are we doing string matching to detect unit test failure? Shouldn't we check the make process to return 0 or not?",
+      "time": "13:18",
+      "timestamp": "1669843120.031009",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "we are, see `stdout_fail_msgs` in `test-cmds-py-unit.json` — we should be, I think that was lydia’s original question in this thread :smile:",
+      "time": "13:19",
+      "timestamp": "1669843182.580559",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yup, we use string matching :slightly_smiling_face:",
+      "time": "13:19",
+      "timestamp": "1669843194.555299",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "did `COVERAGE=true OPEN_REPORT=true make test`  not work?",
+      "time": "13:21",
+      "timestamp": "1669843307.403069",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "It still works!",
+      "time": "13:26",
+      "timestamp": "1669843617.604649",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "it did, I’m just wondering if anyone’s tried adding it to our jenkins pipeline so we have a continuous way of getting coverage info",
+      "time": "13:27",
+      "timestamp": "1669843625.614719",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "or some way of generating a regular report",
+      "time": "13:27",
+      "timestamp": "1669843640.539909",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "(except in api-server because of a system-test hack we put in that overrides run-test-local)",
+      "time": "13:27",
+      "timestamp": "1669843642.678449",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i have not run all unit tests locally recently and am scared of starting it :smile:",
+      "time": "13:27",
+      "timestamp": "1669843661.280089",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "file-lib-v2 looks pretty good :slightly_smiling_face: (the report, not the numbers per se)",
+      "time": "13:27",
+      "timestamp": "1669843676.533589",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "btw, speaking of python unit tests - @Heymian do you monitor the jenkins pipeline? it seems kinda broken",
+      "time": "13:28",
+      "timestamp": "1669843691.925079",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "is it?",
+      "time": "13:28",
+      "timestamp": "1669843721.982889",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "latest run seems like it’s failing during build? https://jenkins.instabase.com/job/Unit-PyDockerTests/16688/console",
+      "time": "13:28",
+      "timestamp": "1669843734.833909",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "not consistently failing right?",
+      "time": "13:29",
+      "timestamp": "1669843768.632989",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh you’re right. I guess alert-unit-tests only reports the failures?",
+      "time": "13:31",
+      "timestamp": "1669843917.725979",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "this is a passing one (https://jenkins.instabase.com/job/Unit-PyDockerTests/16686/console), but I don’t think I see the actual tests with the `[OK]` mark?",
+      "time": "13:32",
+      "timestamp": "1669843962.437969",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "wait, maybe I’m looking at the wrong pipeline. they say build-model-service, run-model-service tests?",
+      "time": "13:34",
+      "timestamp": "1669844044.045779",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yeah PyDocker tests only runs model-service tests because they have to be run in docker. All other python unit tests are here https://jenkins.instabase.com/view/Tests/job/Unit-Py3Tests-Release/",
+      "time": "13:34",
+      "timestamp": "1669844080.241839",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "The Go tests on 22.10 are broken, fix should be going in soon. Otherwise, Go on master is occasionally flaky due to some mock build issues.",
+      "time": "13:36",
+      "timestamp": "1669844166.564909",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-11-30.json",
+    "message_count": 39,
+    "start_time": "1669828862.674079",
+    "end_time": "1669844166.564909",
+    "is_thread": true
+  }
+}

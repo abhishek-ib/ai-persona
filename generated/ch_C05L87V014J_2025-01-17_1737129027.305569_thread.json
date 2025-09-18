@@ -1,0 +1,85 @@
+{
+  "id": "ch_C05L87V014J_2025-01-17_1737129027.305569_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "ligao.zhang",
+    "jordy.vlan"
+  ],
+  "messages": [
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "Hi team, My crafting env can't extract fields, I got error from celery-app-tasks log:\n\n`ValueError: Cannot get field xxx since model output is empty`\n\n`[2025-01-17 15:48:07,508] [ForkPoolWorker-1/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/refiner_utils/refiner_util.py:865} ERROR - [trace_id=] - job-id=89955ae6-fe52-47be-a303-1143368292c3 task-id=89955ae6-fe52-47be-a303-1143368292c3-extract-fields Refiner extraction error for formula get_extracted_field_value@NATIVE. Error: Cannot get field reminders since model output is empty. Traceback: Traceback (most recent call last):`\n  `File \"/instabase/workers/celery-app-tasks/py/instabase/refiner_utils/refiner_util.py\", line 739, in _run_sheet`\n    `execute_result = executor.execute_low_code_function_call(`\n  `File \"/instabase/workers/celery-app-tasks/py/instabase/data_api_utils/_sheet/executors/executor.py\", line 546, in execute_low_code_function_call`\n    `fn_result = py_fn(*args, **other_kwargs, **kwargs)`\n  `File \"/instabase/workers/celery-app-tasks/py/instabase/data_api_utils/_sheet/aihub_build_fns.py\", line 313, in get_extracted_field_value_fn`\n    `return stringify_field_value(get_extracted_field_fn(fields, field))`\n  `File \"/instabase/workers/celery-app-tasks/py/instabase/data_api_utils/_sheet/aihub_build_fns.py\", line 283, in get_extracted_field_fn`\n    `raise ValueError(f\"Cannot get field {field} since model output is empty\")`\ncan anyone help?",
+      "time": "07:50",
+      "timestamp": "1737129027.305569",
+      "is_reply": false
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "gonna need the model-service log for this",
+      "time": "08:14",
+      "timestamp": "1737130496.872229",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "Model service log:\n\n\n`level=INFO time=2025-01-17 16:20:19,836 msg=\"IBLLM executed run_async in 8.6667 seconds\" trace_id=\"071015f1b657c515\" path=\"/model-service/py/instabase/ibllm/model/observability/logging/utils.py:65\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-13_0\" trace_id=\"071015f1b657c515\"`\n`level=INFO time=2025-01-17 16:20:19,863 msg=\"IBLLM executed _extract_basic_fields in 8.6937 seconds\" trace_id=\"071015f1b657c515\" path=\"/model-service/py/instabase/ibllm/model/observability/logging/utils.py:65\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-13_0\" trace_id=\"071015f1b657c515\"`\n`level=INFO time=2025-01-17 16:20:19,864 msg=\"IBLLM executed extraction in 8.7016 seconds\" trace_id=\"071015f1b657c515\" path=\"/model-service/py/instabase/ibllm/model/observability/logging/utils.py:97\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-13_0\" trace_id=\"071015f1b657c515\"`\n`level=INFO time=2025-01-17 16:20:19,865 msg=\"Finished IBLLM request for task: extraction with SUCCESS\"  path=\"/model-service/py/instabase/ibllm/model/model.py:276\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-13_0\" trace_id=\"071015f1b657c515\"`\n`level=INFO time=2025-01-17 16:20:19,866 msg=\"IBLLM executed run in 8.7041 seconds\"  path=\"/model-service/py/instabase/ibllm/model/observability/logging/utils.py:97\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-13_0\" trace_id=\"071015f1b657c515\"`\n`level=ERROR time=2025-01-17 16:20:19,867 msg=\"Failed model inference\" model_id=\"ModelID(name=ibllm, version=2.1.0, is_project_model=False, username=system)\" num_inputs=\"1\" status=\"fail\" external_model=\"True\" path=\"/model-service/py/instabase/model_service/handler.py:72\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-2_0\" trace_id=\"071015f1b657c515\"`\n`level=WARNING time=2025-01-17 16:20:19,868 msg=\"Span has already been finished; will not be reported again.\"  path=\"/usr/local/lib/python3.9/site-packages/jaeger_client/span.py:79\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-2_0\" trace_id=\"071015f1b657c515\"`\n`level=WARNING time=2025-01-17 16:20:19,868 msg=\"Span has already been finished; will not be reported again.\"  path=\"/usr/local/lib/python3.9/site-packages/jaeger_client/span.py:79\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-2_0\" trace_id=\"\"`\n`level=WARNING time=2025-01-17 16:20:19,912 msg=\"Failed to multipart ingest runs: langsmith.utils.LangSmithAuthError: Authentication failed for https://api.smith.langchain.com/runs/multipart. HTTPError('401 Client Error: Unauthorized for url: https://api.smith.langchain.com/runs/multipart', '{\"detail\":\"Invalid token\"}')trace=7aca06e3-c50f-4311-89af-2596174f3f42,id=7aca06e3-c50f-4311-89af-2596174f3f42\"  path=\"/usr/local/lib/python3.9/site-packages/langsmith/client.py:1652\" process=\"MainProcess\" thread=\"Thread-11\" trace_id=\"\"`",
+      "time": "08:21",
+      "timestamp": "1737130895.786269",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "`Failed model inference`  not sure if it is the issue here",
+      "time": "08:22",
+      "timestamp": "1737130938.306759",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "hmmm; seems the actual error is not in there",
+      "time": "08:22",
+      "timestamp": "1737130957.898809",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "the langsmith warning can be ignored",
+      "time": "08:22",
+      "timestamp": "1737130965.841329",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "There have been some issues resolved post-langchain-v0.3 upgrade, so be sure to pull from master and rebuild most services with `cs restart`",
+      "time": "08:24",
+      "timestamp": "1737131082.733439",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "rebuilding with last code works for me, thanks!",
+      "time": "08:42",
+      "timestamp": "1737132162.360399",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-01-17.json",
+    "message_count": 8,
+    "start_time": "1737129027.305569",
+    "end_time": "1737132162.360399",
+    "is_thread": true
+  }
+}

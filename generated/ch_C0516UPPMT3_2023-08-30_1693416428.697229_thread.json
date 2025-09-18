@@ -1,0 +1,223 @@
+{
+  "id": "ch_C0516UPPMT3_2023-08-30_1693416428.697229_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Anil",
+    "Matt Macnak",
+    "tony.shi",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "cc @Kathy Wu",
+      "time": "10:27",
+      "timestamp": "1693416428.697229",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Yash Botadra how did you know that was the actual error message? @Kathy Wu can you see if we can make that error surface better?\n\n@Anil do you know if this is related to not using Flow datastore? The converse endpoint reads the file directly from file-service. Is this still a no-no? Not sure what the current status of async file writes is with Xi's caching work.",
+      "time": "10:29",
+      "timestamp": "1693416550.668589",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Matt Macnak to unblock you for now, is it possible to use the call_model_build function instead? That doesn't read the file from file system (except for long docs), so if you have short docs (< 4K tokens), you should be good to go",
+      "time": "10:30",
+      "timestamp": "1693416608.207669",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Macnak",
+      "user_id": "U02M5TNMH19",
+      "message": "Hi @lydia the issues hasn’t occurred again since I switched to a sandbox",
+      "time": "10:31",
+      "timestamp": "1693416704.454889",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Matt Macnak what sandbox did you switch to?",
+      "time": "10:58",
+      "timestamp": "1693418307.972339",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Macnak",
+      "user_id": "U02M5TNMH19",
+      "message": "https://uscis-pov.internal.instabase.com/",
+      "time": "11:00",
+      "timestamp": "1693418419.080439",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Macnak",
+      "user_id": "U02M5TNMH19",
+      "message": "its on 23.07.08 and we are running ibllm 1.1.17",
+      "time": "11:00",
+      "timestamp": "1693418427.727129",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Matt Macnak I also see the error in the flow logs when I run your flow, but I don't see errors in the final Flow output. Are you seeing something wrong with the output data?",
+      "time": "11:34",
+      "timestamp": "1693420477.157739",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Abhishek Adupa @tony.shi do you have any insights on the `Exception: Failed to read file: Cannot open a non-existent file in rb mode.` error message? Does Flow retry? In this case, the Flow seems to finish successfully (https://instabase.com/apps/flow/edit/SA_Team/demo/fs/fed%20demo/Federal/NatSec/usg_demo/LLM_flow.ibflow) (logs (https://instabase.com/apps/flow/dashboard/24bb135c-0447-4c79-b524-6573c763636c/logs)), but there are a ton of error messages in the logs.",
+      "time": "11:36",
+      "timestamp": "1693420596.335439",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "I'm not sure I understand here; sorry. The error looks like we're trying to read a file that doesn't exist right? Are we suspecting a race condition of some sort?\n\nAlso, @lydia what do you mean by Does Flow retry? Was a flow retried causing that exception? I can't seem to find that exception in the logs that you linked.",
+      "time": "11:49",
+      "timestamp": "1693421364.536079",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Macnak",
+      "user_id": "U02M5TNMH19",
+      "message": "@lydia yes, yesterday it produced ERROR as a returned output but its not happening again today",
+      "time": "11:57",
+      "timestamp": "1693421871.052539",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@tony.shi you can search the error message in the logs. Yes, my question was, are we incorrectly trying to read files from the file system during Flow run? That is happening in ibllm, and I'm wondering if we shouldn't be doing that. Does a Flow guarantee that a file from a previous step will be available to read from file-service in a subsequent step? This used to be not the case, which is why we were supposed to use Flow datastore. I wanted to see what the current recommendation is - it is still the case that we need to access files via Flow datastore?",
+      "time": "12:05",
+      "timestamp": "1693422358.921219",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@lydia reads need to go through datastore. We haven’t removed the datastore yet.\nIf you are reading any intermediate files during flow execution, you need to do it via a datastore",
+      "time": "12:06",
+      "timestamp": "1693422416.639889",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "And if we didn't (currently ibllm reads from file-service), would that potentially explain the \"reading non-existent file\" error we see intermittently? Matt said it \"went away\" in a different env. Are there circumstances that would reduce the appearance of the error? I'm actually a bit surprised nobody has reported it from app-building, since I think sol eng has been using a script that ~reads files from file-service~ calls the converse endpoint, which reads files from file-service",
+      "time": "12:08",
+      "timestamp": "1693422511.629589",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Macnak",
+      "user_id": "U02M5TNMH19",
+      "message": "it was intermittent yesterday too",
+      "time": "12:10",
+      "timestamp": "1693422612.011219",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Macnak",
+      "user_id": "U02M5TNMH19",
+      "message": "it didn’t occur everytime I ran the flow & it seemed to happen to different files randomly",
+      "time": "12:10",
+      "timestamp": "1693422630.405919",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yea, that would point to this race condition, which i suspect is the cause. But I'm confused why it would have gone away in another env.",
+      "time": "12:12",
+      "timestamp": "1693422744.492499",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Yup it is a race condition. We write out files async and ensure they are written out before end of the task.\nWithin in a single task, only way to guarentee you find the file is using datastore.",
+      "time": "12:13",
+      "timestamp": "1693422812.470109",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I thought process files is in a seperate stage but looks like now process files and refiner can be in the same stage.",
+      "time": "12:13",
+      "timestamp": "1693422836.442749",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ah ok, does being in different stages guarantee files would be written to disk?\n\nEither way, we will fix this - just wanted to understand why we haven't seen this reported more",
+      "time": "12:14",
+      "timestamp": "1693422882.549579",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "^ yup",
+      "time": "12:15",
+      "timestamp": "1693422911.191919",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh, could it be if chunking is enabled or not? Would that put process files in a separate stage?",
+      "time": "12:15",
+      "timestamp": "1693422924.777699",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Don’t think chunking is related. Gaurav is best person to ask",
+      "time": "12:17",
+      "timestamp": "1693423021.603319",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Macnak",
+      "user_id": "U02M5TNMH19",
+      "message": "just a heads up - this just happened again on my sandbox:",
+      "time": "16:23",
+      "timestamp": "1693437834.346329",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Macnak",
+      "user_id": "U02M5TNMH19",
+      "message": "I had to look through the Ibmsg though to find the error because it didnt show in the logs",
+      "time": "16:24",
+      "timestamp": "1693437841.167349",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-08-30.json",
+    "message_count": 25,
+    "start_time": "1693416428.697229",
+    "end_time": "1693437841.167349",
+    "is_thread": true
+  }
+}

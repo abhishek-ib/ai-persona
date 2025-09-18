@@ -1,0 +1,61 @@
+{
+  "id": "ch_C06FA6A23_2025-06-12_1749767915.325789_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I'm seeing several DB errors on the crafting-aihub sandbox:\n```2025-06-12T22:33:19.580464851Z stdout F 2025/06/12 22:33:19 level=ERROR path=utils/db/session/dbsession.go:619 msg=\"SQL DB: Error 1054 (42S22): Unknown column 'permissions.metadata' in 'field list'\" operation=db/session/DBSessionImpl.Query query=\"SELECT `accounts`.`account_type` AS `accounts.account_type`, `accounts`.`id` AS `accounts.id`, `accounts`.`metadata` AS `accounts.metadata`, `accounts`.`public_id` AS `accounts.public_id`, `accounts`.`registered_on` AS `accounts.registered_on`, `permissions`.`id` AS `permissions.id`, `permissions`.`metadata` AS `permissions.metadata`, `permissions`.`principal_id` AS `permissions.principal_id`, `permissions`.`principal_type` AS `permissions.principal_type`, `permissions`.`resource_id` AS `permissions.resource_id`, `permissions`.`resource_type` AS `permissions.resource_type`, `permissions`.`role_id` AS `permissions.role_id`, `role_actions`.`id` AS `role_actions.id`, `role_actions`.`name` AS `role_actions.name`, `role_actions`.`resource_type` AS `role_actions.resource_type`, `role_actions`.`role_id` AS `role_actions.role_id`, `roles`.`description` AS `roles.description`, `roles`.`id` AS `roles.id`, `roles`.`name` AS `roles.name`, `roles`.`owner_id` AS `roles.owner_id`, `roles`.`resource_type` AS `roles.resource_type`, `roles`.`sort_order` AS `roles.sort_order`, `roles`.`uuid` AS `roles.uuid`, `user_groups`.`account_id` AS `user_groups.account_id`, `user_groups`.`created_on` AS `user_groups.created_on`, `user_groups`.`creator_account_id` AS `user_groups.creator_account_id`, `user_groups`.`full_name` AS `user_groups.full_name`, `user_groups`.`id` AS `user_groups.id`, `user_groups`.`metadata` AS `user_groups.metadata`, `user_groups`.`name` AS `user_groups.name`, `user_groups`.`profile` AS `user_groups.profile`, `user_groups`.`state` AS `user_groups.state`, `users`.`account_id` AS `users.account_id`, `users`.`deleted_at` AS `users.deleted_at`, `users`.`deletion_started_at` AS `users.deletion_started_at`, `users`.`email` AS `users.email`, `users`.`id` AS `users.id`, `users`.`is_active` AS `users.is_active`, `users`.`is_admin` AS `users.is_admin`, `users`.`is_approved` AS `users.is_approved`, `users`.`is_verified` AS `users.is_verified`, `users`.`metadata` AS `users.metadata`, `users`.`password` AS `users.password`, `users`.`pwd_reset_required` AS `users.pwd_reset_required`, `users`.`state` AS `users.state`, `users`.`type` AS `users.type` FROM `permissions` INNER JOIN `roles` ON (`roles`.`id` = `permissions`.`role_id`) LEFT JOIN `role_actions` ON (`role_actions`.`role_id` = `permissions`.`role_id`) LEFT JOIN `users` ON (`users`.`id` = `permissions`.`principal_id`) LEFT JOIN `accounts` ON (`users`.`account_id` = `accounts`.`id`) LEFT JOIN `user_groups` ON (`user_groups`.`id` = `permissions`.`principal_id`) WHERE ((((`permissions`.`principal_type` = ?) AND (`permissions`.`principal_id` = ?)) OR ((`permissions`.`principal_type` = ?) AND (`permissions`.`principal_id` IN ((SELECT `permissions`.`resource_id` FROM `permissions` WHERE ((`permissions`.`principal_type` = ?) AND (`permissions`.`principal_id` = ?) AND (`permissions`.`resource_type` = ?))))))) AND (((`permissions`.`resource_type` = ?) AND (`permissions`.`resource_id` = ?)) OR ((`permissions`.`resource_type` = ?) AND (`permissions`.`resource_id` = ?))))\" query_type=select table=permissions trace_id=000000000000000085ca9d1dfc8cc922```\n```2025-06-12T22:33:23.843064003Z stdout F 2025/06/12 22:33:23 level=ERROR path=utils/db/session/dbsession.go:619 msg=\"SQL DB: Error 1054 (42S22): Unknown column 'mount_points.provider_config_id' in 'field list'\" operation=db/session/DBSessionImpl.Query query=\"SELECT `ingestion_queues`.`completed_at` AS `ingestion_queues.completed_at`, `ingestion_queues`.`connected_at` AS `ingestion_queues.connected_at`, `ingestion_queues`.`created_at` AS `ingestion_queues.created_at`, `ingestion_queues`.`error_code` AS `ingestion_queues.error_code`, `ingestion_queues`.`error_message` AS `ingestion_queues.error_message`, `ingestion_queues`.`failed_at` AS `ingestion_queues.failed_at`, `ingestion_queues`.`fetched_at` AS `ingestion_queues.fetched_at`, `ingestion_queues`.`id` AS `ingestion_queues.id`, `ingestion_queues`.`mount_point_id` AS `ingestion_queues.mount_point_id`, `ingestion_queues`.`name` AS `ingestion_queues.name`, `ingestion_queues`.`scanned_at` AS `ingestion_queues.scanned_at`, `ingestion_queues`.`schedule` AS `ingestion_queues.schedule`, `ingestion_queues`.`state` AS `ingestion_queues.state`, `ingestion_queues`.`type` AS `ingestion_queues.type`, `ingestion_queues`.`updated_at` AS `ingestion_queues.updated_at`, `ingestion_queues`.`uuid` AS `ingestion_queues.uuid`, `mount_points`.`created_at` AS `mount_points.created_at`, `mount_points`.`cron_schedule` AS `mount_points.cron_schedule`, `mount_points`.`description` AS `mount_points.description`, `mount_points`.`id` AS `mount_points.id`, `mount_points`.`message` AS `mount_points.message`, `mount_points`.`mount_context` AS `mount_points.mount_context`, `mount_points`.`mount_details` AS `mount_points.mount_details`, `mount_points`.`mount_point` AS `mount_points.mount_point`, `mount_points`.`provider_config_id` AS `mount_points.provider_config_id`, `mount_points`.`state` AS `mount_points.state`, `mount_points`.`status` AS `mount_points.status`, `mount_points`.`tmp_global_drive_v1_id` AS `mount_points.tmp_global_drive_v1_id`, `mount_points`.`tmp_repo_mount_point_v1_id` AS `mount_points.tmp_repo_mount_point_v1_id`, `mount_points`.`updated_at` AS `mount_points.updated_at`, `mount_points`.`uuid` AS `mount_points.uuid`, `org_accounts`.`account_type` AS `org_accounts.account_type`, `org_accounts`.`id` AS `org_accounts.id`, `org_accounts`.`metadata` AS `org_accounts.metadata`, `org_accounts`.`public_id` AS `org_accounts.public_id`, `org_accounts`.`registered_on` AS `org_accounts.registered_on`, `org_default_drives`.`account_id` AS `org_default_drives.account_id`, `org_default_drives`.`global_drive_id` AS `org_default_drives.global_drive_id`, `org_default_drives`.`id` AS `org_default_drives.id`, `org_default_drives`.`mount_point_id` AS `org_default_drives.mount_point_id`, `org_mount_points`.`id` AS `org_mount_points.id`, `org_mount_points`.`mount_point_id` AS `org_mount_points.mount_point_id`, `org_mount_points`.`org_id` AS `org_mount_points.org_id`, `organizations`.`account_id` AS `organizations.account_id`, `organizations`.`created_on` AS `organizations.created_on`, `organizations`.`id` AS `organizations.id`, `organizations`.`is_active` AS `organizations.is_active`, `organizations`.`owner_id` AS `organizations.owner_id`, `organizations`.`tier` AS `organizations.tier`, `repo_accounts`.`account_type` AS `repo_accounts.account_type`, `repo_accounts`.`id` AS `repo_accounts.id`, `repo_accounts`.`metadata` AS `repo_accounts.metadata`, `repo_accounts`.`public_id` AS `repo_accounts.public_id`, `repo_accounts`.`registered_on` AS `repo_accounts.registered_on`, `repo_default_drives`.`id` AS `repo_default_drives.id`, `repo_default_drives`.`mount_point_id` AS `repo_default_drives.mount_point_id`, `repo_default_drives`.`mount_point_v1_id` AS `repo_default_drives.mount_point_v1_id`, `repo_default_drives`.`repo_id` AS `repo_default_drives.repo_id`, `repo_mount_points`.`id` AS `repo_mount_points.id`, `repo_mount_points`.`mount_point_id` AS `repo_mount_points.mount_point_id`, `repo_mount_points`.`repo_id` AS `repo_mount_points.repo_id`, `repos`.`account_id` AS `repos.account_id`, `repos`.`created_on` AS `repos.created_on`, `repos`.`description` AS `repos.description`, `repos`.`fs_partition_mode` AS `repos.fs_partition_mode`, `repos`.`id` AS `repos.id`, `repos`.`is_active` AS `repos.is_active`, `repos`.`metadata` AS `repos.metadata`, `repos`.`name` AS `repos.name`, `repos`.`repo_type` AS `repos.repo_type`, `repos`.`stage` AS `repos.stage`, `repos`.`state` AS `repos.state`, `repos`.`visibility` AS `repos.visibility`, `site_mount_points`.`id` AS `site_mount_points.id`, `site_mount_points`.`mount_point_id` AS `site_mount_points.mount_point_id` FROM `mount_points` LEFT JOIN `site_mount_points` ON (`site_mount_points`.`mount_point_id` = `mount_points`.`id`) LEFT JOIN `repo_mount_points` ON (`repo_mount_points`.`mount_point_id` = `mount_points`.`id`) LEFT JOIN `repos` ON (`repos`.`id` = `repo_mount_points`.`repo_id`) LEFT JOIN `accounts` `repo_accounts` ON (`repo_accounts`.`id` = `repos`.`account_id`) LEFT JOIN `repo_default_drives` ON ((`repo_mount_points`.`mount_point_id` = `repo_default_drives`.`mount_point_id`) AND (`repo_mount_points`.`repo_id` = `repo_default_drives`.`repo_id`)) LEFT JOIN `org_mount_points` ON (`org_mount_points`.`mount_point_id` = `mount_points`.`id`) LEFT JOIN `org_default_drives` ON (`org_mount_points`.`mount_point_id` = `org_default_drives`.`mount_point_id`) LEFT JOIN `ingestion_queues` ON ((`ingestion_queues`.`mount_point_id` = `mount_points`.`id`) AND (`ingestion_queues`.`name` = ?)) LEFT JOIN `organizations` ON ((`organizations`.`id` = `org_mount_points`.`org_id`) OR (`organizations`.`account_id` = `repos`.`account_id`)) LEFT JOIN `accounts` `org_accounts` ON (`org_accounts`.`id` = `organizations`.`account_id`) WHERE ((`repos`.`id` IS NULL) OR (`repo_accounts`.`public_id` = ?)) ORDER BY `mount_points`.`mount_point` ASC, `mount_points`.`id` ASC\" query_type=select table=mount_points trace_id=0000000000000000b8b79c072c9997df```",
+      "time": "15:38",
+      "timestamp": "1749767915.325789",
+      "is_reply": false
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Looks like dbmigrate failed a week ago cc @Jeff",
+      "time": "15:39",
+      "timestamp": "1749767963.048469",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "There's also discussions on deprecating crafting-aihub btw: https://instabase.slack.com/archives/CSY11CK7T/p1748976015822259",
+      "time": "15:47",
+      "timestamp": "1749768460.703559",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Victor Zeng you should weigh in if you are actively using this env!",
+      "time": "15:48",
+      "timestamp": "1749768499.772679",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Yikes! Thanks for letting me know.",
+      "time": "16:15",
+      "timestamp": "1749770101.988089",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-06-12.json",
+    "message_count": 5,
+    "start_time": "1749767915.325789",
+    "end_time": "1749770101.988089",
+    "is_thread": true
+  }
+}

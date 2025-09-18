@@ -1,0 +1,126 @@
+{
+  "id": "ch_C05L87V014J_2025-07-22_1753201803.362349_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "astpierre",
+    "mfichman",
+    "Jet"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Vasu you're right -- that key is here:\n\nhttps://instabase.sandboxes.site/secrets",
+      "time": "09:30",
+      "timestamp": "1753201803.362349",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The other key is for the platform itself (dogfood/lambdas). I got confused. The ECR key is only for ECR reads and writes.",
+      "time": "09:30",
+      "timestamp": "1753201834.038549",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "so just the ecr-login secret needs updating?",
+      "time": "09:34",
+      "timestamp": "1753202048.291279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, I think so. It should have read/write to ECR in the instabase-dev account.",
+      "time": "09:35",
+      "timestamp": "1753202143.075799",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Specifically: `549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/* (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/*)`",
+      "time": "09:36",
+      "timestamp": "1753202196.827099",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "I think the main IAM permission required is ecr:GetAuthorizationToken. We basically just need a temporary password so Docker can pull images from ECR—it’s not necessarily required to have an IAM role with read or write access to the ECR repository?",
+      "time": "09:39",
+      "timestamp": "1753202387.863599",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "from ChatGPT \nTypical Full Permission Set for ECR Login + Push/Pull\n\n\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ecr:GetAuthorizationToken\"\n      ],\n      \"Resource\": \"*\"\n    },\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ecr:BatchCheckLayerAvailability\",\n        \"ecr:GetDownloadUrlForLayer\",\n        \"ecr:BatchGetImage\"\n      ],\n      \"Resource\": \"arn:aws:ecr:us-east-1:123456789012:repository/*\"\n    },\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ecr:PutImage\",\n        \"ecr:InitiateLayerUpload\",\n        \"ecr:UploadLayerPart\",\n        \"ecr:CompleteLayerUpload\"\n      ],\n      \"Resource\": \"arn:aws:ecr:us-east-1:123456789012:repository/*\"\n    }\n  ]\n}",
+      "time": "09:44",
+      "timestamp": "1753202669.092129",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We need to be able to write to that ECR too, for caching",
+      "time": "09:47",
+      "timestamp": "1753202845.295259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "See: https://instabase.slack.com/archives/C05L87V014J/p1753202273316519?thread_ts=1753200220.853239&cid=C05L87V014J",
+      "time": "09:48",
+      "timestamp": "1753202917.393859",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "so i think our path forward will be to ask folks to mint new temporary access keys via AWS Access Portal, add them to crafting workspace via env vars, and then run the ecr-login script",
+      "time": "09:54",
+      "timestamp": "1753203282.544219",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "> so i think our path forward will be to ask folks to mint new temporary access keys via AWS Access Portal, add them to crafting workspace via env vars, and then run the ecr-login script\nI think this approach may introduce unnecessary complexity for engineers.",
+      "time": "09:56",
+      "timestamp": "1753203369.989869",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "https://instabase.slack.com/archives/C05L87V014J/p1753200220853239",
+      "time": "09:56",
+      "timestamp": "1753203419.222649",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I tried to set up a policy, but it didn't work. I think the setup to make ECR access automatic without an access key is more involved (https://docs.sandboxes.cloud/docs/cloud-resources-setup#access-setup).\n\n\nSo, folks have to use `aws sso login` for now :disappointed:",
+      "time": "10:23",
+      "timestamp": "1753204983.426249",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-22.json",
+    "message_count": 13,
+    "start_time": "1753201803.362349",
+    "end_time": "1753204983.426249",
+    "is_thread": true
+  }
+}

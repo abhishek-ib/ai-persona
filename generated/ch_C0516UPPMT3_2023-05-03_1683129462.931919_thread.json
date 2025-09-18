@@ -1,0 +1,102 @@
+{
+  "id": "ch_C0516UPPMT3_2023-05-03_1683129462.931919_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Adam",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "unfortunately, the error returned in the job status is what Kathy posted in her original message\n\ni had to go into `core-platform-service` logs to find the `Duplicate entry` error message",
+      "time": "08:57",
+      "timestamp": "1683129462.931919",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems that the job logic already checks for the grpc `EXISTS` error code https://github.com/instabase/instabase/blob/8c2f3db/shared-utils/py-utils/solution[…]utils/src/py/instabase/solution_utils/deployed_solution_util.py (https://github.com/instabase/instabase/blob/8c2f3db/shared-utils/py-utils/solution-utils/src/py/instabase/solution_utils/deployed_solution_util.py#L274)\n\nbut based on Kathy’s error message, it seems that `CreateDeployedSolution` returned the `INTERNAL` error code, not `EXISTS` - is this easy to fix? @mfichman",
+      "time": "08:59",
+      "timestamp": "1683129575.893579",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Very easy @Serena :slightly_smiling_face:",
+      "time": "09:08",
+      "timestamp": "1683130107.535499",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@mfichman have you created a ticket for this? if so, let me know when i should test this on the frontend :pray:",
+      "time": "10:43",
+      "timestamp": "1683135795.378749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Not yet! I'll post a PR in a sec",
+      "time": "10:48",
+      "timestamp": "1683136080.565809",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Serena Judging by the code, it already returns EXISTS: https://github.com/instabase/instabase/blob/master/core-services/core-platform-ser[…]nstabase/coreplatformservice/repo/handler/deployed_solutions.go (https://github.com/instabase/instabase/blob/master/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/repo/handler/deployed_solutions.go#L133)",
+      "time": "10:49",
+      "timestamp": "1683136169.231359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think the issue might actually be that we need to drop the unique constraint cc @Adam",
+      "time": "10:50",
+      "timestamp": "1683136237.811049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "When I added `owner`, we had to re-implement that unique constraint via a transaction b/c reasons. I think I forgot to drop the unique constraint on name, version though.",
+      "time": "10:51",
+      "timestamp": "1683136294.545369",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Oh so we currently still have a unique constraint on name/version as well as a list check for name/version/owner?",
+      "time": "10:52",
+      "timestamp": "1683136373.583139",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/40326\n\nYep! Fix above",
+      "time": "10:56",
+      "timestamp": "1683136567.570299",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-05-03.json",
+    "message_count": 10,
+    "start_time": "1683129462.931919",
+    "end_time": "1683136567.570299",
+    "is_thread": true
+  }
+}

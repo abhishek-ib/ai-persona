@@ -1,0 +1,145 @@
+{
+  "id": "ch_C06FA6A23_2021-03-24_1616603987.109800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "abhitaker",
+    "sudeep",
+    "Xi Cheng",
+    "shaunak",
+    "Anant",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "instabase filesystem loading super slow -- anybody else seeing it?",
+      "time": "09:39",
+      "timestamp": "1616603987.109800",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "<!subteam^S01DXHX6FPT>?",
+      "time": "09:40",
+      "timestamp": "1616604031.109900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Yes, it is quite slow",
+      "time": "09:43",
+      "timestamp": "1616604184.110100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Restarted the file-tservice pods.  Things are looking better now",
+      "time": "09:52",
+      "timestamp": "1616604738.110800",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi Looks that both Aaron and Nidhi are OOO today. I took a quick look at the latest logs. it seems that there are quite a few API buffer full warning (`[2021-03-24 16:41:17,124] {/instabase/file-tservice/instabase/stats/api.py:153} WARNING - Buffer is full. dropping datapoint` and some account service errors `[2021-03-24 16:43:23,749] {/instabase/file-tservice/instabase/utils/rpc/client.py:102} ERROR - [RPC Client] Service name: AccountService. Error executing thrift service method: get_fs_perms, err: unexpected exception` that got spilled out. Will discuss with the team further.",
+      "time": "09:55",
+      "timestamp": "1616604940.115300",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "@Xi Cheng those warning related to buffer are harmless.",
+      "time": "09:56",
+      "timestamp": "1616604992.115700",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@abhitaker Oh, got it thanks!",
+      "time": "09:57",
+      "timestamp": "1616605078.115900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "We saw a significant increase in the CPU utilization.  Could the warnings be a side effect of increased CPU utilization?",
+      "time": "09:58",
+      "timestamp": "1616605133.116100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "",
+      "time": "09:59",
+      "timestamp": "1616605152.116300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Restarting the pods seems to have fixed the CPU utilization",
+      "time": "09:59",
+      "timestamp": "1616605182.116700",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "the buffer full warning is a side effect of high loads for sure.",
+      "time": "09:59",
+      "timestamp": "1616605193.116900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "which makes me feel that something other than the file-service requests caused the CPU increase",
+      "time": "10:00",
+      "timestamp": "1616605230.117100",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "it means multiple operations are happening simultaneously and registering datapoints in buffer.\nwe expect 500 datapoints / 15 secs. as soon as it hits that 500 limit, we drop incoming datapoints until we flush the buffer.",
+      "time": "10:01",
+      "timestamp": "1616605311.117300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@abhitaker Xi just showed me some of the logs, and it looks like pages of buffer errors. 500 datapoints might be way too low, or can we increase the frequency of flushes?",
+      "time": "11:30",
+      "timestamp": "1616610644.119600",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "hey @Heymian i just spoke to @abhitaker sometime back and we will change default buffer size, make it config through env var, set log level to debug (as we also record a stat of points dropped in buffer).\nAlso just in case you want to disable it for the time being you can toggle the `ENABLE_STATS` env var on the file service deployment to `False`",
+      "time": "11:46",
+      "timestamp": "1616611579.121300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-03-24.json",
+    "message_count": 15,
+    "start_time": "1616603987.109800",
+    "end_time": "1616611579.121300",
+    "is_thread": true
+  }
+}

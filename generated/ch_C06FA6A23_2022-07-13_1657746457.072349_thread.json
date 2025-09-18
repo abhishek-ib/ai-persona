@@ -1,0 +1,113 @@
+{
+  "id": "ch_C06FA6A23_2022-07-13_1657746457.072349_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "cj",
+    "Xi Cheng",
+    "shaunak",
+    "Heymian",
+    "lenny",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": ":wave:  Wanted to quickly share a new testing strategy we're trying out in the world of flow execution. With the recent update to Go 1.18 (ty core services!), we now have access to Go's shiny new built-in fuzzing framework (https://go.dev/doc/fuzz/) for randomized testing. In addition to running your hand-crafted unit tests, Go's fuzzing tester will run your code against thousands of randomized inputs to find novel edge cases on its own — it's even smart enough to track code coverage and intelligently find inputs that explore novel code paths for you, and will take failing examples and reduce them to a minimum reproducible test case that's easier to reason through and debug.\n\nWe implemented a fuzzing test for the task scheduler, a complicated piece of critical logic full of edge cases, and discovered several subtle logic bugs thanks to this new technique. We use the fuzzer to generate execution traces against the task scheduler and validate that no deadlocks occur and no state invariants are violated. Here's a sample trace where the fuzzer found a race condition when tasks complete while a job is paused; we can even simulate slow or failing DB calls to find other failures.\n\nMore info in the PR: https://github.com/instabase/instabase/pull/27591\nGo fuzzing documentation: https://go.dev/doc/fuzz/",
+      "time": "14:07",
+      "timestamp": "1657746457.072349",
+      "is_reply": false
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "amazing",
+      "time": "14:27",
+      "timestamp": "1657747642.345899",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this is super cool!!\n\ni wish react came with built-in fuzzing like this :smiling_face_with_tear:",
+      "time": "14:49",
+      "timestamp": "1657748968.790859",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Wow!  This is amazing",
+      "time": "14:57",
+      "timestamp": "1657749477.797299",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "This is awesome! We should do this across the entire go code base!",
+      "time": "14:59",
+      "timestamp": "1657749564.293719",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "@Serena go is the only language I know of that has builtin support for this kind of thing, but there are JS packages that let you do similar things! good starting place is to look into \"property-based testing\" (which I think is basically a more structured form of fuzzing), eg https://github.com/dubzzz/fast-check — never tried this myself but seems to do a similar thing",
+      "time": "15:20",
+      "timestamp": "1657750840.350819",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "very cool, i’ll check that out!\n\nthe problem with frontend apps is that there are too many entry points for different inputs - different API responses, user actions, etc, and it’s too much work to describe all of them in tests\n\ni’d love to have a magical tool that would render the app and fuzz all the different ways to trigger different states in the frontend :pray:",
+      "time": "15:39",
+      "timestamp": "1657751944.971489",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "i think the other tricky piece to doing this for frontend logic is you need to figure out what you're asserting on — are there invalid states you can check for? do you just want to make sure nothing crashes? it seems harder to automate checks on what the UI should look like",
+      "time": "15:41",
+      "timestamp": "1657752082.429959",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "exactly!\n\nand this is close to what i’m imagining! but no one’s figured out how to make it work with Cypress yet https://github.com/dubzzz/fast-check/issues/253",
+      "time": "15:43",
+      "timestamp": "1657752200.279139",
+      "is_reply": true
+    },
+    {
+      "sender": "cj",
+      "user_id": "U03G46LRWSU",
+      "message": ">  too many entry points for different inputs\n@Serena the property-based testing approach for this is using model-based testing (https://github.com/dubzzz/fast-check/blob/main/packages/fast-check/documentation/Tips.md#model-based-testing-or-ui-test), where you can have different kinds of actions applied in an arbitrary order. it honestly seems like a bit more of a hassle though, and i don't know anyone that actually does this in practice (compared to, say, property-based testing for pure functions, which i've definitely seen elsewhere)",
+      "time": "17:18",
+      "timestamp": "1657757917.393189",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Exactly no one wants to define a model, you’re almost writing an entire spec of the code :see_no_evil:",
+      "time": "17:20",
+      "timestamp": "1657758014.812489",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-07-13.json",
+    "message_count": 11,
+    "start_time": "1657746457.072349",
+    "end_time": "1657758014.812489",
+    "is_thread": true
+  }
+}

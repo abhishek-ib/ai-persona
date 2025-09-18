@@ -1,0 +1,249 @@
+{
+  "id": "ch_C06FA6A23_2019-04-12_1555109700.032400_conversation",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "conversation",
+  "participants": [
+    "Ted",
+    "dlluncor",
+    "Ashish",
+    "shaunak",
+    "Heymian",
+    "Matt"
+  ],
+  "messages": [
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Request from Blend [i anticipate we might get questions like this from others” @Heymian @achao\n\nQ: “I’m an admin in Instabase. How can I remove a user from having access to Instabase”\nA: ah interesting — we don’t have a concept of actually removing the user completely. We can think of adding a feature through the UI which enables an admin to disable a user’s access to Instabase",
+      "time": "15:55",
+      "timestamp": "1555109700.032400",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "got it, yeah, deleting users has been on the todo list for a while now. might be worth doing soon. Asana task is here in case anyone wants to add info to it: https://app.asana.com/0/869205164872194/1114432324033074",
+      "time": "15:56",
+      "timestamp": "1555109764.033000",
+      "is_reply": false
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Very soon as I've given some access to users for temporary purposes and we should probably give them the boot eventually",
+      "time": "15:57",
+      "timestamp": "1555109875.033700",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "We do have a feature to disable a user account.",
+      "time": "15:58",
+      "timestamp": "1555109908.034200",
+      "is_reply": false
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "How would one do such a thing",
+      "time": "15:58",
+      "timestamp": "1555109926.034700",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "I understand that it is different from deleting an account.",
+      "time": "15:58",
+      "timestamp": "1555109927.034800",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "There is a field in users table.",
+      "time": "15:58",
+      "timestamp": "1555109937.035200",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i think disabling a user account is a great way to go — i just realized there’s something like “is_verified”: false or something right?",
+      "time": "15:59",
+      "timestamp": "1555109950.036000",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Yeah David",
+      "time": "15:59",
+      "timestamp": "1555109957.036400",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "or “is_approved” perhaps",
+      "time": "15:59",
+      "timestamp": "1555109958.036500",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i think it’s `is_active`",
+      "time": "15:59",
+      "timestamp": "1555109976.037100",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "one addition though when we create the UI is, we should probably strip the user of all existing permissions from all ACL tables",
+      "time": "15:59",
+      "timestamp": "1555109990.037400",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "right, i was going to say. just flipping that bit isn’t enough",
+      "time": "16:00",
+      "timestamp": "1555110000.037800",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Heymian, I don't think we use is_active anywhere.",
+      "time": "16:00",
+      "timestamp": "1555110006.038200",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "we’d have to remove then from all orgs, teams, acl lists as well",
+      "time": "16:00",
+      "timestamp": "1555110011.038400",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah because we don’t currently support “deletion” or “deactivating”",
+      "time": "16:00",
+      "timestamp": "1555110040.039300",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "so we’ve never flipped that bit before",
+      "time": "16:00",
+      "timestamp": "1555110054.040000",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "There are four fields:\nis_admin\nis_active: not used anywhere\nis_verified: when the email address is verified\nis_approved: when they are not on the waitlist",
+      "time": "16:00",
+      "timestamp": "1555110058.040200",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "I’m :+1: on deactivation, deletion has some negative effects like reuse of usernames which I dont think we’ll want",
+      "time": "16:01",
+      "timestamp": "1555110076.041000",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Mark is_approved to False and the user goes onto a waitlist",
+      "time": "16:01",
+      "timestamp": "1555110079.041200",
+      "is_reply": false
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Kk will test on your account real fast :wink:",
+      "time": "16:02",
+      "timestamp": "1555110133.042900",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Having said all this, I think we should change our software such that we start using `is_active` flag.",
+      "time": "16:02",
+      "timestamp": "1555110134.043100",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah, poor verbiage. deletion = deactivation = flip `is_active` and purge connection to all our other tables.",
+      "time": "16:02",
+      "timestamp": "1555110139.043300",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah we don’t even delete repos atm, we just “hide” it. So that will also need to happen when we actually purge.",
+      "time": "16:04",
+      "timestamp": "1555110276.045600",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "If we do go the purge route, we might want to take all that was purged, compress it, and save it to some other table… just thinking about auditability over time",
+      "time": "16:05",
+      "timestamp": "1555110329.046300",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "One would want to be guaranteed the ability to go back and know that UID `foo` was a deleted user with information `xyz`",
+      "time": "16:05",
+      "timestamp": "1555110355.047100",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Let’s chat about purge route in details later.  It is a can of worms with regards to compliance",
+      "time": "16:06",
+      "timestamp": "1555110381.048000",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "(sort of like creating a Google Takeout archihve and then stashing it somewhere before teh actual deletion)",
+      "time": "16:06",
+      "timestamp": "1555110382.048100",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-04-12.json",
+    "message_count": 28,
+    "start_time": "1555109700.032400",
+    "end_time": "1555110382.048100",
+    "is_thread": false
+  }
+}

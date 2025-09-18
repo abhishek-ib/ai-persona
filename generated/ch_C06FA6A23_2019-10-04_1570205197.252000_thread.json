@@ -1,0 +1,253 @@
+{
+  "id": "ch_C06FA6A23_2019-10-04_1570205197.252000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Handsome Dave",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Continuing the issues C1 is seeing, Adam is having an issue where (now that he has `ENABLE_ORG_SUPPORT` and `SITE_SETTING_SITE_ADMIN_CAN_ACCESS_ALL_ORGS` both set to true), he still can’t list the teams in an org. The following is from the webapp logs:\n```\n10.126.157.14 - - [2019-10-04 01:01:50] \"GET /org/teams/insights HTTP/1.0\" 200 3685 1.338608 \n[2019-10-04 01:04:02,992] {/instabase-server/py/instabase/utils/rpc/client.py:106} ERROR - [RPC Client] Service name: AccountService. Error executing thrift service method: get_all_teams_for_org, err: TSocket read 0 bytes \n[2019-10-04 01:04:02,998] {/instabase-server/py/instabase/utils/rpc/client.py:117} ERROR - [RPC Client, after refresh] Service name: AccountService. Error executing thrift service method: get_all_teams_for_org, err: TSocket read 0 bytes \n[2019-10-04 01:04:02,998] {/instabase-server/py/instabase/utils/rpc/client.py:122} ERROR - Retrying again on AccountService \n[2019-10-04 01:04:03,202] {/instabase-server/py/instabase/utils/rpc/client.py:106} ERROR - [RPC Client] Service name: AccountService. Error executing thrift service method: get_all_teams_for_org, err: TSocket read 0 bytes \n[2019-10-04 01:04:03,231] {/instabase-server/py/instabase/utils/rpc/client.py:117} ERROR - [RPC Client, after refresh] Service name: AccountService. Error executing thrift service method: get_all_teams_for_org, err: TSocket read 0 bytes \n[2019-10-04 01:04:03,231] {/instabase-server/py/instabase/utils/rpc/client.py:122} ERROR - Retrying again on AccountService \n[2019-10-04 01:04:03,637] {/instabase-server/py/instabase/utils/rpc/client.py:106} ERROR - [RPC Client] Service name: AccountService. Error executing thrift service method: get_all_teams_for_org, err: TSocket read 0 bytes \n[2019-10-04 01:04:03,663] {/instabase-server/py/instabase/utils/rpc/client.py:117} ERROR - [RPC Client, after refresh] Service name: AccountService. Error executing thrift service method: get_all_teams_for_org, err: TSocket read 0 bytes \n[2019-10-04 01:04:03,663] {/instabase-server/py/instabase/utils/rpc/client.py:122} ERROR - Retrying again on AccountService \n[2019-10-04 01:04:04,264] ERROR in app: Exception on /org/teams/insights [GET] \nTraceback (most recent call last): \nFile \"/home/ibuser/.local/lib/python2.7/site-packages/flask/app.py\", line 1982, in wsgi_app \nresponse = self.full_dispatch_request() \nFile \"/home/ibuser/.local/lib/python2.7/site-packages/flask/app.py\", line 1614, in full_dispatch_request \nrv = self.handle_user_exception(e) \nFile \"/home/ibuser/.local/lib/python2.7/site-packages/flask/app.py\", line 1517, in handle_user_exception \nreraise(exc_type, exc_value, tb) \nFile \"/home/ibuser/.local/lib/python2.7/site-packages/flask/app.py\", line 1612, in full_dispatch_request \nrv = self.dispatch_request() \nFile \"/home/ibuser/.local/lib/python2.7/site-packages/flask/app.py\", line 1598, in dispatch_request \nreturn self.view_functions[rule.endpoint](**req.view_args) \nFile \"/instabase-server/py/instabase/shared/auth_handlers.py\", line 149, in decorated_view \nreturn func(*args, **kwargs) \nFile \"/home/ibuser/.local/lib/python2.7/site-packages/flask/views.py\", line 84, in view \nreturn self.dispatch_request(*args, **kwargs) \nFile \"/home/ibuser/.local/lib/python2.7/site-packages/flask/views.py\", line 149, in dispatch_request \nreturn meth(*args, **kwargs) \nFile \"/instabase-server/py/instabase/handler/views/teams.py\", line 67, in get \norgname=orgname)) \nFile \"/instabase-server/py/instabase/utils/rpc/client.py\", line 65, in __get_proxy_method__ \nreturn self.__method_call__(method, *args, **kwargs) \nFile \"/instabase-server/py/instabase/utils/rpc/client.py\", line 125, in __method_call__ \nraise IOError(err) \nIOError: Unknown exception executing method for service AccountService \n10.126.119.169 - - [2019-10-04 01:04:04] \"GET /org/teams/insights HTTP/1.0\" 200 3685 1.291924\n```",
+      "time": "09:06",
+      "timestamp": "1570205197.252000",
+      "is_reply": false
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "and this is from the `account-tservice` logs:\n```\n2019/10/04 13:07:48 panic in processor: interface conversion: acl.Principal is *acl.TeamPrincipal, not *acl.UserPrincipal: goroutine 179 [running]:\nruntime/debug.Stack(0xc0002575d0, 0xc70fe0, 0xc00026a900)\n\t/usr/local/go/src/runtime/debug/stack.go:24 +0x9d\ngit.apache.org/thrift.git/lib/go/thrift.(*TSimpleServer).processRequests.func1() (http://git.apache.org/thrift.git/lib/go/thrift.(*TSimpleServer).processRequests.func1())\n\t/root/go/pkg/mod/github.com/apache/thrift@v0.0.0-20181129202844-0dd823580c78/lib/go/thrift/simple_server.go:186 +0x57\npanic(0xc70fe0, 0xc00026a900)\n\t/usr/local/go/src/runtime/panic.go:522 +0x1b5\ninstabase/utils/acl.(*OrgResource).IsAllowed(0xc000035680, 0xe4a3e0, 0xc000035700, 0xc0002579c8, 0x1, 0x1, 0x0, 0x0, 0x0, 0xc00026a750, ...)\n\t/go/src/instabase/shared-utils/go-utils/src/instabase/utils/acl/org_resource.go:115 +0x9f6\ninstabase/utils/acl.(*TeamResource).IsAdminTeam(0xc0000351c0, 0xd39235, 0x4, 0xc00002cde0)\n\t/go/src/instabase/shared-utils/go-utils/src/instabase/utils/acl/team_resource.go:210 +0x187\ninstabase/utils/acl.(*ACLManager).GetAllTeamsInOrg(0xc0000aaec0, 0xc0001dc1e8, 0x8, 0xe4a420, 0xc000034900, 0x0, 0x0, 0xc000020b60, 0xc0001ca1f8, 0x8)\n\t/go/src/instabase/shared-utils/go-utils/src/instabase/utils/acl/helpers.go:137 +0x512\ninstabase/accountservice/handler.(*AccountServiceHandler).GetAllTeamsForOrg(0xc0000b8780, 0xc0001d2890, 0x0, 0x0, 0x0)\n\t/go/src/instabase/core-services/account-tservice/src/go/src/instabase/accountservice/handler/team.go:471 +0x2a6\ninstabase/account.(*accountServiceProcessorGetAllTeamsForOrg).Process(0xc00013d180, 0xc000000000, 0xe58900, 0xc0001d77a0, 0xe58900, 0xc0001d7830, 0x6e0a01, 0x0, 0x0)\n\t/go/src/instabase/core-services/account-tservice/build/go/src/instabase/account/account.go:34498 +0x289\ninstabase/account.(*AccountServiceProcessor).Process(0xc0000aaee0, 0xe58900, 0xc0001d77a0, 0xe58900, 0xc0001d7830, 0x0, 0x0, 0x0)\n\t/go/src/instabase/core-services/account-tservice/build/go/src/instabase/account/account.go:31681 +0x2fc\ngit.apache.org/thrift.git/lib/go/thrift.(*TSimpleServer).processRequests(0xc00014a200 (http://git.apache.org/thrift.git/lib/go/thrift.(*TSimpleServer).processRequests(0xc00014a200), 0xe4e420, 0xc0001c9c20, 0x0, 0x0)\n\t/root/go/pkg/mod/github.com/apache/thrift@v0.0.0-20181129202844-0dd823580c78/lib/go/thrift/simple_server.go:201 +0x264\ngit.apache.org/thrift.git/lib/go/thrift.(*TSimpleServer).AcceptLoop.func1(0xc00014a200 (http://git.apache.org/thrift.git/lib/go/thrift.(*TSimpleServer).AcceptLoop.func1(0xc00014a200), 0xe4e420, 0xc0001c9c20)\n\t/root/go/pkg/mod/github.com/apache/thrift@v0.0.0-20181129202844-0dd823580c78/lib/go/thrift/simple_server.go:142 +0x73\ncreated by git.apache.org/thrift.git/lib/go/thrift.(*TSimpleServer).AcceptLoop (http://git.apache.org/thrift.git/lib/go/thrift.(*TSimpleServer).AcceptLoop)\n\t/root/go/pkg/mod/github.com/apache/thrift@v0.0.0-20181129202844-0dd823580c78/lib/go/thrift/simple_server.go:140 +0xfa\n2019/10/04 13:07:48 panic in processor: interface conversion: acl.Principal is *acl.TeamPrincipal, not *acl.UserPrincipal: goroutine 171 [running]:\nruntime/debug.Stack(0xc0002575d0, 0xc70fe0, 0xc00026ad20)\n\t/usr/local/go/src/runtime/debug/stack.go:24 +0x9d\ngit.apache.org/thrift.git/lib/go/thrift.(*TSimpleServer).processRequests.func1() (http://git.apache.org/thrift.git/lib/go/thrift.(*TSimpleServer).processRequests.func1())\n\t/root/go/pkg/mod/github.com/apache/thrift@v0.0.0-20181129202844-0dd823580c78/lib/go/thrift/simple_server.go:186 +0x57\n```\nAnyone have any ideas why the account service is panicking? They use SAML for SSO, if that matters.",
+      "time": "09:07",
+      "timestamp": "1570205250.252100",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "https://instabase.zendesk.com/agent/tickets/447 if you want to view the whole context",
+      "time": "09:07",
+      "timestamp": "1570205265.252300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "will look",
+      "time": "09:20",
+      "timestamp": "1570206005.253100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "also, how do i see the full set of env cars they have set? c1.json?",
+      "time": "09:21",
+      "timestamp": "1570206085.254100",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Yeah, that’s a good starting point.",
+      "time": "09:23",
+      "timestamp": "1570206213.254300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "and how can i diff the env vars from the last time we shipped to them from this time",
+      "time": "09:24",
+      "timestamp": "1570206269.255100",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "I’ve also sent you an email where Adam sent us some yaml files that he added/changed.",
+      "time": "09:24",
+      "timestamp": "1570206287.255800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "biggest question is, did they have SITE_SETTING_LOGICAL_ORG_ISOLATION set before?",
+      "time": "09:25",
+      "timestamp": "1570206301.256200",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Looks like I failed to actually merge the PR, but here is the exact diff from their previous deployment and this one: https://github.com/instabase/deployments/pull/293",
+      "time": "09:26",
+      "timestamp": "1570206393.257800",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Looks like it was false and is false.",
+      "time": "09:26",
+      "timestamp": "1570206415.258400",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "it == SITE_SETTING_LOGICAL_ORG_ISOLATION",
+      "time": "09:27",
+      "timestamp": "1570206423.258600",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "(And I just merged the PR because :sweat:)",
+      "time": "09:27",
+      "timestamp": "1570206470.258800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Still looking. Are there other env var’s layered on top from somewhere? For the PR it looks like ENABLE_ORG_SUPPORT was false before, but that could not have been true. Do we know what the value of SITE_SETTING_ONLY_SITE_ADMIN_CAN_EDIT_ORG was before and what it is now?",
+      "time": "10:06",
+      "timestamp": "1570208765.263700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i also apologize for these ridiculous long and descriptive env var names",
+      "time": "10:07",
+      "timestamp": "1570208832.264100",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "It’s _very_ possible that `ENABLE_ORG_SUPPORT` was set to `True` post-install last time, but without the change being merged back into our deployment repo, since it would be a manual process.",
+      "time": "10:07",
+      "timestamp": "1570208848.264300",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "It certainly looks like `SITE_SETTING_ONLY_SITE_ADMIN_CAN_EDIT_ORG` was false before and false now. Well, I can guarantee it’s false now - we definitely haven’t had him change it.",
+      "time": "10:09",
+      "timestamp": "1570208986.264500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "next message you send, can we get the .yaml to account service? Would be easier to look at all his env vars in one shot instead of guessing.",
+      "time": "10:11",
+      "timestamp": "1570209095.265400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I ask because, the line of code he hit in account service that caused the panic seems to indicate that ONLY_SITE_ADMIN_CAN_EDIT_ORG was set to true for some reason.",
+      "time": "10:12",
+      "timestamp": "1570209151.265700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I’ll fix up the code to handle ^ case better and avoid the panic. But as a quick fix for them, I think setting that env var to false should do the trick.",
+      "time": "10:15",
+      "timestamp": "1570209352.265900",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "You’re looking for `deployments/account-tservice.yml`, not `services/account-tservice.yml`, right?",
+      "time": "10:32",
+      "timestamp": "1570210373.266100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yup the former, the one with all the values of the env vars",
+      "time": "10:37",
+      "timestamp": "1570210669.266300",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Done, I’ll let you know when he gets back to us.",
+      "time": "10:39",
+      "timestamp": "1570210782.266700",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "The yaml file is in the ticket but it looks like you’re right, it’s set to `True`. So reply with (shortened): `Set that to False and in our next release we'll fix the bug that made this crash`?",
+      "time": "10:52",
+      "timestamp": "1570211560.267800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yup sg to me. So are they twiddling these things on their own? Because it’s not matching our c1.json.",
+      "time": "11:00",
+      "timestamp": "1570212058.268400",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "That’s a good question.",
+      "time": "11:01",
+      "timestamp": "1570212112.268700",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "My best guess, btw, is that when he went in to update `SITE_SETTING_SITE_ADMIN_CAN_ACCESS_ALL_ORGS` to be `True`, he updated `SITE_SETTING_ONLY_SITE_ADMIN_CAN_EDIT_ORG` at the same time.",
+      "time": "13:28",
+      "timestamp": "1570220881.281800",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Oh, and would you like me to open a Jira ticket about this issue?",
+      "time": "13:28",
+      "timestamp": "1570220900.282000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "up to you. I have a fix already, just adding tests.",
+      "time": "15:02",
+      "timestamp": "1570226572.282400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-10-04.json",
+    "message_count": 29,
+    "start_time": "1570205197.252000",
+    "end_time": "1570226572.282400",
+    "is_thread": true
+  }
+}

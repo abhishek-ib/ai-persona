@@ -1,0 +1,241 @@
+{
+  "id": "ch_C0516UPPMT3_2024-10-31_1730359129.023049_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "ayesha.ali",
+    "hannah",
+    "pauline.comising",
+    "melissa.amos",
+    "Brian",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "Ground truth datasets: Updating ground truth dataset values:\n\nI've created a ground truth dataset for an app that initially extracted tables w/ dates as is from bank statements. The ground truth values were set to be the as-is extracted formats. For example, if the document had dates that read `Mar 01`, the extracted date would be `Mar 01` -- the ground truth value was set accordingly to also be `Mar 01`.\n\nI've now updated my app to include a cleaning step in-line after the table is extracted that effectively reformats all dates to adopt `MM/DD/YYYY` format.\n\n*Feedback:*\nI really liked how initially, you can set ground truth values by updating extracted values. Going back to update the ground truth values, I was looking for a way to re-run the extractions with the updates cleaning steps, but I couldn't find (easily, at least) how to re-run the files using the updated app config to get to the point where I can just update the extracted values like how I was able to do when initially creating the GT dataset.\n\n*Question:* \nIs there a way to re-run the app so I can just update the many rows of dates instead of doing them manually one by one?\n\nI read somewhere in another thread that we can't delete ground truth datasets, and I think we should avoid having to create another duplicate set by manually selecting and re-uploading the same \"project\" files, which are what I used to create the initial ground truth dataset.",
+      "time": "00:18",
+      "timestamp": "1730359129.023049",
+      "is_reply": false
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "I'd also love to be able to see an expandable preview of the files when looking at the `ground truth values` tab.",
+      "time": "00:20",
+      "timestamp": "1730359201.909149",
+      "is_reply": true
+    },
+    {
+      "sender": "melissa.amos",
+      "user_id": "U046XKHS8VA",
+      "message": "@Brian Does this answer your questions here? https://docs.instabase.com/apps/testing#updating-ground-truth-datasets",
+      "time": "05:36",
+      "timestamp": "1730378179.496959",
+      "is_reply": true
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "Hi! It sure does :slightly_smiling_face: Thank you!\n\nLooks like the `update dataset` action is showing for my GT dataset, though :bug_red:",
+      "time": "07:31",
+      "timestamp": "1730385078.676939",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "@Brian can you explain more about what bug you are seeing here?",
+      "time": "10:12",
+      "timestamp": "1730394749.309599",
+      "is_reply": true
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "Hi @hannah! Of course, here's recording explaining what's going on:\n\nhttps://instabase.zoom.us/clips/share/BkSmdK0o6ce9caqR4FHzTI71GkTz0Br1M6VGgry6PSg-nt1hFLM0vhqDV0cdp9QOSizTtyd7p6U3OcEjm5FJaGAq.ep472e6yaP8Dp7vZ\nPasscode: y6=45yC&",
+      "time": "10:41",
+      "timestamp": "1730396470.055939",
+      "is_reply": true
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "TL;DR: When I update an app, I expect (as per docs) to be able to see my ground-truth dataset update to a status of `Outdated` ; this would give me an opportunity to action an `Update dataset` button which would re-run the app and generate new pre-populated extracted values, which I could then use as a starting point to correct/update values to what's expected. *When I update an app, the groundtruth datasets statuses don't update, so I have to manually go in an update my ground truth datasets.*",
+      "time": "10:43",
+      "timestamp": "1730396625.459369",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@ayesha.ali can you help look into why the dataset status isn’t getting updated to `Outdated`?\n\nfeel free to ask @pauline.comising if you need any help!",
+      "time": "12:47",
+      "timestamp": "1730404027.236159",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "So a ground truth set's status changes when the schema of the app changes (e.g. classes/fields are changed/deleted/added). this may mean 1) for now updating the docs to reflect this and 2) thinking about a future improvement for sol acc which would set the status to outdated for any action that would change field values such as removing/adding cleaning lines for example @Serena but as far as expected behavior rn, this is not a bug but the current intended logic",
+      "time": "12:55",
+      "timestamp": "1730404539.180779",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @melissa.amos on clarifying the docs to explain this",
+      "time": "12:58",
+      "timestamp": "1730404731.309299",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@ayesha.ali so if Brian adds a dummy class/field -> updates the app -> deletes the dummy class/field -> updates the app, the ground truth set will be marked as outdated? would this workaround work?",
+      "time": "13:00",
+      "timestamp": "1730404809.405029",
+      "is_reply": true
+    },
+    {
+      "sender": "melissa.amos",
+      "user_id": "U046XKHS8VA",
+      "message": "To confirm, the clarification is that only schema changes warrant updating your GT datasets? Cleaning and validation changes --which definitely impact results and accuracy metrics-- don't impact dataset status? Eek. @hannah",
+      "time": "13:24",
+      "timestamp": "1730406243.081489",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yeah maybe we don’t update the docs yet since this is confusing behavior",
+      "time": "13:29",
+      "timestamp": "1730406575.953119",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@pauline.comising do you remember the reason why we didn’t update the ground truth set’s status to `Outdated` if there’s any newer app version? that would be simpler to explain and simpler for users to understand\n\nespecially since you can now run accuracy tests with outdated ground truth sets, i think it’s ok to mark ground truth sets as outdated in more cases",
+      "time": "13:37",
+      "timestamp": "1730407066.708269",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah ya, a while back we defined an outdated gt set as one that no longer has the same schema as the latest app (aka fields/classes are different). And marking outdated on all gt sets anytime a new app is created would be doable, it just means that even if a gt set has the same fields/classes as the latest app, it will be marked `Outdated`. But given melissa's notes about cleaning and validation impacting results this sounds expected :woman-bowing::skin-tone-2:",
+      "time": "13:51",
+      "timestamp": "1730407881.352019",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "hmmmm thinking through this I'm wondering if this is an edge case though",
+      "time": "14:32",
+      "timestamp": "1730410371.286569",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "The reason why we didn't mark your ground truth set as needing to be updated when clean functions or validations were added was because the underlying ground truth values _should_ stay the same.",
+      "time": "14:33",
+      "timestamp": "1730410431.730249",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "the ground truth values for a field should theoretically be independent of the clean/validate steps",
+      "time": "14:34",
+      "timestamp": "1730410466.108979",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Ah you’re right! :thinking_rotating:",
+      "time": "14:34",
+      "timestamp": "1730410467.744269",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "So I think we actually leave this behavior as is - especially as in future versions we are adding in protection to persist values for matching fields in the schema which would mean even if we change this behavior the results for the GT shouldn't change",
+      "time": "14:37",
+      "timestamp": "1730410630.799939",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "I think the documentation advice should be that the ground truth set should be reflective of your desired end state values and formatting",
+      "time": "14:37",
+      "timestamp": "1730410665.749849",
+      "is_reply": true
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "That definitely makes sense. Could we add the ability to re-run anyways (without the need for the status to change) for instances like this where it'd be quite convenient to update values via re-run? (Especially since we can't currently delete GT datasets and can't make more instances of those based on the project files.)",
+      "time": "14:53",
+      "timestamp": "1730411590.381999",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "deleting GT sets should come soon! most likely 24.46\n\nfrom a technical perspective, yes we could allow re-running anyways, but curious to hear @hannah’s thoughts",
+      "time": "15:03",
+      "timestamp": "1730412229.844979",
+      "is_reply": true
+    },
+    {
+      "sender": "melissa.amos",
+      "user_id": "U046XKHS8VA",
+      "message": "Merged this edit to prod. YOLO!",
+      "time": "15:48",
+      "timestamp": "1730414930.808369",
+      "is_reply": true
+    },
+    {
+      "sender": "melissa.amos",
+      "user_id": "U046XKHS8VA",
+      "message": "Whoops, I did fix the typo. :hide:",
+      "time": "15:49",
+      "timestamp": "1730414999.004719",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Project files ground truth sets are also marked as outdated if the set of files in the associated project changes btw!",
+      "time": "15:50",
+      "timestamp": "1730415009.333619",
+      "is_reply": true
+    },
+    {
+      "sender": "melissa.amos",
+      "user_id": "U046XKHS8VA",
+      "message": "Pushed a few more updates: https://docs.instabase.com/apps/testing#managing-ground-truth-datasets",
+      "time": "16:03",
+      "timestamp": "1730415795.334779",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-10-31.json",
+    "message_count": 27,
+    "start_time": "1730359129.023049",
+    "end_time": "1730415795.334779",
+    "is_thread": true
+  }
+}

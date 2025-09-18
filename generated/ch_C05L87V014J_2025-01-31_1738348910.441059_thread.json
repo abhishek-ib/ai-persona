@@ -1,0 +1,181 @@
+{
+  "id": "ch_C05L87V014J_2025-01-31_1738348910.441059_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@sean.donohoe on master, it seems like the go fmt logic changed:\n• imports are no longer sorted with \"instabase/...\" to the end\n• pushes the \")\" of function return types to a new line\nAre these changes intentional? Wondering if I did something wrong",
+      "time": "10:41",
+      "timestamp": "1738348910.441059",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "hey, could be related to this PR (https://github.com/instabase/instabase/pull/67155) I merged this morning (more context here (https://instabase.slack.com/archives/C05L87V014J/p1738172125641769)) -- will take a look!",
+      "time": "10:43",
+      "timestamp": "1738349025.864869",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Looks like I missed `\"go.formatTool\": \"goimports\"` in the new config, which would explain the import organization -- I'll put up a change for that in a bit, but you can also add it before then by editing `$IB_HOME/.vscode/settings.json`, sorry for the annoyance!",
+      "time": "10:47",
+      "timestamp": "1738349222.271179",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "hm i can't get it to work",
+      "time": "10:52",
+      "timestamp": "1738349539.844369",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "interesting -- could you share the \"Go\" task output? seems like the extension didn't reload as expected or theres some other setting specific to your host that's conflicting",
+      "time": "10:55",
+      "timestamp": "1738349740.987029",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "sure, but i don't see anything meaningful",
+      "time": "10:59",
+      "timestamp": "1738349989.306809",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "fwiw this is what I see when saving / undoing format changes",
+      "time": "10:59",
+      "timestamp": "1738349994.520779",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "oh ok. looks like we are seeing the same result. \"instabase/...\" was sorted to the end but now it seems like we just sort alphabetically",
+      "time": "11:01",
+      "timestamp": "1738350064.883839",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Ah I see -- because we don't follow the go coding standard of prefixing all third party modules with a url (i.e. we do `instabase` instead of the expected `github.com/instabase/instabase (http://github.com/instabase/instabase)`) goimports is restructuring the instabase imports as though they are stdlib imports",
+      "time": "11:02",
+      "timestamp": "1738350178.820049",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I'm not sure how we would have enabled sorting to the end previously, but I'll continue taking a look",
+      "time": "11:03",
+      "timestamp": "1738350200.569199",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea... our codebase has too many Instabase-custom conventions...",
+      "time": "11:04",
+      "timestamp": "1738350287.728599",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ah found another discrepancy! @Xindi Xu could you try removing this line (https://github.com/instabase/instabase/blob/master/.vscode/settings.json#L17) from the same settings.json?",
+      "time": "11:07",
+      "timestamp": "1738350427.508929",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "still sorts alphabetically :cry:",
+      "time": "11:09",
+      "timestamp": "1738350589.369529",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ok this is very strange, it almost seems like either the latest upgrade to go 1.22.9 introduced some new behavior or goimports just wasn't working before -- I'll keep digging around, would you like me to revert my PR until this is figured out or is this more of a \"would be good to have\" item?",
+      "time": "11:11",
+      "timestamp": "1738350715.671319",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think we should revert it, because it introduces a bunch of changes for each file that I opened :cry:",
+      "time": "11:16",
+      "timestamp": "1738350964.618019",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "actually I'm now seeing things work correctly on my IDE after removing that line :thonk: @Xindi Xu could you check whether `gofumpt` is enabled in your host's `/home/owner/.vscode-server/data/Machine/settings.json` when you have a moment?",
+      "time": "11:16",
+      "timestamp": "1738350969.566709",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ah yes, it seems to work now!",
+      "time": "11:18",
+      "timestamp": "1738351118.192769",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you!",
+      "time": "11:18",
+      "timestamp": "1738351121.164779",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "perfect!! will have a fix PR shortly, thank you for raising this :pray:",
+      "time": "11:19",
+      "timestamp": "1738351140.456399",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "<!subteam^S08AA13VAFQ> can I get a review on https://github.com/instabase/instabase/pull/67621 when someone has a moment?",
+      "time": "11:21",
+      "timestamp": "1738351278.425979",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-01-31.json",
+    "message_count": 20,
+    "start_time": "1738348910.441059",
+    "end_time": "1738351278.425979",
+    "is_thread": true
+  }
+}

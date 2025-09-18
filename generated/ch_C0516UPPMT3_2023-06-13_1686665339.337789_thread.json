@@ -1,0 +1,161 @@
+{
+  "id": "ch_C0516UPPMT3_2023-06-13_1686665339.337789_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "vineeth",
+    "Arjun",
+    "Timo Meijrink",
+    "Sławek Biel",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Timo Meijrink",
+      "user_id": "U02GCQ0JLUC",
+      "message": "Trying to get the line items from an invoice, I suggested a format in json in the complex prompt, but it throws an error (Value issue. Value not set)\n```prompt: extract all invoice line items as JSON, example: {\"Aantal\": \"1\", \"Artikelnummer\": \"112233\", \"Omschrijving\": \"Canon Color Cartridge\", \"VAT\": \"21%\", \"Price\": \"EUR 54,89\"}```",
+      "time": "07:08",
+      "timestamp": "1686665339.337789",
+      "is_reply": false
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "Cc @Kerry this is due to the bug where curly braces result in the model throwing an error on the backend. I had a PR in progress to disallow users from adding this to their prompt but you had instructed me to hold off while determining level of effort at the model level. Is there an update here? If not maybe we should consider merging my PR in until we can address this?",
+      "time": "07:12",
+      "timestamp": "1686665568.788599",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "thanks for following up on this during your OOO time! can you share the PR with me and I can help merge; we won't redeploy AI Hub again until 6/20. i'll merge it in by them if we can't resolve this from the model side\n\n@vineeth can you help assess the effort here to enable curly bracket in the prompts?",
+      "time": "07:35",
+      "timestamp": "1686666902.658409",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Yes will do",
+      "time": "07:35",
+      "timestamp": "1686666943.142329",
+      "is_reply": true
+    },
+    {
+      "sender": "Timo Meijrink",
+      "user_id": "U02GCQ0JLUC",
+      "message": "@Kerry should I keep posting like this when I find something when building or is there a better way for you guys?",
+      "time": "07:36",
+      "timestamp": "1686666989.898379",
+      "is_reply": true
+    },
+    {
+      "sender": "Timo Meijrink",
+      "user_id": "U02GCQ0JLUC",
+      "message": "(just ran into an error that I want to share :))",
+      "time": "07:36",
+      "timestamp": "1686667005.658769",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "posting here is :+1: -- depending on the level of effort we may not always address it right away, but we are always looking for feedback :slightly_smiling_face: thank you for reporting",
+      "time": "07:44",
+      "timestamp": "1686667454.357419",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "@Arjun Do you have the backend stack trace for this error?\n\nIt might be better to just fix it at the prompt level rather than block the users from using it.\n\nI had already fixed one instance where {} was causing issues, if it’s different we’d need to either fix the template or do some escaping.",
+      "time": "07:55",
+      "timestamp": "1686668126.751059",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this is the Arjun’s PR to disable curly braces in the frontend https://github.com/instabase/instabase/pull/42152",
+      "time": "08:46",
+      "timestamp": "1686671209.520529",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Timo Meijrink are you able to share this document so that we can reproduce?",
+      "time": "08:47",
+      "timestamp": "1686671240.195899",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "you can reproduce this by going to any build project and type `{}` as the prompt :slightly_smiling_face:",
+      "time": "08:53",
+      "timestamp": "1686671603.867859",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw this is the error message in `model-service-lite` when Timo’s prompt is used @Sławek Biel\n`Invalid prompt schema; check for mismatched or missing input parameters. '\"Aantal\"' (type=value_error)\"`",
+      "time": "08:55",
+      "timestamp": "1686671707.404129",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "I think it's treating flower brace as format string place holders and not as literal flower brace",
+      "time": "08:55",
+      "timestamp": "1686671747.830509",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "and with Kerry’s prompt (`{}`), this is the error message in `model-service-lite`\n`IndexError: tuple index out of range`",
+      "time": "08:59",
+      "timestamp": "1686671957.731609",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Ok. I think I have a fix for that already in a PR I work on. But it’s a bigger refactor change. \n\nHow about we take the front end block PR. After my change is on master I’ll test it and revert the blocking PR there if all is fine",
+      "time": "09:37",
+      "timestamp": "1686674239.883869",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "sounds good!\n\n@Kerry should we merge Arjun’s PR for now then?",
+      "time": "11:35",
+      "timestamp": "1686681302.083019",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i merged! @Sławek Biel can you create a jira ticket to fix this on the model side so we don't forget?\n\nafter that model PR is in we can revert the frontend PR to allow curly brackets",
+      "time": "13:03",
+      "timestamp": "1686686585.874099",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-06-13.json",
+    "message_count": 17,
+    "start_time": "1686665339.337789",
+    "end_time": "1686686585.874099",
+    "is_thread": true
+  }
+}

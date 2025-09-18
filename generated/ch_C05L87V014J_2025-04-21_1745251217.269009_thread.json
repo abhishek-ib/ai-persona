@@ -1,0 +1,200 @@
+{
+  "id": "ch_C05L87V014J_2025-04-21_1745251217.269009_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "mfichman",
+    "Abhishek Adupa",
+    "Goto Tools Go Links",
+    "Vasu"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "(scheduled message)\nWhen spinning up the `ibdev-backend` template, I see the attached error message, resulting in the box never initializing the db (I can connect but `ibdb` doesn’t exist). It might be related to this PR (https://github.com/instabase/instabase/pull/69602) @mfichman, but it seems like the Make target is still the old name (https://github.com/instabase/instabase/blob/master/shared-utils/go-utils/src/instabase/utils/db/Makefile#L44). Can you take a look at this when you get the chance?",
+      "time": "09:00",
+      "timestamp": "1745251217.269009",
+      "is_reply": false
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "I noticed a similar thing where when creating a fresh sandbox, the db doesn't get initialised!",
+      "time": "09:06",
+      "timestamp": "1745251613.661869",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I was able to resolve it locally by reverting the change for now, but would be good to fix on master",
+      "time": "10:06",
+      "timestamp": "1745255189.492889",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Oh, and I guess I’ll write out the error message here so we can search in the future:\n```No rule target to make target 'dev-dbinit'. Stop.```",
+      "time": "10:07",
+      "timestamp": "1745255260.113589",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Looks like you need to update your sandbox -- not revert the PR.",
+      "time": "11:56",
+      "timestamp": "1745261809.638909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Can you un-revert and try to run `cs sandbox update`?",
+      "time": "11:57",
+      "timestamp": "1745261857.759879",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I’m running `cs sandbox update` and it’s taking a while, but I can confirm that I’m seeing the same error on a fresh box.",
+      "time": "13:41",
+      "timestamp": "1745268091.753419",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If it gets stuck on the last step (kubernetes) you can CTRL-C it; that should fix things.",
+      "time": "13:48",
+      "timestamp": "1745268486.822839",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Paul H can you run:\n\n```cat $IB_HOME/shared-utils/go-utils/src/instabase/utils/db/Makefile```",
+      "time": "13:48",
+      "timestamp": "1745268533.146669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "My guess is you may be using an out-of-date branch, or possibly forgot to pull/rebase (?)",
+      "time": "13:50",
+      "timestamp": "1745268600.952999",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "```owner@dev:~$ cat $IB_HOME/shared-utils/go-utils/src/instabase/utils/db/Makefile\ncurrent_dir = $(shell pwd)\ncurrent_dir_docker = $(project_dir_docker)/shared-utils/go-utils/src/instabase/utils/db\nproject_dir = $(shell pwd)/../../../../../..\n\nGOPATH = $(project_dir)/shared-utils/go-utils\nSRC_PATH = $(current_dir)\nGOTEST_FLAGS = -timeout 50m\n\ninclude $(project_dir)/shared-utils/build-utils/shared/build-go.mk\ninclude $(project_dir)/shared-utils/build-utils/shared/deploy.mk\ninclude $(project_dir)/shared-utils/protos/instabase/protos/stats/stats.mk\n\nbuild-go-proto: build-stats-go-proto\n\nstart-database:\n        @$(current_dir)/test/start-dbs-ci.sh\n\nrun-golint:\n        @echo \"Skipping golint\"\n\nrun-test: start-database\n\ncheck-generated-code:\n        @mkdir -p build/go/src/instabase\n        @./scripts/check-generated-code.sh\n\n\ncheck-migrations:\n        @mkdir -p build/go/src/instabase\n        @./scripts/check-migrations.sh\n\ncheck-versions:\n        @mkdir -p build/go/src/instabase\n        @./scripts/check-versions.sh\n\nshow-releases:\n        @./scripts/show-releases.sh\n\nupdate-schema:\n        @git reset -q ./migrations/data/*/schema.json ../models/*/models_generated.go\n        @git checkout -q ./migrations/data/*/schema.json ../models/*/models_generated.go\n        @bazel run tools/dbschema -- reset --schema-name=platform \n        #@bazel run tools/dbschema -- reset --schema-name=knowledgegraph\n\ndb-dev-init: build-env-local\n        @. ./tmp/env_local && bazel run tools/dbdevinit\n\ndb-dev-migrate: build-env-local\n        @. ./tmp/env_local && bazel run tools/dbmigrate -- -reset-staging-table\n\ndb-dev-rollback: build-env-local\n        @. ./tmp/env_local && bazel run tools/dbrollback\n\nbazel-build:\n        @bazel build $(EXTRA_BAZEL_ARGS) //shared-utils/go-utils/src/instabase/utils/db/...\n\nbazel-test: start-database\n        @bazel test $(EXTRA_BAZEL_ARGS) //shared-utils/go-utils/src/instabase/utils/db/...```",
+      "time": "13:50",
+      "timestamp": "1745268636.992409",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase",
+      "time": "13:50",
+      "timestamp": "1745268638.400089",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase",
+      "time": "13:50",
+      "timestamp": "1745268638.415849",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase",
+      "time": "13:50",
+      "timestamp": "1745268638.421349",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "```owner@dev:~/instabase$ git log\ncommit 671b1c25e77d9c45c629d80d4042a9c752f61b87 (HEAD -> master, origin/master)\nAuthor: Danny Lan <110484093+danny-lan@users.noreply.github.com>\nDate:   Mon Apr 21 11:20:09 2025 -0700\n\n    [AUTO-29] Edit custom function in editor (#69939)\n    \n    * open/close udf editor\n    \n    * add custom function field ui\n    \n    * show placeholder custom function pane\n    \n    * cleanup\n    \n    * fix creating derived field, udf field\n    \n    * Address comments\n    \n    * separate custom fn editor\n    \n    * fix tests\n    \n    * move custom function body to its own component\n    \n    * typescript is both incredible but terrifying\n    \n    * fix tests again\n    \n    * temp casecustomfunctionpane\n    \n    * complete case udf editor ui\n    \n    * Fix tests\n    \n    * don't show field itself as arg for custom function field\n    \n    * address comments:```",
+      "time": "13:50",
+      "timestamp": "1745268653.674299",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "That makefile has a target for `db-dev-init`, not `dev-dbinit`",
+      "time": "13:51",
+      "timestamp": "1745268692.386439",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":thinking_face:",
+      "time": "13:52",
+      "timestamp": "1745268725.461369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":facepalm: Sorry, only half of my intended change merged due to a mistake by me. Here's a temporary patch you can use. Will also post a PR.",
+      "time": "13:53",
+      "timestamp": "1745268814.242019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```diff --git a/shared-utils/go-utils/src/instabase/utils/db/Makefile b/shared-utils/go-utils/src/instabase/utils/db/Makefile\nindex ec51145dca2..9ec0b2d39e4 100644\n--- a/shared-utils/go-utils/src/instabase/utils/db/Makefile\n+++ b/shared-utils/go-utils/src/instabase/utils/db/Makefile\n@@ -41,15 +41,18 @@ update-schema:\n        @bazel run tools/dbschema -- reset --schema-name=platform\n        #@bazel run tools/dbschema -- reset --schema-name=knowledgegraph\n\n-db-dev-init: build-env-local\n+dev-dbinit: build-env-local\n        @. ./tmp/env_local && bazel run tools/dbdevinit\n\n-db-dev-migrate: build-env-local\n+dev-dbmigrate: build-env-local\n        @. ./tmp/env_local && bazel run tools/dbmigrate -- -reset-staging-table\n\n-db-dev-rollback: build-env-local\n+dev-dbrollback: build-env-local\n        @. ./tmp/env_local && bazel run tools/dbrollback\n\n+dev-dbcleanup: build-env-local\n+       @. ./tmp/env_local && bazel run tools/dbcleanup\n+\n bazel-build:\n        @bazel build $(EXTRA_BAZEL_ARGS) //shared-utils/go-utils/src/instabase/utils/db/...```",
+      "time": "13:53",
+      "timestamp": "1745268821.253569",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "PR here: https://github.com/instabase/instabase/pull/70007 Ty Paul!",
+      "time": "13:56",
+      "timestamp": "1745268987.453709",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "PR is ready to merge! can I merge?",
+      "time": "14:08",
+      "timestamp": "1745269719.940929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "merged just now!",
+      "time": "15:20",
+      "timestamp": "1745274029.280579",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-04-21.json",
+    "message_count": 22,
+    "start_time": "1745251217.269009",
+    "end_time": "1745274029.280579",
+    "is_thread": true
+  }
+}

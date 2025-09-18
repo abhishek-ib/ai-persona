@@ -1,0 +1,45 @@
+{
+  "id": "ch_C05L87V014J_2024-12-02_1733177489.823399_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@mfichman / @sean.donohoe I'm using the crafting sandbox and trying to run `make build-mocks` in `shared-utils/go-utils/src/instabase/utils/db`.\nI see this error when running `make build-mocks`\n```02 Dec 24 21:56 UTC INF Starting mockery dry-run=false version=v2.43.2\n02 Dec 24 21:56 UTC INF Using config: /src/home/owner/instabase/shared-utils/go-utils/src/instabase/utils/db/.mockery.yaml dry-run=false version=v2.43.2\n02 Dec 24 21:56 UTC ERR unable to parse packages error=\"err: exit status 1: stderr: go: go.mod requires go >= 1.23 (running go 1.22.3; GOTOOLCHAIN=local)\\n\" dry-run=false version=v2.43.2\nerr: exit status 1: stderr: go: go.mod requires go >= 1.23 (running go 1.22.3; GOTOOLCHAIN=local)```\nThis is due to a version mismatch between `mockery` and `go` . `go` was updated from `1.18` to `1.23` in this PR (https://github.com/instabase/instabase/pull/65409/files#diff-22e8ebbc91998dd95aabd00ab0535c8cce123572920c9e42587077486478a6f7). Either downgrading `go` version to 1.22 or upgrading `mockery` to 2.46 fixes the issue.\nWhich one is preferred?",
+      "time": "14:11",
+      "timestamp": "1733177489.823399",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey, sorry for the delay -- we should upgrade mockery if possible :slightly_smiling_face: We could also invoke mockery via bazel if it fits your needs, e.g.\n```[seandojo_envoy_cleanup_cicd][~/instabase/third-party/bazel/go]$ bazel run @com_github_vektra_mockery_v2//:v2 -- --help\nINFO: Invocation ID: 42e5bd73-659c-4ee8-9d90-991464e0d64c\nINFO: Streaming build results to: https://tektite.cluster.engflow.com/invocation/42e5bd73-659c-4ee8-9d90-991464e0d64c\nINFO: Analyzed target @com_github_vektra_mockery_v2//:v2 (0 packages loaded, 0 targets configured).\nINFO: Found 1 target...\nAspect //third-party/bazel/py/rules_mypy:mypy.bzl%mypy_aspect of @com_github_vektra_mockery_v2//:v2 up-to-date (nothing to build)\nINFO: Elapsed time: 0.162s, Critical Path: 0.00s\nINFO: 1 process: 1 internal.\nINFO: Running command line: bazel-bin/external/com_github_vektra_mockery_v2/v2_/v2 --help\nINFO: Streaming build results to: https://tektite.cluster.engflow.com/invocation/42e5bd73-659c-4ee8-9d90-991464e0d64c\nINFO: Build completed successfully, 1 total action\nGenerate mock objects for your Golang interfaces\n\nUsage:\n  mockery [flags]\n  mockery [command]\n\nAvailable Commands:\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  showconfig  Show the yaml config\n\nFlags:\n      --all                        generates mocks for all found interfaces in all sub-directories\n      --boilerplate-file string    File to read a boilerplate text from. Text should be a go block comment, i.e. /* ... */\n      --case string                name the mocked file using casing convention [camel, snake, underscore] (default \"camel\")\n      --config string              config file to use\n      --cpuprofile string          write cpu profile to file\n      --dir string                 directory to search for interfaces\n      --disable-version-string     Do not insert the version string into the generated mock file.\n  -d, --dry-run                    Do a dry run, don't modify any files\n      --exclude stringArray        prefixes of subdirectories and files to exclude from search\n      --exported                   Generates public mocks for private interfaces.\n      --filename string            name of generated file (only works with -name and no regex)\n  -h, --help                       help for mockery\n      --inpackage                  generate a mock that goes inside the original package\n      --inpackage-suffix           use filename '_mock' suffix instead of 'mock_' prefix for InPackage mocks\n      --keeptree                   keep the tree structure of the original interface files into a different repository. Must be used with XX\n      --log-level string           Level of logging (default \"info\")\n      --name string                name or matching regular expression of interface to generate mock for\n      --note string                comment to insert into prologue of each generated file\n      --outpkg string              name of generated package (default \"mocks\")\n      --output string              directory to write mocks to (default \"./mocks\")\n      --packageprefix string       prefix for the generated package name, it is ignored if outpkg is also specified.\n      --print                      print the generated mock to stdout\n      --quiet                      suppresses logger output (equivalent to --log-level=\"\")\n  -r, --recursive                  recurse search into sub-directories\n      --replace-type stringArray   Replace types\n      --srcpkg string              source pkg to search for interfaces\n      --structname string          name of generated struct (only works with -name and no regex)\n      --tags string                space-separated list of additional build tags to use\n      --testonly                   generate a mock in a _test.go file\n      --unroll-variadic            For functions with variadic arguments, do not unroll the arguments into the underlying testify call. Instead, pass variadic slice as-is. (default true)\n      --version                    prints the installed version of mockery\n      --with-expecter              Generate expecter utility around mock's On, Run and Return methods with explicit types. This option is NOT compatible with -unroll-variadic=false\n\nUse \"mockery [command] --help\" for more information about a command.```",
+      "time": "15:43",
+      "timestamp": "1733183020.858369",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you! The makefile uses docker to run mockery so I just edited the makefile",
+      "time": "15:52",
+      "timestamp": "1733183536.898029",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-02.json",
+    "message_count": 3,
+    "start_time": "1733177489.823399",
+    "end_time": "1733183536.898029",
+    "is_thread": true
+  }
+}

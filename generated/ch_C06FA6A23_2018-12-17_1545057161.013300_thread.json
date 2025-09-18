@@ -1,0 +1,141 @@
+{
+  "id": "ch_C06FA6A23_2018-12-17_1545057161.013300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Aaron Vontell",
+    "dlluncor"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Anyone know how to correctly run local regression tests? I get some failures when running the ones on master, says that \"account with username (ashish) not found.\" How would I correctly set the username and access tokens to use? @dlluncor @Ashish",
+      "time": "06:32",
+      "timestamp": "1545057161.013300",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "which specific regression tests are you referring to here? specific commands you are running?",
+      "time": "11:16",
+      "timestamp": "1545074205.018000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I am following this doc: https://docs.google.com/document/d/1ilUEWDGBFt6ZXA3nQinGDKcK_Vu0vMTf6zoX4l0gJYE/edit",
+      "time": "11:23",
+      "timestamp": "1545074614.018200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I have `make run-regression-test-services` running and then in another tab run `make run-regression-test-local FAST=true` in `api-server`",
+      "time": "11:24",
+      "timestamp": "1545074641.018900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "The command that actually runs the tests (the second one) gets one failure, and then the command that is running the test services reports the following:\n```\n2018/12/17 09:30:38 ERROR accountservice/handler/oauth.go:414 -- Fail: Token not found.\n2018/12/17 09:30:39 ERROR accountservice/handler/oauth.go:414 -- Fail: Token not found.\n2018/12/17 09:30:39 ERROR accountservice/handler/account.go:497 -- Fail: Account with username (ashish) not found\n2018/12/17 09:30:39 ERROR accountservice/handler/account.go:497 -- Fail: Account with username (ashish) not found\n2018/12/17 09:30:40 ERROR accountservice/handler/account.go:497 -- Fail: Account with username (ashish) not found\n2018/12/17 09:30:40 ERROR accountservice/handler/account.go:497 -- Fail: Account with username (ashish) not found\n```",
+      "time": "11:25",
+      "timestamp": "1545074708.019100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Also in addition to fixing this issue, I might actually be trying to write my test in the wrong place... I am writing a test for the use of refiner FNs within udfs, is this the write place? Was going to run a flow with a UDF within the apps-server regression tests (I'm basically trying to cut down on some of my UAT tasks)",
+      "time": "11:28",
+      "timestamp": "1545074906.019400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Yes that's the right place to do things.",
+      "time": "11:33",
+      "timestamp": "1545075183.019700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "I think I know what's going wrong there. Out teardown methods aren't working quite correctly.",
+      "time": "11:33",
+      "timestamp": "1545075206.019900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Did you mean API sever or apps server?",
+      "time": "11:34",
+      "timestamp": "1545075250.020100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "was thinking of writing my test in apps-server since it tests the udf functionality itself rather than an API. But I was trying to run regression tests in all four of the given locations first, just to make sure everything was passing locally",
+      "time": "11:35",
+      "timestamp": "1545075319.020300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "That's how I came across this issue in `api-server`",
+      "time": "11:35",
+      "timestamp": "1545075340.020500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "updated the docs",
+      "time": "11:53",
+      "timestamp": "1545076414.021900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "can you try to down the regresssion-test-services code",
+      "time": "11:53",
+      "timestamp": "1545076439.022100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "tab*, and then run without the FAST flag",
+      "time": "11:54",
+      "timestamp": "1545076462.022300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "ok looks like that worked",
+      "time": "11:56",
+      "timestamp": "1545076611.022500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2018-12-17.json",
+    "message_count": 15,
+    "start_time": "1545057161.013300",
+    "end_time": "1545076611.022500",
+    "is_thread": true
+  }
+}

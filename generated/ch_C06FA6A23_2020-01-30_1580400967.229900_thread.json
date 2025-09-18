@@ -1,0 +1,354 @@
+{
+  "id": "ch_C06FA6A23_2020-01-30_1580400967.229900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+    "achao",
+    "Heymian",
+    "will",
+    "Jesika Haria",
+    "lydia",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Refiner 5 seems to be broken on dogfood? I'm seeing a filesystem error https://dogfood.instabase.com/apps/refiner-v5/edit/lydiagu/my-repo/fs/Instabase%20Drive/files/ira-dist/prog/refiner_map_records.ibrefiner",
+      "time": "08:16",
+      "timestamp": "1580400967.229900",
+      "is_reply": false
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "just started running into this on my local too",
+      "time": "08:18",
+      "timestamp": "1580401138.230000",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Hmm I’ll look into this. I merged in my visual things last night, which I thought were looking good, but I may have missed something",
+      "time": "08:23",
+      "timestamp": "1580401383.231300",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "@lydia is there a chance it has something to do with the failed dogfood pushes? I believe that was happening before I merged as well",
+      "time": "08:25",
+      "timestamp": "1580401523.232600",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "yeah fwiw it’s not failing in refiner 5 for me, it’s just in the file system",
+      "time": "08:25",
+      "timestamp": "1580401541.232800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@cross talk - a podcast about crosswords - listen on apple podcasts or spotify you're seeing failures in file system? where?",
+      "time": "08:26",
+      "timestamp": "1580401565.233000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh just when you load lol",
+      "time": "08:26",
+      "timestamp": "1580401584.233200",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "i just rebuilt master and no issues though",
+      "time": "08:26",
+      "timestamp": "1580401608.233400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "weird that i also see no network errors",
+      "time": "08:26",
+      "timestamp": "1580401614.233600",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "but i swear that i was seeing the colin equivalent of `/api/v1/drives/lydiagu/my-repo/fs failed with message: Unable to find drives. retrying 2 more times`",
+      "time": "08:27",
+      "timestamp": "1580401626.233800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I do see in the file service logs that some credentials are failing in boto",
+      "time": "08:27",
+      "timestamp": "1580401627.234000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "https://console.cloud.google.com/logs/viewer?interval=NO_LIMIT&project=instabase-dogfood&organizationId=396394272939&minLogLevel=0&expandAll=false&timestamp=2020-01-30T16:26:25.866000000Z&customFacets=&limitCustomFacetWidth=true&advancedFilter=resource.type%3D%22container%22%0Aresource.labels.cluster_name%3D%22instabase-main-dogfood-001%22%0Aresource.labels.namespace_id%3D%22instabase-dogfood%22%0Aresource.labels.project_id%3D%22instabase-dogfood%22%0Aresource.labels.zone:%22us-east1-%22%0Aresource.labels.container_name%3D%22file-tservice%22%0Aresource.labels.pod_id:%22deployment-file-tservice-%22&scrollTimestamp=2020-01-30T16:20:20.469434756Z",
+      "time": "08:27",
+      "timestamp": "1580401637.234200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "```Traceback (most recent call last): File \"/instabase/file-tservice/instabase/storage/fileservice/handler.py\", line 118, in run_method return f(*args, **kwargs) File \"/instabase/file-tservice/instabase/storage/fileservice/handler.py\", line 715, in stat client, status = create_client(req.con) File \"/instabase/file-tservice/instabase/storage/fileservice/handler.py\", line 93, in create_client return s3client_boto3.S3Client(con.context, validate), make_status_ok() File \"/instabase/file-tservice/instabase/storage/fileservice/s3client_boto3.py\", line 145, in __init__ self.s3_con = boto.connect_s3() File \"/home/ibuser/.local/lib/python3.7/site-packages/boto/__init__.py\", line 141, in connect_s3 return S3Connection(aws_access_key_id, aws_secret_access_key, **kwargs) File \"/home/ibuser/.local/lib/python3.7/site-packages/boto/s3/connection.py\", line 191, in __init__ validate_certs=validate_certs, profile_name=profile_name) File \"/home/ibuser/.local/lib/python3.7/site-packages/boto/connection.py\", line 569, in __init__ host, config, self.provider, self._required_auth_capability()) File \"/home/ibuser/.local/lib/python3.7/site-packages/boto/auth.py\", line 993, in get_auth_handler 'Check your credentials' % (len(names), str(names))) boto.exception.NoAuthHandlerFound: No handler was ready to authenticate. 1 handlers were checked. ['HmacAuthV1Handler'] Check your credentials```",
+      "time": "08:27",
+      "timestamp": "1580401674.234500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@cross talk - a podcast about crosswords - listen on apple podcasts or spotify you rebuilt master for webapp? or all services?",
+      "time": "08:28",
+      "timestamp": "1580401725.234700",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "all services",
+      "time": "08:28",
+      "timestamp": "1580401736.234900",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "`python provisioner.py stop all && python provisioner.py compile all --as-docker --use-prebuilt && python provisioner.py start all --reload --as-docker`",
+      "time": "08:29",
+      "timestamp": "1580401761.235100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hmm odd",
+      "time": "08:31",
+      "timestamp": "1580401873.236100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@achao @Heymian might this be related to any of your recent fileservice changes?",
+      "time": "08:32",
+      "timestamp": "1580401959.236300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh i see, hitting https://dogfood.instabase.com/lydiagu/my-repo/get_tree_nodes/Instabase%20Drive/ returned an error, but the status is still 200 :stuck_out_tongue:",
+      "time": "08:34",
+      "timestamp": "1580402041.236800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yup seems likely it’s the boto3 connection one. @achao",
+      "time": "08:43",
+      "timestamp": "1580402633.238600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "will fix, sorry folks!",
+      "time": "08:44",
+      "timestamp": "1580402646.239100",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "my bad! will revert as soon as travis passes",
+      "time": "09:03",
+      "timestamp": "1580403818.242100",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "done",
+      "time": "09:27",
+      "timestamp": "1580405241.243100",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "i still see this issue",
+      "time": "10:47",
+      "timestamp": "1580410070.245300",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "i presume it’s cause we’re waiting for the fix to be pushed to dogfood?",
+      "time": "10:48",
+      "timestamp": "1580410106.245500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Yeah, the next scheduled push will be in about…6 hours?",
+      "time": "10:49",
+      "timestamp": "1580410177.245700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "If you want I can push file service now. :slightly_smiling_face:",
+      "time": "10:49",
+      "timestamp": "1580410184.245900",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "oh, hmm. that’d be amazing if possible! i have some feedback meetings scheduled for the afternoon so would be ideal to have the app up!",
+      "time": "10:50",
+      "timestamp": "1580410227.246100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I’ve started the push, does anything else need to be bumped while I am in here?",
+      "time": "10:51",
+      "timestamp": "1580410262.246300",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "thank you!",
+      "time": "10:53",
+      "timestamp": "1580410387.246500",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "i pulled latest master, compiled and reran, and i’m still seeing:\n```/api/v1/drives/colinmackenzie/my-repo/fs failed with message: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again. retrying 2 more times```",
+      "time": "10:56",
+      "timestamp": "1580410612.246900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Was that with the `provisioner.py` command you sent earlier? That doesn’t build the containers from master, it will pull down the most recent build, which might not have it yet.",
+      "time": "10:57",
+      "timestamp": "1580410663.247100",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "oo okay good to know",
+      "time": "10:58",
+      "timestamp": "1580410682.247300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "You can remove the flag to build it though. That’s the `use-prebuilt`",
+      "time": "10:58",
+      "timestamp": "1580410712.247500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "(Though maybe only do that for the one service so you don’t wait while it builds EVERYTHING :smile: )",
+      "time": "10:59",
+      "timestamp": "1580410750.247800",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "yeah - we think file-tservice is the offender here?",
+      "time": "10:59",
+      "timestamp": "1580410766.248000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Yeah",
+      "time": "10:59",
+      "timestamp": "1580410782.248200",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "yeah fileservice was the offender of the error @will posted",
+      "time": "11:01",
+      "timestamp": "1580410881.248400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "The push to dogfood was successful btw!",
+      "time": "11:01",
+      "timestamp": "1580410901.248600",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "@will just tried dogfood, works! thank youuu",
+      "time": "11:03",
+      "timestamp": "1580411032.249000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "That’s @Heymian and @achao, I just pressed the dogfood button. :slightly_smiling_face:",
+      "time": "11:04",
+      "timestamp": "1580411057.249400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-01-30.json",
+    "message_count": 41,
+    "start_time": "1580400967.229900",
+    "end_time": "1580411057.249400",
+    "is_thread": true
+  }
+}

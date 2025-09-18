@@ -1,0 +1,118 @@
+{
+  "id": "ch_C05L87V014J_2025-03-12_1741775569.379969_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "jemin.jain",
+    "Yash Aggarwal",
+    "Vasu"
+  ],
+  "messages": [
+    {
+      "sender": "jemin.jain",
+      "user_id": "U085JC8GY0M",
+      "message": "Hey team,\nFiles are not getting indexed, no error on the UI though just stuck on Indexing :loading:  and showing 0 files while trying to add S3 datasource for testing in crafting\nSandbox link: https://https--jeminjain-instabase.instabase.site.sandboxes.run/\nLogged in with <mailto:jemin.jain@instabase.com|jemin.jain@instabase.com> and created an Org: agent-obs Then proceeded to add the S3 drive .",
+      "time": "03:32",
+      "timestamp": "1741775569.379969",
+      "is_reply": false
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Looks like search-service isn't able to connect the mysql for some reason causing the indexing to stay stuck.",
+      "time": "03:42",
+      "timestamp": "1741776174.269739",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "Also, `0` files means that even connector never started because otherwise you'd see `0/x` files",
+      "time": "07:26",
+      "timestamp": "1741789566.806699",
+      "is_reply": true
+    },
+    {
+      "sender": "jemin.jain",
+      "user_id": "U085JC8GY0M",
+      "message": "any insights on how can we debug it further?",
+      "time": "08:25",
+      "timestamp": "1741793115.840629",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Looking at the logs, it looks like its able to connect after a restart.",
+      "time": "08:59",
+      "timestamp": "1741795173.812569",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Could you try deleting the datasource, and adding it again?",
+      "time": "08:59",
+      "timestamp": "1741795197.441359",
+      "is_reply": true
+    },
+    {
+      "sender": "jemin.jain",
+      "user_id": "U085JC8GY0M",
+      "message": "Done, same state",
+      "time": "09:10",
+      "timestamp": "1741795837.071059",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Based on the logs the last call that landed in app-tasks was at 4 today, you could try following the path from api-server (to make sure mount got added successfully) -> core-platform (same as previous) -> search-service (after adding the mount, search service was able to detect whether there are new items to ingest) -> job-service -> api-server (checking call to node-agent endpoint) -> celery-app-tasks (for actual digitisation, indexing etc.).",
+      "time": "09:28",
+      "timestamp": "1741796884.630629",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "@jemin.jain, just to confirm, did you build and push the connector images?\n`make -C tools/connectors/connector-s3 build-docker push-dev`",
+      "time": "09:28",
+      "timestamp": "1741796929.999999",
+      "is_reply": true
+    },
+    {
+      "sender": "jemin.jain",
+      "user_id": "U085JC8GY0M",
+      "message": "@Yash Aggarwal nope, is it required every time,\ndidnt do it the last time i remember.",
+      "time": "10:04",
+      "timestamp": "1741799094.637749",
+      "is_reply": true
+    },
+    {
+      "sender": "jemin.jain",
+      "user_id": "U085JC8GY0M",
+      "message": "Tried running the above command and re-added the S3 drive.\nWorked now.  Thanks!\nA couple of files failed tho with following errors:\n\n`2025/03/12 17:12:20 INFO jobservice/taskscheduler/stats.go:125 -- Task failed [TaskID=31aaee41-e152-4097-b653-860e6cb4ce0b-Stage2-process_files-m-1-11, IsCheckpointFailure=false, FlowPath=system/global/fs/Instabase Drive/System/tmp/DigitizerIndexer/reader.ibflow, JobPriority=5, JobType=FLOW, Reason='Error from execute_step:process_files, error:HTTPSConnectionPool(host='vision.googleapis.com (http://vision.googleapis.com)', port=443): Max retries exceeded with url: /v1/images:annotate?key=AIzaSyAqQkeWfNjbLoh0yJHG5sj_8dFyVVOsUU8 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f12e36979a0>: Failed to establish a new connection: [Errno -2] Name or service not known')). Image: system/global/fs/Instabase Drive/System/tmp/DigitizerIndexer/31aaee41-e152-4097-b653-860e6cb4ce0b/original/images/01958b55-f594-7181-8160-1186af5855a1.pdf_p3.JPEG'].`",
+      "time": "10:31",
+      "timestamp": "1741800692.271739",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "I thought it was a part of the automated steps that run when the sandbox starts up - https://github.com/instabase/instabase/blob/23199560bc54fcf5e5d84977d96c3a3ca9549363/.sandbox/ibdev-backend/hooks/build#L6. Something may have gone wrong during start up :thinking_face:",
+      "time": "23:36",
+      "timestamp": "1741847777.332239",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-12.json",
+    "message_count": 12,
+    "start_time": "1741775569.379969",
+    "end_time": "1741847777.332239",
+    "is_thread": true
+  }
+}

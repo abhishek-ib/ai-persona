@@ -1,0 +1,242 @@
+{
+  "id": "ch_C06FA6A23_2024-08-05_1722855560.717249_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cheryl Zhou",
+    "mfichman",
+    "tony.shi",
+    "shiqi",
+    "abhijnan",
+    "daniel",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "abhijnan",
+      "user_id": "U056NM536PP",
+      "message": "I'm running into the same issue even after using my credentials. I've made the following changes to `env-local.json`\n```\"base\": {\n  \"aws_access_key_id\": <access key>,\n  \"aws_secret_access_key\" : <secret>,\n  \"aws_session_token\" :<token>\n}\n\n\"local\" : {\n  \"aws_access_key_id\": <access key>,\n  \"aws_secret_access_key\" : <secret>,\n  \"aws_session_token\" :<token>\n}```\nAny idea where I could've gone wrong. I've verified that the credentials I'm using can access dogfood s3 buckets",
+      "time": "03:59",
+      "timestamp": "1722855560.717249",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Make sure you recompile and restart all services. They don’t pick up the env vars unless you recompile.",
+      "time": "06:16",
+      "timestamp": "1722863783.310079",
+      "is_reply": true
+    },
+    {
+      "sender": "abhijnan",
+      "user_id": "U056NM536PP",
+      "message": "Did that as well, the issue still persists.",
+      "time": "06:51",
+      "timestamp": "1722865915.443499",
+      "is_reply": true
+    },
+    {
+      "sender": "abhijnan",
+      "user_id": "U056NM536PP",
+      "message": "fixed it! For anyone else running into the same issue, I had to change this in `env-local.json`\n```\"local\" : {\n    \"use_aws_access_creds\": \"False\",\n}```",
+      "time": "07:04",
+      "timestamp": "1722866685.906039",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Which creds are y'all using?",
+      "time": "10:26",
+      "timestamp": "1722878810.905309",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "https://instabase.slack.com/archives/C06FA6A23/p1722619384000989?thread_ts=1722287077.707969&cid=C06FA6A23",
+      "time": "10:27",
+      "timestamp": "1722878829.935889",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i can’t use my local env because i’m getting `Failure during stat` errors for all fs calls :disappointed:\n\nhowever, this time i’m getting a 400 error, not a 403 error\n```Failure during stat. Path: 3bf42bb6-a3e4-4e8c-8842-4f47afc0d9c5/ground-truth-sets/f9ddab0b-451f-4e5f-ab01-b85ed8ddf3bf/creation-runs/519b1225-a906-4dac-82fc-f6db0e39f85a/75f9e591-6c6c-44a3-bdf1-6ac21373e21a/input/w2_1.pdf Err: operation error S3: HeadObject, https response error StatusCode: 400, RequestID: CN460D59CRQZ1QAH, HostID: yivqQYbkZ4bpyn6htp6dqe+dZ2gg/ugO4j0lRWTdTA9acwONo9R6cOt6MZVbgRGJxcFnNfGX9Ao=, api error BadRequest: Bad Request```\nthis was literally working 10 min ago - did something change?\n\ni know the aws access credentials rotate, so i’m already using my latest access keys for the `baseEng` role in the `instabase` account",
+      "time": "21:24",
+      "timestamp": "1722918281.798349",
+      "is_reply": true
+    },
+    {
+      "sender": "abhijnan",
+      "user_id": "U056NM536PP",
+      "message": "Token might've expired",
+      "time": "21:28",
+      "timestamp": "1722918536.250699",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "just x-posted in <#C0106JV0TFS|> then https://instabase.slack.com/archives/C0106JV0TFS/p1722918692821919",
+      "time": "21:31",
+      "timestamp": "1722918708.291029",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "just to confirm, are you also running into the same problem? @abhijnan @Cheryl Zhou",
+      "time": "21:32",
+      "timestamp": "1722918761.488529",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "i haven't tried in a while, but in the past i've found the tokens from the portal extremely short-lived as well",
+      "time": "21:34",
+      "timestamp": "1722918853.057359",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m not sure if the problem is with the tokens though since i’m getting 400 errors (ie Bad Request), not 403 errors",
+      "time": "21:34",
+      "timestamp": "1722918888.975669",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "@Serena we haven't revoked the previous keys yet, are you able to try those and see if they work? if not then it probably means it is not the credentials",
+      "time": "21:40",
+      "timestamp": "1722919220.933419",
+      "is_reply": true
+    },
+    {
+      "sender": "daniel",
+      "user_id": "U039ZHK0MQF",
+      "message": "I can still access fs in my local env with `baseEng` role cred in the `instabase` account",
+      "time": "21:43",
+      "timestamp": "1722919392.873209",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i used the credentials that Shiqi removed from `deployment-configs/environment-patches/dogfood/fs-creds.yml` in his PR (https://github.com/instabase/instabase/pull/60613/files#diff-16e632b9d5b60c52a9cba43a6c76f57a625432df62343abe50aa52d2ced0ec50), and i still get the same errors, so it’s probably an issue with the `grpc-file-service` image i’m using",
+      "time": "21:49",
+      "timestamp": "1722919763.545189",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i just rebuilt my grpc-file-service image, and i’m still getting the same error :(",
+      "time": "21:58",
+      "timestamp": "1722920324.199619",
+      "is_reply": true
+    },
+    {
+      "sender": "abhijnan",
+      "user_id": "U056NM536PP",
+      "message": "Just solved the same issue by updating the credentials and running `ppy compile lite`",
+      "time": "22:03",
+      "timestamp": "1722920624.393849",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems that both Daniel and you are running everything locally, but i’m running everything in docker, so maybe that’s the difference?",
+      "time": "22:06",
+      "timestamp": "1722920760.067849",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i _think_ the problem is that i use crafting to build our docker images for our go services, and my local config isn’t getting used in the bazel build correctly\n\ni added printf statements to `core-services/file-service/src/go/src/instabase/fileservice/clients/s3_client.go` and it seems that the aws credential variables are always empty :cry:",
+      "time": "22:23",
+      "timestamp": "1722921820.968559",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "@Serena were you using crafting on Friday when the credential was working for you?",
+      "time": "22:37",
+      "timestamp": "1722922631.219349",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "on Friday, i did not recompile file-service since i thought that it was like the other services and would pick up the new env variables by just restarting\n\nbased on matt’s comment (https://instabase.slack.com/archives/C06FA6A23/p1722863783310079?thread_ts=1722287077.707969&cid=C06FA6A23), it seems recompiling is necessary to pick up the new env variables",
+      "time": "22:38",
+      "timestamp": "1722922695.739079",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "sorry I wasn't aware of those details when we made the change, let me connect with IT and see how to make it easier (including extending the default session token lifetime)",
+      "time": "22:49",
+      "timestamp": "1722923399.202779",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’ve made some progress - the aws credentials in `env-local.json` are properly used now in `grpc-file-service`\n\n1. i reloaded the aws access portal to get credentials to copy-paste into the `docker-local` section of `env-local.json`\n2. i re-compiled both `file-service` and `core-platform-service` using `make build-docker CRAFTING_RBE_ENABLED=1`\n    a. previously the aws credentials in `mountDetails` were empty, so that’s why i was getting the 400 errors\n    b. you can see how the aws credentials in my file-service log statements match the aws access portal screenshot\nhowever, now i get a 403 error for all fs calls :sob:",
+      "time": "23:02",
+      "timestamp": "1722924172.484449",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@shiqi another problem is that to run UDFs on AWS lambda (https://docs.google.com/document/d/148iDGDTYvtuCIVsRFfmezenmG7BE1T8zSTwXIkUEZME/edit#heading=h.823v2mvdsmqy), we need to use the `powerUser` role under `instabase-dev`\n\nif we have to use the `baseEng` role under `instabase`, then we’ll never be able to test the custom function feature in Build in local environments",
+      "time": "23:05",
+      "timestamp": "1722924311.023049",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "logging off for now, and i’ll ask core-services again about the 403 errors in grpc-file-service in the morning",
+      "time": "23:06",
+      "timestamp": "1722924417.911559",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "thanks for the info, yeah the old key was using powerUser permission and I couldn't figure out the full scope of what specific permission was needed, (the logs didn't tell us much), will work with IT to ensure the roles are properly set, we will not revoke the old keys until then, so if you are encountering issues feel free to try the old key to see if that works, I will follow up once we can get the roles updated (unfortunately I do not have admin permission on that aws account to make changes myself)",
+      "time": "23:21",
+      "timestamp": "1722925303.704729",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "omg i just fixed my local env, i realized that i never used the dogfood credentials from Shiqi’s PR (https://github.com/instabase/instabase/pull/60613/files#diff-16e632b9d5b60c52a9cba43a6c76f57a625432df62343abe50aa52d2ced0ec50) correctly\n\n1. copy-paste those deleted credentials into the `docker-local` section of `env-local.json`\n    a. also set `use_aws_access_creds` to true - i think we need it to be true so that the access keys are used (see code (https://github.com/instabase/instabase/blob/b340068/core-services/file-service/src/go/src/instabase/fileservice/clients/s3_client.go#L212))\n2. recompile and restart `core-platform-service`\n    a. i realized that recompiling and restarting `grpc-file-service` is unnecessary since `grpc-file-service` calls `GetMountDetails` in `core-platform-service` to get the s3 client credentials\n(only took me 2 hours to figure this out :sob: )",
+      "time": "23:36",
+      "timestamp": "1722926179.098669",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-08-05.json",
+    "message_count": 27,
+    "start_time": "1722855560.717249",
+    "end_time": "1722926179.098669",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-10-02_1727893899.188369_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Managed to get it work thanks to @mfichman. Summary:\nFor read-only MySQL access, go to Grafana and use it. Much simpler.\n\nGo to https://sandbox.console.instabase.com/ for internal sandboxes. (console.instabase.com (http://console.instabase.com) for live customer sandboxes)\n\nFrom Okta, go to AWS iam connect. In instabase-sandbox, copy the access keys for `assume-sandbox-kubectl-admin`\nYou can export the access keys in terminal or add them into ~/.aws/credentials for easy reuse later.\n\nNext go to sandbox https://sandbox.console.instabase.com/customer/Engineering/tenant/aihub-sandbox/info\nClick on connect to the get the connect string, run it in terminal.\nThis will change kubectl context to point to this terminal.\n\nTo connect to MySQL, run\n```kubectl get secret db-backend-params -o json | jq -r '.data | map_values(@base64d) | .db_string'```\nThis returns the connection credentials. Replace username with user in the connection string.\n\nThen run\n```kubectl run dbg-mysql --image=mirror.gcr.io/mysql:8 -it --rm --restart=Never -- /usr/bin/bash```\nThis will open bash shell in a mysql pod in the VPC. Run\n```mysql <connection string>```\n*Note you will have edit access here so be very careful.*",
+      "time": "11:31",
+      "timestamp": "1727893899.188369",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-10-02.json",
+    "message_count": 1,
+    "start_time": "1727893899.188369",
+    "end_time": "1727893899.188369",
+    "is_thread": true
+  }
+}

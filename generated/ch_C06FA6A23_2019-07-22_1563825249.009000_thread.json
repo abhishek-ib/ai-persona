@@ -1,0 +1,135 @@
+{
+  "id": "ch_C06FA6A23_2019-07-22_1563825249.009000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Handsome Dave",
+    "shaunak",
+    "Karthik S",
+    "dlluncor"
+  ],
+  "messages": [
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Howdy, all. We have a ticket (https://instabase.zendesk.com/agent/tickets/400) where a customer has a workflow that is fine in ‘native’ mode but fails to run when compiled. Disabling the Merge Files option makes it work both ways. A video showing the problem (but without the workaround) is in the <#CGMBQ0R8E|> channel. Any ideas what’s going on or what we should be looking into to fix it?",
+      "time": "12:54",
+      "timestamp": "1563825249.009000",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "@Karthik S @shaunak maybe we can do a huddle on this:\n\nThe issue is:\n   Flow Binary does not support running a step after Merge Files\n   Flow Classic or Flow V1 (native mode as you call it) does allow any set of steps to run in any order\n\nLet’s chat about what our options are to make this clearer to the user Shaunak and Karthik:\n\n@Handsome Dave for your purposes, i’d suggest we tell them this is not a supported feature in Flow Binary:\n\nIf they want to mutate the Apply Refiner results, I suggest they do that before the Merge Files step\n\nSo: Apply Refiner -> Apply UDF -> Merge Files",
+      "time": "13:04",
+      "timestamp": "1563825890.009800",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "Multiflows could be an option",
+      "time": "13:05",
+      "timestamp": "1563825934.010000",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "Lets huddle",
+      "time": "13:05",
+      "timestamp": "1563825942.010200",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "Basically, we should physical plan it automatically and compile it as multiflow binary",
+      "time": "13:40",
+      "timestamp": "1563828053.010400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Yes, the `apply_udf` after `merge_files` is the core of the problem here.  What they want to do is convert the out.ibocr to the corresponding .csv file.\n\nIf we want to support it, we should be adding a reducer_udf.  One option that we can do is, disable the Add step option if Merge Files step is already present",
+      "time": "13:41",
+      "timestamp": "1563828114.010600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Another option is to do a post-flow hook? Basically a reducer UDF yes",
+      "time": "14:07",
+      "timestamp": "1563829665.011000",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Just got out of a meeting. Do we have a consensus on what I should be sending to FRB?",
+      "time": "14:22",
+      "timestamp": "1563830522.011200",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "```\nHi Gary,\n\nAfter discussing this with my engineering team, the issue is that Flow v2 (binary mode) does not support running steps after Merge Files, while Flow v1 (native mode) did. Specifically, `apply_udf` after `merge_files` doesn't work. If possible, you should look into applying the UDF after the refiner but before merging the files. We will also look into making this limitation more obvious in the UI in future releases.\n\nCheers,\n\nDavid\n```",
+      "time": "14:45",
+      "timestamp": "1563831932.011700",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "How does that sound? I’m not 100% on what all the words I’m using *mean* so I’d be very happy for any feed back :smile:",
+      "time": "14:46",
+      "timestamp": "1563831973.011900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Yes that is accurate @Handsome Dave — Karthik, Shaunak and I need to work on a feature which allows them to export their flow output as CSV in the next release",
+      "time": "15:29",
+      "timestamp": "1563834572.013700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "if you could just ask them specifically the output they are looking for in the Flow — we can make sure to support that feature in the next Flow release",
+      "time": "15:29",
+      "timestamp": "1563834590.013900",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Will do.",
+      "time": "15:31",
+      "timestamp": "1563834661.014100",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Sent. I did not specify “next” release, as I don’t generally like promising stuff like that in tickets. Once they reply, I’ll forward it along to you. Thank for your help, everyone!",
+      "time": "15:42",
+      "timestamp": "1563835336.014300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-07-22.json",
+    "message_count": 14,
+    "start_time": "1563825249.009000",
+    "end_time": "1563835336.014300",
+    "is_thread": true
+  }
+}

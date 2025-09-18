@@ -1,0 +1,109 @@
+{
+  "id": "ch_CSY11CK7T_2025-07-28_1753710214.788509_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "anik.b",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "I did the fix as suggested on the crafting thread, I made some progress now it is stuck at 40% while uploading\neverything in api-server seems fine though, Job service also looks good, I will work on something else in the meanwhile until we can precisely nail it down.",
+      "time": "06:43",
+      "timestamp": "1753710214.788509",
+      "is_reply": false
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "@Serena When you are back, Could you suggest what else I need to look for?",
+      "time": "07:09",
+      "timestamp": "1753711768.563769",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "you need to look at the logs in celery-app-tasks to figure out why the digitization job is stuck",
+      "time": "07:39",
+      "timestamp": "1753713578.156919",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "in `celery-app-task` logs, i see `DEADLINE_EXCEEDED` errors from model-service (ss1)\n\nin `job-service` logs, i see `Unexpected error getting job state for failed task [TaskID=3e2ca2ff-ca2a-4e00-a409-5fb5a919a2dc-build-process-files, Reason='Failed to store project_docs : Project Docs cannot be empty or None']` (ss2)",
+      "time": "07:47",
+      "timestamp": "1753714022.076919",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`model-service` is not running properly in your environment - see the build issue in ss1\n\nthe fix for this was already mentioned last week (https://instabase.slack.com/archives/C05L87V014J/p1753388110844289)",
+      "time": "07:48",
+      "timestamp": "1753714134.330259",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@anik.b in the future, can you double check that all services are running properly and check <#C05L87V014J|> for any relevant fixes for those services?\n\nfor now, i've added `\"601729033846.dkr.ecr.us-east-2.amazonaws.com (http://601729033846.dkr.ecr.us-east-2.amazonaws.com)\": \"ecr-login\"` to `~/.docker/config.json`, and `model-service` seems to be building successfully",
+      "time": "07:51",
+      "timestamp": "1753714270.926349",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`model-service` successfully built but crashed bc of your change in `shared-utils/py-utils/utils/src/py/instabase/config_utils/feature_flags.py`\n\nyou need to make sure to follow `make build-protos` so that your changes are propagated to auto-generated proto files\n\nsince you haven't done that yet, `model-service` is crashing, which is causing digitization to fail",
+      "time": "08:04",
+      "timestamp": "1753715056.152839",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "I just generated those proto files, model-service looks fine, nonetheless it doesn't work.",
+      "time": "09:14",
+      "timestamp": "1753719246.462969",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "I'll forward this to the <#C05L87V014J|>",
+      "time": "09:18",
+      "timestamp": "1753719504.795489",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`model-service` was not running properly on your crafting environment - see screenshot of `cs logs -f model-service`",
+      "time": "09:29",
+      "timestamp": "1753720158.849499",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i assume you did `cs restart`? it seems `model-service` is running successfully now!",
+      "time": "09:31",
+      "timestamp": "1753720295.703119",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-07-28.json",
+    "message_count": 11,
+    "start_time": "1753710214.788509",
+    "end_time": "1753720295.703119",
+    "is_thread": true
+  }
+}

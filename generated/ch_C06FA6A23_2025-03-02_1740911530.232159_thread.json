@@ -1,0 +1,117 @@
+{
+  "id": "ch_C06FA6A23_2025-03-02_1740911530.232159_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "mfichman"
+  ],
+  "messages": [
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "@mfichman Starting a new thread for this from https://instabase.slack.com/archives/C05BJCNKZAM/p1740762191482179\n\nHad a few question about pull/68433 (https://github.com/instabase/instabase/pull/68433) out of curiosity: What was the purpose of filtering the keys in the go layer when we fetch mount point details? What is it doing if in the python layer we can just pass in `'ib-system-admin'` to bypass the filter which removes the secret keys from mount details?\n\nThanks for all the help!",
+      "time": "02:32",
+      "timestamp": "1740911530.232159",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In the old implementation, secret details were being leaked back to the frontend. Even org members who are not administrators could see them. I don’t think many customers would be happy about that.",
+      "time": "04:05",
+      "timestamp": "1740917147.028469",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "As we add more connectors, we need to be careful about this sort of thing. Previously, there was a blocklist in Python that blocked _some_ of the secrets. But it was not complete, so secrets were getting leaked.\n\nI switched it to an allowlist in Go, which is marginally safer. However, the real fix for this will come with the connector catalog project, and when we move the mailbox connector onto unified ingestion (aka search ingestion).",
+      "time": "04:07",
+      "timestamp": "1740917269.028589",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Lmk if you have other concerns!",
+      "time": "04:11",
+      "timestamp": "1740917476.107479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "By the way, at a meta-level, this is one of the reasons I believe splitting access control between Python and Go is bad. It’s too easy to “drop the ball:” Python code may assume that Go code implements the access controls (or vice versa) when in reality neither does! I’ve been trying to move more access controls into Go to make sure that the lowest layer is always secure.",
+      "time": "04:13",
+      "timestamp": "1740917589.957989",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Makes sense! So just to make sure I'm understanding correctly, we wanted to move the access checks to the go layer so that it's more fail-proof and harder for the mount details to be leaked?",
+      "time": "04:21",
+      "timestamp": "1740918110.326489",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I think my concern is more around having a hardcoded username like `ib-system-admin` that we can use to get any data we want from the go layer. I'm guessing it's not a problem since this operation can only be done from the application logic in the python layer, but I wonder if it might be opening the door up to some security issues in the future. Like if an engineer somehow misses something in the logic and passes some data back to the frontend from using `ib-system-admin`. Ideally this wouldn't happen, but curious to hear your thoughts.",
+      "time": "04:28",
+      "timestamp": "1740918527.126339",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, this is a temporary workaround. Per the original connector/FRAG crawler design that I wrote up last year, connectors are supposed to have a key pair that they use to authenticate with the Go layer, to prevent one connector from taking another connector’s mount details (edit: this is especially important if we start allowing third-party connectors)",
+      "time": "05:10",
+      "timestamp": "1740921013.207259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Regardless, the PR you implemented is still better than the status quo because it requires the programmer to _explicitly_ use the ib-system-admin user at the Python layer. Whereas, in the previous state, one could implicitly use the normal end-user account and cause a leak without realizing it.",
+      "time": "05:12",
+      "timestamp": "1740921145.574919",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@prateek.tenkale if you are interested, it would be great to have volunteer to actually implement the keypair management design!",
+      "time": "05:37",
+      "timestamp": "1740922659.991329",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Sure, that sounds really interesting! I'm currently working on case management backend and OOO 03/06-03/14, but depending on the loe and bandwidth would love to be a part of it! cc @andy",
+      "time": "14:03",
+      "timestamp": "1740953038.443109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Nice! It's not a huge project, but it will help close this loophole :slightly_smiling_face:",
+      "time": "15:09",
+      "timestamp": "1740956941.731459",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-03-02.json",
+    "message_count": 12,
+    "start_time": "1740911530.232159",
+    "end_time": "1740956941.731459",
+    "is_thread": true
+  }
+}

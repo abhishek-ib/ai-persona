@@ -1,0 +1,88 @@
+{
+  "id": "ch_C05L87V014J_2025-07-31_1753983401.157199_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Xindi Xu",
+    "prateek.tenkale",
+    "Jet",
+    "demetr.starshov"
+  ],
+  "messages": [
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "My deployment runs page is crashing on crafting:\nand taking I have only one failed request\nhttps://https--demetr-sand8-instabase.instabase.site.sandboxes.run/api/v2/apps/deployments/01986180-1cc9-716f-9e26-711eda01071f/link\nwhich returns very specific error\n```{\"message\": \"Invalid value for header IB-Context. Requestor doesn't have community context.\"}```\nI assume this is because of configuration and may be related to crafting specific shortcuts.\n\nDoes anyone else have the similar issue?",
+      "time": "10:36",
+      "timestamp": "1753983401.157199",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Is it specifically the deployment runs page? Or are other pages getting the same issue?",
+      "time": "10:57",
+      "timestamp": "1753984637.959719",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "(seems like other people are reporting the same issue on this page)",
+      "time": "11:08",
+      "timestamp": "1753985298.254209",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "check the metronome/license/AiHub license API call in the network tab?",
+      "time": "11:08",
+      "timestamp": "1753985320.360079",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "@tony.shi can you take a look? Might be related to @Xindi Xu's changes",
+      "time": "11:08",
+      "timestamp": "1753985327.248199",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@demetr.starshov could you check the errored api call's request header? All calls sent using `fetch` from the frontend should have the IB-Context header set to the commercial context now.",
+      "time": "11:09",
+      "timestamp": "1753985398.375929",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Related to this https://github.com/instabase/instabase/pull/73002",
+      "time": "11:27",
+      "timestamp": "1753986468.685569",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Ok, resolved this in a separate call. @prateek.tenkale helped pin down the issue. It's actually because of the `/jobs` response returning camelCase instead of snake_case in each job's `metadata` field. There's already a fix for it here (https://instabase.slack.com/archives/C02ACPHNMSQ/p1753748532787879?thread_ts=1753745032.359119&cid=C02ACPHNMSQ), which was merged on Monday.\n\nHowever, any jobs that were run while this bug was active will still have camelCased metadata saved into the DB. So you'll also need to delete the affected jobs. @prateek.tenkale suggested the workaround by:\n1.  Going to the Apps Run page (not Deployment Runs)\n2. Manually inspecting the `/jobs` endpoint for jobs with camelCased metadata\n3. Delete them via the UI.\nOr if you know how to navigate the DB, you can do it manually there too =)",
+      "time": "11:29",
+      "timestamp": "1753986592.541909",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-31.json",
+    "message_count": 8,
+    "start_time": "1753983401.157199",
+    "end_time": "1753986592.541909",
+    "is_thread": true
+  }
+}

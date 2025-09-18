@@ -1,0 +1,129 @@
+{
+  "id": "dm_D03LK3XUJUA_2025-02-26_1740601476.843959",
+  "type": "dm",
+  "participants": [
+    "Anil",
+    "Abhishek Adupa"
+  ],
+  "messages": [
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "```\nDELETE j \nFROM instabase.jobs (http://instabase.jobs) AS j\nLEFT JOIN instabase.job_metadata AS jm \nON j.id = jm.job_id\nWHERE jm.job_id IS NULL;```",
+      "time": "12:24",
+      "timestamp": "1740601476.843959",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "```kubectl run mysql-client --image=mysql:5.7 -it --rm --restart=Never -- sh```\n\n```mysql -h insan-use2-aihub-uat-db.ckyp1w23cnkd.us-east-2.rds.amazonaws.com (http://insan-use2-aihub-uat-db.ckyp1w23cnkd.us-east-2.rds.amazonaws.com) \\\n      -u db_master \\\n      -P 3306 \\\n      -p \\\n      instabase```",
+      "time": "12:25",
+      "timestamp": "1740601530.379299",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "```DELETE aj \nFROM instabase.ai_hub_project_jobs AS aj\nJOIN instabase.jobs (http://instabase.jobs) AS j \nLEFT JOIN instabase.job_metadata AS jm \nON j.id = jm.job_id\nWHERE jm.job_id IS NULL AND aj.job_id = j.id;```",
+      "time": "12:30",
+      "timestamp": "1740601836.935229",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Anil, did you delete the rows already? can I run few queries and save some stuff to debug",
+      "time": "12:40",
+      "timestamp": "1740602409.888809",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "```mysql> DELETE aj\n    -> FROM instabase.ai_hub_project_jobs AS aj\n    -> JOIN instabase.jobs (http://instabase.jobs) AS j ON aj.job_id = j.id\n    -> LEFT JOIN instabase.job_metadata AS jm\n    -> ON j.id = jm.job_id\n    -> WHERE jm.job_id IS NULL AND aj.job_id = j.id;\nQuery OK, 23 rows affected (8.40 sec)```",
+      "time": "12:40",
+      "timestamp": "1740602431.947769",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "this worked",
+      "time": "12:40",
+      "timestamp": "1740602434.083479",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "```mysql> DELETE j\n    -> FROM instabase.jobs (http://instabase.jobs) AS j\n    -> LEFT JOIN instabase.job_metadata AS jm\n    -> ON j.id = jm.job_id\n    -> WHERE jm.job_id IS NULL;```",
+      "time": "12:40",
+      "timestamp": "1740602437.786409",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "this is stuck",
+      "time": "12:40",
+      "timestamp": "1740602439.715129",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "```mysql> DELETE j\n    -> FROM instabase.jobs (http://instabase.jobs) AS j\n    -> LEFT JOIN instabase.job_metadata AS jm\n    -> ON j.id = jm.job_id\n    -> WHERE jm.job_id IS NULL;\n\nQuery OK, 103 rows affected (5 min 17.98 sec)```",
+      "time": "12:41",
+      "timestamp": "1740602505.354749",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "done",
+      "time": "12:41",
+      "timestamp": "1740602506.293009",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Okay.",
+      "time": "12:41",
+      "timestamp": "1740602512.599579",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "```mysql> SELECT j.id, j.job_type\n    -> FROM instabase.jobs (http://instabase.jobs) AS j\n    -> LEFT JOIN instabase.job_metadata AS jm\n    -> ON j.id = jm.job_id\n    -> WHERE jm.job_id IS NULL;\n+--------------------------------------+-----------------+\n| id                                   | job_type        |\n+--------------------------------------+-----------------+\n| 02d5bb6a-917b-481b-843c-1928eac53f9f | AIHUB_BUILD     |\n| 09ebe6ba-5eeb-4772-bd51-2b1ebac71b09 | AIHUB_BUILD     |\n| 0a7bfd64-aad2-4062-a9ad-79e290e0fbe5 | AIHUB_BUILD     |\n| 2f403af6-1259-44ae-b596-288381fb36a6 | AIHUB_BUILD     |\n| 4959ed0e-7929-4f06-9cf5-963ff50d1aff | AIHUB_BUILD     |\n| 5093716c-86fa-41c8-a230-57b25f8db3c7 | AIHUB_BUILD     |\n| 608d3e8a-8afa-4c4a-a52d-ef6048487b9b | AIHUB_BUILD     |\n| 7283b4ec-8ed8-4e53-b85d-83ed37351745 | AIHUB_BUILD     |\n| 74bc49bf-71c0-4b50-bd88-ea7e7545b407 | AIHUB_BUILD     |\n| 7d3fde3b-3df6-4ca9-975d-3da1a9cbaf30 | AIHUB_BUILD     |\n| 887a2da6-359b-4210-a669-8b1a3a8ae84c | AIHUB_BUILD     |\n| 8ec6f3cc-6486-4cb8-b785-3994498208c5 | AIHUB_BUILD     |\n| a0a54161-c22b-4a92-872e-77b9f0ecf55c | AIHUB_BUILD     |\n| caccf275-ed5b-43c6-a5d0-1ea319b4106f | AIHUB_BUILD     |\n| d134831d-751a-41d0-9f32-6f4bbe082b3f | AIHUB_BUILD     |\n| d6fa3faa-ab5a-44ee-b11e-1841977280eb | AIHUB_BUILD     |\n| db965c65-e425-4a46-b75e-d74003f89d63 | AIHUB_BUILD     |\n| dd2d2bed-0f48-4c8d-9154-f0a54a172dee | AIHUB_BUILD     |\n| e93d9e49-a9a4-46e5-a9c7-5915215cee80 | AIHUB_BUILD     |\n| 1b40b64f-5802-4b75-aa7f-fe6f55aa156b | FLOW            |\n| 21fb2103-4b1f-4043-8d36-8351e167dfed | FLOW            |\n| 25388005-b476-4399-ad09-6fabdaf07297 | FLOW            |\n| 32befadc-a4ad-4130-bf5d-aa9bbd0224bb | FLOW            |\n| 37d60738-9fd1-401e-be57-f5b8d1b47bfd | FLOW            |\n| 44e3c544-cdab-49b4-ac05-5ebdb488cfdb | FLOW            |\n| 4f7dbd7b-3d82-4a7e-94cf-e487b4ad2e6b | FLOW            |\n| 632deba6-d148-45f4-bfbd-7211e8b45ac4 | FLOW            |\n| 693272fe-77ee-40b3-8ac5-2e789f2c2aa2 | FLOW            |\n| 6b722f82-f049-4a07-90b0-9a5a7cabf533 | FLOW            |\n| 7c749f5d-ee86-4765-a0e5-c71bde8dbd98 | FLOW            |\n| 7f9843c8-485e-4759-a945-78bcd5ad52f5 | FLOW            |\n| 7fee2c0a-c46d-48f5-8475-2c5b590817ee | FLOW            |\n| 8294daa6-16d6-462f-96ce-57e1e19f4b73 | FLOW            |\n| 857c357f-d9d9-4b2e-ae76-2cf075b055a8 | FLOW            |\n| 875bb37c-e57a-4060-8520-63dcf73399f2 | FLOW            |\n| 8f447053-e862-4d7e-9e23-0aa800d7c00e | FLOW            |\n| a9238618-012b-4d41-8641-a06e7f7fb940 | FLOW            |\n| b7926d80-1c17-4da3-b414-3449f48dc999 | FLOW            |\n| c3988d32-e2ac-4d9c-8b89-95d9b0a1f02c | FLOW            |\n| c7ed749d-cc9e-4e4e-940d-b7ccc872d9c6 | FLOW            |\n| daf4c738-d1a8-41cf-a5b0-581c4046e2e0 | FLOW            |\n| db983917-e361-4498-ad68-b6eb199326d9 | FLOW            |\n| e97556e9-5dc0-4b79-a46e-dbef38de2b3a | FLOW            |\n| fdf9a3c0-71d9-42f4-983c-e6eb315e19e8 | FLOW            |\n| 03ec67aa-6097-46cb-8a09-7f464046d155 | FSBATCH         |\n| 068ce27d-48af-42f4-ad2b-2a5ccc38a6c0 | FSBATCH         |\n| 06c1b288-a7fc-4cc6-a6ac-d67b7a711e00 | FSBATCH         |\n| 0d208c40-d055-4ce8-8c38-cc618a4bf7ae | FSBATCH         |\n| 125033b1-39d6-4874-a3c9-56363ce48675 | FSBATCH         |\n| 20e2041f-48e8-4bc0-8d91-f12fa72e730b | FSBATCH         |\n| 24326202-48de-4879-842d-7203ca21f585 | FSBATCH         |\n| 2e63ffb8-9aa8-4b06-a376-15d001405cce | FSBATCH         |\n| 3160dbae-253a-4027-a1a3-e74e683cf735 | FSBATCH         |\n| 3969e7dd-86a6-419b-ba74-69f212088382 | FSBATCH         |\n| 3a71de8f-e823-443a-a9ea-ea74abf61f26 | FSBATCH         |\n| 41196017-49f4-43e3-9bc6-dde5aa64de1d | FSBATCH         |\n| 4c97a811-bdc8-4864-bce0-7c4158ede86f | FSBATCH         |\n| 51a65604-9fe6-439b-a1bd-19bf0dea58dd | FSBATCH         |\n| 55183767-615a-46e6-9bd2-70ac20240b32 | FSBATCH         |\n| 597dc85d-112a-439f-939e-b9cb29037899 | FSBATCH         |\n| 5a9de7cf-92a0-4f0c-b72d-56736a0007e7 | FSBATCH         |\n| 5b4887a8-d9da-46cf-a743-868c694733cd | FSBATCH         |\n| 5bf547d4-dd2e-4c28-9519-280950e467a2 | FSBATCH         |\n| 6af791cf-ef90-4548-98b4-69f66e3ee3ec | FSBATCH         |\n| 71a4e02a-b94d-48fb-a8f2-76216e76ad34 | FSBATCH         |\n| 74399b4e-8710-43e7-92be-bda3c38cfe3e | FSBATCH         |\n| 7a119a5d-7222-42a2-85e5-307c71b85b02 | FSBATCH         |\n| 90bf527a-05b4-4021-a934-455efb629bb5 | FSBATCH         |\n| 9ba437d9-9a75-4c9a-8a23-4f6e2e08e949 | FSBATCH         |\n| 9f184fba-9c38-4478-a6ce-ce941f8f6fe3 | FSBATCH         |\n| a1d27d30-5cad-4c49-b1e0-3390354d73d0 | FSBATCH         |\n| a333bad3-ec45-46d1-98c0-84f5f3ec31f1 | FSBATCH         |\n| a3e70109-c7f0-4e99-9c98-3b7d6115ac0f | FSBATCH         |\n| a46e94b3-1dad-430e-8400-72de1f491265 | FSBATCH         |\n| aa299d23-228d-4a18-935f-9fa5d1ed83a3 | FSBATCH         |\n| b0327ded-d331-4417-8894-bdbd4a9bb6df | FSBATCH         |\n| b7e47d0f-c5ff-4ff9-abc1-2cc105ffe41c | FSBATCH         |\n| be644119-a32b-41cf-adae-d751f346843e | FSBATCH         |\n| cc6c03c6-a63f-407e-babf-4c982d665178 | FSBATCH         |\n| d0ed266b-4724-4902-89cf-97a2ee31d36f | FSBATCH         |\n| d6f3ad8d-9db5-4376-8c4a-9a4856e3a359 | FSBATCH         |\n| dc6112a9-23b8-470a-b45e-75f208f28efe | FSBATCH         |\n| de496e29-28e5-4d47-84a0-f4689870bac5 | FSBATCH         |\n| e3f0aeee-82f1-46aa-ab3d-32051e10ccde | FSBATCH         |\n| eb940256-2cd8-4c4e-aa00-bea19c000f54 | FSBATCH         |\n| f1cc7e62-8723-49e1-9ace-7cda9a870c1d | FSBATCH         |\n| f66c349d-60a0-4b13-8180-97af812da3fa | FSBATCH         |\n| fa8a71b7-b971-4e18-ac38-563f8420cf98 | FSBATCH         |\n| 01cb2677-cbfc-483d-ae29-20e23adee9d3 | INDEXER_MOUNT   |\n| 2fb6b2f0-d092-4bdc-9489-7233872db48b | INDEXER_MOUNT   |\n| 5dc0234a-09f5-4433-bf64-45b8d9726f70 | INDEXER_MOUNT   |\n| 6c558952-4fd6-4299-93b4-394638242a34 | INDEXER_MOUNT   |\n| 97e1a272-2ab0-4a86-804d-c5ff4d7cd0b1 | INDEXER_MOUNT   |\n| 9b30ddee-e98a-41ad-a17a-2471833d3160 | INDEXER_MOUNT   |\n| b0b61641-bdac-45f4-bdfc-517e264695f5 | INDEXER_MOUNT   |\n| b53d61ff-d7cd-458a-b6c7-315a22823115 | INDEXER_MOUNT   |\n| ea561024-a5a3-430a-8de9-a78a1f144f70 | INDEXER_MOUNT   |\n| 2ff7e3c3-007c-4b11-ae94-c45f7d683959 | INDEXER_UNMOUNT |\n| 31d62ae3-cfab-4a86-ae3c-56116861513c | INDEXER_UNMOUNT |\n| 40c29f98-962b-4430-8c96-7f6b1d11ad25 | INDEXER_UNMOUNT |\n| 98e999d2-7776-4e0a-9bf4-baa7f0a54288 | INDEXER_UNMOUNT |\n| a140336a-3753-42ee-99e5-7ed11c0da7bf | INDEXER_UNMOUNT |\n| 38660eed-b5da-4376-8ccf-e415db8e2b6e | INDEXING        |\n+--------------------------------------+-----------------+\n103 rows in set (5.62 sec)```",
+      "time": "12:41",
+      "timestamp": "1740602516.102949",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "It makes logical sense why this happened.",
+      "time": "12:42",
+      "timestamp": "1740602524.952429",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Sounds good :slightly_smiling_face:",
+      "time": "12:42",
+      "timestamp": "1740602569.451099",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "dm_id": "D03LK3XUJUA",
+    "date_file": "2025-02-26.json",
+    "message_count": 14,
+    "start_time": "1740601476.843959",
+    "end_time": "1740602569.451099"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "id": "ch_C0516UPPMT3_2024-10-31_1730366410.630309_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Raul Mächler",
+    "Anil",
+    "hannah",
+    "Jasper"
+  ],
+  "messages": [
+    {
+      "sender": "Raul Mächler",
+      "user_id": "U02H99GUL9F",
+      "message": "Hello Team, I just received an email from our Partner, Arondor.\nLudovic is working now since around 1 year with Instabase platform and is helping us a lot with different clients (AXA, SocGen, AON etc.).\nHe shared his experience he had recently in the attached Email.\n\nI am not sure if this is the right place to share the feedback, so let me know when there is a better place, thanks.\n\ncc: @Jasper @Darragh Byrne @Daniel Campo",
+      "time": "02:20",
+      "timestamp": "1730366410.630309",
+      "is_reply": false
+    },
+    {
+      "sender": "Jasper",
+      "user_id": "U02KPTJGSCC",
+      "message": "It seems Ludovic’s main concern is the changes we made to the API/SDK definitions, which disrupted their solution.\n\n@hannah @andy, do we have a process for notifying existing customers about API changes? (Apologies if this isn’t your area.)",
+      "time": "05:17",
+      "timestamp": "1730377057.171919",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Cc: @Anil @Kerry\n\nCan we please look into this issue related to batch treatment? We can’t release anything that has breaking changes in the API",
+      "time": "07:03",
+      "timestamp": "1730383436.783349",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "We don’t do changes to API definitions once released as it breaks customer solutions.\nThe batch_id argument has always been an integer.\n\nI realize the customer said this was the 3rd/4th instance of this happening :confused: Will be more careful.\nIn this case, the API might have also accepted string before but doesn’t now.\n\nI had a ticket filed for the unknown error issue, Thought it got fixed. Just re-opened it - will have it fixed soon.\nhttps://instabase.atlassian.net/browse/FLOW-9817",
+      "time": "08:06",
+      "timestamp": "1730387188.055199",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "cc @Abhishek Adupa",
+      "time": "08:06",
+      "timestamp": "1730387213.155639",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Anil, let's deep dive and understand what went wrong -- did we actually make any changes in the new release that caused batch_id to behave differently? Batch ID has always been integer -- can we verify if the customer wrote is actually true. We should be able to look at the code for that.",
+      "time": "09:02",
+      "timestamp": "1730390542.417489",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "In run app API call, batch_id type was incorrect in the docs. It was put as string.\nMay 31 (string)\nhttps://github.com/instabase/instabase-fern/blob/6934e7bd67d62885e0a060f1ff65828fadd952ce/fern/docs/pages/apis/api-reference/app-runs.mdx\n\nJuly 15 - error reported that when you pass batch ID as string, it doesn’t work\n(this was reported in context of run app example code inside AIHub)\nhttps://instabase.slack.com/archives/C05BJCNKZAM/p1721041678350519\nIt fails with Unknown exception when you pass a string\n\nSept 12 - fixed the batch_id type in the docs\nhttps://github.com/instabase/instabase-fern/pull/68\n\nbatch_id as string still doesn’t work. It fails with the same Unknown exception error. Will use the ticket above to track this item. Goal is to return a better error message.\nGiven this didn’t work on July 15 and fails with same error now, it likely never worked when you pass batch id as a string. User is required to pass an integer.",
+      "time": "11:39",
+      "timestamp": "1730399990.823949",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "cc @hannah @Raul Mächler\n\nwe'll improve the error message for batch_id being a non integer, but this never worked before. docs was updated in 1.5 months ago. not sure if you want to let the customers know, but it has been this way.",
+      "time": "11:49",
+      "timestamp": "1730400545.107429",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "is it possible to get the endpoint he's using? in his email he wrote a \"run job endpoint\", but we don't have a run job, it's run app or run deployment; i wonder if he's been using an old endpoint",
+      "time": "17:01",
+      "timestamp": "1730419273.296459",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-10-31.json",
+    "message_count": 9,
+    "start_time": "1730366410.630309",
+    "end_time": "1730419273.296459",
+    "is_thread": true
+  }
+}

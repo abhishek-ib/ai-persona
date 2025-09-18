@@ -1,0 +1,63 @@
+{
+  "id": "ch_C08L4K42H9C_2025-06-06_1749226599.386249_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Serena",
+    "pauline.comising",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "ah thanks serena for lookin into the backend part of this as well, I'm looking at the generated case program, seeing that `class_field_value` you linked (https://github.com/instabase/instabase/blob/79052fc/shared-utils/py-utils/data-api-utils/src/py/instabase/data_api_utils/_sheet/lambda_fns.py#L138-L139) comes from the `class_field` param which is the output of the `get_intra_class_field` native function and that's capable of returning a dictionary (which I can observe when running a flow). So depending on `get_intra_class_field` output, we could get smth like `{\"W2\": {\"employee_name\": {\"value\": \"John Doe\", \"model_confidence\": 0.9}}}`\n\nSo hmm, we'll have to look closer into why this isn't accessible, but I do know the value of `get_intra_class_field` comes from FE `class_field_values` for the `/case_extraction` case, so ya let me investigate",
+      "time": "09:16",
+      "timestamp": "1749226599.386249",
+      "is_reply": false
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "i'm confused about what the parameters for packet args is for `udfs/run` i think the idea was that the frontend would pass in the entire class fields dictionary not just the classfields[class][field][value]? the new intra class field api returns this dictionary which should be passed directly.\n\nthe following is working for me: ss1 creating udf, ss2 `udfs/run`, ss3/4 case extraction. i think we just need the argument to be class_fields",
+      "time": "10:06",
+      "timestamp": "1749229603.832619",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@pauline.comising ah i didn't look into the actual type of `class_field_value` so yeah maybe there's something wrong with how the FE is passing `class_field_values` into `/case_extraction`",
+      "time": "10:11",
+      "timestamp": "1749229902.552299",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Yaa, just wanted to verify for myself how BE was doing things, but yes maybe we can sync with paul on the expected FE req in case there are any things else that can be clarified beyond ayesha's helpful screenshots :woman-bowing::skin-tone-2:",
+      "time": "10:14",
+      "timestamp": "1749230097.599399",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Those screenshots are helpful, seems like we’re definitely mismatched.\n\nLet me take another look at this on Monday (today is SDLC day hah). In the meantime, is there a shared Postman collection that y’all are using?",
+      "time": "10:33",
+      "timestamp": "1749231217.403299",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-06-06.json",
+    "message_count": 5,
+    "start_time": "1749226599.386249",
+    "end_time": "1749231217.403299",
+    "is_thread": true
+  }
+}

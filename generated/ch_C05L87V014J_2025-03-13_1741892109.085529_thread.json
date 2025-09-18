@@ -1,0 +1,143 @@
+{
+  "id": "ch_C05L87V014J_2025-03-13_1741892109.085529_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe",
+    "Serena",
+    "Sayan"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Hey there! I wanted to check something. When i do `cs restart` , model-service and `webapp`/`webpacked` take the most amount of time. `model-service` in particular seems to be reinstalling and uninstalling python dependencies (like `wheel` and `setup-tools`) over and over again in step 24. It eventually works but it ends up taking 30+ min to get started. I'm wondering if anyone has seen this before. Here are the model-service logs (https://instabase.sandboxes.site/logviewx/instabase/sayanbhattacharjee1/dev/daemon/model-service%40instabase)",
+      "time": "11:55",
+      "timestamp": "1741892109.085529",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Some of my own learnings from observing the same previously:\n• Model service has a *massive* docker image -- that alone will introduce significant latency for the time in which constructed layers are exported to your local docker registry\n• Model service has several virtualenvs it installs in its docker image, each one doing their own `pip install` of specific dependencies (i.e. the redundant installs are expected)\n• While it's improved dramatically over the past year, there are still a number of services whose dockerfiles are written such that they regularly invalidate the layer cache (i.e. docker builds happening even though it doesn't appear any changes were made to the service)\n• Webapp has some very backward build patterns that have yet to be refactored, which leads to excessively high build times and poor utilization of the layer cache\n• Webpack builds its JS bundle on the first fetch request received, meaning the \"first\" request is always slow",
+      "time": "12:06",
+      "timestamp": "1741892816.897169",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": ">  Webapp has some very backward build patterns that have yet to be refactored\nIs this for platform or for aihub as well? Was the reason that `ppy restart lite --as-aihub` (which I guess also doesn't include weaviate and model-service) was faster that we were only building things for AIHub instead of for platform as well?\n\nIf so, that leads to a follow up question. Can we add a flag to specify which parts of the build we need or maybe have a repo somewhere with snapshots of the build so that we can rebuild the changes only?",
+      "time": "12:12",
+      "timestamp": "1741893166.922879",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Do we have any initiatives on how we can cut down the build time? It's fine if I have something in the backlog but it won't really cover the time I'm using to build",
+      "time": "12:14",
+      "timestamp": "1741893259.926399",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I may be mis-remembering this, but I believe the `--lite` flag instructed ppy to pull the image rather than build it off the local branch, which is significantly faster for our python services.\n\n@mfichman has already set the configuration for using distributed layer caching in the ibdev-backend template, so further improvements to build times will need to come from service changes themselves. I do think we could discuss some adjustments to include selectors for whether images are built locally or pulled (or even potentially mixing intercepted services with local services), but I'll defer that to @mfichman as he's much more familiar with the asks which helped drive the current structure of ibdev-backend :slightly_smiling_face:",
+      "time": "12:18",
+      "timestamp": "1741893495.523539",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Just remembered, I'm thinking of the `--use-prebuilt` flag -- yes, I do believe the `lite` target was only building a small subset of services, so your reasoning on that being why the command ran faster makes sense to me!",
+      "time": "12:20",
+      "timestamp": "1741893649.402109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i'd recommend restarting individual services to save time\n\nalso, you usually don't need to restart `webpacked` since it will already show the latest updates from the frontend code without a restart (unless you need to install upgraded dependencies)",
+      "time": "13:23",
+      "timestamp": "1741897415.159709",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh no, did model-service docker layer caching break again?",
+      "time": "14:59",
+      "timestamp": "1741903168.003149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "webapp has always been slow. No matter what I do, it seems to always get uncached when building in Docker.",
+      "time": "14:59",
+      "timestamp": "1741903187.703029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ideally, both should just be a quick copy of the source files as the last layer unless a dependency changed!",
+      "time": "15:00",
+      "timestamp": "1741903214.178899",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "But yeah, what Serena & Sean said.",
+      "time": "15:00",
+      "timestamp": "1741903254.740109",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "@Serena my understanding is on pulling master, I'd probably need to do a cold restart for all services in case their files were changed. Potentially i can modify my workflow a bit such that if i'm pulling from latest master, I'd need to 1) run `cs restart` in the morning 2) rebase my branches on master so that when my changes are ready, I can just quickly rebuild the services with changes. I think that's the workaround for now",
+      "time": "15:44",
+      "timestamp": "1741905897.058719",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yep! and btw when you revive your sandbox at the start of the day, i think all the services are already restarted / rebuilt? not sure if this is actually accurate :sweat_smile: @mfichman",
+      "time": "15:59",
+      "timestamp": "1741906759.359469",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "It would be good if at 6am local time (if possible), we pull from master and run `cs restart`",
+      "time": "16:02",
+      "timestamp": "1741906930.489079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah I’m not sure there’s a way to schedule that, but we can ask!",
+      "time": "16:08",
+      "timestamp": "1741907304.583469",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-13.json",
+    "message_count": 15,
+    "start_time": "1741892109.085529",
+    "end_time": "1741907304.583469",
+    "is_thread": true
+  }
+}

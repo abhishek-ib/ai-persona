@@ -1,0 +1,151 @@
+{
+  "id": "ch_C06FA6A23_2019-08-07_1565186706.235300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "will",
+    "Aaron Vontell",
+    "dlluncor",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Do we have a way to run mypy in the context of a certain service?",
+      "time": "07:05",
+      "timestamp": "1565186706.235300",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Mypy locally and on travis tells me that nlp-utils/types is fine because spacy is installed through requirements.txt, but in the context of apps-server, spacy is not available, so it should actually fail in the context of apps-server",
+      "time": "07:05",
+      "timestamp": "1565186757.235400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "Mypy doesn't actually check dependencies, all stubs files are used for all services. The actual build docker run docker would be the only thing to tell you this",
+      "time": "07:21",
+      "timestamp": "1565187688.235600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yeah that’s the issue haha",
+      "time": "07:50",
+      "timestamp": "1565189427.235800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Ya mypy won't understand the pip installs you have since it doesn't execute the code",
+      "time": "09:18",
+      "timestamp": "1565194694.236200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yeah :confused: we should have some sort of Docker-based mypy checks maybe?",
+      "time": "09:18",
+      "timestamp": "1565194737.236400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "What does that mean exactly -- or rather what are you trying to achieve?",
+      "time": "09:20",
+      "timestamp": "1565194809.236600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "So I had a bug where I was importing spacy in nlp-utils/types. This module is used in apps-server, which does not have spacy now, and so mypy should recognize that `import spacy` is an issue. However, since spacy is included in our virtual environment, mypy does find spacy when running mypy on this module, so no issue is reported",
+      "time": "09:21",
+      "timestamp": "1565194918.236800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "So basically when mypy runs a check, it assumes that a module will have access to all dependencies that are in the global requirements.txt, but this is not true if the module is used within a different environment.",
+      "time": "09:22",
+      "timestamp": "1565194979.237000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I mean this isn’t a blocker in that mypy is preventing me from pushing passing code, it’s that mypy gave me a false positive and didn’t catch a bug, so who knows where else we are making imports and statements in our code that are actually invalid in some of our services",
+      "time": "09:24",
+      "timestamp": "1565195058.237200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Gotcha. I'd say the solution to this is to run a unit test and technically the unit tests should run within the context of each Docker. \n\nBut we aren't there yet unfortunately. So the next best thing is to continuously build our services",
+      "time": "09:24",
+      "timestamp": "1565195082.237400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Yes I remember seeing that in your PR about the spacy import",
+      "time": "09:24",
+      "timestamp": "1565195095.237600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yup exactly, so docker-based testing would be the approach, but that will probably take some time. In the meantime we will just have to be diligent about checking our imports and dependencies",
+      "time": "09:25",
+      "timestamp": "1565195153.237800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "We used to have a continuous build of Dockers at some point -- check with infra team in the status of that Cron job",
+      "time": "09:25",
+      "timestamp": "1565195154.238000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I have a PR that is related to dependency management that could be part of some work that would help with issues like this",
+      "time": "10:09",
+      "timestamp": "1565197794.240000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "https://github.com/instabase/instabase/pull/10717 I would love any comments/feedback on the suggested approach",
+      "time": "10:10",
+      "timestamp": "1565197834.240300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-08-07.json",
+    "message_count": 16,
+    "start_time": "1565186706.235300",
+    "end_time": "1565197834.240300",
+    "is_thread": true
+  }
+}

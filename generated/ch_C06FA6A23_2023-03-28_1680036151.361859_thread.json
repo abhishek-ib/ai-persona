@@ -1,0 +1,61 @@
+{
+  "id": "ch_C06FA6A23_2023-03-28_1680036151.361859_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Aaron Tami"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Hey everyone, another issue from Capital One. They are currently running 22.01 on Prod.\n\nThey have been reporting that their is some unapproved outbound traffic coming out of their Prod Instabase deployment.  I checked in this channel a while ago and confirmed that none of our python code is making any external calls for something like pip install.  They just got back to me with network message at the bottom.\n\nOur python services are making calls to pypi.org (http://pypi.org), the specific ones they detected this one are:\ndeployment-celery-core-tasks\ndeployment-file-tservice\ndeployment-runner-service\ndeployment-model-service\n\n\nI reiterated that none of our code is doing this.  Is it possible that some of the python libraries we use are making some pypi.org (http://pypi.org) calls in the background?\n\n```{\"flow\":{\"time\":\"2023-03-27T23:49:44.788583081Z\",\"verdict\":\"FORWARDED\",\"ethernet\":{\"source\":\"e6:9d:a4:c9:2a:1b\",\"destination\":\"ee:c8:97:bd:bf:c6\"},\"IP\":{\"source\":\"198.18.32.11\",\"destination\":\"151.101.192.223\",\"ipVersion\":\"IPv4\"},\"l4\":{\"TCP\":{\"source_port\":52380,\"destination_port\":443,\"flags\":{\"SYN\":true}}},\"source\":{\"ID\":1525,\"identity\":397,\"namespace\":\"ci387633-ci387647\",\"labels\":[\"k8s:app=celery-core-tasks-prod\",\"k8s:capitalone.com/asv=ASVCMLINSTABASE\",\"k8s:capitalone.com/ba=BACMLINSTABASE\",\"k8s:capitalone.com/component=bapprcmlinstabase\",\"k8s:capitalone.com/owner=CUS463\",\"k8s:configID=v1\",\"k8s:io.cilium.k8s.namespace.labels.capitalone.com/ba-id=ci387633\",\"k8s:io.cilium.k8s.namespace.labels.capitalone.com/ba=bacmlinstabase\",\"k8s:io.cilium.k8s.namespace.labels.capitalone.com/component-id=ci387647\",\"k8s:io.cilium.k8s.namespace.labels.capitalone.com/component=appbapprcmlinstabase\",\"k8s:io.cilium.k8s.namespace.labels.capitalone.com/division=commercialtech\",\"k8s:io.cilium.k8s.namespace.labels.capitalone.com/divisiongroup=enabling-tech---doc-mgmt\",\"k8s:io.cilium.k8s.namespace.labels.capitalone.com/pagerdutyid=Commercial-Instabase-TOC\",\"k8s:io.cilium.k8s.namespace.labels.capitalone.com/pcicategorization=3\",\"k8s:io.cilium.k8s.namespace.labels.capitalone.com/subdivision=enabling-tech---doc-mgmt\",\"k8s:io.cilium.k8s.namespace.labels.kubernetes.io/metadata.name=ci387633-ci387647\",\"k8s:io.cilium.k8s.namespace.labels.networkpolicygroup.onekube.capitalone.com/aws-metadata=true\",\"k8s:io.cilium.k8s.namespace.labels.networkpolicygroup.onekube.capitalone.com/datadog=true\",\"k8s:io.cilium.k8s.namespace.labels.networkpolicygroup.onekube.capitalone.com/default=true\",\"k8s:io.cilium.k8s.namespace.labels.networkpolicygroup.onekube.capitalone.com/ingress=true\",\"k8s:io.cilium.k8s.namespace.labels.nodepool.onekube.capitalone.com/node-claim=ci387633-ci387647-prod-us-east-1\",\"k8s:io.cilium.k8s.namespace.labels.onekube.capitalone.com/workspace-name=ci387633-ci387647-prod-us-east-1\",\"k8s:io.cilium.k8s.namespace.labels.onekube.capitalone.com/workspacedeployment-name=ci387633-ci387647\",\"k8s:io.cilium.k8s.policy.cluster=default\",\"k8s:io.cilium.k8s.policy.serviceaccount=default\",\"k8s:io.kubernetes.pod.namespace=ci387633-ci387647\",\"k8s:version=v1\" (http://capitalone.com/asv=ASVCMLINSTABASE%22,%22k8s:capitalone.com/ba=BACMLINSTABASE%22,%22k8s:capitalone.com/component=bapprcmlinstabase%22,%22k8s:capitalone.com/owner=CUS463%22,%22k8s:configID=v1%22,%22k8s:io.cilium.k8s.namespace.labels.capitalone.com/ba-id=ci387633%22,%22k8s:io.cilium.k8s.namespace.labels.capitalone.com/ba=bacmlinstabase%22,%22k8s:io.cilium.k8s.namespace.labels.capitalone.com/component-id=ci387647%22,%22k8s:io.cilium.k8s.namespace.labels.capitalone.com/component=appbapprcmlinstabase%22,%22k8s:io.cilium.k8s.namespace.labels.capitalone.com/division=commercialtech%22,%22k8s:io.cilium.k8s.namespace.labels.capitalone.com/divisiongroup=enabling-tech---doc-mgmt%22,%22k8s:io.cilium.k8s.namespace.labels.capitalone.com/pagerdutyid=Commercial-Instabase-TOC%22,%22k8s:io.cilium.k8s.namespace.labels.capitalone.com/pcicategorization=3%22,%22k8s:io.cilium.k8s.namespace.labels.capitalone.com/subdivision=enabling-tech---doc-mgmt%22,%22k8s:io.cilium.k8s.namespace.labels.kubernetes.io/metadata.name=ci387633-ci387647%22,%22k8s:io.cilium.k8s.namespace.labels.networkpolicygroup.onekube.capitalone.com/aws-metadata=true%22,%22k8s:io.cilium.k8s.namespace.labels.networkpolicygroup.onekube.capitalone.com/datadog=true%22,%22k8s:io.cilium.k8s.namespace.labels.networkpolicygroup.onekube.capitalone.com/default=true%22,%22k8s:io.cilium.k8s.namespace.labels.networkpolicygroup.onekube.capitalone.com/ingress=true%22,%22k8s:io.cilium.k8s.namespace.labels.nodepool.onekube.capitalone.com/node-claim=ci387633-ci387647-prod-us-east-1%22,%22k8s:io.cilium.k8s.namespace.labels.onekube.capitalone.com/workspace-name=ci387633-ci387647-prod-us-east-1%22,%22k8s:io.cilium.k8s.namespace.labels.onekube.capitalone.com/workspacedeployment-name=ci387633-ci387647%22,%22k8s:io.cilium.k8s.policy.cluster=default%22,%22k8s:io.cilium.k8s.policy.serviceaccount=default%22,%22k8s:io.kubernetes.pod.namespace=ci387633-ci387647%22,%22k8s:version=v1%22)],\"pod_name\":\"deployment-celery-core-tasks-7b95778758-qt9rz\",\"workloads\":[{\"name\":\"deployment-celery-core-tasks\",\"kind\":\"Deployment\"}]},\"destination\":{\"identity\":2,\"labels\":[\"reserved:world\"]},\"Type\":\"L3_L4\",\"node_name\":\"ip-10-36-1-110.ec2.internal\",\"destination_names\":[\"pypi.org (http://pypi.org)\"],\"event_type\":{\"type\":4,\"sub_type\":3},\"traffic_direction\":\"EGRESS\",\"trace_observation_point\":\"TO_STACK\",\"is_reply\":false,\"Summary\":\"TCP Flags: SYN\"},\"node_name\":\"ip-10-36-1-110.ec2.internal\",\"time\":\"2023-03-27T23:49:44.788583081Z\"}```",
+      "time": "13:42",
+      "timestamp": "1680036151.361859",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Is it possible that a UDF is doing it?",
+      "time": "13:54",
+      "timestamp": "1680036871.703499",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "that was my thought, but if they are reporting it is also coming from `file-tservice` we don't run any udfs on that deployment",
+      "time": "13:56",
+      "timestamp": "1680036989.319929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "That's true...",
+      "time": "14:01",
+      "timestamp": "1680037260.502269",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "I spent some time researching this tonight and it looks Flask can potentially be resolving dependencies at runtime",
+      "time": "21:13",
+      "timestamp": "1680063213.473319",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-03-28.json",
+    "message_count": 5,
+    "start_time": "1680036151.361859",
+    "end_time": "1680063213.473319",
+    "is_thread": true
+  }
+}

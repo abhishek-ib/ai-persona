@@ -1,0 +1,87 @@
+{
+  "id": "ch_C05L87V014J_2025-02-03_1738626144.049399_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "sean.donohoe",
+    "Heymian",
+    "Sayan"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Seeing this error on my crafting sandbox (https://instabase.sandboxes.site/sandboxes/sayanbhattacharjee1?cw=dev) in api-server logs when trying to restart the service. I've tried restarting the service and refreshing the image.\n\n```docker run  -v /home/owner/instabase/webserver/api-server/tmp/hotconfig:/config \\\n--name instabase-api-server --env-file /home/owner/instabase/webserver/api-server/tmp/docker_env_local.list \\\n--rm -p 5555:5555 -i instabase/api-server\nFailed to read config file: instabase/shared/gunicorn_hooks_config.py\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.9/site-packages/gunicorn/app/base.py\", line 111, in get_config_from_filename\n    spec.loader.exec_module(mod)\n  File \"<frozen importlib._bootstrap_external>\", line 850, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"instabase/shared/gunicorn_hooks_config.py\", line 8, in <module>\n    from instabase.stats.api import StatsExporter\n  File \"/instabase-api-server/py/instabase/stats/api.py\", line 13, in <module>\n    from instabase.config_utils.config import BaseConfig\n  File \"/instabase-api-server/py/instabase/config_utils/config.py\", line 9, in <module>\n    from instabase.config_utils.feature_flags import FeatureFlags\n  File \"/instabase-api-server/py/instabase/config_utils/feature_flags.py\", line 116, in <module>\n    config_pb2.FeatureFlagName.AIHUB_ENABLE_SEARCH_IN_NAVBAR: ENTERPRISE,\nAttributeError: AIHUB_ENABLE_SEARCH_IN_NAVBAR\nmake: *** [Makefile:305: run-docker] Error 1```\nWondering if anyone has seen this issue recently? cc @Paul H",
+      "time": "15:42",
+      "timestamp": "1738626144.049399",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Did you restart core-platform-service too?",
+      "time": "15:46",
+      "timestamp": "1738626397.546159",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Just restarted it but it seems the issue is still there with `api-server`",
+      "time": "15:48",
+      "timestamp": "1738626530.201229",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Have you looked at the config file it’s trying to read? Sounds like it could be a malformed/missing config",
+      "time": "15:49",
+      "timestamp": "1738626544.576019",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Paul had a fix here: https://github.com/instabase/instabase/pull/67699",
+      "time": "15:51",
+      "timestamp": "1738626680.185539",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Great find, thanks for looking into this",
+      "time": "15:52",
+      "timestamp": "1738626731.198429",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The issue is that the Python stub for the proto wasn't updated",
+      "time": "15:52",
+      "timestamp": "1738626732.463349",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I'll remake the protos on sandbox as well to unblock myself",
+      "time": "15:53",
+      "timestamp": "1738626825.876679",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-02-03.json",
+    "message_count": 8,
+    "start_time": "1738626144.049399",
+    "end_time": "1738626825.876679",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "id": "ch_C06FA6A23_2022-08-03_1659553360.997979_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "shiqi",
+    "shaunak",
+    "Heymian",
+    "Travis",
+    "lenny"
+  ],
+  "messages": [
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "there are tons of goldens that are over an hour and then there are even more that are “Waiting for resources”",
+      "time": "12:02",
+      "timestamp": "1659553360.997979",
+      "is_reply": false
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "probably the same as https://instabase.slack.com/archives/C02FSR83JMQ/p1659482641849369",
+      "time": "12:08",
+      "timestamp": "1659553684.759849",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "“waiting for resources” is a new state introduced by @lenny that shows these jobs are not running at all; instead they were sitting in the queue waiting for available workers to pick them up. looks like something is wrong here",
+      "time": "12:35",
+      "timestamp": "1659555359.028609",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "will take a look in 15",
+      "time": "12:36",
+      "timestamp": "1659555374.283639",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "As a side note, i see the “NodeShutDown” status from cloud for a bunch of services now as well, but sure if that is related",
+      "time": "12:42",
+      "timestamp": "1659555739.325929",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hmm, dogfood seems fine to me right now",
+      "time": "12:43",
+      "timestamp": "1659555807.778189",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "yeah seems ok now...I do see some goldens took >1hr around 2pm ET, but this seems to have resolved on its own (don't see any dogfood redeploys or job service restarts between then and now). maybe one of the worker pools getting backed up because of the `NodeShutdown`  Kerry was seeing?",
+      "time": "12:54",
+      "timestamp": "1659556496.659219",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "NodeShutdown should be unrelated from Shubham’s investigations",
+      "time": "12:59",
+      "timestamp": "1659556753.391419",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "`NodeShutdown` typically happens because these are pre-emptible nodes that get recycled every day.\n\nThe UI here makes it seems that the entire deployment is down, but in reality, 1/2 pods are down, and we should still be able to make progress.",
+      "time": "13:50",
+      "timestamp": "1659559817.339329",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "when I looked at some of the cluster node group such as ocr has all nodes shutdown, but it is OCR so not sure if they are special case and has been always that way.",
+      "time": "13:53",
+      "timestamp": "1659559987.003769",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Next time it happens @shiqi can you please take a picture.  Here is what I’m seeing right now:",
+      "time": "13:54",
+      "timestamp": "1659560071.142359",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Because we keep track of *old* deployments / pods, the not-running pods are not recycled away.  Here we can see that 9 pods are still running even though the UI says `NodeShutdown` in the original page.",
+      "time": "13:55",
+      "timestamp": "1659560157.282929",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-08-03.json",
+    "message_count": 12,
+    "start_time": "1659553360.997979",
+    "end_time": "1659560157.282929",
+    "is_thread": true
+  }
+}

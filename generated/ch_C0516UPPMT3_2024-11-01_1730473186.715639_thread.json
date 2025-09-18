@@ -1,0 +1,37 @@
+{
+  "id": "ch_C0516UPPMT3_2024-11-01_1730473186.715639_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Darragh Byrne",
+    "Kerry"
+  ],
+  "messages": [
+    {
+      "sender": "Darragh Byrne",
+      "user_id": "U049QP8DHHD",
+      "message": "@Kerry - this is the feedback from the client:                                                           I am using the following app deployment endpoint:\nhttps://${stageVariables.API_ROOT}/v2/*aihub*/deployments/${stageVariables.APP_DEPLOYMENT_PART1}/*run*\n\nI used to pass the batch id has as String\n{\n    \"batch_id\":\"_{{lastBatchId}}_\"\n}\n\nSince wednesday, the API calls were returning a cryptic \"unknown exception\" error\n\nAfter investigations and tests, I finally noticed that the batchId should now be passed as a number.\n\nThis fixed the error.\n\nI also noticed that the API documentation now reference a new, different, endpoint for app deployment runs :\nhttps://${stageVariables.API_ROOT}/v2/*apps*/deployments/${stageVariables.APP_DEPLOYMENT_PART1}/*runs*\n\nThis endpoint returns a simple \"id\" instead of \"job_id\"\nThe endpoint I am currently using is not referenced anymore in your API documentation - even in the legacy one.\n\nSo to wrap this up it's a bit confusing as this implies:\n- breaking change for us since passing the batchId as string is not supported anymore\n- implementation changes on the client side to migrate to new endpoint and take \"id\" instead of \"batch_id\" as a result\n- inability to retrieve the previous API documentation for the run app deployment endpoint I am using",
+      "time": "07:59",
+      "timestamp": "1730473186.715639",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Ok, this is very valuable feedback; thanks for collecting that from the customer.\n\nThe `aihub` to `apps` API change was announced here https://docs.instabase.com/release-notes#api--sdk-3 back in 24.36 (Sep 16). Don't think it ever reaches the customer.\n\nThink we need to update our process to announce API deprecations, people apparently don't read it  -- a common practice is supporting the older format for a month or two while proactively sending emails to the customers still using the endpoint to ask them to change before a certain date. At a certain date, we will delete that API. We also need to prioritize some resources to improve the metrics side of this to track / delete legacy APIs efficiently. cc @hannah @Ram Prasanna I'll work with you on the process.\n\nMeanwhile @Anil @Abhishek Adupa can you still run a retro on how / if the batch_id param stops supporting strings in this release -- I know we think (and user reported) it was never supported, but according to this somehow it did and the behavior changed. Let's at least do our sanity check; meanwhile there're clear next steps.",
+      "time": "08:19",
+      "timestamp": "1730474393.823379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-11-01.json",
+    "message_count": 2,
+    "start_time": "1730473186.715639",
+    "end_time": "1730474393.823379",
+    "is_thread": true
+  }
+}

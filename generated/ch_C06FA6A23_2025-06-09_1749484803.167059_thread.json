@@ -1,0 +1,189 @@
+{
+  "id": "ch_C06FA6A23_2025-06-09_1749484803.167059_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "For some reason, CI is marking ibllm as failing, even though there is no failure. Example CI run: https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-71203/1/pipeline\n\ncc @Cody Boggs",
+      "time": "09:00",
+      "timestamp": "1749484803.167059",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Seems there are indeed failures, I think\nhttps://grafana.infra.instabase.com/d/aelo4zivfuxhce/pre-merge-quick-view-dev?var-pr_num=7[…]job_num=1&var-trace_id=97f78367c708addcee1d2bffab078f8a (https://grafana.infra.instabase.com/d/aelo4zivfuxhce/pre-merge-quick-view-dev?var-pr_num=71203&var-job_num=1&var-trace_id=97f78367c708addcee1d2bffab078f8a)",
+      "time": "09:30",
+      "timestamp": "1749486620.982259",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Top-right panel filters for (case-insensitive) `err|fail` strings, so it's likely noisy  with expected error outputs but I think the top of the log has some mock failures, at a glance",
+      "time": "09:30",
+      "timestamp": "1749486650.444519",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I'm pretty sure that all of them are false positives. Ibllm has a lot of test cases covering \"what happens if x throws an exception\"",
+      "time": "11:23",
+      "timestamp": "1749493407.185779",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I searched for =============== and couldn't find anything.",
+      "time": "11:23",
+      "timestamp": "1749493427.554199",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ohh ok interesting",
+      "time": "11:37",
+      "timestamp": "1749494261.097559",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "How does CI determine if a test passes/fails? Is it the last exit code?",
+      "time": "11:38",
+      "timestamp": "1749494319.398499",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea since all of our stuff is just \"groovy-wrapped `make` commands\", it's down to whatever Make says is the result of any given command. Or if the docker container exists non-zero (which is just running more make targets :upside_down_face: )",
+      "time": "11:41",
+      "timestamp": "1749494463.917749",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Wow, it's a 4MB build log :lolcry:\n\nLoki is struggling to even load just the lines with 'err|fail' regex matches, there are apparently a little over 4000 of them in that one run :grimacing:",
+      "time": "12:31",
+      "timestamp": "1749497488.310229",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I think there's an entry in that log that is breaking things, it's odd for Loki to struggle with bumping from 3500 lines to even 3750 lines. :thonk:\n\nI've returned the max of 5k plenty of times, so that's strange",
+      "time": "12:32",
+      "timestamp": "1749497532.040579",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Some quick details...\n```─> wc -l ibllm-1.txt\n29915 ibllm-1.txt\n\n─> rg -i 'err|fail' ibllm-1.txt | wc -l\n4036\n\n─> while read line; do echo -n \"Line ${i}: \"; wc -c <<<\"${line}\"; i=$((i+1)); done <<<$(rg -i 'err|fail' ibllm-1.txt) | sort -n -k3\n\n[...]\nLine 3996: 473\nLine 3997: 473\nLine 3998: 473\nLine 3932: 487\nLine 3945: 487\nLine 3946: 487\nLine 3947: 487\nLine 3948: 487\nLine 3949: 487\nLine 3950: 487\nLine 3951: 487\nLine 3952: 487\nLine 3953: 487\nLine 3954: 487```\nThat last one-liner just sorts the err/fail lines by character count, which doesn't yield anything interesting. 487 bytes isn't exactly breaking the bank",
+      "time": "12:45",
+      "timestamp": "1749498342.593649",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "_sigh_\n@Victor Zeng It's because of `runtest.go`\nSpecifically this little helper (https://github.com/instabase/instabase/blob/master/shared-utils/test-utils/src/runtest/runtest.go#L113-L121)\n\nCombine that with this log line (https://grafana.infra.instabase.com/goto/MJWEjtYHg?orgId=1), et voila - a failing passing test. :lolcry:",
+      "time": "13:17",
+      "timestamp": "1749500228.760739",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Lovely.",
+      "time": "14:04",
+      "timestamp": "1749503090.625339",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Thanks.",
+      "time": "14:04",
+      "timestamp": "1749503091.837089",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I can take this from here.",
+      "time": "14:04",
+      "timestamp": "1749503095.900709",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":+1: Lemme know if you need anything!",
+      "time": "14:31",
+      "timestamp": "1749504696.512889",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Will do",
+      "time": "14:31",
+      "timestamp": "1749504704.968179",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Alright. I think I fixed the offending unit test.",
+      "time": "15:16",
+      "timestamp": "1749507367.775959",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Fingers crossed.",
+      "time": "15:16",
+      "timestamp": "1749507370.422039",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":crossed_fingers::skin-tone-3:",
+      "time": "15:25",
+      "timestamp": "1749507909.041929",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Yay. It worked",
+      "time": "16:43",
+      "timestamp": "1749512582.768299",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-06-09.json",
+    "message_count": 21,
+    "start_time": "1749484803.167059",
+    "end_time": "1749512582.768299",
+    "is_thread": true
+  }
+}

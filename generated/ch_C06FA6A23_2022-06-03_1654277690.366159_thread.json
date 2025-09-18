@@ -1,0 +1,139 @@
+{
+  "id": "ch_C06FA6A23_2022-06-03_1654277690.366159_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Mohit",
+    "Kerry",
+    "Wilson",
+    "Anil",
+    "vp",
+    "Heymian",
+    "Matt Weaver",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "vp",
+      "user_id": "U02ENFDJHC0",
+      "message": "Hey Team, could be a dumb question, but now that our team got affected so I had to ask. >> When the whole list of image is build or re-certified...how do we know at that point of time what all services got some CP back to it from higher version? Just to quote an example, we provided a set of images to JPMC for ML Studio ACL and Default OCR fixes, now after they applied, we figured that call from flow is failing because pdf-tservice had some new methods introduced all together. Now on the list of images we provided , pdf-tservice was not included, so it caused bad customer experience :disappointed:",
+      "time": "10:34",
+      "timestamp": "1654277690.366159",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@vp this is a recurring and very annoying problem.\nThe biggest reason usually is proto changes, however, it can happen for other reasons too.\nUnfortunately I don't think any person/team has responsibility for tooling here - maybe this now comes under <#C035SLYCJ9X|>",
+      "time": "10:40",
+      "timestamp": "1654278057.062889",
+      "is_reply": true
+    },
+    {
+      "sender": "vp",
+      "user_id": "U02ENFDJHC0",
+      "message": "got it :thumbsup:",
+      "time": "10:44",
+      "timestamp": "1654278273.625569",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "I’d like to understand this more as well - is there a particular reason why we don’t update all images at once?",
+      "time": "10:46",
+      "timestamp": "1654278364.094309",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "me too",
+      "time": "10:49",
+      "timestamp": "1654278563.330599",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Sending all the images to customer is annoying. Some of our images are quite big and it will take them good amount of time to get / reverify possibly and deploy them.\nHence we resort to sending only necessary images\n\nThe problem is as follows, Eng X makes a cherry-pick into release branch - say this is the 10th cherrypick (CP)\nCustomer received previously when they were no CPs\n\nNow either X or PRE have to estimate blindly what all images to send as CPs 1 to 9 might have modified things. There is no tooling here.",
+      "time": "10:54",
+      "timestamp": "1654278868.744999",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "thanks for the explanation! i’ve encountered this issue as well but didn’t know the reasons behind it",
+      "time": "10:56",
+      "timestamp": "1654278960.552659",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "IMO we really should send people all images that have changes every time we release a patch / update. i believe Shiqi is working on this. We also now have sub-releases (like 22.05.02, for example). cc @Heymian here since Shiqi is OOO - this has been a long standing problem that is very hard for PREs to address. I’m also not sure if the statement “Sending all the images to customer is annoying. Some of our images are quite big and it will take them good amount of time to get / reverify possibly and deploy them” is true - @vp and the PREs might be able to chime in.",
+      "time": "11:01",
+      "timestamp": "1654279299.638089",
+      "is_reply": true
+    },
+    {
+      "sender": "vp",
+      "user_id": "U02ENFDJHC0",
+      "message": "thanks @Kerry, yes \"sending all the images that have change every time\" is what I was looking for, so we do not miss on things like example I listed. And wanting to know how can we list them. But I guess @Anil was talking about All-All images every time(I might be wrong in understanding). Which can definitely be annoying.",
+      "time": "11:13",
+      "timestamp": "1654280039.629239",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Sending all the images is the right answer here. It is not reasonable to figure out exactly all the impacted services based on git change lists of files touched. Think of all the changes to files in shared-utils, makefiles, base-containers.",
+      "time": "11:40",
+      "timestamp": "1654281609.237069",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I understand that this will take longer for the customer to re-validate images, but this realistically the correct way of doing it.\nWe are starting to use patch release versions (e.g. we are currently on 22.05.4) which will stamp an entire release and contain a collection of cherry-picks. Going forward, we should only ship full patch releases to customers and not one-off re-builds of individual services.",
+      "time": "11:43",
+      "timestamp": "1654281784.185169",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "There are 32+ deployments = 32+ images. Is it realistic to send all of them? We need a tool to figure out which images have changed.\nCustomer previously received images with redis image hash W, app-tasks image hash X and job-service image hash Y\nAfter cherrypick: redis image hash W, app-tasks image hash X and job-service image hash Z => send only job-service image\nI know we have release versioning 22.05.X, that helps but doesn't solve the above problem of having to send all 32 images to be safe.",
+      "time": "11:49",
+      "timestamp": "1654282165.166679",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Weaver",
+      "user_id": "U01B8GFNUAC",
+      "message": "Once we have automated tooling, and an automated report to share with customers to demonstrate that the CVEs in the images have not materially changed, sending all images should be no problem.\n\nWe get into very confusing \"hybrid-release\" deployments of instabase where we have 22.01, 22.02, 22.03 etc images all deployed as one \"instabase\" installation.... this makes troubleshooting really hard & painful when something goes wrong (e.g. Citi & NatWest) CC @Lee & @Aimé\n\nIf we can provide a \"Diff\" CVE report to the customer along with the full list of new images (to show nothing has changed), sending all images is the right approach here.\n\nThe file-size of the images is a non-issue imho",
+      "time": "13:13",
+      "timestamp": "1654287204.316449",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "+1 to Matt’s proposal here.\n--> Sending all images + Diff of CVE reports for faster reverification\nseems to be a good balance of debuggability and speed of release adoption.",
+      "time": "14:30",
+      "timestamp": "1654291833.470679",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-06-03.json",
+    "message_count": 14,
+    "start_time": "1654277690.366159",
+    "end_time": "1654291833.470679",
+    "is_thread": true
+  }
+}

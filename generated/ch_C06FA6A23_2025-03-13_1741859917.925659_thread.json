@@ -1,0 +1,331 @@
+{
+  "id": "ch_C06FA6A23_2025-03-13_1741859917.925659_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Balaram",
+    "vp",
+    "jordy.vlan",
+    "Ashish",
+    "Hamish",
+    "rohit",
+    "arun",
+    "Aegis"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Hey team, urgent ask here. India team are mostly on holiday so we are lacking support\n\nANZ have a demo to a very important exec in around 10 hours time. Their Sandbox env (the only one they currently have access to) is failing on classification and extraction of the document in this project here (https://anz-pov.internal.instabase.com/build/0195057c-2cd2-70a7-9df0-def391ec3048).\n\nCan someone pls take a look at the project and/or sandbox to see if we can fix the issue ASAP?\n\ncc <!subteam^S05BKH20B4K> <!subteam^S02FJA6A7U5>",
+      "time": "02:58",
+      "timestamp": "1741859917.925659",
+      "is_reply": false
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Sandbox here: https://sandbox.console.instabase.com/customer/Customer%20Success/tenant/anz-pov/info",
+      "time": "02:59",
+      "timestamp": "1741859979.892279",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Hiya Hamish! jumping in",
+      "time": "03:03",
+      "timestamp": "1741860187.500329",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "I see a ton of errors like this in `model-service`:\n> 2025-03-13T10:01:58.788272922Z stdout F level=INFO time=2025-03-13 10:01:58,786 msg=“Finished IBLLM request for task: classification with ERROR: Exception Error code: 404 - {‘error’: {‘code’: ‘DeploymentNotFound’, ‘message’: ‘The API deployment for this resource does not exist. If you created the deployment within the last 5 minutes, please wait a moment and try again.’}}”  path=“/model-service/py/instabase/ibllm/model/model.py:272\" process=“MainProcess” thread=“ThreadPoolExecutor-6890_0\" trace_id=“a72345beb41f024e”\nHow is OpenAI configured for them? Should it be using Azure?",
+      "time": "03:03",
+      "timestamp": "1741860211.212509",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Yes its using Azure in Australia",
+      "time": "03:04",
+      "timestamp": "1741860254.600409",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "This earlier thread seems very related: https://instabase.slack.com/archives/C04TSMWLPAS/p1721983113891199?thread_ts=1721891039.665449&cid=C04TSMWLPAS",
+      "time": "03:04",
+      "timestamp": "1741860299.214369",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Perhaps an issue with the Azure `deployment map`",
+      "time": "03:07",
+      "timestamp": "1741860421.268699",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "In deployment manager I see these as the latest changes:",
+      "time": "03:09",
+      "timestamp": "1741860567.296499",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Yesterday there was similar activity regarding the AZURE_OPENAI_KEY on Anz-dev: https://instabase.slack.com/archives/C05BJCNKZAM/p1741739091870899",
+      "time": "03:11",
+      "timestamp": "1741860663.041579",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "```2025-03-13T10:00:31.793366278Z stdout F level=INFO time=2025-03-13 10:00:31,792 msg=\"HTTP Request: POST https://aihub-australia.openai.azure.com/openai/deployments/aihub-gpt35/chat/completions?api-version=2024-04-01-preview \"HTTP/1.1 404 DeploymentNotFound\"\"  path=\"/usr/local/lib/python3.9/site-packages/httpx/_client.py:1038\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-2352_0\" trace_id=\"ae6fae4783aecdf8\"```\nso no gpt3.5 found, also seems different model name in Azure aihub-australia",
+      "time": "03:15",
+      "timestamp": "1741860920.140749",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "current map =\n```'{\"text-embedding-ada-002\": \"text-embedding-ada-002\", \"gpt-3.5-turbo-0125\": \"aihub-gpt35\", \"gpt-3.5-turbo-1106\": \"aihub-gpt35\", \"gpt-3.5-turbo-16k\": \"aihub-gpt35\", \"gpt-4-1106-preview\": \"aihub-gpt4\", \"gpt-4o\": \"aihub-gpt4\", \"gpt-4o-2024-05-13\": \"aihub-gpt4\", \"gpt-4o-mini-2024-07-18\": \"aihub-gpt35\"}'```\nNames were modified on 11/3 (Mar 11, 2025 2:54 AM) in Azure; so found root cause.\nNow will try to patch the deployment map to match the correct names :wink:\n\nThis new deployment map should fix the deployment not found issue:\n```'{\"text-embedding-ada-002\": \"text-embedding-ada-002\", \"gpt-3.5-turbo-0125\": \"gpt-35-turbo\", \"gpt-3.5-turbo-1106\": \"gpt-35-turbo\", \"gpt-3.5-turbo-16k\": \"gpt-35-turbo\", \"gpt-4-1106-preview\": \"gpt-4\", \"gpt-4o\": \"gpt-4\", \"gpt-4o-2024-05-13\": \"gpt-4\", \"gpt-4o-mini-2024-07-18\": \"gpt-35-turbo\"}'```\nWill let you know when I successfully patched, to test :wink:",
+      "time": "03:17",
+      "timestamp": "1741861036.271059",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Thanks @jordy.vlan - if we need to update the env to the latest version of AI Hub which might not use 3.5 then lmk.",
+      "time": "03:20",
+      "timestamp": "1741861254.558349",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "I've created a Zendesk ticket: 9201",
+      "time": "03:21",
+      "timestamp": "1741861266.304069",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Patch should be applied, let’s test :wink:",
+      "time": "03:23",
+      "timestamp": "1741861418.592979",
+      "is_reply": true
+    },
+    {
+      "sender": "vp",
+      "user_id": "U02ENFDJHC0",
+      "message": "Jordy, we need that map patch on api-server too as well I guess",
+      "time": "03:30",
+      "timestamp": "1741861804.670429",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Still getting failure",
+      "time": "03:30",
+      "timestamp": "1741861821.975559",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "ah yeah? Did not know that was needed, sure will do. So deployment-api-server then?",
+      "time": "03:30",
+      "timestamp": "1741861839.769049",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "Below was the config used with ANZ dev environment.\n\n'{\"text-embedding-ada-002\":\"text-embedding-ada-002\",\"gpt-4o-mini-2024-07-18\":\"gpt-35-turbo-0125\",\"gpt-3.5-turbo-0125\":\"gpt-35-turbo-0125\",\"gpt-3.5-turbo-1106\":\"gpt-35-turbo-0125\",\"gpt-4\":\"gpt-4-1106\",\"gpt-4o-2024-05-13\":\"gpt-4-1106\",\"gpt-4o-2024-08-06\":\"gpt-4-1106\"}'\n\nOPENAI_API_VERSION*:* \"2024-10-01-preview\"\nAZURE_OPENAI_ENDPOINT*:* https://aihub-australia.openai.azure.com\n\nhttps://anz.dev.instabase.com/deployment-manager/configs?targetObject=deployment-model-service\n\ncc: @Yash Botadra",
+      "time": "03:30",
+      "timestamp": "1741861850.878969",
+      "is_reply": true
+    },
+    {
+      "sender": "rohit",
+      "user_id": "U05HDSK851D",
+      "message": "```{\"text-embedding-ada-002\":\"text-embedding-ada-002\",\"gpt-3.5-turbo-0125\":\"gpt-35-turbo-0125\",\"gpt-3.5-turbo-1106\":\"gpt-35-turbo-0125\",\"gpt-3.5-turbo-16k\":\"gpt-35-turbo-0125\",\"gpt-4-1106-preview\":\"gpt-4-1106\",\"gpt-4o\":\"gpt-4-1106\",\"gpt-4o-2024-05-13\":\"gpt-4-1106\",\"gpt-4o-mini-2024-07-18\":\"gpt-4-1106\",\"gpt-4o-2024-08-06\":\"gpt-4-1106\"}```",
+      "time": "03:31",
+      "timestamp": "1741861913.106969",
+      "is_reply": true
+    },
+    {
+      "sender": "rohit",
+      "user_id": "U05HDSK851D",
+      "message": "This should be the correct map for ANZ POV as per new deployment models in https://aihub-australia.openai.azure.com/",
+      "time": "03:32",
+      "timestamp": "1741861954.172029",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "hmmm seems different from what I see in the UI:",
+      "time": "03:33",
+      "timestamp": "1741862003.352059",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "@Balaram getting a “OAuthError: User is not assigned to the client application.” when trying to check the configs for anz.dev (http://anz.dev)",
+      "time": "03:34",
+      "timestamp": "1741862068.664199",
+      "is_reply": true
+    },
+    {
+      "sender": "vp",
+      "user_id": "U02ENFDJHC0",
+      "message": "Jordy, give us a minute, @rohit is patching it",
+      "time": "03:40",
+      "timestamp": "1741862429.652869",
+      "is_reply": true
+    },
+    {
+      "sender": "rohit",
+      "user_id": "U05HDSK851D",
+      "message": "model map updated\n@Hamish can you try it now in *anz-pov.internal.instabase.com (http://anz-pov.internal.instabase.com)*",
+      "time": "03:46",
+      "timestamp": "1741862780.015529",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Working! Thanks team:tada:",
+      "time": "03:47",
+      "timestamp": "1741862843.685259",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "As a wider discussion point - do we expect these Azure model mappings to be a problem in the long run once ANZ have their dev/prod envs and we are deploying upgrades to them? @bibhash.rajbongshi @Vikesh Chopra",
+      "time": "03:48",
+      "timestamp": "1741862901.171279",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Do we know what changed to cause these issues?",
+      "time": "03:48",
+      "timestamp": "1741862931.722029",
+      "is_reply": true
+    },
+    {
+      "sender": "rohit",
+      "user_id": "U05HDSK851D",
+      "message": "deployment model names modified in Azure which were not replicated to the model map in ANZ POV env",
+      "time": "03:51",
+      "timestamp": "1741863093.556539",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Are those modifications ones we make? or is that Azure controlled?",
+      "time": "03:54",
+      "timestamp": "1741863274.063869",
+      "is_reply": true
+    },
+    {
+      "sender": "rohit",
+      "user_id": "U05HDSK851D",
+      "message": "IB controlled",
+      "time": "03:55",
+      "timestamp": "1741863302.659119",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Not sure who we need to flag this to but we should 100% make sure there is a process around this to make sure this doesn't happen with their Prod envs",
+      "time": "03:55",
+      "timestamp": "1741863354.167779",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "cc @BG",
+      "time": "03:56",
+      "timestamp": "1741863367.670109",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "U01HM9DEJE9",
+      "message": "@Hamish We will root cause this and take necessary steps to make sure this does not happen again. \n\n@vp Let’s keep the Zendesk ticket open and update our findings in the ticket and in this thread.",
+      "time": "03:59",
+      "timestamp": "1741863559.146149",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "cc @Yash Botadra for awareness on the deployment map changes",
+      "time": "04:01",
+      "timestamp": "1741863700.218479",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "@arun @vp can you please create a retroactive incident for this? Even though this is for a dev environment, there is a material business impact. We need to track the root cause and learn from it. Thank you",
+      "time": "04:37",
+      "timestamp": "1741865851.624249",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "thanks a lot to everyone for jumping on this issue and resolving it quickly. great team work. I very much appreciate it",
+      "time": "04:38",
+      "timestamp": "1741865907.106049",
+      "is_reply": true
+    },
+    {
+      "sender": "Aegis",
+      "user_id": "U06K3T6CTFW",
+      "message": "*Aegis has created the incident*\nIncident Channel: <#C08HPHQPBB6>\nIncident: 660 (https://instabase.app.opsgenie.com/incident/detail/c9b01b69-15b5-4254-927b-35def202104f)\n\nCreated by @arun",
+      "time": "05:52",
+      "timestamp": "1741870338.579479",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "U01HM9DEJE9",
+      "message": "New incident <#C08HPHQPBB6|> will used for further discussions and to identify the root cause.",
+      "time": "08:22",
+      "timestamp": "1741879332.506759",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-03-13.json",
+    "message_count": 38,
+    "start_time": "1741859917.925659",
+    "end_time": "1741879332.506759",
+    "is_thread": true
+  }
+}

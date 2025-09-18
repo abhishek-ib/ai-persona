@@ -1,0 +1,160 @@
+{
+  "id": "ch_C0516UPPMT3_2023-05-31_1685550925.159489_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Xi Cheng",
+    "shaunak",
+    "Jessica",
+    "donagh"
+  ],
+  "messages": [
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "After going through the \"connecting external storage\" flow I am returned to the same page without any indication that my drive was successfully added. I'd have liked to see it somewhere in the UI after adding it",
+      "time": "09:35",
+      "timestamp": "1685550925.159489",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Heymian",
+      "time": "09:37",
+      "timestamp": "1685551071.700859",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@donagh did you connect S3 or Google Drive? When you refresh do you see anything? cc @songeun.you",
+      "time": "09:46",
+      "timestamp": "1685551613.059659",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@donagh is this your private, or public drive?",
+      "time": "09:53",
+      "timestamp": "1685551992.713069",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Yash Botadra can probably help look into this too.",
+      "time": "09:57",
+      "timestamp": "1685552239.966649",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@donagh And what if you try connecting again?",
+      "time": "09:59",
+      "timestamp": "1685552384.590289",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "I connected google drive, it was my instabase account",
+      "time": "10:01",
+      "timestamp": "1685552471.730569",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "I will try again now",
+      "time": "10:01",
+      "timestamp": "1685552475.544609",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Ok so my first two tries yielded no change, and my recent third try seemed to work",
+      "time": "10:02",
+      "timestamp": "1685552558.575399",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Got it, @Yash Botadra Let's try this as well and understand the root cause. I think I've experienced something similar before",
+      "time": "10:03",
+      "timestamp": "1685552607.769969",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "If there’s any error while going through the Google Auth flow or if the user declines the requested permissions, we redirect back to the “original URL”, which in this case is the `My Hub` page. (Showing an error in a small pop up would be good but we don’t have that at the moment).\nI’ll go through the webapp logs to look for errors.",
+      "time": "13:07",
+      "timestamp": "1685563673.783549",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "yeah I did a quick search around the time this got reported and did find much, but I could have missed this",
+      "time": "13:26",
+      "timestamp": "1685564812.782189",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "```Error while fetching token for mounting Google Drive: (mismatching_state) CSRF Warning! State not equal in request and response.```\nThis has happened thrice in the last 24hours or so, presumably all for this particular request. I am not an expert here but looks like a flask+gunicorn+docker weirdness when trying to access cookies.",
+      "time": "13:27",
+      "timestamp": "1685564836.633159",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Do you have the time frame? Yes, this does happen and in my experience, refreshing the web page resolves it.",
+      "time": "13:28",
+      "timestamp": "1685564881.523879",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "@Xi Cheng Loki logs: https://aihub.instabase.com/grafana/explore?orgId=1&left=%7B%22datasource%22:%22P8E80F[…]nge%22:%7B%22from%22:%22now-24h%22,%22to%22:%22now%22%7D%7D (https://aihub.instabase.com/grafana/explore?orgId=1&left=%7B%22datasource%22:%22P8E80F9AEF21F6940%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22P8E80F9AEF21F6940%22%7D,%22editorMode%22:%22builder%22,%22expr%22:%22%7Bcontainer%3D%5C%22webapp%5C%22%7D%20%7C%3D%20%60State%20not%20equal%20in%20request%20and%20response%60%22,%22queryType%22:%22range%22%7D%5D,%22range%22:%7B%22from%22:%22now-24h%22,%22to%22:%22now%22%7D%7D)",
+      "time": "13:28",
+      "timestamp": "1685564906.737389",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Got it, I think this collides with when @donagh reported the issue. @donagh The problem is likely that we hit some CSRF token mismatch error in the backend. We (or I) don't have a very good understanding as to how this happens, but empirically I resolve this by refreshing the webpage before proceeding to mounting the drive.\n\n@Yash Botadra I wonder if we should redirect the user to an error page if this happens, and to force them refresh the page again. Dropping this silently isn't a great thing to do",
+      "time": "13:31",
+      "timestamp": "1685565075.218499",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Unless the user does a hard refresh, redirecting to an error page or back to My Hub won’t make much of a difference, will it?\nWe don’t have a good error page at the moment, but I agree that silently dropping this isn’t good.",
+      "time": "13:33",
+      "timestamp": "1685565231.326549",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-05-31.json",
+    "message_count": 17,
+    "start_time": "1685550925.159489",
+    "end_time": "1685565231.326549",
+    "is_thread": true
+  }
+}

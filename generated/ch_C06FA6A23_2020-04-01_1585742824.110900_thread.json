@@ -1,0 +1,128 @@
+{
+  "id": "ch_C06FA6A23_2020-04-01_1585742824.110900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "abhilash",
+    "pankaj.hazra",
+    "dlluncor",
+    "Hari",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "pankaj.hazra",
+      "user_id": "URZU9R90R",
+      "message": "Hey everyone! In the local dev setup, is there a way to *kill  pending celery app tasks* so that it doesn’t flood the app-tasks? if we have to re run a step, the previous run is run until it’s task is done? I tried using *celery flower* as mentioned in the dev setup doc, however it fails to load the *tasks. Any alternative ways to kill the tasks?*",
+      "time": "05:07",
+      "timestamp": "1585742824.110900",
+      "is_reply": false
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "Hello, you can purge the rabbitmq by going here: http://localhost:15672/#/queues/%2F/celery\nlogin: c0nsole, password: c0nsole",
+      "time": "05:18",
+      "timestamp": "1585743492.111700",
+      "is_reply": true
+    },
+    {
+      "sender": "pankaj.hazra",
+      "user_id": "URZU9R90R",
+      "message": "the password appears to fail!",
+      "time": "05:20",
+      "timestamp": "1585743607.111900",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": ":confusedparrot:",
+      "time": "05:21",
+      "timestamp": "1585743686.112100",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "It should’ve worked",
+      "time": "05:21",
+      "timestamp": "1585743697.112300",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "Try this: https://instabase.slack.com/archives/CD6DST2R0/p1585199873029300?thread_ts=1585199669.027000",
+      "time": "05:22",
+      "timestamp": "1585743737.112500",
+      "is_reply": true
+    },
+    {
+      "sender": "pankaj.hazra",
+      "user_id": "URZU9R90R",
+      "message": "It doesn’t work for me! I tried looking it up here as well and tried multiple times but it fails",
+      "time": "05:28",
+      "timestamp": "1585744103.112800",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "@pankaj.hazra Here is another way:\n\nflush a celery queue that just won't die:\n-- Ctrl-C Redis\n-- Ctrl-C RabbitMQ\n-- rm dump.rdb\n-- Restart Redis\n-- Restart RabbitMQ\n-- Run: /usr/local/sbin/rabbitmqadmin list queues | cut -d '|' -f 2 | grep -v \\+ | xargs -n1 -I@ /usr/local/sbin/rabbitmqadmin purge queue name=@",
+      "time": "05:30",
+      "timestamp": "1585744226.113200",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "guest:guest worked.. he was running rabbitmq locally, without docker.",
+      "time": "05:48",
+      "timestamp": "1585745306.113500",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "just seeing this @pankaj.hazra - the local rabbitmq run does not use this env file :slightly_smiling_face:  Thus it has the default rabbitmq password guest:guest.",
+      "time": "07:09",
+      "timestamp": "1585750175.113900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "this would be a great Q/A to codify into our internal https://stackoverflow.com/ — could you help with that @abhilash, thanks!",
+      "time": "09:39",
+      "timestamp": "1585759147.114500",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "Here it is: https://stackoverflow.com/c/instabase/questions/41/42#42\nI too learned the `celery purge` command with this :smile:",
+      "time": "10:15",
+      "timestamp": "1585761331.114900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "nice!",
+      "time": "10:36",
+      "timestamp": "1585762586.115500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-04-01.json",
+    "message_count": 13,
+    "start_time": "1585742824.110900",
+    "end_time": "1585762586.115500",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "id": "ch_C06FA6A23_2020-06-05_1591387219.000800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "abhilash",
+    "Aaron Vontell",
+    "Shivam",
+    "Jonathan Shih"
+  ],
+  "messages": [
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "A flow that has just two steps:\n1. fetch_files and 2. process_files\nThe issue I'm facing is, when I'm running this flow on instabase.com (http://instabase.com), the flow runs smoothy. When I run it locally on latest master, I can only see fetch files step executed successfully. There isn't even a folder named s2_process_files in the out.\nHere's the error from the app-tasks. logs:\nPS: This happens only in V2 mode.",
+      "time": "13:00",
+      "timestamp": "1591387219.000800",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Unfortunately I don’t think we can run Process Files after fetch files, maybe some infra can confirm this? Can you paste a link to the Flow?",
+      "time": "13:01",
+      "timestamp": "1591387292.001800",
+      "is_reply": true
+    },
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "I think we can : )\nThere is even a golden test for fetcher that has it too.\nhttps://instabase.com/apps/flow/edit/org1/repo1/fs/Test%20Drive/tests/golden-dataset-tests/FetcherTests/workflows/custom-fetcher-csv.ibflow",
+      "time": "13:02",
+      "timestamp": "1591387372.002100",
+      "is_reply": true
+    },
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "@Jonathan Shih thoughts?",
+      "time": "13:04",
+      "timestamp": "1591387454.002400",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "i’m not very familiar with fetcher. I was also under the impression that this would work. Is fetcher producing any files?",
+      "time": "13:05",
+      "timestamp": "1591387555.002600",
+      "is_reply": true
+    },
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "Yes. The fetcher step executed successfully. I doubt that it's a fetcher issue.",
+      "time": "13:06",
+      "timestamp": "1591387606.002800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "It looks like your fetcher step is outputting text files",
+      "time": "13:07",
+      "timestamp": "1591387649.003300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "And the error is that it can’t find ibocr/ibdoc files, I wonder if Flow is making some invalid assertions about file type",
+      "time": "13:08",
+      "timestamp": "1591387692.003500",
+      "is_reply": true
+    },
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "Yes correct @Aaron Vontell",
+      "time": "13:08",
+      "timestamp": "1591387694.003700",
+      "is_reply": true
+    },
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "But the flow generally doesn't make assertions right?\nNottice that Flow executes successfully on ib.com (http://ib.com) but not locally.",
+      "time": "13:09",
+      "timestamp": "1591387781.004000",
+      "is_reply": true
+    },
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "BUG FOUND",
+      "time": "13:14",
+      "timestamp": "1591388080.004300",
+      "is_reply": true
+    },
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "it fails on dogfood but succeeds on ib.com (http://ib.com)",
+      "time": "13:15",
+      "timestamp": "1591388111.004500",
+      "is_reply": true
+    },
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "Someone added a bug probably :stuck_out_tongue:\nLet me fix this",
+      "time": "13:15",
+      "timestamp": "1591388133.004700",
+      "is_reply": true
+    },
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "cc: @Hari",
+      "time": "13:15",
+      "timestamp": "1591388151.004900",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "very likely. `fetcher-csv-input` golden has been failing for a week now..",
+      "time": "13:16",
+      "timestamp": "1591388213.005200",
+      "is_reply": true
+    },
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "Yes finally will solve both problems with 1 solution.\nhaha",
+      "time": "13:17",
+      "timestamp": "1591388264.005400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-06-05.json",
+    "message_count": 16,
+    "start_time": "1591387219.000800",
+    "end_time": "1591388264.005400",
+    "is_thread": true
+  }
+}

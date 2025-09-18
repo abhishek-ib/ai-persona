@@ -1,0 +1,142 @@
+{
+  "id": "ch_C05L87V014J_2024-10-28_1730129614.727969_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "sean.donohoe",
+    "Serena",
+    "Sayd"
+  ],
+  "messages": [
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "webapp is up and logs are pretty much empty. Now, the ppy-server-nginx link isn't working either. All services are up",
+      "time": "08:33",
+      "timestamp": "1730129614.727969",
+      "is_reply": false
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "server-nginx is also up and no error logs",
+      "time": "08:34",
+      "timestamp": "1730129651.249779",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "",
+      "time": "08:34",
+      "timestamp": "1730129659.074639",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "I'm gonna resync with dev and see",
+      "time": "08:35",
+      "timestamp": "1730129708.546949",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i guess if the tunneling isn’t working, it makes sense that you don’t see any logs since no requests are getting to server-nginx?",
+      "time": "09:06",
+      "timestamp": "1730131579.197149",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "Yes, but the ppy-server-nginx was working and then it suddenly stopped",
+      "time": "09:43",
+      "timestamp": "1730133784.420219",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "@sean.donohoe could you please help take a look?\n\ni've tried restarting, updating: https://instabase.sandboxes.site/sandboxes/sayd-dev",
+      "time": "09:58",
+      "timestamp": "1730134691.347789",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "the redis removal caused the ppy-server-nginx issue resolved. but the tunnel is still broken",
+      "time": "10:00",
+      "timestamp": "1730134821.996229",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah I see your nginx up and running fine -- based on this I suspect there's an issue with two different processes listening on ipv4 and ipv6\n```➜  instabase git:(fix-classification-with-org) ✗ sudo netstat -ltpn | grep ':80'\ntcp        0      0 127.0.0.1:8080          0.0.0.0:*               LISTEN      1/uinit             \ntcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      3058/docker-proxy   \ntcp6       0      0 :::80                   :::*                    LISTEN      3065/docker-proxy   \ntcp6       0      0 :::8081                 :::*                    LISTEN      3618/webpack```",
+      "time": "10:03",
+      "timestamp": "1730135013.596569",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "nvm got the same response with `curl -vvv http://127.0.0.1/` and `curl -vvv http://\\[::1\\]/ `",
+      "time": "10:05",
+      "timestamp": "1730135111.504679",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "oops, did you change anything right now? It just loaded",
+      "time": "10:05",
+      "timestamp": "1730135146.640009",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "",
+      "time": "10:05",
+      "timestamp": "1730135159.109139",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I did not -- fwiw you also do not need port forwarding if you are accessing via the `ppy` endpoint on your sandbox!",
+      "time": "10:06",
+      "timestamp": "1730135179.021309",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah right - @Sayd is there a specific reason you need to use port forwarding since i assume you’re running all services on crafting and you’re accessing the sandbox via https://ppy-server-nginx--sayd-dev-instabase.instabase.site.sandboxes.run/?",
+      "time": "10:16",
+      "timestamp": "1730135776.329489",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "Nope, well one of them was google oauth wasn't working because that link wasn't present in redirect uri but that's fixed. The issue was even the ppy-link wasn't working but now they both do",
+      "time": "10:24",
+      "timestamp": "1730136245.926889",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-10-28.json",
+    "message_count": 15,
+    "start_time": "1730129614.727969",
+    "end_time": "1730136245.926889",
+    "is_thread": true
+  }
+}

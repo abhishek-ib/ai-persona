@@ -1,0 +1,376 @@
+{
+  "id": "ch_C06FA6A23_2020-02-26_1582740778.047000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "achao",
+    "Aaron Vontell",
+    "Heymian",
+    "john"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Is there an “owner” for our API endpoints?",
+      "time": "10:12",
+      "timestamp": "1582740778.047000",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i try to keep an eye on all the api-server API’s. Don’t follow api-server-apps though.",
+      "time": "10:17",
+      "timestamp": "1582741071.047200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Alright, I am curious about how to create an endpoint that does not need to take in a repo or user as part of the path, whenever I try that I get an error that I need to pass in a valid user, repo, mount point, etc…",
+      "time": "10:20",
+      "timestamp": "1582741241.047400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I am trying to move towards “putting all necessary parameters in the POST body” so we can keep the endpoint paths simple. In this case `api/v1/sdlc/init` versus `api/v1/vontell/workspace/Instabase Drive/my_folder/sdlc/init` which is a lot harder for a customer to comprehend",
+      "time": "10:21",
+      "timestamp": "1582741317.047600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah you’ll need to add a new top level division. are you doing this in api-server-apps?",
+      "time": "10:23",
+      "timestamp": "1582741395.047800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "No api-server",
+      "time": "10:24",
+      "timestamp": "1582741456.048000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "ah okay, would you be okay to move that under api/v1/developer/sdlc/init..?",
+      "time": "10:24",
+      "timestamp": "1582741480.048200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I no longer develop in api-server-apps because most of our APIs should be accessible outside of the UI, I think, and api-server seems to be best for that?\n\nAnd actually I currently have it api/v1/drives/sdlc/init since it is mostly an operation on files",
+      "time": "10:25",
+      "timestamp": "1582741517.048400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "But that would work too",
+      "time": "10:25",
+      "timestamp": "1582741522.048600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "But I am mostly curious at where in the code api-server chooses to throw an error because my endpoint didnt include a parameter for user and repo",
+      "time": "10:25",
+      "timestamp": "1582741555.048800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "mm I wouldn’t put that under drives",
+      "time": "10:26",
+      "timestamp": "1582741563.049000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "flask does that",
+      "time": "10:26",
+      "timestamp": "1582741571.049200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "it looks at all the routes you’ve added (bottom of all the files) and matches your request to them. Everything in drives.py is under the “/drives” path. So “api/v1/drives/repo-owner/repo-name…”",
+      "time": "10:27",
+      "timestamp": "1582741646.049400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "you’d add it to developer.py if you want it to be under /api/v1/developer/sdlc…",
+      "time": "10:28",
+      "timestamp": "1582741699.049800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "yeah but the repo owner and name is part of the endpoint, not the drive handler itself, right?",
+      "time": "10:28",
+      "timestamp": "1582741729.050000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Like if I make an endpoint in drives.py that doesnt have those parameters in the endpoint, it shouldnt try to get those, correct?",
+      "time": "10:29",
+      "timestamp": "1582741748.050200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think your paths can’t conflict. So if you want to go to /drives/sdlc/init, that already matches the structure of an existing path, and it treats sdlc as the repo owner and init as the reponame",
+      "time": "10:30",
+      "timestamp": "1582741849.050400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "tho, i guess I see what you’re saying. the rest of the path doesn’t match, so it shouldn’t try those…",
+      "time": "10:33",
+      "timestamp": "1582742016.050700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yeah like our endpoints are kinddddaaaaa really weird lol",
+      "time": "10:34",
+      "timestamp": "1582742099.050900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Like what if my path to a folder ends up including something like `copy` or `move`, do weird things happen? Maybe not but kinda non-intuitive",
+      "time": "10:35",
+      "timestamp": "1582742129.051100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "what do you mean?",
+      "time": "10:36",
+      "timestamp": "1582742164.051400",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "yeah the copy and move endpoints are a little strange because you have to append `/copy` and `/move`  to the actual URL",
+      "time": "10:38",
+      "timestamp": "1582742332.051600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Oh here is a good example:",
+      "time": "10:39",
+      "timestamp": "1582742342.051800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "If you have POST `api/v1/drives/vontell/workspace/fs/IB Drive/some_folder/copy`, how does it know whether to resolve to the copy endpoint POST for folder `some_folder`, or the `PathView` MethodView POST on a folder named `copy`",
+      "time": "10:40",
+      "timestamp": "1582742421.052000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@Heymian regarding my earlier question, is that check related to `@verify_credentials(OAuth2Scope.REPO)`? Cause this operation does happen in a specific repo… But I don’t want to pass that repo in via the path lol",
+      "time": "10:49",
+      "timestamp": "1582742962.052200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "yes it’s due to verify_credentials. This oauth scope indicates that you are accessing something from a repo, hence we expect that repo information to show up in the API URL as a convention",
+      "time": "10:51",
+      "timestamp": "1582743091.052400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "hmmmmm yeah I figured…",
+      "time": "10:53",
+      "timestamp": "1582743189.052600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@dlluncor does the file client itself do any checking for those kinds of permissions? Like what if I go rogue and write a file read on a hardcoded path that not every user has access to within that endpoint",
+      "time": "10:54",
+      "timestamp": "1582743252.052800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "(Sorry for all the questions) if I really wanted to simplify this path, can I pull the user and repo from my body parameters, and then do a verify credentials on that?",
+      "time": "10:54",
+      "timestamp": "1582743281.053000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "yep file handle (ibfile) will do all the permissions checking and make sure that things are done appropriately",
+      "time": "10:55",
+      "timestamp": "1582743353.053200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "verify_credentials(USER) is a reasonable way to go too",
+      "time": "10:56",
+      "timestamp": "1582743366.053400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Does verify_credentials(USER) work without passing in the user in the path? Does it just check the auth token? If so that would be cool… and then i can still be confident that nothing is breached security-wise if they attempt to do a repo they dont have access to",
+      "time": "11:05",
+      "timestamp": "1582743932.053600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "it just checks the auth token yep, no URL mangling needed",
+      "time": "11:20",
+      "timestamp": "1582744847.053900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "and repo stuff will all be checked on the FS",
+      "time": "11:21",
+      "timestamp": "1582744873.054100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "niiiiiccceeeee",
+      "time": "11:21",
+      "timestamp": "1582744889.054300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Thanks!",
+      "time": "11:21",
+      "timestamp": "1582744894.054500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Hackathon project: Move to Instabase API V2 that uses a proper body instead of arguments inside the header as a stringified JSON :joy:",
+      "time": "11:27",
+      "timestamp": "1582745255.055000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "oh using a header was on purpose actually!",
+      "time": "12:21",
+      "timestamp": "1582748499.055600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yeah I’ve been curious about this, what is the justification?",
+      "time": "12:21",
+      "timestamp": "1582748516.055800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "We followed the Dropbox API model. Basically if you’re downloading or uploading a file, the body is reserved for binary data. So they use the headers and a stringified JSON to pass in arbitrary data as a common way across all their APIs",
+      "time": "12:23",
+      "timestamp": "1582748629.056000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I see - is there a reason we went that route instead of a standard multipart file upload? This is what I’ve seen a lot of other sites do",
+      "time": "14:01",
+      "timestamp": "1582754503.056400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Even so… I suppose that works for uploading files, but what about all of our other API calls? For instance, running Flows, listing files, reading a file, etc… don’t involve uploading binary data, but we still using that same model - just looked through Dropbox and they only do that for the file upload calls (update: they do it for some others too like delete, but I can’t figure out why… they aren’t uploading any binary data in those calls)",
+      "time": "14:07",
+      "timestamp": "1582754847.056700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "This is probably a very opinionated topic XD but anyways, I think multipart/form-data for uploads and then using a POST body for non-binary data would be more familiar to our customers, could be wrong though. @john do customers actually have issues with our API?",
+      "time": "14:12",
+      "timestamp": "1582755169.056900",
+      "is_reply": true
+    },
+    {
+      "sender": "john",
+      "user_id": "UGJ1TQ1JM",
+      "message": "holy, this is a long thread.\n\n> @john do customers actually have issues with our API?\nFew issues, like bugs, but customers mosdef use it. Most questions are regarding the file system API.",
+      "time": "15:50",
+      "timestamp": "1582761008.057200",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-02-26.json",
+    "message_count": 44,
+    "start_time": "1582740778.047000",
+    "end_time": "1582761008.057200",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "id": "ch_C06FA6A23_2019-07-16_1563309186.287400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "paul",
+    "sudeep",
+    "Ashish",
+    "shaunak",
+    "Aaron Vontell"
+  ],
+  "messages": [
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Is this going to affect the CDD use case for SC?",
+      "time": "13:33",
+      "timestamp": "1563309186.287400",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I believe it would",
+      "time": "13:34",
+      "timestamp": "1563309244.287800",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@paul heads up",
+      "time": "13:35",
+      "timestamp": "1563309332.288000",
+      "is_reply": true
+    },
+    {
+      "sender": "paul",
+      "user_id": "UEDF3JGN8",
+      "message": ":eyes:",
+      "time": "13:35",
+      "timestamp": "1563309341.288200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Oh actually @shaunak this depends, I think SC may be providing their own searches",
+      "time": "13:36",
+      "timestamp": "1563309372.288500",
+      "is_reply": true
+    },
+    {
+      "sender": "paul",
+      "user_id": "UEDF3JGN8",
+      "message": "hmm",
+      "time": "13:36",
+      "timestamp": "1563309380.288800",
+      "is_reply": true
+    },
+    {
+      "sender": "paul",
+      "user_id": "UEDF3JGN8",
+      "message": "thanks for the heads up — i’m talking to SC tonight and will listen in for it",
+      "time": "13:36",
+      "timestamp": "1563309405.289700",
+      "is_reply": true
+    },
+    {
+      "sender": "paul",
+      "user_id": "UEDF3JGN8",
+      "message": "if it does impact them, what’s the lag between this happening and them noticing? same day or will they not notice it until tomorrow?",
+      "time": "13:37",
+      "timestamp": "1563309421.289900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "That’s probably a question for Hari and Sudeep but they are asleep, I think their current procedure runs once a day. But once again, I think they always provide their own search results, let us know if you hear otherwise!",
+      "time": "13:38",
+      "timestamp": "1563309506.290300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "re: SC's NLP use-case, AFAIR, (1) a user runs a script to make a google search query, (2) once the google search results are retrieved, they send a request to Instabase to run NLP analysis.\nSince a google search query is made from a user's desktop, it is very likely that that request will not be blocked by Google.",
+      "time": "13:49",
+      "timestamp": "1563310162.292600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "That seems very reasonable as to why SC hasn’t mentioned this to us yet.",
+      "time": "13:51",
+      "timestamp": "1563310265.294900",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "@Aaron Vontell - i think this is also the same issue that we were chatting about nlp search as well where we saw the UI stop processing the fetch links yesterday for a demo. We cancelled that call then.",
+      "time": "14:31",
+      "timestamp": "1563312667.302200",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Re: SC the UAT script ran fine much earlier. It does header rotation and rate limiting to avoid captchas by google. Afaik we also do not use Beautiful Soup for getting the links from google search output. Checking their script now.",
+      "time": "14:34",
+      "timestamp": "1563312850.305300",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "SC uses the same script to perform search on individual laptop before submitting search links to webdriver tasks for fetching as pdf.",
+      "time": "14:35",
+      "timestamp": "1563312931.307100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Since they are using their own process for the fetching, I think we should be all good on that front then",
+      "time": "14:51",
+      "timestamp": "1563313865.308000",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Yeah I am checking the code as well, as that code is actually given by us to them.",
+      "time": "14:51",
+      "timestamp": "1563313910.308200",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Just ran the SC desktop script as well and that works fine!",
+      "time": "15:02",
+      "timestamp": "1563314559.308400",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Here is how we did the link extraction there. we do use BS there, had not looked at that code in a while :joy:\n```\n  soup_obj = BeautifulSoup(response1_text, \"html.parser\")\n  main_block = soup_obj.find_all(\"div\", {\"class\": \"r\"})\n  main_block_texts = []\n  titles = []\n  for i in range(len(main_block)):\n    result = main_block[i].findAll(\"a\")[0][\"href\"]\n    result_list.append(result)\n```",
+      "time": "15:03",
+      "timestamp": "1563314619.308600",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "We use `<div class='r' />` instead and look for hrefs within to get the search results, hence not getting affected by the Google's obfuscation change ..",
+      "time": "15:06",
+      "timestamp": "1563314813.308800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-07-16.json",
+    "message_count": 19,
+    "start_time": "1563309186.287400",
+    "end_time": "1563314813.308800",
+    "is_thread": true
+  }
+}

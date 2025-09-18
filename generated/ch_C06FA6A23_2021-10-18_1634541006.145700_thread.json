@@ -1,0 +1,110 @@
+{
+  "id": "ch_C06FA6A23_2021-10-18_1634541006.145700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "Abhishek",
+    "Rahul Rawal"
+  ],
+  "messages": [
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Abhishek Looks like this happens in your local env? We are investigating some on going issues of 504 errors, but do you start seeing this recently? And is ENABLE_FILE_SERVICE_V2 set in your local env?",
+      "time": "00:10",
+      "timestamp": "1634541006.145700",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek",
+      "user_id": "U01T5NS31NE",
+      "message": "yes this came 3 days back , previously everything was working. ENABLE_FILE_SERVICE_V2 is enabled in env-local",
+      "time": "00:13",
+      "timestamp": "1634541196.145900",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Got it, this may have to do with what we have seen on prod. For now, try disable ENABLE_FILE_SERVICE_V2 and re-build relevant services.",
+      "time": "00:15",
+      "timestamp": "1634541356.146100",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek",
+      "user_id": "U01T5NS31NE",
+      "message": "thanks will try this",
+      "time": "00:16",
+      "timestamp": "1634541395.146300",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek",
+      "user_id": "U01T5NS31NE",
+      "message": "rebuild all images from scratch by deleting the cache layers and then set the file_service_v2 to false but still the same errors",
+      "time": "02:12",
+      "timestamp": "1634548329.150500",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek",
+      "user_id": "U01T5NS31NE",
+      "message": "```[2021-10-18 14:15:34,413] {/Users/abhishekchaudhary/instabase/webserver/api-server-apps/build/py/instabase/utils/web/handler_util.py:80} ERROR - Received exception in WEBAPP JSON request: Error=Unknown exception executing method for service RepoService. Traceback=Traceback (most recent call last):;File \"/Users/abhishekchaudhary/instabase/webserver/api-server-apps/build/py/instabase/utils/web/handler_util.py\", line 74, in inner_func;return f(*args, **kwargs);File \"/Users/abhishekchaudhary/instabase/webserver/api-server-apps/build/py/instabase/utils/oauth2/oauth2.py\", line 136, in wrapped_f;return f(*args, **kwargs);File \"/Users/abhishekchaudhary/instabase/webserver/api-server-apps/build/py/instabase/tracing/flask.py\", line 128, in wrapped;raise error;File \"/Users/abhishekchaudhary/instabase/webserver/api-server-apps/build/py/instabase/tracing/flask.py\", line 123, in wrapped;r = func(*args, **kwargs);File \"/Users/abhishekchaudhary/instabase/webserver/api-server-apps/build/py/instabase/handler/api/v1/marketplace.py\", line 142, in get;name_arg);File \"/Users/abhishekchaudhary/instabase/webserver/api-server-apps/build/py/instabase/tracing/utils.py\", line 299, in wrapped;raise error;File \"/Users/abhishekchaudhary/instabase/webserver/api-server-apps/build/py/instabase/tracing/utils.py\", line 294, in wrapped;r = func(*args, **kwargs);File \"/Users/abhishekchaudhary/instabase/webserver/api-server-apps/build/py/instabase/solution_utils/solution.py\", line 283, in list;resp = repo_client.get_mktplace_avail_solns(req);File \"/Users/abhishekchaudhary/instabase/webserver/api-server-apps/build/py/instabase/utils/rpc/client.py\", line 82, in __get_proxy_method__;return self.__method_call__(method, *args, **kwargs);File \"/Users/abhishekchaudhary/instabase/webserver/api-server-apps/build/py/instabase/utils/rpc/client.py\", line 196, in __method_call__;raise IOError(err);OSError: Unknown exception executing method for service RepoService;```",
+      "time": "02:12",
+      "timestamp": "1634548359.150700",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek",
+      "user_id": "U01T5NS31NE",
+      "message": "also this is coming in api-server-apps",
+      "time": "02:13",
+      "timestamp": "1634548388.150900",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek",
+      "user_id": "U01T5NS31NE",
+      "message": "also no logs coming in celery-app-tasks",
+      "time": "02:14",
+      "timestamp": "1634548468.151100",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Rawal",
+      "user_id": "U01J0N3UV7E",
+      "message": "I am facing similar issue in server-nginx. `2021/10/14 13:08:17 [error] 19#19: *23 connect() failed (111: Connection refused) while connecting to upstream, client: 172.17.0.1, server: , request: \"POST /api/v2/spans HTTP/1.1\", upstream: \"http://192.168.65.2:9411/api/v2/spans\", host: \"localhost\", referrer: \"https://localhost/apps/flow/edit/rahul_rawal/my-repo/fs/Instabase%20Drive/refiner-load-time/workflow.ibflow\"` cc: @Yash Aggarwal",
+      "time": "04:49",
+      "timestamp": "1634557749.151700",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek",
+      "user_id": "U01T5NS31NE",
+      "message": "The issue is fixed temporarily by running all services as docker image. Root cause why it is not working as local is not fixed",
+      "time": "05:02",
+      "timestamp": "1634558528.151900",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek",
+      "user_id": "U01T5NS31NE",
+      "message": "Thanks @Xi Cheng",
+      "time": "05:02",
+      "timestamp": "1634558537.152100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-10-18.json",
+    "message_count": 11,
+    "start_time": "1634541006.145700",
+    "end_time": "1634558537.152100",
+    "is_thread": true
+  }
+}

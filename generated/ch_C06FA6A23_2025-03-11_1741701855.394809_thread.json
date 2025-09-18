@@ -1,0 +1,93 @@
+{
+  "id": "ch_C06FA6A23_2025-03-11_1741701855.394809_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "Sayan"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":eyes:\nSounds unpleasant",
+      "time": "07:04",
+      "timestamp": "1741701855.394809",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "At a glance, `deploy-saas-aws-preprod` is failing > 90% of the time. :sob:\n\nPicked `release-24-07` sandbox deployment (https://jenkins.instabase.com/job/build-services/29238/console) as a spot-check\nServices failing to build are:\n• `post-install-action-retention-rules`\n• `post-install-action-test-runner`\n• `search-tservice`\nCheck of `aihub-sandbox` deployment (https://jenkins.instabase.com/job/build-services/29237/console), failing services:\n• `connector-sharepoint`\n• `generic-connectors`\nFascinating lack of overlap in services, but some overlap in packages failing:\n• `mypy-0.812-cp39-cp39-manylinux2010_x86_64.whl`\n    ◦ Affects: `post-install-action-retention-rules` `post-install-action-test-runner` `search-tservice` `connector-sharepoint`\n    ◦ Expect: `33f159443db0829d16f0a8d83d94df3109bb6dd801975fe86bacb9bf71628e97`\n    ◦ Got: `4dc0ce006c6ed34c450a9dc7b665ad63b657f427eec4f0f2f580e9ffa57b4a48`\n• `pydantic_core-2.27.2-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl`\n    ◦ Affects: `generic-connectors`\n    ◦ Expect: `47956ae78b6422cbd46f772f1746799cbb862de838fd8d1fbd34a82e05b0983a`\n    ◦ Got: `5b29ad3774d5d15883305e5202da6483b0854831455509b4ebbeaa8aa6d46f70`",
+      "time": "07:15",
+      "timestamp": "1741702555.834329",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "~My money's on \"pypi is busted\" but I haven't chased that hunch yet lol~",
+      "time": "07:17",
+      "timestamp": "1741702642.874169",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Seems not pypi, but I didn't dig deep there.\n\nJust some more details I gathered from the examples above:\n1. They all ran on discrete builder nodes\n2. None of those nodes are around currently (didn't get 'stuck')\n3. The build environment for these is containerized, and the `bazel` cache local to the build is *NOT* persisted to the host FS (no bind mounts of `/home/ubuntu/.cache/bazel`)\n4. The network flakiness hypothesis from @sean.donohoe makes sense in light of previous experiences, but I don't know why it's suddenly so consistent. :thinking_face:",
+      "time": "07:35",
+      "timestamp": "1741703756.246469",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Rebuild (https://jenkins.instabase.com/job/service-builder/job/build-service/810658/console) of `generic-connectors` on `aihub-uat` worked fine, which tracks with 'flaky network'\n\nI don't rightly know what's the right troubleshooting / debugging path, TBH.\n\nI know lots of ways to dive into low level breakages, but this one is so hard to repro consistently that it's much trickier. :thonk:",
+      "time": "07:41",
+      "timestamp": "1741704099.163999",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Having this issue on my PR (https://github.com/instabase/instabase/pull/68707/) as well here. Is there a way we can contribute to debugging this issue @Cody Boggs",
+      "time": "09:21",
+      "timestamp": "1741710082.252699",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Looks like the last attempt was ~12 hours ago, rebuilding now to see if it passes just to get you unblocked.\n\nI don't think it's as consistent in failing right now, but will monitor.",
+      "time": "09:31",
+      "timestamp": "1741710678.849019",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I am very happy seeing this!",
+      "time": "13:57",
+      "timestamp": "1741726656.227049",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Do you know if it's possible to restart jobs automatically if we can detect that the failures are transient?",
+      "time": "14:01",
+      "timestamp": "1741726891.769709",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-03-11.json",
+    "message_count": 9,
+    "start_time": "1741701855.394809",
+    "end_time": "1741726891.769709",
+    "is_thread": true
+  }
+}

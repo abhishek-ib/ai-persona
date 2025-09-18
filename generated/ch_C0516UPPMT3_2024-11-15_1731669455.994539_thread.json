@@ -1,0 +1,393 @@
+{
+  "id": "ch_C0516UPPMT3_2024-11-15_1731669455.994539_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Deepthi",
+    "Ashish",
+    "hannah",
+    "Hamish",
+    "Aimé",
+    "jean",
+    "Jet",
+    "Ram Prasanna",
+    "Clemens",
+    "Anant",
+    "Jasper",
+    "Tom",
+    "lydia",
+    "Sanch"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Hey team, this is a really good example of where we are seeing major issues with customers post-sale (as mentioned on the field-to-EPD feedback call). I know there is a feature that @hannah is working on here, but flagging this as a priority. This is a commercial customer, but as we look to land Enterprise accounts, this kind of thing is concerning\n\nCan we get a response back to the customer ASAP?\n\ncc @Jasper @Kerry @Tom @hannah @Clemens @Nico @jack.robbins @bharath.raj",
+      "time": "03:17",
+      "timestamp": "1731669455.994539",
+      "is_reply": false
+    },
+    {
+      "sender": "Jasper",
+      "user_id": "U02KPTJGSCC",
+      "message": "Thanks @Hamish.\nFYI @Aimé @amber, this seems to be related to a change in the reasoning pipeline (https://instabase.slack.com/archives/C05BJCNKZAM/p1731616547334439?thread_ts=1731614266.587949&cid=C05BJCNKZAM), in case you need to check with any other customers with solutions in production.",
+      "time": "04:02",
+      "timestamp": "1731672158.918899",
+      "is_reply": true
+    },
+    {
+      "sender": "Sanch",
+      "user_id": "U04UB9F2AKZ",
+      "message": "perhaps a dumb question - does this only affect certain environments? e.g. if Kering have a paid AI Hub Commercial plan could they also be affected (just wondering if i should be proactive with comms as my champ is demoing to teams internally or if they will be fine now)",
+      "time": "05:45",
+      "timestamp": "1731678317.274419",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "@Sanch unless they have their own ST, this could affect them (all MT orgs). Not sure what the actual problem was in the end, so its possible it was specific to the setup of Expatrio's app. I'd always recommend re-running a demo a few hours before just in case",
+      "time": "05:48",
+      "timestamp": "1731678526.338559",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Hey, from my reading of that thread, the only change was the error message is different (from a more specific error message to a more generic one). There is no indication that the model or reasoning pipeline output changed.",
+      "time": "07:51",
+      "timestamp": "1731685873.446379",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "As far as I know, we have not made any model or pipeline changes from 24.42 to 24.44.",
+      "time": "07:51",
+      "timestamp": "1731685898.699809",
+      "is_reply": true
+    },
+    {
+      "sender": "Jasper",
+      "user_id": "U02KPTJGSCC",
+      "message": "Got it, thanks @lydia. Do we know what is the root cause for the issue from Expatrio then was since the update from 24.42 to 24.44? We can also analyse this offline.",
+      "time": "07:53",
+      "timestamp": "1731686007.309069",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "We don't yet. In the future, let's not link to guesses from the eng team when trying to troubleshoot, since those are not confirmed, and I don't want to spread misinformation",
+      "time": "07:59",
+      "timestamp": "1731686345.628909",
+      "is_reply": true
+    },
+    {
+      "sender": "Tom",
+      "user_id": "UUEDM4T9R",
+      "message": "Thanks all. Whats the best way to get to an explaination for the customer as to what went wrong? We should get back to them asap",
+      "time": "08:00",
+      "timestamp": "1731686444.974049",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Dumb question - Was a ticket raised? And where is that ticket?",
+      "time": "08:01",
+      "timestamp": "1731686465.429349",
+      "is_reply": true
+    },
+    {
+      "sender": "Tom",
+      "user_id": "UUEDM4T9R",
+      "message": "Ticket was raised (unsure of the number or link)",
+      "time": "08:02",
+      "timestamp": "1731686529.853219",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Assume this: https://instabase.zendesk.com/agent/tickets/8548",
+      "time": "08:03",
+      "timestamp": "1731686583.108879",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "or https://instabase.zendesk.com/agent/tickets/8540",
+      "time": "08:04",
+      "timestamp": "1731686651.303709",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "We figured out the root cause. In 24.44, we changed quick clean data format function to raise an error if the date couldn't be parsed correctly, rather than fail silently and return the input. (mentioned in the release notes (https://instabase.slack.com/archives/C05BJCNKZAM/p1731686835055679?thread_ts=1731614266.587949&cid=C05BJCNKZAM)).\n\nHowever, given this led to quite a negative impact on a customer, it's something we need to consider (https://instabase.slack.com/archives/C05BJCNKZAM/p1731686977536059?thread_ts=1731614266.587949&cid=C05BJCNKZAM) when rolling out changes.",
+      "time": "08:13",
+      "timestamp": "1731687191.589929",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "Yes, the ticket number is https://instabase.zendesk.com/agent/tickets/8548. I explained this issue to the client yesterday already, but they haven’t replied yet.",
+      "time": "08:31",
+      "timestamp": "1731688264.369529",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Although we have provided a factual update the the customer - it is expected behaviour - We did not highlight in the release notes that the chnage would impact existing solutions and require a change to be made. If that ever is the case, as with deprecations, we need to proactively inform our customers and not rely on them finding out in the release notes. So I suggest we acknowledge that and reassure the customer how we plan to mitigate this from happening again in the future.",
+      "time": "08:34",
+      "timestamp": "1731688493.234619",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": ":pensive: I think it will be very difficult to prevent this in the future since Dev, UAT, and Prod use the same version (different workspaces). Updates to AIHUB will likely impact their prod runs before they have time to understand the changes.",
+      "time": "08:39",
+      "timestamp": "1731688790.252559",
+      "is_reply": true
+    },
+    {
+      "sender": "Tom",
+      "user_id": "UUEDM4T9R",
+      "message": "@jack.robbins are you able to run point on responding to the customer once you're back next week please?",
+      "time": "08:43",
+      "timestamp": "1731688980.894429",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Agree @Jet :slightly_smiling_face: This was not a comment on how you handled the ticket btw :slightly_smiling_face: Suggest Jack owns that communication back as per Toms suggestion. As I understand it EPD are also exploring creative ways for us to support regression testing with the frequent upgrades so that this won't happen. Until then, we need to be very careful not to introduce breaking changes.",
+      "time": "08:44",
+      "timestamp": "1731689080.184109",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Aimé, do we have a plan on what we would like to communicate to the customer in the interim?",
+      "time": "08:46",
+      "timestamp": "1731689212.055099",
+      "is_reply": true
+    },
+    {
+      "sender": "Tom",
+      "user_id": "UUEDM4T9R",
+      "message": "@Ashish Aime and the CSMs don't cover these customers, so we should align with Jack once he's back Monday",
+      "time": "08:55",
+      "timestamp": "1731689711.887659",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "I can message Tomas and say he will get a response then in the interim? @Tom",
+      "time": "08:56",
+      "timestamp": "1731689817.049239",
+      "is_reply": true
+    },
+    {
+      "sender": "Tom",
+      "user_id": "UUEDM4T9R",
+      "message": "Yes please Hamish",
+      "time": "08:57",
+      "timestamp": "1731689836.844289",
+      "is_reply": true
+    },
+    {
+      "sender": "Deepthi",
+      "user_id": "U03C09E7CPP",
+      "message": "@Ashish Currently, AI Hub commercial customers do not have dedicated  CSMs assigned to their accounts.",
+      "time": "08:59",
+      "timestamp": "1731689965.849339",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "FYI - not sure if they were aware of release notes before or after this event. @Jet do you have any context on that?",
+      "time": "09:06",
+      "timestamp": "1731690403.003139",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "And who knows the answer on release notes?",
+      "time": "09:07",
+      "timestamp": "1731690425.578629",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "@jean?",
+      "time": "09:07",
+      "timestamp": "1731690442.634769",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "Release notes go out with the release.",
+      "time": "09:08",
+      "timestamp": "1731690528.415419",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "So there is no way a customer could preempt an issue to stop their prod solution going down in advance?",
+      "time": "09:09",
+      "timestamp": "1731690573.458589",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "We are also adding a release announcement banner to the docs, so that will help users know when a new release happens… if they go to the docs.",
+      "time": "09:09",
+      "timestamp": "1731690585.953119",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "Not from the docs side, no. It’s standard practice to have release notes go out with the release. Even if we wanted to release them early, they wouldn’t be reliable, because we often see changes go into releases very late. cc @Ram Prasanna",
+      "time": "09:11",
+      "timestamp": "1731690697.873619",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "Believe me, that’s not the answer I want to give you. We should absolutely not be shipping breaking changes to customers without notice imo.",
+      "time": "09:15",
+      "timestamp": "1731690906.332299",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Thanks @jean - I think there is a big gap that has been highlighted here (not in docs but in the release process). Don't know what the solution is but for sure we need to solve it",
+      "time": "09:16",
+      "timestamp": "1731690966.238939",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "Yeah, agreed. I cc’d @Ram Prasanna because I think this goes to versioning (our version numbers don’t communicate whether they may contain breaking changes) and other release processes, as you say.",
+      "time": "09:17",
+      "timestamp": "1731691040.710809",
+      "is_reply": true
+    },
+    {
+      "sender": "Ram Prasanna",
+      "user_id": "U06U10FM3N1",
+      "message": "Yeah, working on buy-in of this versioning proposal (https://docs.google.com/document/d/1GP8BdoScgqD75W-B9Yg-M1SVAO5jWQpZYo84wzHxYl8/edit?tab=t.0), we expect to have a yay or nay by eom.",
+      "time": "09:27",
+      "timestamp": "1731691649.758289",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I don't think this specific issue would be helped by better communication of breaking changes, because the team didn't realize that this change would break existing apps. We try really hard not to introduce breaking changes, but sometimes we miss the impact something might have. I think actually, we need better metrics of how things are being used by customers, to help us assess the impact of changes ahead of time. This is particularly challenging with all the envs we have to monitor, but we can at least start with MT AI Hub (which is where expatrio was on).",
+      "time": "09:55",
+      "timestamp": "1731693331.303159",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I understand the customer is probably very frustrated, and we've had app breakages quite frequently - and this is challenging for the CS/PMs to handle communication-wise. It's also really hard to constantly improve a product while not \"changing\" anything :confused:. I'll chat with Kerry next week on what eng initiatives we can invest in to help reduce the effects over time.",
+      "time": "09:57",
+      "timestamp": "1731693458.628649",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Thanks @lydia for looking into this one. I agree we need to figure out best practices for handling cases like these going forward.\n\n@Hamish - I'm happy to send a note to the customer today while Jack is OOO. Let me know if that would be helpful.",
+      "time": "10:23",
+      "timestamp": "1731695018.756049",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "I don’t think anyone would expect that eng never pushes a breaking change, that would be absurd. And of course things break unexpectedly sometimes. We’re happy to help in whatever way we reasonably can.",
+      "time": "10:37",
+      "timestamp": "1731695870.467429",
+      "is_reply": true
+    },
+    {
+      "sender": "Clemens",
+      "user_id": "U04178PPSGY",
+      "message": "@lydia why didn't we realize that this change would break apps?",
+      "time": "12:06",
+      "timestamp": "1731701216.982379",
+      "is_reply": true
+    },
+    {
+      "sender": "Clemens",
+      "user_id": "U04178PPSGY",
+      "message": "this sounds like the same issue we had on the ib platform side",
+      "time": "12:08",
+      "timestamp": "1731701286.562109",
+      "is_reply": true
+    },
+    {
+      "sender": "Clemens",
+      "user_id": "U04178PPSGY",
+      "message": "and to me it seems quite obvious that a significant behavior change in a function that is so commonly used would have to be communicated well in advance",
+      "time": "12:08",
+      "timestamp": "1731701304.882209",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "I am confused -- if we change a platform function behavior which changes return type from a value to an exception -- why would we not expect that it would break things -- no collection of date from customers here would help -- anyone can use our platform functions based on what it allows them to do.\n\nI am against collecting data on how customers use our platform functions for the purpose of compatibility decisions. Those are good analytics to give us usage behavior. We need to have engineering practice where every developers and code reviewers know that platform functions should be designed in a way which allows us to change things or extend them without breaking applications.",
+      "time": "12:34",
+      "timestamp": "1731702896.731549",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "The previous behavior was incorrect - it would return the original input string without formatting it correctly. I would consider this an error as well, just not flagged as one. It seemed that correctly flagging this as an error would be a strictly improvement in behavior.\n\n@Anant I think the challenge here is that fixing bugs in existing functions / platform behavior may affect customer results, but does that mean we shouldn't fix bugs?",
+      "time": "12:52",
+      "timestamp": "1731703955.367899",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "> We need to have engineering practice where every developers and code reviewers know that platform functions should be designed in a way which allows us to change things or extend them without breaking applications.\nWe generally strive for this, but I think there is a trade-off between smoothness of transition vs. development speed. The idea with data collection is to help us assess when we should lean towards one vs the other. For example, if only 1 person uses derived fields, should we take 3 weeks of development time to ensure a smooth transition, vs. 1 day to make the change?",
+      "time": "12:56",
+      "timestamp": "1731704184.885229",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-11-15.json",
+    "message_count": 45,
+    "start_time": "1731669455.994539",
+    "end_time": "1731704184.885229",
+    "is_thread": true
+  }
+}

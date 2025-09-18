@@ -1,0 +1,45 @@
+{
+  "id": "ch_C05L87V014J_2025-08-04_1754345091.233079_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "mfichman"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi all... as many of you know, there have been lots of problems with 401 errors, docker build hangs, etc. in Crafting. I think we've finally root-caused this after about a week of looking into it.\n\nThe cause is a dirty hack (https://chatgpt.com/share/68912d9a-99a0-8002-8c8d-ad7c1afce36f) (ChatGPT's words, not mine!!) on line 12 in Crafting's `idfed` script.  This is the script that we use to authenticate Docker pulls/pushes against AWS.\n\nThe script relies on port 80 being unused. In our Crafting sandboxes, port `80` is used by nginx. As a result, when `nginx` is running, the  `idfed` script hangs.\n\nThis in turn causes the ECR credentials helper to hang, and then the Docker daemon to hang, which in turn hangs the currently-running `docker build` or `docker run` command when reading/writing the registry. Eventually (after a long time) the ECR credentials helper gives up, and Docker is unable to read/write the image it's trying to pull/push, resulting in 401 errors. The long wait also tanks build performance.\n\nI'm working on an immediate fix to move `nginx` to port `8080`, and Crafting is also working on a fix on their end. Until then, the workaround is to *stop nginx,* wait for all other builds to finish, and then start nginx again.\n\nThis was for sure a weird one.",
+      "time": "15:04",
+      "timestamp": "1754345091.233079",
+      "is_reply": false
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Wow. Incredible debugging and such a gnarly issue. Thanks for sharing the details and working on finding a proper solution :tada:",
+      "time": "15:12",
+      "timestamp": "1754345524.039179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Fix: https://github.com/instabase/instabase/pull/73312",
+      "time": "15:29",
+      "timestamp": "1754346566.430219",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-08-04.json",
+    "message_count": 3,
+    "start_time": "1754345091.233079",
+    "end_time": "1754346566.430219",
+    "is_thread": true
+  }
+}

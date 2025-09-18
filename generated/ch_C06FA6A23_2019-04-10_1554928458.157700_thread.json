@@ -1,0 +1,134 @@
+{
+  "id": "ch_C06FA6A23_2019-04-10_1554928458.157700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Ted",
+    "Loc"
+  ],
+  "messages": [
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Got it @Ted, @Loc can help you with this",
+      "time": "13:34",
+      "timestamp": "1554928458.157700",
+      "is_reply": false
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "this is there error I got: ```\n[2019-04-10 20:36:55,770: ERROR/ForkPoolWorker-1] Retrying again on AriService\n[2019-04-10 20:36:55,771: ERROR/ForkPoolWorker-1] failed to resolve sockaddr for :7070\nTraceback (most recent call last):\n  File \"/home/ibuser/.local/lib/python2.7/site-packages/thrift/transport/TSocket.py\", line 95, in open\n    addrs = self._resolveAddr()\n  File \"/home/ibuser/.local/lib/python2.7/site-packages/thrift/transport/TSocket.py\", line 42, in _resolveAddr\n    socket.AI_PASSIVE | socket.AI_ADDRCONFIG)\n  File \"/home/ibuser/.local/lib/python2.7/site-packages/gevent/_socketcommon.py\", line 276, in getaddrinfo\n    return get_hub().resolver.getaddrinfo(host, port, family, socktype, proto, flags)\n  File \"/home/ibuser/.local/lib/python2.7/site-packages/gevent/resolver_thread.py\", line 65, in getaddrinfo\n    return self.pool.apply(_socket.getaddrinfo, args, kwargs)\n  File \"/home/ibuser/.local/lib/python2.7/site-packages/gevent/pool.py\", line 325, in apply\n    return self.spawn(func, *args, **kwds).get()\n  File \"/home/ibuser/.local/lib/python2.7/site-packages/gevent/event.py\", line 385, in get\n    return self.get(block=False)\n  File \"/home/ibuser/.local/lib/python2.7/site-packages/gevent/event.py\", line 375, in get\n    return self._raise_exception()\n  File \"/home/ibuser/.local/lib/python2.7/site-packages/gevent/event.py\", line 355, in _raise_exception\n    reraise(*self.exc_info)\n  File \"/home/ibuser/.local/lib/python2.7/site-packages/gevent/threadpool.py\", line 211, in _worker\n    value = func(*args, **kwargs)\ngaierror: [Errno -2] Name or service not known\n[2019-04-10 20:36:55,771: ERROR/ForkPoolWorker-1] Error creating thrift client failed to resolve sockaddr for :7070\n[2019-04-10 20:36:55,772: ERROR/ForkPoolWorker-1] Traceback (most recent call last):\n  File \"/instabase/workers/celery-image-tasks/py/instabase/utils/rpc/pool.py\", line 62, in _create_thrift_client\n    transport.open()\n  File \"/home/ibuser/.local/lib/python2.7/site-packages/thrift/transport/TTransport.py\", line 152, in open\n    return self.__trans.open()\n  File \"/home/ibuser/.local/lib/python2.7/site-packages/thrift/transport/TSocket.py\", line 99, in open\n    raise TTransportException(TTransportException.NOT_OPEN, msg)\nTTransportException: failed to resolve sockaddr for :7070```",
+      "time": "13:37",
+      "timestamp": "1554928643.158000",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "i tried Jonathan suggestion of resetting the stack but no luck",
+      "time": "13:37",
+      "timestamp": "1554928668.158200",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "i have also pulled in master earlier today",
+      "time": "13:38",
+      "timestamp": "1554928681.158400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "is your ocr-ari actually running?",
+      "time": "13:38",
+      "timestamp": "1554928684.158600",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "mhmm ```User setup checks ...\nStarting server ...\nI0410 20:36:33.242691    10 server.cpp:60] LOG LEVEL: 0 VERBOSITY: 0\nI0410 20:36:33.243535    10 server.cpp:70] Initializing FREngine ...\nI0410 20:36:34.231976    10 server.cpp:112] Serving on port 7070 ...```",
+      "time": "13:38",
+      "timestamp": "1554928697.158800",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "process files used ocr-ari and that ran fine too",
+      "time": "13:38",
+      "timestamp": "1554928726.159000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "So, in your `docker-env.json` inside image tasks, can you set the following?   `\"tservice_ocr_ari_host\": \"docker.for.mac.localhost\",`",
+      "time": "13:41",
+      "timestamp": "1554928867.159200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Ahh, I remember getting stuck on that too",
+      "time": "13:41",
+      "timestamp": "1554928889.159400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "looks like image tasks is trying to resolve `:7070`",
+      "time": "13:41",
+      "timestamp": "1554928894.159600",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Will add that to a README in image-tasks",
+      "time": "13:41",
+      "timestamp": "1554928897.159800",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "You can just add that and keep it.  I don’t think it really matters if the OCR doesn’t run",
+      "time": "13:42",
+      "timestamp": "1554928921.160000",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "okay this is resolved. thanks @shaunak",
+      "time": "13:48",
+      "timestamp": "1554929290.160200",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "no problem!",
+      "time": "13:48",
+      "timestamp": "1554929335.160400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-04-10.json",
+    "message_count": 14,
+    "start_time": "1554928458.157700",
+    "end_time": "1554929335.160400",
+    "is_thread": true
+  }
+}

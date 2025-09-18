@@ -1,0 +1,93 @@
+{
+  "id": "ch_C06FA6A23_2023-09-14_1694704467.300759_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "So...interestingly enough, this didn't work consistently. Sometimes it would segfault still, sometimes not. I found another option to avoid the issue with fork + opencv, which is to use `--pool=solo` locally. This reduces concurrency, but for local debugging, that's probably fine. This works consistently at least.\n\n```index 0274e231ad3..1b312c35668 100755\n--- a/distributed-tasks/celery/app-tasks/start-celery-local.sh\n+++ b/distributed-tasks/celery/app-tasks/start-celery-local.sh\n@@ -3,4 +3,4 @@ source ../../tmp/env_local\n # via numpy causes a SIGSEGV error in the subprocess mode.\n # Setting the following flag fixes the problem.\n VECLIB_MAXIMUM_THREADS=1\n-celery -A instabase.registry.tasks worker -l ${LOG_LEVEL} --concurrency=${NUM_EXECUTORS} -Q celery --without-gossip --without-mingle -n celery-app-tasks@%h --max-tasks-per-child ${MAX_TASKS_PER_CHILD} --max-memory-per-child ${MAX_MEMORY_PER_CHILD_KB} --task-events\n+celery -A instabase.registry.tasks worker -l ${LOG_LEVEL} --concurrency=${NUM_EXECUTORS} -Q celery --without-gossip --without-mingle -n celery-app-tasks@%h --max-tasks-per-child ${MAX_TASKS_PER_CHILD} --max-memory-per-child ${MAX_MEMORY_PER_CHILD_KB} --task-events --pool=solo```",
+      "time": "08:14",
+      "timestamp": "1694704467.300759",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Is it crashing on startup? or are you running a particular flow?",
+      "time": "09:46",
+      "timestamp": "1694709971.429309",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Don’t think we should change local to use pool=solo as it mean local mode will behave different from cluster and we won’t catch issues like this.",
+      "time": "09:48",
+      "timestamp": "1694710107.384449",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "PS: Just ran a flow locally with latest master, it runs fine. (M1 Mac)",
+      "time": "09:55",
+      "timestamp": "1694710523.891839",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@mfichman think your local env package is broken.\nI have not seen this error before and I haven’t seen anyone else hit this before.\n\nCan you try reinstalling opencv? (Or nuke poetry env and reinstall the packages in app-tasks)",
+      "time": "13:27",
+      "timestamp": "1694723274.492479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If you search back in Slack, there are lots of people complaining about SIGSEGV in celery-app-tasks. The answer is always \"run in Docker.\"\n\nFWIW, I did nuke poetry's virtualenv once, and I tried upgrading/downgrading opencv-contrib-python as well.",
+      "time": "13:31",
+      "timestamp": "1694723475.362939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For example:\n\nhttps://instabase.slack.com/archives/C039JKRCE2H/p1691759082005389",
+      "time": "13:32",
+      "timestamp": "1694723565.335029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://instabase.slack.com/archives/C0119EXLXGU/p1694617227338749",
+      "time": "13:33",
+      "timestamp": "1694723591.092739",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Interesting, just approved your PR so we unblock people.",
+      "time": "14:03",
+      "timestamp": "1694725405.954859",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-09-14.json",
+    "message_count": 9,
+    "start_time": "1694704467.300759",
+    "end_time": "1694725405.954859",
+    "is_thread": true
+  }
+}

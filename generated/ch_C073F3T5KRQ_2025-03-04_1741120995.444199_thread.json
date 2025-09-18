@@ -1,0 +1,101 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-03-04_1741120995.444199_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Sayan"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "for this test (https://github.com/instabase/instabase/blob/4bb3535573c2097f02031b671c663ced60cf2f94/shared-utils/py-utils/aihub-utils/test/unit/py/instabase/aihub_utils/test_variables_utils.py#L415), how we can run this specific test\n\nI've tried running `cd ~/instabase/shared-utils/py-utils/aihub-utils && make test TEST_NAMES=test.instabase.aihub_utils.test_variables_utils`\n\nbut i get this following error:\n```TYPECHECKING FAILURE: mypy exited with code 1\n/home/owner/instabase/shared-utils/py-utils/aihub-utils/build/py-stubs/stubs/instabase/protos/table_service/table_service_pb2.pyi:2: error: Cannot find implementation or library stub for module named \"google.protobuf.descriptor\"  [import-not-found]\ninstabase/metronome/helpers.py:3: error: Library stubs not installed for \"dateutil\"  [import-untyped]\ninstabase/metronome/usage.py:3: error: Library stubs not installed for \"dateutil\"  [import-untyped]\n/home/owner/instabase/shared-utils/py-utils/aihub-utils/build/py-stubs/stubs/instabase/protos/audit_logs/audit_logs_pb2.pyi:2: error: Cannot find implementation or library stub for module named \"google.protobuf.descriptor\"  [import-not-found]\n/home/owner/instabase/shared-utils/py-utils/aihub-utils/build/py-stubs/stubs/instabase/protos/config/config_pb2.pyi:2: error: Cannot find implementation or library stub for module named \"google.protobuf.descriptor\"  [import-not-found]\n/home/owner/instabase/shared-utils/py-utils/aihub-utils/build/py-stubs/stubs/instabase/protos/http_utils/http_utils_pb2.pyi:2: error: Cannot find implementation or library stub for module named \"google.protobuf.descriptor\"  [import-not-found]```",
+      "time": "12:43",
+      "timestamp": "1741120995.444199",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Try: `poetry shell` to avoid dependency hell (hey, it rhymes!!)\n\n```cd ~/instabase/shared-utils/py-utils/aihub-utils && poetry shell make test TEST_NAMES=test.instabase.aihub_utils.test_variables_utils```",
+      "time": "12:44",
+      "timestamp": "1741121080.184539",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I tried some variants but I get the same error:\n\n```(3.9.17) owner@dev:~/instabase/shared-utils/py-utils/aihub-utils$ cd ~/instabase/shared-utils/py-utils/aihub-utils && poetry shell make test TEST_NAMES=test.instabase.aihub_utils.test_variables_utils\n\nPoetry could not find a pyproject.toml file in /home/owner/instabase/shared-utils/py-utils/aihub-utils or its parents\n(3.9.17) owner@dev:~/instabase/shared-utils/py-utils/aihub-utils$ cd ~/instabase/shared-utils/py-utils/aihub-utils/test/ && poetry shell make test TEST_NAMES=test.instabase.aihub_utils.tes\nt_variables_utils\n\nPoetry could not find a pyproject.toml file in /home/owner/instabase/shared-utils/py-utils/aihub-utils/test or its parents\n(3.9.17) owner@dev:~/instabase/shared-utils/py-utils/aihub-utils/test$ cd ~/instabase/shared-utils/py-utils/aihub-utils/test/unit/py && poetry shell make test TEST_NAMES=test.instabase.aih\nub_utils.test_variables_utils\n\nPoetry could not find a pyproject.toml file in /home/owner/instabase/shared-utils/py-utils/aihub-utils/test/unit/py or its parents```",
+      "time": "12:45",
+      "timestamp": "1741121158.996739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh, sorry -- try this:",
+      "time": "12:51",
+      "timestamp": "1741121461.233469",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cd webserver/api-server\npoetry shell -C ~/instabase/shared-utils/py-utils/aihub-utils make test TEST_NAMES=test.instabase.aihub_utils.test_variables_utils```",
+      "time": "12:51",
+      "timestamp": "1741121483.207729",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "hmm, I'm getting the same error still on crafting\n```(3.9.17) owner@dev:~/instabase/webserver/api-server$ cd ~/instabase/webserver/api-server && poetry shell -C ~/instabase/shared-utils/py-utils/aihub-utils make test TEST_NAMES=test.instabase.aihub_utils.test_variables_utils\n\nPoetry could not find a pyproject.toml file in /home/owner/instabase/shared-utils/py-utils/aihub-utils or its parents```",
+      "time": "12:53",
+      "timestamp": "1741121636.062689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":thinking_face:",
+      "time": "13:20",
+      "timestamp": "1741123226.649019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Works for me, but try this:\n\n```cd ~/instabase/webserver/api-server && poetry shell\n\nmake -C ~/instabase/shared-utils/py-utils/aihub-utils test```",
+      "time": "13:20",
+      "timestamp": "1741123258.286689",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "That worked! Thanks @mfichman++",
+      "time": "13:23",
+      "timestamp": "1741123385.371449",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Aside: We should really make the `poetry shell` part automatic in some way, or finish moving Python to Bazel. That would also fix this.",
+      "time": "13:23",
+      "timestamp": "1741123417.861909",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-03-04.json",
+    "message_count": 10,
+    "start_time": "1741120995.444199",
+    "end_time": "1741123417.861909",
+    "is_thread": true
+  }
+}

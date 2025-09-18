@@ -1,0 +1,70 @@
+{
+  "id": "ch_C06FA6A23_2023-08-23_1692849114.927819_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Heymian",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hey team, I edited the Makefiles of apps-server, webapp, and server-nginx to set `RELOAD=true` if `RELOAD` is not defined as a DX improvement (PR (https://github.com/instabase/instabase/pull/45659/files#diff-c72be2c01b31ecc141ecd59e52586518771c6d382c16ebe5db68cf22d2bb6744), engs don't need to add that to their shell script). But on second thought, I wonder if this would actually break deployment? Do we set env var `RELOAD=false` in deployment pipelines?",
+      "time": "20:51",
+      "timestamp": "1692849114.927819",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think you’re okay, because RELOAD is only read in the `run-docker` command, which is only used locally. So you won’t be impacted deployments.\n\nI don’t see anything in server-nginx’s Makefile that respects RELOAD though, why do you need to set it there?\n\niirc, the main reason why RELOAD is default to false is because we have more backend devs than front-end :slightly_smiling_face: And backend folks don’t have their env setup for RELOAD = true to work.",
+      "time": "20:57",
+      "timestamp": "1692849447.668469",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Haha... frontend devs are :cry: . I found that starting server-nginx locally with production mode (`RELOAD=false`) actually takes longer than starting server-nginx locally with dev mode (`RELOAD=true`)  + starting webpack dev server, so I _think_ we might just want to always run the dev mode :thinking_face: We have some discussions under this PR (https://github.com/instabase/instabase/pull/45620)",
+      "time": "21:06",
+      "timestamp": "1692849982.998769",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Got it. haha yeah I remember server nginx always taking forever for backend folks. If we can update our onboarding docs or provisioner to make it easy to get RELOAD=true to work for everyone, then no problem at all. I personally haven’t gotten it to work before (but also haven’t tried really hard) \n\njw, is this also something that we can have folks set RELOAD in their terminal’s bash_profile? We can also add instructions for that.",
+      "time": "21:13",
+      "timestamp": "1692850393.015179",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Right, so if we kept the default value to true in makefiles, we don’t have to ask folks to do it as an onboarding step.",
+      "time": "21:59",
+      "timestamp": "1692853178.633109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`RELOAD` is also read in the `build-docker`script for `server-nginx` though\n\ndo we use the `build-docker` script to build our `server-nginx` production images?",
+      "time": "23:01",
+      "timestamp": "1692856869.504389",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-08-23.json",
+    "message_count": 6,
+    "start_time": "1692849114.927819",
+    "end_time": "1692856869.504389",
+    "is_thread": true
+  }
+}

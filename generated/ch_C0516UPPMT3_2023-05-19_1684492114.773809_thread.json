@@ -1,0 +1,130 @@
+{
+  "id": "ch_C0516UPPMT3_2023-05-19_1684492114.773809_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Balaram",
+    "avi",
+    "Subash",
+    "Heymian",
+    "Gauti",
+    "Adam",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "App icons don't seem to show on aihub.instabase.com (http://aihub.instabase.com) when you're not logged in. They show when logged in.",
+      "time": "03:28",
+      "timestamp": "1684492114.773809",
+      "is_reply": false
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "@Subash @Aayush, any idea why this may be?",
+      "time": "03:29",
+      "timestamp": "1684492169.447699",
+      "is_reply": true
+    },
+    {
+      "sender": "Subash",
+      "user_id": "U01CPRMS8LV",
+      "message": "It is because loginless users do not have access to load icons from system drives. This has to be fixed.\n\ncc: @Gauti @Balaram @Serena",
+      "time": "03:32",
+      "timestamp": "1684492334.462199",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Hi @Adam /@Serena can yo help here? I thought it was fixed and public apps should work for loginless user.",
+      "time": "07:14",
+      "timestamp": "1684505668.038179",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "Adding @Eric Han for tracking this issue",
+      "time": "08:36",
+      "timestamp": "1684510585.871819",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Ok it looks like the API is returning the solution path correctly, but a loginless user doesn’t have permission to read the icon file from the system repo (list solutions call is succeeding and contains the correct path, `icon.png` requests are failing). This is going to be a kind of hairy permissions issue to unravel",
+      "time": "09:45",
+      "timestamp": "1684514726.098429",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "cc @Heymian would a similar username swap to `aihub_guest` in fileservice be acceptable here? We definitely do not want to give loginless users read access to the entire system repo",
+      "time": "09:47",
+      "timestamp": "1684514842.556189",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we already do this for the `/api/v2/files` endpoint https://github.com/instabase/instabase/pull/39980\n\nwe just need to change the icon rendering logic on the frontend to use `/api/v2/files/filepath` instead of `/filepath?content-disposition=raw`",
+      "time": "09:51",
+      "timestamp": "1684515084.526249",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Serena can you remind me, why we decided this was safe, I know we discussed but can’t find original thread. This allows any public user to read everything the aihub_guest user can, which means the contents of our system repo are completely open to the public for reading?",
+      "time": "10:15",
+      "timestamp": "1684516518.672269",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "technically not all contents of the system repo, only folders under a Marketplace app folder or Deployed Solution folder",
+      "time": "10:18",
+      "timestamp": "1684516724.499739",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "here’s the thread that discussed this https://instabase.slack.com/archives/C04PFH9DYF7/p1682630276733269?thread_ts=1682615587.022919&cid=C04PFH9DYF7",
+      "time": "10:28",
+      "timestamp": "1684517296.784339",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "TLDR yes this is dangerous, and we were going to revisit this when merging `aihub_23_04` into master, which i guess is around now :sweat_smile:",
+      "time": "10:29",
+      "timestamp": "1684517349.625399",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Okay, going to :see_no_evil: and re-think this before master. Currently, it’s access to everything under `/Applications` and `/System/Desktop/Background`. We probably want to carve out some more paths, or add another type of role to allow access the system repo",
+      "time": "11:05",
+      "timestamp": "1684519503.163129",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-05-19.json",
+    "message_count": 13,
+    "start_time": "1684492114.773809",
+    "end_time": "1684519503.163129",
+    "is_thread": true
+  }
+}

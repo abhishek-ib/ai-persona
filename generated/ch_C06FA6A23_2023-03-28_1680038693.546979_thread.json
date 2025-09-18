@@ -1,0 +1,207 @@
+{
+  "id": "ch_C06FA6A23_2023-03-28_1680038693.546979_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "amit.gupta",
+    "Kathy Wu",
+    "lydia",
+    "shiqi"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Kathy Wu do you know why we’re only running into this now? I thought we were already using onnx for other models?",
+      "time": "14:24",
+      "timestamp": "1680038693.546979",
+      "is_reply": false
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "hm the error is caused by initializing an onnxruntime session",
+      "time": "14:33",
+      "timestamp": "1680039239.196559",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "in the instabase code, the only other place we do that is in ORTInferenceSessionBuilder, but I don't think that code actually gets run with a real model anywhere",
+      "time": "14:35",
+      "timestamp": "1680039309.452149",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "do you know if the model-service ONNX models are run in a different way? or is it just that they don’t run any unit tests in Jenkins",
+      "time": "14:35",
+      "timestamp": "1680039309.967369",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "cc @Rakesh if you can help here",
+      "time": "14:35",
+      "timestamp": "1680039321.566019",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "I might be missing something, but I can't find the model-service onnx models. When I search for onnx in the codebase I only see jayasoo's code for the ort inference session builder. would the model code be in ibformers?",
+      "time": "14:44",
+      "timestamp": "1680039867.202109",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Yea I think it might be part of the model code in https://github.com/instabase/ib-models",
+      "time": "14:45",
+      "timestamp": "1680039903.347409",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "ah yup I see, the inference session code is there",
+      "time": "14:46",
+      "timestamp": "1680039969.770079",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Kathy Wu is it possible to confirm if this is a unit test only issue? for example, if you import onnx in a UDF on dogfood, does that work?",
+      "time": "14:46",
+      "timestamp": "1680039976.536489",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "hm lemme check",
+      "time": "14:47",
+      "timestamp": "1680040043.099709",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "onnxruntime doesn't exist on dogfood yet, so it errors because of that",
+      "time": "15:07",
+      "timestamp": "1680041240.623259",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hmm that is weird because I thought the entity models were onnx now and they run?",
+      "time": "15:07",
+      "timestamp": "1680041267.247959",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "ohh interesting, wait are they run in celery app tasks? or one of the model services",
+      "time": "15:09",
+      "timestamp": "1680041378.564129",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hmm, good question, I assumed it was model-service, but I’m not sure",
+      "time": "15:10",
+      "timestamp": "1680041451.124639",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh wait, I misunderstood - what is the onnx error in dogfood? can you paste it?",
+      "time": "15:11",
+      "timestamp": "1680041487.524479",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "`Error registering your UDF: No module named 'onnxruntime', line 2 of scripts/custom...`",
+      "time": "15:13",
+      "timestamp": "1680041615.693299",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "is onnxruntime not available in app-tasks?",
+      "time": "15:17",
+      "timestamp": "1680041825.664159",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "ah it's not, I can add it in my PR",
+      "time": "15:20",
+      "timestamp": "1680042047.544869",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oo ok, yea you’ll need it since classifier run in app-tasks",
+      "time": "15:24",
+      "timestamp": "1680042252.324779",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "cc @amit.gupta do you know who can help us fix this issue for the unit tests - it looks like we need to make some change to the Jenkins image? We are adding ONNX to support an sklearn version bump which is necessary for security vulnerabilities",
+      "time": "15:26",
+      "timestamp": "1680042397.955669",
+      "is_reply": true
+    },
+    {
+      "sender": "amit.gupta",
+      "user_id": "U04C2BGQPQC",
+      "message": "@shiqi",
+      "time": "16:10",
+      "timestamp": "1680045056.995979",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "I chat with Kathy, it is in dev team's responsibility to update the jenkins image and incorporate in their PR to make it work, we have a dedicated wiki page for that",
+      "time": "17:23",
+      "timestamp": "1680049396.010139",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "we can help installing the missing package on the linux builder vm if necessary since dev team doesn't have access to that",
+      "time": "17:24",
+      "timestamp": "1680049466.075659",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-03-28.json",
+    "message_count": 23,
+    "start_time": "1680038693.546979",
+    "end_time": "1680049466.075659",
+    "is_thread": true
+  }
+}

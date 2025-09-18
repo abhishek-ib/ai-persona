@@ -1,0 +1,69 @@
+{
+  "id": "ch_C06FA6A23_2023-03-06_1678121352.372569_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Wilson"
+  ],
+  "messages": [
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "alrighty im starting the cplane provisioner job (https://jenkins.instabase.com/job/control-plane-sandbox-provisioner/4673/) for the doc-insights sandbox with experimental control plane set",
+      "time": "08:49",
+      "timestamp": "1678121352.372569",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Lmk if you have problems!",
+      "time": "09:20",
+      "timestamp": "1678123231.688929",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "ok i have some problems, I’ll resolve it with you privately @mfichman and post updates on this thread",
+      "time": "11:23",
+      "timestamp": "1678130615.817189",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, so it seems like even with Experimental Control Plane checked, the core patch for the `job-dbmigrate` job was not applied. That patch includes the DB credentials, so :fail_stamp:\n\nWhat we ended up doing was:\n\n```aws eks update-kubeconfig --name=YOUR-SANDBOX --region=us-east-2 --profile=ib-sandbox-user\n\nkubectl -n instabase get job/job-dbmigrate -o yaml > dbmigrate.yml\nkubectl -n instabase get deployment/deployment-core-platform-service -o yaml\n\n**Edit dbmigrate.yml to add INSTABASE_BACKEND_DB_PARAMS, copied from core-platform-service**\n\nkubectl -n instabase delete job/job-dbmigrate\nkubectl -n instabase apply -f dbmigrate.yml```",
+      "time": "12:00",
+      "timestamp": "1678132808.971929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "cc @Cheryl Zhou",
+      "time": "13:44",
+      "timestamp": "1678139090.632759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Another option -- if you still have access to the CP UI at  `/control-plane`, you can patch `job-dbmigrate` to add `INSTABASE_BACKEND_DB_PARAMS` (copy from `core-platform-service`)",
+      "time": "13:54",
+      "timestamp": "1678139693.317289",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-03-06.json",
+    "message_count": 6,
+    "start_time": "1678121352.372569",
+    "end_time": "1678139693.317289",
+    "is_thread": true
+  }
+}

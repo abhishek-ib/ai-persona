@@ -1,0 +1,183 @@
+{
+  "id": "ch_C05L87V014J_2024-12-18_1734523498.039069_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Nikolaos Kofinas",
+    "jordy.vlan",
+    "mfichman",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "did you already follow the instructions from this FAQ answer? https://instabase.atlassian.net/wiki/spaces/TI/pages/2213183494/Use+PPY+on+Crafting#Q%3A-How-do-I-enable-form-reco[…]SYNC-CALL-TO-form-recognizer%3F (https://instabase.atlassian.net/wiki/spaces/TI/pages/2213183494/Use+PPY+on+Crafting#Q%3A-How-do-I-enable-form-recognizer-for-apps-that-have-entity-detection-on-so-that-celery-app-task-logs-don%E2%80%99t-hang-with-ASYNC-CALL-TO-form-recognizer%3F)",
+      "time": "04:04",
+      "timestamp": "1734523498.039069",
+      "is_reply": false
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "(or use Matt’s template where this is all done for you)",
+      "time": "07:02",
+      "timestamp": "1734534163.800329",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "I am using matts template @mfichman and this is the sandbox: https://https--nikolaoskofinas-instabase.instabase.site.sandboxes.run/build/0193d619-5328-7128-bdef-47a2487e9c3c\nstill failing",
+      "time": "10:16",
+      "timestamp": "1734545815.727199",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i see a lot of `Max retries exceeded with url: /formrecognizer/documentModels/prebuilt-layout:syncAnalyze?api-version=2022-08-31 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f88a4831130>: Failed to establish a new connection: [Errno 111] Connection refused'))` errors in the `celery-app-tasks` logs in your sandbox (`docker logs instabase-celery-app-tasks`)",
+      "time": "11:03",
+      "timestamp": "1734548604.410419",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i see the following settings for `celery-app-tasks` in your environment",
+      "time": "11:07",
+      "timestamp": "1734548851.212099",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Nikolaos Kofinas can you follow these steps and see if that resolves the issue?\n\n1. set the variables as described by Ayesha (https://instabase.slack.com/archives/C05EQQJGN7L/p1733324105297479?thread_ts=1733168876.844369&cid=C05EQQJGN7L) in `shared-utils/build-utils/shared/env-local-crafting.json`\n2. restart `celery-app-tasks`\n    a. see “How do I restart one service” in https://docs.google.com/presentation/d/1Fl2QBxoLnP1EIegMcHPC9qRlrBdQKmic_cn_wTb4Wu8/edit#slide=id.g31cbd307c56_0_68\n3. after restarting, run `cat distributed-tasks/celery/app-tasks/tmp/docker_env_local.list  | grep MSFT` to confirm that your new env variable settings are used in `celery-app-tasks`\nif this solves the issue for you, we can update the template to include these settings by default",
+      "time": "11:10",
+      "timestamp": "1734549037.152729",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hey @Nikolaos Kofinas -- just got out of a meeting. I can take a look at your sandbox too if you haven't resolved this yet.",
+      "time": "11:20",
+      "timestamp": "1734549601.206929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "By the way, should form-recognizer be turned on by default? If it should I can reconfigure the template do to this, so folks don't have to manually do it.",
+      "time": "11:20",
+      "timestamp": "1734549637.836929",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "form recognizer is already accessible in the product in AI Hub environments by default - so no need to change anything in the template for that\n\nthe problem is that form recognizer usually doesn’t work with the default environment variable settings -   i do think we should change the template for this",
+      "time": "11:21",
+      "timestamp": "1734549704.117499",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "this worked serena thanks :smile: can we add it to the template?",
+      "time": "12:29",
+      "timestamp": "1734553787.011159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes! IMO this should match whatever the prod configuration is. Are the settings just:\n\n```\"msft_ocr_layout_endpoint\": \"https://form-recognizer-aihub-prod.cognitiveservices.azure.com\",\n\"msft_fr_provider\": \"ocr-form-rec-async\",```\nOr is there more @Nikolaos Kofinas?",
+      "time": "12:45",
+      "timestamp": "1734554701.313889",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "I am not an expert on this cc: @Serena\nand btw this worked but now I am getting classification and extraction errors : https://https--nikolaoskofinas-instabase.instabase.site.sandboxes.run/build/0193d619-5328-7128-bdef-47a2487e9c3c (e.g. nothing works)",
+      "time": "12:48",
+      "timestamp": "1734554901.388829",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "It is the issue I found last time:\n> level=ERROR  in get_license;span.set_tag(tags.USERNAME, username);AttributeError: ‘NoneType’ object has no attribute ‘set_tag’;”  path=“/instabase-api-server/py/instabase/utils/web/handler_util_v2.py:414” process=“MainProcess” thread=“ThreadPoolExecutor-0_1” trace_id=“”",
+      "time": "13:00",
+      "timestamp": "1734555625.743219",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "https://instabase.slack.com/archives/C05L87V014J/p1734085884662099\nManually do the fix of Victor’s PR (https://github.com/instabase/instabase/pull/66339) and then `cs restart` :wink:",
+      "time": "13:01",
+      "timestamp": "1734555682.415139",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Though supposedly that bugfix PR (https://github.com/instabase/instabase/pull/66339) got merged 2 days ago, so if you would rebase your feature branch on `origin/master` and then `cs restart` , should also work :wink:",
+      "time": "13:02",
+      "timestamp": "1734555751.975929",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "can you let me know how to access the logs to avoid asking repeated questions? :smiling_face_with_tear:",
+      "time": "13:10",
+      "timestamp": "1734556206.269149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Nikolaos Kofinas you can do `cs logs -f <service>` or `cs logs -n 10000 <service>` or go to the UI:",
+      "time": "13:11",
+      "timestamp": "1734556274.866569",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "13:12",
+      "timestamp": "1734556340.028829",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "thank you :)",
+      "time": "13:13",
+      "timestamp": "1734556386.464089",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> Yes! IMO this should match whatever the prod configuration is. Are the settings just:\n> ```\"msft_ocr_layout_endpoint\": \"https://form-recognizer-aihub-prod.cognitiveservices.azure.com\",\n> \"msft_fr_provider\": \"ocr-form-rec-async\",```\n> Or is there more @Nikolaos Kofinas?\n@mfichman this should be sufficient!",
+      "time": "22:33",
+      "timestamp": "1734590034.638229",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-18.json",
+    "message_count": 20,
+    "start_time": "1734523498.039069",
+    "end_time": "1734590034.638229",
+    "is_thread": true
+  }
+}

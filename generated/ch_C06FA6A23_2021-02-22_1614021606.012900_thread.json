@@ -1,0 +1,170 @@
+{
+  "id": "ch_C06FA6A23_2021-02-22_1614021606.012900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "sudeep",
+    "kunal",
+    "Aaron Tami",
+    "Aaron Vontell",
+    "Justin",
+    "Lisa Han"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "So the resources requirements for these containers are outrageous",
+      "time": "11:20",
+      "timestamp": "1614021606.012900",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "",
+      "time": "11:20",
+      "timestamp": "1614021610.013100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Minimum is 16 CPU and 20 GB of memory",
+      "time": "11:20",
+      "timestamp": "1614021615.013500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "this is really a non-starter... @kunal @shaunak",
+      "time": "11:21",
+      "timestamp": "1614021679.013800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yikes… that is way larger than we assumed.",
+      "time": "11:22",
+      "timestamp": "1614021741.014300",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "I believe FR has all of Read inside it",
+      "time": "11:22",
+      "timestamp": "1614021750.014800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "ya for more context the Read 3.2 containers need like 6 GB of ram and 4 CPU, and thats a non starter as well",
+      "time": "11:25",
+      "timestamp": "1614021922.015200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "this is like 4x that",
+      "time": "11:25",
+      "timestamp": "1614021925.015400",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hmm is this something that is impossible with the banks or just something we need to communicate ahead of time? because they are paying $$$$ for instabase, CPU / Memory shouldn’t be too costly? :slightly_smiling_face: i am very naive here on deployment constraints",
+      "time": "11:28",
+      "timestamp": "1614022092.015600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Also, even without container costs, Form Recognizer is 50x more expensive than the Read API in terms of what they bill per transactions.",
+      "time": "11:30",
+      "timestamp": "1614022207.015800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "https://azure.microsoft.com/en-us/pricing/details/cognitive-services/form-recognizer/",
+      "time": "11:30",
+      "timestamp": "1614022208.016000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "$50 per 1000 pages",
+      "time": "11:30",
+      "timestamp": "1614022212.016300",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "I think the biggest deployment constraint is that even if customers provisioned clusters with enough resources to run replicas of FR (and they would likely need many replicas to run this at scale), most don’t have single nodes large enough to support 24+ core containers.",
+      "time": "11:38",
+      "timestamp": "1614022727.019100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I wonder if we have a strong enough relationship with them to get specific models in a container. I predict the large size is due to the fact that this image likely contains all of the form recognizer models",
+      "time": "11:54",
+      "timestamp": "1614023656.019300",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "Yeah, it would be great if we could get specific models split out into individual containers but also if they could use an external read API instead of bundling it into the container since we have to run that separately anyways.",
+      "time": "11:55",
+      "timestamp": "1614023749.021000",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "@kunal the node constraint is esp true in the POC environment. Usually the nodes on the cluster are not large enough to accommodate this size containers, or have much higher saturation of resources across tenants too.",
+      "time": "20:32",
+      "timestamp": "1614054747.021500",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "we should look at ways of making this more horizontally scalable as you all suggested",
+      "time": "20:33",
+      "timestamp": "1614054782.021700",
+      "is_reply": true
+    },
+    {
+      "sender": "Lisa Han",
+      "user_id": "U011FH2ACNP",
+      "message": "@kunal @sudeep I relayed the ask to the MSFT team. Thank you for investigating - I'll keep you updated on their response.",
+      "time": "22:57",
+      "timestamp": "1614063463.022400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-02-22.json",
+    "message_count": 18,
+    "start_time": "1614021606.012900",
+    "end_time": "1614063463.022400",
+    "is_thread": true
+  }
+}

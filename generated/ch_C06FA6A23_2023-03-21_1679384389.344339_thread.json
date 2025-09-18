@@ -1,0 +1,151 @@
+{
+  "id": "ch_C06FA6A23_2023-03-21_1679384389.344339_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "Rahul Rawal",
+    "lenny",
+    "Victor Zeng"
+  ],
+  "messages": [
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Has anyone seen this error when running mypy checking in api-server? I just started seeing this when syncing down from master a moment ago:\n```poetry run python /Users/xicheng/Dev/instabase/webserver/api-server/../../shared-utils/py-utils/typing-utils/src/py/scripts/run_mypy.py \\\n\t  --root_dir=/Users/xicheng/Dev/instabase/webserver/api-server/build/py \\\n\t  --project_dir=/Users/xicheng/Dev/instabase/webserver/api-server/../.. \\\n\t  --single_file= \\\n\t  --main_py_file=* \\\n\t  --fast= \\\n\t  --image_name=api-server \\\n\t  --cache_dir=/Users/xicheng/Dev/instabase/webserver/api-server/.mypy_cache\nTYPECHECKING FAILURE: mypy exited with code 1\nERROR MESSAGE: b'Traceback (most recent call last):\\n  File \"/Users/xicheng/Library/Caches/pypoetry/virtualenvs/api-server-AcZzR2Nj-py3.9/bin/mypy\", line 8, in <module>\\n    sys.exit(console_entry())\\n  File \"/Users/xicheng/Library/Caches/pypoetry/virtualenvs/api-server-AcZzR2Nj-py3.9/lib/python3.9/site-packages/mypy/__main__.py\", line 11, in console_entry\\n    main(None, sys.stdout, sys.stderr)\\n  File \"mypy/main.py\", line 90, in main\\n  File \"mypy/build.py\", line 179, in build\\n  File \"mypy/build.py\", line 253, in _build\\n  File \"mypy/build.py\", line 2638, in dispatch\\n  File \"mypy/build.py\", line 2955, in process_graph\\n  File \"mypy/build.py\", line 3033, in process_fresh_modules\\n  File \"mypy/build.py\", line 1977, in fix_cross_refs\\n  File \"mypy/fixup.py\", line 26, in fixup_module\\n  File \"mypy/fixup.py\", line 77, in visit_symbol_table\\n  File \"mypy/fixup.py\", line 301, in lookup_qualified_stnode\\n  File \"mypy/lookup.py\", line 47, in lookup_fully_qualified\\nAssertionError: Cannot find component \\'IFD@193\\' for \\'pikepdf.models._transcoding.IFD@193\\'\\n'```",
+      "time": "00:39",
+      "timestamp": "1679384389.344339",
+      "is_reply": false
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Here's the prior thread: https://instabase.slack.com/archives/C039JKRCE2H/p1678473153693849",
+      "time": "00:50",
+      "timestamp": "1679385030.986039",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": ":+1:",
+      "time": "01:14",
+      "timestamp": "1679386466.106589",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "cc @Rahul Rawal",
+      "time": "03:02",
+      "timestamp": "1679392944.578949",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Rawal",
+      "user_id": "U01J0N3UV7E",
+      "message": "Hi @Xi Cheng ! This is a bug in mypy wrt pikepdf 5.2.0 We will fix this. Meanwhile you can delete mypy cache and the tests should pass.",
+      "time": "03:31",
+      "timestamp": "1679394663.000359",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Thanks, removing the cache and do a \"make clean build test\" seems to work",
+      "time": "08:16",
+      "timestamp": "1679411815.502419",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Rahul Rawal After making a chance in api-server, the error shows up again when running `make build test` - does this mean I have to clean up cache every time? I am getting confused",
+      "time": "09:46",
+      "timestamp": "1679417179.895749",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Rawal",
+      "user_id": "U01J0N3UV7E",
+      "message": "@Xi Cheng you can delete mypy cache to temporarily unblock. We are looking at possible solutions for the fix. Apologies!!",
+      "time": "09:49",
+      "timestamp": "1679417364.136419",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "You meant I have to delete mypy cache everytime running this command? That means it is going to take ~10 mins to run unit test to check some local changes.",
+      "time": "09:50",
+      "timestamp": "1679417411.021579",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "@Xi Cheng if you want, you can disable mypy when running tests locally like this: https://instabase.slack.com/archives/C029DKPHRPY/p1678217339608409?thread_ts=1677994362.052179&cid=C029DKPHRPY (don’t commit this so mypy still runs in CI)",
+      "time": "09:50",
+      "timestamp": "1679417441.109459",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "but this will let you iterate on unit tests more quickly locally",
+      "time": "09:50",
+      "timestamp": "1679417449.452199",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@lenny Thanks for the tips, that works for now.",
+      "time": "10:02",
+      "timestamp": "1679418132.150209",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Rahul Rawal So this PR (https://github.com/instabase/instabase/pull/36881) broke it right? Do we know what is our path forward to fix this?",
+      "time": "10:04",
+      "timestamp": "1679418279.881339",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Rawal",
+      "user_id": "U01J0N3UV7E",
+      "message": "Yes. We have few options:\n1. We clone and maintain this version of pikepdf and fix the mypy issue.\n2. We add the library/file in mypy ignore files\n3. We set ignore_errors = True in config file for this specific file.\n4. We ask/contribute pikepdf into fixing this",
+      "time": "10:09",
+      "timestamp": "1679418563.105189",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Option 2) / 3) sounds like the most cost effective for now.",
+      "time": "10:12",
+      "timestamp": "1679418726.909139",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Rawal",
+      "user_id": "U01J0N3UV7E",
+      "message": "Yes. That's what we will be going forward with.",
+      "time": "10:13",
+      "timestamp": "1679418788.262709",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-03-21.json",
+    "message_count": 16,
+    "start_time": "1679384389.344339",
+    "end_time": "1679418788.262709",
+    "is_thread": true
+  }
+}

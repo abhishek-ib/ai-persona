@@ -1,0 +1,127 @@
+{
+  "id": "ch_C06FA6A23_2023-04-26_1682545720.928259_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Xindi Xu",
+    "sean.donohoe",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Has anyone run into this error when running `server nginx`  after pulling the latest master?\n```2023/04/26 21:43:02 [emerg] 28#28: cannot load certificate \"/etc/nginx/certificates/default.crt\": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/nginx/certificates/default.crt, r) error:10000080:BIO routines::no such file)\nnginx: [emerg] cannot load certificate \"/etc/nginx/certificates/default.crt\": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/nginx/certificates/default.crt, r) error:10000080:BIO routines::no such file)\nmake: *** [run-docker-proxy] Error 1```",
+      "time": "14:48",
+      "timestamp": "1682545720.928259",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Maybe related to this change? https://github.com/instabase/instabase/pull/39843",
+      "time": "14:58",
+      "timestamp": "1682546326.579849",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@sean.donohoe this certificate is necessary for the frontend to work in our local environments - is there a reason for removing it?",
+      "time": "15:00",
+      "timestamp": "1682546423.460439",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@Serena yes, it was requested to be removed as a potential sensitive information leak by BofA in the linked helpdesk ticket -- @shaunak can provide more context as well, could we instead mount a locally generated certificate into the container rather than bundling as part of the image?",
+      "time": "15:02",
+      "timestamp": "1682546521.825399",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Temp workaround, in case anyone runs into this as well: reverting the change allows nginx to work",
+      "time": "15:03",
+      "timestamp": "1682546583.789139",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Is this being run in k8s or as a local standalone? If the former then we should be able to add a cert to the cluster as a secret and mount it into the container, if the latter then we should be able to generate the cert and mount it as part of the `docker run` command",
+      "time": "15:05",
+      "timestamp": "1682546726.604699",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm running `make build-docker run-docker-proxy` in the nginx directory and it doesn't work without the cert",
+      "time": "15:06",
+      "timestamp": "1682546800.366429",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yep, so we should be able to modify the docker run command in the makefile to mount the cert generated in the build step rather than adding it to the server-nginx image",
+      "time": "15:07",
+      "timestamp": "1682546852.956599",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Got a PR here (https://github.com/instabase/instabase/pull/39875) if either of you would like to try it out :slightly_smiling_face:",
+      "time": "15:20",
+      "timestamp": "1682547607.129899",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you! It works!",
+      "time": "15:31",
+      "timestamp": "1682548277.949979",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Thank you @sean.donohoe!\n\n  @Serena let me know if that works for you.",
+      "time": "15:46",
+      "timestamp": "1682549165.829899",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i haven’t tried it yet (i’m on `aihub_23_04` and haven’t switched back to master yet)\n\nbut the fix makes sense, and if it worked for Xindi, I fully expect it to work for me too!",
+      "time": "15:47",
+      "timestamp": "1682549274.429749",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "thank you for fixing so quickly! @sean.donohoe :raised_hands:",
+      "time": "15:50",
+      "timestamp": "1682549456.688259",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-04-26.json",
+    "message_count": 13,
+    "start_time": "1682545720.928259",
+    "end_time": "1682549456.688259",
+    "is_thread": true
+  }
+}

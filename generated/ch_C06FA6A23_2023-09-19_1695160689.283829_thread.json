@@ -1,0 +1,238 @@
+{
+  "id": "ch_C06FA6A23_2023-09-19_1695160689.283829_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Heymian",
+    "lydia",
+    "Ashwin"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "what venv do people run the python shared-util unit tests in? is it still the venv requirements listed here (https://github.com/instabase/instabase/blob/master/tools/devtools/code-dependencies/python/requirements.base.in)?",
+      "time": "14:58",
+      "timestamp": "1695160689.283829",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yes, I think that’s the only one that works for shared-utils, it’s stuck on python 3.7 dependent libraries.",
+      "time": "14:59",
+      "timestamp": "1695160764.980109",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Are we supposed to add / update dependencies specific to 3.9 in this file? Or is this supposed to be compatible with <=3.7.x",
+      "time": "15:01",
+      "timestamp": "1695160874.659079",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "It’s pretty awkward to manage, but my guess is this file needs to stay compatible for <= 3.7. I don’t know how Lenny got things to build on his machine, but I attempted to move my dev environment to 3.9, and I couldn’t get anything in shared-utils to pass.",
+      "time": "15:03",
+      "timestamp": "1695160997.811069",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "After making an update here for a dependency that requires 3.9+, if the CI is passing, is that acceptable?",
+      "time": "15:03",
+      "timestamp": "1695161031.338269",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "why does it need to stay compatible with 3.7? I thought we're done with 3.7 lol. Or should we just create a new 3.9 file?",
+      "time": "15:03",
+      "timestamp": "1695161036.542479",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "(the PR is already merged) can fix if this is a problem though",
+      "time": "15:04",
+      "timestamp": "1695161044.765899",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "dogfood deploy also succeeded",
+      "time": "15:04",
+      "timestamp": "1695161061.451439",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah if everything passes then all good!",
+      "time": "15:04",
+      "timestamp": "1695161068.677809",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Ashwin what PR did you merge?",
+      "time": "15:04",
+      "timestamp": "1695161079.599099",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Heymian do you know if the jenkins image running unit tests during CI uses this venv file?",
+      "time": "15:05",
+      "timestamp": "1695161126.966889",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I thought we were done with 3.7 too as well, but when I tried to move my entire env to 3.9, nothing in shared-utils passed. The biggest one being the mypy version was forced to be bumped, which then bumped piptools, and there are thousands of mypy errors.",
+      "time": "15:05",
+      "timestamp": "1695161135.073769",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yes, jenkins image is using this venv file for all tests in shared-utils",
+      "time": "15:05",
+      "timestamp": "1695161152.538509",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "https://github.com/instabase/instabase/pull/46854",
+      "time": "15:06",
+      "timestamp": "1695161172.270469",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hmm, that is very confusing... because obviously the code in shared-utils works in 3.9 because all the services they're used in are on 3.9?",
+      "time": "15:06",
+      "timestamp": "1695161192.821149",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yeah super confusing",
+      "time": "15:06",
+      "timestamp": "1695161202.941319",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "okay interesting, so the CI also passed for 23.01 and 23.04 (with the same value in the file)",
+      "time": "15:06",
+      "timestamp": "1695161204.562939",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "maybe it's that the 3.7 venv file doesn't work on 3.9, so we just need to make a new venv for 3.9 with the right package versions",
+      "time": "15:06",
+      "timestamp": "1695161211.742009",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I know we just talked about the docker layer for CI tests in incident review today - it sounded like release eng was making some changes to the jenkins image? do you know if they changed anything related to the venv setup?",
+      "time": "15:07",
+      "timestamp": "1695161269.114759",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "The moved all poetry venvs for all python services to a separate file-system. Because shared-utils is not in a poetry venv, that could not be moved out.",
+      "time": "15:08",
+      "timestamp": "1695161315.838539",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think one option is we build a separate poetry venv for the py-utils modules (equivalent of this file in poetry.toml form). And then we can run all py-utils in it.",
+      "time": "15:10",
+      "timestamp": "1695161414.755579",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "that makes sense! might be a good idea to do a sweep of this file and start anew because a lot of the dependencies are outdated",
+      "time": "15:26",
+      "timestamp": "1695162389.652829",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hmm just dug a bit more into poetry and it's not clear to me how the different py-util packages would share a single poetry env. seems like they would each need their own",
+      "time": "15:37",
+      "timestamp": "1695163064.685059",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yeah the ultimate correct solution is every single py-util has it’s own .toml file that declares it’s dependencies (similar to Go), and we can use poetry to compose the higher level services based on the dependencies on the included packages. But I don’t know how much of this will go away/be duplicated when we Bazel our python build.",
+      "time": "15:40",
+      "timestamp": "1695163258.035899",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yea, maybe for now we just fix all the outdated packages in the venv file",
+      "time": "15:42",
+      "timestamp": "1695163321.698689",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yup :slightly_smiling_face:",
+      "time": "15:42",
+      "timestamp": "1695163328.993939",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I can take a stab at updating all the packages. @Cody Boggs @fernando do you know if the Jenkins image (https://github.com/instabase/instabase/blob/master/tools/releasetools/jenkins/Makefile) was upgraded to Python 3.9? And this is still the image we use for running unit tests in CI?",
+      "time": "15:45",
+      "timestamp": "1695163515.263529",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-09-19.json",
+    "message_count": 27,
+    "start_time": "1695160689.283829",
+    "end_time": "1695163515.263529",
+    "is_thread": true
+  }
+}

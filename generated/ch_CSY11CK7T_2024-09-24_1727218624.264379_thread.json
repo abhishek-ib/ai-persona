@@ -1,0 +1,149 @@
+{
+  "id": "ch_CSY11CK7T_2024-09-24_1727218624.264379_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "there have been some confusing Cypress CI failures recently\n• @Arjun’s PR: https://github.com/instabase/instabase/actions/runs/11019111346/job/30604813282?pr=62984\n• my PR: https://github.com/instabase/instabase/actions/runs/11007200092/job/30562996806?pr=62951\n• my other PR: https://github.com/instabase/instabase/actions/runs/11020161809/job/30604868945?pr=63002\nwe last increased the timeout 4 months ago (https://github.com/instabase/instabase/pull/58004), so maybe it’s time to increase the limit again?",
+      "time": "15:57",
+      "timestamp": "1727218624.264379",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yep, makes sense to bump it up again",
+      "time": "15:57",
+      "timestamp": "1727218668.930969",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m quite confused - sometimes “Cypress Tests / results” is successful even though the Cypress tests timed out :notlikeblob:",
+      "time": "16:32",
+      "timestamp": "1727220739.078489",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Xindi Xu i think the fix would be to check `needs.cypress.result === 'success'` , just like we already check for `needs.make-sandbox.result === success` ?",
+      "time": "16:52",
+      "timestamp": "1727221976.365409",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, that sounds right to me! Do you have links to the log where we see this?",
+      "time": "16:59",
+      "timestamp": "1727222357.138109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "https://github.com/instabase/instabase/actions/runs/11007200092/job/30614626571",
+      "time": "17:00",
+      "timestamp": "1727222433.739929",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ohh, i think in this case, all tests in the blocking group is completed so it shows as successful.\n\nhttps://cloud.cypress.io/projects/cfhedy/runs/14181/specs",
+      "time": "17:02",
+      "timestamp": "1727222540.503569",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "But the status of the actual GitHub action step should be failure, right?",
+      "time": "17:09",
+      "timestamp": "1727222985.013429",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The code is only checking statuses from the blocking test group, rn. I think either way makes sense :thinking_face: ? If we know that all tests in the blocking group passed, Cypress CI is successful.",
+      "time": "17:13",
+      "timestamp": "1727223195.573749",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "I assumed needs.cypress.result would give us the step status",
+      "time": "17:13",
+      "timestamp": "1727223198.839879",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "But not all tests in the blocking group were actually run\n\nA lot of them weren’t run bc the run was cancelled by the GitHub action step timeout",
+      "time": "17:14",
+      "timestamp": "1727223249.922249",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The dashboard shows all blocking tests are completed tho :thinking_face:",
+      "time": "17:15",
+      "timestamp": "1727223336.281119",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "At the time when we posted the comment about cypress being successful, not all of the blocking tests were run though\n\nI think sometimes the GitHub action timeout doesn’t cancel the cypress run",
+      "time": "17:25",
+      "timestamp": "1727223933.632359",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Oh, I do see this sometimes, even when there are no timeouts. I wonder if there's a delay for Cypress Dashboard to show the results",
+      "time": "17:27",
+      "timestamp": "1727224057.123009",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Ah maybe you’re right, maybe the issue is in Cypress dashboard :goodobservation:",
+      "time": "18:26",
+      "timestamp": "1727227562.501089",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw i increased the timeout to 45 min in this PR (https://github.com/instabase/instabase/pull/63002)!",
+      "time": "20:35",
+      "timestamp": "1727235342.794279",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-09-24.json",
+    "message_count": 16,
+    "start_time": "1727218624.264379",
+    "end_time": "1727235342.794279",
+    "is_thread": true
+  }
+}

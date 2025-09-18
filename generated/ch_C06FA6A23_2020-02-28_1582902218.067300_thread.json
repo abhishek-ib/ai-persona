@@ -1,0 +1,240 @@
+{
+  "id": "ch_C06FA6A23_2020-02-28_1582902218.067300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "Aaron Tami",
+    "Jonathan Shih",
+    "Felicia",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ideally it would work with all the OCR engines since people might use the others in dogfood or on instabase.com (http://instabase.com) and scan_box should still work. what is the concern with making it work with all OCR engines?",
+      "time": "07:03",
+      "timestamp": "1582902218.067300",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "to solve the immediate issue that App Eng needs, makes sense to focus on Marx. Ideally though we’d get it to work with ABBYY, Marx, and Goog, but ABBYY / Marx are definitely much higher priority since those are where the production use-cases are",
+      "time": "07:36",
+      "timestamp": "1582904161.067600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "since Google is the default on cloud, we should also get it to work there, i imagine that will be similar work to getting it to work with ABBYY",
+      "time": "07:36",
+      "timestamp": "1582904186.067800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i'm actually kind of confused why it's different for each OCR engine. do we not have access to the processed image to be able to run line detection after OCR?",
+      "time": "07:58",
+      "timestamp": "1582905527.068000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i believe the OCR engine’s do their own internal manipulation of the image. @Aaron Tami and @Jonathan Shih will know best whether this is true, and whether we have access to that internal manipulated image",
+      "time": "07:59",
+      "timestamp": "1582905584.068200",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "@dlluncor @lydia Yeah, we don’t have access to the internal image. And it’s different for each OCR engine because not all of them support rotation correction. However, the rotation correction fine works for all images and might be able to be wrapped into whatever @Felicia is doing, since it also tries to detect lines to determine rotation.",
+      "time": "09:58",
+      "timestamp": "1582912713.071200",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "(correct me if i’m wrong but we don’t need to do anything to have line detection or scan box working with abbyy, because it already works based abbyy’s own line detection)",
+      "time": "10:22",
+      "timestamp": "1582914143.071800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Ah good point, you're right!",
+      "time": "10:23",
+      "timestamp": "1582914210.072000",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "Are we actually passing down the line info?",
+      "time": "10:29",
+      "timestamp": "1582914593.072200",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "@Jonathan Shih in abbyy? we’re passing the line information down to the ibocr annotationdatadict in the separators field with abbyy and that’s where line information with my thing also is going",
+      "time": "10:43",
+      "timestamp": "1582915381.072400",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "woot nice. haha just checking, cuz I think a while back, we were getting the info from abbyy then discarding it",
+      "time": "10:51",
+      "timestamp": "1582915875.072700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "how does write_converted_image write out an image for the various OCR engines?",
+      "time": "11:02",
+      "timestamp": "1582916532.072900",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "Those aren’t images from the OCR engines. The converted image is what is passed in to the OCR engines, so it includes converting PDF into image and any image processing we do before it hits OCR",
+      "time": "11:07",
+      "timestamp": "1582916878.073100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh i see. when does rotation correction happen? when i write converted image, it seems like the rotation is correct? (i might be wrong here)",
+      "time": "12:28",
+      "timestamp": "1582921692.073500",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "the ocr specific rotation correction happens after ocr based on the coordinates returned from the ocr engine",
+      "time": "12:31",
+      "timestamp": "1582921870.073700",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "oh yeah and good point. that converted image is written by us after using the coordinates from ocr to correct for orientation",
+      "time": "12:31",
+      "timestamp": "1582921898.073900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ah ok. so i guess _theoretically_ we could convert the image for line detection with rotation correction from ocr, just not use the converted image for ocr unless force_image_ocr=true?",
+      "time": "12:40",
+      "timestamp": "1582922401.074100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "it will in general give us correct-ish results (as correct as image provenance is i guess) but won't handle cropping, which i think maybe only Marx does?",
+      "time": "12:40",
+      "timestamp": "1582922433.074300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "(I'm just trying to think of a more generalized solution vs. one-off solution per ocr engine)",
+      "time": "12:41",
+      "timestamp": "1582922501.074500",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "yeah we could do that. the rotation just wouldn’t be correct for all ocr engines. how are we doing the line detection though? correct_orientation_fine is using hough transforms to detect lines. are we doing something similar now?",
+      "time": "12:45",
+      "timestamp": "1582922743.074700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yea i think so. oh is correct_orientation_fine how we do rotation correction? i kinda assumed the ocr engines estimated a rotation correction based on word alignment",
+      "time": "12:47",
+      "timestamp": "1582922837.074900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "as in, the majority of words on a page should be horizontal",
+      "time": "12:47",
+      "timestamp": "1582922868.075100",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "haha there’s different types of rotation correction that we’re doing. correct_orientation_fine uses hough transforms. the ocr specific ones i was talking about use the word coordinates. there’s also correct_orientation_coarse that tries ocr on the image at 0, 90, 180, 270 and tries to see which gets the best results. I was just thinking that if we’re already using image processing for line detection, we can also use it to detect orientation. I was just wondering why we are able to pick up the orientation with correct_orientation_fine but not with the line detection, though. @Felicia?",
+      "time": "12:55",
+      "timestamp": "1582923301.075500",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "I have to check what it does if there’s a tilted image but my line detection assumes horizontal and vertical lines (so no tilted lines), it doesn’t check the orientation of the image",
+      "time": "13:17",
+      "timestamp": "1582924628.075700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Sorry, still catching up on this thread",
+      "time": "14:23",
+      "timestamp": "1582928615.076100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Marx ORC has built in line detection too",
+      "time": "14:23",
+      "timestamp": "1582928621.076300",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "@Aaron Tami and I just chatted but Marx doesn’t have separator/line detection, just word lines. We identified a place to do the separator/line detection here and it should be after any reorientation happening before or after OCR, and I still have access to the IBObj page and raw image:\n\nhttps://github.com/instabase/instabase/blob/master/shared-utils/py-utils/apps/services/ocr/src/py/instabase/apps/services/ocr/ocr_util.py#L572",
+      "time": "15:09",
+      "timestamp": "1582931385.076800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-02-28.json",
+    "message_count": 27,
+    "start_time": "1582902218.067300",
+    "end_time": "1582931385.076800",
+    "is_thread": true
+  }
+}

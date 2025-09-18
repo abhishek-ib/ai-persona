@@ -1,0 +1,169 @@
+{
+  "id": "ch_C06FA6A23_2021-09-29_1632930960.056500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Will",
+    "Mohit",
+    "Naveen",
+    "Xi Cheng",
+    "shaunak",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "hi all, I’m having an issue opening a notebook in a folder. Getting a “bad gateway” error. Other notebooks within the same folder are opening correctly. How would I debug this?",
+      "time": "08:56",
+      "timestamp": "1632930960.056500",
+      "is_reply": false
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "@Will, can you send the notebook that you’re trying to access?",
+      "time": "08:57",
+      "timestamp": "1632931027.056900",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "https://instabase.com/faisal.mohammad/m_t_proj/fs/m_and_t_s3/Integration/forTesting_wd.ipynb",
+      "time": "08:57",
+      "timestamp": "1632931060.057100",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "what’s your username so I can add you?",
+      "time": "08:58",
+      "timestamp": "1632931113.057400",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "`naveen.kumar`",
+      "time": "08:58",
+      "timestamp": "1632931137.057600",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "k, you’ve been added",
+      "time": "09:01",
+      "timestamp": "1632931266.057800",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "the main directory is https://instabase.com/faisal.mohammad/m_t_proj/fs/m_and_t_s3/Integration/",
+      "time": "09:01",
+      "timestamp": "1632931271.058000",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "I’m trying to open forTesting_wd which isn’t working but the others in the directory are",
+      "time": "09:01",
+      "timestamp": "1632931289.058200",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "@Will are you trying to open notebook in Jupyter or Text editor?",
+      "time": "09:05",
+      "timestamp": "1632931521.058500",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@Naveen & I investigated this and observed the following:\n1. *Observation 1: Notebooks are working fine, its the file preview that is NOT working correctly.*\n @Will, can you please right click the file> Open With > Jupyter to open the notebook and that should unblock you. [As shown in the screenshot attached]\nMeanwhile we can investigate why preview is not working correctly.\n\n*2. Observation 2: Webapp pod restarts every time we send open the URL shared by @Will earlier* https://instabase.com/faisal.mohammad/m_t_proj/fs/m_and_t_s3/Integration/forTesting_wd.ipynb.\nFile size: 2MB\nThis URL goes through webapp to get file contents and shows them in preview app in UI. We see some GRPC errors (https://console.cloud.google.com/logs/query;cursorTimestamp=2021-09-29T16:35:53.196310246Z;query=resource.type%3D%22k8s_container%22%0Aresource.labels.project_id%3D%22instabase-main%22%0Aresource.labels.location%3D%22us-central1-c%22%0Aresource.labels.cluster_name%3D%22instabase-main-prod-002%22%0Aresource.labels.namespace_name%3D%22instabase-prod%22%0Aresource.labels.pod_name%3D%22deployment-webapp-6d96d64c7-blx54%22%20severity%3E%3DDEFAULT%0Atimestamp%3D%222021-09-29T16:35:53.196232277Z%22%0AinsertId%3D%22lryuv1sqe7z5q2fr%22?project=instabase-main) while retrieving contents of the file.\n\n@Nidhi @achao [file-service team]  Have we re-enabled GRPC file service for read operations in prod? If yes, does these change use GRPC streaming for large files (as we are seeing stream errors which essentially crash webapp pod!)?\n+ @shaunak  [infra] Are we aware of any recent GCP networking issue in GCP that would impact GRPC streams?",
+      "time": "09:41",
+      "timestamp": "1632933696.058700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Hi @Nidhi, @achao, @Xi Cheng looks like file-service V2 is *still* set to true in all the services on the production cluster.  Does the new code have all the streaming code disabled?  If not, can one of you please take the charge here and disable it and make sure that new production push does not cause the Flag flip?\n\ncc @Heymian",
+      "time": "10:06",
+      "timestamp": "1632935185.059300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "We have not re-enabled file-service v2, it should be disabled everywhere. We’ll make sure to check the env vars to see why it seems to be re-enabling itself.",
+      "time": "10:07",
+      "timestamp": "1632935277.059500",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@shaunak Great catch. I just inspected the code and I think you are right. My guess is that file_service_v2 is only disabled in the last release:\nhttps://github.com/instabase/instabase/blob/release-21.8.0/webserver/api-server/deployment/env/deployment-config.json\nBut not in the latest one:\nhttps://github.com/instabase/instabase/blob/release-21.9.0/webserver/api-server/deployment/env/deployment-config.json\nnor dogfood:\nhttps://github.com/instabase/instabase/blob/master/webserver/api-server/deployment/env/deployment-config.json\nwe should disable v2 ASAP @Heymian @achao @Nidhi, and understand why there is a gap here (chances are the disabling change did not make to master or got reverted somehow)",
+      "time": "10:16",
+      "timestamp": "1632935774.059700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Okay, who is going to make this change?  :slightly_smiling_face:",
+      "time": "10:20",
+      "timestamp": "1632936011.059900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "it’s coming - https://github.com/instabase/instabase/pull/21907",
+      "time": "10:21",
+      "timestamp": "1632936085.060100",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "@Mohit right-clicking and choosing to open with worked. Thank you!",
+      "time": "15:40",
+      "timestamp": "1632955236.060800",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Glad this was resolved quickly. Feel free to let us know if you face any issues.\n\nThe preview should work fine as well, once the above PR is shipped to production environment. cc: @Heymian",
+      "time": "15:42",
+      "timestamp": "1632955347.061000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "as arun mentioned yesterday, there’s a production deploy coming very soon",
+      "time": "15:45",
+      "timestamp": "1632955554.061500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-09-29.json",
+    "message_count": 18,
+    "start_time": "1632930960.056500",
+    "end_time": "1632955554.061500",
+    "is_thread": true
+  }
+}

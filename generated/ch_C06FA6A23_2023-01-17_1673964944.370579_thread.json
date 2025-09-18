@@ -1,0 +1,53 @@
+{
+  "id": "ch_C06FA6A23_2023-01-17_1673964944.370579_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "daniel",
+    "lenny"
+  ],
+  "messages": [
+    {
+      "sender": "daniel",
+      "user_id": "U039ZHK0MQF",
+      "message": "Good morning! My python debugger failed to yield any outputs in console when running unit tests. The debugger just hangs and won’t show anything until I kill it. Upon investigation, I found the cause is this PR (https://github.com/instabase/instabase/pull/33496/files) added -b flag to running unit tests and this redirects all pdb output to buffer rather than stdout. I could just temporarily delete this flag in `build-python.mk (http://build-python.mk)` when needed but was wondering is there a better way to debug unit tests?",
+      "time": "06:15",
+      "timestamp": "1673964944.370579",
+      "is_reply": false
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "IIRC the flag was added to make it easier to parse unit test output, so that you only see the stdout of a failing test and not every test that runs (because our tests are super noisy). but i can see that not working well with hanging tests :) maybe there’s a way to set a timeout so that if a test doesn’t pass/fail within x seconds it’s automatically marked as failure? cc @lydia you were looking into python test runner recently",
+      "time": "06:45",
+      "timestamp": "1673966758.524919",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "oh sorry I just reread your question and realized i think i misunderstood — yes if you’re running unit tests with PDB you’ll need to remove -b for now. we can probably have an env var when running tests to automatically run with PDB and disable -b all in one go",
+      "time": "06:47",
+      "timestamp": "1673966829.869109",
+      "is_reply": true
+    },
+    {
+      "sender": "daniel",
+      "user_id": "U039ZHK0MQF",
+      "message": "Got it and yeah your first reply also sounds like a legit concern",
+      "time": "07:04",
+      "timestamp": "1673967891.935849",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-01-17.json",
+    "message_count": 4,
+    "start_time": "1673964944.370579",
+    "end_time": "1673967891.935849",
+    "is_thread": true
+  }
+}

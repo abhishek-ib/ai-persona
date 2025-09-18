@@ -1,0 +1,186 @@
+{
+  "id": "ch_C06FA6A23_2022-12-01_1669936540.127159_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yan Wang",
+    "Kerr Yoo",
+    "shiqi",
+    "Jessica",
+    "jtau",
+    "Pridhvi Vegesna",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`core-platform-service` is really slow on dogfood rn? nothing’s loading for me in Explorer or any file picker\n\ni’m getting 504s for every `/api/v1/spaces/list` and `/api/v1/repos/{repo_name}` API call, but the actual file-service API calls seem fine",
+      "time": "15:15",
+      "timestamp": "1669936540.127159",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "actually, maybe those file-service API calls were cached, i’m getting 504s for some `api/v1/drive` calls for loading file content as well :disappointed:",
+      "time": "15:19",
+      "timestamp": "1669936749.122959",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "cc @jtau are we still working on dogfood upgrade atm?",
+      "time": "15:21",
+      "timestamp": "1669936904.481469",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems the upgrade is complete? https://instabase.slack.com/archives/CCY413CSU/p1669924741301559?thread_ts=1669923710.644969&cid=CCY413CSU",
+      "time": "15:23",
+      "timestamp": "1669937012.924099",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Not necessarily related, but the control-plane dashboard is reporting 8 deployemnts for core-platform-service",
+      "time": "15:25",
+      "timestamp": "1669937132.000179",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "And api-server has 9 active deployments https://dogfood.instabase.com/control-plane/dashboard/deployments/apps/v1/api-server",
+      "time": "15:30",
+      "timestamp": "1669937411.455229",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "@fernando this is probably due to pushing all the configs out?",
+      "time": "15:30",
+      "timestamp": "1669937456.106609",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "i do see one api-server trying to terminate\n```deployment-api-server-6b5fffc656-85kx6                  5/5     Terminating        0              171m\ndeployment-api-server-6b5fffc656-f26qj                  5/5     Running            0              176m\ndeployment-api-server-6b5fffc656-hbb64                  5/5     Running            0              176m```\nsometimes the terminations get stuck when there aren't enough resources in the cluster",
+      "time": "15:35",
+      "timestamp": "1669937701.049109",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "@shiqi this issue shouldn't be related to the GKE version upgrade since the slowness only happened after the configs were pushed out to dogfood to fix an envoy issue. what happened was all the configs in the db were rolled out, so it's possible any change that w as not persisted to the database / created manually using `kubectl` was erased/overwritten.\n\n@fernando not sure what envoy ports/network policy changes those might be but this hanging indicates to me a connection issue",
+      "time": "15:51",
+      "timestamp": "1669938719.663159",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Is there something we can do to revert those changes? Still seeing this on dogfood",
+      "time": "15:53",
+      "timestamp": "1669938829.666359",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "cc @Yan Wang looks like other apps are working fine? might just be a core-platform-service issue?",
+      "time": "16:04",
+      "timestamp": "1669939459.962989",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "It seems the api-server ports are changed by patches again even with the skip tag... I have changed it and see if it works",
+      "time": "16:17",
+      "timestamp": "1669940230.526149",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "@Kerr Yoo can you help look into why the skip tag isn't working?",
+      "time": "16:17",
+      "timestamp": "1669940260.587839",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Should we see it fixed immediately? Or do we need to wait?",
+      "time": "16:17",
+      "timestamp": "1669940272.013389",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "This is my pr https://github.com/instabase/instabase/pull/33453.",
+      "time": "16:17",
+      "timestamp": "1669940272.860819",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "The pods are restarting. I will check if it fixes the issue",
+      "time": "16:18",
+      "timestamp": "1669940290.411869",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "It's back!! Thank you!!",
+      "time": "16:21",
+      "timestamp": "1669940502.404439",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "Cool. I just changed the value via kubectl. Hopefully the next deployment will apply my pr and we don't need to delete that patch",
+      "time": "16:22",
+      "timestamp": "1669940559.480929",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "It doesn’t look like master was merged into the branch, which was created before the new label feature created. I can’t confirm, since it seems the branch was deleted. Patch Professor’s functionality is determined by the action yaml of the branch from which a PR is being made. To get the last patch professor features, you need to pull the latest changes from master and merge them into your branch.",
+      "time": "16:26",
+      "timestamp": "1669940781.595599",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "The latest dogfood deployment failed due to timeout. I delete the patch and will apply it after next successful deployment",
+      "time": "17:18",
+      "timestamp": "1669943925.168159",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-12-01.json",
+    "message_count": 20,
+    "start_time": "1669936540.127159",
+    "end_time": "1669943925.168159",
+    "is_thread": true
+  }
+}

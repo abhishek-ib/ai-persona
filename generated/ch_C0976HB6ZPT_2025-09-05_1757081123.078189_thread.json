@@ -1,0 +1,153 @@
+{
+  "id": "ch_C0976HB6ZPT_2025-09-05_1757081123.078189_thread",
+  "type": "channel",
+  "channel_name": "proj-agent-mode",
+  "conversation_type": "thread",
+  "participants": [
+    "Anil",
+    "Natasha",
+    "margaret.tomaszczuk",
+    "jaden",
+    "melissa.amos",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "Got it thanks for clarifying!\n\nSo the UX problem I'm trying to solve here is the intermediate step after schema is generated looks a little confusing, in two dimensions:\n• We auto-open the `other` class which shows `no fields exist` message, which feels odd since we just auto-generated\n• We _could_ solve for this without introducing extra latency of classification by auto-opening the schema we just generated (confidentiality agreement in this ex)\n• However, the `no results to display` message on each field + `no documents selected message` in this state is also a bit confusing. What would work is if the `no results to display` message said something like `generating results` in this state instead, and also, keep the doc auto-selected that the schema was generated on\n• An alternative and possibly lower LOE to both of these would be to show a new message on spinny wheel after schema is generated to at least indicate some progress, e.g. `Schema generated, classifying documents...\"\nLMK  your thoughts! cc: @melissa.amos + @Natasha",
+      "time": "07:05",
+      "timestamp": "1757081123.078189",
+      "is_reply": false
+    },
+    {
+      "sender": "Natasha",
+      "user_id": "U03JW1JAW1G",
+      "message": "i think we should definitely implement the loading state (https://www.figma.com/design/1GTN3fSYdAbrK2UJqODW4Q/EPD-4651-Doc-AI?node-id=5321-17241&t=JNmHulHBma6bFxgU-4) of the panel in between clicking the \"autogenerate schema\" button and seeing the resulting class + fields.\n\nwe can switch to displaying classes once they're generated. i agree that the generated class should be expanded (not other) and that we maintain the selection on the document. that's what happens in projects currently if you have a doc selected, create a new class, and click \"reclassify documents\".\n\nfor the fields, we can use the skeleton loader (https://pollen.instabase.com/?path=/docs/status-indicators-skeleton--docs) instead of saying \"no results to display\" while we wait for the docs to classify",
+      "time": "09:17",
+      "timestamp": "1757089047.641749",
+      "is_reply": true
+    },
+    {
+      "sender": "Natasha",
+      "user_id": "U03JW1JAW1G",
+      "message": "this way the user experience is: i click on the autogenerate button -> i see it's working on generating something so i wait -> i see the new class that got made and all the field names in it -> i wait for docs to classify (which i know is happening because of the popover on the bottom left) -> i see the classification & field results for my selected doc -> yay",
+      "time": "09:25",
+      "timestamp": "1757089555.837479",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> i agree that the generated class should be expanded (not other) and that we maintain the selection on the document\nthis means the selected doc and the selected class won't be in sync since the selected doc hasn't been classified yet as this class\n\n> that's what happens in projects currently if you have a doc selected, create a new class, and click \"reclassify documents\".\nyes we have special logic to allow this inconsistency when creating/editing classes",
+      "time": "09:28",
+      "timestamp": "1757089734.762469",
+      "is_reply": true
+    },
+    {
+      "sender": "Natasha",
+      "user_id": "U03JW1JAW1G",
+      "message": "> this means the selected doc and the selected class won't be in sync since the selected doc hasn't been classified yet as this class\ni think that's fine -- better to show details for the thing that just got created than expand _other_. if for some reason the selected doc is not classified as the generated class, could we switch to _other_ once everything's been classified? since this is for a demo, i doubt we'd be switching between multiple documents in this context (esp if we know the interaction could be weird) when the generated class is made specifically based on the selected document",
+      "time": "09:36",
+      "timestamp": "1757090167.607739",
+      "is_reply": true
+    },
+    {
+      "sender": "melissa.amos",
+      "user_id": "U046XKHS8VA",
+      "message": "Quick clarifying question on the flow and technical limitations: when we generate a schema from the selected document, is there a reason we can't immediately place that document into the new class, and then only classify the remaining documents? :ghibli-totoro-question:",
+      "time": "10:25",
+      "timestamp": "1757093119.592479",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> when we generate a schema from the selected document, is there a reason we can't immediately place that document into the new class, and then only classify the remaining documents?\nthis doesn't work for split classification\n\neven without split classification, it's possible for the LLM to make a mistake -> we need to show the output of the LLM and not assume it always behaves consistently",
+      "time": "10:41",
+      "timestamp": "1757094113.209739",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> if for some reason the selected doc is not classified as the generated class, could we switch to _other_ once everything's been classified?\nif the selected doc is classified as \"Other\", we will show \"Other\" after everything's been classified since that's the class for the selected doc\n\n> since this is for a demo, i doubt we'd be switching between multiple documents in this context (esp if we know the interaction could be weird) when the generated class is made specifically based on the selected document\n@jaden we should disable selecting another doc while generating the schema (we already do this when classifying docs)",
+      "time": "10:43",
+      "timestamp": "1757094203.267389",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> the generated class should be expanded (not other)\n@jaden it should be simple (?) to do this by using `useSelectClassId`, but i haven't tried this out myself :sweat_smile:",
+      "time": "10:43",
+      "timestamp": "1757094237.520939",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "ill give all those suggestions a shot and update here~ :ty:",
+      "time": "10:47",
+      "timestamp": "1757094457.685909",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "<tangent>\nOne thing I noticed in Jaden’s demo is that it took a minute+ end to end. Would be good to eyeball look to make sure we are not doing something stupid that is causing slowness. The schema gen API itself shouldn’t take more than a few s.",
+      "time": "10:50",
+      "timestamp": "1757094628.154849",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "^ cc @ayesha.ali",
+      "time": "10:51",
+      "timestamp": "1757094666.620329",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Ensuring it works is first priority. ^ just a thought.",
+      "time": "10:52",
+      "timestamp": "1757094728.017819",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Are we still on track to merge this in today?",
+      "time": "16:12",
+      "timestamp": "1757113963.771839",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "@Natasha @margaret.tomaszczuk here is the new design flow lmk if it looks good!",
+      "time": "17:13",
+      "timestamp": "1757117635.816369",
+      "is_reply": true
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "Looks fantastic Jaden nice work!",
+      "time": "17:16",
+      "timestamp": "1757117810.435949",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0976HB6ZPT",
+    "channel_name": "proj-agent-mode",
+    "date_file": "2025-09-05.json",
+    "message_count": 16,
+    "start_time": "1757081123.078189",
+    "end_time": "1757117810.435949",
+    "is_thread": true
+  }
+}

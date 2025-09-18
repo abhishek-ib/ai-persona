@@ -1,0 +1,69 @@
+{
+  "id": "ch_CSY11CK7T_2025-04-16_1744845492.659879_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Hey y’all, I’m going to disable the Cypress tests for now. It seems like nearly all tests are failing and there’s a lot of noise in the logs to debug this effectively (see screenshot). Let me know if this is an issue.",
+      "time": "16:18",
+      "timestamp": "1744845492.659879",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "So an interesting finding:\nIn Danny’s run (https://cloud.cypress.io/projects/cfhedy/runs/19054/overview/293fc364-2ae7-4853-93e4-c81d371a4708/replay?att=2&roarHideRunsWithDiffGroupsAndTags=1&ts=1744844428115.8), I noticed a 502 `/lock` endpoint call, which was weird to me because that’s supposed to be a very lightweight endpoint.\n\nWhat made it especially weird is that I don’t see it in the nginx logs. I see 200s just fine, but 50X is missing. This leads me to believe that the request is not even making it to our cluster",
+      "time": "16:25",
+      "timestamp": "1744845935.645569",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Same thing with extracted fields:",
+      "time": "16:27",
+      "timestamp": "1744846049.847109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Each ci sandbox has its own server-nginx instance, so we need to go to the crafting UI to see the nginx logs for these 50X requests",
+      "time": "18:03",
+      "timestamp": "1744851814.530349",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "My theory is that this is the same network issue that Matt has asked the crafting team about multiple times (https://instabase.slack.com/archives/C03B865Q74K/p1744220347918199) \n\n\n@Paul H can you check the nginx logs for this error on a CI sandbox for one of these failed CI runs?",
+      "time": "18:06",
+      "timestamp": "1744851962.833799",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "If this is just flakiness at the network layer in crafting… :shaking-angry-fist:",
+      "time": "18:06",
+      "timestamp": "1744852015.512379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-04-16.json",
+    "message_count": 6,
+    "start_time": "1744845492.659879",
+    "end_time": "1744852015.512379",
+    "is_thread": true
+  }
+}

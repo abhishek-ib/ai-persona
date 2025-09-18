@@ -1,0 +1,174 @@
+{
+  "id": "ch_C06FA6A23_2019-10-08_1570558650.330700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ted",
+    "Heymian",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Seeing this in Travis",
+      "time": "11:17",
+      "timestamp": "1570558650.330700",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "it’s downloading the image. give it some time to run?",
+      "time": "11:22",
+      "timestamp": "1570558929.331400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Ah, I thought it had stalled",
+      "time": "11:24",
+      "timestamp": "1570559058.331600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "gigantic image, will take a while",
+      "time": "11:25",
+      "timestamp": "1570559148.332100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yup -- you should always see that in travis :slightly_smiling_face:",
+      "time": "11:33",
+      "timestamp": "1570559633.332300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "@Heymian the slowness seems to be crashing it?",
+      "time": "12:32",
+      "timestamp": "1570563172.333400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "",
+      "time": "12:32",
+      "timestamp": "1570563178.333600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Chetan Did we hit an endless loop or something while figuring out which tests to run/build?",
+      "time": "12:35",
+      "timestamp": "1570563304.334000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "the actual dependency tracing seems to have finished fine (`echo \"Testing distributed-tasks/celery/image-tasks shared-utils/py-utils/acl-access shared-utils/py-utils/app-utils shared-utils/py-utils/data-export-utils shared-utils/py-utils/flow/server shared-utils/py-utils/recipe-utils shared-utils/py-utils/refinerv5-utils shared-utils/py-utils/visual-refiner/client shared-utils/py-utils/visual-refiner/server webserver/api-server webserver/api-server-apps webserver/apps-server webserver/shared webserver/shared/src/js/webpacked webserver/webapp\"`)\n\nIt seems the `go run runtest.go` command is what ran into problems…. i’ve never seen this before though where it simply outputs nothing.",
+      "time": "12:44",
+      "timestamp": "1570563852.334200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i hit retry :man-shrugging: let’s see if it replicates. if yes, i’ll try to reproduce it locally.",
+      "time": "12:45",
+      "timestamp": "1570563924.334500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "will have to do that tonight though — about to leave for the airport for the metlife on-site.",
+      "time": "12:45",
+      "timestamp": "1570563930.334700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "happening consistently — I see it also happened on one of Erick’s PR’s. specifically, travis gets hung on `image-tasks`. Erick’s PR had the package before (docops-lib) run correctly, and in Ted’s case _none_ ran because image-tasks was the first one.",
+      "time": "20:32",
+      "timestamp": "1570591927.346200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i can reproduce on master inside the jenkins container — image-tasks just hangs on PY3 after unit tests.",
+      "time": "21:21",
+      "timestamp": "1570594866.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "we’re not hitting this problem on master because of a bug with the way `test-all` works — it’s missing all the leaf services (image-tasks, app-tasks, etc.). this problem is only hit on these specific branches because they change image-tasks code triggering the PR to take a look at image-tasks.",
+      "time": "21:22",
+      "timestamp": "1570594932.000500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "this PY3 unit test hanging problem for image-tasks must have creeped in some time between david/i introducing `test-changes` and now.",
+      "time": "21:22",
+      "timestamp": "1570594958.000700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "maybe a jenkinsfile change caused it… first i’ll fix the `test-all` bug. PR: https://github.com/instabase/instabase/pull/11361 @Heymian @dlluncor",
+      "time": "21:23",
+      "timestamp": "1570594981.000900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i’m at metlife all day tomorrow though — @Heymian any chance you could help look into this PY3 image-tasks unit tests hanging post-success problem?",
+      "time": "21:26",
+      "timestamp": "1570595186.001100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yup, i can look, but if it has something to do with a specific bad test, i’m not going to have a whole lot of context with what those tests do",
+      "time": "22:06",
+      "timestamp": "1570597593.002500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yea if you can find the test, that makes the task easier for someone else. i’m not sure it is though (from the screenshot I posted earlier — it could be misleading though).",
+      "time": "22:13",
+      "timestamp": "1570598008.002700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-10-08.json",
+    "message_count": 19,
+    "start_time": "1570558650.330700",
+    "end_time": "1570598008.002700",
+    "is_thread": true
+  }
+}

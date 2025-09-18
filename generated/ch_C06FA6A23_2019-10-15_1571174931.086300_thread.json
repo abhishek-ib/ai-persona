@@ -1,0 +1,127 @@
+{
+  "id": "ch_C06FA6A23_2019-10-15_1571174931.086300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Jesika Haria",
+    "Ted",
+    "dlluncor",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "@Jesika Haria @dlluncor Just ran into this in `train_refiner_util` and was wondering if y'all knew if it was intentional:\n\n```\n  records, iberr = apply_refiner_fns.refine_extract_ibocr(\n      orig_ibocr, [saved_program], '', ibocr, ctx, fn_ctx_reader, clients)\n  return records, None\n```\n\nWe're silently swallowing any refiner error that happens. I'm hesitant to switch that `None` to an `iberr` since I know sometimes our customer depend upon very specific quirks of flow/refiner behavior.... anyone know if suppressing the error is intentional?",
+      "time": "14:28",
+      "timestamp": "1571174931.086300",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "not intentional. Looking at the code, when iberr != None is very rare. So if we catch the iberr there, it’s OK.\n\nIn reality, we swallow the majority of Refiner running exceptions with try catch blocks inside of refiner_util.py",
+      "time": "14:37",
+      "timestamp": "1571175441.086500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "So `not intentional, but don't fix` seems to be the read on it?",
+      "time": "14:49",
+      "timestamp": "1571176146.086800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Just making sure I follow",
+      "time": "14:49",
+      "timestamp": "1571176155.087000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "not intentional, you can fix it — i don’t anticipate it will have a worrisome impact, because iberr is None the vast majority of the time, unless your IBOCR is really a borked format",
+      "time": "14:49",
+      "timestamp": "1571176196.087200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "for sure — good to be very explicit :slightly_smiling_face: — you can fix it though i’d say, not a high risk change",
+      "time": "14:51",
+      "timestamp": "1571176295.087500",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "Yup agreed",
+      "time": "15:01",
+      "timestamp": "1571176905.088000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Ted that was a bug -- i should be checking for the error and returning",
+      "time": "16:21",
+      "timestamp": "1571181701.088600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "but that said, it's another reason why raising exceptions is better :slightly_smiling_face:",
+      "time": "16:21",
+      "timestamp": "1571181714.088800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "just fyi that function is only used by refiner 5 (i added it)",
+      "time": "16:22",
+      "timestamp": "1571181757.089000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "it provides a way to run refiner with provenance outside of flow",
+      "time": "16:23",
+      "timestamp": "1571181789.089200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "also I can fix it tomorrow",
+      "time": "16:23",
+      "timestamp": "1571181829.089400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Oh it's just R5! Cool. I thought it was in the refiner classic pathway so was afraid to change anything",
+      "time": "16:28",
+      "timestamp": "1571182105.089600",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-10-15.json",
+    "message_count": 13,
+    "start_time": "1571174931.086300",
+    "end_time": "1571182105.089600",
+    "is_thread": true
+  }
+}

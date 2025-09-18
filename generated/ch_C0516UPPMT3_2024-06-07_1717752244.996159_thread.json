@@ -1,0 +1,223 @@
+{
+  "id": "ch_C0516UPPMT3_2024-06-07_1717752244.996159_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "jayasooryan",
+    "Hari",
+    "avi",
+    "Sławek Biel"
+  ],
+  "messages": [
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Here's an example of the model coming back with 3 different answers for the same question :disappointed: cc: @Hari @Sławek Biel",
+      "time": "02:24",
+      "timestamp": "1717752244.996159",
+      "is_reply": false
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "docs attached\nand this Wiki imported via URL - Arsenal F.C. - Wikipedia (https://en.wikipedia.org/wiki/Arsenal_F.C.)",
+      "time": "02:24",
+      "timestamp": "1717752289.776289",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "<!subteam^S06395ZEFSL> can you do some debugging why the model struggles here?\n\n@avi is one of the answers here the expected one?",
+      "time": "02:33",
+      "timestamp": "1717752823.731909",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Yeah, the middle one - `Kai Havertz` . Though football fans will understand why a model finds it tough to believe :see_no_evil:",
+      "time": "02:35",
+      "timestamp": "1717752927.272929",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "@Subash @Aayush @vineeth Can we get the new MS-Lite into multidocs, chatbots as well? This is anyway internal so we can keep testing the determinism of this model!",
+      "time": "03:08",
+      "timestamp": "1717754935.796459",
+      "is_reply": true
+    },
+    {
+      "sender": "jayasooryan",
+      "user_id": "U0162F348KB",
+      "message": "The first answer seems to be coming from model's own knowledge (not from the docs). The model mentions the highest paid player is not listed in the docs and I can't find `Pierre-Emerick` in the three docs as well.\n\n@avi can you share the steps taken by the model for the answer `Gabriel Jesus`?\n\nIn UAT, I'm getting consistent answers. UAT has `gpt-4o` model. If this is prod, I believe it is still on `gpt-4-1106-preview`.",
+      "time": "03:21",
+      "timestamp": "1717755718.604389",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "~I think it's pulling `Pierre-Emerick` from the wikipedia article~  Actually you're right, it's not in the article",
+      "time": "03:22",
+      "timestamp": "1717755776.500769",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "You can try the chatbot here actually, made it as a public unlisted chatbot - https://aihub.instabase.com/hub/apps/shared/avi.vaid/Arsenal%2023-24%20Season",
+      "time": "03:23",
+      "timestamp": "1717755825.358549",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "",
+      "time": "03:24",
+      "timestamp": "1717755881.890659",
+      "is_reply": true
+    },
+    {
+      "sender": "jayasooryan",
+      "user_id": "U0162F348KB",
+      "message": "Ok. There seems to be 2 issues:\n\n1. Model is using it's own knowledge to answer question: \n    a. Highest paid player is Pierre_Emerick\n    b. Kal Havertz is not an Arsenal Player\n2. The user's question is `who is our highest paid player` and when search tool executes, it gets converted into `Who is the highest paid player at Arsenal?`. This might be because the question uses the word `our` and based on the documents, the model assumes it is about Arsenal.",
+      "time": "03:33",
+      "timestamp": "1717756393.655259",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Why do you say Kai Havertz isn't an Arsenal player? IRL he is, but also in the docs it's never indicated he isn't",
+      "time": "03:34",
+      "timestamp": "1717756477.529959",
+      "is_reply": true
+    },
+    {
+      "sender": "jayasooryan",
+      "user_id": "U0162F348KB",
+      "message": "The model is saying that. If you look at the Progress tool output, it mentions the reason why it ignored Kai Havertz and it says he is not an Arsenal player. Did he recently join Arsenal? Knowledge cut off for gpt-4-1106-preview is April 2023.",
+      "time": "03:38",
+      "timestamp": "1717756722.839989",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Ohh interesting, yeah he joined `28 June 2023`, I forgot about model training cutoff",
+      "time": "03:41",
+      "timestamp": "1717756860.472059",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "It’s kind of tricky here, the player_salaries file does not mention the club. The model would need to crossreference with the wikipedia article, but it doesn’t do it.\n@avi Can you check if renaming ‘player_salaries’ to ‘arsenal_player_salaries’ helps?",
+      "time": "03:45",
+      "timestamp": "1717757133.968929",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Yeah totally get how this can become tricky :disappointed: I'll test that change!",
+      "time": "03:50",
+      "timestamp": "1717757422.318729",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "@jayasooryan the model knowledge leak happens in the SearchTool here, maybe we can add a sentence there to only use the document contents?",
+      "time": "03:55",
+      "timestamp": "1717757729.718799",
+      "is_reply": true
+    },
+    {
+      "sender": "jayasooryan",
+      "user_id": "U0162F348KB",
+      "message": "Would there be scenarios where we actually need model's knowledge to answer a question?",
+      "time": "04:01",
+      "timestamp": "1717758096.077309",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Yeah good point, if I ask about French people and the document mentions someone born in Paris we’d like the model to be able to do that connection",
+      "time": "04:03",
+      "timestamp": "1717758209.543619",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "it seems the doc rename really helps!",
+      "time": "04:03",
+      "timestamp": "1717758236.056889",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "I wonder if we should add context to the docs automatically baed on our understanding of the knowledge base too",
+      "time": "04:04",
+      "timestamp": "1717758261.400379",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "As we scale to many data sources, it's likely docs will be named quite vaguely :disappointed:",
+      "time": "04:04",
+      "timestamp": "1717758284.807939",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "A chat bot level system prompt would be another way. If the model knew all the documents relate to Arsenal that would be good enough",
+      "time": "04:05",
+      "timestamp": "1717758352.991409",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Yeah, this can open many more possibilities too. Getting answers in a specific style, coaching the model on creativity level, and eventually maybe even function calling - [EPD-1285] Custom instructions/Pre-Processing/Post-Processing for Chatbot queries - Jira (atlassian.net) (https://instabase.atlassian.net/browse/EPD-1285)",
+      "time": "04:07",
+      "timestamp": "1717758459.261199",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "But the doc description may help for non-chatbot scenarios in search/converse",
+      "time": "04:08",
+      "timestamp": "1717758490.377879",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "We generate descriptions for each doc independently. I don’t have a good idea how to achieve the “understanding of the knowledge base” bit.",
+      "time": "04:43",
+      "timestamp": "1717760599.359839",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-06-07.json",
+    "message_count": 25,
+    "start_time": "1717752244.996159",
+    "end_time": "1717760599.359839",
+    "is_thread": true
+  }
+}

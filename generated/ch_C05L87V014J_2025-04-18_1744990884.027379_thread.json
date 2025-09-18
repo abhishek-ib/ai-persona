@@ -1,0 +1,93 @@
+{
+  "id": "ch_C05L87V014J_2025-04-18_1744990884.027379_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "astpierre",
+    "Abhishek Adupa"
+  ],
+  "messages": [
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "Hey @Abhishek Adupa I attempted to create one fresh myself to see if I can reproduce the error but it came up healthy. \nTo unblock, do you mind trying to create a fresh sandbox to see if it’s working now for you? If you can keep these two sandboxes around I’ll continue to debug and maybe ping the crafting folks to see if they have any ideas on their end",
+      "time": "08:41",
+      "timestamp": "1744990884.027379",
+      "is_reply": false
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "oh actually i'm seeing it now as well :grimacing:",
+      "time": "09:19",
+      "timestamp": "1744993199.421319",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Yes :slightly_smiling_face:\nSometimes sandbox build works, but the signup/login fails with similar ibdb error.",
+      "time": "09:20",
+      "timestamp": "1744993257.152089",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "i've ping'd our crafting team. It sounds like there is a coredns addon failing in our cluster which would explain some of the networking issues we're facing. I'll keep this thread updated as we dig deeper to learn more",
+      "time": "09:29",
+      "timestamp": "1744993740.143189",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Thank you!",
+      "time": "09:31",
+      "timestamp": "1744993864.511219",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "i think actually this error is due to a missing `CREATE DATABASE ibdb;` command in the template, or perhaps a race condition? :thinking_face:  either way i created the db in mysql to attempt to unblock these sandboxes from spinning up successfully",
+      "time": "12:03",
+      "timestamp": "1745003022.216879",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "ok the short term fix is to go to the terminal for your crafting sandbox failing the build step and perform the following steps to re-perform a db-migrate\n\n```mysql -h mysql -u root\nCREATE DATABASE ibdb;\nexit\ncd $IB_HOME/shared-utils/go-utils/src/instabase/utils/db\nmake db-dev-migrate```\nand then the build will succeed",
+      "time": "13:56",
+      "timestamp": "1745009760.717569",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "long term, i think something needs to get updated in the template to ensure these steps succeed as a part of the automated setup",
+      "time": "13:56",
+      "timestamp": "1745009809.632669",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "It works now Thank you @astpierre :slightly_smiling_face:",
+      "time": "14:18",
+      "timestamp": "1745011113.930439",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-04-18.json",
+    "message_count": 9,
+    "start_time": "1744990884.027379",
+    "end_time": "1745011113.930439",
+    "is_thread": true
+  }
+}

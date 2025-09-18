@@ -1,0 +1,125 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-10-18_1729268894.803899_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Hi, I'm back! So this is deployed to aihub-sandbox.internal now, and I added a patch for the host name to celery-app-tasks: https://aihub-sandbox.internal.instabase.com/deployment-manager/configs\n\nHowever, when I test by running a deployment with notifications set up, the hostname is not being picked up. Is it possible I added the env var to the wrong service?",
+      "time": "09:28",
+      "timestamp": "1729268894.803899",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Jessica It looks like it's there in the config; line 225",
+      "time": "09:42",
+      "timestamp": "1729269752.431019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We can try executing into a pod to check too. 1 sec",
+      "time": "09:42",
+      "timestamp": "1729269762.963589",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mattfichman1❯ kubectl exec -it deployment-celery-app-tasks-788597695f-gprcp -c celery-app-tasks -- bash\nbash-5.2$ export | grep INSTABASE_HOST\ndeclare -x INSTABASE_HOSTNAME=\"aihub-sandbox.internal.instabase.com (http://aihub-sandbox.internal.instabase.com)\"\nbash-5.2$```\nEverything looks good there. I guess if it still isn't working, then celery-app-tasks was the wrong place.",
+      "time": "09:44",
+      "timestamp": "1729269873.920729",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think we discussed that maybe that code ran in `webapp` or `api-server` as well?",
+      "time": "09:44",
+      "timestamp": "1729269891.442979",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It is _not_ set in webapp:\n\n```cs/mattfichman1❯ kubectl exec -it deployment-webapp-6ffbc7c564-7q6vf -c webapp -- bash\nbash-5.2$ export | grep INSTABASE_HOST\ndeclare -x INSTABASE_HOSTNAME=\"\"```",
+      "time": "09:45",
+      "timestamp": "1729269930.349949",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also not set for api-server:",
+      "time": "09:46",
+      "timestamp": "1729270019.493169",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mattfichman1❯ kubectl exec -it deployment-api-server-56d54d9667-622t6 -c api-server -- bash\nbash-5.2$  export | grep INSTABASE\ndeclare -x INSTABASE_HOSTNAME=\"\"```",
+      "time": "09:47",
+      "timestamp": "1729270039.002409",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Oh wow! Okay let me go set it in those, thanks",
+      "time": "09:47",
+      "timestamp": "1729270076.211379",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "That worked! I added it to api-server, apps-server, and webapp so I have no idea which one of them it ended up being haha, but it did work!",
+      "time": "10:16",
+      "timestamp": "1729271805.928269",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Nice! I think probably webapp. That's usually where emails send from.",
+      "time": "10:18",
+      "timestamp": "1729271885.548869",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Could it be api-server since the run is kicked off from there?",
+      "time": "10:18",
+      "timestamp": "1729271910.792929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It could!",
+      "time": "10:28",
+      "timestamp": "1729272492.237219",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-10-18.json",
+    "message_count": 13,
+    "start_time": "1729268894.803899",
+    "end_time": "1729272492.237219",
+    "is_thread": true
+  }
+}

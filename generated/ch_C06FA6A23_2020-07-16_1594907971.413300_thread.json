@@ -1,0 +1,143 @@
+{
+  "id": "ch_C06FA6A23_2020-07-16_1594907971.413300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Kerry",
+    "Nihar Sheth",
+    "achao"
+  ],
+  "messages": [
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Refiner is not usable right now on dogfood - I got a `SoftTimeLimitExceeded()` error no matter what program I run. The error message changes to `Error: An unexpected error occurred. (Error=Object of type ChordError is not JSON serializable)` after a while",
+      "time": "06:59",
+      "timestamp": "1594907971.413300",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Running master locally, it looks like `udf_docs_helper` in `udf_util.py` is timing out. cc @Nihar Sheth, @Erick",
+      "time": "07:23",
+      "timestamp": "1594909409.413600",
+      "is_reply": true
+    },
+    {
+      "sender": "Nihar Sheth",
+      "user_id": "U014CTLGQJY",
+      "message": "Looking into it right now",
+      "time": "07:26",
+      "timestamp": "1594909574.414000",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Seem to be GRPC error related to File service. cc @Heymian @achao - I’m seeing this locally running an apply refiner step\n\n``` [RPC Client] Service name: FileService. Error executing thrift service method: Connect, err: Error occurred executing GRPC method: Retrying request in 1.5s due to StatusCode DEADLINE_EXCEEDED, Error (4, 'deadline exceeded'), Message Deadline Exceeded. Retries left 0\n[2020-07-16 10:49:16,652: ERROR/ForkPoolWorker-1] Chord callback for '18722729-4c69-477a-b830-fb89b165b2f4' raised: ChordError('Dependency 6d3f23ad-ac0a-4f70-b465-718b05afd52f raised AttributeError(\"\\'NoneType\\' object has no attribute \\'status\\'\")')\nTraceback (most recent call last):\n  File \"/Users/kerryspchang/Documents/venv-instabase/p3/lib/python3.7/site-packages/celery/app/trace.py\", line 385, in trace_task\n    R = retval = fun(*args, **kwargs)\n  File \"/Users/kerryspchang/Documents/venv-instabase/p3/lib/python3.7/site-packages/celery/app/trace.py\", line 648, in __protected_call__\n    return self.run(*args, **kwargs)\n  File \"/Users/kerryspchang/Documents/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/registry/tasks.py\", line 1035, in apply_refiner\n    use_file_cache=use_file_cache)\n  File \"/Users/kerryspchang/Documents/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/tasks/apps/train_refiner_util.py\", line 635, in apply_refiner\n    ibocr_path, username, file_client, refresh_cache=not use_file_cache)\n  File \"/Users/kerryspchang/Documents/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/tasks/apps/train_refiner_util.py\", line 588, in read_ibocr_and_cache\n    ibocr_path, 'rb', username=username, file_client=file_client) as f:\n  File \"/Users/kerryspchang/Documents/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/content/filehandle/ibfile.py\", line 237, in ibopen\n    fs_params)\n  File \"/Users/kerryspchang/Documents/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/content/filehandle/ibfile_chunk.py\", line 27, in ibopen_chunk\n    fs_params)\n  File \"/Users/kerryspchang/Documents/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/content/filehandle/ibfile_chunk.py\", line 68, in __init__\n    self.fs_params)\n  File \"/Users/kerryspchang/Documents/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/content/filehandle/ibfile_chunk.py\", line 42, in _get_con\n    if con_resp.status.code != FileService.StatusCode.OK:\nAttributeError: 'NoneType' object has no attribute 'status'```",
+      "time": "07:56",
+      "timestamp": "1594911398.414200",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "ah sorry about this, fixing",
+      "time": "07:59",
+      "timestamp": "1594911597.414500",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "merged!",
+      "time": "08:13",
+      "timestamp": "1594912399.415900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Whoa!!!",
+      "time": "08:18",
+      "timestamp": "1594912694.416100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Are we enabling gRPC based File Service?",
+      "time": "08:18",
+      "timestamp": "1594912705.416300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "that is very very exciting!",
+      "time": "08:18",
+      "timestamp": "1594912710.416500",
+      "is_reply": true
+    },
+    {
+      "sender": "Nihar Sheth",
+      "user_id": "U014CTLGQJY",
+      "message": "thanks @achao",
+      "time": "08:18",
+      "timestamp": "1594912717.416700",
+      "is_reply": true
+    },
+    {
+      "sender": "Nihar Sheth",
+      "user_id": "U014CTLGQJY",
+      "message": "that fixed the issue",
+      "time": "08:18",
+      "timestamp": "1594912720.416900",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "@shaunak yes! :blush:",
+      "time": "08:25",
+      "timestamp": "1594913122.418800",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@achao can we capture something like this in our tests in the future before pushing it to dogfood? I’m surprised that Golden didn’t capture this.",
+      "time": "08:46",
+      "timestamp": "1594914406.419400",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "mm they would have, I merged this late last night.",
+      "time": "08:49",
+      "timestamp": "1594914540.420300",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "The goldens are stalled now, but should be fixed in the next dogfood push",
+      "time": "08:49",
+      "timestamp": "1594914565.421100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-07-16.json",
+    "message_count": 15,
+    "start_time": "1594907971.413300",
+    "end_time": "1594914565.421100",
+    "is_thread": true
+  }
+}

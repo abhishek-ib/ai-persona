@@ -1,0 +1,85 @@
+{
+  "id": "ch_C06FA6A23_2023-03-06_1678111788.078999_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Wilson"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi all! Dogfood's SQL database is running out of storage, so I'm going to scale it. Scaling storage is an online operation (dogfood will still be available), but performance might drop a bit during the process. I will update here when the resize is done.",
+      "time": "06:09",
+      "timestamp": "1678111788.078999",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "EDIT: On hold, b/c I don't actually have permission to scale it :laughing:",
+      "time": "06:12",
+      "timestamp": "1678111930.290289",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "Curious to know which table is taking up the most space??",
+      "time": "06:37",
+      "timestamp": "1678113465.802269",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```SQL> select job_type, count(*), trunc(sum(length(metadata) + length(result_metadata) + coalesce(length(smessage), 0) + coalesce(length(sdescription), 0))/1048576, 0) as \"SIZE (MB)\" from jobs group by job_type order by \"SIZE (MB)\" desc;\n\nJOB_TYPE                                   COUNT(*)  SIZE (MB)\n---------------------------------------- ---------- ----------\nFLOW                                         979689       1904\nFSBATCH                                     3408919         76\nDATASET_ADD_FILES                             28899         67\nTESTRUNNER                                      752         37\nBUILDER_CREATE_PROJECT                         7401         22\nREADER                                         5402          7\nREFINER                                       46732          5\nBUILDER_ADD_FILES                              9355          4\nDATASET_BULK_ANNOTATE                          8477          1\nDATASET_COPY_PROCESSED_FILES                   1538          0\nBUILDER_RENAME_FILES                            817          0\nGSS                                              73          0\nDATASET_CREATE_FROM_FLOW_RESULTS               1271          0\nBUILDER_REMOVE_FILES                           1085          0\nBUILDER_RUN_MODULE                               39          0\nBUILDER_PREPARE_OUTPUT_SET                        3          0\nMODEL                                             1          0\nDATASET_FILE_DEL                              11579          0\nDATASET_EXPORT                                 1535          0\nDATASET                                        1213          0\nREADER_COPY_PROCESSED_FILES                      37          0\nBUILDER                                         312          0\nmodel                                            10          0\nCRON                                             35          0\nBUILDER_COPY_ONBOARDING_FILES                   318          0\nDATASET_EXPORT_ANNOTATIONS                      680          0\n\n26 rows selected.```",
+      "time": "06:40",
+      "timestamp": "1678113641.367729",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "`jobs` table :slightly_smiling_face:",
+      "time": "06:40",
+      "timestamp": "1678113651.093999",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Well, and `tasks`",
+      "time": "06:40",
+      "timestamp": "1678113657.834759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```select count(*) from tasks;\n\n  COUNT(*)\n----------\n  11489363```",
+      "time": "06:41",
+      "timestamp": "1678113687.969229",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```SEGMENT_NAME                   SEGMENT_TYPE                           MB\n------------------------------ ------------------------------ ----------\nSYS_LOB0000020870C00011$$      LOBSEGMENT                     67392.1875\nTASKS                          TABLE                               19072\nSYS_LOB0000073867C00007$$      LOBSEGMENT                      8064.1875\nSYS_LOB0000073861C00005$$      LOBSEGMENT                      7808.1875\nSYS_LOB0000020870C00010$$      LOBSEGMENT                      5440.1875\nSYS_LOB0000122682C00005$$      LOBSEGMENT                      5440.1875\nSYS_LOB0000094241C00009$$      LOBSEGMENT                      4160.1875\nJOBS                           TABLE                                3968\nSYS_LOB0000020761C00012$$      LOBSEGMENT                      2304.1875\nSYS_LOB0000096613C00009$$      LOBSEGMENT                      2240.1875\nSYS_LOB0000095838C00012$$      LOBSEGMENT                      2240.1875\nJOBS_BACKUP                    TABLE                                2048\nJOBS_BACKUP2                   TABLE                                2048\nJOBS_V0                        TABLE                                1792\nSYS_C005348                    INDEX                                 952\nTASK_RESULT_INDEX              INDEX                                 880\nUSER_SESSIONS                  TABLE                                 440\nSYS_LOB0000094241C00010$$      LOBSEGMENT                       400.1875\nLICENSE_METRICS                TABLE                                 352\nJOB_V1_PRIMARY_KEY             INDEX                                 320```\nSYS_LOB are the `CLOB` text columns (mostly from the jobs/tasks tables)",
+      "time": "06:50",
+      "timestamp": "1678114210.182249",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-03-06.json",
+    "message_count": 8,
+    "start_time": "1678111788.078999",
+    "end_time": "1678114210.182249",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "id": "ch_C06FA6A23_2020-01-21_1579602271.032300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "*Update on Microsoft OCR - service not available issue* \n\nthe microsoft container is not actually ready, because its unable to connect to metering endpoint via proxy\n\nand that is why it is also returning 403 in localhost:5000 from within the pod\n\nwhen we do a GET on localhost:5000 from within pod on dogfood - we get a 200 with response that says `Your Azure Cognitive Service Container is up and running`\n\nwhereas on SC msft OCR pod using proxy the metering endpoint is not reachable -\n```>>> proxy=urllib2.ProxyHandler({'http': 'gateway-hk.npedmi.standardchartered.com:8080 (http://gateway-hk.npedmi.standardchartered.com:8080)'})\n>>> opener = urllib2.build_opener(proxy)\n>>> urllib2.install_opener(opener)\n>>> urllib2.urlopen(\"https://southeastasia.api.cognitive.microsoft.com\")```",
+      "time": "02:24",
+      "timestamp": "1579602271.032300",
+      "is_reply": false
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "*Update on MS OCR container*\n\nthe proxy did not seem to be working in reaching metering endpoint as the env variable was upper cased. Not sure why the casing matters, Gopu pointed this out and on changing it got the container to ready state.\n\nAnother thing to note, MS OCR container can be up even when metering endpoint is not connected. The OCR requests will fail however. To confirm if the container is ready we need to make a call to `http://<url>:5000` and it should return <200> with `Your Azure Cognitive Service Container is up and running`",
+      "time": "05:25",
+      "timestamp": "1579613116.032500",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "*Update on app task to MS OCR connectivity*\n\nProxy settings on app-task seemed to be causing MS OCR to not be reachable from app-task, causing process files to fail.\n\nAs a temporary measure have removed proxy setting from app-task and the connectivity looks fine. Please note this is a hack that should not be done. We will have to understand this better, and fix it.\n\nTest flow for MS OCR runs fine. Once I can access the laptop again will change replica counts back to original values.",
+      "time": "05:29",
+      "timestamp": "1579613391.032700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-01-21.json",
+    "message_count": 3,
+    "start_time": "1579602271.032300",
+    "end_time": "1579613391.032700",
+    "is_thread": true
+  }
+}

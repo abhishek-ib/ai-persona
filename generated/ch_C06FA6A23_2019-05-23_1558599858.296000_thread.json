@@ -1,0 +1,206 @@
+{
+  "id": "ch_C06FA6A23_2019-05-23_1558599858.296000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ted",
+    "dlluncor",
+    "Matt"
+  ],
+  "messages": [
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "That'd be awesome. Would be great to see how it works and use Recipe more",
+      "time": "01:24",
+      "timestamp": "1558599858.296000",
+      "is_reply": false
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "It’s really interesting from a security perspective that if a script is wrapped into a binary we can run it without admin, makes sense but also poses other challenges",
+      "time": "08:18",
+      "timestamp": "1558624733.297500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "@Matt when you get a chance, curious to hear the elaboration on this.",
+      "time": "09:14",
+      "timestamp": "1558628080.297800",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "So you have a site admin, good or bad... wrap something into a binary. It becomes executable by everyone. We limit scripts privileges today on site admin (which needs to change). So how do we think about the larger problem of, Instabase users need to be able to build and execute scripts... what level of privilege/imports do we give them. We also need to think about site admins ability to wrap anything they want into a binary and deploy. It’s a good faith policy right now but that may need to change. \n\nI didn’t realize as a site admin I could build a UDF wrap it in a binary and let anyone use it...",
+      "time": "10:05",
+      "timestamp": "1558631154.303400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "So you’re suggesting that the customer’s most powerful user be given less than total control?",
+      "time": "10:09",
+      "timestamp": "1558631359.304500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "I wonder if a policy of “three must sign off on this” could be an option if this becomes important",
+      "time": "10:10",
+      "timestamp": "1558631410.305800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "So they still have control, but you can’t unilaterally act",
+      "time": "10:10",
+      "timestamp": "1558631422.306400",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Yes and no... I think the problem is we limit today by who and who cannot execute scripts. The problem is if you wrap it in a binary it loses all privileges. So yes, the super admin can run their scripts, but they can without knowledge wrap them in a way anyone can use.",
+      "time": "10:12",
+      "timestamp": "1558631538.309000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Yeah that’s 100% intentional.",
+      "time": "10:19",
+      "timestamp": "1558631945.310900",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "The super admin can’t wrap a script without knowledge, but someone can run it",
+      "time": "10:19",
+      "timestamp": "1558631975.312000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Just trying to get a feel for the concern: it’s that we might not want to fully trust super admins?",
+      "time": "10:19",
+      "timestamp": "1558631992.312700",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "the thinking behind the current design was: absent a more fine grained custom code permissions scheme, we pursue the approach of “super admin as trusted gate keeper”",
+      "time": "10:21",
+      "timestamp": "1558632066.314300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "The super admin can “bless” trusted code by compiling it for everyone to use",
+      "time": "10:21",
+      "timestamp": "1558632099.315500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "But uncompiled code can be modified ad hoc and is thus off limits to regular users (until we have better micro services platform )",
+      "time": "10:22",
+      "timestamp": "1558632155.316900",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "But seems like maybe there’s a layer of checks and balances on super admin worth chatting about some time",
+      "time": "10:23",
+      "timestamp": "1558632183.317700",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "I know banks do the same thing: eg Anant has to have two accounts at SVB (if he does it like I did at Cloudstitch m) to simulate a buddy system of verification for all dangerous account actions (wire sending etc)",
+      "time": "10:23",
+      "timestamp": "1558632238.319500",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "All extremely valid points I think my issue is around script running. I think any script that runs universally once compiled has to be apart of some master list or lookup somehow",
+      "time": "10:25",
+      "timestamp": "1558632358.322500",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "It’s a check and balance, I am giving everyone this privilege but it’s also visible what I am doing via some sort of master list or catalog",
+      "time": "10:26",
+      "timestamp": "1558632415.324600",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "For the concern (capital one drilled this into my brain) the biggest threat is internal not external. Make sure internal has controls.",
+      "time": "10:29",
+      "timestamp": "1558632540.327500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Makes total sense. Cool — thanks for explaining!!",
+      "time": "10:29",
+      "timestamp": "1558632549.327900",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Catalog of all flows with custom scripts, who made them, and who has run them is absolutely data we have.. it would just be a matter or organizing it for productive recall and report",
+      "time": "10:30",
+      "timestamp": "1558632623.329400",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "I think we can go one level higher and just say this the script that was run. A pointer to that specific script. The people running it don’t have to know it’s more of audit of we know what everyone has the potential to run. So it allows for model governance of can we approve this for everyone or not.",
+      "time": "10:32",
+      "timestamp": "1558632730.331700",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "So I think it can be divided into an area that a super admin can do whatever they want, once it becomes universal it has to be apart of some master list",
+      "time": "10:34",
+      "timestamp": "1558632864.332900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-05-23.json",
+    "message_count": 23,
+    "start_time": "1558599858.296000",
+    "end_time": "1558632864.332900",
+    "is_thread": true
+  }
+}

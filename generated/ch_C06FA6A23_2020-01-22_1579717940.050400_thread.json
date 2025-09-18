@@ -1,0 +1,227 @@
+{
+  "id": "ch_C06FA6A23_2020-01-22_1579717940.050400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "paul",
+    "Chetan",
+    "Jonathan Shih",
+    "nakul",
+    "Matt",
+    "Justin",
+    "Jesika Haria",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "How do we do cross document validation? Part of the RBS POC is going to be getting in a batch of documents for a customer and making sure their names match, their Date of birth, and potentially other fields is that possible within Instabase? I’m guessing we need to do a hacky UDF?",
+      "time": "10:32",
+      "timestamp": "1579717940.050400",
+      "is_reply": false
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yes :slightly_smiling_face:",
+      "time": "10:34",
+      "timestamp": "1579718053.050500",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "@Jonathan Shih",
+      "time": "10:42",
+      "timestamp": "1579718551.050700",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "hack hack hack",
+      "time": "10:42",
+      "timestamp": "1579718565.050900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "",
+      "time": "10:44",
+      "timestamp": "1579718651.051200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "",
+      "time": "10:44",
+      "timestamp": "1579718675.051500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "",
+      "time": "10:44",
+      "timestamp": "1579718695.051800",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "https://media.giphy.com/media/jPAdK8Nfzzwt2/giphy.gif",
+      "time": "10:45",
+      "timestamp": "1579718707.052000",
+      "is_reply": true
+    },
+    {
+      "sender": "paul",
+      "user_id": "UEDF3JGN8",
+      "message": "I’d be curious to know whatever the answer ends up being — especially given how many things we hear about that sound like “validate that this information is the same in all these documents”",
+      "time": "10:53",
+      "timestamp": "1579719220.052300",
+      "is_reply": true
+    },
+    {
+      "sender": "paul",
+      "user_id": "UEDF3JGN8",
+      "message": "any kind of guidance we can give to customers on how to do it would be :sparkles:",
+      "time": "10:53",
+      "timestamp": "1579719235.052500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "@paul i’d say that’s basically the answer. seems like it’s unlikely that we have even a UDF that does this right now.",
+      "time": "11:01",
+      "timestamp": "1579719698.052700",
+      "is_reply": true
+    },
+    {
+      "sender": "paul",
+      "user_id": "UEDF3JGN8",
+      "message": "yeah; it would be great if we have some suggestions on how to solve it beyond “hack together a UDF” since I don’t think our customers are sure how to write said UDF",
+      "time": "11:03",
+      "timestamp": "1579719784.052900",
+      "is_reply": true
+    },
+    {
+      "sender": "nakul",
+      "user_id": "UPZNC6LAC",
+      "message": "could the approach that we used in the Citi Galileo POC work (where we compares an excel file with a folder of images to verify matches)? @Erick",
+      "time": "11:12",
+      "timestamp": "1579720355.053100",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "i think in order to accomplish this without udfs, we will need some way of combining the documents together first, which will require a reducer step, and then being able to run a mapper step after reducer, which is currently not possible.",
+      "time": "11:14",
+      "timestamp": "1579720453.053400",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Kind of — it depends a little bit how the data is organized (how do we know which documents in the input)",
+      "time": "11:14",
+      "timestamp": "1579720468.053600",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Yeah a reducer step would be key if we want to be able to do this in a single flow",
+      "time": "11:14",
+      "timestamp": "1579720477.053800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "I had been pitching to extend “merge IBOCRs” to let it “merge by key” (or merge by a specific extracted attribute or a collection) (if you recall from the sequencer conversations @Jonathan Shih) — that would also help with this.",
+      "time": "11:20",
+      "timestamp": "1579720838.054100",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "is that for records or for ibocrs?",
+      "time": "11:25",
+      "timestamp": "1579721142.054300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "for ibocrs — so that passport / license / w-2 could be kept different records but put in the same IBOCR if they are of the same person. there might be data modeling challenges here though (IBDOC i imagine would support this, IBOCR might not?)",
+      "time": "11:31",
+      "timestamp": "1579721499.054500",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "oh fascinating haha yeah that would be useful",
+      "time": "11:32",
+      "timestamp": "1579721567.054700",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "probably would be supported by our reducer udfs haha",
+      "time": "11:33",
+      "timestamp": "1579721590.054900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "haha likely. right before the reducer UDF makes its way into our codebase :slightly_smiling_face:",
+      "time": "11:34",
+      "timestamp": "1579721677.055100",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "\"Merge\" is definitely a flow step primitive we should be supporting",
+      "time": "13:23",
+      "timestamp": "1579728224.058800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yup — slighty past the “merge everything into 1”",
+      "time": "13:26",
+      "timestamp": "1579728391.059100",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "Huge +1 to the reducer UDFs in general, but Paul’s point is valid about supporting a set of primitives that are Instabase-official merge _functions_ not just the ability to UDF (tho that’s an important first step). Document x-validation is one of a useful category of functions:\n• Filter by value (only output records where income <30,000)\n•  Filter by percentile (only output top 5% records)\n• Join on key (the x-validation, or combine data from different sets)\n• Compute stats (average, min, max, etc)\n• Group by some characteristic\n• Pivot (show me all records where account_type = checking)\nWhat I’m describing above are standard capabilities of a data transformation tool (such as Trifacta, for instance). We could consider integrating with any open-source alternatives, or even building some of these important light-weight functions ourselves. My 2c would be to not just build for the immediate use case i.e. the x-validation, to take a step back so we can take 2 steps forward for all such requests in the future.\nCurious to hear thoughts!",
+      "time": "13:38",
+      "timestamp": "1579729136.059500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-01-22.json",
+    "message_count": 25,
+    "start_time": "1579717940.050400",
+    "end_time": "1579729136.059500",
+    "is_thread": true
+  }
+}

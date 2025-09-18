@@ -1,0 +1,53 @@
+{
+  "id": "ch_C06FA6A23_2024-09-12_1726163511.388349_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":star: *UPDATE:* OK, I rebuilt everything again and restarted it all again. Working now :shrug:\n\n\nHi all, I'm trying to run AI Hub locally (using `master)`, and digitization is not working (in build or converse). It seems like some models are missing?\n\nAlso, it's saying that \"jpg.ibdoc\" is not supported, which is odd. We definitely support jpgs :thinking_face:\n\n```    raise ModelServiceException(e) from None\ninstabase.model_service.sdk.ModelServiceException: (ModelServiceException(...), 'Invalid arguments: Model Registration (name=signature_model, version=0.0.4, is_project_model=False) failed with the following reason: Model registration not found (Name: signature_model, Version: 0.0.4): sql: no rows in result set (StatusCode.INVALID_ARGUMENT)')\n    raise ModelServiceException(e) from None\ninstabase.model_service.sdk.ModelServiceException: (ModelServiceException(...), 'Invalid arguments: Model Registration (name=barcode_qrcode_detection, version=1.0.0, is_project_model=False) failed with the following reason: Model registration not found (Name: barcode_qrcode_detection, Version: 1.0.0): sql: no rows in result set (StatusCode.INVALID_ARGUMENT)')\n    raise ModelServiceException(e) from None\ninstabase.model_service.sdk.ModelServiceException: (ModelServiceException(...), 'Invalid arguments: Model Registration (name=signature_model, version=0.0.4, is_project_model=False) failed with the following reason: Model registration not found (Name: signature_model, Version: 0.0.4): sql: no rows in result set (StatusCode.INVALID_ARGUMENT)')\n    raise ModelServiceException(e) from None\ninstabase.model_service.sdk.ModelServiceException: (ModelServiceException(...), 'Invalid arguments: Model Registration (name=barcode_qrcode_detection, version=1.0.0, is_project_model=False) failed with the following reason: Model registration not found (Name: barcode_qrcode_detection, Version: 1.0.0): sql: no rows in result set (StatusCode.INVALID_ARGUMENT)')\n[2024-09-12 17:49:34,821] [MainProcess/ThreadPoolExecutor-670_0] {/home/owner/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/aihub_utils/index_util.py:71} INFO - [trace_id=3276e040c0b88870] - Response: {'start_time': 1726163300.0, 'end_time': 1726163300.0, 'model_result': {'custom_result': {'error': 'Exception RetryError[<Future at 0x7fa96f7bcc10 state=finished raised AuthenticationError>]', 'token_usage_stats': [{'total_tokens': 0.0, 'completion_tokens': 0.0, 'prompt_tokens': 0.0, 'model_name': 'text-embedding-ada-002'}], 'document_id': 'matt-local-dev-org/matt.fichman_instabase.com/fs/Instabase Drive/aihub/0191e71f-478f-7bde-846d-4c03f501418f/documents/out/dl_eJxLydHLKkgHAAe3AkA=.jpg.ibdoc', 'tabular_traceback': None, 'cached_index': 'IB_AI_LABS_0191e71f_478f_7bde_846d_4c03f501418f', 'tabular_path': None, 'tabular_error': 'Document type is not supported.'}}}\n[2024-09-12 17:49:34,821] [MainProcess/ThreadPoolExecutor-670_0] {/home/owner/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/aihub_utils/index_util.py:88} ERROR - [trace_id=3276e040c0b88870] - Error during create_index_per_document for dl_eJxLydHLKkgHAAe3AkA=.jpg. Error: Exception RetryError[<Future at 0x7fa96f7bcc10 state=finished raised AuthenticationError>]```\nThis was working for me as of a week ago. Is anyone else having the same problem?",
+      "time": "10:51",
+      "timestamp": "1726163511.388349",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "is the file extension literally `jpg.ibdoc` ? we don’t support uploading ibdocs into Build/Converse projects",
+      "time": "13:13",
+      "timestamp": "1726171984.362789",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m not sure why the digitization job is trying to call the `barcode_qrcode_detection`, which you probably don’t have in your local environment\n\ndo you have any special digitization settings in your Build/Converse project?",
+      "time": "13:15",
+      "timestamp": "1726172150.323819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hey Serena, I actually figure this out! I just had to rebuild.",
+      "time": "13:32",
+      "timestamp": "1726173172.291379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-09-12.json",
+    "message_count": 4,
+    "start_time": "1726163511.388349",
+    "end_time": "1726173172.291379",
+    "is_thread": true
+  }
+}

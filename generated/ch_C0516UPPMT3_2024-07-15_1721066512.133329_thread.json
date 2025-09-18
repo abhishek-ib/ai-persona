@@ -1,0 +1,135 @@
+{
+  "id": "ch_C0516UPPMT3_2024-07-15_1721066512.133329_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Jessica",
+    "Serena",
+    "Subash",
+    "Arjun"
+  ],
+  "messages": [
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I’m still seeing this issue btw since this is on aihub uat I’m concerned it will affect next weeks prod push",
+      "time": "11:01",
+      "timestamp": "1721066512.133329",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this did not occur in my pre-existing empty Converse project\n\nthis only occurs if you create a new Converse project and click “select files” to upload a file - i was able to reproduce this way",
+      "time": "11:10",
+      "timestamp": "1721067038.176789",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "actually this isn’t accurate, i tried this a second time and couldn’t reproduce :lolcry:",
+      "time": "11:11",
+      "timestamp": "1721067064.717739",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "somehow, if i have the browser console open, the issue doesn’t occur\n\nif i close the browser console and click “select files”, i’m able to reproduce :confused_dog:",
+      "time": "11:16",
+      "timestamp": "1721067390.819969",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "hm, as you can see in the above video I did reproduce w the browser console open",
+      "time": "11:16",
+      "timestamp": "1721067413.447989",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yeah i know, but it always works for me with the browser console open",
+      "time": "11:17",
+      "timestamp": "1721067450.950329",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "do you want to hop on a call to debug if you can consistently reproduce?",
+      "time": "11:20",
+      "timestamp": "1721067611.121709",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "sure",
+      "time": "12:03",
+      "timestamp": "1721070203.821569",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "actually does 4:30pm ET work for a debugging call?",
+      "time": "12:06",
+      "timestamp": "1721070378.168649",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "so did some testing and setting `refetchOnWindowFocus` to `false` in the `useInitialDigitizationStatus` query seems to fix this issue. IIRC @Jessica made that change recently to globally set `refetchOnWindowFocus` to `true`. I’m not familiar enough with the code here to know if the solution should be just setting `refetchOnWindowFocus:false` or if there’s a more preferable solution",
+      "time": "12:19",
+      "timestamp": "1721071176.970799",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Ooh interesting this is the first bug we've found from this! So it must be because the file picker is open, selecting something triggers a refocus on the window?",
+      "time": "12:24",
+      "timestamp": "1721071460.624649",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I bet it's because of the cancleQueries function being called on line 483",
+      "time": "12:26",
+      "timestamp": "1721071568.696169",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "This seems like something that would benefit from keeping `refetchOnWindowFocus` set to true, but I'm also not familiar enough with this to fix it quickly. @Subash it looks like you touched this code most recently - do you want to try to fix this bug or should we turn off refetching for this query?",
+      "time": "12:29",
+      "timestamp": "1721071778.837909",
+      "is_reply": true
+    },
+    {
+      "sender": "Subash",
+      "user_id": "U01CPRMS8LV",
+      "message": "@Aayush & @Balaram are looking into this",
+      "time": "22:07",
+      "timestamp": "1721106450.669349",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-07-15.json",
+    "message_count": 14,
+    "start_time": "1721066512.133329",
+    "end_time": "1721106450.669349",
+    "is_thread": true
+  }
+}

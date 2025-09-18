@@ -1,0 +1,102 @@
+{
+  "id": "ch_CSY11CK7T_2025-05-14_1747260027.390859_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I’ve been seeing some extraction failed errors in the Cypress tests today. Investigating.",
+      "time": "15:00",
+      "timestamp": "1747260027.390859",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "This is after updating the OpenAI key, so that shouldn’t be the issue…",
+      "time": "15:00",
+      "timestamp": "1747260045.648929",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Seeing this error when running extraction:\n```Error during refiner extraction: model result is empty due to an error in model service\\n\\n METADATA:\\n\\n\\n{\\\"extraction_result\\\": null}```",
+      "time": "15:45",
+      "timestamp": "1747262724.014389",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "<!subteam^S06395ZEFSL> can I get help on this issue for the Cypress cluster? It’s blocking PRs from being merged.\n\nFrom this Jaeger trace (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22ptc%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D,%22query%22:%22addea8f9b37f0482%22%7D%5D,%22range%22:%7B%22from%22:%221747176120000%22,%22to%22:%221747176180000%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1), I’m seeing these errors in different spans but I’m not sure if they’re relevant:\n```Refiner extraction error for formula get_raw_extracted_fields@NATIVE. Error: Error running model ibllm-2.1.0: Org (cypress-user-70599_instabase.com (http://cypress-user-70599_instabase.com)) not found\n\nException list index out of rangeTraceback: Traceback (most recent call last):\n  File \"/model-service/py/instabase/ibllm/code_labs/provenance/provenance_to_word_poly_util.py\", line 215, in get_word_poly_from_word_location\n    start_index, end_index = start_end_offsets[0]\nIndexError: list index out of range```",
+      "time": "16:04",
+      "timestamp": "1747263865.029439",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Actually, @Xindi Xu do you happen to know why this org isn’t found on https://crafting-cyp.test.instabase.com/? We’re performing extraction in a community context:\n```Refiner extraction error for formula get_raw_extracted_fields@NATIVE. Error: Error running model ibllm-2.1.0: Org (cypress-user-70599_instabase.com (http://cypress-user-70599_instabase.com)) not found```",
+      "time": "16:23",
+      "timestamp": "1747264985.614969",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I’m also seeing community extraction fail on UAT so we might have an actual bug on our hands",
+      "time": "16:23",
+      "timestamp": "1747265008.574009",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "`cypress-user-70599_instabase.com (http://cypress-user-70599_instabase.com)` is a username, so it's expected that the org is not found. I guess the question is, why are we trying to find the org using a username",
+      "time": "16:24",
+      "timestamp": "1747265053.658929",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "What’s the typical org for community users? I recall it was something weird",
+      "time": "16:24",
+      "timestamp": "1747265095.812579",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://github.com/instabase/instabase/blob/f3df61a63cef79dd51a638b037da0db5dd6752[…]ebserver/shared/src/js/webpacked/cypress/create-user-and-org.js (https://github.com/instabase/instabase/blob/f3df61a63cef79dd51a638b037da0db5dd67524b/webserver/shared/src/js/webpacked/cypress/create-user-and-org.js#L5-L16)",
+      "time": "16:25",
+      "timestamp": "1747265127.939279",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Victor Zeng @Sayan can you help look into this tomorrow? it seems that community extraction is not working on master or uat (see `Org (cypress-user-70599_instabase.com (http://cypress-user-70599_instabase.com)) not found` error message above)\n\nthis was caught via Cypress test failures",
+      "time": "17:02",
+      "timestamp": "1747267361.947369",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-05-14.json",
+    "message_count": 10,
+    "start_time": "1747260027.390859",
+    "end_time": "1747267361.947369",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "id": "ch_C06FA6A23_2019-08-13_1565735291.334900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "lydia",
+    "Jonathan Shih"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@dlluncor I want to extract `instabase.flow.runnables.apply_refiner_fns._refine_extract_ibocr` into a util that I can call from a celery task so I can have the refiner v5 frontend run the same logic as apply_refiner flow step. Code generally makes sense, except I don't understand what `fn_ctx_reader` should contain.",
+      "time": "15:28",
+      "timestamp": "1565735291.334900",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "it seems like it just keeps getting passed down all the function calls and not used until parser. is it for udfs?",
+      "time": "15:28",
+      "timestamp": "1565735326.335000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "fn_ctx_reader is for reading files — and providing an abstraction around that. It is used in the LOOKUP function for example. It’s design is pretty out-of-date in fact (the reading of static files like csv relative to the ibprog)\n\n@Aaron Vontell and @Jonathan Shih — have some background in this one as well",
+      "time": "15:40",
+      "timestamp": "1565736057.335300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "so it was mostly designed around the fact that Flow V1 reads from the filesystem and Flow V2 reads from the Flow Binary — so fn_ctx_reader was to create an abstraction to Apply Refiner could handle both the FLow V1 and Flow V2 case of LOOKUP",
+      "time": "15:41",
+      "timestamp": "1565736110.335500",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "yeah, not too sure on all the context around it, but, like what david said, i’ve just used it for reading files in refiner udfs. i think the clients object also comes from it in the apply udf functions",
+      "time": "15:46",
+      "timestamp": "1565736371.335700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "actually it looks like there's already a celery task in app-tasks: `apply_refiner_async`. Is the assumption that this is only run in context of flow v1? (it seems to require some flow args)",
+      "time": "16:12",
+      "timestamp": "1565737952.335900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "also thanks for background on fx_ctx_reader!",
+      "time": "16:13",
+      "timestamp": "1565737997.336100",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "yeah the celery task for apply_refiner_async is only for v1. all of the v2 tasks are called from the map and reduce celery tasks in flow_batch_lib.py i think. @Karthik S for confirmation haha",
+      "time": "16:18",
+      "timestamp": "1565738332.336300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Yes that's true. Apply_refiner_async is the Flow V1 case. @lydia could you possibly write an email for what you're looking to accomplish and I can point you to different code / design that might help accomplish that?",
+      "time": "17:09",
+      "timestamp": "1565741343.336500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-08-13.json",
+    "message_count": 9,
+    "start_time": "1565735291.334900",
+    "end_time": "1565741343.336500",
+    "is_thread": true
+  }
+}

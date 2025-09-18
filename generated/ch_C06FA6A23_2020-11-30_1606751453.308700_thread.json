@@ -1,0 +1,230 @@
+{
+  "id": "ch_C06FA6A23_2020-11-30_1606751453.308700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Naveen",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Also looking at the various tests, i guess tests for services written in go are consuming more time (~1-2 minute per service), i guess this might be due to the build step in go, where all the modules are downloaded (listed in go.mod)… We should test whether this is the case (by printing time taken by test), and parallelize all the build step of go services, and then run testing step later synchronously if this is the case…",
+      "time": "07:50",
+      "timestamp": "1606751453.308700",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "That is great debugging @Naveen.  @Heymian can we look at what's causing the slowness",
+      "time": "18:33",
+      "timestamp": "1606790010.312100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "And how we can fix it?",
+      "time": "18:33",
+      "timestamp": "1606790015.312300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Pretty sure go builds isn’t the bottleneck here. Also, travis should only be running code against affected code, so it’s worse if you’re touching python utils that are shared by many services/other modules.",
+      "time": "18:37",
+      "timestamp": "1606790267.312500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "If you have a large PR that’s touching a bunch of services across different languages, you’ll be coming up on this 50min mark here, and this doesn’t include js tests, those take ~2.5min.",
+      "time": "18:38",
+      "timestamp": "1606790311.312900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "",
+      "time": "18:42",
+      "timestamp": "1606790539.313200",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Wow, why are py tests taking 42 mins!!",
+      "time": "18:43",
+      "timestamp": "1606790617.313600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "They should be very fast",
+      "time": "18:43",
+      "timestamp": "1606790627.313800",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Heymian is our run affected code not working correctly?",
+      "time": "19:27",
+      "timestamp": "1606793244.314200",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "In master branch after merging of pr, all tests run, right?",
+      "time": "19:31",
+      "timestamp": "1606793481.314400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Not sure, it’s possible. I’ve never really looked at that code, I think @Chetan would know that script best.",
+      "time": "19:31",
+      "timestamp": "1606793486.314600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Naveen there is a script in the python side of things that should only run the affected tests",
+      "time": "19:32",
+      "timestamp": "1606793525.314800",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I’m not sure why we are running everything",
+      "time": "19:32",
+      "timestamp": "1606793534.315000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Naveen, on Jenkins, the python unit test suite runs bi-hourly against master. There’s actually a LOT of new modules missing, so I’m going to add them and probably increase the runtime even more.",
+      "time": "19:32",
+      "timestamp": "1606793559.315200",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "- 'if [ \"$TRAVIS_PULL_REQUEST\" = \"false\" ]; then cd ${TRAVIS_BUILD_DIR}/tools/releasetools/travis && make -s test-all-in-docker; fi'",
+      "time": "19:32",
+      "timestamp": "1606793561.315400",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "https://github.com/instabase/instabase/blob/00b92849397496242a988b3a87da73fe6319d10d/.travis.yml#L27 (https://github.com/instabase/instabase/blob/00b92849397496242a988b3a87da73fe6319d10d/.travis.yml#L27)",
+      "time": "19:32",
+      "timestamp": "1606793569.315600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "This file - https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/src/py/run_tests_for_affected_code.py",
+      "time": "19:33",
+      "timestamp": "1606793588.315900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Is this test-all-in-docker something new?",
+      "time": "19:33",
+      "timestamp": "1606793601.316100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "nope, since the earliest of days",
+      "time": "19:33",
+      "timestamp": "1606793610.316300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "hmm",
+      "time": "19:34",
+      "timestamp": "1606793660.316500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "shouldn’t this be test-changes-in-docker?",
+      "time": "19:34",
+      "timestamp": "1606793667.316700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "wait — TRAVIS_PULL_REQUEST is the one that controls whether we run the changes or we run everything",
+      "time": "19:38",
+      "timestamp": "1606793928.316900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "https://github.com/instabase/instabase/blame/00b92849397496242a988b3a87da73fe6319d10d/.travis.yml#L26-L27",
+      "time": "19:38",
+      "timestamp": "1606793938.317100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think that env var is fine - if you look at any build, you’ll see that we do go into test-changesin-docker.\n```880.86s$ if [ \"$TRAVIS_PULL_REQUEST\" != \"false\" ]; then cd ${TRAVIS_BUILD_DIR}/tools/releasetools/travis && make -s test-changes-in-docker; fi\nUnable to find image 'gcr.io/instabase-build/jenkins:20.11.10.04.59.56 (http://gcr.io/instabase-build/jenkins:20.11.10.04.59.56)' locally\n20.11.10.04.59.56: Pulling from instabase-build/jenkins```\nI think our affected code diffing script has problems though",
+      "time": "19:54",
+      "timestamp": "1606794874.317300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "For example, my go PR (https://travis-ci.com/github/instabase/instabase/builds/205563577) ran quickly on the just the go modules. But jessica’s JS-only change (https://travis-ci.com/github/instabase/instabase/builds/204101103) seems to have run against all the python code.",
+      "time": "19:56",
+      "timestamp": "1606794983.317500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Oh jk, looks like the path between jessica and my runs end up different. There’s an error in `make -s test-changes-in-docker` that forces jessica’s down the `test-all-in-docker` path, but not mine. :thinking_face: Will see if @Chetan can help when he’s back from ooo\n```$ if [ \"$TRAVIS_PULL_REQUEST\" != \"false\" ]; then cd ${TRAVIS_BUILD_DIR}/tools/releasetools/travis && make -s test-changes-in-docker; fi\nThe command \"if [ \"$TRAVIS_PULL_REQUEST\" != \"false\" ]; then cd ${TRAVIS_BUILD_DIR}/tools/releasetools/travis && make -s test-changes-in-docker; fi\" exited with 0.\n$ if [ \"$TRAVIS_PULL_REQUEST\" = \"false\" ]; then cd ${TRAVIS_BUILD_DIR}/tools/releasetools/travis && make -s test-all-in-docker; fi```",
+      "time": "22:49",
+      "timestamp": "1606805351.317800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-11-30.json",
+    "message_count": 26,
+    "start_time": "1606751453.308700",
+    "end_time": "1606805351.317800",
+    "is_thread": true
+  }
+}

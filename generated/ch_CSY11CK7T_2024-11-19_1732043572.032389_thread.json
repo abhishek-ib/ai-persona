@@ -1,0 +1,258 @@
+{
+  "id": "ch_CSY11CK7T_2024-11-19_1732043572.032389_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "mfichman",
+    "Anil",
+    "Udit",
+    "Jag",
+    "sean.donohoe",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Apologies for the delay, here’s the PR that makes all Cypress tests non-blocking for now:\nhttps://github.com/instabase/instabase/pull/65229",
+      "time": "11:12",
+      "timestamp": "1732043572.032389",
+      "is_reply": false
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "Are they still consistently failing today? I saw Liam's CI passed",
+      "time": "11:15",
+      "timestamp": "1732043701.018019",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Yeah, and it’s actually passing on mine last night too",
+      "time": "11:17",
+      "timestamp": "1732043848.404339",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "We can keep this in our back pocket if we have infra crafting issues again.",
+      "time": "11:18",
+      "timestamp": "1732043884.918719",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "> i’m now seeing these errors in `core-platform-service`\n> ```ERROR coreplatformservice/aihub/handler.go:487 -- [INTERNAL]: Could not read projects (Err: Error 1040 (08004): Too many connections)```\n> do we need to modify the db config or the `core-platform-service` config somehow?\nTo fix this, we need to upgrade to a larger MySQL instance",
+      "time": "11:27",
+      "timestamp": "1732044459.675719",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "> @mfichman do you have any suggestions for how to resolve the `slow db query` logs in `core-platform-service` to improve performance in crafting-cyp.test.instabase.com (http://crafting-cyp.test.instabase.com)? maybe there’s an easier way besides deleting a bunch of rows from the db?\nThere are some flow cleanup jobs that clean up the jobs/tasks table. Should probably run those if there are too many rows.",
+      "time": "11:28",
+      "timestamp": "1732044492.852409",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "(btw apologies for pulling more people into this thread!)\n\n@Anil are you familiar with these flow cleanup jobs? how do we run them on crafting-cyp.test.instabase.com (http://crafting-cyp.test.instabase.com)?",
+      "time": "12:14",
+      "timestamp": "1732047261.044969",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "The flow cleanup jobs delete the old job and task table entries. You can go into the DB to do this - it is simpler.\nDELETE * FROM jobs WHERE start_time < {1 week old}\n\nhttps://crafting-cyp.test.instabase.com/grafana/d/anTj9iEMz/database-operation?orgId=1&refresh=5s\nThe issue is in the mount_points table.\nThe task and job table are fine - they are not causing issues.",
+      "time": "12:23",
+      "timestamp": "1732047828.956659",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think we need to fix this permanently, so we should configure the cleanup job for this sandbox.",
+      "time": "14:08",
+      "timestamp": "1732054123.801739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "And not manually fiddle w/ the DB",
+      "time": "14:08",
+      "timestamp": "1732054133.571629",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The default is to retain for 10 years, which is too long for a small dev sandbox like this.",
+      "time": "14:09",
+      "timestamp": "1732054162.027539",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@mfichman are you still talking about the flow cleanup jobs?\n\n@Anil are you suggesting that the flow cleanup jobs won’t be very helpful in this case? since the db slowness is caused by excess of rows in the `mount_points` table, not `tasks` or `jobs`?",
+      "time": "14:33",
+      "timestamp": "1732055611.779849",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi all -- sorry, I haven't had time to look at this myself until now.\n\nHere is what I found:\n\n```WITH file_status_subquery AS (SELECT `docs`.`path_prefix_id`, `docs`.`path_suffix`, MIN(`docs`.`id`) AS `min_doc_id`, \\n\\t\\t\\t\\t\\tCASE\\n\\t\\t\\t\\t\\t\\tWHEN SUM(CASE WHEN doc_reviews.review_status = 'IN_REVIEW' THEN 1 ELSE 0 END) > 0 THEN 'IN_REVIEW'\\n\\t\\t\\t\\t\\t\\tWHEN COUNT(*) = SUM(CASE WHEN doc_reviews.review_status = 'COMPLETED' THEN 1 ELSE 0 END) THEN 'COMPLETED'\\n\\t\\t\\t\\t\\t\\tWHEN COUNT(*) = SUM(CASE WHEN doc_reviews.review_status = 'NOT_COMPLETED' THEN 1 ELSE 0 END) THEN 'NOT_COMPLETED'\\n\\t\\t\\t\\t\\t\\tELSE 'NOT_COMPLETED'\\n\\t\\t\\t\\t\\tEND\\n\\t\\t\\t\\t AS `file_review_status` FROM `docs` LEFT JOIN `doc_reviews` ON (`docs`.`id` = `doc_reviews`.`doc_id`) GROUP BY `docs`.`path_prefix_id`, `docs`.`path_suffix`) SELECT COUNT(*) AS `count` FROM `docs` INNER JOIN `file_status_subquery` ON ((`docs`.`path_prefix_id` = `file_status_subquery`.`path_prefix_id`) AND (`docs`.`path_suffix` = `file_status_subquery`.`path_suffix`) AND (`docs`.`id` = `file_status_subquery`.`min_doc_id`)) INNER JOIN `doc_reviews` ON (`docs`.`id` = `doc_reviews`.`doc_id`) LEFT JOIN `review_queues` ON (`doc_reviews`.`queue_id` = `review_queues`.`id`) LEFT JOIN `accounts` ON (`doc_reviews`.`reviewer_id` = `accounts`.`id`) LEFT JOIN `deployed_solution_jobs` ON (`doc_reviews`.`job_id` = `deployed_solution_jobs`.`job_id`) LEFT JOIN `deployed_solutions` ON (`deployed_solution_jobs`.`deployed_solution_id` = `deployed_solutions`.`id`) LEFT JOIN `repos` ON (`deployed_solution_jobs`.`repo_id` = `repos`.`id`) I```\nThe query here involves multiple tables, including `mount_points` -- the database dashboard Anil linked attributes the stats to the first table in the query. In this case, I think the real problem is probably `docs`, since that is the high-cardinality one.\n\n@andy’s team should take a look.",
+      "time": "14:47",
+      "timestamp": "1732056424.973759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Another slow one:\n\n```2024-11-19T22:43:29.975806833Z stdout F 2024/11/19 22:43:29 level=WARNING path=utils/db/session/stats_utils.go:308 msg=\"SQL DB: Slow query\" args_count=7 duration_ms=530 operation=query query=\"WITH file_status_subquery AS (SELECT `docs`.`path_prefix_id`, `docs`.`path_suffix`, \\n\\t\\t\\t\\t\\tCASE\\n\\t\\t\\t\\t\\t\\tWHEN SUM(CASE WHEN doc_reviews.review_status = 'IN_REVIEW' THEN 1 ELSE 0 END) > 0 THEN 'IN_REVIEW'\\n\\t\\t\\t\\t\\t\\tWHEN COUNT(*) = SUM(CASE WHEN doc_reviews.review_status = 'COMPLETED' THEN 1 ELSE 0 END) THEN 'COMPLETED'\\n\\t\\t\\t\\t\\t\\tWHEN COUNT(*) = SUM(CASE WHEN doc_reviews.review_status = 'NOT_COMPLETED' THEN 1 ELSE 0 END) THEN 'NOT_COMPLETED'\\n\\t\\t\\t\\t\\t\\tELSE 'NOT_COMPLETED'\\n\\t\\t\\t\\t\\tEND\\n\\t\\t\\t\\t AS `file_review_status` FROM `docs` LEFT JOIN `doc_reviews` ON (`docs`.`id` = `doc_reviews`.`doc_id`) GROUP BY `docs`.`path_prefix_id`, `docs`.`path_suffix`) SELECT `accounts`.`account_type` AS `accounts.account_type`, `accounts`.`id` AS `accounts.id`, `accounts`.`metadata` AS `accounts.metadata`, `accounts`.`public_id` AS `accounts.public_id`, `accounts`.`registered_on` AS `accounts.registered_on`, `app_deployments`.`account_id` AS `app_deployments.account_id`, `app_deployments`.`created_at` AS `app_deployments.created_at`, `app_deployments`.`deployed_solution_id` AS `app_deployments.deployed_solution_id`, `app_deployments`.`description` AS `app_deployments.description`, `app_deployments`.`human_review_mode` AS `app_deployments.human_review_mode`, `app_deployments`.`id` AS `app_deployments.id`, `app_deployments`.`metadata` AS `app_deployments.metadata`, `app_deployments`.`name` AS `app_deployments.name`, `app_deployments`.`repo_id` AS `app_deployments.repo_id`, `app_deployments`.`state` AS `app_deployments.state`, `app_deployments`.`updated_at` AS `app_deployments.updated_at`, `app_deployments`.`uuid` AS `app_deployments.uuid`, `deployed_solutions`.`app_release_version` AS `deployed_solutions.app_release_version`, `deployed_solutions`.`author` AS `deployed_solutions.author`, `deployed_solutions`.`context_account_id` AS `deployed_solutions.context_account_id`, `deployed_solutions`.`created_at` AS `deployed_solutions.created_at`, `deployed_solutions`.`description` AS `deployed_solutions.description`, `deployed_solutions`.`id` AS `deployed_solutions.id`, `deployed_solutions`.`is_customizable` AS `deployed_solutions.is_customizable`, `deployed_solutions`.`link_sharing_mode` AS `deployed_solutions.link_sharing_mode`, `deployed_solutions`.`metadata` AS `deployed_solutions.metadata`, `deployed_solutions`.`name` AS `deployed_solutions.name`, `deployed_solutions`.`owner` AS `deployed_solutions.owner`, `deployed_solutions`.`solution_type` AS `deployed_solutions.solution_type`, `deployed_solutions`.`state` AS `deployed_solutions.state`, `deployed_solutions`.`summary` AS `deployed_solutions.summary`, `deployed_solutions`.`update_mode` AS `deployed_solutions.update_mode`, `deployed_solutions`.`updated_at` AS `deployed_solutions.updated_at`, `deployed_solutions`.`version` AS `deployed_solutions.version`, `deployed_solutions`.`visibility` AS `deployed_solutions.visibility`, `doc_reviews`.`blocked` AS `doc_reviews.blocked`, `doc_reviews`.`completed_at` AS `doc_reviews.completed_at`, `doc_reviews`.`doc_id` AS `doc_reviews.doc_id`, `doc_reviews`.`failure` AS `doc_reviews.failure`, `doc_reviews`.`id` AS `doc_reviews.id`, `doc_reviews`.`job_id` AS `doc_reviews.job_id`, `doc_reviews`.`last_processed` AS `doc_reviews.last_processed`, `doc_reviews`.`queue_id` AS `doc_reviews.queue_id`, `doc_reviews`.`review_by` AS `doc_reviews.review_by`, `doc_reviews`.`review_status` AS `doc_reviews.review_status`, `doc_reviews`.`reviewer_id` AS `doc_reviews.reviewer_id`, `doc_reviews`.`started_at` AS `doc_reviews.started_at`, `doc_reviews`.`warning` AS `doc_reviews.warning`, `docs`.`created_at` AS `docs.created_at`, `docs`.`id` AS `docs.id`, `docs`.`mount_point_id` AS `docs.mount_point_id`, `docs`.`name` AS `docs.name`, `docs`.`page_ranges_str` AS `docs.page_ranges_str`, `docs`.`path_prefix_id` AS `docs.path_prefix_id`, `docs`.`path_suffix` AS `docs.path_suffix`, `docs`.`record_index` AS `docs.record_index`, `docs`.`updated_at` AS `docs.updated_at`, `repos`.`account_id` AS `repos.account_id`, `repos`.`created_on` AS `repos.created_on`, `repos`.`description` AS `repos.description`, `repos`.`fs_partition_mode` AS `repos.fs_partition_mode`, `repos`.`id` AS `repos.id`, `repos`.`is_active` AS `repos.is_active`, `repos`.`metadata` AS `repos.metadata`, `repos`.`name` AS `repos.name`, `repos`.`repo_type` AS `repos.repo_type`, `repos`.`state` AS `repos.state`, `repos`.`visibility` AS `repos.visibility`, `review_queues`.`allowed_roles` AS `review_queues.allowed_roles`, `review_queues`.`assignment_strategy` AS `review_queues.assignment_strategy`, `review_queues`.`deployed_solution_id` AS `review_queues.deployed_solution_id`, `review_queues`.`description` AS `review_queues.description`, `review_queues`.`id` AS `review_queues.id`, `review_queues`.`is_first_queue` AS `review_queues.is_first_queue`, `review_queues`.`last_reviewer_id` AS `review_queues.last_reviewer_id`, `review_queues`.`name` AS `review_queues.name`, `review_queues`.`uuid` AS `review_queues.uuid` FROM `docs` INNER JOIN `file_status_subquery` ON ((`docs`.`path_prefix_id` = `file_status_subquery`.`path_prefix_id`) AND (`docs`.`path_suffix` = `file_status_subquery`.`path_suffix`)) INNER JOIN `doc_reviews` ON (`docs`.`id` = `doc_reviews`.`doc_id`) LEFT JOIN `review_queues` ON (`doc_reviews`.`queue_id` = `review_queues`.`id`) LEFT JOIN `accounts` ON (`doc_reviews`.`reviewer_id` = `accounts`.`id`) LEFT JOIN `deployed_solution_jobs` ON (`doc_reviews`.`job_id` = `deployed_solution_jobs`.`job_id`) LEFT JOIN `deployed_solutions` ON (`deployed_solution_jobs`.`deployed_solution_id` = `deployed_solutions`.`id`) LEFT JOIN `repos` ON (`deployed_solution_jobs`.`repo_id` = `repos`.`id`) INNER JOIN `app_deployment_flow_jobs` ON (`doc_reviews`.`job_id` = `app_deployment_flow_jobs`.`job_id`) INNER JOIN `app_deployments` ON (`app_deployment_flow_jobs`.`deployment_id` = `app_deployments`.`id`) WHERE ((((`deployed_solution_jobs`.`repo_id` IN (?)) AND ((`doc_reviews`.`reviewer_id` = ?) OR (`doc_reviews`.`reviewer_id` IS NULL))) OR (`deployed_solution_jobs`.`repo_id` IN (?))) AND (`file_status_subquery`.`file_review_status` IN (?, ?)) AND (`doc_reviews`.`job_id` LIKE BINARY ?)) ORDER BY CASE WHEN `doc_reviews`.`review_by` IS NULL THEN 1 ELSE 0 END, `doc_reviews`.`review_by` ASC, CASE WHEN `doc_reviews`.`id` IS NULL THEN 1 ELSE 0 END, `doc_reviews`.`id` ASC LIMIT ?\" query_type=select table=docs trace_id=f5859e9d53ed826d```",
+      "time": "14:47",
+      "timestamp": "1732056451.741749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think part of the problem here is that we never clean the `docs` table as per the original design for the review dashboard. It just keeps getting larger. Maybe time to revisit that.",
+      "time": "14:47",
+      "timestamp": "1732056476.880319",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "cc @Jag",
+      "time": "14:50",
+      "timestamp": "1732056659.243629",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@mfichman do we expect that these slow queries would slow down the entire environment? other operations unrelated to `docs` also seem slow sometimes",
+      "time": "14:58",
+      "timestamp": "1732057088.680769",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For sure!",
+      "time": "14:58",
+      "timestamp": "1732057101.303099",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, I'm trying to connect to the crafting-cyp cluster in kubernetes, but I'm having a time...",
+      "time": "14:58",
+      "timestamp": "1732057122.098019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also having trouble finding the RDS instance for this in the AWS console",
+      "time": "14:59",
+      "timestamp": "1732057142.036109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```aws eks update-kubeconfig --name insan-use2-crafting-cyp-eks-cluster --region us-east-2 --role-arn arn:aws:iam::519787998606:role/insan-crafting-cyp-kubectl-admin-role --alias crafting-cyp\n\nAn error occurred (ResourceNotFoundException) when calling the DescribeCluster operation: No cluster found for name: insan-use2-crafting-cyp-eks-cluster.```",
+      "time": "14:59",
+      "timestamp": "1732057150.482449",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Using `instabase-sandbox` account + `assume-sandbox-kubectl-admin` credentials",
+      "time": "14:59",
+      "timestamp": "1732057172.683709",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Which works for every sandbox I've ever used except this one :laugh-cry:",
+      "time": "14:59",
+      "timestamp": "1732057189.297059",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@sean.donohoe how do we connect to the RDS instance for crafting-cyp?\n\n(btw welcome to the party of this thread :lolcry: )",
+      "time": "15:01",
+      "timestamp": "1732057286.366589",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "oh hey there :sweat_smile: let me grab the command real quick, it's just like for crafting-aihub",
+      "time": "15:06",
+      "timestamp": "1732057568.211439",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "• `cs sandbox update -D 'dev/env[NAMESPACE]=intes-use2-crafting-cyp-instabase' -D 'dev/env[CONNECTED_INFRA]=crafting-cyp'` <-- updates your sandbox attached cluster configuration\n• `cs ssh workspace setup -W $SANDBOX_FULL_NAME/dev` <-- applies the configuration (need a new session to pick up the updated environment variables)",
+      "time": "15:09",
+      "timestamp": "1732057781.851029",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "^ that'll update your existing sandbox to be connected to crafting-cyp, full kubectl access just like crafting-aihub",
+      "time": "15:10",
+      "timestamp": "1732057807.942189",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "also @mfichman’s command was failing because crafting clusters are deployed to `instabase-test`, not `instabase-sandbox` (`intes-use2-...` vs `insan-use2-...)`  :slightly_smiling_face:",
+      "time": "15:11",
+      "timestamp": "1732057885.604639",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "I made this story ticket and assigned it to myself -> https://instabase.atlassian.net/browse/FLOW-10374\n\nWill work with @andy and @jack.robbins to see if we can increase the priority of it. But I agree that we should start cleaning up the docs table, and prevent customers from opening old runs in human review after a certain time limit.",
+      "time": "15:13",
+      "timestamp": "1732057999.187919",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-11-19.json",
+    "message_count": 29,
+    "start_time": "1732043572.032389",
+    "end_time": "1732057999.187919",
+    "is_thread": true
+  }
+}

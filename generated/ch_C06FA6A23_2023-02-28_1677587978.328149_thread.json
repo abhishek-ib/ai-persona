@@ -1,0 +1,78 @@
+{
+  "id": "ch_C06FA6A23_2023-02-28_1677587978.328149_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Venkatesh",
+    "Xi Cheng"
+  ],
+  "messages": [
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "Hi Team. Do we have the gcp client package installed for us to import it in our UDFs?\nI have a use case in Colpal for this.\n\npackage: https://pypi.org/project/google-cloud-storage/\nSample snippet: https://github.com/googleapis/python-storage/blob/main/samples/snippets/storage_fileio_write_read.py\n\nI get an import error on ib.com (http://ib.com) for this. The purpose is to read and write files from / to a gcp storage bucket.\nOur GCP drive mount option is beta. So in case it does not work, we need to fallback to the API approach.\n\ncc: @Biz @Krista Hardebeck @vartika.bhargava @Murali @Piyush @Sreenath Anilkumar",
+      "time": "04:39",
+      "timestamp": "1677587978.328149",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Hi @Venkatesh any reason why you can’t use the current beta support for GCP buckets?\n\ncc @Heymian @Xi Cheng",
+      "time": "08:13",
+      "timestamp": "1677600812.790829",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "Hey Shaunak. 2 reasons:\n\n1. Colpal is currently on 22.08 which does not have the GCP bucket mounting option\n2. Even if they upgrade the platform, they may oppose going to production with a beta feature\nThey are yet to comeback on the platform upgrade and using our bucket mounting option, however I just wanted to be ready with plan B in case it doesn't work out",
+      "time": "08:15",
+      "timestamp": "1677600947.275019",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Well you are trying to import this GCP client python library from UDF, so the prerequisite is this package needs to be installed first in celery-app-tasks",
+      "time": "08:16",
+      "timestamp": "1677600984.844669",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "Hey @Xi Cheng yeah I wanted to check if we can install it. Would be helpful to test before committing on the feasibility to the client.",
+      "time": "08:18",
+      "timestamp": "1677601082.837449",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Venkatesh I don't see an issue with installing this package in celery-app-tasks, but that'd require patch deployment and testing too. Additional questions to be addressed, how do you plan to handle authorization v.s. GCP in the UDF? Shouldn't you need creds/private key to do this, and if so where do you plan to store those?",
+      "time": "09:47",
+      "timestamp": "1677606431.148459",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "hmm, I would steer away from installing these packages in app-tasks.  They seem like a short term measure that will go away with the 23.04 release.\n\nThe other question I will ask is: for the infromation that they want to put into the Google Cloud Bucket, can’t they put the same information in the S3 bucket?",
+      "time": "10:27",
+      "timestamp": "1677608864.844199",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-02-28.json",
+    "message_count": 7,
+    "start_time": "1677587978.328149",
+    "end_time": "1677608864.844199",
+    "is_thread": true
+  }
+}

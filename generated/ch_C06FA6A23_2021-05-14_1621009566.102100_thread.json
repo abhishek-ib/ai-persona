@@ -1,0 +1,232 @@
+{
+  "id": "ch_C06FA6A23_2021-05-14_1621009566.102100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "kunal",
+    "Ashish",
+    "Jessica",
+    "lydia",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Anyone else running into a problem where they click on anything in explorer, and instabase logs them out and shows a 404 from the wordpress site?\n\nUpdate: this is just a bug for organizations that start with `company` or potentially anything that has a corresponding wordpress site slug",
+      "time": "09:26",
+      "timestamp": "1621009566.102100",
+      "is_reply": false
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Looks like this is specific to a subspace I just created",
+      "time": "09:27",
+      "timestamp": "1621009621.102400",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "https://instabase.com/company_training_05_2021",
+      "time": "09:27",
+      "timestamp": "1621009645.102600",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Haha I think we might have an nginx rule that bumps anything that starts with `company` to the wordpress site",
+      "time": "09:28",
+      "timestamp": "1621009707.102800",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "yeah.. https://github.com/instabase/instabase/blob/release-21.4.0/webserver/server-nginx/config/nginx-config-template.jinja.yml#L363",
+      "time": "09:28",
+      "timestamp": "1621009723.103000",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "cc @Ashish",
+      "time": "09:28",
+      "timestamp": "1621009739.103200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "umm, is that gonna be true for anything that starts with a subdirectory our website… (e.g. cases, careers, contact)….",
+      "time": "10:39",
+      "timestamp": "1621013981.105800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yup yup it does",
+      "time": "10:44",
+      "timestamp": "1621014242.106000",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Is this resolved? There should be a way to require an exact match for the first part of the url",
+      "time": "10:56",
+      "timestamp": "1621014986.108000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "there are a certain prefixes that are reserved for the marketing site",
+      "time": "11:10",
+      "timestamp": "1621015804.108200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "```/Blog\n/Careers\n/Company\n/Customer\n/Discover\n/Events\n/Webinars\n/Customers\n/Pricing\n/Features\n/Resources\n/lp\n/Marketing\n/Community\n/Learning\n/Platform\n/Product\n/Products\n/What-We-Do\n/Partners\n/Support\n/Transform\n/Try\n/Use-Cases```",
+      "time": "11:11",
+      "timestamp": "1621015865.108400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "all requests with these prefixes will not make it to the product site",
+      "time": "11:11",
+      "timestamp": "1621015908.108600",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Should we restrict these prefixes in instabase.com (http://instabase.com) for user accounts and spaces? Or should we only block things prefixed with `/company/` with the terminating slash included?",
+      "time": "11:19",
+      "timestamp": "1621016358.108800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "we can do:\n\n1. add / after each of these prefixes however I don't if that will cause a routing problem if someone wants to access instabase.com/company (http://instabase.com/company) [without the slash]\n2. add all these prefixes in the blocked list to ensure that no user account or space is created with the prefix",
+      "time": "11:22",
+      "timestamp": "1621016530.109000",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'd prefer option 1 here assuming there's no seo impact; it's pretty rare that someone would type in a url directly to navigate there, versus navigating there from somewhere else",
+      "time": "11:23",
+      "timestamp": "1621016615.109200",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@Ashish, what if we had two blocks for each prefix, where one is `location = /<name>` and the other one is `location /<name>/`",
+      "time": "11:25",
+      "timestamp": "1621016742.109400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "We must do 2 regardless.\n\nWith 1, we just have to make sure `company` and `company/` both work",
+      "time": "11:26",
+      "timestamp": "1621016770.109600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "isn’t blocking all these prefixes from a user space kinda crazy?",
+      "time": "11:46",
+      "timestamp": "1621018010.109800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "well, that's a decision we had made in eng staff when we couldn't come to a conclusion to move entire product under /os prefix",
+      "time": "11:47",
+      "timestamp": "1621018063.110000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "we have to have some tradeoff",
+      "time": "11:47",
+      "timestamp": "1621018072.110200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "like when we get blogger as a customer and they want to try out on instabase.com/blogger-training (http://instabase.com/blogger-training) we’re like sorry?",
+      "time": "11:48",
+      "timestamp": "1621018084.110400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i thought we meant we couldn’t ship api endpoints like instabase.com/blog/some/path/ (http://instabase.com/blog/some/path/)",
+      "time": "11:48",
+      "timestamp": "1621018103.110600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "not that people can’t make user spaces that start with any of those prefixes",
+      "time": "11:48",
+      "timestamp": "1621018119.110800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "we are testing to check whether we can limit to /blog and /blog/ and not /blogger....",
+      "time": "11:48",
+      "timestamp": "1621018126.111000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "sorry I’m getting a bit carried away. sassy fridays :stuck_out_tongue:",
+      "time": "11:51",
+      "timestamp": "1621018279.111300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "hahaha it's all good",
+      "time": "11:51",
+      "timestamp": "1621018291.111500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-05-14.json",
+    "message_count": 26,
+    "start_time": "1621009566.102100",
+    "end_time": "1621018291.111500",
+    "is_thread": true
+  }
+}

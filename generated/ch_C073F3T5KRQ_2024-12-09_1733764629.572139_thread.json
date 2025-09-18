@@ -1,0 +1,119 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-12-09_1733764629.572139_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Serena",
+    "Sayan",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "minor nit I keep having, when I run `cd ~/instabase/webserver/api-server && poetry run make build-protos` after editing `repo_service.proto` , `/Users/sayan/instabase/webserver/shared/src/js/webpacked/lib/src/IBProtos/compiled-protos.d.ts` gets formatted with no significant changes. Then when I commit it, `prettier` and `TypeScript` complains which actually reverts the formatting change. The only reason I'm bringing this up is that `Typescript` takes a couple seconds to lint the file and it forces me to git add and recommit.\n\nIs there a way to avoid this entirely by either not generating compiled protos or running the linter after running make build protos?",
+      "time": "09:17",
+      "timestamp": "1733764629.572139",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm why does running `build-protos` in `api-server` affect `compiled-protos.d.ts` in `webpacked`?\n\n@Xindi Xu do you know?",
+      "time": "09:18",
+      "timestamp": "1733764709.859419",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think a lot of the Proto definitions for data structures that we use at the GRPC layer are also used the front end now. To avoid code duplication. Things like constants in particular.",
+      "time": "09:25",
+      "timestamp": "1733765155.704139",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Sayan btw to answer your original question, you can run `yarn run format` in `webserver/shared/src/js/webpacked` to run the linter",
+      "time": "09:35",
+      "timestamp": "1733765726.531309",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Sounds good, I'll probably just `&& cd ~/instabase/webserver/shared/src/js/webpacked && yarn run format` with the command",
+      "time": "09:36",
+      "timestamp": "1733765815.520059",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Where we run `make build-protos` doesn't matter because they will end up running the same command in `shared-utils/build-utils/shared/build-common.mk`.",
+      "time": "10:14",
+      "timestamp": "1733768050.759729",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yep, protos are use in the frontend to share enums. One use case is sharing the set of available feature flags.",
+      "time": "10:15",
+      "timestamp": "1733768103.217919",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think the reason why we still generate all JS protos even when `FAST=true` is passed in is that all JS proto and type definitions are saved in one file so skipping unchanged protos is difficult to do",
+      "time": "10:18",
+      "timestamp": "1733768293.438779",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "@Xindi Xu can we run the linter for all changed files upon running make build-protos automatically? This is somewhat unconventional since the make commands don't usually run linters but this would be a nice to have in this case",
+      "time": "10:20",
+      "timestamp": "1733768427.905209",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "We definitely can. This is just never implemented",
+      "time": "10:21",
+      "timestamp": "1733768464.733639",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Opened a PR to run prettier on the generated `.js` and `.d.ts` files:\nhttps://github.com/instabase/instabase/pull/66046",
+      "time": "10:54",
+      "timestamp": "1733770448.103519",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Thanks for quickly making this change @Xindi Xu!",
+      "time": "18:41",
+      "timestamp": "1733798491.634419",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-12-09.json",
+    "message_count": 12,
+    "start_time": "1733764629.572139",
+    "end_time": "1733798491.634419",
+    "is_thread": true
+  }
+}

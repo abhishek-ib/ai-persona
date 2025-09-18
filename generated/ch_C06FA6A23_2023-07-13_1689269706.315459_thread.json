@@ -1,0 +1,167 @@
+{
+  "id": "ch_C06FA6A23_2023-07-13_1689269706.315459_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "youngmok.cho",
+    "Jag",
+    "sean.donohoe",
+    "andy"
+  ],
+  "messages": [
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "CI tests seem to be consistently failing due to `ConnectionRefusedError: [Errno 111] Connection refused` errors.\nhttps://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-43804/1/pipeline\nhttps://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-43804/2/pipeline\n\nIs this just flakiness? I think I've seen this before but normally it resolves itself after a rerun of the tests",
+      "time": "10:35",
+      "timestamp": "1689269706.315459",
+      "is_reply": false
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "CC: <!subteam^S038TM462UX>",
+      "time": "10:50",
+      "timestamp": "1689270649.714999",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "I can take a look in an hour-ish. Btw, it would be great if you could include the link to your PR next time for faster iteration.",
+      "time": "10:57",
+      "timestamp": "1689271028.130959",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "Gotcha, will do for the future. Here's the PR https://github.com/instabase/instabase/pull/43804",
+      "time": "10:57",
+      "timestamp": "1689271069.182389",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "The following CI failed as well due to the same reason. Here it is for reference: https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-43804/3/pipeline\n\nGoing to abort that one and restart.",
+      "time": "11:58",
+      "timestamp": "1689274734.554359",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "I’m not sure about timeouts, but I do see legitmate errors such as:\n```Error: Exception calling function - log_fn2: can only concatenate str (not \"int\") to str. Defined in scripts/script.py (line 16)```\nCould be from your change in _get_human_readable_positions()?\n\nWhen debugging CI errors, it’s very difficult for us to debug when such errors exist. Can you try again after fixing it?",
+      "time": "12:48",
+      "timestamp": "1689277690.761679",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "That's strange, I can take a look. This PR is simply a revert of a PR (https://github.com/instabase/instabase/pull/43656#issuecomment-1631288215) that was merged (and had passed CI tests).",
+      "time": "12:49",
+      "timestamp": "1689277787.247769",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "I believe the error you referenced isn't referring to my code, its referring to a line in `public-libs/provenance-utils/src/py/instabase/provenance/tracking.py` , which I haven't changed.\n\nI checked out the PR branch and ran all tests in `flow/server` locally and they all pass. I've also rebased locally and did the same thing, all passing as well. I've had issues with unit tests in `flow/server` being flaky in the past, so perhaps its an instance of that. My changes shouldn't be failing anything since its just a revert of a PR I merged in yesterday.",
+      "time": "13:06",
+      "timestamp": "1689278796.583199",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "Looks like the error is relevent to `shared-utils/py-utils/flow/server/test/unit/py/instabase/flow/runnables/test_apply_refiner_fns.py`",
+      "time": "13:18",
+      "timestamp": "1689279494.358119",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "Can anyone from the flow team help debug the errors other than timeouts?",
+      "time": "13:20",
+      "timestamp": "1689279623.872399",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "I’m a bit confused about errors I see in the CI. For example,\n```instabase.errors.ib_error.IBError: Exception calling function - custom_function_name: name 'realError' is not defined.\ninstabase.errors.ib_error.IBError: Line number 2 does not exist in field \"field_reference\"```\nThese look legitamate to me.",
+      "time": "13:22",
+      "timestamp": "1689279763.115099",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "I agree it's strange these errors pop up in CI. I can't say I haven't seen this before though. I'm assuming because the tests pass locally when I run make test in `flow/server` that this is just flakiness? It looks like on this most recent CI run, the connection refused error didn't happen; I'll wait and see if the same error happens in `flow/server`.",
+      "time": "13:26",
+      "timestamp": "1689279995.186849",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "Okay it looks like flow/server passed in this most recent run. :crossed_fingers::skin-tone-5: that everything passes now.",
+      "time": "13:45",
+      "timestamp": "1689281105.675819",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "Ah nice. So, it is flaky then? :thinking_face:",
+      "time": "13:47",
+      "timestamp": "1689281223.672349",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "the errors besides timeouts",
+      "time": "13:47",
+      "timestamp": "1689281247.813669",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "The errors are flaky yes, which is what I had expected. Do we know why the timeouts happen; is that something that can be fixed?",
+      "time": "13:48",
+      "timestamp": "1689281281.566579",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "That test should be excluded until fixed, or deleted, if it’s flaky. Do we know who owns that code?",
+      "time": "13:49",
+      "timestamp": "1689281363.195839",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "Okay, the CI tests eventually passed on the 4th run. No code changes in between runs - just clicked restart runs. I've had this issue on quite a few PRs, especially in the last 2 weeks.\n\nIt seems there's three issues\n1. CI aborts after 2 hours (now changed to 3 hours which is great! stops premature aborts) :white_check_mark: \n2. Too many tests to run. It seems from this thread (https://instabase.slack.com/archives/C035SLYCJ9X/p1689089708996109) there isn't much we can do to fix this besides making sure our fork's master and master we branched off of for the feature are in sync. \n3. Flaky tests \nI wonder if we can take a look at (3) and disable all flaky tests? Having to run CI tests multiple times purely due to flakiness stalls progress (especially if there's future PRs dependent on the one being blocked). Appreciate any help here! :smile:\n\nEdit: As a solution, I could maybe just post in this thread next time I see another flaky test so those can be disabled.",
+      "time": "14:32",
+      "timestamp": "1689283934.528679",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-07-13.json",
+    "message_count": 18,
+    "start_time": "1689269706.315459",
+    "end_time": "1689283934.528679",
+    "is_thread": true
+  }
+}

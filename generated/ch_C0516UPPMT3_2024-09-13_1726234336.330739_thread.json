@@ -1,0 +1,122 @@
+{
+  "id": "ch_C0516UPPMT3_2024-09-13_1726234336.330739_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Mitch Welzen",
+    "hannah",
+    "Arjun",
+    "Hamish",
+    "andy",
+    "Weiming Wu",
+    "Kaustubh (KD)"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Hey team, sharing some feedback from a Commercial customer doing a POC at the minute\n\n*Positives*\nOverall, really enjoying the UI experience and the platforms ability to deal with many types of documents. Particularly likes validations as part of Build and seeing a lot of value from custom function fields and validation functions.\n\n*Points of Improvement*\n1. Ability to track history of previous prompts in a project is critical. Worried about the process of improving prompts but then losing what the original prompt was (I've heard the same thing from ABN AMRO at Enterprise level and remains a common objection)\n2. Found validation prompts created errors and didn't generate code in some instances. Used custom validations as a workaround\n3. Worried that solutions won't improve over time when correcting large volumes of documents (I believe things like deployment metrics will help here to identify issues and track improvements)\n4. Would like the ability to reject some documents (class validations) based on document properties. E.g. if a black and white document is submitted they need to reject these for regulatory purposes, also some constraints around image quality e.g. blur, which we can do at field level but not whole document level",
+      "time": "06:32",
+      "timestamp": "1726234336.330739",
+      "is_reply": false
+    },
+    {
+      "sender": "Mitch Welzen",
+      "user_id": "U0417REBTV4",
+      "message": "+ on point 1.\n\nEspecially with auto save, you start losing your prompt even without deploying. Lets say to make a minor update and release as a minor patch, its hard to see between release which prompt was used within which version, or where you can't to revert, you will have to go back to a specific version to re-release this. Tracking these things will be difficult currently",
+      "time": "07:02",
+      "timestamp": "1726236143.388509",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "@lydia I know we had discussed this as part of this doc (https://docs.google.com/document/d/1kB5M0_NNgEN8Rgw1skpXp0q-7ptpoE89Rs9AJRF-lCk/edit#heading=h.slafztpzjj5w) regarding keeping track of edit history and enabling undo/redo.\n\ncc @Kaustubh (KD) as well",
+      "time": "07:08",
+      "timestamp": "1726236509.009079",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "@Hamish the solution accuracy features with ground truth sets should directly address point 3, right? Is there some gap here still?",
+      "time": "07:10",
+      "timestamp": "1726236610.041249",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Thanks @Arjun - this is mainly just to highlight a gap in understanding we see between how DL solutions improve over time vs LLM solutions. The more we can make this easy for customers and give them ways to easily improve this over time the better I feel",
+      "time": "07:12",
+      "timestamp": "1726236747.093219",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Thanks @Hamish\n1. Makes a lot of sense --> this leads to the topic of versioning in AI Hub (version history similar to google). @Arjun will take a look at the doc\n2. This is good feedback. These should be tracked as bugs, do we have any examples from them or screenshots? cc: @andy / @Elan Sharony / @Weiming Wu \n3. Yeah this part makes sense as well\n4. Interestingly this is a requirement that has come up as a part of Case Management as well. Currently there is no rejection terminal state, but having is really helpful in cases where at a business level, these documents should not be approved to go downstream. cc: @jack.robbins / @andy",
+      "time": "09:59",
+      "timestamp": "1726246774.377499",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "For part 2 unfortunately I don't - just another data point",
+      "time": "10:01",
+      "timestamp": "1726246869.890589",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Great feedback definitely aligns with roadmap and planned improvements!\n\n@Kaustubh (KD) and @jack.robbins it would be good to create backlog EPD tickets for project versioning and review rejection workflow if they don't exist already! Feels like we're getting enough signal on both to consider prioritizing for Q4.\n\nQuick question on (4) though - do they plan to use human review or would this be a classification validation?  Wondering whether those rules are things the human reviewers would know and reject if they see it or if we'd need to codify at the class level and show as classification validation in human review which would trigger the human review to reject?",
+      "time": "11:07",
+      "timestamp": "1726250824.553669",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "For (2), @Kaustubh (KD) this is going to be resolved based on our refresh of prompt-based validations. can you sanity check me on that?",
+      "time": "12:42",
+      "timestamp": "1726256528.258269",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Yeah for 2, I think for the pure prompt focused refresh I agree. Just that if we offer that option to generate code for the custom code validations, could we still run into this?",
+      "time": "16:26",
+      "timestamp": "1726270012.030989",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "It's hard to say without knowing exactly what the failing case was, but I think most of the bugs with not being able to generate good code have been due to bad examples or bad handling of examples, so if we generate code for custom code validations without generating examples, we can at least return code every single time, even if that code needs tweaks\ncc @Elan Sharony",
+      "time": "16:29",
+      "timestamp": "1726270165.170679",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "(I don't think I've ever seen prompt-based fail in the \"generate code\" step)",
+      "time": "16:30",
+      "timestamp": "1726270208.914339",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-09-13.json",
+    "message_count": 12,
+    "start_time": "1726234336.330739",
+    "end_time": "1726270208.914339",
+    "is_thread": true
+  }
+}

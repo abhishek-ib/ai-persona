@@ -1,0 +1,150 @@
+{
+  "id": "ch_CSY11CK7T_2024-06-03_1717450950.298759_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "CJ",
+    "Serena",
+    "andy"
+  ],
+  "messages": [
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "`converse-app` is failing pretty consistently on ci (https://cloud.cypress.io/projects/cfhedy/analytics/top-failures/e3d80788-2952-e3cc-f08f-323d8d5665a9-10b7c164-43eb-914b-5120-c30fc7561bf4?branches=%5B%5D&browsers=%5B%5D&chartRangeMostCommonErrors=%5B%5D&chartRangeSlowestTests=%5B%5D&chartRangeTopFailures=%5B%5D&committers=%5B%5D&cypressVersions=%5B%5D&flaky=%5B%5D&operatingSystems=%5B%5D&runGroups=%5B%5D&specFiles=%5B%7B%22label%22%3A%22apps%2Fsrc%2Faihub%2F__e2e__%2FConverseApp%2Fconverse-app.spec.ts%22%2C%22suggested%22%3Afalse%2C%22value%22%3A%22e3d80788-2952-e3cc-f08f-323d8d5665a9%22%7D%5D&status=%5B%7B%22label%22%3A%22Passed%22%2C%22value%22%3A%22PASSED%22%7D%2C%7B%22label%22%3A%22Failed%22%2C%22value%22%3A%22FAILED%22%7D%5D&tags=%5B%7B%22disabled%22%3Afalse%2C%22label%22%3A%22ci%22%2C%22labelProperties%22%3A%7B%22color%22%3A%22%23dadade%22%7D%2C%22suggested%22%3Afalse%2C%22value%22%3A%22ci%22%7D%5D&tagsMatch=ANY&timeInterval=WEEK&timeRange=%7B%22startDate%22%3A%222024-06-03%22%2C%22endDate%22%3A%222024-06-03%22%7D&viewBy=TEST_CASE) with the run_stream giving 500s?",
+      "time": "14:42",
+      "timestamp": "1717450950.298759",
+      "is_reply": false
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "okay no, thi sis happening in every converse project in crafting",
+      "time": "14:47",
+      "timestamp": "1717451274.295169",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "okay it's also failing on master",
+      "time": "14:52",
+      "timestamp": "1717451533.633799",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "AttributeError: 'StreamingChatView' object has no attribute 'chatbot_query_cache'",
+      "time": "14:52",
+      "timestamp": "1717451535.444579",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "@upendra would you know what's happening here?",
+      "time": "14:56",
+      "timestamp": "1717451808.102429",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i can’t tell what’s wrong - the PR does add `chatbot_query_cache` in the `__init__`…\n\nshould we revert this PR (https://github.com/instabase/instabase/pull/57899) for now to unblock Cypress CI and fix Converse on aihub-sandbox? otherwise, almost no frontend PRs can be merged today",
+      "time": "15:13",
+      "timestamp": "1717452806.780319",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oh i see, `chatbot_query_cache` is defined in `def post(...)` , but the `post` function is not the only entry point for `process_model_result` to be called",
+      "time": "15:15",
+      "timestamp": "1717452905.997679",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "`chatbot_query_cache` is not defined in `__init__`, but in `post`, yeah",
+      "time": "15:19",
+      "timestamp": "1717453195.993339",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "fix could probably be\n`self.chatbot_query_cache: Optional[ChatbotQueryCache] = None`?",
+      "time": "15:21",
+      "timestamp": "1717453264.008019",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "but we could also revert :shrug: it's eod for me so",
+      "time": "15:21",
+      "timestamp": "1717453307.750979",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "sure, i was also thinking of `if hasattr(self, 'chatbot_query_cache'):`",
+      "time": "15:21",
+      "timestamp": "1717453308.642519",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm even if we do fix or revert, we need to redeploy crafting-aihub, right? we just start a new job using https://jenkins.instabase.com/view/SaaS/job/SAAS-AWS/job/crafting-cd/?",
+      "time": "15:23",
+      "timestamp": "1717453383.061719",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "yep",
+      "time": "15:23",
+      "timestamp": "1717453422.357509",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "should also be pinned in <#C05L87V014J|>",
+      "time": "15:23",
+      "timestamp": "1717453433.501479",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "here’s the fix! https://github.com/instabase/instabase/pull/58186\n\ncould i get a review? @andy @lydia",
+      "time": "15:46",
+      "timestamp": "1717454790.645709",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "ah ya `hasattr` is a fine fix here",
+      "time": "15:53",
+      "timestamp": "1717455182.674409",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-06-03.json",
+    "message_count": 16,
+    "start_time": "1717450950.298759",
+    "end_time": "1717455182.674409",
+    "is_thread": true
+  }
+}

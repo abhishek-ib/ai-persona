@@ -1,0 +1,119 @@
+{
+  "id": "ch_C06FA6A23_2021-02-25_1614280284.083100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Karthik S",
+    "Aaron Tami",
+    "Mohit"
+  ],
+  "messages": [
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "We are integrating license service to Goldens (https://github.com/instabase/instabase/pull/18134) Facing some gRPC unavailable errors when running Goldens on dogfood  even when the license-service is available.\n```\"[2021-02-25 18:54:52,722: ERROR/ForkPoolWorker-3] job-id=32b8a8f3-0b6d-48ab-b75f-4e236879069e username=carthik task-id=32b8a8f3-0b6d-48ab-b75f-4e236879069e-map-0-8 Retrying b'/license_service.LicenseService/RecordLicenseUsageMetrics' request in 0.5s due to StatusCode UNAVAILABLE, Error (14, 'unavailable'), Message Socket closed. Retries left 2```\nThis is causing transient failures in Goldens. Looks like we have added the retry logic (for few seconds) to address this.@Aaron Tami  -  Any reason why this can happen when the service is healthy and running and the client is getting service unavailable errors? I'm able to reach the service from api-server but is failing from celery-app-tasks (intermittently)",
+      "time": "11:11",
+      "timestamp": "1614280284.083100",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "We see these errors a lot, usually we just do retries and they succeed",
+      "time": "11:16",
+      "timestamp": "1614280617.083800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "How are you making the grpc call? Are you using the GRPCClient library we have? It has these retries built into it",
+      "time": "11:17",
+      "timestamp": "1614280639.084700",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "Yes, I'm. using the GRPCClient library. Let me see if I can tweak the retry logic",
+      "time": "11:18",
+      "timestamp": "1614280686.085100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Aaron Tami I think we need to get to the bottom of this now.  Retrying is just a patch to the solution.  I think we are missing something important here.",
+      "time": "11:20",
+      "timestamp": "1614280853.085300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Yes agreed, I raised this issue with the grpc team a while back but never really followed through with a thorough investigation. We are also running a old version of grpc in some services that we might want to try to upgrade everywhere.",
+      "time": "11:41",
+      "timestamp": "1614282112.087300",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "Filing https://instabase.atlassian.net/browse/LM-213 to track this. @Aaron Tami - If you feel upgrade can help here, happy to look into that direction as well",
+      "time": "12:06",
+      "timestamp": "1614283569.087500",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Update: Me @Naveen and @Karthik S discussed this issue and have 3 approaches to potentially resolve this. We will post our findings here if we are able to resolve this.\n\n@Aaron Tami we are already using latest version 1.35.0",
+      "time": "23:52",
+      "timestamp": "1614325958.087700",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@Aaron Tami meanwhile if you get some info from grpc team, feel free to update us here.",
+      "time": "23:53",
+      "timestamp": "1614326013.088000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Mohit I recently updated the gRPC version to 1.35.0.  Until last week we were on 1.23.0",
+      "time": "23:54",
+      "timestamp": "1614326045.088200",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Correct, we noticed the update. The issue at hand surfaced while the latest version is being used. :confused:",
+      "time": "23:55",
+      "timestamp": "1614326106.088400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "ah, got it!",
+      "time": "23:55",
+      "timestamp": "1614326129.088600",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-02-25.json",
+    "message_count": 12,
+    "start_time": "1614280284.083100",
+    "end_time": "1614326129.088600",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "id": "ch_C0516UPPMT3_2023-12-05_1701772225.884119_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Sławek Biel",
+    "Arjun",
+    "Elan Sharony",
+    "Dominic Fannjiang",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "I created a new build project on https://aihub-uat.internal.instabase.com/\nAfter I added new classes it had failed. The request response shows\n`\n```Failed to split classify file with input_file_id = 3343: Failed to call LLM to get doc splits: Error during model run.```\nThis was with the default value of “Split documents” setting. After I found it and flipped off the documents got classified as expected.",
+      "time": "02:30",
+      "timestamp": "1701772225.884119",
+      "is_reply": false
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "@Dominic Fannjiang",
+      "time": "05:20",
+      "timestamp": "1701782410.894979",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I just reproduced this as well",
+      "time": "09:08",
+      "timestamp": "1701796133.188779",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "Here’s a trace Id: `63a03e1c3fa1de76`",
+      "time": "09:10",
+      "timestamp": "1701796203.945069",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "error in ibllm:\n```\t\t2023-12-05 09:11:12.853\t\n  File \"/model-service/py/instabase/ibllm/model/tasks/split_classification.py\", line 57, in split_classification\n2023-12-05 09:11:12.853\t\n\"  path=\"/model-service/py/instabase/ibllm/model/tasks/split_classification.py:70\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_9\" trace_id=\"47f8380fc71a4315\" exception=\"Traceback (most recent call last):\n2023-12-05 09:11:12.853\t\nKeyError: 'arjun.natarajan'\n2023-12-05 09:11:12.853\t\n    max_tokens = MODEL_TO_MAX_OUTPUT_TOKENS[model_name]\n2023-12-05 09:11:12.853\t\n  File \"/model-service/py/instabase/ibllm/code_labs/llm.py\", line 122, in get_llm_model\n2023-12-05 09:11:12.853\t\n    llm = get_llm_model(\n2023-12-05 09:11:12.853\t\n  File \"/model-service/py/instabase/ibllm/code_labs/runner.py\", line 52, in run\n2023-12-05 09:11:12.853\t\n    result = function(*args, **kwargs)\n2023-12-05 09:11:12.853\t\n  File \"/model-service/py/instabase/ibllm/model/observability/logging/utils.py\", line 58, in wrapper\n2023-12-05 09:11:12.853\t\n    raise e\n2023-12-05 09:11:12.853\t\n  File \"/model-service/py/instabase/ibllm/model/observability/logging/utils.py\", line 61, in wrapper\n2023-12-05 09:11:12.853\t\n    r = func(*args, **kwargs)\n2023-12-05 09:11:12.853\t\n  File \"/model-service/py/instabase/ibllm/model/observability/tracing/utils.py\", line 124, in wrapped\n2023-12-05 09:11:12.853\t\n    raise error\n2023-12-05 09:11:12.853\t\n  File \"/model-service/py/instabase/ibllm/model/observability/tracing/utils.py\", line 129, in wrapped\n2023-12-05 09:11:12.853\t\n    results = run(\n2023-12-05 09:11:12.853\t\n  File \"/model-service/py/instabase/ibllm/model/tasks/split_classification.py\", line 57, in split_classification\n2023-12-05 09:11:12.853\t\nKeyError: 'arjun.natarajan'\"\n2023-12-05 09:11:12.852\t\nlevel=ERROR time=2023-12-05 17:11:12,519 msg=\"Traceback: Traceback (most recent call last):```",
+      "time": "09:13",
+      "timestamp": "1701796420.751979",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "@Sławek Biel any ideas?",
+      "time": "09:13",
+      "timestamp": "1701796428.549819",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "hm is model name getting passed in as `arjun.natarajan` :eyes:",
+      "time": "09:14",
+      "timestamp": "1701796479.055439",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "@Nikolaos Kofinas",
+      "time": "09:15",
+      "timestamp": "1701796528.747579",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "does this selection get passed in via Build backend @Dominic Fannjiang? I know Naveen and @Elan Sharony have been making changes  (https://github.com/instabase/instabase/pull/49777)to how build specifies which model to use (gpt-3.5 vs gpt-4 vs instaLLM) for example",
+      "time": "09:17",
+      "timestamp": "1701796677.314209",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "this is the request to model service\n```{'context': {'username': 'arjun.natarajan', 'orgname': None}, 'external_model': True, 'model_name': 'ibllm', 'model_version': '2.1.0', 'model_payload': {'custom_request': {'task': 'split_classification', 'project_id': '2152d07c-2e78-46c5-b5ad-085764f628d3', 'classes': {'Paystub': 8341, 'Other': 8342, 'Pokemon Card': 8343}, 'source_id': '2152d07c-2e78-46c5-b5ad-085764f628d3', 'source_type': 'Build', 'user_agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36', 'embedding_model': 'text-embedding-ada-002', 'model_name': 'arjun.natarajan'}}```\nsee your name at the end of the dictionary - this is why its happening",
+      "time": "09:19",
+      "timestamp": "1701796783.190139",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "ah i see it",
+      "time": "09:21",
+      "timestamp": "1701796919.393849",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "this PR incorrectly passes in orgname as the llm model to use https://github.com/instabase/instabase/pull/50448/files#diff-23ca21e1b7a8fde91f5232c2730b80344f548e83e085f5ec8eb405d64d748e63",
+      "time": "09:22",
+      "timestamp": "1701796948.312759",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "i can fix this",
+      "time": "09:23",
+      "timestamp": "1701796984.365269",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "I have a PR which will get merged today focusing on using the project's LLM selection in:\n1. extraction backend\n2. refinement in flow\n3. classification in flow",
+      "time": "10:04",
+      "timestamp": "1701799473.515069",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "no worries, the fix for this particular issue is here alrdy https://github.com/instabase/instabase/pull/50662",
+      "time": "10:05",
+      "timestamp": "1701799503.772489",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Thanks for the quick fix!",
+      "time": "13:25",
+      "timestamp": "1701811557.473519",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-12-05.json",
+    "message_count": 16,
+    "start_time": "1701772225.884119",
+    "end_time": "1701811557.473519",
+    "is_thread": true
+  }
+}

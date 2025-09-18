@@ -1,0 +1,150 @@
+{
+  "id": "ch_C0516UPPMT3_2023-05-29_1685352295.137139_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Prashant Kikani",
+    "avi",
+    "Varun Jain"
+  ],
+  "messages": [
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": ":thread: CSV file not working well on converse",
+      "time": "02:24",
+      "timestamp": "1685352295.137139",
+      "is_reply": false
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Here's the CSV of responses to our AIHub feedback form. I tried to analyse these with Converse and the results are pretty bad.",
+      "time": "02:25",
+      "timestamp": "1685352332.611819",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "I'm not sure why it's responding with `8 2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1`",
+      "time": "02:26",
+      "timestamp": "1685352364.441879",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "It's decent as an XLSX",
+      "time": "02:26",
+      "timestamp": "1685352396.731079",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "@avi is this on prod?",
+      "time": "02:32",
+      "timestamp": "1685352764.344509",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "it's in dev",
+      "time": "02:33",
+      "timestamp": "1685352827.670229",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "okay, let me check",
+      "time": "02:34",
+      "timestamp": "1685352850.959139",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Yeah, I'm also seeing this.\n\nBtw, Kerry checked that CSV was working on dev...\nhttps://instabase.slack.com/archives/C04PFH9DYF7/p1685127131998409?thread_ts=1685098623.170009&cid=C04PFH9DYF7\n\nNo code change has done after that.. certainly not from model side...",
+      "time": "02:43",
+      "timestamp": "1685353411.758619",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "It's working for me on other CSVs though on dev. @avi can you confirm this? If it's working for other CSVs for you?",
+      "time": "02:50",
+      "timestamp": "1685353855.919539",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Yeah, it seems to work for another I tried. But seems to not work for the file that I shared",
+      "time": "02:52",
+      "timestamp": "1685353967.450769",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Okay, thanks.\nI'm debugging for that one",
+      "time": "02:53",
+      "timestamp": "1685353996.475949",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "So, the query \"Summarize this feedback about my app\" was getting classified as SQL query(instead of General query) and treated such way... [Context: We handle SQL query differently than General query]\n\nAsking the same question in different way worked for that CSV which you shared...",
+      "time": "03:01",
+      "timestamp": "1685354461.751229",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Makes sense, is it possible to make sure the query doesn't get classified this way?",
+      "time": "03:06",
+      "timestamp": "1685354818.866179",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Yes, we're getting that query type(general vs. SQL) from LLM only... Let me experiment with the query-classification prompt to improve the performance",
+      "time": "03:09",
+      "timestamp": "1685354956.829679",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "How do we handle the SQL query?",
+      "time": "22:29",
+      "timestamp": "1685424584.642699",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "> How do we handle the SQL query?\nWe try to convert user's text query into `pandas` SQL-like query using LLM call. Then run that query on the CSV file to get the answer.\nFor example, user text query is\n> What is was the average annual SaaS revenue between January 2020 and January 2021 in this table?\nFor that `pandas` SQL-like query will be\n```df['Annual SaaS Revenue'].loc[(df['Effective Date'] >= 'January 1, 2020') & (df['Effective Date'] <= 'January 1, 2021')].mean()```",
+      "time": "22:30",
+      "timestamp": "1685424647.965129",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-05-29.json",
+    "message_count": 16,
+    "start_time": "1685352295.137139",
+    "end_time": "1685424647.965129",
+    "is_thread": true
+  }
+}

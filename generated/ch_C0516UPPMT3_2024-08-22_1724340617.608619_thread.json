@@ -1,0 +1,224 @@
+{
+  "id": "ch_C0516UPPMT3_2024-08-22_1724340617.608619_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Ed",
+    "andy",
+    "Jessica",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "hey folks, a couple points of feedback for the *Run app with API* screen for the Python `requests` library:\n1. the url we provide in the sample code should include `https://`  at the beginning, changing it from `aihub.instabase.com/api/v2/batches (http://aihub.instabase.com/api/v2/batches)` to `https://aihub.instabase.com/api/v2/batches`  for example\n2. we should not be putting live OAuth tokens in sample code as a standard security practice (PS: I deleted the token in the screenshot)",
+      "time": "08:30",
+      "timestamp": "1724340617.608619",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the oauth token is only presented to logged-in users if they have an existing oauth token in their account\n\nwe do not show arbitrarily show oauth tokens to users who don’t own that token",
+      "time": "08:34",
+      "timestamp": "1724340870.472709",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @Jessica",
+      "time": "08:34",
+      "timestamp": "1724340878.058809",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "good callout on the URL. we can also add a note about where that API token is being injected from to not scare users on (2)",
+      "time": "08:39",
+      "timestamp": "1724341172.561309",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "understood about the token being pulled from the list of the logged-in user's tokens, but injecting credentials in sample code, regardless of being limited to the logged-in user, is a security risk. just wanted to call this out",
+      "time": "08:56",
+      "timestamp": "1724342166.138729",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "might be good to have a call out to the OAuth token documentation and have a placeholder in the sample code, like we have for RUN_ID for example",
+      "time": "08:58",
+      "timestamp": "1724342320.932799",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Thanks for the call out Ed! Right now we default to having one of the OAuth tokens selected. Do you think it would help if we default to not having one selected and we show a placeholder in the code, then you can select one, thus choosing to have it show up?",
+      "time": "09:01",
+      "timestamp": "1724342493.442229",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "these tokens impersonate the user, granting all the same permissions as the individual user has when they log in with their username and password - these tokens are effectively passwords and should be treated as such. the goal should be to minimize the number of times they are shown in plain text (ideally to one when it is created).",
+      "time": "10:43",
+      "timestamp": "1724348625.890859",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Okay, got it. One more idea to run past you - what if we allow the user to copy the auth token to their clipboard in this panel so that they can easily sub it in when they're running this code? I just want to remove as many barriers as possible to the user being able to get this working.",
+      "time": "10:47",
+      "timestamp": "1724348863.375039",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "so for instance in the case of my screenshot, I can choose my `SATS` token in the dropdown, then have a `Copy Token to Clipboard` button, but not actually show it in plain text?\n\nagreed on the goal of getting users developing against the APIs as quickly and easily as possible. just trying to balance a baseline security posture in doing so",
+      "time": "10:52",
+      "timestamp": "1724349123.548539",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "something as simple as this would give the user access to what they need via the copy button in this pane without us actually exposing the credential:",
+      "time": "11:02",
+      "timestamp": "1724349750.877109",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yeah exactly! Do you think that would make it secure enough?\n\nWe could even make it so that when you click the copy button for a block of code, we autofill the bearer token with the selected auth token.",
+      "time": "11:05",
+      "timestamp": "1724349901.140709",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "I would still be cautious to inject credentials directly into code. at minimum, credentials should be read into the code from environment variables.",
+      "time": "11:30",
+      "timestamp": "1724351411.480529",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "understanding that we can’t control what a user does after they copy the token, we should stay away from giving sample code that contains anti-patterns, especially when credentials are involved",
+      "time": "11:32",
+      "timestamp": "1724351521.568419",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Okay sounds good, we don't want any surprises for the user. Tickets are here:\nhttps://instabase.atlassian.net/browse/FLOW-9871\nhttps://instabase.atlassian.net/browse/FLOW-9872\n\nAre we okay with having these changes be in 24.36, or do we need to backport?",
+      "time": "11:41",
+      "timestamp": "1724352083.318979",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "thank you! it would probably be good to backport, though I'm not sure what implications that comes with - would that cause a lot of extra work, or would it be fairly straightforward?",
+      "time": "14:11",
+      "timestamp": "1724361075.643749",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "@Jessica would it be possible to also do this on the api page where the token is shown in plain text? maybe add a box that obfuscates the token and has a `view` and `copy` token button like in the example here:",
+      "time": "14:24",
+      "timestamp": "1724361894.042129",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yep - @Xindi Xu I assigned to you in case you have time but feel free to assign to me https://instabase.atlassian.net/browse/FLOW-9875",
+      "time": "14:28",
+      "timestamp": "1724362092.534539",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I will backport the API docs fix to 24.34, but I won't get to it in time to backport to 24.32",
+      "time": "14:28",
+      "timestamp": "1724362114.103099",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "thank you!",
+      "time": "14:29",
+      "timestamp": "1724362165.645789",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "We have a separate epic for this. We'll add 1-way encryption for oauth tokens\ncc @mfichman\nhttps://instabase.atlassian.net/browse/CS-5133",
+      "time": "15:03",
+      "timestamp": "1724364200.031389",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Do you think we should still hide it and make it only copiable in the meantime?",
+      "time": "15:05",
+      "timestamp": "1724364303.631779",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "It won't take it out of the frontend, but it would prevent it from accidentally being shown during videos and screenshares and such",
+      "time": "15:05",
+      "timestamp": "1724364330.789239",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Jeff has started on the backend for the ticket and I'll start on the frontend once the backend is completed (so it should be ready in a couple releases). This has existed for a while so i don't think we need to update it now.",
+      "time": "15:09",
+      "timestamp": "1724364571.744279",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Here's my plan:\nI'll implement this new design which is part of the linked epic. Before the backend is ready, I'll add copy buttons next to the action buttons. Note that we still show the first and last 3 chars to help users identify which token they are using. After the backend is ready, we'll take out the copy button. I think the change should be fairly simple and hopefully, I can squeeze into 24.36",
+      "time": "15:33",
+      "timestamp": "1724365992.309229",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-08-22.json",
+    "message_count": 25,
+    "start_time": "1724340617.608619",
+    "end_time": "1724365992.309229",
+    "is_thread": true
+  }
+}

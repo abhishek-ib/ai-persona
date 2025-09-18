@@ -1,0 +1,111 @@
+{
+  "id": "ch_C0516UPPMT3_2023-12-11_1702291334.481899_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "CJ",
+    "melissa.amos",
+    "danny.lan",
+    "Lee"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Hey, playing a lot with the clean functionality today and the prompt clean is working great. Makes it so much easier to get the data I need which means its so much simpler to write the prompt as i’m not cluttering it with format info too.\n\nI do have some feedback on the ‘quick clean date’ functionality, which feels like its the code for the UDF `format_date` from Enterprise. Is that the case? I think it would be more powerful if I didn’t have to provide the input month order to this function and the LLM could interpret this using context of the document. I’ve tested this with customers before where I ask the LLM to determine the data order, and it seems to use other cues like the addresses and currency to determine if its a US document or not and apply the correct month order.\n\nAt the moment with the current implementation I can’t use the built in formatting with MUFG’s solution as there are some docs which are month first, and some which are day first all in the same solution.\n\nAs an improvement, could we add a 3rd option to the input option which is ‘Auto’ where we let the LLM decide? This would make the feature much more powerful.",
+      "time": "02:42",
+      "timestamp": "1702291334.481899",
+      "is_reply": false
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Also, it doesn’t work in situations like these, where you need to use another clean function before to get just the date. In which case you might as well put the format in the prompt clean function too",
+      "time": "03:01",
+      "timestamp": "1702292464.546269",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Like this",
+      "time": "03:04",
+      "timestamp": "1702292665.026259",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "@danny.lan?",
+      "time": "09:06",
+      "timestamp": "1702314394.725559",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "to answer what i know—this does use the `format_date` UDF (or something like that). there's also gonna be an \"Infer date\" input format coming up",
+      "time": "09:21",
+      "timestamp": "1702315267.637949",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "That’s correct, this function uses `format_date`  from the platform so it does not use the LLM. I’m adding an option to the input argument for “infer date” but it won’t handle 1) cases where context is needed i.e. addresses/currency or 2) cases where the date is in a sentence like your first screenshot. In this case it would be better to use a prompt clean, which is not clear.\nI think it might be good to mention that this function/the quick clean functions *don’t* use the LLM cc: @melissa.amos",
+      "time": "09:56",
+      "timestamp": "1702317377.582799",
+      "is_reply": true
+    },
+    {
+      "sender": "melissa.amos",
+      "user_id": "U046XKHS8VA",
+      "message": "We were going to add a tooltip that indicates we're using code, not LLM. Is this already done?\nhttps://instabase.slack.com/archives/C05NKL85Y2G/p1701981186804649?thread_ts=1701967715.543829&cid=C05NKL85Y2G\n\ncc: @alagu Here's a place where people are repeatedly confused about whether we're using LLM or code. I'm trying to add clarity with the words, but it might be helpful to tackle from a design perspective.",
+      "time": "10:04",
+      "timestamp": "1702317882.760899",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "Hmm that’s true, I’ve already added this tooltip but I wonder if a) its explicit enough and b) its prominent enough since its a tooltip on the input argument, not on the whole function",
+      "time": "10:19",
+      "timestamp": "1702318790.835619",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Thanks for the background here @danny.lan if the ‘infer’ function doesn’t look for the document context, what does it use?",
+      "time": "10:23",
+      "timestamp": "1702319005.476129",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "It only looks at the date itself, for example 30/5/2023 can’t be month first so must be date first",
+      "time": "10:25",
+      "timestamp": "1702319146.055239",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Ah got it thanks. could the LLM assist with the infer of order? Its worked pretty well in our testing",
+      "time": "11:00",
+      "timestamp": "1702321213.804709",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-12-11.json",
+    "message_count": 11,
+    "start_time": "1702291334.481899",
+    "end_time": "1702321213.804709",
+    "is_thread": true
+  }
+}

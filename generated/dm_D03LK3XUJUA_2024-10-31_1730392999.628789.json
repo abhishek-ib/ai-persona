@@ -1,0 +1,105 @@
+{
+  "id": "dm_D03LK3XUJUA_2024-10-31_1730392999.628789",
+  "type": "dm",
+  "participants": [
+    "Anil",
+    "Abhishek Adupa"
+  ],
+  "messages": [
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Hi Anil, need to access one app on aihub prod, can you make me admin for a while or help debug on call?",
+      "time": "09:43",
+      "timestamp": "1730392999.628789",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "https://aihub.instabase.com/build/0192d871-6060-7823-9eff-db6006653333",
+      "time": "09:43",
+      "timestamp": "1730393011.933389",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Huddle now?",
+      "time": "09:56",
+      "timestamp": "1730393814.782389",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Yes",
+      "time": "09:57",
+      "timestamp": "1730393821.807599",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "https://instabase.slack.com/archives/C05BJCNKZAM/p1730323084296829?thread_ts=1730314939.461949&cid=C05BJCNKZAM",
+      "time": "09:57",
+      "timestamp": "1730393844.588339",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "```2024-10-30 12:31:45.289\t2024-10-30T19:31:44.360442185Z stdout F [2024-10-30 19:31:44,360] [ForkPoolWorker-265/ThreadPoolExecutor-10_0] {/instabase/workers/celery-app-tasks/py/instabase/data_api_utils/_sheet/confidence_fns.py:1299} ERROR - [trace_id=947bedb7c5193935] - job-id=4e518ca2-71a1-4911-bd31-e7d81a933165 task-id=4e518ca2-71a1-4911-bd31-e7d81a933165-Stage1 username=support-testing.aihubib_instabase.com (http://support-testing.aihubib_instabase.com) stage-id=Stage1 step=s5 get_extracted_unsure_list error: Misalignment between record text and record OCR information: Mismatch: 1 lines in `text` vs 183 in `lines````",
+      "time": "09:58",
+      "timestamp": "1730393935.232229",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "can you join back",
+      "time": "10:00",
+      "timestamp": "1730394029.345579",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "ping ping",
+      "time": "10:01",
+      "timestamp": "1730394093.302069",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Hi Anil, quick huddle??",
+      "time": "10:21",
+      "timestamp": "1730395311.729599",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Found the issue — APIs from `v2/jobs` were recently moved to `v2/apps/runs` in 24.42, but we didn’t realize that `v2/jobs` was still being used in this feature. In AIHub, SDK and Postman and docs were all developed and mention only `v2/apps/runs`. Few action items:\n\n- Update the path for the re-extraction use case to use `v2/apps/runs` instead of `v2/jobs`\n- Check for any other occurrences of `v2/jobs` in the UI and modify them as needed\n- Add a UAT/system test for the re-extraction feature",
+      "time": "10:37",
+      "timestamp": "1730396225.570819",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Found the issue — The app run APIs were present it both `v2/jobs`  and `v2/apps/runs` . As a result v2/apps/runs/status /v2/jobs/status referred to the same code. Only v2/apps/runs  is exposed as an API and SDK.\n\nIn 24.42, removed the v2/jobs duplicated endpoints as I wanted to use it for run deletion related deletion job status. v2/jobs/status now is used to query FS deletion job status. This removed X endpoint used by re-extraction.\n\nFew action items:\n- Update the path in frontend for re-extraction  to use `v2/apps/runs` instead of `v2/jobs`\n- Check for any other occurrences of `v2/jobs` in the UI and modify them as needed. I had checked earlier for ‘v2/jobs’ but string search returned empty.\n- Add a UAT/system test for the re-extraction feature",
+      "time": "10:43",
+      "timestamp": "1730396602.997419",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "dm_id": "D03LK3XUJUA",
+    "date_file": "2024-10-31.json",
+    "message_count": 11,
+    "start_time": "1730392999.628789",
+    "end_time": "1730396602.997419"
+  }
+}

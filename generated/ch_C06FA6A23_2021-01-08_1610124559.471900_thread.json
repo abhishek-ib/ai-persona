@@ -1,0 +1,197 @@
+{
+  "id": "ch_C06FA6A23_2021-01-08_1610124559.471900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Naveen",
+    "John St"
+  ],
+  "messages": [
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Hi all, I’m having an issue with provisioner trying to start up. I’m seeing this error.\n\n```ERROR - Could not start service - worker-image-tasks. Error=b\"Unable to find image 'instabase/celery-image-tasks:latest' locally\\ndocker: Error response from daemon: pull access denied for instabase/celery-image-tasks, repository does not exist or may require 'docker login': denied: requested access to the resource is denied.\\nSee 'docker run --help'.\\nmake: *** [run-docker] Error 125\\n\"```\nI just compiled everything again locally but still not having any luck.",
+      "time": "08:49",
+      "timestamp": "1610124559.471900",
+      "is_reply": false
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "can you try running `make build-docker` in distributed-tasks/image-tasks and see if that helps?",
+      "time": "08:51",
+      "timestamp": "1610124689.472000",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "I have a feeling it will but then I’ll have to do that for all the services that didn’t start :sadparrot:",
+      "time": "08:52",
+      "timestamp": "1610124755.472300",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "```The command '/bin/sh -c apt-get update -y &&     DEBIAN_FRONTEND=noninteractive apt-get -y install $BUILD_PACKAGES $RUNTIME_PACKAGES xmlsec1 &&     pip install --user --upgrade pip setuptools wheel &&     pip install --user -r /tmp/requirements.txt &&     apt-get remove --purge -y $BUILD_PACKAGES &&     apt-get autoremove -y &&     rm -rf /var/lib/apt/lists/* &&     rm -rf /home/ibuser/.local/lib/python3.7/site-packages/Cryptodome/SelfTest/PublicKey/test_vectors/* &&     rm -rf /home/ibuser/.local/lib/python3.7/site-packages/gevent/tests/* &&     rm -rf /home/ibuser/.local/lib/python3.7/site-packages/tornado/test/*' returned a non-zero code: 100\nmake: *** [build-docker] Error 100```",
+      "time": "08:54",
+      "timestamp": "1610124876.472700",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Can you post the logs prior to the failure, why did they fail? Also a check that you’re on latest commit…",
+      "time": "09:11",
+      "timestamp": "1610125889.475600",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "I just pulled master but can do it again",
+      "time": "09:19",
+      "timestamp": "1610126377.475800",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "```Reading package lists...\nW: GPG error: http://security.ubuntu.com/ubuntu groovy-security InRelease: At least one invalid signature was encountered.\nE: The repository 'http://security.ubuntu.com/ubuntu groovy-security InRelease' is not signed.\nW: GPG error: http://archive.ubuntu.com/ubuntu groovy InRelease: At least one invalid signature was encountered.\nE: The repository 'http://archive.ubuntu.com/ubuntu groovy InRelease' is not signed.\nW: GPG error: http://archive.ubuntu.com/ubuntu groovy-updates InRelease: At least one invalid signature was encountered.\nE: The repository 'http://archive.ubuntu.com/ubuntu groovy-updates InRelease' is not signed.\nW: GPG error: http://archive.ubuntu.com/ubuntu groovy-backports InRelease: At least one invalid signature was encountered.\nE: The repository 'http://archive.ubuntu.com/ubuntu groovy-backports InRelease' is not signed.\nThe command '/bin/sh -c apt-get update -y &&     DEBIAN_FRONTEND=noninteractive apt-get -y install $BUILD_PACKAGES $RUNTIME_PACKAGES xmlsec1 &&     pip install --user --upgrade pip setuptools wheel &&     pip install --user -r /tmp/requirements.txt &&     apt-get remove --purge -y $BUILD_PACKAGES &&     apt-get autoremove -y &&     rm -rf /var/lib/apt/lists/* &&     rm -rf /home/ibuser/.local/lib/python3.7/site-packages/Cryptodome/SelfTest/PublicKey/test_vectors/* &&     rm -rf /home/ibuser/.local/lib/python3.7/site-packages/gevent/tests/* &&     rm -rf /home/ibuser/.local/lib/python3.7/site-packages/tornado/test/*' returned a non-zero code: 100\nmake: *** [build-docker] Error 100```",
+      "time": "09:20",
+      "timestamp": "1610126430.476000",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "I guess your docker has filled up the disk (disk size allocated to docker)",
+      "time": "09:36",
+      "timestamp": "1610127410.476300",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Can you try removing some images or running\n```docker image prune -a```",
+      "time": "09:37",
+      "timestamp": "1610127448.476500",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "You can check all docker images by running `docker images` , after pruning the image, I guess python provisioner should be able to compile all the images too… So you can just run provisioner script again and everything should work (previously compile step might’ve errored out and since the image was not present on local, docker tried to pull the image)",
+      "time": "09:39",
+      "timestamp": "1610127584.476700",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "okay i’ll give that a shot",
+      "time": "10:10",
+      "timestamp": "1610129445.476900",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Do these settings look okay?",
+      "time": "10:11",
+      "timestamp": "1610129480.477100",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Yup these look OK!",
+      "time": "10:11",
+      "timestamp": "1610129494.477500",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Does `docker system prune` do the same thing as `docker image prune` ?",
+      "time": "10:12",
+      "timestamp": "1610129528.477700",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "removing images might help, since out of 120GB, 112.2 GB is already used’…",
+      "time": "10:12",
+      "timestamp": "1610129543.477900",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "I see, I thought system meant images and containers but I guess not",
+      "time": "10:12",
+      "timestamp": "1610129561.478100",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "yeah system will remove images, and containers as well i guess… but you should be fine with removing just the images only…",
+      "time": "10:13",
+      "timestamp": "1610129604.478300",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "okay",
+      "time": "10:13",
+      "timestamp": "1610129612.478500",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "I’m removing all things, starting fresh",
+      "time": "10:13",
+      "timestamp": "1610129619.478700",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "I’m hopeful that this will fix my problems :crossed_fingers::skin-tone-4:",
+      "time": "10:25",
+      "timestamp": "1610130341.478900",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "it sort of did, I had to go in and run the `make build-docker` in the image folder but was able to start up each service after that",
+      "time": "11:04",
+      "timestamp": "1610132686.483000",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "i guess re-compiling and running through provisioner (maybe by passing `--as-docker` flag) should also have worked…",
+      "time": "11:19",
+      "timestamp": "1610133589.483400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-01-08.json",
+    "message_count": 22,
+    "start_time": "1610124559.471900",
+    "end_time": "1610133589.483400",
+    "is_thread": true
+  }
+}

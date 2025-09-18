@@ -1,0 +1,135 @@
+{
+  "id": "ch_CSY11CK7T_2024-10-01_1727820269.744639_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Jessica",
+    "Arek",
+    "danny.lan"
+  ],
+  "messages": [
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Hey team, can anyone help me figure out why my PR is causing Cypress tests to fail https://cloud.cypress.io/projects/cfhedy/runs/14293? This is the PR https://github.com/instabase/instabase/pull/62993",
+      "time": "15:04",
+      "timestamp": "1727820269.744639",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "<!subteam^S07855GV3GV>",
+      "time": "15:06",
+      "timestamp": "1727820392.837409",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "there’s an issue creating the community license but the error message is empty:\n```PR number, url, oauth token, existing org name:\n {\n  prNumber: '62993',\n  url: 'https://crafting-cyp--pr-62993-cypress-instabase.instabase.site.sandboxes.run',\n  oauthToken: 'z6mgsyVv9lp6o7WoqJECO2qigDHGQc',\n  existingOrg: 'cypress-drive-tests'\n}\n\n\n------------------\nSetting up community user:\nSuccess! Email: <mailto:cypress-user-62993@instabase.com|cypress-user-62993@instabase.com>\nError: \n/home/runner/work/instabase/instabase/webserver/shared/src/js/webpacked/cypress/create-user-and-org.js:50\n    throw Error(error.msg ?? error.message);\n          ^\n\nError\n    at catchStatusCodeError (/home/runner/work/instabase/instabase/webserver/shared/src/js/webpacked/cypress/create-user-and-org.js:50:11)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async createCommunityLicense (/home/runner/work/instabase/instabase/webserver/shared/src/js/webpacked/cypress/create-user-and-org.js:244:5)\n    at async main (/home/runner/work/instabase/instabase/webserver/shared/src/js/webpacked/cypress/create-user-and-org.js:265:3)```\ni saw this error on my PR too.\n\n@Xindi Xu do you think this is the same as the `api/v2/licenses/migrate` issue from last week?",
+      "time": "15:34",
+      "timestamp": "1727822040.398379",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, probably the same issue. Can you rebase the latest master?",
+      "time": "15:36",
+      "timestamp": "1727822199.814249",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@danny.lan can you link your PR as well?",
+      "time": "15:37",
+      "timestamp": "1727822241.072619",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "here is my PR, https://github.com/instabase/instabase/pull/63173#issuecomment-2387148497, I tried merging master actually but I got the same error",
+      "time": "15:40",
+      "timestamp": "1727822407.673579",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "My rebase also failed",
+      "time": "16:00",
+      "timestamp": "1727823616.169729",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm seeing 401s for both PRs: https://crafting-cyp.test.instabase.com/grafana/goto/y6bQrSkHg?orgId=1\nhttps://crafting-cyp.test.instabase.com/grafana/goto/5ypNCIkNg?orgId=1\nProbably the oauth token is not longer valid",
+      "time": "16:01",
+      "timestamp": "1727823660.053469",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "cc @jtau could this be the encryption issue in another context?",
+      "time": "16:01",
+      "timestamp": "1727823697.809969",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Context: https://instabase.slack.com/archives/C011FHLBN8N/p1727714027352829",
+      "time": "16:02",
+      "timestamp": "1727823756.583439",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Are any services on different platform versions on the crafting instance? @sean.donohoe",
+      "time": "16:03",
+      "timestamp": "1727823811.777229",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ah.. I see what happens... We no longer return the access token when we list oauth apps. I'll put up a PR for the fix",
+      "time": "16:06",
+      "timestamp": "1727824016.285099",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://github.com/instabase/instabase/pull/63327",
+      "time": "16:16",
+      "timestamp": "1727824567.187069",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I forgot to reply here :cry: . Please rebase master if you see issues with creating the community user's license in Cypress CI",
+      "time": "17:13",
+      "timestamp": "1727827988.302669",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-10-01.json",
+    "message_count": 14,
+    "start_time": "1727820269.744639",
+    "end_time": "1727827988.302669",
+    "is_thread": true
+  }
+}

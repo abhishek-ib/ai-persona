@@ -1,0 +1,383 @@
+{
+  "id": "ch_C06FA6A23_2022-10-05_1664975520.288269_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cheryl Zhou",
+    "Heymian",
+    "Ben",
+    "Bas"
+  ],
+  "messages": [
+    {
+      "sender": "Ben",
+      "user_id": "U01U9TP9U94",
+      "message": "Hey team,\n\nWasn't sure where the best place to ask this - but on instabase.com (http://instabase.com) the JPMC Org spaces are showing the following error. This is happening since yesterday (that was when I discovered it, could have been before), is there anything broken behind the scenes?",
+      "time": "06:12",
+      "timestamp": "1664975520.288269",
+      "is_reply": false
+    },
+    {
+      "sender": "Ben",
+      "user_id": "U01U9TP9U94",
+      "message": "As a note, its impacting all subspaces beneath the overall JPMC org",
+      "time": "06:12",
+      "timestamp": "1664975537.604699",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Cheryl Zhou do you want to take a shot at tracking down this error?",
+      "time": "09:11",
+      "timestamp": "1664986282.741069",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Yeah I can take a look!",
+      "time": "09:12",
+      "timestamp": "1664986349.143329",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "I did some log searching but didn't find log entries for this subspace or this error",
+      "time": "09:46",
+      "timestamp": "1664988414.684959",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "I think this error would be specific to this org in some way because other org spaces i have access to seem to be working",
+      "time": "09:47",
+      "timestamp": "1664988444.449669",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "which services did you look in?",
+      "time": "09:47",
+      "timestamp": "1664988455.758439",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "webapp, core-platform-service, api-service",
+      "time": "09:47",
+      "timestamp": "1664988476.413919",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "i looked for `get_tree_nodes` since this is where the endpoint should be calling. So I should be seeing an entry for the jpmc org space but I am not",
+      "time": "09:52",
+      "timestamp": "1664988727.413189",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Do you see any errors in the browser console when loading this page?",
+      "time": "09:53",
+      "timestamp": "1664988807.366249",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "oh i don't have access to the jpmc org space",
+      "time": "09:53",
+      "timestamp": "1664988824.550229",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "not even with the admin account on 1pass",
+      "time": "09:54",
+      "timestamp": "1664988880.736209",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "admin account in 1pass isn't an admin anymore. @Ben can you make Cheryl a collaborator?",
+      "time": "09:55",
+      "timestamp": "1664988932.558509",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "my username is <mailto:hongrun.zhou@instabase.com|hongrun.zhou@instabase.com> thanks!",
+      "time": "09:57",
+      "timestamp": "1664989069.211449",
+      "is_reply": true
+    },
+    {
+      "sender": "Ben",
+      "user_id": "U01U9TP9U94",
+      "message": "added you as a space manager for JPMC, so you should see what I can :slightly_smiling_face:",
+      "time": "10:03",
+      "timestamp": "1664989430.178619",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "thank you! i see the error now",
+      "time": "10:05",
+      "timestamp": "1664989507.713359",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "looks like the error is `Page not found`",
+      "time": "10:08",
+      "timestamp": "1664989682.168499",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ah okay, so the next place to look is server-nginx",
+      "time": "10:24",
+      "timestamp": "1664990652.443849",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "That’s the entry point for all our routes. It goes from UI -> nginx -> webapp/api-server/… so if you’re getting to a page not found, and you also don’t see anything in webapp or api-server, then something in server-nginx must be cutting it off",
+      "time": "10:25",
+      "timestamp": "1664990704.602119",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "yeah i do see logs (https://instabase.com/grafana/explore?orgId=1&left=%7B%22datasource%22:%22P8E80F9AEF21F6940%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22editorMode%22:%22builder%22,%22expr%22:%22%7Bservice%3D%5C%22server-nginx-prod%5C%22%7D%20%7C%3D%20%60%5C%22GET%20%2Fjpmc%2FTraining_Videos%2Fget_node%2FInstabase%2520Drive%2F%20HTTP%2F1.1%5C%22%60%22,%22queryType%22:%22range%22%7D%5D,%22range%22:%7B%22from%22:%22now-5m%22,%22to%22:%22now%22%7D%7D) with 404s in server-nginx, but there aren't any other error logs",
+      "time": "10:40",
+      "timestamp": "1664991627.539289",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "can you see the specific routes that are leading to the 404?",
+      "time": "10:45",
+      "timestamp": "1664991943.059779",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "yeah so the two endpoints are `get_tree_nodes` and `get_node` in `webapp/filesystems`",
+      "time": "10:49",
+      "timestamp": "1664992194.622369",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "weird thing is just i don't see these errors in webapp logs",
+      "time": "10:50",
+      "timestamp": "1664992222.215629",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah sounds like it’s not getting through nginx to hit webapp. Can you pull the full route? Try looking through server-nginx routes.",
+      "time": "10:53",
+      "timestamp": "1664992404.050719",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "ahh are you looking for `/jpmc/main/get_node/Instabase%20Drive/` and `/jpmc/main/get_tree_nodes/Instabase%20Drive/`",
+      "time": "10:57",
+      "timestamp": "1664992621.948129",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "i believe they are called from here: https://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpacked/apps/src/file-system/utils/nodes.ts#L80 and this is where the webapp endpoints are: https://github.com/instabase/instabase/blob/master/webserver/webapp/src/py/instabase/handler/views/filesystems.py#L856",
+      "time": "10:57",
+      "timestamp": "1664992675.250309",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Look in the server-nginx routes (there’s only a few files in there). That’s the routing that happens between the front-end (webpacked) and decides how it hits the backend (webapp).",
+      "time": "10:59",
+      "timestamp": "1664992766.464359",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "ahh sorry what are server-nginx routes?",
+      "time": "10:59",
+      "timestamp": "1664992792.252839",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "they’re under webserver/server-nginx. https://github.com/instabase/instabase/blob/master/webserver/server-nginx/config/nginx-config-template.jinja.yml",
+      "time": "11:00",
+      "timestamp": "1664992802.073579",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "oh this is interesting, there's a route added for jpmc: https://github.com/instabase/instabase/blame/master/webserver/server-nginx/config/nginx-config-template.jinja.yml#L588",
+      "time": "11:03",
+      "timestamp": "1664992994.718429",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "since the org space name is also `jpmc` this new server-nginx route is interfering with the org space endpoints i think?",
+      "time": "11:06",
+      "timestamp": "1664993198.034969",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Bas the marketing page for the JPMC microsite: `/JPMC/` url is conflicting with some of our JPMC Space causing it to not load. Can we consider another URL for the marketing page, something more verbose than “jpmc”?",
+      "time": "11:08",
+      "timestamp": "1664993290.510829",
+      "is_reply": true
+    },
+    {
+      "sender": "Bas",
+      "user_id": "U0290LSC5QA",
+      "message": "@Carrie Feord see above request regarding landing page for jpmc. Could you please respond to @Heymian with acceptable url names? I'm not sure what communication has already gone out that contains this url\n\n@Heymian once we have resolved this immediate topic: as the marketing fucntion is growing, these topics on the website, temporrary campiagn pages, specific landing mapges for clients are going to come up VERY frequently. I would love for us to think through how can separate these so we don't overload the infra team.",
+      "time": "11:21",
+      "timestamp": "1664994099.068639",
+      "is_reply": true
+    },
+    {
+      "sender": "Bas",
+      "user_id": "U0290LSC5QA",
+      "message": "@Heymian just spoke with Carrie - we can change this to \"InstabaseJPMCPartnership\", or \"JPMCPartnership\". Either one will work",
+      "time": "11:30",
+      "timestamp": "1664994636.156279",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "sounds good. What is the current marketing route btw? is it instabase.com/jpmc/jpmc (http://instabase.com/jpmc/jpmc)? That doesn’t seem to take me to a proper page, or has the page not been constructed yet",
+      "time": "11:32",
+      "timestamp": "1664994736.886979",
+      "is_reply": true
+    },
+    {
+      "sender": "Bas",
+      "user_id": "U0290LSC5QA",
+      "message": "I dont think it is live yet",
+      "time": "11:32",
+      "timestamp": "1664994777.675359",
+      "is_reply": true
+    },
+    {
+      "sender": "Bas",
+      "user_id": "U0290LSC5QA",
+      "message": "@Heymian Following this, I want to organize a session to explore how Marketing can independently set up new pages easily and frequently, without dependency on the release cycle, and without having to burden infra, or creating these types of url clashes. This must be possible as there are many SaaS companies who do the same thing :slightly_smiling_face: Who would be the key people on your side that would need to be involved in this?",
+      "time": "11:37",
+      "timestamp": "1664995056.573139",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think that would be @kunal",
+      "time": "11:59",
+      "timestamp": "1664996357.061109",
+      "is_reply": true
+    },
+    {
+      "sender": "Bas",
+      "user_id": "U0290LSC5QA",
+      "message": "Great - do you want to be involved or Kunal is sufficient to cover this?",
+      "time": "12:00",
+      "timestamp": "1664996439.379939",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Kunal is sufficient. I don’t know much about our website other than to help out on miscellaneous bugs.\n\nMost of these constraints that we’re running into is because of the requirement that @Anant had for the marketing page to also be under the instabase.com/ (http://instabase.com/)… namespace. If that requirement can be lifted and we can move marketing over to a completely separate namespace and we won’t run into these conflicts on prod. May want him to be on the call as well.",
+      "time": "12:02",
+      "timestamp": "1664996565.289529",
+      "is_reply": true
+    },
+    {
+      "sender": "Bas",
+      "user_id": "U0290LSC5QA",
+      "message": "Thanks for the context!",
+      "time": "12:03",
+      "timestamp": "1664996639.150999",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Separately, @Cheryl Zhou can you help update the special route in nginx from `jpmc` to `jpmc-partnership`. Donagh is OOO.",
+      "time": "12:05",
+      "timestamp": "1664996704.319499",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "yes i can!",
+      "time": "12:06",
+      "timestamp": "1664996819.174519",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "thank you! :smile:",
+      "time": "12:07",
+      "timestamp": "1664996830.274909",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "PR here: https://github.com/instabase/instabase/pull/31366",
+      "time": "12:14",
+      "timestamp": "1664997256.075319",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-10-05.json",
+    "message_count": 45,
+    "start_time": "1664975520.288269",
+    "end_time": "1664997256.075319",
+    "is_thread": true
+  }
+}

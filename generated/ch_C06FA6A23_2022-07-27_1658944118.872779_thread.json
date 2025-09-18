@@ -1,0 +1,208 @@
+{
+  "id": "ch_C06FA6A23_2022-07-27_1658944118.872779_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Junwon Jang",
+    "Yan Wang",
+    "Dominic Fannjiang",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Hi all, when im on localhost, I keep getting gateway timeout errors when in filesystem, seemingly for any file service call. i just recompiled file-tservice and grpc-file-service and core-platform-service but still getting the issue. I don't see this happening on dogfood though. anyone else experiencing this?",
+      "time": "10:48",
+      "timestamp": "1658944118.872779",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Junwon Jang had similar issues here (https://instabase.slack.com/archives/C02RZS1UR6Z/p1658847055195929)",
+      "time": "10:50",
+      "timestamp": "1658944225.395079",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’d recommend re-compiling and restarting `api-server` as well",
+      "time": "10:50",
+      "timestamp": "1658944253.828589",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m guessing that you’ll see some errors in `api-server` when it tries to call `grpc-file-service` or `repo-service`",
+      "time": "10:51",
+      "timestamp": "1658944299.362569",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "~The error in Junwong’s post was fixed by @Yan Wang yesterday (or the day before?). If this is still happening on master, then I’l let Yan take a look.~",
+      "time": "10:52",
+      "timestamp": "1658944356.208519",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Actually, the symptoms are a little different from what Yan fixed 2 days ago. So this might not be totally related. Sorry for the disctraction.\nHere’s the thread I was referring to anyway: https://instabase.slack.com/archives/C02ACPHNMSQ/p1658778502352559?thread_ts=1658772571.929099&cid=C02ACPHNMSQ",
+      "time": "10:55",
+      "timestamp": "1658944544.737419",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "hm now i cant even load localhost, not really sure what changed :confused: curiously, there are no logs in api-server and apps-server generated when i navigate to localhost. only thing i see is the timeout logged in server-ngnix",
+      "time": "11:18",
+      "timestamp": "1658945915.998959",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "It works on my side.",
+      "time": "11:33",
+      "timestamp": "1658946788.524419",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "Could you please sync the latest master and rebuild?",
+      "time": "11:33",
+      "timestamp": "1658946800.422009",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "which service should i rebuild?",
+      "time": "11:34",
+      "timestamp": "1658946874.808899",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "I just build all using `lite`...",
+      "time": "11:35",
+      "timestamp": "1658946902.212739",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "still have the issue :confused: weird cause i cant find any logs that give any hint as to what is causing the gateway timeout",
+      "time": "11:51",
+      "timestamp": "1658947918.243049",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "Some interns had an issue caused by vpn. Not sure if that's related, but you can disable vpn and see if it works.",
+      "time": "12:17",
+      "timestamp": "1658949441.557289",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Dominic Fannjiang are there any error logs in core-platform-service or webapp?",
+      "time": "12:20",
+      "timestamp": "1658949627.412319",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "if you’re going to `localhost` exactly, that will go through `webapp`, not `apps-server`",
+      "time": "12:20",
+      "timestamp": "1658949641.600049",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "nothing in webapp besides\n```[2022-07-27 18:15:13 +0000] [1] [INFO] Listening at: http://0.0.0.0:5000 (1)\n\n[2022-07-27 18:15:13 +0000] [1] [INFO] Using worker: gthread\n\n[2022-07-27 18:15:13 +0000] [18] [INFO] Booting worker with pid: 18\n\n[2022-07-27 18:15:13 +0000] [19] [INFO] Booting worker with pid: 19\n\n[2022-07-27 18:15:13 +0000] [20] [INFO] Booting worker with pid: 20\n\n[2022-07-27 18:15:25,427] [MainProcess/MainThread] {instabase/shared/gunicorn_hooks_config.py:62} INFO - Worker pid: 20 started, curpid 20\n\n[2022-07-27 18:15:25,427] [MainProcess/MainThread] {instabase/shared/gunicorn_hooks_config.py:62} INFO - Worker pid: 18 started, curpid 18\n\n[2022-07-27 18:15:25,428] [MainProcess/MainThread] {instabase/shared/gunicorn_hooks_config.py:53} INFO - Potentially active pid: 18, curpid 19\n\n[2022-07-27 18:15:25,428] [MainProcess/MainThread] {instabase/shared/gunicorn_hooks_config.py:53} INFO - Potentially active pid: 20, curpid 19\n\n[2022-07-27 18:15:25,428] [MainProcess/MainThread] {instabase/shared/gunicorn_hooks_config.py:62} INFO - Worker pid: 19 started, curpid 19\n\n[2022-07-27 18:15:28,289] [MainProcess/Thread-2] {/instabase-server/py/instabase/config_utils/hot_config.py:114} INFO - Hotconfig update. Old: {\"LOG_LEVEL\": \"info\", \"STATS_ENABLED\": false, \"ENABLE_TRACING\": false}, New: {\"LOG_LEVEL\": \"info\", \"STATS_ENABLED\": false, \"ENABLE_TRACING\": false}\n\n[2022-07-27 18:15:28,290] [MainProcess/Thread-2] {/instabase-server/py/instabase/config_utils/hot_config.py:114} INFO - Hotconfig update. Old: {\"LOG_LEVEL\": \"info\", \"STATS_ENABLED\": false, \"ENABLE_TRACING\": false}, New: {\"LOG_LEVEL\": \"info\", \"STATS_ENABLED\": false, \"ENABLE_TRACING\": false}\n\n[2022-07-27 18:15:28,290] [MainProcess/Thread-2] {/instabase-server/py/instabase/config_utils/hot_config.py:114} INFO - Hotconfig update. Old: {\"LOG_LEVEL\": \"info\", \"STATS_ENABLED\": false, \"ENABLE_TRACING\": false}, New: {\"LOG_LEVEL\": \"info\", \"STATS_ENABLED\": false, \"ENABLE_TRACING\": false}```",
+      "time": "12:21",
+      "timestamp": "1658949678.882219",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m free to get on a call to debug with you after lunch? how about 1:30? @Dominic Fannjiang",
+      "time": "12:23",
+      "timestamp": "1658949832.644689",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "that should work! im recompilling everything without `--use-prebuilt` now . that worked for junwon apparently",
+      "time": "12:24",
+      "timestamp": "1658949857.358439",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "restarting webapp and api-server also worked, but then i had issues when i did `ppy start` , but recompiling everything made `ppy start` work too",
+      "time": "12:25",
+      "timestamp": "1658949925.473519",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah yes, i’m not sure how the prebuilt images are updated, so i always rebuild locally",
+      "time": "12:25",
+      "timestamp": "1658949926.076729",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "starting my services in local mode (_not docker_) makes things work! so far i've had to start api-server+apps-server+webapp in local mode. Not sure yet if I need to start all my services in local or not",
+      "time": "15:34",
+      "timestamp": "1658961246.873789",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "@Dominic Fannjiang I think the reason for this is due to some missing env vars for docker local and I have uploaded a pr to fix it. Thanks. https://github.com/instabase/instabase/pull/29076",
+      "time": "19:31",
+      "timestamp": "1658975469.855579",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "thank you!!",
+      "time": "22:52",
+      "timestamp": "1658987568.593549",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-07-27.json",
+    "message_count": 23,
+    "start_time": "1658944118.872779",
+    "end_time": "1658987568.593549",
+    "is_thread": true
+  }
+}

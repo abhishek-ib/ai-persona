@@ -1,0 +1,71 @@
+{
+  "id": "ch_C06FA6A23_2024-10-08_1728407382.524169_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena",
+    "Anil",
+    "Udit"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hey team, I have a general Q regarding v2 API error handling. We often do something like this to pass back the grpc error message & status code thru the API.\n```\nresp, err, grpc_err = GRPCClient.execute_with_code(\n        req, <grpc endpoint>)\n\nif err or grpc_err:\n   return handler_util_v2.http_response(grpc_err=grpc_err, err_msg=err)```\nHowever, this produces an api response like so:\n```{ message: \"Error occurred executing GRPC method: Request /account_service.AccountService/CreateOrgServiceAccount failed. Error code=INVALID_ARGUMENT, Error=(3, 'invalid argument'), Message: Service account name (deployment service account) already exists in the org (xindi-test-org-0329). Non-retriable error\" }```\nI would like to know how frontend folks should extract the real error message `Service account name (deployment service account) already exists in the org (xindi-test-org-0329)` from this API response and surface it to the user. Should the API layer change how it passes back the error message?",
+      "time": "10:09",
+      "timestamp": "1728407382.524169",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "This is a long pending issue. The API should ideally return just\n`Service account name (deployment service account) already exists in the org (xindi-test-org-0329)`\nWe should log the full error and return just the msg in API response.",
+      "time": "10:22",
+      "timestamp": "1728408132.573649",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I see. Definitely would be great to fix this!",
+      "time": "10:25",
+      "timestamp": "1728408311.987739",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": ":plus-1: this has been like this for a while",
+      "time": "10:27",
+      "timestamp": "1728408470.859259",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Gaurav Saini has a relevant doc that could help address this https://docs.google.com/document/d/1pNFQ7Z5FOIcnOTNVPjgWLmM8_e_xlNx32PXc7iAeaYk/edit?disco=AAABWFasGq4 (https://docs.google.com/document/d/1pNFQ7Z5FOIcnOTNVPjgWLmM8_e_xlNx32PXc7iAeaYk/edit?disco=AAABWFasGq4)",
+      "time": "14:54",
+      "timestamp": "1728424491.872729",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you for linking the doc!",
+      "time": "14:56",
+      "timestamp": "1728424614.636209",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-08.json",
+    "message_count": 6,
+    "start_time": "1728407382.524169",
+    "end_time": "1728424614.636209",
+    "is_thread": true
+  }
+}

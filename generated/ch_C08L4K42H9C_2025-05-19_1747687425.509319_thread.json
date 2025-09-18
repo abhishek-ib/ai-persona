@@ -1,0 +1,118 @@
+{
+  "id": "ch_C08L4K42H9C_2025-05-19_1747687425.509319_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "prateek.tenkale",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Paul H @prateek.tenkale have you synced on this bug (https://instabase.atlassian.net/browse/EPD-4368?focusedCommentId=141388) yet? it seems you'll need to discuss whether to fix this on the FE and/or the BE",
+      "time": "13:43",
+      "timestamp": "1747687425.509319",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "No, we have not synced. @prateek.tenkale let me know when is a good time for you",
+      "time": "13:54",
+      "timestamp": "1747688067.846439",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Give me like 10 mins to get context on this bug",
+      "time": "14:01",
+      "timestamp": "1747688478.176049",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Ayesha told me about it last week, thought it was def a FE bug but let me take another look",
+      "time": "14:01",
+      "timestamp": "1747688511.148559",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I added some notes to the ticket — this bug we’re observing is from a FE bug fix which shouldn’t have been a FE bug fix in the first place.",
+      "time": "14:22",
+      "timestamp": "1747689754.306179",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "@Paul H Quick huddle?",
+      "time": "14:33",
+      "timestamp": "1747690407.390969",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Sure one second",
+      "time": "14:34",
+      "timestamp": "1747690457.418539",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "did you two decide on an approach?",
+      "time": "15:49",
+      "timestamp": "1747694980.328119",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "We went for a third approach: the frontend was sending a `field_type` of `TEXT` for this array of objects field, so change it to `LIST` since the backend uses that to determine whether to parse the value or not.\n\nbut @prateek.tenkale after some investigation, I see why we have `DICT_LIST` in the frontend only, despite it not existing in the backend. It’s to distinguish between an array of objects vs. an array of arrays (e.g. `[{ foo: 1, bar: 2 }]` vs. `[['foo', 'bar'], [1, 2]]` ). For example:\n1. The backend gives a field value as a stringy array of objects\n2. For some reason, the frontend converts that into an array of arrays and sets the `fieldType` as `DICT_LIST` in redux\n    a. Maybe this conversion is to match some table component API? Or jerry rigged to fit with existing code?\n3. Upon save (aka before the `/set-records`), the frontend checks if the field type is `DICT_LIST` and if so, convert the array of arrays back into an object list.\nSo changing the field type into a `LIST`  makes *subsequent* saves skip step 3, which results in the field value being stored as a stringy array of arrays (which does not match its original format of stringy array of objects). I have no idea what the downstream implications for this are",
+      "time": "16:14",
+      "timestamp": "1747696473.542179",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "So this third approach will probably cause some bugs later down the line which I’m not too keen on.",
+      "time": "16:15",
+      "timestamp": "1747696513.953909",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> Maybe this conversion is to match some table component API?\nyes, we convert the list-of-objects value into an array of arrays, so that it appears as a \"table\" in the UI\n\nthis is to ensure consistency between the Human Review UI and Build UI, while also returning `[{ foo: 1, bar: 2 }]` when users fetch run results via API",
+      "time": "18:36",
+      "timestamp": "1747705014.892269",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> So changing the field type into a `LIST`  makes *subsequent* saves skip step 3, which results in the field value being stored as a stringy array of arrays (which does not match its original format of stringy array of objects)\nyeah i don't think approach 3 is viable for exactly this reason\n\nthe downstream implication is that we won't display this value correctly on the FE since the stored value is now formatted differently\n\nit seems you found yet another solution in your PR though! :eyes: :tada:",
+      "time": "18:39",
+      "timestamp": "1747705161.114529",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-05-19.json",
+    "message_count": 12,
+    "start_time": "1747687425.509319",
+    "end_time": "1747705161.114529",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "id": "ch_C06FA6A23_2020-01-15_1579119152.086200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Aaron Vontell"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@Shivam and I were debugging a UDF-based Flow and found two bugs,\n@shaunak it looks like the “load_from_str” functions for IBOCR fails when the IBDOC represents a text file\n@dlluncor there is a bug with strutils - in Py2 we allowed passing in non-strings, but in Py3 it needs a string:\n```if PY3:\n\n  def get_bytes(text, encodings=('utf-8', 'latin1', 'ascii'), errors='ignore'):\n    # type: (Union[Text, bytes], Iterable, str) -> bytes\n    if isinstance(text, bytes):\n      return text\n    return text.encode('utf-8')\nelse:\n\n  def get_bytes(text, encodings=('utf-8', 'latin1', 'ascii'), errors='ignore'):\n    # type: (Union[Text, bytes], Iterable, str) -> bytes\n    if isinstance(text, unicode):\n      for encoding in encodings:\n        try:\n          return text.encode(encoding=encoding, errors=errors)\n        except UnicodeEncodeError:\n          pass\n\n    return bytes(text)```",
+      "time": "12:12",
+      "timestamp": "1579119152.086200",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Aaron Vontell can you provide me with the flow that is creating this issue?",
+      "time": "16:23",
+      "timestamp": "1579134212.095900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-01-15.json",
+    "message_count": 2,
+    "start_time": "1579119152.086200",
+    "end_time": "1579134212.095900",
+    "is_thread": true
+  }
+}

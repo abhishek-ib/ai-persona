@@ -1,0 +1,112 @@
+{
+  "id": "ch_C0516UPPMT3_2023-07-25_1690299967.091699_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "andy",
+    "Lee",
+    "Varun Jain",
+    "ChrisM"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Hey, when will APIs be available on AI Hub? We’ve got a customer that wants to start calling via API and building apps themselves, but I can’t give them access until I can allow them to call via API.",
+      "time": "08:46",
+      "timestamp": "1690299967.091699",
+      "is_reply": false
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "We have the run apps API in private preview with 23.07. First version of converse APIs will come with 23.08 in another month. cc: @avi @andy",
+      "time": "09:11",
+      "timestamp": "1690301476.763809",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "@Lee do you have any details on what kind of workflow the customer is trying to enable through API?",
+      "time": "09:35",
+      "timestamp": "1690302914.024739",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Lee if you can add the use case to this EPD ticket -- what's the app the the customer wants to build themselves, and what are the APIs they might be expecting\nhttps://instabase.atlassian.net/browse/EPD-237",
+      "time": "09:50",
+      "timestamp": "1690303845.941669",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Thanks. This is for a parter in France. Pretty simple document, extracting a few fields off a single page. They would need to upload a document, run an app, get results. No validations or deterministic refinements needed. \n\nHow close to the current APIs will AI Hub APIs be? They are looking to do this as simply as possible, preferably via long polling or some other synchronous approach. But if they need to poll for results that’ll be fine for now. \n\n@Kerry will get this added to the ticket.",
+      "time": "12:08",
+      "timestamp": "1690312089.069559",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "They did have questions around if they create the app in a personal AI Hub account (their gmail) how do they make this available / share this to a shared work account for API access. I didn’t have a good answer to this.",
+      "time": "12:09",
+      "timestamp": "1690312147.237249",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Another thought, checkboxes are a requirement which could force me back to Enterprise until we have that in AI Hub",
+      "time": "12:12",
+      "timestamp": "1690312374.506859",
+      "is_reply": true
+    },
+    {
+      "sender": "ChrisM",
+      "user_id": "U03AB9GNNAH",
+      "message": "@Lee Is this QuickSign?",
+      "time": "12:49",
+      "timestamp": "1690314558.186919",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "@ChrisM nope this is Arondor for Aon",
+      "time": "13:02",
+      "timestamp": "1690315345.365229",
+      "is_reply": true
+    },
+    {
+      "sender": "ChrisM",
+      "user_id": "U03AB9GNNAH",
+      "message": "If he is not already, please be sure @Darragh Byrne is in the loop. Thank you.",
+      "time": "13:03",
+      "timestamp": "1690315381.399669",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "@Lee, I have a script that shows how it would be like to actually run and get results from an App using our current APIs in 23.07. For (most likely) 23.08, we’re looking at creating a synchronous approach that also abstracts away the 4 different APIs that need to be called today. The other blocker to get this enabled for AI Hub that we are currently addressing is just surfacing the API token to AI Hub users.\n\n```from typing import Optional\n\nimport requests\nimport time\n\nAPP_NAME = 'EXAMPLE-APP-NAME'\nIB_INPUT_FILE_DIR = 'primary-drive/input/files/here/'\nAPI_TOKEN = 'ADD-YOUR-API-TOKEN-HERE'\n\nAPI_BASE_URL = 'https://aihub.instabase.com/api'\nAPI_HEADERS = {\n    'Authorization': f'Bearer {API_TOKEN}'\n}\n\n\ndef upload_input_files(input_file_dir: str, input_files_content: list[str]) -> None:\n    # Step 1: Create input folder\n    create_folder_payload = {\n        'name': 'input',\n        'node_type': 'folder',\n    }\n    create_folder_resp = requests.post (http://requests.post)(f'{API_BASE_URL}/v2/files/{input_file_dir}/input/', headers=API_HEADERS, data=create_folder_payload)\n    if create_folder_resp.status_code != 201:\n        raise RuntimeError(f'Failed to create input file folder at {input_file_dir}')\n\n    # Step 2: Add input files to folder\n    for input_file_index, input_file_content in enumerate(input_files_content):\n        input_file_name = f'input_file_{input_file_index}.png'\n        input_file_data = bytes(input_file_content, 'utf-8')\n\n        upload_resp = requests.post (http://requests.post)(f'{API_BASE_URL}/v2/files/{input_file_dir}/input/{input_file_name}', headers=API_HEADERS, data=input_file_data)\n        if upload_resp.status_code != 204:\n            raise RuntimeError(f'Failed to upload file {input_file_name} to Instabase')\n\n\ndef run_app(input_file_dir: str, app_name: str) -> dict:\n    # Step 1: Run App\n    run_app_payload = {\n        'input_dir': input_file_dir,\n        'name': app_name,\n    }\n    run_app_resp = requests.post (http://requests.post)(f'{API_BASE_URL}/v2/projects/app/run', headers=API_HEADERS, data=run_app_payload)\n    if run_app_resp.status_code != 202:\n        raise RuntimeError(f'App Run API failed: {run_app_resp.status_code} {run_app_resp.text}')\n\n    run_job_id = run_app_resp.json().get('payload', {}).get('job_id', '')\n    if not run_job_id:\n        raise KeyError(f'Job Id not found in successful App Run API response')\n\n    # Step 2: Poll Job until Complete\n    job_status = ''\n    while job_status != 'COMPLETE':\n        # Wait before re-polling job status\n        time.sleep(5)\n\n        job_status_payload = {\n            'job_id': run_job_id,\n            'type': 'flow'\n        }\n        job_status_resp = requests.get(f'{API_BASE_URL}/v1/jobs/status', headers=API_HEADERS, data=job_status_payload)\n        if job_status_resp.status_code != 200:\n            raise RuntimeError(f'Job Status API failed: {job_status_resp.status_code} {job_status_resp.text}')\n        \n        job_status_resp = job_status_resp.json()\n        job_status = job_status_resp.get('status')\n        if not job_status:\n            raise KeyError('Invalid Job Status')\n\n    output_folder_path = job_status_resp.get('results', {}).get('output_folder', '')\n    if not output_folder_path:\n        raise KeyError('Results file path not found')\n    ibflowresults_path = f'{output_folder_path}/batch.ibflowresults'\n\n    # Step 3: Retrieve Results\n    file_offset = 0\n    results_payload = {\n        'job_id': run_job_id,\n        'file_offset': file_offset,\n        'ibresults_path': ibflowresults_path,\n    }\n    results_resp = requests.post (http://requests.post)(f'{API_BASE_URL}/v1/flow_binary/results', headers=API_HEADERS, data=results_payload)\n    if results_resp.status_code != 200:\n        raise RuntimeError('Failed to retrieve results')\n\n    return results_resp.json()\n\n\nupload_input_files(IB_INPUT_FILE_DIR, [])  # Link input file content here\nrun_app(IB_INPUT_FILE_DIR, APP_NAME)```",
+      "time": "16:11",
+      "timestamp": "1690326686.714959",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-07-25.json",
+    "message_count": 11,
+    "start_time": "1690299967.091699",
+    "end_time": "1690326686.714959",
+    "is_thread": true
+  }
+}

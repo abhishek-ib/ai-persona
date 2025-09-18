@@ -1,0 +1,103 @@
+{
+  "id": "ch_C05L87V014J_2025-03-25_1742937686.681509_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "jordy.vlan",
+    "Serena",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Is anyone else seeing model-service get stuck on entity inference in crafting? I'm trying to digitize a bank statement, and the last log lines I see in celery-app-tasks are below, and it just hangs:\n```[2025-03-25 21:18:38,333] [ForkPoolWorker-14/ThreadPoolExecutor-9_0] {/instabase/workers/celery-app-tasks/py/instabase/flow/ocr_utils/ocr_util.py:959} INFO - [trace_id=] - job-id=8cc8c3d0-f1a1-4edf-a253-5c2ef09ed886 task-id=8cc8c3d0-f1a1-4edf-a253-5c2ef09ed886-Stage2 username=lydia_instabase.com (http://lydia_instabase.com) stage-id=Stage2 step=process_files OCR request completed - Path=90adb434-10bd-4e5c-a437-fced7fb1c32b__Aaron Andrade.pdf_p1.JPEG TimeTaken=1.31s\n[2025-03-25 21:18:38,333] [ForkPoolWorker-14/ThreadPoolExecutor-9_0] {/instabase/workers/celery-app-tasks/py/instabase/flow/ocr_utils/ocr_util.py:985} INFO - [trace_id=] - job-id=8cc8c3d0-f1a1-4edf-a253-5c2ef09ed886 task-id=8cc8c3d0-f1a1-4edf-a253-5c2ef09ed886-Stage2 username=lydia_instabase.com (http://lydia_instabase.com) stage-id=Stage2 step=process_files Selected best rotation - Path=90adb434-10bd-4e5c-a437-fced7fb1c32b__Aaron Andrade.pdf_p1.JPEG TimeTaken=0.00s\n[2025-03-25 21:18:38,428] [ForkPoolWorker-14/ThreadPoolExecutor-10_0] {/instabase/workers/celery-app-tasks/py/instabase/flow/runnables/process_file/entity_util.py:219} INFO - [trace_id=] - job-id=8cc8c3d0-f1a1-4edf-a253-5c2ef09ed886 task-id=8cc8c3d0-f1a1-4edf-a253-5c2ef09ed886-Stage2 username=lydia_instabase.com (http://lydia_instabase.com) stage-id=Stage2 step=process_files Running Entity Inference: 90adb434-10bd-4e5c-a437-fced7fb1c32b__Aaron Andrade.pdf_p1.JPEG\n[2025-03-25 21:18:38,429] [ForkPoolWorker-14/ThreadPoolExecutor-10_1] {/instabase/workers/celery-app-tasks/py/instabase/flow/runnables/process_file/entity_util.py:219} INFO - [trace_id=] - job-id=8cc8c3d0-f1a1-4edf-a253-5c2ef09ed886 task-id=8cc8c3d0-f1a1-4edf-a253-5c2ef09ed886-Stage2 username=lydia_instabase.com (http://lydia_instabase.com) stage-id=Stage2 step=process_files Running Entity Inference: 90adb434-10bd-4e5c-a437-fced7fb1c32b__Aaron Andrade.pdf_p1.JPEG```",
+      "time": "14:21",
+      "timestamp": "1742937686.681509",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I see this in model-service logs, which I'm kind of confused about - is it rebuilding the docker container?\n\n```#29 unpacking to docker.io/instabase/model-service:latest (http://docker.io/instabase/model-service:latest) 301.2s done\n#29 DONE 787.4s\n\n#30 exporting cache to registry\n#30 preparing build cache for export\n#30 writing layer sha256:048e49602e0e254af25a7dc97c10a17c9002a0199f29f9c15f0a56396a5c0790\n#30 writing layer sha256:048e49602e0e254af25a7dc97c10a17c9002a0199f29f9c15f0a56396a5c0790 0.0s done\n#30 writing layer sha256:1c4e7f383a8cfcdb5fd0b539e0c77deabd74f158e4e34e7fbe3012c04147a8ae\n#30 writing layer sha256:1c4e7f383a8cfcdb5fd0b539e0c77deabd74f158e4e34e7fbe3012c04147a8ae 6.0s done\n#30 writing layer sha256:1d5619686bbf412b09175fe31b57e5383b2389e93062968d343c1d32f3a5cfb5\n#30 writing layer sha256:1d5619686bbf412b09175fe31b57e5383b2389e93062968d343c1d32f3a5cfb5 0.5s done\n#30 writing layer sha256:37a2648dc0b74eb88e36b87366262211f5614ef0ed38619b7fb013c3428346b2```",
+      "time": "14:23",
+      "timestamp": "1742937795.706399",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Yeah, I also recently realized that rebuilding model-service has suddenly become very slow…",
+      "time": "14:26",
+      "timestamp": "1742938017.889949",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "huh not sure what happened but it finished building and docs finally digitized :slightly_smiling_face:",
+      "time": "14:56",
+      "timestamp": "1742939806.869039",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "As I said, \"just very slow\" :p",
+      "time": "14:58",
+      "timestamp": "1742939900.502559",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> is it rebuilding the docker container?\nyes, model-service probably took a while to build and start up since you haven't restarted your sandbox in a while",
+      "time": "15:31",
+      "timestamp": "1742941908.635919",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This rings a bell. It happened once before when we were having DNS resolution issues. I think the digitizer tries to hit some external DNS name (I forget which) for about 10 minutes before finally giving up and continuing without whatever service it was looking for. This may or may not be the same thing.",
+      "time": "16:44",
+      "timestamp": "1742946278.926799",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think it was some Microsoft/azure/something endpoint.",
+      "time": "16:45",
+      "timestamp": "1742946300.171739",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems that after `model-service` finished building and actually started, digitization worked as expected in lydia's sandbox\n\nwe shouldn't have the DNS resolution issues since you fixed this in env-local.json (https://github.com/instabase/instabase/pull/66567/files) and fixed the DNS configs in the ibdev-backend template (https://instabase.atlassian.net/wiki/spaces/TI/pages/2213183494/Deprecated+Use+PPY+on+Crafting#Q%3A-How-do-I-enable-form-recognizer-for-apps-that-have-entity-detection-on-so-that-celery-app-task-logs-don%E2%80%99t-hang-with-ASYNC-CALL-TO-form-recognizer%3F)",
+      "time": "16:46",
+      "timestamp": "1742946412.946609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah, that makes sense. model-service being unavailable would definitely cause this",
+      "time": "17:07",
+      "timestamp": "1742947651.574749",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-25.json",
+    "message_count": 10,
+    "start_time": "1742937686.681509",
+    "end_time": "1742947651.574749",
+    "is_thread": true
+  }
+}

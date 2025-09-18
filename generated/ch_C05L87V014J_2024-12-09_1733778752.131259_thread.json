@@ -1,0 +1,61 @@
+{
+  "id": "ch_C05L87V014J_2024-12-09_1733778752.131259_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "ligao.zhang",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "I created a sandbox using Matt's last template, I got 2 issues:\n1: I can't create a project, this seems related to this PR: (https://github.com/instabase/instabase/pull/65726/files), after I convert this code change and recompile/restart *api-server* and *celery-app-tasks*, I can create project and upload file\n2: after uploading file, when I tried to create an app, I got error from *celery-app-tasks*:\n`[2024-12-09 21:00:51,498] [ForkPoolWorker-18/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/solution_utils/deployed_solution_util.py:215} ERROR - [trace_id=a224693d1804d038] - Error in creating directories system/global/fs/Instabase Drive/Applications/Deployed/All/e7b6666e-ab87-485e-a1f4-93f40e8f93fb. Err: [File_service_v2 Enabled] Error occurred executing GRPC method: Request /file_service.FileService/Mkdir failed. Error code=INTERNAL, Error=(13, 'internal'), Message: Failed to get system repo FS perms. Non-retriable error`\n`[2024-12-09 21:00:51,498] [ForkPoolWorker-18/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/solution_utils/deployed_solution_util.py:900} ERROR - [trace_id=a224693d1804d038] - Error writing deployed solution to the filesystem: [File_service_v2 Enabled] Error occurred executing GRPC method: Request /file_service.FileService/Mkdir failed. Error code=INTERNAL, Error=(13, 'internal'), Message: Failed to get system repo FS perms. Non-retriable error`\n`[2024-12-09 21:00:52,363] [ForkPoolWorker-18/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/aihub_utils/aihub_apps_util.py:715} ERROR - [trace_id=] - User: ligao.zhang.01_instabase.com (http://01_instabase.com) - Failed to create the app. Error: Error deploying solution to the filesystem. Rollback from database was successful: [File_service_v2 Enabled] Error occurred executing GRPC method: Request /file_service.FileService/Mkdir failed. Error code=INTERNAL, Error=(13, 'internal'), Message: Failed to get system repo FS perms. Non-retriable error`\n\nerror from file-service, seems we need to add a user `aihub_marketplace_admin` ?\n`2024/12/09 21:16:25 ERROR fileservice/handler/acl.go:41 -- [INTERNAL]: Failed to get system repo FS perms (Err: code = INTERNAL msg = User (aihub_marketplace_admin) not found)`\n`2024/12/09 21:16:25 ERROR fileservice/handler/file.go:321 -- [ERROR][stat] Username: aihub_marketplace_admin, Path: system/global/fs/Instabase Drive/Applications/Deployed/All/2f780950-b241-4fc8-8640-559de0605552, Err: rpc error: code = Internal desc = Failed to get system repo FS perms, Time: 1ms, Size: 0Bytes`",
+      "time": "13:12",
+      "timestamp": "1733778752.131259",
+      "is_reply": false
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "I find this doc (https://docs.google.com/document/d/1IndR3LfrkciQR-M_of76Rdxd9uAIMRSaXRirhTLyBcw/edit?tab=t.0) mentioned 'aihub_marketplace_admin',  and this code (https://github.com/instabase/instabase/blob/9b85c04e91d7cc4c52ea4e72d12d9810d413f51e/shared-utils/py-utils/module-type-utils/src/py/instabase/aihub_utils/constants.py#L26), the issues here is we need a *aihub_marketplace_admin* but it was not created in sandbox?",
+      "time": "13:59",
+      "timestamp": "1733781597.946179",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Correct, an aihub_marketplace_admin user is necessary for creating an app in AI Hub\n\nThere are several steps for initializing required state for an AI Hub sandbox (as described in that doc you linked!)\n\nThere’s a post-install action now for handling this in AI Hub sandboxes created via ICC - maybe we could run this post-install action somehow for new crafting sandboxes using your template? @mfichman",
+      "time": "14:53",
+      "timestamp": "1733784829.439029",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "From this doc,  for each env,  we need to add aihub_guest password to 1pass, add callback url to Google auth/drive, will it be a best practice to add all personal dev env urls/userinfo to 1pass and GoogleAuth? I am thinking if we could have a more elegant practice :no_mouth:.",
+      "time": "15:06",
+      "timestamp": "1733785561.092649",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "comment from doc (https://docs.google.com/document/d/1IndR3LfrkciQR-M_of76Rdxd9uAIMRSaXRirhTLyBcw/edit?disco=AAABPWOE4BE): This is automated in the license-aihub post-install action,\n\nThe issue maybe sandbox creation without  license-aihub post-install action.",
+      "time": "15:22",
+      "timestamp": "1733786533.545949",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-09.json",
+    "message_count": 5,
+    "start_time": "1733778752.131259",
+    "end_time": "1733786533.545949",
+    "is_thread": true
+  }
+}

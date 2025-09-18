@@ -1,0 +1,37 @@
+{
+  "id": "ch_C0976HB6ZPT_2025-09-02_1756857328.930219_thread",
+  "type": "channel",
+  "channel_name": "proj-agent-mode",
+  "conversation_type": "thread",
+  "participants": [
+    "jordy.vlan",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Did some trial and error.\nOne thing that looked promising - https://ai.google.dev/gemini-api/docs/structured-output#json-schema\nUsing JSON schema reduces the schema size significantly as we can use $ref\nThis didn’t help.\n\nI changed the field names in the schema\nbounding_box_details -> box_2ds\npage_numbers -> pages\npage_number -> page\n\nThis let me increase number of fields from 30 to 36 (20% improvement) - we should do this by default.\n\nNeed to define some heuristic where one shot no longer works. For larger number of fields, idea 1\n1. Extract all the data using gemini thinking\nclassification + extraction - this should allow us to support ~ 100-120 fields (up from 25-30 right now)\n2. Make multiple calls to gemini non-thinking to get provenance for each of the chunks.\n\nidea 2\n1. Classify\n2. Chunk the PDF based on page number from classify and run extraction per class\nIf total number of fields > 100 - return a good error message.",
+      "time": "16:55",
+      "timestamp": "1756857328.930219",
+      "is_reply": false
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "If we think about supporting other providers, JSON schema is supported by all and should become the standard ;)",
+      "time": "23:02",
+      "timestamp": "1756879359.306129",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0976HB6ZPT",
+    "channel_name": "proj-agent-mode",
+    "date_file": "2025-09-02.json",
+    "message_count": 2,
+    "start_time": "1756857328.930219",
+    "end_time": "1756879359.306129",
+    "is_thread": true
+  }
+}

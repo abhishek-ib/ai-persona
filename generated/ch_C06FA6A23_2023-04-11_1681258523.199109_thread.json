@@ -1,0 +1,127 @@
+{
+  "id": "ch_C06FA6A23_2023-04-11_1681258523.199109_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "youngmok.cho",
+    "Heymian",
+    "Yiqing"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Who can I bug about celery-webdriver-tasks failing?\nError in my sandbox:\n```Defaulted container \"celery-webdriver-tasks\" out of: celery-webdriver-tasks, envoy-proxy, fluent-bit-sidecar, jaeger-agent, stats-coll\nUsage: celery [OPTIONS] COMMAND [ARGS]...\nTry 'celery --help' for help.\n\nError: Invalid value for '-A' / '--app':\nUnable to load celery application.\nWhile trying to load the module instabase.registry.tasks the following error occurred:\nTraceback (most recent call last):\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/celery/app/utils.py\", line 384, in find_app\n    sym = symbol_by_name(app, imp=imp)\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/kombu/utils/imports.py\", line 61, in symbol_by_name\n    return getattr(module, cls_name) if cls_name else module\nAttributeError: module 'instabase.registry' has no attribute 'tasks'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/celery/bin/celery.py\", line 53, in convert\n    return find_app(value)\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/celery/app/utils.py\", line 387, in find_app\n    sym = imp(app)\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/celery/utils/imports.py\", line 100, in import_from_cwd\n    return imp(module, package=package)\n  File \"/opt/python-3.7.16/lib/python3.7/importlib/__init__.py\", line 127, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n  File \"<frozen importlib._bootstrap>\", line 1006, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 983, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 967, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 677, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 728, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 219, in _call_with_frames_removed\n  File \"/instabase/workers/celery-webdriver-tasks/py/instabase/registry/tasks.py\", line 77, in <module>\n    from instabase.tasks.fetcher import fetch_files_lib\n  File \"/instabase/workers/celery-webdriver-tasks/py/instabase/tasks/fetcher/fetch_files_lib.py\", line 22, in <module>\n    from instabase.data_api_utils._fetcher import platform_fetchers\n  File \"/instabase/workers/celery-webdriver-tasks/py/instabase/data_api_utils/_fetcher/platform_fetchers.py\", line 4, in <module>\n    from instabase.data_api_utils._fetcher import fetch_attachments_util\n  File \"/instabase/workers/celery-webdriver-tasks/py/instabase/data_api_utils/_fetcher/fetch_attachments_util.py\", line 1, in <module>\n    from extract_msg import Message\nModuleNotFoundError: No module named 'extract_msg'```\nI’m curious if it’s related to my base image update PR https://github.com/instabase/instabase/pull/38930, but it seems unlikely",
+      "time": "17:15",
+      "timestamp": "1681258523.199109",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think this is a recent change introducing the extract_msg library into a py-utils, which is imported into both app-tasks and webdriver-tasks. Looks only the dependency was only added to app-tasks and webdriver-tasks was missed.\nhttps://github.com/instabase/instabase/pull/38223\n\n@Anurag Mudgil @Rakesh",
+      "time": "17:22",
+      "timestamp": "1681258964.168769",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Looks like this would’ve also broken the 23.01 branch since the cherry-pick was made. I’m a bit surprised we didn’t catch this in our 23.01 release sandbox.",
+      "time": "17:24",
+      "timestamp": "1681259076.757579",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Oh wait, just kidding, the dep did get added to webdriver in the cherry-pick, but it’s missing on master.",
+      "time": "17:25",
+      "timestamp": "1681259117.222429",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Hrm, so why isn’t this failing our dogfood deploy from master.",
+      "time": "17:27",
+      "timestamp": "1681259228.958319",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Glad I could make life confusing :joy:",
+      "time": "17:30",
+      "timestamp": "1681259409.360979",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "I think the libraries were added to master as well from this PR https://github.com/instabase/instabase/pull/38223/files#diff-8a526cf6b09b8ba85aa18c9f0b423677c33fce5b4b1521166761550f0de23c74",
+      "time": "17:31",
+      "timestamp": "1681259471.093909",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Oh i see, there’s another PR. yeah, a bit confused. Are you on latest master Cody?",
+      "time": "17:44",
+      "timestamp": "1681260279.173159",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "https://github.com/instabase/instabase/pull/38533",
+      "time": "17:45",
+      "timestamp": "1681260304.815709",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "Some contexts can be found here: https://instabase.slack.com/archives/C01E4D91VK5/p1680635201838609?thread_ts=1680630839.452449&cid=C01E4D91VK5",
+      "time": "17:46",
+      "timestamp": "1681260368.927159",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ah got it, thanks Yiqing! Seems like Cody got unlucky and picked up a commit between the original PR and the fix",
+      "time": "17:46",
+      "timestamp": "1681260419.163029",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "Yeah, just merge from master should help",
+      "time": "17:47",
+      "timestamp": "1681260443.581529",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oooh, makes sense. Impeccable timing as always, yea? :joy: \n\nThanks all!!",
+      "time": "17:52",
+      "timestamp": "1681260763.818469",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-04-11.json",
+    "message_count": 13,
+    "start_time": "1681258523.199109",
+    "end_time": "1681260763.818469",
+    "is_thread": true
+  }
+}

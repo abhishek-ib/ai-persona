@@ -1,0 +1,103 @@
+{
+  "id": "ch_C06FA6A23_2022-09-27_1664314297.995089_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Cheryl Zhou",
+    "Heymian",
+    "Yan Wang"
+  ],
+  "messages": [
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "hi team, I'm trying to get the SAML sandbox running on the latest master. but after deployment i have not been able to log in with the credentials on 1password. when I enter the credentials I get a blank page. I am also not seeing any errors from the Network tab, but just a warning:\n```DevTools failed to load source map: Could not load content for https://saml.sandbox.instabase.com/static/output/toastr.js.map: HTTP error: status code 404, net::ERR_HTTP_RESPONSE_CODE_FAILURE```\nI also did the following:\n1. clearing out my cache and cookies\n2. confirmed that all pods are running (https://console.cloud.google.com/kubernetes/discovery?project=instabase-dev&pageState=(%22savedViews%22:(%22i%22:%223a17cc3cf0454dce873fd25c9f079836%22,%22c%22:%5B%5D,%22n%22:%5B%22saml%22%5D)))\nHas anyone had this issue before? Would appreciate any pointers :pray:",
+      "time": "14:31",
+      "timestamp": "1664314297.995089",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "you may want to dive into the webapp logs and see if there are any errors surfacing there",
+      "time": "15:29",
+      "timestamp": "1664317778.740799",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I see:\n```2022-09-27 15:29:09.692 PDTTraceback (most recent call last): File \"/instabase-server/py/instabase/utils/web/handler_util.py\", line 32, in inner_func return f(*args, **kwargs) File \"/instabase-server/py/instabase/handler/sso/saml2.py\", line 363, in post userSession, groups, url, is_first_time_login=False, clients=clients) File \"/instabase-server/py/instabase/handler/sso/saml2.py\", line 137, in _request_org_selection_or_login account_service_pb2.SAML) File \"/instabase-server/py/instabase/handler/sso/saml2.py\", line 42, in _update_authorized_groups_for_user authority_type=account_service_pb2.AuthorityType(authority_type), TypeError: 'EnumTypeWrapper' object is not callable```",
+      "time": "15:30",
+      "timestamp": "1664317829.117179",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Looks like it could be related to the thrift migration work?",
+      "time": "15:30",
+      "timestamp": "1664317842.499509",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "fyi @Yan Wang",
+      "time": "15:31",
+      "timestamp": "1664317860.527789",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Reminds me, we should probably build a manual test plan and make sure we hit some of these more obscure code paths. E.g. we should test out LDAP as well, which I think @Victor Zeng may know how to setup.",
+      "time": "15:32",
+      "timestamp": "1664317924.974289",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Interesting.",
+      "time": "15:33",
+      "timestamp": "1664318016.887289",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "There’s a guide for setting up ldap here: https://instabase.atlassian.net/wiki/spaces/CI/pages/1202978835/How+to+set+up+LDAP+integration+locally+and+in+sandboxes",
+      "time": "15:34",
+      "timestamp": "1664318048.359589",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "@Yan Wang @Heymian i think i know the issue. will put in a fix shortly",
+      "time": "15:42",
+      "timestamp": "1664318560.701739",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "@Yiqing",
+      "time": "16:25",
+      "timestamp": "1664321159.686449",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-09-27.json",
+    "message_count": 10,
+    "start_time": "1664314297.995089",
+    "end_time": "1664321159.686449",
+    "is_thread": true
+  }
+}

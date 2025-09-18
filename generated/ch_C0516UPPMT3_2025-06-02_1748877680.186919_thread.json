@@ -1,0 +1,112 @@
+{
+  "id": "ch_C0516UPPMT3_2025-06-02_1748877680.186919_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Varun Nandan",
+    "Hamish",
+    "Kaustubh (KD)",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "This is super helpful. Thank you for finding a good example. @Hamish I don't have access here but can you give me access? Do you know what type of fields these are? Are they text extraction (I'm assuming they are)",
+      "time": "08:21",
+      "timestamp": "1748877680.186919",
+      "is_reply": false
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "cc: @Serena / @Atinder good example",
+      "time": "08:21",
+      "timestamp": "1748877693.798889",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Hamish can you also give me access to this environment?\n\nalso, when did the linked app run (https://nab.internal.instabase.com/review/d9c25216-4841-401f-95a4-21b39f21c274) occur?",
+      "time": "15:56",
+      "timestamp": "1748904969.045279",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i see, i didn't look back far enough - the app run was running at around May 29 3:03am PT",
+      "time": "15:56",
+      "timestamp": "1748905017.297999",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw i see some `HTTP Request: POST https://aihub-australia.openai.azure.com/openai/deployments/gpt-4-1106/chat/completions?api-version=2024-10-01-preview \"HTTP/1.1 429 Too Many Requests\"` errors in the model-service logs  (https://nab.internal.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22ldq%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22model-service%5C%22%7D%20%7C%3D%20%60a91a25d2b9fa0e1f%60%20%7C%3D%20%60Too%20Many%20Requests%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22backward%22%7D%5D,%22range%22:%7B%22from%22:%221748509200000%22,%22to%22:%221748513399000%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1)around this time\n\nso i think that the `No value found` errors are bc of the rate limit with the `aihub-australia.openai.azure.com (http://aihub-australia.openai.azure.com)` OpenAI endpoints,  not bc of EPD-2900\n\ncc @Yash Botadra to take a look at whether any deployment configs can be adjusted to improve things",
+      "time": "16:03",
+      "timestamp": "1748905404.840519",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Rate limit errors are expected in AZ OpenAI in Aus. The rate limits for the gpt-4-1106 deployment (which now maps to gpt-4o because of an auto-upgrade) are really low.\n\nThat said, looking at the logs (https://nab.internal.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22ldq%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22model-service%5C%22%7D%20%7C~%20%60%28Failed%20model%7CFinished%20IBLLM%20request%29%60%20%21%3D%20%60SUCCESS%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22backward%22%7D%5D,%22range%22:%7B%22to%22:%221748513399000%22,%22from%22:%221748509200000%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D), it doesn’t look like these errors failed the model-service requests fully. We retry on getting these rate limit errors and it looks like all of them eventually succeeded.",
+      "time": "16:36",
+      "timestamp": "1748907386.831649",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "@Kaustubh (KD) @Serena invited and made you both admins!",
+      "time": "17:12",
+      "timestamp": "1748909521.113699",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "If you need any more details on behaviour then @Sankeerthana / @Shridhar Kawalkar have been doing the development here",
+      "time": "17:12",
+      "timestamp": "1748909544.982749",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "I believe they are Reasoning fields primarily",
+      "time": "17:12",
+      "timestamp": "1748909572.147549",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Nandan",
+      "user_id": "UKLRUHCUF",
+      "message": "In ANZ DEV also we are facing similar issue.\ncc: @Ananya @kushagra.agarwal @sneha.vejju @Nithin @bibhash.rajbongshi",
+      "time": "22:36",
+      "timestamp": "1748928994.711989",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "got it, so the rate limit errors may not be the root cause of the `No value found` issue in app runs\n\nwe'll need to take a closer look at the app run to investigate further\n\n@jordy.vlan can you also try to take a look? i don't see any errors for `Trust Deed - Ryan Family Trust.pdf` in model-service logs (https://nab.internal.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22kav%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22model-service%5C%22%7D%20%7C%3D%20%60Ryan%20Family%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22backward%22%7D%5D,%22range%22:%7B%22from%22:%221748509200000%22,%22to%22:%221748513399000%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1)\n\nhowever, it seemed that the extraction pipeline returned `Success` with `value: \"\"` or `value: \"N/A\"` for all fields on this file (ss1)\n\nis it possible that the azure openai endpoint just returns `\"\"` or `\"N/A\"` if we hit max retries?\n\ncc @Hari as well",
+      "time": "23:15",
+      "timestamp": "1748931346.799189",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-06-02.json",
+    "message_count": 11,
+    "start_time": "1748877680.186919",
+    "end_time": "1748931346.799189",
+    "is_thread": true
+  }
+}

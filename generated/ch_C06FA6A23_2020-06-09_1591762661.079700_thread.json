@@ -1,0 +1,117 @@
+{
+  "id": "ch_C06FA6A23_2020-06-09_1591762661.079700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Felicia",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "another issue running a flow locally.. flow is stuck on `Flow in progress... {}`\n\nin `app-tasks`\n```[2020-06-10 04:05:17,926: ERROR/ForkPoolWorker-2] [RPC Client] Service name: PDFService. Error executing thrift service method: get_pdf_metadata, err: unexpected exception\n(...)\n[2020-06-10 04:06:17,418: ERROR/ForkPoolWorker-2] [RPC Client, after refresh] Service name: PDFService. Error executing thrift service method: get_pdf_metadata, err: TSocket read 0 bytes\n[2020-06-10 04:06:17,423: ERROR/ForkPoolWorker-2] Retrying again on PDFService\n[2020-06-10 04:06:37,396: ERROR/ForkPoolWorker-3] [RPC Client] Service name: PDFService. Error executing thrift service method: get_pdf_metadata, err: TSocket read 0 bytes\n[2020-06-10 04:06:57,447: ERROR/ForkPoolWorker-2] [RPC Client] Service name: PDFService. Error executing thrift service method: get_pdf_metadata, err: TSocket read 0 bytes\n[2020-06-10 04:07:17,414: ERROR/ForkPoolWorker-3] [RPC Client, after refresh] Service name: PDFService. Error executing thrift service method: get_pdf_metadata, err: TSocket read 0 bytes\n[2020-06-10 04:07:17,415: ERROR/ForkPoolWorker-3] Retrying again on PDFService\n(...)```\n`pdf-tservice`\n```[main] WARN org.apache.thrift.server.TThreadPoolServer - Task has been rejected by ExecutorService 9 times till timedout, reason: java.util.concurrent.RejectedExecutionException: Task org.apache.thrift.server.TThreadPoolServer$WorkerProcess@67b64c45 rejected from java.util.concurrent.ThreadPoolExecutor@34ce8af7[Running, pool size = 2, active threads = 2, queued tasks = 0, completed tasks = 0] ```",
+      "time": "21:17",
+      "timestamp": "1591762661.079700",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "you running locally in docker?",
+      "time": "21:28",
+      "timestamp": "1591763312.079800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Try this locally for now, should fix it temporarily:\n```--- a/data-services/pdf-services/pdf-tservice/deployment/env/deployment-config.json\n+++ b/data-services/pdf-services/pdf-tservice/deployment/env/deployment-config.json\n@@ -5,8 +5,8 @@\n     \"pdf_tservice_min_memory\": \"3Gi\",\n     \"pdf_tservice_max_memory\": \"3Gi\",\n     \"pdf_tservice_min_cpu\": \"200m\",\n-    \"max_num_worker_threads\": 2,\n-    \"min_num_worker_threads\": 1,\n+    \"max_num_worker_threads\": 8,\n+    \"min_num_worker_threads\": 4,\n     \"max_image_size_in_mb\": 50,\n     \"max_split_file_size_in_mb\": 256,\n     \"pdfbox_max_memory_mb\": 512,```",
+      "time": "21:29",
+      "timestamp": "1591763390.080000",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "yup locally in docker! let me try this, thanks heymian :slightly_smiling_face:",
+      "time": "21:33",
+      "timestamp": "1591763585.080200",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "maybe there’s something i’m forgetting to do but when i build and run docker I still get the old number of worker threads",
+      "time": "22:47",
+      "timestamp": "1591768033.080500",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "```2020/06/10 05:42:10: Starting server on port 7500...\nPDFService Config:\n  fileHost=localhost\n  filePort=9900\n  port=7500\n  maxImageSize=50MB\n  logLevel=INFO\n  maxNumWorkerThreads=2\n  minNumWorkerThreads=1\n  pdfboxMaxMemory=512MB\n  pdfboxMaxStorage=1024MB```",
+      "time": "22:47",
+      "timestamp": "1591768035.080700",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "sorry, it’s late :sweat_smile:",
+      "time": "22:49",
+      "timestamp": "1591768196.080900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrm, okay the foolproof way:\n```--- a/data-services/pdf-services/pdf-tservice/src/main/java/com/instabase/extraction/pdfservice/Config.java\n+++ b/data-services/pdf-services/pdf-tservice/src/main/java/com/instabase/extraction/pdfservice/Config.java\n@@ -38,9 +38,9 @@ public class Config {\n     filePort = Integer.parseInt(env.getOrDefault(\"TSERVICE_FILE_PORT\", \"9900\"));\n\n     maxNumWorkerThreads = Integer\n-        .parseInt(env.getOrDefault(\"MAX_NUM_WORKERS_THREADS\", \"2\"));\n+        .parseInt(env.getOrDefault(\"MAX_NUM_WORKERS_THREADS\", \"8\"));\n     minNumWorkerThreads = Integer\n-        .parseInt(env.getOrDefault(\"MIN_NUM_WORKERS_THREADS\", \"1\"));\n+        .parseInt(env.getOrDefault(\"MIN_NUM_WORKERS_THREADS\", \"4\"));\n\n     maxImageSizeInMB = Integer.parseInt(env.getOrDefault(\"MAX_IMAGE_SIZE_IN_MB\", \"50\"));```",
+      "time": "23:01",
+      "timestamp": "1591768863.081100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "actually that’s not the foolproof way but might be worth trying?",
+      "time": "23:04",
+      "timestamp": "1591769042.081300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrm not sure why you’re not picking it up. if you don’t use provisioner, can you try just doing `make build runlocal`?",
+      "time": "23:04",
+      "timestamp": "1591769062.081500",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "Hmm let me try both first thing in the morning",
+      "time": "23:09",
+      "timestamp": "1591769367.081800",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "Thanks!!!",
+      "time": "23:09",
+      "timestamp": "1591769370.082000",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-06-09.json",
+    "message_count": 12,
+    "start_time": "1591762661.079700",
+    "end_time": "1591769370.082000",
+    "is_thread": true
+  }
+}

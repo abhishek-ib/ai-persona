@@ -1,0 +1,703 @@
+{
+  "id": "ch_C05L87V014J_2024-12-03_1733242246.041289_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "jordy.vlan",
+    "sean.donohoe",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Starting a thread on slowness/inability in obtaining files from Instabase Drive.\n`model-service` :\n```level=ERROR time=2024-12-03 16:05:34,510 msg=\"Error reading processed image file: testorgjvl/jvlinsta/fs/Instabase Drive/aihub/01938d29-9df0-7220-bd29-3480d61f8ef6/documents/out/original/images/6a72877c-748c-45fe-a997-b6c8cf3f5543__Charon 6 - Technische fiche - Zehnder - Badkamerradiator.pdf_p1.JPEG.jpeg - Failed to read file: Could not connect to path: aihub/01938d29-9df0-7220-bd29-3480d61f8ef6/documents/out/original/images/6a72877c-748c-45fe-a997-b6c8cf3f5543__Charon 6 - Technische fiche - Zehnder - Badkamerradiator.pdf_p1.JPEG.jpeg. Repo_owner testorgjvl. Repo_name jvlinsta. Mount_point Instabase Drive. Reason: Error occurred executing GRPC method: Request /file_service.FileService/Connect failed. Error code=DEADLINE_EXCEEDED, Error=(4, 'deadline exceeded'), Message: Deadline Exceeded. Retries left 0\"  path=\"/model-service/py/instabase/ibllm/code_labs/utils/vision_utils.py:63\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-25_1\" trace_id=\"\"```\nThis is when running visual reasoning extraction, cuz I need dem images :slightly_smiling_face:\n\n<adding other service logs soonish>",
+      "time": "08:10",
+      "timestamp": "1733242246.041289",
+      "is_reply": false
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "`file-service` floods with these messages:\n```2024/12/03 16:05:44 ERROR fileservice/handler/acl.go:52 -- [INTERNAL]: Failed to initialize Principal (Err: User (84d145db-09bf-474b-9cad-8fffa92fc2b6) not found)\n2024/12/03 16:05:44 ERROR fileservice/handler/file.go:321 -- [ERROR][list_dir] Username: 84d145db-09bf-474b-9cad-8fffa92fc2b6, Path: goldens-tester/system-test-repo-d0e9f6cd-c/fs/Instabase Drive, Err: rpc error: code = Internal desc = Failed to initialize Principal, Time: 25ms, Size: 0Bytes\n2024/12/03 16:05:44 INFO fileservice/handler/file.go:318 -- [stat] Username: jvlinsta, Path: testorgjvl/jvlinsta/fs/Instabase Drive/aihub/01938d29-9df0-7220-bd29-3480d61f8ef6/documents/out/6a72877c-748c-45fe-a997-b6c8cf3f5543__Charon 6 - Technische fiche - Zehnder - Badkamerradiator.pdf.ibdoc, Time: 123ms, Size: 0Bytes\n2024/12/03 16:05:44 INFO fileservice/handler/file.go:318 -- [read_file_stream] Username: jvlinsta, Path: testorgjvl/jvlinsta/fs/Instabase Drive/aihub/01938d29-9df0-7220-bd29-3480d61f8ef6/documents/out/6a72877c-748c-45fe-a997-b6c8cf3f5543__Charon 6 - Technische fiche - Zehnder - Badkamerradiator.pdf.ibdoc, Time: 67ms, Size: 60430Bytes\n2024/12/03 16:05:44 ERROR fileservice/handler/acl.go:52 -- [INTERNAL]: Failed to initialize Principal (Err: User (84d145db-09bf-474b-9cad-8fffa92fc2b6) not found)```",
+      "time": "08:15",
+      "timestamp": "1733242508.544339",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Maybe it is due to congestion and my `get_images` requests are being drowned?",
+      "time": "08:16",
+      "timestamp": "1733242572.511279",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "I can confirm that the paths exist:\n> https://ppy-server-nginx--jordyvlan-instabase.instabase.site.sandboxes.run/testorgjvl/jvlinsta/fs/Instabase%20Drive/aihub/01938d29-9df0-7220-bd29-3480d61f8ef6/documents/out/original/images/",
+      "time": "08:42",
+      "timestamp": "1733244143.847439",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "This request times out and blocks all subsequent jobs…\n```0\" trace_id=\"d678454d7568e620\"\nlevel=ERROR time=2024-12-03 16:44:13,210 msg=\"Exception 0\"  path=\"/model-service/py/instabase/ibllm/model/model.py:335\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-43_0\" trace_id=\"d678454d7568e620\"\nlevel=ERROR time=2024-12-03 16:44:13,210 msg=\"Traceback: Traceback (most recent call last):\n  File \"/model-service/py/instabase/ibllm/model/model.py\", line 313, in run\n    result = self._run_util(\n  File \"/model-service/py/instabase/ibllm/model/model.py\", line 125, in _run_util\n    result = extraction(request, custom_params)\n  File \"/model-service/py/instabase/ibllm/model/observability/tracing/utils.py\", line 129, in wrapped\n    raise error\n  File \"/model-service/py/instabase/ibllm/model/observability/tracing/utils.py\", line 124, in wrapped\n    r = func(*args, **kwargs)\n  File \"/model-service/py/instabase/ibllm/model/observability/logging/utils.py\", line 61, in wrapper\n    raise e\n  File \"/model-service/py/instabase/ibllm/model/observability/logging/utils.py\", line 58, in wrapper\n    result = function(*args, **kwargs)\n  File \"/model-service/py/instabase/ibllm/model/tasks/extraction.py\", line 865, in extraction\n    basic_field_results, advanced_field_results, object_multi_occurrence_result, table_field_results, vision_reasoning_results = asyncio.run(\n  File \"/pyenv/versions/3.9.17/lib/python3.9/asyncio/runners.py\", line 44, in run\n    return loop.run_until_complete(main)\n  File \"/pyenv/versions/3.9.17/lib/python3.9/asyncio/base_events.py\", line 647, in run_until_complete\n    return future.result()\n  File \"/model-service/py/instabase/ibllm/model/tasks/extraction.py\", line 722, in run_all_pipelines_async\n    return await asyncio.gather(basic_field_pipeline, reasoning_field_pipeline,\n  File \"/model-service/py/instabase/ibllm/model/tasks/extraction.py\", line 522, in run_vision_reasoning_field_extraction\n    return await _extract_vision_fields(  # type: ignore\n  File \"/model-service/py/instabase/ibllm/model/tasks/extraction.py\", line 565, in _extract_vision_fields\n    document.get_images(ibfile_wrapper)\n  File \"/model-service/py/instabase/ibllm/code_labs/document.py\", line 192, in get_images\n    return [self.images[page] for page in page_scope]\n  File \"/model-service/py/instabase/ibllm/code_labs/document.py\", line 192, in <listcomp>\n    return [self.images[page] for page in page_scope]\nKeyError: 0```",
+      "time": "08:46",
+      "timestamp": "1733244361.270659",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "celery-app-tasks even shows tasks that I never requested on documents that were deleted.\n> [2024-12-03 16:56:42,703] [MainProcess/MainThread] {/home/owner/.cache/pypoetry/virtualenvs/celery-app-tasks-EhTOE89x-py3.9/lib/python3.9/site-packages/celery/worker/strategy.py:161} INFO - [trace_id=] - Task instabase.registry.tasks.run_prompt_extraction_with_refiner[a7857109-88a4-4ba8-bfd4-730982b2645f-extract-fields] received\n> [2024-12-03 16:56:42,703] [MainProcess/MainThread] {/home/owner/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/tasks/apps/aihub/aihub_refiner_util.py:1086} INFO - [trace_id=] - Running extraction on docs [9144] for project 01938d29-9df0-7220-bd29-3480d61f8ef6.",
+      "time": "09:00",
+      "timestamp": "1733245207.173539",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "cc: @mfichman (sorry for the many pings)",
+      "time": "09:03",
+      "timestamp": "1733245420.642689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@jordy.vlan I'm not having any of the issues above, but I also don't use dogfood.",
+      "time": "10:01",
+      "timestamp": "1733248915.356229",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "cc @ligao.zhang since I said I would check my Crafting sandbox. All is working as expected in my sandbox. (https://https--mfichman-instabase.instabase.site.sandboxes.run)",
+      "time": "10:02",
+      "timestamp": "1733248948.424509",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "@mfichman could I ask to try and run a vision reasoning field in Build? If that works, then should switch to your sandbox",
+      "time": "10:09",
+      "timestamp": "1733249396.924989",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, sure. Can you let me know how to do what you want? I don't actually use Build that often in my testing.",
+      "time": "10:30",
+      "timestamp": "1733250618.265819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmm...I take it back, build digitization is hanging in my sandbox. Converse digitization was working, so I assumed all was good. I suppose it's not?",
+      "time": "10:45",
+      "timestamp": "1733251540.232939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "10:46",
+      "timestamp": "1733251577.457729",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Probably makes sense to have someone from the build team take a look",
+      "time": "10:46",
+      "timestamp": "1733251593.462649",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "I am from Build :stuck_out_tongue_winking_eye:",
+      "time": "10:47",
+      "timestamp": "1733251662.139559",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "\"Physician, heal thyself\" :laugh-cry:",
+      "time": "11:40",
+      "timestamp": "1733254834.054999",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@mfichman you probably need to follow the instructions for the first FAQ in https://instabase.atlassian.net/wiki/spaces/TI/pages/2213183494/Use+PPY+on+Crafting#FAQ",
+      "time": "12:12",
+      "timestamp": "1733256742.824699",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@jordy.vlan have you tried stopping all services and clearing rabbitmq before restarting all services? to make sure you start from a clean slate",
+      "time": "12:12",
+      "timestamp": "1733256765.206069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Shouldn't this stuff work out of the box? I don't remember needing to edit typescript files to make Build work previously",
+      "time": "12:16",
+      "timestamp": "1733256973.815399",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "did digitization previously work in Build projects in your crafting sandbox?\n\nthis is a pretty common issue (https://instabase.slack.com/archives/C05L87V014J/p1718038784191759) for all crafting sandboxes not using the `frontend` template",
+      "time": "12:18",
+      "timestamp": "1733257109.460329",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It's been a month or two since I tried it, but it was working at the time.",
+      "time": "12:27",
+      "timestamp": "1733257643.717799",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "@Serena how can I clear all rabbitmq messages? I am using the one provided as a sidecar",
+      "time": "12:32",
+      "timestamp": "1733257945.953239",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm i’m not sure either :disappointed: @sean.donohoe do you know how to clear the rabbitmq in an ibdev sandbox?",
+      "time": "12:38",
+      "timestamp": "1733258283.142819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Go to RabbitMQ in the UI, click the double arrows, and select \"clean rebuild\"",
+      "time": "12:40",
+      "timestamp": "1733258443.574439",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "12:40",
+      "timestamp": "1733258458.450289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "12:41",
+      "timestamp": "1733258467.321079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You can also use rabbitmqadmin, but you have to install it first",
+      "time": "12:41",
+      "timestamp": "1733258483.584249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Applying this diff fixed my problem:\n\n```cs/mfichman❯ git show e369d1bd968\ncommit e369d1bd968995289e0118e1617ac8bdc9bdf225\nAuthor: Matt Fichman <matt.fichman@instabase.com>\nDate:   Tue Dec 3 20:39:39 2024 +0000\n\n    PATCH: Fix broken buildApp/constants.ts\n\ndiff --git a/webserver/shared/src/js/webpacked/apps/src/aihub/store/buildApp/constants.ts b/webserver/shared/src/js/webpacked/apps/src/aihub/store/buildApp/constants.ts\nindex 68af785b55b..9dab27c46b2 100644\n--- a/webserver/shared/src/js/webpacked/apps/src/aihub/store/buildApp/constants.ts\n+++ b/webserver/shared/src/js/webpacked/apps/src/aihub/store/buildApp/constants.ts\n@@ -76,7 +76,7 @@ export const BUILD_READER_PROFILE_NO_FORM_RECOGNIZER: ReaderProfile = {\n         version: 'v3',\n       },\n     },\n-    ocr_page_type: OCRModelTypes.MARX,\n+    ocr_page_type: OCRModelTypes.DEFAULT,\n     // @ts-expect-error: TS2322: Type 'null' is not assignable to type 'number'.\n     ocr_timeout: null,\n     output_format_layout: 'layout_per_page',\n@@ -99,16 +99,7 @@ export const BUILD_READER_PROFILE_NO_FORM_RECOGNIZER: ReaderProfile = {\n     write_converted_image: true,\n     write_thumbnail: true,\n     native_excel_processing: true,\n-    entity_models: [\n-      {\n-        model_name: 'signature_model',\n-        model_version: '0.0.4',\n-      },\n-      {\n-        model_name: 'barcode_qrcode_detection',\n-        model_version: '1.0.0',\n-      },\n-    ],\n+    entity_models: [],\n     enable_table_markdown_enrichment: false,\n     enable_paragraph_ordering: false,\n   },```",
+      "time": "12:46",
+      "timestamp": "1733258771.015549",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Is there a way we can use this modified reader profile by default in local environments? Or otherwise fix the default profile that uses Marx so that it works in local environments...?",
+      "time": "12:46",
+      "timestamp": "1733258799.842849",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I don't like to maintain local patches to get the local env running.",
+      "time": "12:47",
+      "timestamp": "1733258837.260989",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the other solution is to keep the default reader profile as-is and to modify `/etc/hosts` - see https://instabase.atlassian.net/wiki/spaces/TI/pages/2213183494/Use+PPY+on+Crafting#Q%3A-How-do-I-enable-form-reco[…]SYNC-CALL-TO-form-recognizer%3F (https://instabase.atlassian.net/wiki/spaces/TI/pages/2213183494/Use+PPY+on+Crafting#Q%3A-How-do-I-enable-form-recognizer-for-apps-that-have-entity-detection-on-so-that-celery-app-task-logs-don%E2%80%99t-hang-with-ASYNC-CALL-TO-form-recognizer%3F)\n\ncan we set `/etc/hosts` in the ibdev template somehow?",
+      "time": "12:49",
+      "timestamp": "1733258975.571829",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think there's a better way",
+      "time": "12:57",
+      "timestamp": "1733259475.307779",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I noticed that nslookup for those hosts didn't work, b/c recursive DNS lookup was disabled.",
+      "time": "12:58",
+      "timestamp": "1733259492.365029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Looking into it more, I found this page:  https://docs.sandboxes.cloud/docs/network-setup#extend-dns-resolver",
+      "time": "12:58",
+      "timestamp": "1733259500.198759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "So I did the following:\n```sudo echo '{\"domains\": [\".\"],\"servers\": [\"1.1.1.1:53\"]}' > /etc/sandbox.d/dns/default.conf```\nand now nslookup works.",
+      "time": "12:59",
+      "timestamp": "1733259543.789959",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think we can easily reconfigure the sandboxes to have this default.conf file. Then, the crafting resolver will still work, except for domains it can't find locally. In those cases, it will forward the request to 1.1.1.1 (cloudflare's DNS)",
+      "time": "12:59",
+      "timestamp": "1733259582.689619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mfichman❯ nslookup instabaseinternalocr.cognitiveservices.azure.com (http://instabaseinternalocr.cognitiveservices.azure.com)\nServer:         169.254.31.254\nAddress:        169.254.31.254#53\n\nNon-authoritative answer:\ninstabaseinternalocr.cognitiveservices.azure.com (http://instabaseinternalocr.cognitiveservices.azure.com)        canonical name = eastus.api.cognitive.microsoft.com (http://eastus.api.cognitive.microsoft.com).\neastus.api.cognitive.microsoft.com (http://eastus.api.cognitive.microsoft.com)      canonical name = cognitiveuseprod.trafficmanager.net (http://cognitiveuseprod.trafficmanager.net).\ncognitiveuseprod.trafficmanager.net (http://cognitiveuseprod.trafficmanager.net)     canonical name = cognitiveuseprod.azure-api.net (http://cognitiveuseprod.azure-api.net).\ncognitiveuseprod.azure-api.net (http://cognitiveuseprod.azure-api.net)  canonical name = apimgmttmsxrvtifzqdtqhxmfmfanqbnjviisx1axz0alfmmew.trafficmanager.net (http://apimgmttmsxrvtifzqdtqhxmfmfanqbnjviisx1axz0alfmmew.trafficmanager.net).\napimgmttmsxrvtifzqdtqhxmfmfanqbnjviisx1axz0alfmmew.trafficmanager.net (http://apimgmttmsxrvtifzqdtqhxmfmfanqbnjviisx1axz0alfmmew.trafficmanager.net)   canonical name = cognitiveuseprod-eastus-01.regional.azure-api.net (http://cognitiveuseprod-eastus-01.regional.azure-api.net).\ncognitiveuseprod-eastus-01.regional.azure-api.net (http://cognitiveuseprod-eastus-01.regional.azure-api.net)       canonical name = apid69e4f0cd7984aa8a89d9d59fb140df1wjcqcmgrfkzhbxquwhytr.eastus.cloudapp.azure.com (http://apid69e4f0cd7984aa8a89d9d59fb140df1wjcqcmgrfkzhbxquwhytr.eastus.cloudapp.azure.com).\nName:   apid69e4f0cd7984aa8a89d9d59fb140df1wjcqcmgrfkzhbxquwhytr.eastus.cloudapp.azure.com (http://apid69e4f0cd7984aa8a89d9d59fb140df1wjcqcmgrfkzhbxquwhytr.eastus.cloudapp.azure.com)\nAddress: 20.232.91.180\n;; Got recursion not available from 169.254.31.254```",
+      "time": "13:02",
+      "timestamp": "1733259765.973999",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "No need for patching in every host the local resolver can't find...",
+      "time": "13:03",
+      "timestamp": "1733259789.643359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I updated the ibdev template, so if you have a sandbox that's affected, resync it.",
+      "time": "13:04",
+      "timestamp": "1733259861.240939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Confirmed that this fixes build upload with the default, unpatched reader profile",
+      "time": "13:06",
+      "timestamp": "1733260010.020159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Updated the wiki page too",
+      "time": "13:08",
+      "timestamp": "1733260100.552429",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "thank you for fixing this!!",
+      "time": "13:34",
+      "timestamp": "1733261683.466909",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "heck yes, glad the crafting devs already had a workaround for us to use, nice find @mfichman!",
+      "time": "13:55",
+      "timestamp": "1733262942.676779",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm I may have spoken too soon... or something else is wrong. I tried this on a fresh sandbox, and it's still hanging despite DNS lookups working fine:\n\n```Stage2 username=matt.fichman.1_instabase.com stage-id=Stage2 step=process_files ASYNC CALL TO MARX V3: https://instabaseinternalocr.cognitiveservices.azure.com/vision/v3.2/read/analyze\n^^^ celery-app-tasks hangs here\n\ncs/mfichman-demo❯ curl  https://instabaseinternalocr.cognitiveservices.azure.com/vision/v3.2/read/analyze\n{\"error\":{\"code\":\"404\",\"message\": \"Resource not found\"}}\n^^^ cURL works\n\ncs/mfichman-demo❯ nslookup instabaseinternalocr.cognitiveservices.azure.com\n;; Got recursion not available from 169.254.31.254\nServer:         169.254.31.254\nAddress:        169.254.31.254#53\n\nNon-authoritative answer:\ninstabaseinternalocr.cognitiveservices.azure.com        canonical name = eastus.api.cognitive.microsoft.com.\neastus.api.cognitive.microsoft.com      canonical name = cognitiveuseprod.trafficmanager.net.\ncognitiveuseprod.trafficmanager.net     canonical name = cognitiveuseprod.azure-api.net.\ncognitiveuseprod.azure-api.net  canonical name = apimgmttmsxrvtifzqdtqhxmfmfanqbnjviisx1axz0alfmmew.trafficmanager.net.\napimgmttmsxrvtifzqdtqhxmfmfanqbnjviisx1axz0alfmmew.trafficmanager.net   canonical name = cognitiveuseprod-eastus-01.regional.azure-api.net.\ncognitiveuseprod-eastus-01.regional.azure-api.net       canonical name = apid69e4f0cd7984aa8a89d9d59fb140df1wjcqcmgrfkzhbxquwhytr.eastus.cloudapp.azure.com.\nName:   apid69e4f0cd7984aa8a89d9d59fb140df1wjcqcmgrfkzhbxquwhytr.eastus.cloudapp.azure.com\nAddress: 20.232.91.180\n;; Got recursion not available from 169.254.31.254\n^^^ nslookup works```",
+      "time": "14:04",
+      "timestamp": "1733263471.664819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I wonder if the problem is actually the entity_models entry",
+      "time": "14:05",
+      "timestamp": "1733263522.896209",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the `entity_models` entry will lead to model not found errors in `model-service` and shouldn’t lead to hanging external network requests",
+      "time": "14:06",
+      "timestamp": "1733263575.638429",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, though I wonder if it's actually hanging on that async call, or if there is just no further output",
+      "time": "14:06",
+      "timestamp": "1733263619.977959",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i see - then yes, you could try modifying `entity_models` to check",
+      "time": "14:07",
+      "timestamp": "1733263650.202539",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I have 0 context on the setup for https://instabaseinternalocr.cognitiveservices.azure.com, but is there any chance we are restricting inbound connections by IP? I'm wondering whether we have something to allow the VPN subnets and need to include the crafting VPC IPs",
+      "time": "14:07",
+      "timestamp": "1733263678.029539",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "if Form Recognizer OCR is working, there are usually a bunch of logs after `Stage2 username=matt.fichman.1_instabase.com (http://1_instabase.com) stage-id=Stage2 step=process_files ASYNC CALL TO MARX V3: https://instabaseinternalocr.cognitiveservices.azure.com/vision/v3.2/read/analyze` though",
+      "time": "14:08",
+      "timestamp": "1733263686.982249",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> I’m wondering whether we have something to allow the VPN subnets and need to include the crafting VPC IPs\nif that’s the case, then modifying `/etc/hosts` directly wouldn’t work?",
+      "time": "14:08",
+      "timestamp": "1733263739.673529",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I got this:\n\n```=Stage2 step=process_files Error pre processing file='matt.fichman.1_instabase.com/my-repo/fs/Instabase (http://matt.fichman.1_instabase.com/my-repo/fs/Instabase) Drive/aihub/01938e89-312d-70c6-b154-e2564baf356d/documents/out/pre_reader_reduce_udf/21f610a4-31da-4836-a643-401079f9b7a6__Receipt - Bagels.png' returned error=OCR on image timed out after 300 seconds. Path: matt.fichman.1_instabase.com/my-repo/fs/Instabase (http://matt.fichman.1_instabase.com/my-repo/fs/Instabase) Drive/aihub/01938e89-312d-70c6-b154-e2564baf356d/documents/out/pre_reader_reduce_udf/21f610a4-31da-4836-a643-401079f9b7a6__Receipt - Bagels.png```",
+      "time": "14:09",
+      "timestamp": "1733263740.815619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://instabase.sandboxes.site/logviewx/instabase/mfichman-demo/dev/daemon/celery-app-tasks%40instabase",
+      "time": "14:09",
+      "timestamp": "1733263752.968779",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "got it, so it’s not able to connect to https://instabaseinternalocr.cognitiveservices.azure.com/vision/v3.2/read/analyze",
+      "time": "14:09",
+      "timestamp": "1733263763.804339",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "But curl worked?",
+      "time": "14:09",
+      "timestamp": "1733263785.993359",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "> if that’s the case, then modifying `/etc/hosts` directly wouldn’t work?\nI might have misunderstood this thread, sorry, I thought that method wasn't working :slightly_smiling_face:",
+      "time": "14:09",
+      "timestamp": "1733263786.859079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Right, agreed @sean.donohoe",
+      "time": "14:10",
+      "timestamp": "1733263805.455059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think something else is amiss besides DNS",
+      "time": "14:10",
+      "timestamp": "1733263812.693439",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```curl -X post https://instabaseinternalocr.cognitiveservices.azure.com/vision/v3.2/read/analyze\n{\"error\":{\"code\":\"404\",\"message\": \"Resource not found\"}}```\n^ curl works (but is missing the auth headers, so 404 is expected)",
+      "time": "14:10",
+      "timestamp": "1733263856.437629",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh weird",
+      "time": "14:11",
+      "timestamp": "1733263885.765819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Serena despite that error, digitization eventually finished anyway...it just took a real long time",
+      "time": "14:11",
+      "timestamp": "1733263898.950659",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "14:11",
+      "timestamp": "1733263915.237719",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "weird… looking at the logs now…",
+      "time": "14:12",
+      "timestamp": "1733263924.554509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I wonder if my sandbox was being slow. I did just build it from scratch. Trying another doc now.",
+      "time": "14:12",
+      "timestamp": "1733263945.872309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, now the latest call succeeded in 1.2s??\n\n```com stage-id=Stage2 step=process_files ASYNC CALL TO MARX V3: https://instabaseinternalocr.cognitiveservices.azure.com/vision/v3.2/read/analyze\n[2024-12-03 22:12:39,176] [ForkPoolWorker-16/ThreadPoolExecutor-4_0] {/instabase/workers/celery-app-tasks/py/instabase/flow/ocr_utils/_private/msft_util.py:364} INFO - [trace_id=] - job-id=0100df71-3829-49ab-a41d-ffa2f4d1c6b8 task-id=0100df71-3829-49ab-a41d-ffa2f4d1c6b8-Stage2 username=matt.fichman.1_instabase.com stage-id=Stage2 step=process_files Marx OCR completed - TimeTaken=1.225860595703125s```",
+      "time": "14:13",
+      "timestamp": "1733263987.383109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Seems like maybe the problem is azure :laughing:",
+      "time": "14:13",
+      "timestamp": "1733263994.828189",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the frontend retries digitization up to 3 times if it fails\n\nso for your first upload, maybe we just started another job that works?",
+      "time": "14:13",
+      "timestamp": "1733264037.440679",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "and now I'm getting:\n\n```.com stage-id=Stage2 step=process_files Request /model_service.ModelService/RunModel failed. Error code=INVALID_ARGUMENT, Error=(3, 'invalid argument'), Message: Invalid arguments: Model Registration (name=signature_model, version=0.0.4, is_project_model=False) failed with the following reason: Model registration not found (Name: signature_model, Version: 0.0.4): sql: no rows in result set. Non-retriable error\n[2024-12-03 22:13:39,604] [ForkPoolWorker-16/ThreadPoolExecutor-5_0] {/instabase/workers/celery-app-tasks/py/instabase/flow/runnables/process_file/entity_util.py:229} ERROR - [trace_id=] - job-id=0100df71-3829-49ab-a41d-ffa2f4d1c6b8 task-id=0100df71-3829-49ab-a41d-ffa2f4d1c6b8-Stage2 username=matt.fichman.1_instabase.com (http://matt.fichman.1_instabase.com) stage-id=Stage2 step=process_files Errored running entity inference for 875ac6ef-c9e5-4897-bf1a-1eb5fad1d905__Receipt - Google.png: Traceback (most recent call last):\n  File \"/instabase/workers/celery-app-tasks/py/instabase/flow/runnables/process_file/entity_util.py\", line 77, in run\n    response = self.model_service_client.run(req)\n  File \"/instabase/workers/celery-app-tasks/py/instabase/model_service/sdk.py\", line 90, in wrapper\n    raise ModelServiceException(e) from None\ninstabase.model_service.sdk.ModelServiceException: (ModelServiceException(...), 'Invalid arguments: Model Registration (name=signature_model, version=0.0.4, is_project_model=False) failed with the following reason: Model registration not found (Name: signature_model, Version: 0.0.4): sql: no rows in result set (StatusCode.INVALID_ARGUMENT)')```",
+      "time": "14:13",
+      "timestamp": "1733264038.040859",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "that’s fine, the entity_models don’t exist, digitization should still succeed",
+      "time": "14:14",
+      "timestamp": "1733264053.201179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Probably b/c I don't have the signature model installed (not using dogfood db)",
+      "time": "14:14",
+      "timestamp": "1733264057.514409",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah yes, i see 3 requests to `POST /api/v2/aihub/build/projects/01938e89-312d-70c6-b154-e2564baf356d/documents`\n\n2 for your first upload, 1 for your second upload",
+      "time": "14:15",
+      "timestamp": "1733264156.657219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Well, I definitely only uploaded 2x files",
+      "time": "14:16",
+      "timestamp": "1733264188.724149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "2nd file still hasn't finished yet",
+      "time": "14:16",
+      "timestamp": "1733264197.726389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, it _just_ finished.",
+      "time": "14:16",
+      "timestamp": "1733264211.648999",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "So I guess working, but quite slow for some other reason.",
+      "time": "14:17",
+      "timestamp": "1733264233.649349",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "removing the `entity_models` should make digitization a lot faster\n\nsince the models don’t exist, i think we retry the model-service requests, but they’ll always fail",
+      "time": "14:17",
+      "timestamp": "1733264253.105279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, wonder if we can change the code to fail fast if model-service returns INVALID",
+      "time": "14:18",
+      "timestamp": "1733264288.684069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "INVALID => caller should not retry",
+      "time": "14:18",
+      "timestamp": "1733264297.404559",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Not sure where the retry is",
+      "time": "14:19",
+      "timestamp": "1733264380.447199",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I don't see it in entity_util.py:77",
+      "time": "14:20",
+      "timestamp": "1733264411.420399",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Actually, it looks like the retries are in model-service-sdk, and we do _not_ retry on INVALID_ARGUMENT. So I don't think that's why it's slow.",
+      "time": "14:21",
+      "timestamp": "1733264495.444219",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for the first successful digitization job\n• OCR took only 1.12s\n• the failed entity inference took 120s\n• weaviate indexing took 15s\nthis doesn’t completely add up to the total ~5min runtime of the digitization job though",
+      "time": "14:23",
+      "timestamp": "1733264589.260109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oh duh each failed entity inference took 120s\n\n1.12s (OCR) + 120s (barcode entity) + 120s (signature entity) + 15s (weaviate indexing) adds up to the ~ 4m 30s runtime of the digitization job",
+      "time": "14:26",
+      "timestamp": "1733264778.660149",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m also not sure where the retries are occurring, but it seems that we try running each entity model twice\n\nsince for each attempt, it takes 1min for the entity inference request to fail",
+      "time": "14:35",
+      "timestamp": "1733265334.912319",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmm yeah might take a while to track that down",
+      "time": "15:36",
+      "timestamp": "1733268963.175459",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-03.json",
+    "message_count": 85,
+    "start_time": "1733242246.041289",
+    "end_time": "1733268963.175459",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "id": "ch_C06FA6A23_2024-04-15_1713188569.326329_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "puneet"
+  ],
+  "messages": [
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "I looked into the traces for different services, sharing my findings below -\n• license-service, search service, job-service - There are multiple dangling spans from `db/session/DBSessionImpl.Exec`  with no parent span.  \n• model-service - All the spans are from `/model_service.ModelService/HealthCheck` \n• file-service - This has the most amount of dangling spans from `S3Client.Stat` \n• core-platform-service - This has spans from -  `cache/RedisCache.Get` \nApart from model-service spans all the other services have dangling spans. If these are caused due to missing propagation we should ideally fix them.\nI am working on a PR to remove HealthCheck spans from model service and also add ratelimiting to service level traces to protect jaeger from overflowing with dangling spans.",
+      "time": "06:42",
+      "timestamp": "1713188569.326329",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Thanks Puneet! Can you create tickets for these under Core Services so we don't lose track?",
+      "time": "06:49",
+      "timestamp": "1713188950.600099",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "@mfichman Is there an EPIC I should use to add these tickets under?",
+      "time": "06:54",
+      "timestamp": "1713189289.340009",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "No, you can file them individually.",
+      "time": "06:55",
+      "timestamp": "1713189351.244549",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ty!",
+      "time": "06:56",
+      "timestamp": "1713189391.375899",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "And assign them to me for now!",
+      "time": "06:56",
+      "timestamp": "1713189404.472109",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "Created a ticket to track this - https://instabase.atlassian.net/browse/CS-4722",
+      "time": "08:50",
+      "timestamp": "1713196220.000219",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-04-15.json",
+    "message_count": 7,
+    "start_time": "1713188569.326329",
+    "end_time": "1713196220.000219",
+    "is_thread": true
+  }
+}

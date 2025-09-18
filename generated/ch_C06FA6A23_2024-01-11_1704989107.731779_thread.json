@@ -1,0 +1,134 @@
+{
+  "id": "ch_C06FA6A23_2024-01-11_1704989107.731779_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Jag",
+    "Dominic Fannjiang"
+  ],
+  "messages": [
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "Hi. Not sure if this is due to the same issue that's causing Dom's migration to not be present, but I'm also getting an error from a db query, specifically on the uat environment. The core-platform service logs (https://uat.dogfood.instabase.com/grafana/explore?orgId=1&left=%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D,%22query%22:%22546ecea81631a543%5Cn%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D) say `\"pq: column docs.page_ranges_str does not exist\"` . That column was added after 23.10 in this PR (https://github.com/instabase/instabase/pull/48719), so it seems that that db migration wasn't added to UAT env.",
+      "time": "08:05",
+      "timestamp": "1704989107.731779",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, it looks like the migrations on UAT are behind. I'm working on this now!",
+      "time": "08:38",
+      "timestamp": "1704991086.109639",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Circling back; I was right. There are some emails in UAT that are identical except for case, but we're fixing casing. This is a known issue that can happen with this migration. Correcting it now by modifying the colliding emails with a +1.\n\n```2024/01/11 11:46:32 level=ERROR path=utils/db/session/tx.go:70 msg=\"SQL DB: pq: duplicate key value violates unique constraint \\\"migration_staging_pk\\\"\" operation=db/session/TxImpl.Exec query_type=insert table=migration_staging\n2024/01/11 11:46:32 ERROR utils/db/accessor/db_accessor.go:829 -- Failed to create model in table migration_staging: pq: duplicate key value violates unique constraint \"migration_staging_pk\"\n2024/01/11 11:46:32 FATAL utils/db/tools/dbmigrate/main.go:58 -- writeBatch failed: CreateModels failed: Failed to create model in table migration_staging: pq: duplicate key value violates unique constraint \"migration_staging_pk\"```",
+      "time": "08:48",
+      "timestamp": "1704991691.753769",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Problematic emails:\n```uat=> select array_agg(id), array_agg(email), lower(email) from users group by lower(email) having count(*) > 1;\n                                  array_agg                                  |                              array_agg                              |              lower\n-----------------------------------------------------------------------------+---------------------------------------------------------------------+----------------------------------\n {2ad40699-3e36-40f5-8235-2cb9b430f3c9,b0b9866c-de0b-40fa-8bf8-d9eb7279ff2d} | {daniela.field@instabase.com,Daniela.field@instabase.com}           | <mailto:daniela.field@instabase.com|daniela.field@instabase.com>\n {a2410a7e-aa88-4371-9f4e-d91e6625f9eb,b9eaab3c-83bd-4ac6-9276-d6a6d79e6fe4} | {paul.gilbert@instabase.com,Paul.gilbert@instabase.com}             | <mailto:paul.gilbert@instabase.com|paul.gilbert@instabase.com>\n {6f18311f-6c77-4061-8b95-285cfe04388c,25258fa4-dd86-49ea-a15d-216096a60f81} | {XI.CHENG+testldap3@instabase.com,xi.cheng+testldap3@instabase.com} | <mailto:xi.cheng+testldap3@instabase.com|xi.cheng+testldap3@instabase.com>\n(3 rows)\n\nuat=>```",
+      "time": "09:04",
+      "timestamp": "1704992683.604559",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In retrospect this problem seems common (also happened in dogfood and aihub prod). I should have changed the migration to check for & recover from duplicates automatically. Hindsight is 20/20 :slightly_smiling_face:",
+      "time": "09:05",
+      "timestamp": "1704992707.809599",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```uat=> select array_agg(id), array_agg(public_id), lower(public_id) from accounts group by lower(public_id) having count(*) > 1;\n                                  array_agg                                  |             array_agg             |      lower\n-----------------------------------------------------------------------------+-----------------------------------+-----------------\n {02729095-1858-45ec-b93b-68dee6e405a4,d1931000-e8bb-475d-8e66-8c2021ea10ff} | {abhinand.rajesh,Abhinand.rajesh} | abhinand.rajesh\n {aee677d1-e1c5-484b-ae29-b9d99d4adb8a,16ed13e5-2caf-4989-8fde-bfe6e36ec629} | {Daniela,daniela}                 | daniela\n {d043300a-21ab-4d16-a0ef-a1cf723e3a32,13432b09-df77-49d0-803a-d15f49b40cab} | {Heymian,heymian}                 | heymian```\nAlso some duplicate accounts.",
+      "time": "09:10",
+      "timestamp": "1704993021.884689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Fixed!",
+      "time": "09:12",
+      "timestamp": "1704993158.083539",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```2024/01/11 12:12:17 INFO utils/db/tools/migrate.go:125 -- Ending schema version: 00000120_0000_create_integrations_table[0000]\n2024/01/11 12:12:17 INFO utils/db/tools/dbmigrate/main.go:60 -- Schema is up-to-date```",
+      "time": "09:12",
+      "timestamp": "1704993163.274269",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Dominic Fannjiang -- can you confirm?",
+      "time": "09:12",
+      "timestamp": "1704993173.688249",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Checking! Currently blocked on getting `Internal Server Error` when accessing uat.dogfood :joy:",
+      "time": "10:00",
+      "timestamp": "1704996028.230609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh,  rip :slightly_smiling_face:",
+      "time": "10:06",
+      "timestamp": "1704996404.374229",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "It's working for me now, thanks @mfichman!",
+      "time": "10:10",
+      "timestamp": "1704996631.293469",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "working for me as well! Thank you @mfichman!",
+      "time": "10:13",
+      "timestamp": "1704996822.693689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Great! sorry it took so long!",
+      "time": "10:27",
+      "timestamp": "1704997671.479509",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-01-11.json",
+    "message_count": 14,
+    "start_time": "1704989107.731779",
+    "end_time": "1704997671.479509",
+    "is_thread": true
+  }
+}

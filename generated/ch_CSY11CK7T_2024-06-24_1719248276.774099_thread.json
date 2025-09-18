@@ -1,0 +1,270 @@
+{
+  "id": "ch_CSY11CK7T_2024-06-24_1719248276.774099_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "CJ",
+    "mfichman",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "How can I enable webpack in my local dev env? I thought I had it enabled, but it's loading JS from /static/output/* instead.",
+      "time": "09:57",
+      "timestamp": "1719248276.774099",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "09:58",
+      "timestamp": "1719248312.516129",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "env var `RELOAD=true` i believe?",
+      "time": "09:59",
+      "timestamp": "1719248358.257139",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "nginx, right?",
+      "time": "09:59",
+      "timestamp": "1719248371.911219",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "think so yeah",
+      "time": "09:59",
+      "timestamp": "1719248396.381269",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think even with the env var, the js files are loaded from `static/output/`",
+      "time": "10:01",
+      "timestamp": "1719248496.103039",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm. Let me try --reload. Rn the changes I made to a JS file didn't propagate",
+      "time": "10:02",
+      "timestamp": "1719248556.225449",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "this nginx route config (https://github.com/instabase/instabase/blob/d4e69ba0fe1c4626eabfe2037da3e43b99da817d/webserver/server-nginx/config/nginx-config-template.jinja.yml#L1047-L1049) should proxy the request to webpack properly\n\nhttps://github.com/instabase/frontend-docs/blob/master/builds.md#development-path",
+      "time": "10:04",
+      "timestamp": "1719248688.635549",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmmm still not picking up the jsx changes I made. Here's what I did:\n\n```ppy --reload --as-aihub compile apps-server webapp server-nginx webpack\nppy --reload --as-aihub restart apps-server webapp server-nginx webpack```",
+      "time": "11:51",
+      "timestamp": "1719255092.237619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think things have changed since I last did FE dev :laughing: it's been a few months",
+      "time": "11:51",
+      "timestamp": "1719255113.770839",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Have you tried setting the env var `RELOAD=true` .\n```export RELOAD=true ppy restart server-nginx```",
+      "time": "11:53",
+      "timestamp": "1719255181.690039",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "are you using crafting? I ran into this issue a couple times–it stop picking up my edits randomly and restarting the sandbox helps",
+      "time": "11:53",
+      "timestamp": "1719255228.636019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yep",
+      "time": "11:53",
+      "timestamp": "1719255228.850489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, crafting",
+      "time": "11:53",
+      "timestamp": "1719255234.645809",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmm weird",
+      "time": "11:54",
+      "timestamp": "1719255248.799849",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Xindi Xu Can you share a screenshot of the request logs for a full page load? Just want to do a sanity check",
+      "time": "12:01",
+      "timestamp": "1719255682.946629",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "yea, 1st one includes all requests, 2nd one includes only JS files",
+      "time": "12:03",
+      "timestamp": "1719255799.480439",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "do you see logs like this from wepack?\n```$ ppya logs -f webpack\n\nmodules by path ./node_modules/html-entities/lib/*.js 81.3 KiB 4 modules\nmodules by mime type image/png 1.09 KiB 4 modules\nmodules by path ./node_modules/css-loader/dist/runtime/*.js 3.52 KiB\n  ./node_modules/css-loader/dist/runtime/sourceMaps.js 688 bytes [built] [code generated]\n  + 2 modules\nmodules by path ./node_modules/webpack/hot/*.js 1.42 KiB\n  ./node_modules/webpack/hot/log.js 1.34 KiB [built] [code generated]\n  ./node_modules/webpack/hot/emitter.js 75 bytes [built] [code generated]\n+ 5 modules\nwebpack 5.74.0 compiled successfully in 20251 ms```",
+      "time": "12:04",
+      "timestamp": "1719255884.991489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes. I intentionally introduced a syntax error -- webpack reran, but there's no error (?)",
+      "time": "12:05",
+      "timestamp": "1719255910.557809",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Where do you run nginx and webpack?",
+      "time": "12:05",
+      "timestamp": "1719255939.552999",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```index e72a3aaee5e..e4763bc8c14 100644\n--- a/webserver/shared/src/js/webpacked/lib/src/IBDrives/BaseGoogleDriveConfigsModal.tsx\n+++ b/webserver/shared/src/js/webpacked/lib/src/IBDrives/BaseGoogleDriveConfigsModal.tsx\n@@ -104,6 +104,7 @@ const BaseGoogleDriveConfigsModal: React.FC<TGoogleDriveConfigsModal> = ({\n                     field={GOOGLE_DRIVE_CONFIG_FIELDS.name}\n                     mode={mode}\n                   />\n+                  <foo/>\n                 </FlexContainer>\n               </Modal.Body>\n               {/* TODO: migrate to custom confirm element once pollen beta supports */}```\nHere's the change I made",
+      "time": "12:06",
+      "timestamp": "1719255982.116739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Both run on the crafting sandbox I have",
+      "time": "12:06",
+      "timestamp": "1719255991.379689",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "OK. I think this is something crafting then. Probably ask Sean on this?",
+      "time": "12:07",
+      "timestamp": "1719256029.540149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "So weird :confused:",
+      "time": "12:07",
+      "timestamp": "1719256042.051109",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "probably something to do with `workspace enable/disable webpack`",
+      "time": "12:07",
+      "timestamp": "1719256056.658229",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Xindi Xu can you include the hostname in the screenshot? Want to see what is loaded from webpack vs nginx",
+      "time": "12:13",
+      "timestamp": "1719256417.617779",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "",
+      "time": "12:14",
+      "timestamp": "1719256496.777699",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I wonder if this has anything to do with it:",
+      "time": "12:15",
+      "timestamp": "1719256541.541139",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Huh, so it all loads via nginx. Interesting",
+      "time": "12:16",
+      "timestamp": "1719256563.262969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, I finally figured it out. When I switched to crafting, I forgot to bring my .ib-dev.json along:\n```{\n    \"apps\": [\"aihub\", \"aihub-billing\", \"aihub-admin\", \"metrics\", \"admin\"],\n    \"devServer\": {\n        \"hot\": true,\n        \"liveReload\": true,\n        \"allowedHosts\": \"all\"\n    }\n}```\nWorks now!",
+      "time": "12:41",
+      "timestamp": "1719258092.174689",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ahh, nice find!",
+      "time": "12:43",
+      "timestamp": "1719258214.686319",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-06-24.json",
+    "message_count": 31,
+    "start_time": "1719248276.774099",
+    "end_time": "1719258214.686319",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "id": "ch_C06FA6A23_2021-07-01_1625174308.049300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Anil",
+    "Brinda Murulidhara",
+    "shaunak",
+    "Aaron Vontell",
+    "Travis"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Is dogfood acting more like cat food for anyone else rn?",
+      "time": "14:18",
+      "timestamp": "1625174308.049300",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I know this joke makes no sense but figured you all would understand it enough for it to make sense",
+      "time": "14:18",
+      "timestamp": "1625174328.049400",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": ":cat2:",
+      "time": "14:19",
+      "timestamp": "1625174364.050000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "this makes no sense.  :stuck_out_tongue:",
+      "time": "14:26",
+      "timestamp": "1625174812.050800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I tried my best! dogfood has been slow and kind of janky these past few hours - and doesnt seem to be during redeploys",
+      "time": "14:28",
+      "timestamp": "1625174925.051000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "can you quantify what is _slow_",
+      "time": "14:30",
+      "timestamp": "1625175007.051300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Reloading on FS takes a long time (i.e. spaces, mounts, files how spinning loader, eventually resolves but also sometimes fails with 504 gateway error). Refiner programs also failing to finish, timing out errors",
+      "time": "14:31",
+      "timestamp": "1625175117.051700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "But it seems super random - will happen for a period of a few minutes and then go back to normal?",
+      "time": "14:32",
+      "timestamp": "1625175153.051900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Seems to be working for me now",
+      "time": "14:32",
+      "timestamp": "1625175159.052100",
+      "is_reply": true
+    },
+    {
+      "sender": "Brinda Murulidhara",
+      "user_id": "U0220RSDJ6N",
+      "message": "I'm facing the same issue too. The refiner program still runs for a long time and then times out.\ncc: @shaunak\n\nhttps://instabase.slack.com/archives/CJ7E9RG7Q/p1625166306159700",
+      "time": "14:57",
+      "timestamp": "1625176662.052400",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Nginx Dashboard - Grafana (instabase.com (http://instabase.com)) (https://dogfood.instabase.com/grafana/d/ZQAsi-Xizz/nginx-dashboard?orgId=1&refresh=30s) - shouldn't 504 errors show up in the grafana dashboard? Don't see anything",
+      "time": "15:12",
+      "timestamp": "1625177540.053000",
+      "is_reply": true
+    },
+    {
+      "sender": "Brinda Murulidhara",
+      "user_id": "U0220RSDJ6N",
+      "message": "Not sure what the issue is but I still see the same error on re-running.",
+      "time": "21:46",
+      "timestamp": "1625201186.053500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Brinda Murulidhara really not sure what the core issue here is.  Looks like the refiner function `get_answer` is expensive.  Is it using model-service?  Or, it is just using plain UDF?",
+      "time": "22:35",
+      "timestamp": "1625204102.054200",
+      "is_reply": true
+    },
+    {
+      "sender": "Brinda Murulidhara",
+      "user_id": "U0220RSDJ6N",
+      "message": "Yes. It's using model service.",
+      "time": "22:39",
+      "timestamp": "1625204360.054500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Aaron Vontell looks like this is the last log I see\n```Error\n2021-07-01 21:53:32.506 PDT\n[2021-07-02 04:53:32,506] {/model-service/py/instabase/model_service/model_cache.py:417} INFO - Waiting to download model 'ib_question_answering_model'\n ```",
+      "time": "22:42",
+      "timestamp": "1625204554.054700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I don't see the follow up log about whether the model was downloaded or not",
+      "time": "22:42",
+      "timestamp": "1625204574.054900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "looks like the lock was never release :neutral_face:",
+      "time": "22:46",
+      "timestamp": "1625204817.055100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "```    model_name = package_json['name']\n    logging.info (http://logging.info)(\"Waiting to download model '{}'\".format(model_name))\n    acquire_model_lock(model_name)```\nWe should probably do this in the `with context` command so that we are able to also handle exceptions which will never cause the lock to be released.",
+      "time": "22:47",
+      "timestamp": "1625204872.055300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Example logs (https://console.cloud.google.com/logs/query;query=resource.type%3D%22container%22%0Aresource.labels.cluster_name%3D%22instabase-main-dogfood-001%22%0Aresource.labels.namespace_id%3D%22instabase-dogfood%22%0Aresource.labels.project_id%3D%22instabase-dogfood%22%0Aresource.labels.zone:%22us-east1-%22%0Aresource.labels.container_name%3D%22model-service%22%0Aresource.labels.pod_id%3D%22deployment-model-service-7bddd7d9c7-kshhk%22;timeRange=2021-07-01T22:53:19.387Z%2F2021-07-02T05:53:19.387204Z;cursorTimestamp=2021-07-02T04:47:18.591116307Z?authuser=1&project=instabase-dogfood)",
+      "time": "22:54",
+      "timestamp": "1625205293.055500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-07-01.json",
+    "message_count": 19,
+    "start_time": "1625174308.049300",
+    "end_time": "1625205293.055500",
+    "is_thread": true
+  }
+}

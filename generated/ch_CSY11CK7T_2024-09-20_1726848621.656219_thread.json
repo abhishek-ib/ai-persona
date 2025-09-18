@@ -1,0 +1,159 @@
+{
+  "id": "ch_CSY11CK7T_2024-09-20_1726848621.656219_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Jessica",
+    "danny.lan",
+    "Udit"
+  ],
+  "messages": [
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "workspace-settings is failing on my pr:\n\nhttps://cloud.cypress.io/projects/cfhedy/runs/14094/overview/f4a25fce-768c-4f08-8de3-807f970e1147?roarHideRunsWithDiffGroupsAndTags=1",
+      "time": "09:10",
+      "timestamp": "1726848621.656219",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Jessica could you take a look. The user we try to assert does exist but we probably need to wait until the dialog is closed, or until the api response is back?",
+      "time": "09:15",
+      "timestamp": "1726848959.395949",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "I’m also seeing that same test fail on this PR: https://cloud.cypress.io/projects/cfhedy/runs/14072/overview/48e13c32-e732-420b-8439-d3035e610a04?roarHideRunsWithDiffGroupsAndTags=1,\n\nI think the problem might be that we only load the first 20 users in the list, if you run the cypress test a lot of times you could have >20 users",
+      "time": "09:19",
+      "timestamp": "1726849185.111079",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Ohhh I saw this on sandbox and was confused but yes, it's the virtualization of the table that's the issue! Let me manually clean things up, then figure out a better long-term solution",
+      "time": "09:20",
+      "timestamp": "1726849225.168499",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Maybe we can solved by searching the user in the search bar?",
+      "time": "09:22",
+      "timestamp": "1726849367.014049",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I think this issue only occurs on PRs where it's been run many times, then failed to clean up. I need to figure out why the user deletion is failing so often",
+      "time": "09:22",
+      "timestamp": "1726849379.144709",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I actually can't clean it up manually since it's the org for the PR... :cry:",
+      "time": "09:24",
+      "timestamp": "1726849467.089709",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm going to make this test and the manage members one non-blocking for now, PR coming soon",
+      "time": "09:26",
+      "timestamp": "1726849567.627999",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Seems like we need to clean up licenses before we delete users. I'll look into fixing this later today.\n```\"Failed to delete cy-ws-user-1724974515082-2_instabase.com (http://cy-ws-user-1724974515082-2_instabase.com)'s account. Err: Error 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`instabase`.`license_assignment`, CONSTRAINT `license_assignment_updated_by_account_fk` FOREIGN KEY (`updated_by_account`) REFERENCES `accounts` (`id`))\"```",
+      "time": "09:27",
+      "timestamp": "1726849624.860489",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "https://github.com/instabase/instabase/pull/62829",
+      "time": "09:31",
+      "timestamp": "1726849911.118269",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "So we do have code to delete the license if `EnableLicensing` is true but that code didn't run because it't not set to true in crafting or aihub-sandbox.",
+      "time": "09:35",
+      "timestamp": "1726850141.287599",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Do we need to change the logic for when that code should run then?",
+      "time": "09:40",
+      "timestamp": "1726850448.360239",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "yep yep, I'll confirm with the core-services team. Either make it always run, or patch the env properly",
+      "time": "09:42",
+      "timestamp": "1726850527.097899",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Merged the PR, you can rebase and rerun!",
+      "time": "09:51",
+      "timestamp": "1726851104.808779",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I added a patch to enable licensing for now",
+      "time": "09:51",
+      "timestamp": "1726851111.785599",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "awesome",
+      "time": "09:53",
+      "timestamp": "1726851208.111549",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "With the env patch that sets `ENABLE_LICENSING` to true, force deleting user worked",
+      "time": "10:03",
+      "timestamp": "1726851825.783199",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-09-20.json",
+    "message_count": 17,
+    "start_time": "1726848621.656219",
+    "end_time": "1726851825.783199",
+    "is_thread": true
+  }
+}

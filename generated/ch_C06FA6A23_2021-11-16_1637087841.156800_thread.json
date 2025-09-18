@@ -1,0 +1,174 @@
+{
+  "id": "ch_C06FA6A23_2021-11-16_1637087841.156800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Will",
+    "Heymian",
+    "Shubham Oli"
+  ],
+  "messages": [
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "I think this is a known problem - copying between mount points doesn’t work and throws an error, in particular, I have an s3 mount point and I can’t copy to another mount point.\n\nUnfortunately, it seems that the comparison app requires this copy permission. When I run the comparison app on a checkpoint on the s3 mountpoint, it fails. When I push those files to an instabase drive, it works. Any work around available besides downloading the files and re-uploading?",
+      "time": "10:37",
+      "timestamp": "1637087841.156800",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Can you share the exact two mount points you’re trying to copy between?",
+      "time": "10:38",
+      "timestamp": "1637087892.156900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I believe that you may be running into another case of the mount points being from different AWS projects (`instabase` and `instabase-dev` and the AWS policies attached aren’t allowing copy’s across them) @Shubham Oli potentially another manifest",
+      "time": "10:40",
+      "timestamp": "1637088046.157100",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "this is a separate mount point outside of our own environment - mounted as a bucket.",
+      "time": "10:42",
+      "timestamp": "1637088144.157300",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "https://demo-2.aws.sandbox.instabase.com/faisal.mohammad/m_t_proj/fs/m_and_t_s3/Matt%20Weaver[…]6158-45b7-9206-601e1c49515c/out/s4_apply_checkpoint/ (https://demo-2.aws.sandbox.instabase.com/faisal.mohammad/m_t_proj/fs/m_and_t_s3/Matt%20Weaver/Input_LOA_DocPackets/run_balaram/2021-11-16-18:15:28/aa54161e-6158-45b7-9206-601e1c49515c/out/s4_apply_checkpoint/)",
+      "time": "10:42",
+      "timestamp": "1637088146.157500",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "this is the folder I am trying to run the compare app against",
+      "time": "10:42",
+      "timestamp": "1637088160.157700",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "I have tried copying to this folder: https://demo-2.aws.sandbox.instabase.com/faisal.mohammad/my-repo/fs/Instabase%20Drive/files/mAndT/testCompare/ manually which also fails",
+      "time": "10:43",
+      "timestamp": "1637088199.157900",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "if I download the files and upload to that directory, I can run the comparison app on them",
+      "time": "10:43",
+      "timestamp": "1637088214.158100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah i think the AWS CopyObjects permission is not being allowed between two buckets. I haven’t checked, but iirc one is in the `instabase-dev` project (demo2) and the other is in `instabase-external` (mnt).",
+      "time": "10:45",
+      "timestamp": "1637088318.158300",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "sounds about right",
+      "time": "10:45",
+      "timestamp": "1637088355.158500",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "is that a permission we set ourselves or where does that get set?",
+      "time": "10:46",
+      "timestamp": "1637088364.158700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i think this must be possible, i looked into AWS docs https://aws.amazon.com/premiumsupport/knowledge-center/copy-s3-objects-account/ and I tried to follow this, but I couldn’t fix it.",
+      "time": "10:46",
+      "timestamp": "1637088373.158900",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "@Heymian Yes, there could be account specific Principal added in the IAM role. Let me check.",
+      "time": "10:46",
+      "timestamp": "1637088389.159100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "it’s our AWS environment, we can configure it",
+      "time": "10:46",
+      "timestamp": "1637088394.159300",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "by default cross account copy is not allowd so we have to whitelist it",
+      "time": "10:47",
+      "timestamp": "1637088440.159500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "if you figure it out, can you also share the fix with me. i’m very curious where I missed looking",
+      "time": "10:47",
+      "timestamp": "1637088444.159700",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "@Shubham Oli were you looking at this?",
+      "time": "13:00",
+      "timestamp": "1637096408.160000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "He’s asleep in india time, he was looking right up until he slept, and seems to have figured out how to whitelist the buckets across projects. He’s trying to figure out what the full set of changes are needed though, so I hope he’ll have it by our tmr?",
+      "time": "16:24",
+      "timestamp": "1637108687.160200",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "ok, thanks for the update",
+      "time": "17:41",
+      "timestamp": "1637113298.160500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-11-16.json",
+    "message_count": 19,
+    "start_time": "1637087841.156800",
+    "end_time": "1637113298.160500",
+    "is_thread": true
+  }
+}

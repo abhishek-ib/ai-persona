@@ -1,0 +1,201 @@
+{
+  "id": "ch_C06FA6A23_2024-08-07_1723026246.757079_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Ashwin",
+    "HH",
+    "Nikolaos Kofinas",
+    "jtau",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "We have a problem with the configuration deployment of our sandboxes.\nA week ago I submitted this PR: https://github.com/instabase/instabase/pull/59484 where I removed some environment variables from the yaml file  which are controlled by the ibllm! Since then I have merged some PRs that change the default models: https://github.com/instabase/instabase/pull/60407 but today I found out that our deployments are “stuck” on the old config (see attached picture)\nThis means that our UAT (and maybe prod) is stuck on using older models !\nFor UAT I will mitigate this by removing the entries from the config, but I dont know what to do about prod!\ncc: @lydia @Kerry",
+      "time": "03:24",
+      "timestamp": "1723026246.757079",
+      "is_reply": false
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "<!subteam^S02FJA6A7U5> I will need your help\nI am going to apply this patch in UAT:\n```apiVersion: apps/v1\nkind: Deployment\nspec:\n  template:\n    spec:\n      containers:\n        - name: model-service\n          env:\n            - name: AZURE_MODEL_DEPLOYMENT_MAP\n              $patch: delete\n            - name: AIHUB_DEFAULT_OPENAI_MODEL\n              $patch: delete\n            - name: AIHUB_ADVANCED_OPENAI_MODEL\n              $patch: delete\n            - name: AIHUB_DEFAULT_MODEL_CONVERSE\n              $patch: delete\n            - name: AIHUB_MODEL_CONVERSE_INTENT_CLASSIFICATION\n              $patch: delete\n            - name: AIHUB_MODEL_BUILD_REASONING_INTENT_CLASSIFICATION\n              $patch: delete\n            - name: SERVICE_WEAVIATE_HOST\n              $patch: delete\n            - name: SERVICE_WEAVIATE_PORT\n              $patch: delete```\nbasically delete all the variables that appear in this PR: https://aihub-uat.internal.instabase.com/deployment-manager/configs?tab=enter_patch&targetObject=deployment-model-service\n----IF------ they have the same value as in the PR.\na) Can you give me an LGTM for this patch?\nb) Can you apply it to the environments that I dont have access? (prod, sandbox)",
+      "time": "03:30",
+      "timestamp": "1723026610.194679",
+      "is_reply": true
+    },
+    {
+      "sender": "HH",
+      "user_id": "U03S42PSK5M",
+      "message": "checking",
+      "time": "03:41",
+      "timestamp": "1723027299.735979",
+      "is_reply": true
+    },
+    {
+      "sender": "HH",
+      "user_id": "U03S42PSK5M",
+      "message": "this patch looks good to me. As changed are being made to base config then this should not be required, however let me loop in SME to provide more insight.\n\n@Nikolaos Kofinas do you need to apply this for our AIHub instance or all AIHub SaaS tenant?\n\n@Ashwin Could you take a look at this?",
+      "time": "03:50",
+      "timestamp": "1723027826.063579",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "I want to make the change in all aihub sandboxes where the values are the same as the PR",
+      "time": "04:10",
+      "timestamp": "1723029057.031979",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "(sorry for the mess, I thought that deletes are applied automatically)",
+      "time": "04:11",
+      "timestamp": "1723029081.984599",
+      "is_reply": true
+    },
+    {
+      "sender": "HH",
+      "user_id": "U03S42PSK5M",
+      "message": "then you might need to add patches in code base so those gets automatically applied, however let the SME to chime in.",
+      "time": "04:12",
+      "timestamp": "1723029129.115549",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@jtau can you help here? i don't know if this requires us to remove some manual patches applied before (so this is the expected behavior), or something is wrong with DM applying configs",
+      "time": "10:20",
+      "timestamp": "1723051237.862689",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "+1 to Hanuman's comment, we should check in a patch which updates the value to override the patch that was previously applied, we dont have a way to programatically delete  a patch from all environments",
+      "time": "10:22",
+      "timestamp": "1723051332.474109",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "If we need this in all environments managed through sandbox console and console.instabase.com (http://console.instabase.com), we can check it in here https://github.com/instabase/instabase/tree/master/deployment-configs/environment-patches/saas then backport to the relevant releases",
+      "time": "10:23",
+      "timestamp": "1723051402.534139",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "@Nikolaos Kofinas can you check if there is an existing patch checked in or formerly checked in which sets it to the incorrect value?",
+      "time": "10:24",
+      "timestamp": "1723051452.131359",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "If we want to verify whether something is patched & pinned, you can use the patch searching functionality; for example you can see here that one of the env vars is patched previously in january\n\nAn option is to find all the patches that may have patched such env vars and delete the patches, which could be time consuming. The easier way is like what @HH and @Ashwin is saying, which is to check in the delete patch to github so that they're applied to all ai hub sandboxes\n\nThe github directory that ashwin linked is for all saas environments, so if we want this to be even more specific, like sandboxes only, there's a different directory for that. The question is, which environments exactly do you want this patch to go into?",
+      "time": "10:26",
+      "timestamp": "1723051618.544179",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "ie\n\nall single tenant ai hub environments (which include aihub sandboxes + customer prod single tenant aihub envs) : https://github.com/instabase/instabase/tree/master/deployment-configs/environment-patches/saas-advanced-patches/saas-managed-aihub-st\n\nonly sandboxes (both aihub and non aihub): https://github.com/instabase/instabase/tree/master/deployment-configs/environment-[…]saas-advanced-patches/saas-hierarchial-patches/environments/san (https://github.com/instabase/instabase/tree/master/deployment-configs/environment-patches/saas-advanced-patches/saas-hierarchial-patches/environments/san)\n\nall aihub (including our multitenant ones): https://github.com/instabase/instabase/tree/master/deployment-configs/environment-patches/saas-advanced-patches/saas-managed-aihub",
+      "time": "10:30",
+      "timestamp": "1723051814.098989",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Hey, just to clarify my understanding, is the config for these removed variables still there because we either checked in a patch (deploys automatically) or the user manually applied a patch? In those cases, for customer environments, I imagine we would want to leave those patches alone?\n\nOn an env, if no patches modify the env var, then would we expect the env var to disappear with Nikolaos's original PR?\n\nIf my understanding above is correct, then I think we can apply a delete patch for our own internal environments, but I would be hesitant to check it in for all saas environments.",
+      "time": "10:39",
+      "timestamp": "1723052344.722899",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Your understanding is correct",
+      "time": "10:39",
+      "timestamp": "1723052394.348769",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "What would be the reason for this configuration drift between our internal environments and our customer saas environments? I think this difference in config could lead to other problems in the future",
+      "time": "10:40",
+      "timestamp": "1723052440.254769",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "@lydia so far we shouldn't have set a specific environment variable for a customer (except the azure mapping) , what if we delete all the patches from our codebase and then let the deployment do its work ?",
+      "time": "10:44",
+      "timestamp": "1723052652.967189",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Yes, we can also remove the patches from our codebase. That is different than one of the proposals above, right, which was to check-in a \"delete patch\"? I assume that would override any manual customer settings.\n\nThe situation I'm trying to avoid is that a customer has manually decided to use X model for some env var (e.g. AZURE_MODEL_DEPLOYMENT_MAP), and on the next deployment, we delete that configuration and replace it with the default, which might not work for them.",
+      "time": "10:45",
+      "timestamp": "1723052759.224769",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Removing patches from our code base would a different behavior, correct? That means on the next deployment, we won't _apply_ any changes to the env vars from the patches in our codebase.",
+      "time": "10:46",
+      "timestamp": "1723052790.793199",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Btw @jtau is there an order in which checked-in patches are applied? what happens if you have patches that modify the same env var?",
+      "time": "10:47",
+      "timestamp": "1723052874.347339",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "At least for Saas, customers cannot \"patch\" anything (we don't allow them to access DM) - if there needed to be a config change, it would still have to go through us. I wouldn't be the right person to know whether there was anything specific for a customer that _needs_ to stay that way.\n\nHowever, if there _were_ customer stack specific changes that should _stay_. They should've been checked into this customer directory (https://github.com/instabase/instabase/tree/master/deployment-configs/environment-patches/saas-advanced-patches/saas-hierarchial-patches/customer)\nor tenant directory: https://github.com/instabase/instabase/tree/master/deployment-configs/environment-patches/saas-advanced-patches/saas-hierarchial-patches/tenant\n\nwhich is applied later than for example the saas (all internal envs) directory\n\nSo that shouldn't be a problem, assuming they were checked in correctly",
+      "time": "10:48",
+      "timestamp": "1723052939.486499",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "@lydia yes there is a hierarchy / ordering involved here",
+      "time": "10:49",
+      "timestamp": "1723052956.237029",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-08-07.json",
+    "message_count": 22,
+    "start_time": "1723026246.757079",
+    "end_time": "1723052956.237029",
+    "is_thread": true
+  }
+}

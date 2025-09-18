@@ -1,0 +1,537 @@
+{
+  "id": "ch_C06FA6A23_2024-04-24_1713997185.552169_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "Kerry",
+    "Aaron Tami",
+    "Sunny Khatri",
+    "sean.donohoe",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Hi, do we have a dev sandbox setup for enterprise releases (maybe for latest enterprise release) for testing purposes ? Given its quite inconvenient (inc. setup issues) to re-build things and deploy locally (since most of us don't actually directly work on enterprise branches), an enterprise sandbox could really help in quickly debugging and triaging issues. Thanks !",
+      "time": "15:19",
+      "timestamp": "1713997185.552169",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "what enterprise release do you need to test on? and what are you testing?\n\nif you’re making changes to `ibformers`, you can publish a new version of `ibformers` to any existing enterprise release sandbox to test out your changes",
+      "time": "15:43",
+      "timestamp": "1713998587.391949",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "We have an customer escalation, they are on 24.01. It's related to some field extraction stuff (in refiner) using ibllm that is failing for them.",
+      "time": "15:44",
+      "timestamp": "1713998677.780129",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "not sure what you mean by a dev sandbox, but we do have dogfood.instabase.com (http://dogfood.instabase.com) deploys the latest master in an enterprise mode, and all supported enterprise versions in their own release sandbox deploys the latest branch too; login creds should be in 1pw",
+      "time": "15:44",
+      "timestamp": "1713998685.464029",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "• dogfood.instabase.com (http://dogfood.instabase.com) is deployed every 6 hours from master\n• uat.dogfood.instabase.com (http://uat.dogfood.instabase.com) is deployed every 6 hours from the latest enterprise release branch during UAT week (no auto-deployment during non UAT weeks)\n• if you need an older enterprise release up to 23.07, you can revive one of these sandboxes  (https://sandbox.console.instabase.com/sandbox?name=release)for testing",
+      "time": "15:44",
+      "timestamp": "1713998686.164279",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yep, so you can try reviving https://release-24-01.internal.instabase.com/ and using that for testing, and as Kerry mentioned, the login creds are in 1password",
+      "time": "15:46",
+      "timestamp": "1713998778.373529",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Great. Thanks ! Let me take a look.",
+      "time": "15:46",
+      "timestamp": "1713998801.668429",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "however, it seems that sandbox is in a bad state\n\n@sean.donohoe it seems you most recently tried to deploy this sandbox? any tips on how to get this sandbox working again?",
+      "time": "15:46",
+      "timestamp": "1713998803.553439",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I had set up the recurring deployment schedule in admiral so it links my name any time an upgrade is performed -- I'll take a quick peek at what failed though :slightly_smiling_face:",
+      "time": "15:47",
+      "timestamp": "1713998876.964839",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oh oops sorry, thanks for taking a look! :pray:",
+      "time": "15:49",
+      "timestamp": "1713998962.358949",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "yeah sandbox deployment is failing frequently right now; 24.01 sandbox was last successfully deployed this morning, so hopefully not too out of date\nhttps://instabase.slack.com/archives/CCY413CSU/p1713965783418019",
+      "time": "15:49",
+      "timestamp": "1713998971.660109",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Can someone also point me to vault/credentials I should be using. Couldn't find anything searching for \"enterprise\", probably not the right thing I'm searching for.",
+      "time": "15:52",
+      "timestamp": "1713999145.048999",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Ah, I think the failed upgrades are caused by the same issue as whatever is causing https://instabase.slack.com/archives/C01N7DV1137/p1713937810855069 (failure logs at https://jenkins.instabase.com/job/SAAS-AWS/job/saas-pipelines/job/install-ib-platform/7847/console) -- <!subteam^S038TM462UX> is anyone actively looking into this? I am not familiar enough with how our jenkins cluster is deployed to start debugging :neutral_face:",
+      "time": "15:52",
+      "timestamp": "1713999176.473849",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Nvm..found it. Probably this one.",
+      "time": "15:53",
+      "timestamp": "1713999184.996279",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "you found the credentials for 21.04, not 24.01",
+      "time": "15:53",
+      "timestamp": "1713999235.351789",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@shaunak / @Kerry / @Aaron Tami if you have some spare cycles I would greatly appreciate any help identifying an appropriate party to investigate what's breaking deployments :slightly_smiling_face:",
+      "time": "15:54",
+      "timestamp": "1713999269.363179",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "search for the url of the sandbox in 1password https://release-24-01.internal.instabase.com/",
+      "time": "15:54",
+      "timestamp": "1713999271.503819",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "This one ? There is another credentials available for this seems like.",
+      "time": "15:55",
+      "timestamp": "1713999345.347449",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "No no no, those sandboxes are not for testing :slightly_smiling_face:",
+      "time": "15:55",
+      "timestamp": "1713999354.719479",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "The `release-<release version>` sandboxes are exclusively for testing:\n1. building the release branch\n2. deploy it\n3. running automated tests (systems, goldens, so forth)\nIf you need a sandbox built from 24.01, please build a new one at sandbox.console.instabase.com (http://sandbox.console.instabase.com)",
+      "time": "15:57",
+      "timestamp": "1713999420.518249",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "From there you can test the platform any which way you want, and deploy breakfix code to it much more rapidly than you'd be able to from the 'major release sandbox' deployment :slightly_smiling_face:",
+      "time": "15:57",
+      "timestamp": "1713999468.192849",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "CC: @shaunak @Aaron Tami @shiqi in case I'm being entirely unreasonable in disallowing abitrary hacking on release sandboxes :sweat_smile:",
+      "time": "15:58",
+      "timestamp": "1713999509.817609",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "We'll need to address whatever is causing deployments to fail in order for people to push and test changes, regardless of the cluster being used for testing :slightly_smiling_face:",
+      "time": "15:59",
+      "timestamp": "1713999578.072069",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "I just need a working 24.01 right now to quickly test something. What shall I do.",
+      "time": "16:00",
+      "timestamp": "1713999609.873099",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@Sunny Khatri if it would work for you, I can set up a 24.01 cluster with crafting for you to hack on?",
+      "time": "16:01",
+      "timestamp": "1713999665.935439",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Do you need to deploy any code or just test something on a certified release?",
+      "time": "16:01",
+      "timestamp": "1713999699.445139",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "If it’s just latter, @Cody Boggs what’s the issue with using the release sandbox?",
+      "time": "16:02",
+      "timestamp": "1713999722.229169",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Sure. I'm looking at a customer issue and just need to try out refiner as customer has been running into failures there. That's a good enough start.",
+      "time": "16:02",
+      "timestamp": "1713999758.081739",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Manual intervention / usage in the release sandbox has a _very_ high incidence of \"breaking all the automated tests\" unfortunately",
+      "time": "16:02",
+      "timestamp": "1713999761.117049",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "I see",
+      "time": "16:02",
+      "timestamp": "1713999775.773599",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "They are on 24.01.14 if that helps. Rebuilding things locally for enterprise is a painstaking process, figured existing sandbox might be the quickest.",
+      "time": "16:03",
+      "timestamp": "1713999792.721499",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ok\nI can launch you a sandbox, assuming there aren't blockers to doing so @sean.donohoe? I haven't kept up with the deployment failure thread, apologies :confused:",
+      "time": "16:04",
+      "timestamp": "1713999840.901399",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ah, yea the release sandboxes are always running the latest certified version of their respective releases, so it'd be on 24.01.16 or higher I think",
+      "time": "16:05",
+      "timestamp": "1713999903.085059",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "We can go for that. If things work there, we can perhaps suggest an update (assuming this generally doesn't tend to be a painful process for them)",
+      "time": "16:05",
+      "timestamp": "1713999951.291449",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I can deploy a specific release version to a new sandbox, no biggie :slightly_smiling_face:",
+      "time": "16:06",
+      "timestamp": "1713999975.503869",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I'm provisioning one for crafting regardless since it'll come in handy for these situations if they come up again, but definitely go for whichever option that'll unblock Sunny the quickest!",
+      "time": "16:06",
+      "timestamp": "1713999993.306119",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Just the 'major release' ones that we auto-deploy several times per day are always `latest` so to speak",
+      "time": "16:06",
+      "timestamp": "1713999997.938139",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Okie doke!",
+      "time": "16:06",
+      "timestamp": "1714000010.713499",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Build kicked: https://sandbox.console.instabase.com/customer/Engineering/tenant/sunny-24-01-14/info\nI'll keep an eye on it",
+      "time": "16:08",
+      "timestamp": "1714000093.733439",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":blob_sad: No good\n```17:11:43  │ Error: creating WAFv2 IPSet (insan-use2-sunny-24-01-14-ipset-wafv2): WAFLimitsExceededException: AWS WAF couldn't perform the operation because you exceeded your resource limit NUM_IP_SETS_BY_ACCOUNT```\nWe'll just have to deal with the test breakage if it comes up, I think.\n\n@Sunny Khatri did you find working creds for the 24.01 sandbox?",
+      "time": "16:14",
+      "timestamp": "1714000470.465539",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Sunny Khatri search for `release-24-01` it's in the ib sandboxes vault",
+      "time": "16:15",
+      "timestamp": "1714000552.402099",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "I see these 3",
+      "time": "16:17",
+      "timestamp": "1714000675.947349",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "yeah do any of these work",
+      "time": "16:18",
+      "timestamp": "1714000690.464109",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "they are shared creds and usually have admin privilege",
+      "time": "16:18",
+      "timestamp": "1714000722.519969",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Atleast the 3rd one didn't work. Let me try others.",
+      "time": "16:19",
+      "timestamp": "1714000777.136299",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "the golden one works",
+      "time": "16:20",
+      "timestamp": "1714000830.626659",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Not working for me. Not able to authenticate.",
+      "time": "16:21",
+      "timestamp": "1714000889.459589",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "try again",
+      "time": "16:22",
+      "timestamp": "1714000948.413429",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "works for me every time",
+      "time": "16:22",
+      "timestamp": "1714000961.059109",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Nope doesn't work. This is the right url correct ? https://release-24-01.internal.instabase.com. I'm authenticating via the authenticator app as I generally do for instabase account but doesn't seem to work.",
+      "time": "16:24",
+      "timestamp": "1714001046.895339",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Ah no you need use the authentication code in 1pw",
+      "time": "16:24",
+      "timestamp": "1714001066.860769",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "this",
+      "time": "16:25",
+      "timestamp": "1714001106.289389",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Ahhh..got it. That one-time password.",
+      "time": "16:25",
+      "timestamp": "1714001106.715559",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Ok. I'm in.",
+      "time": "16:25",
+      "timestamp": "1714001156.428529",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Thanks Guys. Will let you know if I need anything. Might be good for us to have some of the sandbox issues resolved as having these sandboxes could come really handy during triaging and escalations.",
+      "time": "16:27",
+      "timestamp": "1714001224.844729",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea usually they work quite well, but the last two days have been plagued with some odd failures :upside_down_face:\nYour timing is just a little off :joy:",
+      "time": "16:31",
+      "timestamp": "1714001499.392409",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "No worries. Thanks for helping out here promptly.",
+      "time": "16:37",
+      "timestamp": "1714001835.778839",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "I'm failing to hit ib_llm_tools from 24.01 sandbox for this golden-test user. Is this expected ? cc @Serena, @Nikolaos Kofinas ?",
+      "time": "17:27",
+      "timestamp": "1714004823.740029",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "have you checked that the OpenAI API key and the license are set up correctly in this environment, as described in https://instabase.atlassian.net/wiki/spaces/PROD/pages/2080178179/Enabling+LLMs+in+Refiner#Sandbox-Environments?",
+      "time": "17:30",
+      "timestamp": "1714005014.987589",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Not sure what settings we used while creating this. I would have imagined this to be fully functional. Let me see if I could find.",
+      "time": "17:32",
+      "timestamp": "1714005168.586719",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "enterprise sandboxes are not necessarily set up for usage with `ib_llm_tools` and OpenAI, so you may need to contact IT / infra support and install the license as described in that doc",
+      "time": "17:33",
+      "timestamp": "1714005231.110039",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Yeah I see that. @Cody Boggs @sean.donohoe Is this something you guys can help follow up since I'm not sure how we wish to manage this environment. It's a bit weird we don't have this setup, as I had imagined ib_llm_tools to be a core component.",
+      "time": "17:35",
+      "timestamp": "1714005353.904689",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I honestly haven’t a clue what any of the ib llm stuff is or where it’s expected to exist :sweat_smile: \nWe just handle SRE and release automation stuff",
+      "time": "17:38",
+      "timestamp": "1714005491.443839",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Makes sense. No worries. I can follow up if we are good with us setting up the license there.",
+      "time": "17:40",
+      "timestamp": "1714005618.767229",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-04-24.json",
+    "message_count": 64,
+    "start_time": "1713997185.552169",
+    "end_time": "1714005618.767229",
+    "is_thread": true
+  }
+}

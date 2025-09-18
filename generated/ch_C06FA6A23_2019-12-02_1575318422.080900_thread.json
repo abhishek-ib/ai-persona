@@ -1,0 +1,214 @@
+{
+  "id": "ch_C06FA6A23_2019-12-02_1575318422.080900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "dlluncor",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "anyone have experience running into pickle-ing problems? Running into a `Can't pickle <class> error: attribute lookup on builtins failed` error when trying to pickle inside a UDF, but the identical code doesn’t trigger the error locally. I can’t seem to figure out why… :dizzy_face:",
+      "time": "12:27",
+      "timestamp": "1575318422.080900",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "PY2 vs PY3 pickle issue? — in what environment are you pickling and which environment are you unpickling?",
+      "time": "12:53",
+      "timestamp": "1575319989.081200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "problem is pickling in the first place, not unpickling @dlluncor PY3",
+      "time": "13:48",
+      "timestamp": "1575323328.081400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "flow: https://www.instabase.com/apps/flow/edit/georgia/FRB-doc-splitter/fs/Instabase%20Drive/workspace-chetan/train_doc_splitting_model.ibflow#\npython source code: https://instabase.com/apps/text-editor/georgia/FRB-doc-splitter/fs/Instabase%20Drive/workspace-chetan/scripts/scripts.py",
+      "time": "13:49",
+      "timestamp": "1575323344.081600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "hm gotcha — this pickle issue i’m not totally sure about — might be StackOverflow kind of thing?",
+      "time": "13:58",
+      "timestamp": "1575323913.081800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "Yea i did a fair amount of stack overflow and docs spelunking to not much avail. Most confusing is why I can't repo locally",
+      "time": "14:01",
+      "timestamp": "1575324098.082000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "@lydia @shaunak seen this before by any chance?",
+      "time": "14:02",
+      "timestamp": "1575324133.082200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "screenshot of the error — “NearestNeighborClassifier” is defined in the scripts.py file I linked to above",
+      "time": "14:13",
+      "timestamp": "1575324828.082500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "are you trying to pickle a class instead of an object?",
+      "time": "14:14",
+      "timestamp": "1575324864.083000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "nope — it’s an object",
+      "time": "14:15",
+      "timestamp": "1575324903.083200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "this error apparently happens when the class definition isn’t in-scope to the pickle object (https://stackoverflow.com/questions/4677012/python-cant-pickle-type-x-attribute-lookup-failed)",
+      "time": "14:15",
+      "timestamp": "1575324942.083400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "but that can’t be the problem here — my class definition isn’t nested (or hidden in some other way)",
+      "time": "14:15",
+      "timestamp": "1575324958.083700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "isn’t `this.classifier` the nested object in there?",
+      "time": "14:32",
+      "timestamp": "1575325967.084100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "nope — that’s a sklearn classifier object @shaunak",
+      "time": "14:35",
+      "timestamp": "1575326139.084300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Are you sure that `classifier` is picklable",
+      "time": "14:39",
+      "timestamp": "1575326371.084500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yea — `trained_model_serialized =  pickle.dumps(trained_model.classifier)` just worked",
+      "time": "14:44",
+      "timestamp": "1575326649.084700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "in flow on instabase*. it works both ways locally.",
+      "time": "14:45",
+      "timestamp": "1575326729.085100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "it could be how this is being executed inside of an exec() since it’s a UDF in Flow",
+      "time": "15:06",
+      "timestamp": "1575328009.085300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "aaha that would cause it.",
+      "time": "15:11",
+      "timestamp": "1575328260.086500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "let me investigate other serialization options.",
+      "time": "15:11",
+      "timestamp": "1575328305.087600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "fixed by serializing `object.__dict__` instead of `object`. all types in `object.__dict__` were defined outside the UDF. defining a `__reduce__` didn’t work for whatever reason (identical error message, albeit stack overflow said it should work) @dlluncor @shaunak",
+      "time": "17:21",
+      "timestamp": "1575336094.098800",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Is it possible to serialize the object as a json, or protobuf?",
+      "time": "17:23",
+      "timestamp": "1575336212.099000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I would highly recommend using either of them as opposed to pickling",
+      "time": "17:24",
+      "timestamp": "1575336247.099200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "json wouldn’t be good (lots of floating point values in this class, that’s the majority of the ~13 MB pickled object), protobuf could work but do we want to be managing  proto files / protobuf code generation/etc. for customer solutions? maybe there’s an easier way i don’t know about?",
+      "time": "17:28",
+      "timestamp": "1575336523.099800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-12-02.json",
+    "message_count": 24,
+    "start_time": "1575318422.080900",
+    "end_time": "1575336523.099800",
+    "is_thread": true
+  }
+}

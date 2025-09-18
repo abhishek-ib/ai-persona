@@ -1,0 +1,71 @@
+{
+  "id": "ch_C0516UPPMT3_2024-08-08_1723153813.505099_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Balaram",
+    "Kaustubh (KD)",
+    "avi",
+    "hannah"
+  ],
+  "messages": [
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "LuminAI is running into inconsistencies with their API response and in-app Chatbot response. This is becoming a production blocker for them. @avi + @Balaram when you folks are up can you help us diagnose what is happening? See the attachements.\n\nThey have folks in India timezones are are willing to jump on the call.",
+      "time": "14:50",
+      "timestamp": "1723153813.505099",
+      "is_reply": false
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "@Kaustubh (KD) I think it's because of the difference in the model choice. By default, APIs multistep-lite and the UI uses multistep.\n\nThis discrepancy will be removed after the 24.34 release, multistep-lite will be the default model for both API and UI.",
+      "time": "19:49",
+      "timestamp": "1723171777.670279",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Interesting I saw that you commented on the thread there thanks for following up!",
+      "time": "20:51",
+      "timestamp": "1723175480.381459",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Catching up here - want to understand the user scenarios a bit better internally before bugging them. From reading the channel and seeing their usage, it seems like there are a few patterns we see them using. @hannah @Kaustubh (KD) does this sound about right?\n\n1. They want to extract data from a doc (eg: insurance cards) - here they will use Build.\n2. They want to do some kind of information retrieval (eg: accolade provider search) - here they can use Chatbots since the information not be configured via API and they want to test in the UI with multiple people too.\n3. It seems there's a 3rd frankenstein scenario where they want to extract data from a doc, but are not getting great results in build (eg: check processing). So they are using converse (eg: check data extraction). Since they want to share the converse projects in the commercial org for testing, they are currently using chatbots and querying using chatbots API. We should be very careful here since this isn't what chatbots are designed for. I'd recommend we guide them toward the following pattern instead. Eventually, it is likely this will be solved better in build. @Balaram what do you think? \n    ◦ For testing - create a converse chat with one doc each, extract data using prompt in UI. \n        ▪︎ They can share this too by creating a chatbot. Since there's only 1 doc, it'll use the advanced model by default, or research mode (multistep) if they need\n    ◦ For prod - they should use the *converse API* (not chatbots API) to upload a doc, query the chat using advanced model (multistep model coming soon), and pass the result to their downstream system\n        ▪︎ In the near term, they can use the chatbot API if they need to use the multistep model since it isn't supported on converse API yet. But they should note that they will not be able to manage chatbot docs via API or use advanced model.\nOnce we align, let's setup a chat with them next week to learn more and guide them.",
+      "time": "23:27",
+      "timestamp": "1723184833.531599",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Yes this is right @avi! I’d definitely get time with them next week and help them through this.\n\nThey have both a short term and long term goal. The ST goal is how do they start using commercial asap (which I recommended they just migrate directly to converse in commercial) and then a LT goal which is helping to set things up right (using build and converse when best suited. \n\nAs for the converse/chatbot, I pushed them to use chatbots as they wanted to have multiple people rebuild the conversations, test results, and use a single API token to call them in production. I thought chatbots would work well here (given the sharing nature and single API call), but it seems like there might be some gaps/limitations to this approach. We should definitely push them back to converse if chatbots won’t work (ideally sooner rather than later!).",
+      "time": "23:48",
+      "timestamp": "1723186100.771539",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Awesome, I'll get time with them. They can totally use chatbots for testing in the front end, but would likely be best served with using the Converse API for production as long as they don't have multidoc queries, or require multistep model since it seems the docs keep changing",
+      "time": "23:55",
+      "timestamp": "1723186543.054679",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-08-08.json",
+    "message_count": 6,
+    "start_time": "1723153813.505099",
+    "end_time": "1723186543.054679",
+    "is_thread": true
+  }
+}

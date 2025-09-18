@@ -1,0 +1,87 @@
+{
+  "id": "ch_C06FA6A23_2020-01-27_1580170768.159400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ashish",
+    "dlluncor",
+    "Heymian",
+    "Aaron Tami"
+  ],
+  "messages": [
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "api-server-apps is crashing in dogfood. Can someone please have a look?\n```ashish@build-machine-v17-09-26:~/instabase-master/webserver/webapp$ kubectl logs -n instabase-dogfood deployment-api-server-apps-85db864595-25zff \n[2020-01-28 00:12:18,472] {/instabase-api-server-apps/py/instabase/handler/api/v1/transformer.py:63} INFO - Transformer will group (parallelize) requests in non-development environment\n[2020-01-28 00:12:18,500] {/instabase-api-server-apps/py/instabase/handler/api/v1/diff.py:96} INFO - Diff will group (parallelize) requests in non-©269development environment\nTraceback (most recent call last):\n  File \"manage.py\", line 64, in <module>\n    server.register_blueprints()\n  File \"/instabase-api-server-apps/py/instabase/server/main.py\", line 135, in register_blueprints\n    self._register_apis()\n  File \"/instabase-api-server-apps/py/instabase/server/main.py\", line 145, in _register_apis\n    from instabase.handler.api.v1 import (\n  File \"/instabase-api-server-apps/py/instabase/handler/api/v1/doc.py\", line 17, in <module>\n    from instabase.image_utils import file_io\n  File \"/instabase-api-server-apps/py/instabase/image_utils/file_io.py\", line 6, in <module>\n    import cv2\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/cv2/__init__.py\", line 3, in <module>\n    from .cv2 import *\nImportError: libXrender.so.1: cannot open shared object file: No such file or directory```",
+      "time": "16:19",
+      "timestamp": "1580170768.159400",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Aaron Tami I think it might be your document API PR.",
+      "time": "17:10",
+      "timestamp": "1580173858.162900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "oof",
+      "time": "17:20",
+      "timestamp": "1580174455.164200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "do we not want to include cv2 into api-server-apps?",
+      "time": "17:21",
+      "timestamp": "1580174480.164400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "not sure if i’m the person to make the call on that. But off the top of my head for why we wouldn’t want to do this is because at some point we were depending on multiple (incompatible) versions of opencv in different services. So if you do that we might not be able to run all the services locally anymore. But this might be out of date info? on the other hand, local builds are not a terribly valid reason for not including something. :stuck_out_tongue:",
+      "time": "17:30",
+      "timestamp": "1580175042.164800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "I recommend that we keep cv2 limited to a select set of services.",
+      "time": "17:57",
+      "timestamp": "1580176675.165500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Yep — we’d like to limit cv2 to workers only. Heavy processing shouldn’t be done in services like api-server-apps",
+      "time": "21:06",
+      "timestamp": "1580187979.175400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "what is the cv2 library being used for?",
+      "time": "21:06",
+      "timestamp": "1580187999.175600",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-01-27.json",
+    "message_count": 8,
+    "start_time": "1580170768.159400",
+    "end_time": "1580187999.175600",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-02-04_1738717658.802119_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hey team! @Heymian and I were chatting about saving the requestor protobuf context (`pbCtx.Context`) into the Golang context (`context.Context`). What are your thoughts on this?\n\nAttaching a dummy code snippet for a new interceptor in the thread.\n\nHere are a couple of pros I can think of:\n1. We don't have to pass the requestor username in function arguments. Just do `ctx.Value('requestor')`. \n2. We can add validation logic to make sure the requestor username is always present in a centralized place\n3. With some extra changes, this will also make propagating requestor info from Python to Golang easier:\n    a. Python: find the username from cookies or the api token\n    b. Python: use handler util functions to save context in grpc metadata \n    c. Golang: parse grpc metadata, create `pbCtx.Context`, and set it in context\nTagging @sudeep @puneet since y'all have been working on grpc interceptors.",
+      "time": "17:07",
+      "timestamp": "1738717658.802119",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "```var requestorContextKey = \"requestorContext\"\n\nfunc parseRequestorContext(requestorContextMD string) *pbCtx.Context {\n\n\t// json marshall requestorContextMD to get the pbCtx.Context from req proto\n\tusername := \"casper\"\n\treturn &pbCtx.Context{\n\t\tUsername: &username,\n\t}\n}\n\nfunc requestorContextInterceptor(ctx context.Context, req interface{},\n\tinfo *grpc.UnaryServerInfo, handler grpc.UnaryHandler,\n) (resp interface{}, err error) {\n\tmd, _ := metadata.FromIncomingContext(ctx)\n\tvalues := md.Get(\"requestor-context\")\n\n\trequestorContext := parseRequestorContext(values[0])\n\tctx = context.WithValue(ctx, requestorContextKey, requestorContext)\n\n\treturn handler(ctx, req)\n}\n\nfunc GetRequestorContext(ctx context.Context) *pbCtx.Context {\n\treturn ctx.Value(requestorContextKey).(*pbCtx.Context)\n}\n\n\n// in handler fns:\n// requestorCtx := GetRequestorContext(ctx)```",
+      "time": "17:07",
+      "timestamp": "1738717673.682949",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-02-04.json",
+    "message_count": 2,
+    "start_time": "1738717658.802119",
+    "end_time": "1738717673.682949",
+    "is_thread": true
+  }
+}

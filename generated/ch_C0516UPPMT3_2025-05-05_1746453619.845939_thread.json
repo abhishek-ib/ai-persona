@@ -1,0 +1,86 @@
+{
+  "id": "ch_C0516UPPMT3_2025-05-05_1746453619.845939_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "hannah",
+    "Nathaniel",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "Why was the \"Exempt Misclassified Document\" toggle not set as the default behavior in AI Hub (and can that be changed now)?\n\nThe reason it's a toggle and not just the standard calculation is because of backwards compatibility in the classic platform and not wanting to change the behavior on customers with existing goldens back in 2023.  However, we created Build from scratch since then and didn't have to worry about anyone with existing ground truths.\n\nIn the thread where it was requested and discussed, there seemed to be consensus that the toggle being on would be the preferred behavior:\nhttps://instabase.slack.com/archives/C03HWN6BFC2/p1678686355801289\nBut 2 years later on a whole new product, we're having to discuss whether this toggle should be on with customers instead of more important topics.  :upside_down_face:",
+      "time": "07:00",
+      "timestamp": "1746453619.845939",
+      "is_reply": false
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "@Nathaniel do you mind providing more context on why this should be the default behavior? Would love to understand the customer need more.",
+      "time": "10:12",
+      "timestamp": "1746465148.487739",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "When we implemented the solution accuracy feature, we didn't toggle it on by default because the true project accuracy is impacted by misclassified documents.",
+      "time": "10:16",
+      "timestamp": "1746465400.733909",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "But would love to hear more",
+      "time": "10:16",
+      "timestamp": "1746465410.921909",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "So I've discussed this issue a bit deeper with Fannie Mae's data scientist and he also raised your point about the default calculation being a representation of  real end-to-end accuracy.\n\nMy point is that it's labeled as \"extraction accuracy\" but is not representative of only the extraction components.  If the classification accuracy is 80%, then the extraction accuracy could never get higher than 80%.  And since 100% accuracy is rare, likely it'll show even lower than that, even if raw it's doing great, like 95%.\n\nBoth ways of calculating the accuracy are helpful in their correct context, so the approach that we agreed on (and one that I feel would be ideal for all customers/use cases), is that we're going to report on both accuracy calculation methods.\n\nThe current default behavior will be labeled as \"End-to-End Accuracy\", and the calculation with the `Exempt misclassified...` toggle will take the \"Extraction Accuracy\" title in our reports.\n\nThis is a problematic workaround as it not only requires annoyingly having to rerun ground truth datasets to get both calculations, but also poses the chance for these non-deterministic models to predict different answers between 1 run and the 2nd (which we've already experienced).  Ideally, there'd also be a way to recalculate accuracies based on changes to the toggles in the ground truth settings without having to reprocess all the docs.",
+      "time": "12:45",
+      "timestamp": "1746474303.496519",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> Ideally, there'd also be a way to recalculate accuracies based on changes to the toggles in the ground truth settings without having to reprocess all the docs.\nyes,\nyeah i think we discussed a \"Recalculate\" button for this when originally designing solution accuracy? @hannah\n\n@hannah @Kaustubh (KD) should we create a feature request ticket for this?",
+      "time": "13:57",
+      "timestamp": "1746478643.907219",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "I see what you're saying @Nathaniel - I think it's that the \"exempt misclassified records\" shouldn't be a dataset config, but rather a toggle on the accuracy report itself",
+      "time": "13:59",
+      "timestamp": "1746478794.348179",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "We currently have the \"hide misclassified records\" but maybe more accuractely it would be to have an accuracy test setting that both excludes them from the report and hides them",
+      "time": "14:00",
+      "timestamp": "1746478841.671909",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-05-05.json",
+    "message_count": 8,
+    "start_time": "1746453619.845939",
+    "end_time": "1746478841.671909",
+    "is_thread": true
+  }
+}

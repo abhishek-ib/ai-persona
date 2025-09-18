@@ -1,0 +1,127 @@
+{
+  "id": "ch_CSY11CK7T_2025-07-21_1753139616.490119_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "prateek.tenkale",
+    "Sherif",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Hey @Paul H @Sherif , do you know what type of logic is there on the frontend to decide whether or not revalidation happens after field edits in. human review? Essentially what I've noticed is that we make field edits through a `/set-records`  (run-based review) or `/extract` (doc-based review) call, it won't always call `/revalidate-records` (to trigger revalidation for fields)  like it's supposed to. I wonder if there is any conditional logic this API call that I should be aware of",
+      "time": "16:13",
+      "timestamp": "1753139616.490119",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "There seems to be some conditional logic, but it's kinda hard to give a definitive answer on what exactly that logic is:\n\nFor example, here's the thunk that triggers the API call:\nhttps://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpack[…]c/aihub/store/review/resultsSlice/revalidateDocument/actions.ts (https://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpacked/apps/src/aihub/store/review/resultsSlice/revalidateDocument/actions.ts#L67)\n\nHere's where we call it (based if it's run based or not), on records with truthy `canValidate`:\nhttps://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpack[…]c/aihub/store/review/resultsSlice/revalidateDocument/actions.ts (https://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpacked/apps/src/aihub/store/review/resultsSlice/revalidateDocument/actions.ts#L67)\n\nand here is where we set `canValidate` for each record\nhttps://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpack[…]/src/aihub/store/review/resultsSlice/saveCorrections/reducer.ts (https://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpacked/apps/src/aihub/store/review/resultsSlice/saveCorrections/reducer.ts#L136)\n\nand so on. It get kinda deep.\n\nIs there a scenario where you were expecting revalidate to occur but it didn't, and the scenario can be replicated? If so, I can take a look for you",
+      "time": "16:26",
+      "timestamp": "1753140378.995359",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "(Note that we have a bug on master rn where we don't trigger revalidation when reclassification happens. PR to fix (https://github.com/instabase/instabase/pull/72547))",
+      "time": "16:27",
+      "timestamp": "1753140443.252379",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Got it, when I first opened a doc / run I noticed the calls weren't being made (even though there was a validation every field having confidence >= 100%), but when I went to the projects page and made changes to the validation rules, updated app version on my deployment it seemed to work",
+      "time": "17:54",
+      "timestamp": "1753145673.025989",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "It's unclear exactly what behavior on the UI makes it dysfunctional",
+      "time": "17:54",
+      "timestamp": "1753145674.240819",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "@prateek.tenkale Do you know how I can get to the doc based human review page? Just realized I don't think I tested case fields out there.",
+      "time": "18:05",
+      "timestamp": "1753146335.078289",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "For a deployment with human review enabled, it will show up under the \"Reviews\" tab",
+      "time": "18:06",
+      "timestamp": "1753146395.551149",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Do I have to be enterprise? I made a deployment with human review and I'm not seeing that tab",
+      "time": "18:11",
+      "timestamp": "1753146709.118239",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I'm not sure, but you definitely need to be on a commercial account for sure",
+      "time": "18:13",
+      "timestamp": "1753146784.405939",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Try this https://instabase.atlassian.net/wiki/spaces/ENG/pages/2881486881/Setting+up+your+Dev+Environment#Create-an-enterprise-organization",
+      "time": "18:20",
+      "timestamp": "1753147228.833619",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> when I first opened a doc / run I noticed the calls weren't being made\nwhen you first open a doc / run, why should revalidation calls occur? are you talking about field edits during the first time you open a doc / run?",
+      "time": "23:12",
+      "timestamp": "1753164724.203549",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Sherif to understand why you don't see the \"Review\" tab, can you double check the role of your account in that workspace?",
+      "time": "23:13",
+      "timestamp": "1753164801.175699",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "@Serena yes I meant when I perform field edits",
+      "time": "23:56",
+      "timestamp": "1753167371.649749",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-07-21.json",
+    "message_count": 13,
+    "start_time": "1753139616.490119",
+    "end_time": "1753167371.649749",
+    "is_thread": true
+  }
+}

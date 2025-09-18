@@ -1,0 +1,54 @@
+{
+  "id": "ch_CSY11CK7T_2025-04-22_1745332188.186459_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Serena",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "When running some tests, I see this warning -- not sure how to fix it. I think it's pre-existing, but not 100% sure.\n\n``` Warning: An update to TestComponent inside a test was not wrapped in act(...).\n\n    When testing, code that causes React state updates should be wrapped into act(...):\n\n    act(() => {\n      /* fire events that update state */\n    });\n    /* assert on the output */\n\n    This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act\n        at TestComponent (/home/owner/instabase/webserver/shared/src/js/webpacked/node_modules/@testing-library/react-hooks/lib/helpers/createTestHarness.js:22:5)\n        at QueryClientProvider (/home/owner/instabase/webserver/shared/src/js/webpacked/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)\n        at children (/home/owner/instabase/webserver/shared/src/js/webpacked/lib/src/IBUtils/lib/testing/WithReactQuery.tsx:18:3)\n        at Suspense\n        at ErrorBoundary (/home/owner/instabase/webserver/shared/src/js/webpacked/node_modules/react-error-boundary/dist/react-error-boundary.cjs.js:59:35)\n\n      at console.error (node_modules/@testing-library/react-hooks/lib/core/console.js:19:7)\n      at printWarning (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:68:30)\n      at error (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:44:5)\n      at warnIfNotCurrentlyActingUpdatesInDEV (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:15034:9)\n      at dispatchAction (node_modules/react-test-renderer/cjs/react-test-renderer.development.js:7129:9)\n      at node_modules/react-query/lib/react/useBaseQuery.js:75:9\n      at node_modules/react-query/lib/core/notifyManager.js:67:18\n      at NotifyManager.notifyFn (node_modules/react-query/lib/core/notifyManager.js:15:7)\n      at node_modules/react-query/lib/core/notifyManager.js:82:20\n          at Array.forEach (<anonymous>)\n      at node_modules/react-query/lib/core/notifyManager.js:81:17\n      at NotifyManager.batchedUpdates$1 [as batchNotifyFn] (node_modules/react-dom/cjs/react-dom.development.js:22380:12)\n      at node_modules/react-query/lib/core/notifyManager.js:80:16```",
+      "time": "07:29",
+      "timestamp": "1745332188.186459",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "AFAICT the test is already using `act` and `renderHook` like it's supposed to, but this error still crops up. `useWSDataSourcesWithIndexingStatusPolling.test.ts`",
+      "time": "07:36",
+      "timestamp": "1745332588.751399",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw this warning isn't blocking\n\nso as long as the test passes, your PR shouldn't be blocked\n\nbut yes ideally we would like to fix this warning",
+      "time": "09:16",
+      "timestamp": "1745338571.876909",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "+1, these are just warnings. These warnings indicate that the react state changes in the tested component, but the test doesn't wait for it. A couple of ways to fix it:\n1. Use `await act(async () => {})` around fireEvents/userEvents\n2. Add `act(() => Promise.resolve())` after the fireEvents/userEvents\n3. Use `await screen.findByRole()` after the fireEvents/userEvents when getting DOM elements\nThese warnings are non-blocking, so it's possible that we start seeing these warnings after the react code changes without noticing it. It just hard to make sure we can always catch the warnings and fix them.",
+      "time": "09:34",
+      "timestamp": "1745339643.272259",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-04-22.json",
+    "message_count": 4,
+    "start_time": "1745332188.186459",
+    "end_time": "1745339643.272259",
+    "is_thread": true
+  }
+}

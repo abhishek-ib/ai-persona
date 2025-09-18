@@ -1,0 +1,101 @@
+{
+  "id": "ch_C05L87V014J_2025-01-15_1736941276.624519_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think setting up pyenv also fixes this!",
+      "time": "03:41",
+      "timestamp": "1736941276.624519",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The default bashrc does it, but if you override it or use a different shell, it doesn’t work",
+      "time": "03:41",
+      "timestamp": "1736941307.835419",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "You are referring to this part of the pyenv doc (https://github.com/pyenv/pyenv?tab=readme-ov-file#b-set-up-your-shell-environment-for-pyenv), right? I can run `pyenv` directly from both zsh and bash but `cs start core-platform` run into the same issue in both shell.\nThe odd part is that I can't find any config like this in my .bashrc, which explains why `cs start` failed on both . I wonder if I wiped out anything in the bashrc file accidentally when I set up stuffs...\nAnyways! It's working now. Thank you for the help :slightly_smiling_face:",
+      "time": "09:30",
+      "timestamp": "1736962238.086219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mfichman❯ cat ~/.bashrc\neval \"$(/usr/local/pyenv/bin/pyenv init --path)\"\neval \"$(/usr/local/nodenv/bin/nodenv init -)\"\n\nsource .bash_profile```\n^ This is what I meant. This is the default bashrc for the sandbox",
+      "time": "09:58",
+      "timestamp": "1736963909.888359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Specifically, `eval \"$(/usr/local/pyenv/bin/pyenv init --path)\"` is the important part.",
+      "time": "09:58",
+      "timestamp": "1736963921.339759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/blob/master/third-party/crafting/templates/ibdev-backend.yml#L234",
+      "time": "09:59",
+      "timestamp": "1736963990.332949",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Might be that you have a custom bashrc in your personal snapshot.",
+      "time": "10:00",
+      "timestamp": "1736964014.410689",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I see... not sure why. I added these to zsh and that themselves didn't work either. Now i don't have them in my zshrc and `cs start` , `pyenv` , `nodenv` work directly out of the box",
+      "time": "10:07",
+      "timestamp": "1736964448.643009",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Huh....that is strange. I'll have to look into it at some point.",
+      "time": "10:32",
+      "timestamp": "1736965920.048439",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I have the same issue with nodenv not being set correctly in `PATH` so server-nginx failed to compile because node version is incorrect.\nI found that if I set the default shell to bash and run in zsh shell, both node and python are set correctly:\n```sudo usermod --shell /bin/bash owner```\nBut if i set the default shell to zsh, it won't work (i tried both)\n```sudo usermod --shell /usr/bin/zsh owner\nsudo usermod --shell /bin/zsh owner```",
+      "time": "17:48",
+      "timestamp": "1736992114.022099",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-01-15.json",
+    "message_count": 10,
+    "start_time": "1736941276.624519",
+    "end_time": "1736992114.022099",
+    "is_thread": true
+  }
+}

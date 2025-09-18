@@ -1,0 +1,136 @@
+{
+  "id": "ch_C06FA6A23_2025-03-10_1741649136.091699_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Xindi Xu",
+    "Cheryl Zhou",
+    "Heymian",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hey team, I'm seeing some issues related to package hash mismatch in my CI runs: PR 1 (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-68736/1/pipeline), PR 2 (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-68729/3/pipeline/), PR 3 (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-68735/1/pipeline). These error originated from python in bazel. Does anyone know how to fix them?\nSample error:\n```\n[2025-03-10T22:35:38.720Z]  (ERROR: THESE PACKAGES DO NOT MATCH THE HASHES FROM THE REQUIREMENTS FILE. If you have updated the package versions, please update the hashes. Otherwise, examine the package contents carefully; someone may have tampered with them.\n[2025-03-10T22:35:38.720Z]     unknown package:\n[2025-03-10T22:35:38.720Z]         Expected sha256 70de2f11bf64ca9921fda018864c78af7147025e467ce9f4a11bc877266900a6\n[2025-03-10T22:35:38.720Z]              Got        e302e143e08559fe61a01be084a2ef1527be83a43dee47e6550c67dfd4bd9725```",
+      "time": "16:25",
+      "timestamp": "1741649136.091699",
+      "is_reply": false
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "I moved pass this error after committing an empty commit and re-running CI, but would love to understand why this is happening too",
+      "time": "16:28",
+      "timestamp": "1741649300.253419",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you! I'll try it out",
+      "time": "16:36",
+      "timestamp": "1741649779.386429",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I'm seeing this in our image builds too:\n\n```17:08:19    Downloading mypy-0.812-cp39-cp39-manylinux2010_x86_64.whl.metadata (1.5 kB)\n17:08:19  Downloading mypy-0.812-cp39-cp39-manylinux2010_x86_64.whl (22.7 MB)\n17:08:19     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 22.7/22.7 MB 112.8 MB/s eta 0:00:00\n17:08:19   (ERROR: THESE PACKAGES DO NOT MATCH THE HASHES FROM THE REQUIREMENTS FILE. If you have updated the package versions, please update the hashes. Otherwise, examine the package contents carefully; someone may have tampered with them.\n17:08:19      unknown package:\n17:08:19          Expected sha256 33f159443db0829d16f0a8d83d94df3109bb6dd801975fe86bacb9bf71628e97\n17:08:19               Got        4dc0ce006c6ed34c450a9dc7b665ad63b657f427eec4f0f2f580e9ffa57b4a48\n17:08:19  ```\nhttps://instabase.slack.com/archives/CCY413CSU/p1741651704415279?thread_ts=1741651345.881899&cid=CCY413CSU",
+      "time": "17:11",
+      "timestamp": "1741651875.842979",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "<!subteam^S08AA13VAFQ> (maybe @sean.donohoe specifically) for help debugging Bazel + python?",
+      "time": "17:12",
+      "timestamp": "1741651937.370099",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Similar but different error in my PR:\n```Hash for srsly (2.5.1) from archive srsly-2.5.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl not found in known hashes (was: sha256:b3ec87c777b37fb31793d7b48a9263302de2ca7c54c85fbe94ba48be1cbf98e2)```\nhttps://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-68738/2/pipeline",
+      "time": "17:22",
+      "timestamp": "1741652572.655229",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey there! This is indeed very odd, and appears to be likely an issue with the pre-merge runners rather than bazel (@Yash Botadra your failure is unrelated to any bazel commands, it's emitting that failure for a `poetry install`). I'm happy to investigate, but is this something that can wait until tomorrow?",
+      "time": "17:46",
+      "timestamp": "1741654002.727969",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I'm not sure, I'm seeing a lot of build failures come in on all our automated pipelines",
+      "time": "17:47",
+      "timestamp": "1741654047.951719",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Alright, I'll start poking around for any recent changes :slightly_smiling_face:",
+      "time": "17:48",
+      "timestamp": "1741654102.754309",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Thanks, yeah the <#CCY413CSU|> channel is blowing up right now with errors. From checking a few of these, they all look like it's from this issue.",
+      "time": "17:49",
+      "timestamp": "1741654191.072319",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "kk I just went through the PRs merged today and didn't find anything relevant, so I think it's likely some corrupt state on one of the jenkins workers -- I'm doing another comb through the failure logs first, but assuming nothing jumps out I'm going to bounce the existing workers as a potential mitigation",
+      "time": "18:02",
+      "timestamp": "1741654922.174209",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I know it's just one data point, but we've had frequent issues with poor network reliability in our jenkins environments previously so I'm thinking this could be related: https://stackoverflow.com/a/77798451",
+      "time": "18:05",
+      "timestamp": "1741655125.058889",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Workers bounced by running the following at https://jenkins.instabase.com/manage/script\n```import hudson.model.Label\nimport hudson.model.labels.LabelAtom\nimport jenkins.model.Jenkins\n\n// delete all agents associated with label\nString agent_label = 'ec2-build-machine-pr-merge'\n\nLabel agent = (Jenkins.instance.getLabel(agent_label)) ?: (new LabelAtom(agent_label))\n\nList computers = agent.nodes*.computer\n\n// put all agents in offline mode (some may be in use)\ncomputers*.doToggleOffline()\n\n// delete inactive agents\ncomputers.findAll {\n    it.countBusy() == 0\n}.with {\n    it*.doDoDelete()\n    println \"${it.size()} agents deleted.\"\n}```",
+      "time": "18:08",
+      "timestamp": "1741655312.170869",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Looks like it's still happening? latest set build all surfaced same error.",
+      "time": "19:36",
+      "timestamp": "1741660576.639459",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-03-10.json",
+    "message_count": 14,
+    "start_time": "1741649136.091699",
+    "end_time": "1741660576.639459",
+    "is_thread": true
+  }
+}

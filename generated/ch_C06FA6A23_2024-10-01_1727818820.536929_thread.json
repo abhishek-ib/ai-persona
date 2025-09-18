@@ -1,0 +1,36 @@
+{
+  "id": "ch_C06FA6A23_2024-10-01_1727818820.536929_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":wave: :truck:\n*Jenkins migration update!*\nAs we're working on migrating the Jenkins servers from GKE -> EKS, I wanted to share some status updates. I'm working on Prod right now, as it's basically _immaculate_ compared to PreProd, despite its warts - and counterintuitively it's of a lower criticality than PreProd.\n\n(For those who'd like to play the home game, this project is being tracked in PRODENG-1327 (https://instabase.atlassian.net/browse/PRODENG-1327))\n\nThis last day-ish has been spent tackling the necessary data copy/sync automation, and I've got most of it scripted up for testing and experiments so I can blow stuff away repeatedly on the core-infra EKS side and get a clean updated state repeatably until ready for cutover. It consists of:\n1. Setup script to snapshot the Jenkins Prod PV disk and get it mounted up on my one-off worker node in GCP\n2. Data cleanup script to:\n    a. Delete known cruft / temp data\n    b. Expire / delete old job config histories and the like\n    c. Delete the `workspace` directory, and its ~9.17 grazillion copies of our messy giant repo\n    d. Delete job histories older than a day (for the sake of quicker data syncs)\n:bar_chart: *Some stats!*\nPre-Cleanup:\n• Disk usage: *171 GiB*\n• inode count: *7,368,226*\nCopy + Cleanup Run Time:\n• Disk copy ops: *3-5 minutes*\n• Data cleanup: *~5 minutes*\nPost-Cleanup:\n• Disk usage: *4.4 GiB*\n• inode count: *188,030*\nAll in, *~40x* less data to ship across from GKE to EKS while I test configurations and such, and many hours saved waiting for rsync just to iterate over the stupid files. lol",
+      "time": "14:40",
+      "timestamp": "1727818820.536929",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Next step is to script up a safety switch that disables *ALL* jobs via XML config file edits in the freshly-scrubbed data volume so that when I start it up on EKS, I don't end up being a victim of my own success by having lots of jobs kick off and run just far enough to _burn the world down_.",
+      "time": "14:42",
+      "timestamp": "1727818959.684559",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-01.json",
+    "message_count": 2,
+    "start_time": "1727818820.536929",
+    "end_time": "1727818959.684559",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "id": "ch_C0516UPPMT3_2024-10-29_1730230282.886489_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "jordy.vlan",
+    "Kaustubh (KD)",
+    "Hamish"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "*Vision Model Feedback*\nI used a couple of sample docs I got from CVS today for a use case that requires these capabilities. I've attached them as they are pretty tricky docs\n1. Overall, accuracy was a big improvement on what we currently have - which is a big unlock!\n2. Vision models performed well on circled content (e.g. yes or no) and score-throughs e.g. ~this.~ \n    a. They seemed to perform poorly on standard checkboxes, particularly where we had picked these up in the pre-processing steps (I could see e.g `[CHECK]` in these cases) (see screenshots). I'm not sure if the differing information is confusing to the models, or whether the vision models answer just isn't as accurate as our checkbox abilities\n    b. The combination of the two approaches means we can solve pretty much anything in this document! Its just how we pick which model that is the hard bit\n3. There are no associated confidence scores. I think this is almost essential for any customer to use these. \n    a. Is this possible with OpenAI APIs currently for these models? Or is this a gap with vision models in general?\n4. The 'Change model' button is still present. I suspect this is something we will need to fix in the UI\n5. Related to point 2 - how can we solve instances where we don't know how the doc will be filled in in advance? E.g. sometimes its a score-through, sometimes a circle, sometimes a tick in a box.\n    a. Can we combine checkbox + text extract vs vision, and then take the highest confidence answer from the two approaches as our answer? Maybe derived fields could come in here\n6. Long-term I'd like to combine vision capabilities with other extraction methods. E.g. for this use case I need to extract every question and answer pair\n    a. I'd like a list extraction, where questions use a standard list extraction approach, but where the answers are generated with a vision model\n    b. I can imagine similar things use cases for derived fields with vision capabilities\nI saw a couple of instances where the model provided the incorrect answer and have also attached these (one has both checkboxes and score-throughs so maybe confusing).\n\ncc @jordy.vlan",
+      "time": "12:31",
+      "timestamp": "1730230282.886489",
+      "is_reply": false
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "1/2b: Nice!\n2a / 4 -> Did you use the default model (`40-mini`) or advanced (`4o-08-06`)? In my benchmarks I noticed a significant improvement when switching into advanced for checkbox detection.\n3. This is in the works, I just did not manage to implement and test it properly before the internal release deadline :wink: Not a gap in vision models at all.\n5. Will need to look into this with product (@Kaustubh (KD)) if this is something we could support; sending text and vision is possible technically already, unsure if (and how) we want to give the user control over this. Good suggestion for using derived fields :slightly_smiling_face:\n6. Great suggestions",
+      "time": "12:39",
+      "timestamp": "1730230760.229399",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "I used default model for all queries. So to clarify:\n1. We have standard + advanced models for vision reasoning?\n2. It will be possible to get confidence scores in the medium term?",
+      "time": "13:20",
+      "timestamp": "1730233239.550689",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Imo this field type shouldn't be released without confidence scores (in Build at least)",
+      "time": "13:21",
+      "timestamp": "1730233274.115119",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Also how will we price vision reasoning fields? @hannah",
+      "time": "13:23",
+      "timestamp": "1730233419.275159",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "1. As we currently structured it, yes, there is a default and an advanced model. Though in fact, the advanced model is 2x cheaper, and more performant; so for testing keeping both, might decide to just have advanced model as single option. \n2. Yes, literally coded the first implementation an hour ago, so still need to properly test and benchmark.\nAgree it needs 2 :) \nIf any input is needed on the pricing, lmk.",
+      "time": "13:46",
+      "timestamp": "1730234791.107639",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "This is great feedback and @jordy.vlan has been answering most questions, but to add a bit more color.\n\n2a. This is something I've been thinking about as well in terms of how we deal with these for the customer. There may be options to have specific data types like checkboxes and we decide behind the scenes what makes sense. This also similar to question 5.\n\n4. @jordy.vlan I second that opinion that we should only have the advanced model. Feels like there doesn't really need to be a discussion here.\n\n6. Long term I think this is just another pipeline like our TDF and regular pipeline. It becomes a foundational flow that can be leveraged across different data types. cc: @lydia curious on your thoughts here",
+      "time": "14:16",
+      "timestamp": "1730236607.295219",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-10-29.json",
+    "message_count": 7,
+    "start_time": "1730230282.886489",
+    "end_time": "1730236607.295219",
+    "is_thread": true
+  }
+}

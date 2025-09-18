@@ -1,0 +1,207 @@
+{
+  "id": "ch_C06FA6A23_2023-02-21_1676992748.125029_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yan Wang",
+    "Xindi Xu",
+    "lenny",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hey team, I'm new to the backend world. I need some help figuring out some mypy issue:\nI added one extra field `filters` in thrift and protos definition for `GetUserListReq` in the account service. I have run `make build-protos` and `make build-thrift` to generate stubs (commits here (https://github.com/instabase/instabase/commit/c4380feb7af7f9b65520d0c16135f84acf2bf7a6) and here (https://github.com/instabase/instabase/commit/ab7603889fb3fcf2d83b06a825b199e3ae92a2f3)). However, when I try to run tests in api-server with `make run-test-local` , `mypy` throws this error:\n```instabase/api_server/handler/api/v1/account.py:233: error: Property \"filters\" defined in \"GetUserListReq\" is read-only```\n`filters` is the new field I added, but I'm not sure why `mypy` thinks that it is read-only.",
+      "time": "07:19",
+      "timestamp": "1676992748.125029",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Full output\n```➜  api-server git:(CS-2623-hide-deactivated-users-by-default-in-all-users-page) ✗ make run-test-local\nMakefile:101: warning: overriding commands for target `run-test-local'\n/Users/xindixu/Code/instabase/webserver/api-server/../../shared-utils/build-utils/shared/build-python.mk:193: warning: ignoring old commands for target `run-test-local'\npoetry env use $(pyenv root)/versions/$(grep 'python =' pyproject.toml | cut -d '\"' -f 2)/bin/python && poetry install\nUsing virtualenv: /Users/xindixu/Library/Caches/pypoetry/virtualenvs/api-server-6qStoZeK-py3.9\nInstalling dependencies from lock file\n\nNo dependencies to install or update\npoetry run python /Users/xindixu/Code/instabase/webserver/api-server/../../shared-utils/py-utils/typing-utils/src/py/scripts/run_mypy.py \\\n\t  --root_dir=/Users/xindixu/Code/instabase/webserver/api-server/build/py \\\n\t  --project_dir=/Users/xindixu/Code/instabase/webserver/api-server/../.. \\\n\t  --single_file= \\\n\t  --main_py_file=* \\\n\t  --fast= \\\n\t  --image_name=api-server \\\n\t  --cache_dir=/Users/xindixu/Code/instabase/webserver/api-server/.mypy_cache\nTYPECHECKING FAILURE: mypy exited with code 1\n/Users/xindixu/Code/instabase/shared-utils/py-utils/typing-utils/py3/src/py/stubs/instabase/account/AccountService.pyi:10: error: Name 'all_structs' already defined (possibly by an import)\ninstabase/api_server/handler/api/v1/account.py:233: error: Property \"filters\" defined in \"GetUserListReq\" is read-only\nFound 2 errors in 2 files (checked 1378 source files)\n\nmake: *** [mypy] Error 1```\n\nThe error come from this line (https://github.com/instabase/instabase/compare/master...xindixu:instabase:CS-2623-hide-deactivated-users-by-default-in-all-users-page#diff-e5191d4286fd244d844d6a45f23fec73995ff36ab1b4c95f559c50c0e431e82bR233) I added:\n```    if filters and isinstance(filters, dict):\n      req.filters = filters```",
+      "time": "07:19",
+      "timestamp": "1676992763.904299",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "`account_service.proto`:\n```message GetUserListReq {\n\treserved 1;\n\toptional string username_prefix = 2;\n\toptional string email_domain_pattern = 3;\n\n\t// Max number of entries to return. Note that there is a max limit of 500\n\t// imposed by the DB\n\toptional int32 limit = 4;\n\n\t// Arbitrary search string against username or email\n\toptional string search_string = 5;\n\toptional int32 offset = 6;\t// An offset to query from if paginating search results\n\tmap<string, bool> filters = 7; // A map of filters to apply to the query <-- new field added\n}```",
+      "time": "07:20",
+      "timestamp": "1676992810.371819",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "`account.thrift`\n```struct GetUserListReq {\n  1: optional string username_prefix;\n  2: optional string email_domain_pattern;\n\n  // Max number of entries to return. Note that there is a max limit of 500\n  // imposed by the DB\n  3: optional i32 limit;\n\n  // Arbitrary search string against username or email\n  4: optional string search_string;\n  5: optional i32 offset; // An offset to query from if paginating search results\n  // A map of filters to apply to the query, currently only support is_active\n  6: optional map<string, bool> filters;  // <-- new field added\n}```",
+      "time": "07:20",
+      "timestamp": "1676992840.551229",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "WIP branch: https://github.com/instabase/instabase/compare/master...xindixu:instabase:CS-2623-hide-deactivated-users-by-default-in-all-users-page",
+      "time": "07:21",
+      "timestamp": "1676992880.648679",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "If you look at the generated stub for `GetUserListReq` (https://github.com/instabase/instabase/compare/master...xindixu:instabase:CS-2623-hide-deactivated-users-by-default-in-all-users-page#diff-[…]072cee (https://github.com/instabase/instabase/compare/master...xindixu:instabase:CS-2623-hide-deactivated-users-by-default-in-all-users-page#diff-8acf1024ed0b2abb0a9df71ffdda14cb0b0114f6244aeeadf93da8f421072cee)), I think `filters` is actually a read-only field (there is a @property but no setter). you might need to refactor this to pass this to the initializer or add it to the map that’s already there (I think by default it will be initialized with an empty map)",
+      "time": "07:57",
+      "timestamp": "1676995050.231199",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "the reason it works with other fields is because they are simple types (eg strings)",
+      "time": "07:57",
+      "timestamp": "1676995070.175549",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ah, I see. So something is wrong with my proto definition! Thanks! I'll look into that :slightly_smiling_face:",
+      "time": "07:58",
+      "timestamp": "1676995135.978659",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I think your proto definition is fine actually, the generated stubs just don’t let you overwrite the entire field. you’ll have to either pass the value you want when you initialize the Req object or update the map (instead of writing over the entire filters property)",
+      "time": "08:00",
+      "timestamp": "1676995216.603329",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think I figured it out!!",
+      "time": "08:05",
+      "timestamp": "1676995545.430539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Is there a way to make it writable?",
+      "time": "08:07",
+      "timestamp": "1676995658.597159",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Also there’s no need to update the account.thrift file, that’s deprecated now. :) @Yan Wang I forget, what was the reason we couldn’t delete them again?",
+      "time": "08:07",
+      "timestamp": "1676995669.959989",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "i think the reason it’s a read-only field is because the type is some funky protobuf type, so it doesn’t want you overwriting the entire thing. but the value itself should be mutable, so i think you can write into the dict, you just can’t overwrite the entire value",
+      "time": "08:09",
+      "timestamp": "1676995740.959399",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "or if you pass a dict into the initializer, then it will populate the value with the appropriate values",
+      "time": "08:09",
+      "timestamp": "1676995758.525469",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I see. So it is okay to keep the proto definition as it is.",
+      "time": "08:10",
+      "timestamp": "1676995802.655759",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "yep, think so!",
+      "time": "08:10",
+      "timestamp": "1676995831.969569",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thanks a lot, Lenny :smile:",
+      "time": "08:10",
+      "timestamp": "1676995851.465019",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "@Heymian, this is because file service  v1  is still using some of them. Because we haven't remove file service v1 from our codebase, we have to keep the thrift file until then...",
+      "time": "08:11",
+      "timestamp": "1676995894.210949",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "@Xindi Xu,  thrift is not using anymore, changing the proto will be fine enough for now",
+      "time": "08:12",
+      "timestamp": "1676995953.052819",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I see! Thanks for the info",
+      "time": "08:14",
+      "timestamp": "1676996088.391859",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I have one more Q: To fix this error when i run `make mypy` in api-server\n```/Users/xindixu/Code/instabase/shared-utils/py-utils/typing-utils/py3/src/py/stubs/instabase/account/AccountService.pyi:10: error: Name 'all_structs' already defined (possibly by an import)```\nI have to delete this line (https://github.com/instabase/instabase/compare/master...xindixu:instabase:CS-2623-hide-deactivated-users-by-default-in-all-users-page#diff-c92c2916ee2f87e5bd8675e0bf540f93f890e57605e78cba3a50f05f08e2ac66R10) (`all_structs: Any` from `AccountService.pyi:10`), which is auto-generated when I run `make build-protos` .\nHave anyone encountered this issue? Is there a proper/better way of fixing this issue?",
+      "time": "08:31",
+      "timestamp": "1676997096.702849",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "Yeah, I ran into this when upgrading to py39, feel free to delete that line. This will go away when we get rid of thrift fully.\n\nBut per Yan’s suggestion, I think we can leave these files alone since we don’t use thrift anymore, so I don’t think you need to regenerate the thrift files?",
+      "time": "08:35",
+      "timestamp": "1676997352.193049",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ah, got it! I'll revert all the changes to the thrift files then. Thanks!",
+      "time": "08:38",
+      "timestamp": "1676997499.975739",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-02-21.json",
+    "message_count": 23,
+    "start_time": "1676992748.125029",
+    "end_time": "1676997499.975739",
+    "is_thread": true
+  }
+}

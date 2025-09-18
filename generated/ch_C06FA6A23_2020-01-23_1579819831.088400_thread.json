@@ -1,0 +1,104 @@
+{
+  "id": "ch_C06FA6A23_2020-01-23_1579819831.088400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "shaunak",
+    "Justin",
+    "Jesika Haria",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Anybody familiar with the Review OCR UI and able to help with runtime errors in Refiner and custom functions?\n\nWe’re trying to make UDF and Refiner runtime error debugging easier, and to do that when running Flow requires us to basically update the Review OCR page.\n\nI’m familiar enough with the Refiner V2 UI, but would also need help with getting this information to the Refiner V5 UI.\n\nGoal is to add this to the Feb 3rd release if possible (mostly backend work, with a couple tweaks to the UI)\n\ncc: @lydia @Aaron Vontell @Erick @Jessica who might be able to help and chat more about it",
+      "time": "14:50",
+      "timestamp": "1579819831.088400",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "After chatting with @Justin, it sounds like @Kerry and @Eric Han have plans to revamp the whole Review OCR experience and replace it.\n\nSo i’ll focus on an approach that writes these logs to Flow Timeilne (no UI updates needed) — and then we can decide whether we want to add these logs and exception messages to a more easily accessible locatio",
+      "time": "15:04",
+      "timestamp": "1579820649.090000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "can we put these logs directly into refined phrases? (pros / cons?) that will make it super easy to show in refiner 5 (and i assume review OCR as well). the refiner 5 pipeline is not really set up to handle both ibocr results, and a separate path of metadata",
+      "time": "15:14",
+      "timestamp": "1579821240.090600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "for sure — we can do that. Cons are that it expands the size of the response, but that’s not really a huge deal since these logs will be quite small, and the number of records we process with errors are relatively small. @shaunak if he has any comments on this approach of storing more information in RefinedPhrases (runtime error information) and if that has any negative impact on ReviewDoc",
+      "time": "15:50",
+      "timestamp": "1579823433.091700",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "cc: @Jesika Haria",
+      "time": "15:59",
+      "timestamp": "1579823968.091900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "So the main feedback that I have is that not everything will go to refined phrases.  For example in process file UDF & Map-Record UDF, there is no RefinedPhrases.\n\nSo, I think it makes sense for us to isolate the logging (which in flow infra), from the reffined phrase which is specific to a flow step",
+      "time": "16:02",
+      "timestamp": "1579824140.092100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "hm — maybe we can chat about it @shaunak? Not exactly sure what you mean here. For example, there’s a trade-off between debuggability and generality. For example, Refiner UI can show custom logs per cell execution, where as Apply UDF shows logs for that entire function execution. Different steps might want to organize their logs differently (for example it’s really helpful to look at logs in Refiner on a per-cell basis, where as other steps may not have this concept)",
+      "time": "16:04",
+      "timestamp": "1579824284.093700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Yes, let's chat about this.  I would like this to be more generalized than only being specific for Refiner.\n\nWe can also implemented something like log_to_refiner which will be specific for Refiner.",
+      "time": "16:08",
+      "timestamp": "1579824493.097400",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "Let's keep in mind the general object model we would like to adhere to and how that would ever be exposed to an end user (udf writer) :slightly_smiling_face:",
+      "time": "16:10",
+      "timestamp": "1579824627.098200",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "What’s the latest on this? There are a few flow requirements such as chaining, branching, post/pre hooks etc that are all in-flight right now, and we should proly sync on general approaches to avoid locally optimizing",
+      "time": "16:35",
+      "timestamp": "1579826115.101700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-01-23.json",
+    "message_count": 10,
+    "start_time": "1579819831.088400",
+    "end_time": "1579826115.101700",
+    "is_thread": true
+  }
+}

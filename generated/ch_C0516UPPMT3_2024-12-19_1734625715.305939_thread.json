@@ -1,0 +1,198 @@
+{
+  "id": "ch_C0516UPPMT3_2024-12-19_1734625715.305939_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kaustubh (KD)",
+    "Ganan Prabaharan",
+    "danny.lan"
+  ],
+  "messages": [
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "Hi team, Is there a particular reason that table fields have a specific string encoding like this:\n\n```| Subscriber SSN | Subscriber ID | Last Name | First Name | Relshp | DOB | Group ID | Sub Group ID | Class ID | Plan ID | Plan Eff Dt | Plan Term Dt | Org Eff Dt | Cancel Dt | Elig Type | Error Messages |\n|----------------|--------------|-----------|------------|--------|------------|----------|--------------|---------|----------|-------------|--------------|------------|-----------|-----------|-----------------------------------|\n SB | 10/02/1990 | 00634146 |\n 0001 | MAP0002 | 06/14/2024 | 12/31/2199 | 10/01/2023 | 12/31/2199| M | Change invalid for termed member |\n 0001 | MAP0002 | 06/14/2024 | | 06/01/2024 | | M | Change invalid for termed memb```\nI’m finding it hard to manipulate values in cleaning functions, as well as just generally being difficult to read/parse/work with. I notice when I download run results it gets converted into a nested list. Would it be possible to keep it as a nested list (or string version of a nested list), during intermediate steps as well? I can create a PFR, just wanted to check if there was a specific reason we have this encoding",
+      "time": "08:28",
+      "timestamp": "1734625715.305939",
+      "is_reply": false
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Do you mean why its in markdown format?  I think its just that our TDF (table data framework) returns markdown and then we convert it\ncc: @Rakesh",
+      "time": "10:18",
+      "timestamp": "1734632280.821149",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "Also where are you seeing this table format? In a custom cleaning function the table should be formatted as a nested list",
+      "time": "10:19",
+      "timestamp": "1734632373.464729",
+      "is_reply": true
+    },
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "Ah didn’t realize it was markdown\n\nI’m seeing it in the custom cleaning format, I can share the project if that’s helpful.\nI was also seeing it a few other places:\n• Last week when I double clicked the table i’d get the markdown format, though I don’t see that anymore\n• In some cases the intermediate steps return the markdown formatted (maybe there’s some issue with those results and it can’t be displayed properly?)\nI created a custom clean function to help with some modifications that might be needed. I’m finding the input is the markdown string. I feel like I tried returning a nested list earlier, and ran into issues, but it seems to be working now",
+      "time": "10:28",
+      "timestamp": "1734632919.572969",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "yes sharing the project would help!\n\nFrom looking at the string it seems that the markdown table might not have been converted properly to the nested list format so I can double check in the project",
+      "time": "10:40",
+      "timestamp": "1734633636.977119",
+      "is_reply": true
+    },
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "https://aihub.instabase.com/build/0193e040-4209-7f4b-b850-f56962f9f77d\n\nEdit: Moved it out of my personal workspace, let me know if you’re still unable to access it",
+      "time": "10:43",
+      "timestamp": "1734633804.270689",
+      "is_reply": true
+    },
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "I should add, the field was a Visual Reasoning field. For Document reasoning, it’s more consistent but even then sometimes the extraction response comes out as normal string (note even markdown). Adding “Make sure the response is formatted as a table.” has helped with that. Interestingly, after adding that line to the prompt, the input to the cleaning function turned into a nested list in string format",
+      "time": "14:07",
+      "timestamp": "1734646067.464579",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "which document did you see this issue on?",
+      "time": "14:09",
+      "timestamp": "1734646174.600769",
+      "is_reply": true
+    },
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "Do you mean the type of document? It’s a PDF for insurance detail errors",
+      "time": "14:10",
+      "timestamp": "1734646216.630269",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "i mean to ask which document in this project are you seeing this formatting, but I now see two documents with the markdown formatting",
+      "time": "14:14",
+      "timestamp": "1734646497.409809",
+      "is_reply": true
+    },
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "Ah ok yeah, also I added the Document Reasoning field in the original project (https://aihub.instabase.com/build/0193abf9-43df-70b3-a90a-a5fcf3467079) (not the one share above) since the original has the ground truth sets I’ve been working with. Not sure if you can access it in my workspace though",
+      "time": "14:17",
+      "timestamp": "1734646668.215799",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "I can see it :+1:\n\nGot it, have you tried Table Extraction? I would expect Table Extraction to have the best result, then Reasoning, and then Visual Reasoning (which is more suited for images)",
+      "time": "14:21",
+      "timestamp": "1734646896.811559",
+      "is_reply": true
+    },
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "For some reason Table Extraction kept giving me errors. It would say “Cleaning returned no value” Even though there were no cleaning functions applied. I think there were other errors too. I’ve added it back in so you should be able to see it as well (e.g. *Cigna-BenOptions_page_0)*",
+      "time": "14:24",
+      "timestamp": "1734647052.887529",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "Interesting, it looks like the table may not have been created properly in the DB based on this error\n`Error in extracting field ErrorDetailsTableExtraction: No DB file found`\n\ncc @Rakesh regarding the tables, here is the project (https://aihub.instabase.com/build/0193abf9-43df-70b3-a90a-a5fcf3467079) linked above",
+      "time": "14:35",
+      "timestamp": "1734647741.041899",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "In general using table extraction should give you the highest likelihood of getting the right table format",
+      "time": "14:36",
+      "timestamp": "1734647774.581309",
+      "is_reply": true
+    },
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "Ok sounds good! This is not directly related, but for *Cigna - Class_page_1*, the Subscriber SSN column gets split into two columns for some reason (last row gets it’s own column). Any idea on why this happens, and would this be an example of something TableExtraction would handle better?",
+      "time": "14:41",
+      "timestamp": "1734648061.128019",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "I’m not sure since that document looks to be in the same format as the other Cigna class documents which are extracted correctly.\nYes I would expect Table Extraction to handle that better",
+      "time": "14:45",
+      "timestamp": "1734648305.064789",
+      "is_reply": true
+    },
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "Perfect thanks! If I could ask one more question, is there a simple way to understand the differences in TableExtraction, DocumentReasoning, and VisualReasoning? The customer was interested in knowing what was happening behind the scenes",
+      "time": "14:48",
+      "timestamp": "1734648483.129159",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "The Text/Table/List Extraction types take information strictly from the document, with Table and List being better at extracting structured data from the document (aka tables, lists)\n\nThe Reasoning types aren’t limited to returning data from the document, e.g. if you ask to summarize a document it will give you a summary but can the model can use its own words, if that makes sense?",
+      "time": "14:55",
+      "timestamp": "1734648918.259859",
+      "is_reply": true
+    },
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "Ok yeah that makes sense, and VisualReasoning is better for Images?",
+      "time": "14:56",
+      "timestamp": "1734648979.032769",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "exactly, Visual Reasoning is the only field type that can retrieve information from images, the others only from text",
+      "time": "14:57",
+      "timestamp": "1734649069.756219",
+      "is_reply": true
+    },
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "Awesome, thanks!",
+      "time": "14:58",
+      "timestamp": "1734649081.529109",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-12-19.json",
+    "message_count": 22,
+    "start_time": "1734625715.305939",
+    "end_time": "1734649081.529109",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "ch_C06FA6A23_2023-03-03_1677894361.300149_conversation",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "conversation",
+  "participants": [
+    "Xi Cheng"
+  ],
+  "messages": [
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Folks, a premerge of mine fails with an error that I don't quite understand.\nhttps://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-37046/9/pipeline\nDoes this indicate some network level issues on the pre-merge build machines? I have seen a few other random looking errors that point to similar network issues.\nI retried a few times, but no luck. And the PR itself has nothing to do with api-server. It just introduces a new DB table and schema.\n```\n[2023-03-04T00:18:24.058Z]   ConnectionResetError\n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z]   [Errno 104] Connection reset by peer\n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z]   at /pyenv/versions/3.7.3/lib/python3.7/ssl.py:911 in read\n\n[2023-03-04T00:18:24.058Z]        907│         if self._sslobj is None:\n\n[2023-03-04T00:18:24.058Z]        908│             raise ValueError(\"Read on closed or unwrapped SSL socket.\")\n\n[2023-03-04T00:18:24.058Z]        909│         try:\n\n[2023-03-04T00:18:24.058Z]        910│             if buffer is not None:\n\n[2023-03-04T00:18:24.058Z]     →  911│                 return self._sslobj.read(len, buffer)\n\n[2023-03-04T00:18:24.058Z]        912│             else:\n\n[2023-03-04T00:18:24.058Z]        913│                 return self._sslobj.read(len)\n\n[2023-03-04T00:18:24.058Z]        914│         except SSLError as x:\n\n[2023-03-04T00:18:24.058Z]        915│             if x.args[0] == SSL_ERROR_EOF and self.suppress_ragged_eofs:\n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z] The following error occurred when trying to handle this error:\n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z]   ProtocolError\n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z]   (\"Connection broken: ConnectionResetError(104, 'Connection reset by peer')\", ConnectionResetError(104, 'Connection reset by peer'))\n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z]   at /var/jenkins_home/poetry/venv/lib/python3.7/site-packages/urllib3/response.py:461 in _error_catcher\n\n[2023-03-04T00:18:24.058Z]       457│                 raise ReadTimeoutError(self._pool, None, \"Read timed out.\")\n\n[2023-03-04T00:18:24.058Z]       458│ \n\n[2023-03-04T00:18:24.058Z]       459│             except (HTTPException, SocketError) as e:\n\n[2023-03-04T00:18:24.058Z]       460│                 # This includes IncompleteRead.\n\n[2023-03-04T00:18:24.058Z]     → 461│                 raise ProtocolError(\"Connection broken: %r\" % e, e)\n\n[2023-03-04T00:18:24.058Z]       462│ \n\n[2023-03-04T00:18:24.058Z]       463│             # If no exception is thrown, we should avoid cleaning up\n\n[2023-03-04T00:18:24.058Z]       464│             # unnecessarily.\n\n[2023-03-04T00:18:24.058Z]       465│             clean_exit = True\n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z] The following error occurred when trying to handle this error:\n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z]   ChunkedEncodingError\n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z]   (\"Connection broken: ConnectionResetError(104, 'Connection reset by peer')\", ConnectionResetError(104, 'Connection reset by peer'))\n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z]   at /var/jenkins_home/poetry/venv/lib/python3.7/site-packages/requests/models.py:818 in generate\n\n[2023-03-04T00:18:24.058Z]        814│             if hasattr(self.raw, \"stream\"):\n\n[2023-03-04T00:18:24.058Z]        815│                 try:\n\n[2023-03-04T00:18:24.058Z]        816│                     yield from self.raw.stream(chunk_size, decode_content=True)\n\n[2023-03-04T00:18:24.058Z]        817│                 except ProtocolError as e:\n\n[2023-03-04T00:18:24.058Z]     →  818│                     raise ChunkedEncodingError(e)\n\n[2023-03-04T00:18:24.058Z]        819│                 except DecodeError as e:\n\n[2023-03-04T00:18:24.058Z]        820│                     raise ContentDecodingError(e)\n\n[2023-03-04T00:18:24.058Z]        821│                 except ReadTimeoutError as e:\n\n[2023-03-04T00:18:24.058Z]        822│                     raise ConnectionError(e)\n\n[2023-03-04T00:18:24.058Z] \n\n[2023-03-04T00:18:24.058Z]   • Installing testing-redis (1.1.1)\n\n[2023-03-04T00:18:24.058Z]   • Installing typeguard (2.7.1)\n\n[2023-03-04T00:18:24.058Z]   • Installing usaddress (0.5.10)\n\n[2023-03-04T00:18:24.058Z]   • Installing xlsxwriter (1.0.2)\n\n[2023-03-04T00:18:24.058Z]   • Installing zipcodes (1.2.0)\n\n[2023-03-04T00:18:24.058Z] make[2]: Leaving directory '/instabase_dir/webserver/api-server'```\n@lenny @Cheryl Zhou Another thing that looks curious is why api-server is running something on python 3.7 instead of python 3.9.",
+      "time": "17:46",
+      "timestamp": "1677894361.300149",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-03-03.json",
+    "message_count": 1,
+    "start_time": "1677894361.300149",
+    "end_time": "1677894361.300149",
+    "is_thread": false
+  }
+}

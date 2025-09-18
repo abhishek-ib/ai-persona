@@ -1,0 +1,126 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-08-22_1724352964.932259_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "mfichman",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@sean.donohoe I'm getting this error on master and on 2 CI runs (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-61754/3/pipeline). Matt suggested that the mock blob storage is probably down. Could you recommend a solution? Should I retry later? Thanks!\n```Err:(*net.OpError)(0xc000a099a0)} (\"Put \\\"http://127.0.0.1:10000/devstoreaccount1/test-container-01917b45-ed92-7daf-a2c9-fedf370a8312?restype=container\\\": dial tcp 127.0.0.1:10000: connect: connection refused\")```\n(running tests in `//core-services/file-service/src/go/src/instabase/fileservice/clients:clients_test`)",
+      "time": "11:56",
+      "timestamp": "1724352964.932259",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I don't see anything down at the moment -- I'm going to take a quick peek at the logs and bounce the container, should work after then",
+      "time": "12:04",
+      "timestamp": "1724353456.588969",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "alrighty it's bounced, could you retry your run?",
+      "time": "12:05",
+      "timestamp": "1724353541.518009",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "kicked off another run! :crossed_fingers:",
+      "time": "12:06",
+      "timestamp": "1724353599.231849",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "seems like it failed again :cry: https://github.com/instabase/instabase/actions/runs/10511789410/job/29131202263?pr=61754",
+      "time": "12:16",
+      "timestamp": "1724354167.261149",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "```FAIL: core-services/file-service/src/go/src/instabase/fileservice/clients/client_test.go:2173: ClientTestSuite.TestReadFile\ncore-services/file-service/src/go/src/instabase/fileservice/clients/client_test.go:2175:\n    s.testReadFile(c, clientType, client, \"\")\ncore-services/file-service/src/go/src/instabase/fileservice/clients/client_test.go:878:\n    c.Assert(err, Equals, io.EOF)\n... obtained *errors.errorString = &errors.errorString{s:\"Failed to download content. Err: GET http://test-azurite.instabase.internal:10000/devstoreaccount1/test-container-01917b7e-e09b-73ca-bfb3-a151a13e3c12/test-prefix/testfile.txt\\n--------------------------------------------------------------------------------\\nRESPONSE 416: 416 The range specified is invalid for the current size of the resource.\\nERROR CODE: InvalidRange\\n--------------------------------------------------------------------------------\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?>\\n<Error>\\n  <Code>InvalidRange</Code>\\n  <Message>The range specified is invalid for the current size of the resource.\\nRequestId:44236835-56ac-4d18-91cd-ae9a147fa969\\nTime:2024-08-22T19:12:55.717Z</Message>\\n</Error>\\n--------------------------------------------------------------------------------\\n\"} (\"Failed to download content. Err: GET http://test-azurite.instabase.internal:10000/devstoreaccount1/test-container-01917b7e-e09b-73ca-bfb3-a151a13e3c12/test-prefix/testfile.txt\\n--------------------------------------------------------------------------------\\nRESPONSE 416: 416 The range specified is invalid for the current size of the resource.\\nERROR CODE: InvalidRange\\n--------------------------------------------------------------------------------\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?>\\n<Error>\\n  <Code>InvalidRange</Code>\\n  <Message>The range specified is invalid for the current size of the resource.\\nRequestId:44236835-56ac-4d18-91cd-ae9a147fa969\\nTime:2024-08-22T19:12:55.717Z</Message>\\n</Error>\\n--------------------------------------------------------------------------------\\n\")\n... expected *errors.errorString = &errors.errorString{s:\"EOF\"} (\"EOF\")\n... Difference:\n...     s: \"Failed to download content. Err: GET http://test-azurite.instabase.internal:10000/devstoreaccount1/test-container-01917b7e-e09b-73ca-bfb3-a151a13e3c12/test-prefix/testfile.txt\\n--------------------------------------------------------------------------------\\nRESPONSE 416: 416 The range specified is invalid for the current size of the resource.\\nERROR CODE: InvalidRange\\n--------------------------------------------------------------------------------\\n<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?>\\n<Error>\\n  <Code>InvalidRange</Code>\\n  <Message>The range specified is invalid for the current size of the resource.\\nRequestId:44236835-56ac-4d18-91cd-ae9a147fa969\\nTime:2024-08-22T19:12:55.717Z</Message>\\n</Error>\\n--------------------------------------------------------------------------------\\n\" != \"EOF\"```\na different error https://tektite.cluster.engflow.com/invocations/default/d1e752ab-4871-4a41-9340-73b66abe57b8#targets-Ly9jb3JlLXNlcnZpY2[…]llbnRzOmNsaWVudHNfdGVzdA== (https://tektite.cluster.engflow.com/invocations/default/d1e752ab-4871-4a41-9340-73b66abe57b8#targets-Ly9jb3JlLXNlcnZpY2VzL2ZpbGUtc2VydmljZS9zcmMvZ28vc3JjL2luc3RhYmFzZS9maWxlc2VydmljZS9jbGllbnRzOmNsaWVudHNfdGVzdA==)",
+      "time": "12:23",
+      "timestamp": "1724354596.885209",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "the only thing I can think might have changed is the azurite image itself, since we use `latest` (mcr.microsoft.com/azure-storage/azurite (http://mcr.microsoft.com/azure-storage/azurite)) -- @mfichman any chance these errors are familiar to you?",
+      "time": "12:36",
+      "timestamp": "1724355412.363589",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "based on `The range specified is invalid for the current size of the resource` it seems like either the test file wasn't fully uploaded successfully, or something changed recently with how we compute range bounds when fetching?",
+      "time": "12:38",
+      "timestamp": "1724355493.613129",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "No, not familiar with that. Can we try using the previous version to see if that fixes things?",
+      "time": "13:10",
+      "timestamp": "1724357449.616289",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "gonna try dropping it back to 3.31.0, thanks for the feedback @mfichman!",
+      "time": "13:45",
+      "timestamp": "1724359530.474939",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@Xindi Xu I just retriggered the checks for your PR, will keep an eye on them",
+      "time": "13:48",
+      "timestamp": "1724359684.630729",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@Xindi Xu your checks passed :tada: thanks for the patience!",
+      "time": "14:55",
+      "timestamp": "1724363736.084949",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you for your help!",
+      "time": "15:03",
+      "timestamp": "1724364219.944819",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-08-22.json",
+    "message_count": 13,
+    "start_time": "1724352964.932259",
+    "end_time": "1724364219.944819",
+    "is_thread": true
+  }
+}

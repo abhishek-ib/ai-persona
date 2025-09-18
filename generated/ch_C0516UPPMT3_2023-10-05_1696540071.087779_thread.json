@@ -1,0 +1,227 @@
+{
+  "id": "ch_C0516UPPMT3_2023-10-05_1696540071.087779_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Dale DeLoy",
+    "Anil",
+    "Ashwin",
+    "Ashish",
+    "Aaron Tami",
+    "Dave",
+    "Kathy Wu"
+  ],
+  "messages": [
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Getting to this late. A couple of things we need to do here:\n1. :white_check_mark: @Kathy Wu @lydia the court order team is running into the `'word_provenance' referenced before assignment` error that you fixed in https://instabase.atlassian.net/browse/INSIGHTS-5533. Can you share the new ib_llm_tool packge here so the SE team can upload this to their sandbox? \n2. This issue is due to hitting the rate limit error. @Dave @Ashish @Dale DeLoy -- is the court order's API key using the AI Hub prod org or the dev org in Open AI? Prod org should have a higher rate limit than dev. The team has a demo next week that if possible we should use a prod key at least for next week. \n3. If we can't increase the rate limit by swapping a higher-limit API key, another way to do this is to temporarily reduce the deployment for celery-app-tasks to reduce the number of workers / parallel calls going out the same time. @Aaron Tami pinging you here since Shaunak is OOO, who can help with this on the infra side? This is a PoC sandbox. Or can the SE team do it themselves?",
+      "time": "14:07",
+      "timestamp": "1696540071.087779",
+      "is_reply": false
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "yup, here is the new ibllm package",
+      "time": "14:09",
+      "timestamp": "1696540182.895139",
+      "is_reply": true
+    },
+    {
+      "sender": "Dave",
+      "user_id": "U03D9RJ7SQL",
+      "message": "@Dale DeLoy are you able to confirm which key you had SRE submit? Was it one you generated or one SRE had for sandboxes/POVs/POCs etc?",
+      "time": "14:14",
+      "timestamp": "1696540474.849199",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "I generated a key for three environments.  The SE demo environment, court-orders and Partners",
+      "time": "14:34",
+      "timestamp": "1696541641.024849",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "@Kerry I’m traveling for the next few hours but I’ll be available tonight if we need to resize or update any keys\n\nAnyone with the sandbox DM access will also be able to do it",
+      "time": "14:35",
+      "timestamp": "1696541716.011489",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "I have DM access, what patches need to be made?",
+      "time": "14:37",
+      "timestamp": "1696541853.844649",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "let's cut celery app tasks deployment to half -- i think standard is 8, we can make it 4 cc @Anil  -- Anil, please ping here if there's any negative impact on just reducing app-tasks (besides slowness when batch processing, as that is expected)",
+      "time": "14:39",
+      "timestamp": "1696541949.113029",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Dale DeLoy is your generated key in instabase_dev org or instabase_prod org?",
+      "time": "14:39",
+      "timestamp": "1696541978.890459",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "instabase_dev",
+      "time": "14:40",
+      "timestamp": "1696542002.466299",
+      "is_reply": true
+    },
+    {
+      "sender": "Dave",
+      "user_id": "U03D9RJ7SQL",
+      "message": "(to note individual users can’t generate keys for prod under the new process)",
+      "time": "14:42",
+      "timestamp": "1696542130.137239",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i did a quick search and saw Shaunak in another thread with @Ashwin here on another PoC hitting dev org rate limit... https://instabase.slack.com/archives/C05UWRAKA2K/p1696523762212889?thread_ts=1696519227.266429&cid=C05UWRAKA2K i think all of these PoCs using instabase_dev is not going to work, as to my understanding, dev org has a lower rate limit.",
+      "time": "14:42",
+      "timestamp": "1696542131.365799",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "In that thread, the solution Ashwin told the team is to apply through IT a key under the instabase_prod org. so @Dale DeLoy -- can you do that also? And when @Ashish is online I'll let him make a call there. The fact that multiple PoCs going on all hitting GPT4 using dev keys is probably also the reason that this rate limit gets triggered easily. If we get a new key, Dale you can update the env.",
+      "time": "14:44",
+      "timestamp": "1696542296.152389",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "So the next steps are clear here: cc @Dale DeLoy @fernando.piazza.ctr\n1. Publish the new ib_llm_tool package that Kathy shared to get rid of the word_provenance error that hides the real error \n2. Get a key under instabase_prod, pending @Ashish approval. Try this out first before downsizing the env. \n3. If we can't get a key or after getting the key we are still hitting errors, downsize the env -- cut app-tasks to half. cc @Anil on anything to be careful here (the goal is to reduce things running in parallel, so we don't trigger the rate limit)",
+      "time": "14:47",
+      "timestamp": "1696542471.344979",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Should be ok :slightly_smiling_face:",
+      "time": "14:49",
+      "timestamp": "1696542545.514819",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "I can update the environment for reduced celery app tasks but need Infra support to apply the prod key",
+      "time": "14:49",
+      "timestamp": "1696542581.877789",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Here is a doc explaining the process for getting a new OpenAI API key\n\nhttps://instabase.atlassian.net/wiki/spaces/IT/pages/2088730639/Requesting+an+OpenAI+API+Key",
+      "time": "15:19",
+      "timestamp": "1696544362.275369",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "~But to summarize, to request a prod key for an environment:~\n\n1. ~send an email to IT with the information required in the doc~\n2. ~IT will coordinate with <!subteam^S05TMRUDCAG> to update the environment~\nEDIT:\n1. Some in <!subteam^S05TMRUDCAG> will coordinate with IT to request a prod key and update in the environment",
+      "time": "15:20",
+      "timestamp": "1696544443.591459",
+      "is_reply": true
+    },
+    {
+      "sender": "Dave",
+      "user_id": "U03D9RJ7SQL",
+      "message": "@Dale DeLoy you’ll want to check :this-right-here: revision",
+      "time": "15:44",
+      "timestamp": "1696545888.439709",
+      "is_reply": true
+    },
+    {
+      "sender": "Dave",
+      "user_id": "U03D9RJ7SQL",
+      "message": "> If you are requesting a key for a Sandbox post in <#C01N7DV1137|> requesting for an open ai key for a sandbox, link to the tenant/sandbox in sandbox.console and tag @sre-openai-key (https://instabase.slack.com/admin/user_groups) and the SRE team will respond",
+      "time": "15:45",
+      "timestamp": "1696545910.658679",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "Submitted ticket according to the document referenced above",
+      "time": "16:10",
+      "timestamp": "1696547444.232059",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "Waiting for ithelp to respond",
+      "time": "16:11",
+      "timestamp": "1696547478.849109",
+      "is_reply": true
+    },
+    {
+      "sender": "Dave",
+      "user_id": "U03D9RJ7SQL",
+      "message": "Clarified with Dale over DM, but as Ashwin's adjust notes above indicate, this follows the second flow in the document (https://instabase.atlassian.net/wiki/spaces/IT/pages/2088730639/Requesting+an+OpenAI+API+Key)\n\n> If you are requesting a key for a Sandbox post in <#C01N7DV1137|> requesting for an open ai key for a sandbox, link to the tenant/sandbox in sandbox.console and tag @sre-openai-key (https://instabase.slack.com/admin/user_groups) and the SRE team will respond",
+      "time": "16:16",
+      "timestamp": "1696547790.217699",
+      "is_reply": true
+    },
+    {
+      "sender": "Dave",
+      "user_id": "U03D9RJ7SQL",
+      "message": "I've updated to note POV and POC in there as well",
+      "time": "16:17",
+      "timestamp": "1696547839.759989",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Thanks, @Kerry for looping me in. Sorry @Dale DeLoy that you are having to go through this.\n\nThe timing is a bit unfortunate. I say this because we are actively working to organize the keys to minimize rate limit issues. Sharing a small snippet from my conversation with the team on Wednesday.\n\nAnother thing that complicates matter here is that some sandboxes allow users to patch open ai keys and some sandboxes can only be patched by the SRE team. We are moving towards a model where all the sandboxes will be handled by the SRE team and that will allow us to manage key distribution across sandboxes better. cc @jtau @Aaron Tami",
+      "time": "19:44",
+      "timestamp": "1696560279.425459",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "@Dale DeLoy are you unblocked now?",
+      "time": "19:45",
+      "timestamp": "1696560301.002179",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-10-05.json",
+    "message_count": 25,
+    "start_time": "1696540071.087779",
+    "end_time": "1696560301.002179",
+    "is_thread": true
+  }
+}

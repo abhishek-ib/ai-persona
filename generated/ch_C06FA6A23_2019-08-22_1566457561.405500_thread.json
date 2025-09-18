@@ -1,0 +1,214 @@
+{
+  "id": "ch_C06FA6A23_2019-08-22_1566457561.405500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "Heymian",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "anyone know how to get regression tests working for webapp? @Heymian @achao @Aaron Vontell @Chetan\n\nIn this PR you’ll see that i had to change line 159 of main.py to get the regression tests to run in the first place: https://github.com/instabase/instabase/pull/10841\n\nAnd then after that — none of the users seem to get created in my account.go — anyone have the same issue or can others run these regression tests successfully?",
+      "time": "00:06",
+      "timestamp": "1566457561.405500",
+      "is_reply": false
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "can't run them at all -- my accounts service doesn't start up properly. @Heymian has the same issue",
+      "time": "00:08",
+      "timestamp": "1566457724.405600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "I'd pinged you about it a week or so ago i think but it fell off our radars. Here's the comment from before:\n\n```\nerror message we're getting is `IOError: Could not connect to any of [('127.0.0.1', 10006)]`.\n[12:43 AM]\nerror we're getting from account service is `2019/07/30 17:32:25 ERROR accountservice/handler/oauth2.go:439 -- Fail: Token not found`.\n```",
+      "time": "00:09",
+      "timestamp": "1566457757.405800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "It basically started happening for me from the point that we updated go versions. could be a coincidence though.",
+      "time": "00:09",
+      "timestamp": "1566457790.406000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "interesting — i dont have that problem, i get this problem: 2019/08/21 23:29:57 ERROR accountservice/handler/account.go:512 -- Fail: User with email (<mailto:site_admin@gmail.com|site_admin@gmail.com>) not found",
+      "time": "00:10",
+      "timestamp": "1566457806.406200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i could be using an old tab though that doesnt have the updated go let me try that",
+      "time": "00:10",
+      "timestamp": "1566457823.406400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "im running it with: go version go1.12.7 darwin/amd64",
+      "time": "00:10",
+      "timestamp": "1566457850.406600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah not sure either, i took a look earlier didn’t have any ideas about what the problem could be",
+      "time": "00:13",
+      "timestamp": "1566458032.407600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "that’s the right go version. and bringing up the service locally works perfectly fine",
+      "time": "00:16",
+      "timestamp": "1566458162.408500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "when i run some of the tests i get this: 2019/08/21 23:13:42 ERROR accountservice/handler/account.go:145 -- Fail: No registered account found with this email.\n2019/08/21 23:13:42 ERROR reposervice/handler/repo.go:458 -- Fail: Could not find an account with publicID (None)\n\nCould it get somehow Go works differently now with sqllite or something?",
+      "time": "00:17",
+      "timestamp": "1566458259.408700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "don’t think so, all of the go unit tests also bring up a sqlite db",
+      "time": "00:18",
+      "timestamp": "1566458302.408900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "that error message means that we sent repo-service an empty string in teh username field",
+      "time": "00:18",
+      "timestamp": "1566458329.409100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "maybe @Heymian you could put some print statements in the Go for one of the account tests to see what might be going wrong?\n\nI could try to muck around in the Go — my guess is you’ll have a better sense of why it can’t create or find an account",
+      "time": "00:18",
+      "timestamp": "1566458331.409300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yup i can look",
+      "time": "00:19",
+      "timestamp": "1566458353.409500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "when i run other tests i see: Fail: User with email (<mailto:dlluncor@gmail.com|dlluncor@gmail.com>) not found\n\ntest_developer has quite simple tests that might be easy to debug, you can change test.sh so you can isolate running one specific test",
+      "time": "00:21",
+      "timestamp": "1566458467.409700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "if there’s anything that might need to change from the Python side let me know — happy to change it — for now heading to bed though — thanks for looking into it whenever you get a chance!",
+      "time": "00:21",
+      "timestamp": "1566458497.409900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "probably heading to bed in a bit too so i’ll tackle this tomorrow",
+      "time": "00:23",
+      "timestamp": "1566458589.410100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "ohh it’s coming back to me as to why i gg-ed on debugging this. I kept getting a bizarre error related to blueprints:\n```\nImportError: Failed to import test module: webapp.test_account_two_factor\nTraceback (most recent call last):\n  File \"/usr/local/Cellar/python@2/2.7.16/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/loader.py\", line 254, in _find_tests\n    module = self._get_module_from_name(name)\n  File \"/usr/local/Cellar/python@2/2.7.16/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/loader.py\", line 232, in _get_module_from_name\n    __import__(name)\n  File \"/Users/heymian/src/venv/ib_venv2/lib/python2.7/site-packages/gevent/builtins.py\", line 93, in __import__\n    result = _import(*args, **kwargs)\n  File \"/Users/heymian/src/instabase/webserver/webapp/build/test/py/instabase_regression_tests/webapp/test_account_two_factor.py\", line 8, in <module>\n    from .util.webapp_test_util import AbstractWebappTest\n  File \"/Users/heymian/src/venv/ib_venv2/lib/python2.7/site-packages/gevent/builtins.py\", line 93, in __import__\n    result = _import(*args, **kwargs)\n  File \"/Users/heymian/src/instabase/webserver/webapp/build/test/py/instabase_regression_tests/webapp/util/webapp_test_util.py\", line 12, in <module>\n    from instabase_test.webserver.server_test_util import AbstractTest\n  File \"/Users/heymian/src/venv/ib_venv2/lib/python2.7/site-packages/gevent/builtins.py\", line 93, in __import__\n    result = _import(*args, **kwargs)\n  File \"instabase_test/webserver/server_test_util.py\", line 17, in <module>\n    import manage\n  File \"/Users/heymian/src/venv/ib_venv2/lib/python2.7/site-packages/gevent/builtins.py\", line 93, in __import__\n    result = _import(*args, **kwargs)\n  File \"manage.py\", line 53, in <module>\n    webapp.register_blueprints()\n  File \"instabase/server/main.py\", line 159, in register_blueprints\n    self._register_api_server_proxy(cast(LocalConfig, self.config))\n  File \"instabase/server/main.py\", line 205, in _register_api_server_proxy\n    url_prefix='/api/v1/drives')\n  File \"/Users/heymian/src/venv/ib_venv2/lib/python2.7/site-packages/flask/app.py\", line 64, in wrapper_func\n    return f(self, *args, **kwargs)\n  File \"/Users/heymian/src/venv/ib_venv2/lib/python2.7/site-packages/flask/app.py\", line 946, in register_blueprint\n    (blueprint, self.blueprints[blueprint.name], blueprint.name)\nAssertionError: A blueprint's name collision occurred between <flask.blueprints.Blueprint object at 0x1065e71d0> and <flask.blueprints.Blueprint object at 0x1065e1650>.  Both share the same name \"drives_api\".  Blueprints that are created on the fly need unique names.\n```",
+      "time": "00:26",
+      "timestamp": "1566458819.410400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Yes I addressed that particular bug in my PR. You can comment out the line I had",
+      "time": "00:28",
+      "timestamp": "1566458902.410600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Had modified* in the PR that is",
+      "time": "00:28",
+      "timestamp": "1566458914.410800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Somebody got confused about our local proxy setup :) -- which is quite confusing",
+      "time": "00:29",
+      "timestamp": "1566458979.411000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "But we should check in that one line change as I believe it addresses the issue",
+      "time": "00:31",
+      "timestamp": "1566459078.411300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "where is the code in python land that initializes the sqlite db?",
+      "time": "00:31",
+      "timestamp": "1566459110.411500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "heh it’s ok, let’s just debug this tmr when i’m in",
+      "time": "00:32",
+      "timestamp": "1566459148.411700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-08-22.json",
+    "message_count": 24,
+    "start_time": "1566457561.405500",
+    "end_time": "1566459148.411700",
+    "is_thread": true
+  }
+}

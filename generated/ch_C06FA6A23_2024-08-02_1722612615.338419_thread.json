@@ -1,0 +1,45 @@
+{
+  "id": "ch_C06FA6A23_2024-08-02_1722612615.338419_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "lydia",
+    "shiqi"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "One of the PR checks (run tests for data-services) failed in Slawek's ray training worker dependency bump PR (https://github.com/instabase/instabase/actions/runs/10204360212/job/28232828614?pr=60680). The same PR merged to master fine, but is running into this error on the 24.07 backport. The error message seems more related to the test setup? How do we fix / should I just force merge? We have a customer waiting for this fix to be deployed this weekend. cc @Aaron Tami @sean.donohoe if you have any insights into this test setup\n```Installing dependencies from lock file\n\nPackage operations: 0 installs, 5 updates, 0 removals\n\n  • Updating huggingface-hub (0.20.3 -> 0.24.3)\n  • Updating sympy (1.13.0 -> 1.13.1)\n  • Updating tokenizers (0.15.1 -> 0.19.1)\n  • Updating accelerate (0.26.1 -> 0.33.0)\n  • Updating transformers (4.37.2 -> 4.43.3)\n\n  CalledProcessError\n\n  Command '['/shared/venvs/ray-model-training-worker-WesT9KoN-py3.9/bin/python', '-m', 'pip', 'uninstall', 'transformers', '-y']' returned non-zero exit status 2.\n\n  at ~/pyenv/versions/3.7.3/lib/python3.7/subprocess.py:487 in run\n       483│             raise\n       484│         retcode = process.poll()\n       485│         if check and retcode:\n       486│             raise CalledProcessError(retcode, process.args,\n    →  487│                                      output=stdout, stderr=stderr)\n       488│     return CompletedProcess(process.args, retcode, stdout, stderr)\n       489│ \n       490│ \n       491│ def list2cmdline(seq):\n\nThe following error occurred when trying to handle this error:\n\n\n  EnvCommandError\n\n  Command ['/shared/venvs/ray-model-training-worker-WesT9KoN-py3.9/bin/python', '-m', 'pip', 'uninstall', 'transformers', '-y'] errored with the following return code 2\n  \n  Output:\n  Found existing installation: transformers 4.37.2\n  Uninstalling transformers-4.37.2:\n  ERROR: Exception:\n  Traceback (most recent call last):\n    File \"/home/runner/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 825, in move\n      os.rename(src, real_dst)\n  OSError: [Errno 18] Invalid cross-device link: '/shared/venvs/ray-model-training-worker-WesT9KoN-py3.9/lib/python3.9/site-packages/transformers/' -> '/shared/venvs/ray-model-training-worker-WesT9KoN-py3.9/lib/python3.9/site-packages/~ransformers'\n\n  During handling of the above exception, another exception occurred:\n  \n  Traceback (most recent call last):\n    File \"/shared/venvs/ray-model-training-worker-WesT9KoN-py3.9/lib/python3.9/site-packages/pip/_internal/cli/base_command.py\", line 169, in exc_logging_wrapper\n      status = run_func(*args)\n    File \"/shared/venvs/ray-model-training-worker-WesT9KoN-py3.9/lib/python3.9/site-packages/pip/_internal/commands/uninstall.py\", line 105, in run\n      uninstall_pathset = req.uninstall(\n    File \"/shared/venvs/ray-model-training-worker-WesT9KoN-py3.9/lib/python3.9/site-packages/pip/_internal/req/req_install.py\", line 680, in uninstall\n      uninstalled_pathset.remove(auto_confirm, verbose)\n    File \"/shared/venvs/ray-model-training-worker-WesT9KoN-py3.9/lib/python3.9/site-packages/pip/_internal/req/req_uninstall.py\", line 381, in remove\n      moved.stash(path)\n    File \"/shared/venvs/ray-model-training-worker-WesT9KoN-py3.9/lib/python3.9/site-packages/pip/_internal/req/req_uninstall.py\", line 272, in stash\n      renames(path, new_path)\n    File \"/shared/venvs/ray-model-training-worker-WesT9KoN-py3.9/lib/python3.9/site-packages/pip/_internal/utils/misc.py\", line 313, in renames\n      shutil.move(old, new)\n    File \"/home/runner/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 843, in move\n      rmtree(src)\n    File \"/home/runner/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 734, in rmtree\n      _rmtree_safe_fd(fd, path, onerror)\n    File \"/home/runner/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 667, in _rmtree_safe_fd\n      _rmtree_safe_fd(dirfd, fullname, onerror)\n    File \"/home/runner/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 673, in _rmtree_safe_fd\n      onerror(os.rmdir, fullname, sys.exc_info())\n    File \"/home/runner/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 671, in _rmtree_safe_fd\n      os.rmdir(entry.name, dir_fd=topfd)\n  OSError: [Errno 39] Directory not empty: 'seamless_m4t_v2'\n  \n\n  at ~/poetry/venv/lib/python3.7/site-packages/poetry/utils/env.py:1546 in _run\n      1542│                 )\n      1543│             else:\n      1544│                 output = subprocess.check_output(cmd, stderr=stderr, env=env, **kwargs)\n      1545│         except CalledProcessError as e:\n    → 1546│             raise EnvCommandError(e, input=input_)\n      1547│ \n      1548│         return decode(output)\n      1549│ \n      1550│     def execute(self, bin: str, *args: str, **kwargs: Any) -> int:\n\nmake[1]: *** [/runner/_work/instabase/instabase/data-services/ray/model-training-worker/../../../shared-utils/build-utils/shared/build-python.mk:63: update-python] Error 1\nmake[1]: Leaving directory '/runner/_work/instabase/instabase/data-services/ray/model-training-worker'\n\nRUNTEST projectPath: /runner/_work/instabase/instabase/shared-utils/test-utils/../..\nexit status 1\n[OK]      data-services/ray/head (test) (346.481s)\nmake: *** [Makefile:22: run-test-changes] Error 1\n----------- DONE -----------\n[TOTAL]: 2  [OK]:1  [FAIL]:1```",
+      "time": "08:30",
+      "timestamp": "1722612615.338419",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Ok I decided just to merge this PR - it looks like this test failure wasn't blocking merge anyways",
+      "time": "08:41",
+      "timestamp": "1722613302.253219",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "yeah just merge it, it is something we are working on fixing in the new CI (in beta)",
+      "time": "10:12",
+      "timestamp": "1722618760.805219",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-08-02.json",
+    "message_count": 3,
+    "start_time": "1722612615.338419",
+    "end_time": "1722618760.805219",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "id": "ch_C06FA6A23_2022-01-27_1643288851.216400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Wilson",
+    "Rafal",
+    "Lee"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Hi all, not sure where this should go, but i’m having problems with this task for SC. Please could I get some help with the following?\n\nI need to get SC a trained bank statements model to convince them to stop writing refiner functions, and that ML is the best route forward for these use cases.\nI have an annotated dataset (the same dataset that has been used to make our Marketplace Apps, and i’ve added another dataset which contains their bank statement samples.\n\nNow I have 2 problems,\n• SC are on 21.10, and I just found out that models trained on 22.01 aren’t compatible with 21.10. So I can’t use instabase.com (http://instabase.com) to train this model for them, or make use of multiple datasets to 1 model feature. \n• I can’t move the dataset as using the ML Studio utilities app seems to not work properly on a dataset of this size. I’m not able to unzip the downloaded dataset on any other environment. \nHow can I get around either of these to be able to train a model for them that can work in their env, but use our annotated dataset which is stuck on instabase.com (http://instabase.com)? At the moment i’m blocked and SC are expecting this model by the end of the week",
+      "time": "05:07",
+      "timestamp": "1643288851.216400",
+      "is_reply": false
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "I’ll take on problem no (2) :+1:",
+      "time": "08:28",
+      "timestamp": "1643300913.218800",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "hey,\nI would suggest to work on ML Studio utilities to transfer those datasets to the sandbox with 21.10.\nHowever, if you won’t be able to overcome issues with multiple datasets by end of this week you could try to do a workaround and train a model on 22.01 release — this solution would need to be tested as this workaround is not tested by us\nBasically you could force ML Studio to use previous training package by doing something like this (it would work only with layoutlm-base model):\n```{\n  \"batch_size\": 2,\n  \"chunk_size\": 510,\n  \"stride\": 64,\n  \"epochs\": 10,\n  \"learning_rate\": 0.00005,\n  \"scheduler_type\": \"constant_schedule_with_warmup\",\n  \"use_mixed_precision\": true,\n  \"warmup\": 0.2,\n  \"weight_decay\": 0,\n  \"class_weights\": 1,\n  \"max_no_annotation_examples_ratio\": 0.7,\n  \"training_scripts\": {\n            \"extraction\": {\n              \"mp_package\": \"ib_layout_lm_trainer\",\n              \"mp_version\": \"0.1.9\"\n            }\n          }\n}```",
+      "time": "12:46",
+      "timestamp": "1643316372.219600",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-01-27.json",
+    "message_count": 3,
+    "start_time": "1643288851.216400",
+    "end_time": "1643316372.219600",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-03-20_1742469819.700399_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe",
+    "Heymian",
+    "Goto Tools Go Links"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, it’s definitely not working. I’ve seen many uncommented public functions that escaped linting, just to give one example.",
+      "time": "04:23",
+      "timestamp": "1742469819.700399",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "That’s odd — I need to double check, but I think nogo is more ‘go vet’-focused, in which case I wouldn’t be surprised at missing lints for comments",
+      "time": "09:42",
+      "timestamp": "1742488968.795809",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "If that ends up being the case I’ll re-state what I said previously, that we likely need to lift those validations into pre-merge checks — otherwise we don’t have any enforcement the everyone is running pre-commit actions prior to merging",
+      "time": "09:44",
+      "timestamp": "1742489058.181279",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yeah pre-merge would be great. I’d be up for adding it to pre-merge and pre-commit. Is this something you can help with?",
+      "time": "09:45",
+      "timestamp": "1742489139.805729",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think there are a few other style things it's missing:\n\n• Formatting (though should be caught by gofmt)\n• Names of things (HTTP is correct Go style, Http is not; module.ModuleSomeFunc is stuttering; etc.)\n• Ignored `err` returns\n• I think there are a few others that we're not picking up",
+      "time": "09:45",
+      "timestamp": "1742489155.038809",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Also, I think even though golint is marked as deprecated, we can still use it right?",
+      "time": "09:46",
+      "timestamp": "1742489202.341479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, we can",
+      "time": "09:46",
+      "timestamp": "1742489214.610839",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Yeah I’m looking in to whether there’s an issue with nogo not running as expected, and what checks it’s running, first — there are a handful of tools we can/should employ in both pre-commit and pre-merge, I’d be happy to help get that added if needed :)",
+      "time": "09:49",
+      "timestamp": "1742489341.028429",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I’m grabbing a coffee at the moment but will share a ticket I’ll be using to track this once I’m back at my desk",
+      "time": "09:49",
+      "timestamp": "1742489392.887159",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Completely forgot to share the ticket (https://instabase.atlassian.net/browse/PRODENG-1652) earlier, apologies! From what I've been able to gather thus far, it appears nogo (at least our config (https://github.com/instabase/instabase/blob/master/third-party/bazel/go/BUILD.bazel#L40) right now) does not have support for the syntax-level items mentioned previously. I'm doing another run through of the nogo docs (https://github.com/bazel-contrib/rules_go/blob/master/go/nogo.rst) in case that was something previously unsupported and available now, but it's looking like we will indeed need to rely on separate checks in precommit/premerge",
+      "time": "11:51",
+      "timestamp": "1742496712.265919",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/blob/master/go/nogo",
+      "time": "11:51",
+      "timestamp": "1742496713.623819",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/BUILD",
+      "time": "11:51",
+      "timestamp": "1742496713.709489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmmm...maybe we should just stick to golint even though it's deprecated (?)",
+      "time": "13:03",
+      "timestamp": "1742500992.174779",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I guess staticcheck is another option",
+      "time": "13:03",
+      "timestamp": "1742501017.118989",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Agreed, can we just use golint?",
+      "time": "13:03",
+      "timestamp": "1742501029.347729",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "95% or more of our codebase already conforms to golint, let’s just stick with it",
+      "time": "13:04",
+      "timestamp": "1742501069.181169",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmm...I think actually staticcheck seems the most popular & best option at the moment. It seems the style enforcement is similar to golint, or at least configurable to be the same as golint.",
+      "time": "13:04",
+      "timestamp": "1742501092.213499",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It also does static analysis, which go lint does not do (but go vet does). I figure we can run both staticcheck + go vet",
+      "time": "13:05",
+      "timestamp": "1742501123.062489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/golangci/golangci-lint/issues/1892",
+      "time": "13:07",
+      "timestamp": "1742501267.129789",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah I'm looking at that now, staticcheck would be more robust as the builds will fail outright if linting doesn't pass (rather than errors only getting surfaced at pre-commit/PR time)\n\nthe existing nogo rules are running the checks that `go vet` runs in addition to some checks from https://pkg.go.dev/golang.org/x/tools/go/analysis/passes, I'm looking at https://github.com/sluongng/nogo-analyzer/tree/master/staticcheck as a reference for adding staticcheck to the nogo rule",
+      "time": "13:08",
+      "timestamp": "1742501280.882909",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/analysis/passes>,",
+      "time": "13:08",
+      "timestamp": "1742501282.434659",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "> *NOTE:* Golint is deprecated and frozen (https://github.com/golang/go/issues/38968). There's no drop-in replacement for it, but tools such as Staticcheck (https://staticcheck.io/) and `go vet` should be used instead.\n^ from the Go team (https://github.com/golang/lint/blob/master/README.md)",
+      "time": "13:08",
+      "timestamp": "1742501311.430339",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/issues/38968%7Cdeprecated",
+      "time": "13:08",
+      "timestamp": "1742501312.619309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, \"fail outright\" is what we want",
+      "time": "13:09",
+      "timestamp": "1742501345.150159",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-03-20.json",
+    "message_count": 24,
+    "start_time": "1742469819.700399",
+    "end_time": "1742501345.150159",
+    "is_thread": true
+  }
+}

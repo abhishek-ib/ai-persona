@@ -1,0 +1,102 @@
+{
+  "id": "ch_C06FA6A23_2019-10-01_1569954090.169300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "dlluncor",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "@Eric Han @cross talk - a podcast about crosswords - listen on apple podcasts or spotify @Ashish @Karthik S — In webapp/Makefile I see:\nbuild-docker: check-node-version build-webpack-js build fetch-docs\n\nIs build-webpack-js needed? Since webapp doesn’t host any JS files in prod, this command shouldn’t be needed correct?",
+      "time": "11:21",
+      "timestamp": "1569954090.169300",
+      "is_reply": false
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "it looks like build-webpack-js is ran in server-nginx Makefile so I think this is probably ok to delete if that’s where prod copies static files",
+      "time": "11:33",
+      "timestamp": "1569954795.169800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "yes server-nginx runs build-webpack-js and hosts the files from there — sounds good",
+      "time": "11:38",
+      "timestamp": "1569955091.170200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "we need it for local dev",
+      "time": "11:42",
+      "timestamp": "1569955340.171400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "can you check that things work for local docker development when making makefile changes",
+      "time": "11:42",
+      "timestamp": "1569955378.171900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "how do you run webapp locally in Docker btw?\n\nInteresting — is it possible for us to have a separate “build-docker” command for local in this particular case?\n\nMain reason that motivates this: Currently our build process takes a long time for infra. build-webpack-js specifically takes a very long time. And we have it twice right now (server-nginx and webapp) whereas we should only need it for server-nginx when we deploy to prod)",
+      "time": "11:46",
+      "timestamp": "1569955564.172900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "with provisioner script. python provisioner.py compile webapp --as-docker",
+      "time": "11:47",
+      "timestamp": "1569955639.173100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "then python provisioner.py start webapp --as-docker",
+      "time": "11:47",
+      "timestamp": "1569955648.173300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "there is a DEV flag in the makefile, move it so the build-webpack-js dep is inside that flag?",
+      "time": "11:47",
+      "timestamp": "1569955669.173900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "sounds good!",
+      "time": "12:07",
+      "timestamp": "1569956865.177300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-10-01.json",
+    "message_count": 10,
+    "start_time": "1569954090.169300",
+    "end_time": "1569956865.177300",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,239 @@
+{
+  "id": "ch_C08L4K42H9C_2025-05-22_1747920281.234459_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Kaustubh (KD)",
+    "Serena",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "hey team, i'm working on this ticket (https://instabase.atlassian.net/browse/EPD-4316) where an accuracy test fails to run due to a table field not being in the correct format. ideally even being able to set an invalid format for a table field is blocked on the frontend (i haven't been able to reproduce KD's case, but this is also possible to do when a table field errors or somehow returns a string value). idk how difficult that will be (probably much easier when we have data types), but for now, to unblock accuracy runs in this case, i was wondering what the behavior should be? right now, an invalid json string gets turned into `ERROR` and that's the value that's used in the accuracy test. that might be a bit weird for the user when the table field value looks like a table in the ui but then turns into ERROR in the acc run. another option is to keep the value the same way it is w/o converting to ERROR but it would also require some frontend changes to show how it's different from an actual table",
+      "time": "06:24",
+      "timestamp": "1747920281.234459",
+      "is_reply": false
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "@Serena @Kaustubh (KD)",
+      "time": "06:24",
+      "timestamp": "1747920297.071519",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Hmm okay for short term fix, I agree blocking the invalid format for the field makes the most sense, but what would happen if we did not convert the invalid JSON? how would we compare?",
+      "time": "06:44",
+      "timestamp": "1747921441.132099",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "do u mean if we don't convert the invalid JSON to `ERROR` ? it would basically be the same way when it's an `ERROR` where it wouldn't be able to be converted and basically no comparison acc takes place and is treated as a non-match. the tricky part is when it is a valid JSON but not in a table format which would require some backend change to make sure it's not a table format and then do the same logic (no comparison --> non-match)",
+      "time": "06:54",
+      "timestamp": "1747922079.884539",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "So ideally we give a warning when a user makes a HR change right?",
+      "time": "07:08",
+      "timestamp": "1747922896.432549",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Yeah was referring to\n> another option is to keep the value the same way it is w/o converting to ERROR but it would also require some frontend changes to show how it's different from an actual table",
+      "time": "07:08",
+      "timestamp": "1747922917.029439",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "yeah a warning or just block saving entirely until the correct format is given",
+      "time": "07:10",
+      "timestamp": "1747923016.402659",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "What is the effort on giving a clear error message, something like: \"Invalid table format for field X. Correct before running accuracy test\" ?",
+      "time": "07:11",
+      "timestamp": "1747923099.772449",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "My recommendation would be:\n1. Have a short term error message that is clear\n2. Prevent HR from putting invalid formats (which should be easier to police with Data Types)",
+      "time": "07:12",
+      "timestamp": "1747923146.526129",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "i think effort is dependent on how much access there is to the app schema on the frontend when on human review, but we can loop in @Paul H, another problem tho is that correcting a human review field to be the correct format is quite difficult. if a user inputs a list, i think the ui just bugs out and if a user inputs a list of object, any further human review edit will be a list of objects. the only way i've found to redo it is through re-extraction",
+      "time": "07:18",
+      "timestamp": "1747923489.501959",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Will wait for Serena also to comment but 2 can wait and we should think about this during data types tech spec design",
+      "time": "07:22",
+      "timestamp": "1747923749.659849",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "1. @Kaustubh (KD) are you saying we should show an error message in Human Review? i think this could get complicated\n2. yes this is quite hard without data types, so yes we need to consider this in the data types tech spec\n> right now, an invalid json string gets turned into `ERROR` and that's the value that's used in the accuracy test\nfor now, i think we should go with this and continue running the accuracy test\n-> after we have data types, we can prevent users from introducing invalid formats in Human Review",
+      "time": "08:46",
+      "timestamp": "1747928794.636589",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "for 1. I'm not suggesting in HR, i'm suggesting when the accuracy test is run with `ERROR`. Had that information been clear to me, I would have tried to correct the ground truth",
+      "time": "08:48",
+      "timestamp": "1747928933.043239",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for 1, are you saying the accuracy test should not be run, and we would show the error message in a toast?",
+      "time": "08:50",
+      "timestamp": "1747929031.878539",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Yeah we already have an error its just not very helpful",
+      "time": "08:55",
+      "timestamp": "1747929310.397049",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ok seems that we're aligned on this approach then!\n• if we see an invalid ground truth value for a table field, the \"run accuracy test\" endpoint returns an error message like `Invalid table format for field X. Correct before running accuracy test.`\n@ayesha.ali can you double check this error message with melissa in <#C05NKL85Y2G|>?",
+      "time": "09:01",
+      "timestamp": "1747929707.529479",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "We should also fix the bug where table formats `[[]]` are occasionally being converted into lists `[]`, so if we have steps to replicate, I can take a look in the human review side.",
+      "time": "09:02",
+      "timestamp": "1747929775.579349",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "Yeah this was one of the errors in kd’s gt set but I couldn’t figure out how to reproduce",
+      "time": "09:03",
+      "timestamp": "1747929836.615879",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "@ayesha.ali despite it being a list `[]` struct, did the UI render a table? I’m thinking it could be a list of objects `[{}]`",
+      "time": "09:05",
+      "timestamp": "1747929920.187249",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "the ui did render a table but then when you clicked to edit, you get the something went wrong page",
+      "time": "09:11",
+      "timestamp": "1747930304.969219",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "just to confirm with the approach, in this ticket https://instabase.atlassian.net/browse/EPD-3148 , we had made the change that for any string value including \"ERROR\", the table field will be set to ERROR so that the accuracy test would run. https://github.com/instabase/instabase/pull/64868 are we changing this to do this new error msg/not run acc test approach? or is this approach only for valid json strings that aren't in the table format?",
+      "time": "09:21",
+      "timestamp": "1747930892.349919",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think we should be consistent\n1. either set the table field value to `ERROR` so that the accuracy test can run\n2. or always return an error and not run the accuracy test\ni was previously leaning towards the first since we already have this precedent, but not a strong opinion, and we can easily switch to the second - wdyt? @Kaustubh (KD)",
+      "time": "09:26",
+      "timestamp": "1747931206.998759",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "So let me know if I'm misinterpreting, but this would happen post review right? If that the case, I would def prefer the second. If a user incorrectly edits a table and then it goes to error, how does a user get back to where they were?",
+      "time": "09:56",
+      "timestamp": "1747932965.398609",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "yeah option 1 sets the value to ERROR in the ground truth set snapshot not actually through/in human review, if a user goes back to human review it should be the same before/after acc test run, nothing changes about the incorrect table there",
+      "time": "09:58",
+      "timestamp": "1747933133.791869",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Maybe Ayesha you and I can jump on a quick call. Let me put something on your calendar",
+      "time": "09:59",
+      "timestamp": "1747933180.363069",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "did you two resolve this? i assume we're going with always returning an error and not running the accuracy test?",
+      "time": "11:29",
+      "timestamp": "1747938572.172079",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Yeah that is the direction with better error messages",
+      "time": "12:00",
+      "timestamp": "1747940422.399349",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-05-22.json",
+    "message_count": 27,
+    "start_time": "1747920281.234459",
+    "end_time": "1747940422.399349",
+    "is_thread": true
+  }
+}

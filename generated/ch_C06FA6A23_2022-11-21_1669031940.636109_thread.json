@@ -1,0 +1,160 @@
+{
+  "id": "ch_C06FA6A23_2022-11-21_1669031940.636109_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "youngmok.cho",
+    "shiqi",
+    "naveen",
+    "Heymian",
+    "Bartosz Topolski"
+  ],
+  "messages": [
+    {
+      "sender": "Bartosz Topolski",
+      "user_id": "U02GTU7C9K6",
+      "message": "Hi team. It seems that since friday the prod has been deployed with `'RELEASE_TAG': '22.08.0-pre-2237-g508ba709a4'`. This is problematic with `ibformers` since we check this variable (among others) to infer platform version and enable/disable features for backwards compatibility. We can quickly fix this to first look into the `dd_version` variable which contains the correct version (`'DD_VERSION': '(HEAD-22.11.0'` ), but wanted to report this as maybe this could indicate that there is some bigger issue related to this.",
+      "time": "03:59",
+      "timestamp": "1669031940.636109",
+      "is_reply": false
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "@shiqi",
+      "time": "05:22",
+      "timestamp": "1669036971.143529",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrm this doesn't seem right, we should've deployed 22.11 to prod. @youngmok.cho would you be able to take a look?",
+      "time": "08:48",
+      "timestamp": "1669049286.604849",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Bartosz Topolski please don't use the DD version, that's tied to datadog which we’re deprecating soon. \n\nThough, you may need to update the version code in informers. We made some recent changes to the version tag that may add suffixes. Will let Shiqi chime in and see if we can avoid this or provide a different env var or solution.",
+      "time": "08:55",
+      "timestamp": "1669049753.627329",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "~Hmm, it’s a tag created by `ib-cp-bot` . I don’t know the full details of the bot, but creating a tag seems like an odd behaviour for a bot. Still investigating it~\n\n^ This is wrong. The bot is the author of the commit, not the tag:sweat_smile:",
+      "time": "09:30",
+      "timestamp": "1669051839.685629",
+      "is_reply": true
+    },
+    {
+      "sender": "Bartosz Topolski",
+      "user_id": "U02GTU7C9K6",
+      "message": "@Heymian got it. The DD version logic is currently the only one giving the correct version, so we’l remove it once this is fixed on prod.\n\nThe env variables we’re checking to obtain the version are `\"RELEASE_VERSION\", \"DD_VERSION\", \"RELEASE_BRANCH\", \"RELEASE_TAG\"`, in that order (the DD is the temporary one). Can we agree on some reliable way to obtain the version? The suffixes etc are not a problem, we use regex to find the version anyway",
+      "time": "09:39",
+      "timestamp": "1669052390.732259",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Is RELEASE_VERSION correct? If so, I would rely on RELEASE_VERSION instead of RELEASE_TAG since tag is just an arbitrary identify to the built image.",
+      "time": "09:45",
+      "timestamp": "1669052746.461279",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "RELEASE_VERSION is correct for release-22.11.0",
+      "time": "09:47",
+      "timestamp": "1669052869.318699",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "I don’t know how these two tags, `22.08.0-pre-2237-g508ba709a4` and `22.11.0` point to the same commit",
+      "time": "09:48",
+      "timestamp": "1669052919.741559",
+      "is_reply": true
+    },
+    {
+      "sender": "Bartosz Topolski",
+      "user_id": "U02GTU7C9K6",
+      "message": "Here are all the environment variables available when training the model. release_version isn’t there",
+      "time": "09:54",
+      "timestamp": "1669053282.353359",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Hrm, do you know where these env vars are getting populated from? I thought ibformers would be running in app-tasks, but app-tasks wouldn’t have all these env vars. E.g. app-tasks doesn’t talk to table-service. And env vars like `SERVICE_OCR_ARI_11_TSERVICE_PORT` has been completely removed from the code base.",
+      "time": "10:00",
+      "timestamp": "1669053603.872189",
+      "is_reply": true
+    },
+    {
+      "sender": "Bartosz Topolski",
+      "user_id": "U02GTU7C9K6",
+      "message": "`model-training-tasks-gpu`, I think",
+      "time": "10:01",
+      "timestamp": "1669053716.036159",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "ah yes. hrmm so RELEASE_VERSION (https://github.com/instabase/instabase/blob/master/deployment-configs/base/model-training-tasks-gpu.yml#L153) is there, and not the hoards of env vars you just pasted in. I can’t find any service that surfaces anywhere near this many env vars.",
+      "time": "10:06",
+      "timestamp": "1669053981.222609",
+      "is_reply": true
+    },
+    {
+      "sender": "Bartosz Topolski",
+      "user_id": "U02GTU7C9K6",
+      "message": "This was just a standard training run where I logged everything in `os.environ` just as a debug. So not sure why are there so many extra variables, and the one important is missing :thinking_face:",
+      "time": "10:41",
+      "timestamp": "1669056110.727539",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "Can I get more context around `RELEASE_TAG` if possible? Is it generated on the fly during deployment or manually created?\n\nI checked git tags from Github UI and it’s not there. But, when I run\n```git branch --contains tags/22.08.0-pre-2237-g508ba709a4```\nto find which branch this tag is contained in (or to find whether it is even a git tag or not), I get\n```release-22.11.0```\nPlus, it’s not deleted by `git tag -d`\n```youngmokcho@XL29TQJLHC instabase % git tag -d 22.08.0-pre-2237-g508ba709a4\nerror: tag '22.08.0-pre-2237-g508ba709a4' not found.```",
+      "time": "11:19",
+      "timestamp": "1669058345.451989",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "@Abhinav is the release_tag is handled by the release bundle process?",
+      "time": "13:28",
+      "timestamp": "1669066107.781389",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "the tag look very strange, it is a combination of older release (`22.08.0-pre` was a tag we created for 22.08 release) and a new commit `508ba709a4` , the only possibility that I know of to have such tag created is that gen_spec code is evoked in local directory that hasn't synced since 22.08 release. so the latest tag in its local is still 22.08.0-pre",
+      "time": "13:47",
+      "timestamp": "1669067271.563979",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-11-21.json",
+    "message_count": 17,
+    "start_time": "1669031940.636109",
+    "end_time": "1669067271.563979",
+    "is_thread": true
+  }
+}

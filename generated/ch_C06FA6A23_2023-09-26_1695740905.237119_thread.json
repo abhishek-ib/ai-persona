@@ -1,0 +1,28 @@
+{
+  "id": "ch_C06FA6A23_2023-09-26_1695740905.237119_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "youngmok.cho"
+  ],
+  "messages": [
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "Those are great questions :slightly_smiling_face:\n\nMy answers to the bullet-point questions respectively,\n• We will have just the necessary dependencies in each service. Having a common denominator doesn’t mean every dependency in the requirements.txt will be included in the final artifact of every service. For example, if we were to create an image for py-utils/io-utils (https://github.com/instabase/instabase/blob/master/shared-utils/py-utils/io-utils/src/py/instabase/utils/BUILD.bazel) (treating it as a service), we will only have `six` , `billiard` , `protobuf` and transitive deps of `//shared-utils/py-utils/errors/src/py/instabase/errors` and `//shared-utils/py-utils/io-utils/src/py/instabase/utils/path` . When it comes to vulnerability management, I think it will become easier to manage, but if you have a counter example, I’d love to hear it!\n• This is a case for the exception where we will have a second requirements.txt and specify a different version of opencv in it. This exception can be granted on a per service basis, but we will first try to work on creating a common denominator.\n• We can do the same for Bazel by creating another requirements.txt and incrementally adding the right set of dependencies compatible with the new python version to it.\n```My take is we need to tackle python the same way we tackled Go: one module at a time and we actually flesh out the exact set of dependencies + library versions we need```\nI was hoping to do the same, and searched for a way here and there for a while :slightly_smiling_face:, but the most ticky part would be version resolution + deperformance coming from having to load dependencies from potentially 200+ requirements.txt. How are we going to make sure there are no redundant packages among these requirements files? I think it’s possible as well and can be implemented with Bazel, but there are some fundamental issues with this approach. Happy to discuss this further though!\n\n```don't think Bazel will help Lydia out in the short-term anyways```\nand I’m sorry we can’t help out Lydia yet :smiling_face_with_tear:",
+      "time": "08:08",
+      "timestamp": "1695740905.237119",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-09-26.json",
+    "message_count": 1,
+    "start_time": "1695740905.237119",
+    "end_time": "1695740905.237119",
+    "is_thread": true
+  }
+}

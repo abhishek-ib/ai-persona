@@ -1,0 +1,145 @@
+{
+  "id": "ch_C06FA6A23_2019-07-24_1564005370.048400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ted",
+    "dlluncor",
+    "Aaron Tami",
+    "Chetan",
+    "Aaron Vontell",
+    "Divya"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Im getting a spacy error when trying to run app-tasks: `ERROR:root:Unable to load SpaCy en_core_web_md model: [E050] Can't find model 'en_core_web_md'. It doesn't seem to be a shortcut link, a Python package or a valid path to a data directory.` Anyone know wahat this is?",
+      "time": "14:56",
+      "timestamp": "1564005370.048400",
+      "is_reply": false
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "running it in the docker container or locally? if locally, look at the dockre container for the command lines that let you download + link that resource file",
+      "time": "14:57",
+      "timestamp": "1564005472.048700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "basically you're just missing a model file that spacy needs to run whatever code path you're hitting @Aaron Tami",
+      "time": "14:58",
+      "timestamp": "1564005485.048900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "ya i was able to fix it with `python -m spacy download en_core_web_md`",
+      "time": "14:58",
+      "timestamp": "1564005493.049100",
+      "is_reply": true
+    },
+    {
+      "sender": "Divya",
+      "user_id": "UKDUP7SRJ",
+      "message": "@Aaron Vontell app-tasks now depends on spacy @dlluncor so docker image isn't building",
+      "time": "18:00",
+      "timestamp": "1564016423.057700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I believe this was always the case? app-tasks is what runs refiner functions which have had NLP as a dependency I think?",
+      "time": "18:04",
+      "timestamp": "1564016698.058000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Yep app-tasks Docker fails for me too I get this:\n\n  File “/instabase/workers/celery-app-tasks/py/instabase/registry/tasks.py”, line 81, in <module>\n    from instabase.tasks.apps import flow_studio_util\n  File “/instabase/workers/celery-app-tasks/py/instabase/tasks/apps/flow_studio_util.py”, line 14, in <module>\n    from instabase.refiner_utils.refiner_util import IBRefinerProg\n  File “/instabase/workers/celery-app-tasks/py/instabase/refiner_utils/refiner_util.py”, line 21, in <module>\n    from instabase.data_api_utils._sheet.executors.executor import FunctionExecutor\n  File “/instabase/workers/celery-app-tasks/py/instabase/data_api_utils/_sheet/executors/executor.py”, line 11, in <module>\n    from instabase.data_api_utils._sheet import fns\n  File “/instabase/workers/celery-app-tasks/py/instabase/data_api_utils/_sheet/fns.py”, line 18, in <module>\n    from instabase.data_api_utils._sheet import nlp_fns\n  File “/instabase/workers/celery-app-tasks/py/instabase/data_api_utils/_sheet/nlp_fns.py”, line 29, in <module>\n    from instabase.nlp_utils.token_matchers.similarity import PhraseSimilarity\n  File “/instabase/workers/celery-app-tasks/py/instabase/nlp_utils/token_matchers/similarity.py”, line 15, in <module>\n    import instabase.nlp_utils.similarity as similarity\n  File “/instabase/workers/celery-app-tasks/py/instabase/nlp_utils/similarity.py”, line 11, in <module>\n    from instabase.nlp_utils.spacy_utils.spacy_utils import get_english_corpus\n  File “/instabase/workers/celery-app-tasks/py/instabase/nlp_utils/spacy_utils/spacy_utils.py”, line 29, in <module>\n    EN_CORE_WEB_MD.vocab.add_flag(  # type: ignore\nNameError: name ‘EN_CORE_WEB_MD’ is not defined\n\n\n@Aaron Vontell @Ted — was this due to the api-server-apps refactor which just got merged?",
+      "time": "18:27",
+      "timestamp": "1564018025.058200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "1) Can we fix all these type: ignore’s :slightly_smiling_face: 2) it looks like there is a bug in spacy_utils when trying to load a model which doesn’t exist @Ted\n3) Should this model be loaded into app-tasks at all in the first place?",
+      "time": "18:27",
+      "timestamp": "1564018061.058400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Happy to help debug this. My recollection was someone wanted spacy in there for something, though I forget what",
+      "time": "18:38",
+      "timestamp": "1564018716.059100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Regarding loading the mode that doesn’t exist, I could have sworn we addressed this about two months ago by having it fail softly with a warning but no exception",
+      "time": "18:39",
+      "timestamp": "1564018780.060600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Ya think something happened with the new fix that went in today?",
+      "time": "19:00",
+      "timestamp": "1564020005.060900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "I believe this will block the dogfood push we need to make tonight since app-tasks won't run",
+      "time": "19:00",
+      "timestamp": "1564020021.061100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "I am taking my mom on a date to Hamilton tonight (sitting in theater) for her birthday so can’t hop on a computer right now",
+      "time": "19:02",
+      "timestamp": "1564020136.062100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "If there’s a push to go out and this is what I think it is, i think the fix is literally just to wrap on a try catch",
+      "time": "19:02",
+      "timestamp": "1564020158.063000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "*in",
+      "time": "19:02",
+      "timestamp": "1564020162.063300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-07-24.json",
+    "message_count": 15,
+    "start_time": "1564005370.048400",
+    "end_time": "1564020162.063300",
+    "is_thread": true
+  }
+}

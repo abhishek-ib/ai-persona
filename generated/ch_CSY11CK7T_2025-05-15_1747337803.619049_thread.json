@@ -1,0 +1,272 @@
+{
+  "id": "ch_CSY11CK7T_2025-05-15_1747337803.619049_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Goto Tools Go Links",
+    "Sayan",
+    "Victor Zeng",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw the same issue is occurring on aihub-uat! i just ran an app as a community user, and all fields got `ERROR` bc of this",
+      "time": "12:36",
+      "timestamp": "1747337803.619049",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oh oops paul already mentioned this above (https://instabase.slack.com/archives/CSY11CK7T/p1747265008574009?thread_ts=1747260027.390859&cid=CSY11CK7T)",
+      "time": "12:37",
+      "timestamp": "1747337831.368689",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "@Xindi Xu I checked some other requests when I am on a community account. It seems the community account org is the username / user id in the request:\n```curl 'https://https--sayanbhattacharjee-instabase.instabase.site.sandboxes.run/api/v2/aihub/build/projects?org=sayan.bhattacharjee.community_instabase.com&query_option=workspace&search_string=&sort_is_ascending=false&workspace=my-repo' \\\n  -H 'accept: */*' \\\n  -H 'accept-language: en-US,en;q=0.9' \\\n  -H 'ib-context: sayan.bhattacharjee.community_instabase.com' \\\n  -H 'priority: u=1, i' \\\n  -H 'referer: https://https--sayanbhattacharjee-instabase.instabase.site.sandboxes.run/build/0196d60d-3efc-7a9e-aac0-1f3a66a23a73' \\\n  -H 'sec-ch-ua: \"Google Chrome\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"' \\\n  -H 'sec-ch-ua-mobile: ?0' \\\n  -H 'sec-ch-ua-platform: \"macOS\"' \\\n  -H 'sec-fetch-dest: empty' \\\n  -H 'sec-fetch-mode: cors' \\\n  -H 'sec-fetch-site: same-origin' \\\n  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'```\nIn this case, the org name seems correct to be the username.\n\nFWIW, on model service, I get these errors on model service and I'm wondering if this is an llm issue / langchain token issue\n```level=WARNING time=2025-05-15 22:56:18,817 msg=\"Failed to multipart ingest runs: langsmith.utils.LangSmithAuthError: Authentication failed for https://api.smith.langchain.com/runs/multipart. HTTPError('401 Client Error: Unauthorized for url: https://api.smith.langchain.com/runs/multipart', '{\"error\":\"Unauthorized\"}\\n')trace=b7b80194-5e2b-4a53-ab9d-fc676d566df3,id=b7b80194-5e2b-4a53-ab9d-fc676d566df3\"  path=\"/usr/local/lib/python3.9/site-packages/langsmith/client.py:1652\" process=\"MainProcess\" thread=\"Thread-47\" trace_id=\"\"```",
+      "time": "16:15",
+      "timestamp": "1747350900.790209",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I was able to reproduce the extraction failure but I'm looking at more logs to try to pinpoint where the issue is coming from.\n\nThis is the error that comes up when I try extracting fields\n```    \"msg\": \"Error during refiner extraction: model result is empty due to an error in model service\\n\\n METADATA:\\n\\n\\n{\\\"extraction_result\\\": null}\",```\n@ayesha.ali @prateek.tenkale do you know what this could be referring to?",
+      "time": "16:28",
+      "timestamp": "1747351731.322549",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the `LangSmithAuthError` errors are red herrings that you should just ignore",
+      "time": "16:35",
+      "timestamp": "1747352148.914929",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the `model result is empty` error is occurring bc `ibllm` is returning an empty response bc the billing check is failing",
+      "time": "16:36",
+      "timestamp": "1747352180.791039",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I am going to try reverting this PR (https://github.com/instabase/instabase/commit/adf525e27cc6b652b03a2e9b86f2c6b798dc0f8f#diff-e996bb005d726cb4ff76d6def1a62468ea577482247b1c9f2d065f45639b6b40) locally and see if it affects anything",
+      "time": "16:37",
+      "timestamp": "1747352254.070879",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this request `/api/v2/aihub/build/projects?org=sayan.bhattacharjee.community_instabase.com (http://community_instabase.com)&query_option=workspace&search_string=&sort_is_ascending=false&workspace=my-repo` is listing the Build projects in your community account's personal workspace\n\nevery account's personal workspace is always named the same as their username",
+      "time": "16:37",
+      "timestamp": "1747352267.572069",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Sayan however, this PR is in 25.18, which has been deployed to aihub.instabase.com (http://aihub.instabase.com), which does not have this problem (i just tested)",
+      "time": "16:50",
+      "timestamp": "1747353015.533199",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "let me check a couple other prs that were merged prior to uat code cut as well",
+      "time": "16:51",
+      "timestamp": "1747353071.730679",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw these tests still passed on crafting-cyp last Friday ~4:30pm PT https://cloud.cypress.io/projects/cfhedy/runs/19431/test-results?actions=%5B%5D&brows[…]39%5C%22%5D%22%7D%5D&statuses=%5B%5D&testingTypesEnum=%5B%5D (https://cloud.cypress.io/projects/cfhedy/runs/19431/test-results?actions=%5B%5D&browsers=%5B%5D&groups=%5B%5D&isFlaky=%5B%5D&modificationDateRange=%7B%22startDate%22:%221970-01-01%22,%22endDate%22:%222038-01-19%22%7D&orderBy=EXECUTION_ORDER&oses=%5B%5D&specs=%5B%7B%22label%22:%22apps/src/aihub/__e2e__/BuildApp/aihub-extraction.spec.ts%22,%22value%22:%22%5B%5C%227d3fea7a-3345-47f4-bf06-ef477d9e2973%5C%22,%5C%2258c8462f-e76a-4965-8ef2-0626717ce254%5C%22%5D%22%7D,%7B%22label%22:%22apps/src/aihub/__e2e__/BuildApp/aihub-quick-clean-refinement.spec.ts%22,%22value%22:%22%5B%5C%220a924554-348f-4e6e-8894-17469f61de67%5C%22,%5C%22a9ef4dc3-1451-475d-9300-a45ff9a3a05e%5C%22%5D%22%7D,%7B%22label%22:%22apps/src/aihub/__e2e__/ViewApp/run-app.spec.ts%22,%22value%22:%22%5B%5C%227a9793f4-7d3d-4812-a348-9a6996ad4fe2%5C%22,%5C%2214174737-994f-451b-b705-e492fe209a2e%5C%22%5D%22%7D,%7B%22label%22:%22apps/src/aihub/__e2e__/ViewApp/run-public-app.spec.ts%22,%22value%22:%22%5B%5C%22816f9390-5946-401a-af0e-0687b0c86141%5C%22,%5C%2237bf0e8b-ecc1-4bf0-be38-0bbb747ad839%5C%22%5D%22%7D%5D&statuses=%5B%5D&testingTypesEnum=%5B%5D)\n\nso something changed between the deployment before that (https://instabase.slack.com/archives/CCY413CSU/p1746806440325859) (~9am PT) and monday's code cut that introduced this issue",
+      "time": "16:56",
+      "timestamp": "1747353413.952629",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "looking into this pr (https://github.com/instabase/instabase/pull/70514)",
+      "time": "17:01",
+      "timestamp": "1747353680.255629",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "This PR changed quite a lot of stuff too. Maybe worth looking into?\n\nhttps://github.com/instabase/instabase/commit/0ed3db4a8e4e60e5e1693f0c5ef96a285b1edb8b#diff-5b0d1e1cbd8e1ed09d433b1c[…]0f75fa40717509673b05a3b473L24 (https://github.com/instabase/instabase/commit/0ed3db4a8e4e60e5e1693f0c5ef96a285b1edb8b#diff-5b0d1e1cbd8e1ed09d433b1c4b7569daf7f5b50f75fa40717509673b05a3b473L24)",
+      "time": "17:04",
+      "timestamp": "1747353887.000329",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "• the `Org (serena.wang.aihubsandbox_instabase.com (http://aihubsandbox_instabase.com)) not found` error message is returned by `get_dimensions` in model_usage.py (https://github.com/instabase/instabase/blob/90234abe/shared-utils/py-utils/license-utils/src/py/instabase/license_utils/model_usage.py#L516) (see celery-app-tasks logs screenshot)\n• `get_dimensions` calls `billing_dimensions.get_organization_id`, which Xindi's PR (https://github.com/instabase/instabase/commit/0ed3db4a8e4e60e5e1693f0c5ef96a285b1edb8b#diff-5b0d1e1cbd8e1ed09d433b1c4b7569daf7f5b50f75fa40717509673b05a3b473R155) updates to call `org_util.get_org_req_tbd`\n• `get_org_req_tbd` sends a slightly different `GetOrgReq` to `core-platform-service`, compared to the prior implementation of `get_organization_id`\n    ◦ `get_org_req_tbd` sets (https://github.com/instabase/instabase/commit/0ed3db4a8e4e60e5e1693f0c5ef96a285b1edb8b#diff-947bca78229dedaa45ba2fc901748e845d4663e3dec16bbdcd2f950684bb747dR268) `get_profile` to `True` in `GetOrgReq`\n    ◦ the old implementation (https://github.com/instabase/instabase/commit/0ed3db4a8e4e60e5e1693f0c5ef96a285b1edb8b#diff-5b0d1e1cbd8e1ed09d433b1c4b7569daf7f5b50f75fa40717509673b05a3b473L154-L155) of `get_organization_id` did not set `get_profile` to `True` in `GetOrgReq`\n    ◦ maybe this could be the discrepancy causing the issue?\n    ◦ i'm not confident on this though - if `get_profile` is true, `core-platform-service` will try to call `h.dbAccessor.GetOrgProfile` , but if `GetOrgProfile` returns an error, the endpoint doesn't return an error (https://github.com/instabase/instabase/blob/0af0417/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/account/handler/org.go#L735)",
+      "time": "17:56",
+      "timestamp": "1747357016.784319",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase/coreplatformservice/account/handler/org",
+      "time": "17:56",
+      "timestamp": "1747357017.858679",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "> but if `GetOrgProfile` returns an error, the endpoint doesn't return an error (https://github.com/instabase/instabase/blob/0af0417/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/account/handler/org.go#L735)\nYea, even if `GetOrgProfile` errors, the endpoint should still be successful.\n\nFrom the log, I think the behavior of `get_organization_id` is correct. We call `get_organization_id(serena.wang.aihubsandbox_instabase.com (http://aihubsandbox_instabase.com), serena.wang.aihubsandbox_instabase.com (http://aihubsandbox_instabase.com))`, and it makes sense to return org not found error because `serena.wang.aihubsandbox_instabase.com (http://aihubsandbox_instabase.com)` is not an org.",
+      "time": "18:36",
+      "timestamp": "1747359403.554419",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase/coreplatformservice/account/handler/org",
+      "time": "18:36",
+      "timestamp": "1747359404.739979",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ah, I think I know what happens!\n\nThe old code calls `_get_org` will only error if the grpc endpoint returns any error. However the `GetOrg` endpoint will never return an error. Instead, it returns `GetOrgResp(Status=...)` to indicate error. (code (https://github.com/instabase/instabase/blob/0af041703cbb1017ee027ff0f8e13525bb3bbb8f/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/account/handler/org.go#L699-L770))\n\n\n```def _get_org(req: Any) -> Tuple[Any, Text, Optional[RpcError]]:\n  return GRPCClient.execute_with_code(req, clients_factory.account_client.GetOrg)```\nThe new code, will check the status code and extract the error message.\n\n```  resp, _, _ = GRPCClient.execute_with_code(req, account_client.GetOrg)\n  if resp.status.code != account_service_pb2.OK:\n    return None, resp.status.msg\n  return resp, None```",
+      "time": "18:39",
+      "timestamp": "1747359596.766189",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The old code wasn't checking the error from the `GetOrgResp` so `if err` cause basically does nothing :sweat_smile:",
+      "time": "18:41",
+      "timestamp": "1747359719.954959",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for community users, we've always passed in `Ib-Context` as the username though - even on prod, this is how we call the `/extraction` API to run fields in Build projects, and this still works\n\nthis then gets set as `request.current_context_name` -> which is propagated into different celery app tasks as `orgname` (ex: /extraction API (https://github.com/instabase/instabase/blob/master/webserver/api-server/src/py/instabase/api_server_apps/handler/api/v2/aihub_build.py#L3988))",
+      "time": "18:46",
+      "timestamp": "1747360019.932469",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ">  we've always passed in `Ib-Context` as the username though\nYou mean for community context, right?",
+      "time": "18:47",
+      "timestamp": "1747360071.557019",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "since the new `get_org_req_tbd` code actually checks for the error inside `GetOrgResp(Status=...)` , can we skip populating `organization_id` in `ModelDimensions` in `get_dimenstions`? there will never be a valid `organization_id` for community users anyways, right? @Sayan @Victor Zeng",
+      "time": "18:49",
+      "timestamp": "1747360151.292109",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think previously the code worked because `get_organization_id` swallowed the error. We can see that we didn't even check if orgname==username before calling `get_organization_id`  in various places",
+      "time": "18:49",
+      "timestamp": "1747360189.319159",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I would think that the previous code always return org id as `None` . According to chatgpt: Fields *not populated by the sender* will have *default values*.\n`resp.org.org (http://resp.org.org)_id` will not error and will be evaluated to None",
+      "time": "18:52",
+      "timestamp": "1747360365.706779",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "In terms of the fix, i think I'm going to rename this fn to `try_get_organization_id` and comment that we ignore the error where orgname is not a valid org",
+      "time": "18:54",
+      "timestamp": "1747360462.168869",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Hmm. I still want to send the organization id to metronome for commercial.",
+      "time": "18:58",
+      "timestamp": "1747360728.943929",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "We still will do that, we just need to not do this for community",
+      "time": "18:59",
+      "timestamp": "1747360760.854939",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "PR for the fix: https://github.com/instabase/instabase/pull/70721",
+      "time": "19:13",
+      "timestamp": "1747361609.765409",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Extraction failed in both community and commercial context in my sandbox :sweat_smile:",
+      "time": "20:06",
+      "timestamp": "1747364781.078819",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ahh finally. It's working after rebuilding the 2nd time!",
+      "time": "20:38",
+      "timestamp": "1747366703.732019",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Thank you for fixing this quickly and following up on it  @Xindi Xu!",
+      "time": "21:49",
+      "timestamp": "1747370993.365519",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-05-15.json",
+    "message_count": 31,
+    "start_time": "1747337803.619049",
+    "end_time": "1747370993.365519",
+    "is_thread": true
+  }
+}

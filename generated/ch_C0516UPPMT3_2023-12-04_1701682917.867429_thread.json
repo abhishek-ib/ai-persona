@@ -1,0 +1,89 @@
+{
+  "id": "ch_C0516UPPMT3_2023-12-04_1701682917.867429_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Hari",
+    "Varun Jain",
+    "Nikolaos Kofinas",
+    "Matt Weaver",
+    "Sławek Biel"
+  ],
+  "messages": [
+    {
+      "sender": "Matt Weaver",
+      "user_id": "U01B8GFNUAC",
+      "message": "Hi team,\n\nI am currently trying to extract specific clauses from a contract, and in many cases i'm getting stuck where the chunks selected / context window sent to the model are too small to fit the whole clause in.\n\nIs there any option i can use to increase the number of chunks sent to the model to increase the chance that the full clause will fit?",
+      "time": "01:41",
+      "timestamp": "1701682917.867429",
+      "is_reply": false
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "Interesting problem! We have not encountered and optimised for this so far. Thoughts - @Hari @Sławek Biel?",
+      "time": "02:18",
+      "timestamp": "1701685136.518359",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "Hey Matt.. Did multi-step help?",
+      "time": "02:20",
+      "timestamp": "1701685252.277709",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Weaver",
+      "user_id": "U01B8GFNUAC",
+      "message": "Hey, it did not. I tried default, advanced and multi-step",
+      "time": "02:22",
+      "timestamp": "1701685331.483959",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Weaver",
+      "user_id": "U01B8GFNUAC",
+      "message": "Using `advanced-gpt-long-context` here in ib_llm_tools from refiner did help\nhttps://instabase.atlassian.net/wiki/spaces/PROD/pages/2080178179/Enabling+LLMs+in+Refiner",
+      "time": "02:31",
+      "timestamp": "1701685863.130469",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Yeah the code currently is optimized for retrieving relatively short answers. Most of our benchmark questions can be answered by a single sentence and none requires generating multiple paragraphs of text.\n\nSome initial ideas on how to improve it, ordered by amount of effort:\n• Update to gpt-4-1106-preview gpt-3.5-turbo-1106 models. We could then play with increasing the number of chunks and the output tokens limit - measure how it affects the cost/accuracy/latency\n• Have some kind of adaptive logic, detect when there is more context needed, or the answer isn’t complete\n• Have a separate tool/pipeline for extracting blocks of text verbatim. Similar to the long tables. It’s very inefficient to wait and pay for gpt-4 just repeat what it gets in the input back to the output. If we could use the model to just detect the range of lines we could quickly fetch it right from the doc. (Though there would be many corner cases to handle)\nLeaving it to @Hari and @Varun Jain to turn into projects/tasks",
+      "time": "03:29",
+      "timestamp": "1701689362.845599",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "yeah i agree with bullet-point 3 -- i think this will actually be a good thing to add in Build's extraction mode cc @lydia @Nikolaos Kofinas . Once we have data type support, you can imagine \"long text\" is a different datatype that can use a different tool for this (@Sławek Biel’s third bulletpoint).\n\nconverse can move to more and more like search results -- generate a fix size summary answer with links to different content that's used to compose this answer (so in this, multiple chunks that contains the entire clause)",
+      "time": "11:08",
+      "timestamp": "1701716911.194909",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "that is a good idea that we can explore for sure, @Matt Weaver can you send me this doc together with the question to start experimenting a bit?",
+      "time": "11:11",
+      "timestamp": "1701717074.721269",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-12-04.json",
+    "message_count": 8,
+    "start_time": "1701682917.867429",
+    "end_time": "1701717074.721269",
+    "is_thread": true
+  }
+}

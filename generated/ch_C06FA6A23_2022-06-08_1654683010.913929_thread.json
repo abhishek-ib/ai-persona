@@ -1,0 +1,45 @@
+{
+  "id": "ch_C06FA6A23_2022-06-08_1654683010.913929_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Radhika Patwari",
+    "Pridhvi Vegesna"
+  ],
+  "messages": [
+    {
+      "sender": "Radhika Patwari",
+      "user_id": "U03DL4AU29X",
+      "message": "Hello Pridhvi,\nWe are planning to add stats dependency to each `Makefile` and instabase dependency as `instabase => ./build/go/src/instabase` in `go.mod` file for all packages that are failing currently.\nWe want to discuss 2 more issues that we were facing because of recent go upgrade and mockery integration:\n*Issue 1:*\n`make test` failed in libraries like `shared-utils/go-utils/......./acl`, `shared-utils/go-utils/....../documentindexer`, etc It gave the following error.\n\n*Possible Cause :* since we added an extra stats dependency and due to recent go upgrade, `make test` detects updates to `go.mod` and tries to run `go mod tidy`. Since there is no explicit command to run `go mod tidy` in `Makefile`, it is failing with error.\n```go: updates to go.mod needed; to update it:\n        go mod tidy\nmake: *** [run-test] Error 1```\n*Solutions that we think of and need your advice on :* \na. we plan to add `go mod tidy` in `run test` in `instabase/shared-utils/build-utils/shared/build-go.mk` file as it ensures running of `go mod tidy` before `make test` and solves our `go.mod` update issue\n\n```run-test: run-golint gen-mocks\n    GO111MODULE=on \\\n    `go mod tidy` \\\n    go test $(shell [ -n \"${COVERAGE}\" ] && echo \"-coverprofile cp.out\") \\\n    ${GOTEST_FLAGS} -timeout 50m \\\n    `go list ./... | grep -v build | grep -v tmp` \\\n    -check.f \"Test.*${TEST_NAME}\"```\nb. I locally update all `go.mod` files for required packages by running `go mod tidy` in terminal. However it that case the same error may arise for others\n\n*Issue 2 :* \nwe want to have a generic solutioin for  mockery issue in `license-service/` and hence planning to add command to do both build and go mod tidy in  `instabase/shared-utils/build-utils/shared/build-go.mk` file\n\n```go-mod-tidy: build\n    `go mod tidy````\nWe need your suggestions on the 2 issues and their solutions so that we can unblock ourselves on the PR",
+      "time": "03:10",
+      "timestamp": "1654683010.913929",
+      "is_reply": false
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Hey Radhika, for *Issue 1*, Let's go with Solution a. We already call `go mod tidy` in other make commands so it makes sense to add `go mod tidy` in `run-test`. That being said, I would encourage all developers to exercise the go-mindset of running `go mod tidy` any time they update a go mod file. It's important for go developers to understand how modules work. Updating go.sum files after go.mod files are modified is part of that workflow. (As long as you locally update all go.mod files for required packages in terminal and push these changes, other developers shouldn't have to deal with stale go.mod/go.sum files from your updates)\n\nFor *Issue 2*: The idea of using a generic solution makes sense to me, though I'm unsure if it makes sense in this case because you first have to `cd` into the a shared-util folder before issuing `build` and `go mod tidy`. The workarounds may be a little overkill.\n\nUnrelated but the direct `build` command may not work, you might have to adopt the syntax used in the license-service Makefile of your PR.",
+      "time": "09:11",
+      "timestamp": "1654704683.066929",
+      "is_reply": true
+    },
+    {
+      "sender": "Radhika Patwari",
+      "user_id": "U03DL4AU29X",
+      "message": "Thank you Pridhvi for approving the solution for issue 1. We will follow your advice. I am adding you as my reviewer for the latest PR incorporating these changes. I request you to review our solution for issue 2.",
+      "time": "09:52",
+      "timestamp": "1654707139.883329",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-06-08.json",
+    "message_count": 3,
+    "start_time": "1654683010.913929",
+    "end_time": "1654707139.883329",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "ch_C06FA6A23_2020-07-14_1594743918.388800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Karthik S",
+    "Shivam",
+    "aashish"
+  ],
+  "messages": [
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "I’m facing errors while running a flow in v2 when I pass runtime-config. It’s on the latest master without anything on top of it. I think could be related to job-service.\nThe errors seems to be:  (image attached)\n\n```App tasks logs: \n\n\n[2020-07-14 20:30:47,963: ERROR/ForkPoolWorker-2] Could not export entity [971a84a0-4786-4738-97de-7b563d42485b] to endpoint\n[2020-07-14 20:32:41,879: ERROR/ForkPoolWorker-2] Retrying request in 0.5s due to StatusCode DEADLINE_EXCEEDED, Error (4, 'deadline exceeded'), Message Deadline Exceeded. Retries left 2\n[2020-07-14 20:34:42,387: ERROR/ForkPoolWorker-2] Retrying request in 1.0s due to StatusCode DEADLINE_EXCEEDED, Error (4, 'deadline exceeded'), Message Deadline Exceeded. Retries left 1\n[2020-07-14 20:36:43,395: ERROR/ForkPoolWorker-2] Retrying request in 1.5s due to StatusCode DEADLINE_EXCEEDED, Error (4, 'deadline exceeded'), Message Deadline Exceeded. Retries left 0\n[2020-07-14 20:36:44,897: ERROR/ForkPoolWorker-2] err: Error occurred executing GRPC method: Retrying request in 1.5s due to StatusCode DEADLINE_EXCEEDED, Error (4, 'deadline exceeded'), Message Deadline Exceeded. Retries left 0 when updating progress in job-service for flow: cbc143c1-4a93-4714-a66c-1ea4dd2faac4```\n```Job service logs:\n\n[mysql] 2020/07/14 16:37:14 connection.go:157: invalid connection\n2020/07/14 16:37:14 ERROR utils/db/session/tx.go:51 -- Tx Prepare statement fail: driver: bad connection\n2020/07/14 16:37:14 ERROR utils/db/accessor/db_accessor.go:179 -- driver: bad connection\n2020/07/14 16:37:14 ERROR utils/db/accessor/db_accessor.go:485 -- Failed to invalidate models for jobs. Error: driver: bad connection\n2020/07/14 16:37:14 ERROR jobservice/handler/flow.go:424 -- [FAIL] INTERNAL: Failed to update database. Error: driver: bad connection\n2020/07/14 16:37:14 ERROR utils/db/session/tx.go:90 -- Tx Rollback fail: invalid connection\n2020/07/14 16:37:14 ERROR utils/db/accessor/tx_accessor.go:107 -- Failed to rollback tx. Error: invalid connection\n[mysql] 2020/07/14 16:37:15 packets.go:72: read tcp 192.168.43.2:61387->35.168.160.40:3306: read: connection reset by peer\n[mysql] 2020/07/14 16:37:15 packets.go:393: busy buffer\n2020/07/14 16:37:15 ERROR jobservice/handler/flow.go:45 -- [FAIL] NOT_FOUND: Job with ID (cbc143c1-4a93-4714-a66c-1ea4dd2faac4) not found\n[mysql] 2020/07/14 16:49:35 packets.go:72: read tcp 192.168.43.2:61586->35.168.160.40:3306: read: connection reset by peer\n[mysql] 2020/07/14 16:49:35 packets.go:393: busy buffer```\n\ncc: @Karthik S @abhilash @Hari",
+      "time": "09:25",
+      "timestamp": "1594743918.388800",
+      "is_reply": false
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "@aashish faced the same issue as well ( DEADLINE_EXCEEDED ) - JobService timing out in this case.",
+      "time": "14:56",
+      "timestamp": "1594763819.397500",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "It appears we are issuing 'SELECT * from JOBS' - Debugging this with @aashish",
+      "time": "14:57",
+      "timestamp": "1594763835.397700",
+      "is_reply": true
+    },
+    {
+      "sender": "aashish",
+      "user_id": "U016V74409E",
+      "message": "I made a PR that should fix this: #14784",
+      "time": "17:07",
+      "timestamp": "1594771628.400400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-07-14.json",
+    "message_count": 4,
+    "start_time": "1594743918.388800",
+    "end_time": "1594771628.400400",
+    "is_thread": true
+  }
+}

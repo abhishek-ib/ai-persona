@@ -1,0 +1,61 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-05-13_1747174677.643219_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "mfichman"
+  ],
+  "messages": [
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Hi all, I'm working on adjusting some of the metrics for deployments according to this formula: https://instabase.slack.com/archives/C072M5T29FD/p1728064613896329?thread_ts=1727894223.371469&cid=C072M5T29FD\n\nI was looking into the code a little bit, it looks like we make call to the `/automation_metrics/` endpoint. I was following the code and the endpoint pretty much just queries ElasticSearch at the go layer (`ElasticSearchQuery`) with the parameters from the FE. I don't have too much context on how /where these formulas are defined in ElasticSearch, or how the relevant data from Instabase propogates for it to gather these metrics. Would anyone happen to know how this works? Or if there's any relevant docs I can look at?",
+      "time": "15:17",
+      "timestamp": "1747174677.643219",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@prateek.tenkale I'm not an expert here, but I think the automation metrics are collected with \"counter\" metrics -- same mechanism as the billing metrics.",
+      "time": "16:17",
+      "timestamp": "1747178223.002049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Search for `increment_by` in the Python code :slightly_smiling_face:",
+      "time": "16:19",
+      "timestamp": "1747178348.133129",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Thanks @mfichman! I was looking into it, wasn't able to find much for the metrics I'm concerned with. For context, I'm trying to figure out where these metrics are generated / configured for deployments:",
+      "time": "23:14",
+      "timestamp": "1747203277.527539",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Unless there's something I'm totally missing in the code. But from what I can tell, we log these metrics with the *`apply_set_records_metrics_changes_ibdoc`* function in `automation_metrics_util.py` , and all that does is modify the `ReviewPayload.checkpoint_validation_info.record_timing_data` that's stored with the corresponding ibdoc. I also noticed that the updates to metrics don't show up right away after making human review edits— I wonder if there is some sort of automated job that propagates the latest timing data to Elastic Search, and then we fetch it directly from Elastic Search.",
+      "time": "23:20",
+      "timestamp": "1747203643.605179",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-05-13.json",
+    "message_count": 5,
+    "start_time": "1747174677.643219",
+    "end_time": "1747203643.605179",
+    "is_thread": true
+  }
+}

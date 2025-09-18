@@ -1,0 +1,142 @@
+{
+  "id": "ch_C06FA6A23_2022-08-01_1659372163.746889_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "lenny",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Just curious, what’s a non-celery task?",
+      "time": "09:42",
+      "timestamp": "1659372163.746889",
+      "is_reply": false
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "that refers to a task that is not in the \"celery\" celery queue, e.g. a task that is directed to one of the other celery worker pools (webdriver, core-tasks, etc)",
+      "time": "09:45",
+      "timestamp": "1659372300.743289",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "the naming is confusing but this is how it's already referred to elsewhere in the codebase :sweat_smile:",
+      "time": "09:45",
+      "timestamp": "1659372346.749159",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "where does celery-webdriver get its tasks from if not a queue?",
+      "time": "09:46",
+      "timestamp": "1659372394.263379",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "and yea, that is very confusing naming :joy:",
+      "time": "09:46",
+      "timestamp": "1659372407.509049",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh i think i get it, the queue is called celery-webdriver or something like that? we used to have `celery-image-tasks`  queue for the image-tasks workers",
+      "time": "09:47",
+      "timestamp": "1659372452.726849",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "we have several queues in celery. one of them is called \"celery\", which is what job service refers to as \"celery tasks\". there are other queues that feed the other works, eg \"celery-core-tasks\", \"celery-webdriver-tasks\", etc",
+      "time": "09:47",
+      "timestamp": "1659372473.892179",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "yeah exactly ^",
+      "time": "09:48",
+      "timestamp": "1659372480.735589",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "gotcha. i don’t know how I feel about perpetuating our bad naming :lolcry:. maybe call it, the non-celery-app-task celery queues. what a mouthful",
+      "time": "09:48",
+      "timestamp": "1659372534.391899",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "so task scheduler only manages tasks for `celery-app-tasks`?",
+      "time": "09:49",
+      "timestamp": "1659372585.384839",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "sort of — some non-celery-app-tasks tasks will also go through task scheduler, but we don't apply any kind of queuing/rate limiting to them — they get passed to the workers directly",
+      "time": "09:50",
+      "timestamp": "1659372631.096279",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "whereas celery-app-tasks tasks are subject to concurrency limits",
+      "time": "09:50",
+      "timestamp": "1659372639.669039",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "gotcha - thanks for the context!",
+      "time": "09:50",
+      "timestamp": "1659372657.458079",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "to close the loop on @Xi Cheng’s original report, the fix is merged and deployed to dogfood. I'll keep an eye on it over the next day but of course if anyone notices a problem before I do just post here or ping me directly.",
+      "time": "09:52",
+      "timestamp": "1659372753.562329",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@lenny Thanks. Let's keep an eye as today is the code cut and we need to ensure this doesn't introduce instability to platform. Thanks again for looking into this!",
+      "time": "09:53",
+      "timestamp": "1659372799.746409",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-08-01.json",
+    "message_count": 15,
+    "start_time": "1659372163.746889",
+    "end_time": "1659372799.746409",
+    "is_thread": true
+  }
+}

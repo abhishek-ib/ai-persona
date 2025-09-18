@@ -1,0 +1,182 @@
+{
+  "id": "ch_C06FA6A23_2024-10-18_1729262929.832159_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "mfichman",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "PSA: I merged some updates to the local nginx & webpack config. If you have problems with nginx or webpack, please reach out to me. I did my best to avoid any issues for folks, but there are a lot of dev configurations out there. Thank you!",
+      "time": "07:48",
+      "timestamp": "1729262929.832159",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "We’re seeing these issues when Github Actions is trying to spin up a Crafting sandbox for the automated Cypress tests:\n```2024-10-18T16:50:48Z    ERROR   Failed to run base environment setup steps      {\"error\": \"setting up ssl: '/bin/sh /home/owner/instabase/tools/devtools/ssl/setup_ssl.sh' failed with exit status 2\"}```\nHere’s an example sandbox:\nhttps://instabase.sandboxes.site/sandboxes/pr-64020-cypress?cw=dev\nand the corresponding PR:\nhttps://github.com/instabase/instabase/pull/64020\n\n~(FYI: the Cypress sandboxes uses a separate Crafting template based off `ibdev` called `cypress-ci` )~ not relevant, see below.",
+      "time": "09:56",
+      "timestamp": "1729270592.122329",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I believe it’s coming from this line, where we try to run `make create-self-signed-cert` in server-nginx when spinning up the Crafting webpack service (and we removed that make target):\nhttps://github.com/instabase/instabase/blob/master/releng/crafting/workspace/services/webpack.go#L54",
+      "time": "10:04",
+      "timestamp": "1729271071.262689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Paul -- I'll update the `workspace` command to skip that step, as it's no longer needed. For now, you can modify setup_ssl.sh to do a no-op on your branch.",
+      "time": "10:19",
+      "timestamp": "1729271943.418389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/compare/mfichman/fix?expand=1 @Paul < Can you approve this one?",
+      "time": "10:21",
+      "timestamp": "1729272070.562479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Fix merged. Ty!",
+      "time": "10:23",
+      "timestamp": "1729272228.648669",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@mfichman I'm seeing a slightly different error for a PR that includes your fix\nSandbox: https://instabase.sandboxes.site/sandboxes/pr-64030-cypress?cw=dev\nLogs: https://instabase.sandboxes.site/logviewx/instabase/pr-64030-cypress/dev/task/setup%3ABuild%3Ainstabase\n```HTTP GET /static/output/ibapp_aihub.bundle.js\nGet \"http://169.254.16.1:8091/static/output/ibapp_aihub.bundle.js\": dial tcp 169.254.16.1:8091: connect: connection refused```\n```2024-10-18T18:51:01Z    ERROR   Failed to setup webpack {\"error\": \"starting service: stopping service daemons: '/opt/sandboxd/bin/cs down webpack nginx' failed with exit status 1\"}```",
+      "time": "11:51",
+      "timestamp": "1729277492.668469",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Xindi Xu Taking a look!",
+      "time": "11:55",
+      "timestamp": "1729277750.909909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```\nFatal: rpc error: code = Unavailable desc = unavailable: workload \"dev\": not ready.```",
+      "time": "11:57",
+      "timestamp": "1729277859.057049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Can we rebuild the sandbox?",
+      "time": "11:58",
+      "timestamp": "1729277883.415599",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'm rebuilding it now. Made an edit to the template to fix the port for the readiness check.",
+      "time": "12:01",
+      "timestamp": "1729278107.157079",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "@mfichman I’m getting this error after rebasing on master:\n```Failed to setup webpack {\"error\": \"starting service: running service setup: generating self-signed certificate: '/usr/bin/make create-self-signed-cert RELOAD=false' failed with exit status 2\"}```\nSorry, I must have copied the wrong error message the first time.",
+      "time": "12:02",
+      "timestamp": "1729278147.417389",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Here’s the box:\nhttps://instabase.sandboxes.site/sandboxes/pr-63865-cypress?cw=dev",
+      "time": "12:02",
+      "timestamp": "1729278154.892409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Paul H fix - https://github.com/instabase/instabase/compare/mfichman/cypress?expand=1",
+      "time": "12:05",
+      "timestamp": "1729278311.753369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "^ fix merged",
+      "time": "12:07",
+      "timestamp": "1729278461.959179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Xindi Xu / @Paul you should rebase your branches now that this merged^",
+      "time": "12:09",
+      "timestamp": "1729278569.127859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "One more thing to fix! https://github.com/instabase/instabase/pull/64032\n\nI have to fix that, then update the base image.",
+      "time": "12:23",
+      "timestamp": "1729279424.672119",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, change pushed & tested here. https://instabase.sandboxes.site/sandboxes/mattfichman-cypress?cw=dev\n\nI'm not sure if the existing cypress sandboxes for PRs will auto-update. But for those that are stuck, doing a \"clean rebuild\" will work:",
+      "time": "13:39",
+      "timestamp": "1729283965.311559",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "*Summary of the problem & resolution:*\n\nI changed webpack to disable https, so that it doesn't require certs. I didn't realize it, but the cypress sandboxes are set up to forward requests to webpack's https port. This configuration was hardcoded in the base cypress image. Modifying the base `cypress` image in crafting to use http instead of https for webpack (https://github.com/instabase/instabase/pull/64032) fixed the issue.\n\nI appreciate the patience! Let me know if anything else is broken, or if you continue to have trouble with cypress sandboxes.",
+      "time": "13:42",
+      "timestamp": "1729284157.621509",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It's working for my PRs! We can also delete the sandbox and rerun the Cypress Github action.\nThank you for fixing this, Matt!",
+      "time": "14:09",
+      "timestamp": "1729285740.767789",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-18.json",
+    "message_count": 20,
+    "start_time": "1729262929.832159",
+    "end_time": "1729285740.767789",
+    "is_thread": true
+  }
+}

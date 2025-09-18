@@ -1,0 +1,233 @@
+{
+  "id": "ch_C0976HB6ZPT_2025-09-04_1757008275.453149_thread",
+  "type": "channel",
+  "channel_name": "proj-agent-mode",
+  "conversation_type": "thread",
+  "participants": [
+    "Anil",
+    "ayesha.ali",
+    "Natasha",
+    "margaret.tomaszczuk",
+    "jaden",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "hi @margaret.tomaszczuk @Natasha I had a quick question with auto generate schema. So the new endpoint made by @ayesha.ali takes in one document/file at a time and spits out the class + fields for the given doc. If a user uploads 3 files/documents and auto generate the schema, should it only auto generate for the one selected document, or should it generate for all documents?\n\nIf the latter, we would need to make 3 separate API calls and receive 3 different class + fields suggestions, in this case if two of the documents somehow return the same class name, do we consider this as two new unique classes or should we combine the fields? cc @Serena",
+      "time": "10:51",
+      "timestamp": "1757008275.453149",
+      "is_reply": false
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "Ah good question Jaden. Seeing as current manual generation requires selecting a given document to configure, it might be reasonable to follow the same paradigm for v1. @Natasha thoughts?",
+      "time": "10:59",
+      "timestamp": "1757008776.200469",
+      "is_reply": true
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "So the way that would work in my mind:\nuser selects a doc - autogeneration happens. other docs in proj will be auto-classified as matching or not. for docs that are in a different class/other class, the user will see auto-gen experience again when they click on it.\n\nHowever, I think we might need a slightly diff ux for the scenario after first classification, where class data is also visible cc: @Natasha",
+      "time": "11:01",
+      "timestamp": "1757008878.642669",
+      "is_reply": true
+    },
+    {
+      "sender": "Natasha",
+      "user_id": "U03JW1JAW1G",
+      "message": "the way this was designed, the schema is generated for all files in one click (this reduces the different scenarios users can encounter in the flow). if the flow is different, then we need to start over on the design side -- jianqi and i had several concerns over this flow initially but it didn't seem like we wanted to spend time working it out so this is the design we have atm",
+      "time": "11:04",
+      "timestamp": "1757009074.105259",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "currently, it is auto generating for all files in one click. @margaret.tomaszczuk is what you are suggesting essentially from UI standpoint:\n1. user selects document -> press auto generate button\n2. auto generates schema just for the selected document\n3. the moment user selects a different document, it starts another auto generation process? but keeps the class + fields it auto generated from step 1. So essentially all 3 documents will share the same schema by the time the user runs auto generate on all the documents.",
+      "time": "11:07",
+      "timestamp": "1757009240.094109",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "yeah the way i designed the endpoint was for the flow margaret mentioned which we discussed https://docs.google.com/document/d/1TzNxIUam8jq1GPXC4EZ86P0HVJ3yBu84Xg6E4Y3_7S8/edit?tab=t.0\n\n• User uploads docs, no schema exists → system offers to “Auto-generate schema” when user clicks on an unclassified doc with no schema\n• Schema is saved → classification/extraction runs across the dataset, applying to files in the same class\n• User clicks on another unclassified doc (i.e. in “Other” section) → option to “Auto-generate schema” appears again\n• If user later wants to regenerate → they can delete full schema and restart.",
+      "time": "11:08",
+      "timestamp": "1757009315.031229",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "so for the design we have at the moment, and the fastest solution meant to finish by this Friday, i can first swap the api endpoint to use the new one and run for all documents. This way at least the auto generation will be faster and still mimic current behavior.\n\nI think for the new flow, we would need a better design because even though user can switch documents and start auto generation for other classes, there are some ambiguous behaviors when a user selects a different document:\n\n• if we automatically start auto generating schema when user selects different doc, what would it look like on the schema UI - would we cover the entire thing and display \"Generating...\" or show the results from the first results and have a loading thing in the background?\n• if we show option to auto gen schema and let user manually select it, it may not be super obvious for the user to click the button (its like a regenerate button rn) because they could still think that the first auto generate run applied for all the documents in the project\nWhat do yall think?",
+      "time": "11:21",
+      "timestamp": "1757010117.971029",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> for the design we have at the moment, and the fastest solution meant to finish by this Friday, i can first swap the api endpoint to use the new one and run for all documents. This way at least the auto generation will be faster and still mimic current behavior\nagreed that this seems to be the fastest solution rn! but i'm concerned that if you have a lot of files, and if you make an API call for each files, will this take too long?\n\nregardless, this should be sufficient for sales demos if the demo involves uploading <5 documents before generating a schema\n\n> in this case if two of the documents somehow return the same class name, do we consider this as two new unique classes or should we combine the fields?\nwe should combine the fields if the class names are the same",
+      "time": "12:08",
+      "timestamp": "1757012928.963719",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> • if we automatically start auto generating schema when user selects different doc, what would it look like on the schema UI - would we cover the entire thing and display \"Generating...\" or show the results from the first results and have a loading thing in the background?\n> • if we show option to auto gen schema and let user manually select it, it may not be super obvious for the user to click the button (its like a regenerate button rn) because they could still think that the first auto generate run applied for all the documents in the project\nagreed, i think @margaret.tomaszczuk and @Natasha will need to iterate on the designs in Figma before we auto-generate schemas for documents classified as \"Other\"",
+      "time": "12:09",
+      "timestamp": "1757012998.476659",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "> agreed that this seems to be the fastest solution rn! but i'm concerned that if you have a lot of files, and if you make an API call for each files, will this take too long?\nIt should theoretically still be faster and mimic a single API call because I will be running them all in parallel i believe. i'd have to actually test it out to see the impact~",
+      "time": "12:12",
+      "timestamp": "1757013171.703669",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "i think running autogenerate on all files won't work that well rn:\n1. class names are currently super specific to the document, i.e. (a NY driver's license gets classified as NY driver's license rather than Driver's License)\n    a. working on fixing this is that things are more general\n2. field names might be a bit off, i.e. not equal if compared case-sensitively, so combining schemas might be kinda big\nonce schemas are generated for all files and combined, for any fields that are missing from one document by found in another of the same class, we'll just run extraction for those fields? is that the idea?",
+      "time": "12:13",
+      "timestamp": "1757013211.790569",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "once the class name issue is fixed it should work fairly well but yeah idk how easy combining schemas is w/o repetition",
+      "time": "12:14",
+      "timestamp": "1757013277.252269",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "> 1. field names might be a bit off, i.e. not equal if compared case-sensitively, so combining schemas might be kinda big\nCorrect me if I'm wrong but for this, I thought eventually we are combining schemas regardless? It's just the matter of do we run it all at once and combine them all in the first auto generate run, or do we combine them one by one as user auto generates a new schema for each document they select.",
+      "time": "12:27",
+      "timestamp": "1757014079.464789",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "For now - for parity, lets make it works well atleast as good as\nhttp://3.16.128.255:8012/\n\nSchema generated from a single file is fine.\nDon’t do multi-file / combine, etc - in this first draft. It won’t work.\nWhatever file the user is on, clicking generate should generate its schema.\n\nNext version should do multi-file\nWhen user uploads 5 files, we take all 5. If they upload 100, we take file until sum of all files hits a limit say 5MB. Send it all to a model to generate a schema for the project.\n\nThen have a separate classification/extraction run.",
+      "time": "12:36",
+      "timestamp": "1757014579.964379",
+      "is_reply": true
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "Sorry team, been back to back today. @jaden @ayesha.ali do you guys wanna just huddle on this quick in 15 min? Might be fastest",
+      "time": "12:46",
+      "timestamp": "1757015208.233699",
+      "is_reply": true
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "And @Natasha :slightly_smiling_face:",
+      "time": "12:49",
+      "timestamp": "1757015363.450039",
+      "is_reply": true
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "Closing the loop on scope for v1 for vis:\n\n1. We'll support auto-generation for a single file for this next release, aligned with current design\n2. When schema is generated, we'll trigger re-classification of all files in proj, so files of the same class will pick up the schema\n3. Files in other classes \"other\" will revert to manual schema creation. \n@Natasha and I will revisit designs for #3 so we can support this but need more time.",
+      "time": "13:28",
+      "timestamp": "1757017694.917379",
+      "is_reply": true
+    },
+    {
+      "sender": "Natasha",
+      "user_id": "U03JW1JAW1G",
+      "message": "here's the updated designs (https://www.figma.com/design/1GTN3fSYdAbrK2UJqODW4Q/EPD-4651-Doc-AI?node-id=5321-36351&t=JNmHulHBma6bFxgU-4) with the current right panel header @jaden",
+      "time": "13:47",
+      "timestamp": "1757018846.748769",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "@margaret.tomaszczuk LMK if this is the expected behavior:\nautogen schema first on selected document -> start classification on all documents -> start extraction",
+      "time": "20:34",
+      "timestamp": "1757043294.066399",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "this looks good",
+      "time": "20:49",
+      "timestamp": "1757044191.507109",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "that flow is perfect",
+      "time": "20:50",
+      "timestamp": "1757044254.790079",
+      "is_reply": true
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "Looking great Jaden! Im curious how start extraction works? What state are we in at :34 state when it looks like fields exist but aren’t populated?",
+      "time": "21:02",
+      "timestamp": "1757044967.879359",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "so that is the classification state - the schema has been generated so I show that first but the documents haven't been classified into classes yet. Once they have been classified, we start the field extraction process to populate the field values.",
+      "time": "21:04",
+      "timestamp": "1757045079.880899",
+      "is_reply": true
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "Gotcha! I think we might wanna show the spinning wheel for that intermediate step from the designs instead while classifying is still going on. So people aren’t confused why schema is half completed. Thoughts?",
+      "time": "21:07",
+      "timestamp": "1757045237.984139",
+      "is_reply": true
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "Can wait til tmrw btw, and if we’re out of time we could do it next week",
+      "time": "21:08",
+      "timestamp": "1757045315.771309",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "sure i can take a look tmrw, should be doable~ Also, the schema is completed (no new fields/classes will be introduced after first stage), it's just the documents haven't been classified into them yet. This step does add an extra 30 sec, I wasn't sure if user wanted to see the schema it autogenerated while waiting for classification (along w the fields and classes) since it takes a bit of time. It is also more likely to error out during the classification stage as well.",
+      "time": "21:15",
+      "timestamp": "1757045758.357229",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0976HB6ZPT",
+    "channel_name": "proj-agent-mode",
+    "date_file": "2025-09-04.json",
+    "message_count": 26,
+    "start_time": "1757008275.453149",
+    "end_time": "1757045758.357229",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "ch_C06FA6A23_2022-08-30_1661868384.723319_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "kunal",
+    "joshbronko",
+    "Vikas Mehta"
+  ],
+  "messages": [
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "Hey Josh - this is a timely question as autoscaling is a key focus of the team over this half. Autoscaling is a pretty loaded term, but here is where we are:\n• we shipped the request routing framework in 22.08, this enables better elasticity, protection and queuing against the ocr backends (will be rolling out to other components as well). In practice, this means that Instabase is more resilient to under-provisioning, so flows won't just fail when the env is under-provisioned, instead it creates backoff and load balances requests better. This is required for any kind of autoscaling so the system doesn't fall apart when under-provisioned and so we no longer need to provision all environments for the 'worst case' - which also allows us to shrink the environments.\n• We are working through designing and implementing service autoscaling. This means scaling the individual backends like ocr, conversion, pdf, file, etc up and down in response to load. The key benefit here is the ability to trade off resources so not everything is provisioned at worst case, i.e. tradeoff between the different ocr engines or between conversion, pdf, etc depending on the needs of the flows coming in. These still operate within the 'fixed' cluster size the customer provides, i.e. if they give 64 or 128 cores then we always operate within that and just trade off between different backends.\n• In the long term, we are also thinking about cluster autoscaling. This is actually scaling the underlying cluster up / down as well as services - the key here is also getting the right permissions and access from customers to make cluster level changes. This will also probably only be feasible in cloud envs, as on-prem doesn't necessarily have a concept of elastic cluster scaling.\nThe last thing I'd highlight is hibernation, which is the ability to turn down Instabase resources when the environment is inactive. I.e. use cases that only process during business hours, you can turn down the env overnight. This has been rolled out for sandboxes, where the sandboxes should just be shut down when not used and then awakened again. Hibernation is also built into control plane (will launch in CP v0.5 / IB v22.10) where you can hit a button to turn down all IB services (besides load balancer and control plane) and then same to re-awaken. If you only run the env 8 hours per day, you can run at 3x the capacity as running 24 hours per day for almost the same cost.\n\nI don't think auto-scaling is necessarily a silver bullet here, it's a pretty loaded term, but the key benefits will be that we no longer have to provision all environments for the worst case if the system is intrinsically more elastic and can handle internal tradeoffs between different components. This would also lead to better throughput (on a per core basis) and reduced cost (i.e. not worst case provisioning).",
+      "time": "07:06",
+      "timestamp": "1661868384.723319",
+      "is_reply": false
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "I guess in short, if one sends 1000 docs to get ocr/runflow into ib, when can we see it auto scale to handle that versus bogging down ocr pods and celery app",
+      "time": "07:08",
+      "timestamp": "1661868480.008679",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "The service autoscaling work would help here, where it will scale up the relevant ocr pods and scale down the others - cluster autoscaling is a longer term effort where the entire cluster scales up to handle the 1000 docs. This is one of those cases where autoscaling is an overloaded term and means different things for customers, onprem, saas or cloud, etc.",
+      "time": "07:11",
+      "timestamp": "1661868707.711049",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "Sorry for the delay in getting back here (thanks Kunal for covering all the details). One more key point to note is that auto-scaling latency will be in the order of minutes each for cluster resizing and for service auto-scaling, which will render it less useful to any short lived spiky workload like we observe in prod (atleast till last week). For prod like envs, current thinking is that we will size services relatively based on some longer term usage trends like a week and react to real time load changes in limited fashion. As we build this out and gain some practical experience running it in our env, we will adjust to work better for our workload.",
+      "time": "09:37",
+      "timestamp": "1661877471.444609",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-08-30.json",
+    "message_count": 4,
+    "start_time": "1661868384.723319",
+    "end_time": "1661877471.444609",
+    "is_thread": true
+  }
+}

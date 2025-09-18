@@ -1,0 +1,175 @@
+{
+  "id": "ch_C0976HB6ZPT_2025-09-08_1757345497.928049_thread",
+  "type": "channel",
+  "channel_name": "proj-agent-mode",
+  "conversation_type": "thread",
+  "participants": [
+    "pauline.comising",
+    "margaret.tomaszczuk",
+    "Serena",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "some fields are loaded, some are still in pending state - they remain stuck in pending state :confused:",
+      "time": "08:31",
+      "timestamp": "1757345497.928049",
+      "is_reply": false
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Alrighty, so this pending state seems unrelated to agent mode as its happening with all fields that have clean lines, which triggers the previously-existing `extraction` API. This would only be specific to agent mode if all clean lines were prompt clean lines, but there are built in native function clean lines (ie `Make title case`) that are also loading for a while. If you look at `GET /extracted_fields` reqs, you can see that all the LLM-extracted fields are saved and quickly read from the file, but the clean lines haven't been run/saved.\n\nThen when I look at the extraction jobs kicked off for these clean lines, their jobs are just running forever. I'm going to look at celery-app-tasks logs and DM and see what's going on",
+      "time": "09:11",
+      "timestamp": "1757347876.037759",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "when I search CAT (https://aihub-sandbox.internal.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22aiv%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22celery-app-tasks%5C%22%7D%20%7C%3D%20%602d047625-3d47-4af2-b010-8ce2b579f095%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22forward%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1) for one of the extraction job_ids, no logs come up :confused: and kicked off a diff async task via app creation and this also looks to be hanging, is there maybe just a problem with celery-app-tasks right now :slightly_frowning_face:",
+      "time": "09:17",
+      "timestamp": "1757348239.290239",
+      "is_reply": true
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "Hey team, just checking in here -- I know we have a few bugs with auto-gen we need to squash.\n\nIn terms of general functionality, uploading + digitizing docs is really slow for me in Sandbox. Seems like extraction jobs might also be running slow per @pauline.comising’s comment above.\n\nDo we need to do some more debugging here before we open up to GTM for testing? Thanks all",
+      "time": "09:22",
+      "timestamp": "1757348532.784329",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "ah i'll let @ayesha.ali chime in on auto-gen, as for slowness, let me try and see if extra resourcing or anything might help, since the slowness wouldn't likely be a code bug or anything. Then that might leave the table bug above, will coordinate on all this after the team automate standup",
+      "time": "09:31",
+      "timestamp": "1757349111.059999",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Alrighty, so looking at the running jobs here (https://aihub-sandbox.internal.instabase.com/api/v1/jobs/view_scheduler_state) and `RunningJobs` shows many jobs at `0` progress and just 5 in progress. I'm considering cancelling the ones in progress and seeing what happens? I see the ones furthest along look like digitization jobs but after a refresh after a few mins, the progresses haven't updated. @Serena any concerns with me cancelling in progress jobs/any common processes for trying to unblock the queue?",
+      "time": "10:04",
+      "timestamp": "1757351080.595539",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "and just to organize my message that's two above, issues:\n• celery-app-tasks slowness\n• auto-gen bugs (https://instabase.slack.com/archives/C0976HB6ZPT/p1757351644142529)\n• tables not showing\n    ◦ ^ but weiming believes this shouldn't impact new testing (https://instabase.slack.com/archives/C0976HB6ZPT/p1757350817242159?thread_ts=1757345396.413339&cid=C0976HB6ZPT) and field creation, bc it should only be a problem for fields created BEFORE his fix was merged\ncc @margaret.tomaszczuk",
+      "time": "10:15",
+      "timestamp": "1757351725.555449",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think cancelling jobs should be fine! esp since this is aihub-sandbox",
+      "time": "10:15",
+      "timestamp": "1757351747.666699",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "cool ty, on it",
+      "time": "10:16",
+      "timestamp": "1757351771.339299",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Hmm after cancelling all jobs and restart celery-app-tasks, the extraction jobs still hang for a bit, but after a while they complete with a `request /ai_hub_service.AIHubService/GetProjectDocs failed. Error code=PERMISSION_DENIED, Error=(7, 'permission denied'), Message: Access denied. Non-retriable error` seen in these logs (https://aihub-sandbox.internal.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22aiv%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22celery-app-tasks%5C%22%7D%20%7C%3D%20%602fb60db4-8f0d-44bc-9ebf-9e8f9b2ad077%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22forward%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1) and the cps logs are attached below. I'm going to try other async jobs that don't get project docs :loading_wheel:",
+      "time": "10:54",
+      "timestamp": "1757354081.309829",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ahh app creation, which previously hanged, works now, so i expect other jobs like digitization to be ok (will test), and I'll ask wider channels whether anything changes recently with licensing",
+      "time": "10:56",
+      "timestamp": "1757354172.568559",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oh did someone try to run fields in a personal workspace's Build project as an org admin?\n\nthat's usually the root cause of the `GetProjectDocs` `PERMISSION_DENIED` error (we've never gotten around to fixing this access issue for org admins :smiling_face_with_tear: )",
+      "time": "10:56",
+      "timestamp": "1757354200.920039",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "oo actually ya that would be the case I believe, I didnt have access to the project in the org I was a part of, until I got bumped to admin",
+      "time": "10:57",
+      "timestamp": "1757354259.591899",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "if you open a Build project in a workspace that you have access to and run fields, does that work? if so, i don't think we need to continue investigating the `PERMISSION_DENIED` error",
+      "time": "10:57",
+      "timestamp": "1757354279.304079",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "right, I'm trying my own proj rn and will see",
+      "time": "10:58",
+      "timestamp": "1757354305.361809",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "so now the job runs and returns values and it's just the same `extraction failed` - `Job response did not contain selected result` issue :,) which ~I believe is still in progress~  ah was merged (https://github.com/instabase/instabase/pull/74412) just a bit ago :raised_hands:",
+      "time": "10:59",
+      "timestamp": "1757354386.216399",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Alrighty, digitization is still hanging and cat logs has `instabase.model_service.sdk.ModelServiceException: (ModelServiceException(...), 'no healthy upstream (StatusCode.UNAVAILABLE)')` errors with model-service being down on aihub-sandbox, will message infra now :pray: since it's gone through 189 retries :clown_face:",
+      "time": "11:42",
+      "timestamp": "1757356975.967999",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "got it, infra team has reported (https://instabase.slack.com/archives/C01N7DV1137/p1757361956117599?thread_ts=1757357456.574599&cid=C01N7DV1137) that model-service is back up now, so we should be good?",
+      "time": "13:18",
+      "timestamp": "1757362711.354329",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "yepp, reported back in this thread (https://instabase.slack.com/archives/C08SC9ZPGFQ/p1757362387480809?thread_ts=1757358736.295599&cid=C08SC9ZPGFQ) first, but things are lookin good on my end",
+      "time": "13:20",
+      "timestamp": "1757362807.515639",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0976HB6ZPT",
+    "channel_name": "proj-agent-mode",
+    "date_file": "2025-09-08.json",
+    "message_count": 19,
+    "start_time": "1757345497.928049",
+    "end_time": "1757362807.515639",
+    "is_thread": true
+  }
+}

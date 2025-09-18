@@ -1,0 +1,201 @@
+{
+  "id": "ch_C06FA6A23_2024-10-29_1730219442.002809_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "mfichman",
+    "Elan Sharony",
+    "Victor Zeng",
+    "sean.donohoe",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi all, noticed a build problem with a pytorch package:\n\n```[2024-10-29T11:46:32.971Z] ERROR: /root/.cache/bazel/_bazel_root/eecbca7b87c7c33fd2d8ffba03ee98a3/external/pypi_deps_torch/BUILD.bazel:29:11: no such package '@pypi_deps_nvidia_cudnn_cu11//': The repository '@pypi_deps_nvidia_cudnn_cu11' could not be resolved: Repository '@pypi_deps_nvidia_cudnn_cu11' is not defined and referenced by '@pypi_deps_torch//:_pkg'```\nhttps://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-64110/11/pipeline\n\nhttps://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-64296/15/pipeline\n\nSome nvidia cudnn package failing to install.",
+      "time": "09:30",
+      "timestamp": "1730219442.002809",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "cc @lydia maybe?",
+      "time": "09:31",
+      "timestamp": "1730219471.659829",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "cc @Yash Botadra did you all make any recent changes here?",
+      "time": "09:42",
+      "timestamp": "1730220150.689869",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "We moved the base model-service dependencies to poetry. Nothing else that I am aware of. cc: @Victor Zeng",
+      "time": "10:39",
+      "timestamp": "1730223589.659349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This is actually crashing a few packages in py-utils, not model-service",
+      "time": "11:32",
+      "timestamp": "1730226769.478519",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "This is a bazel error, and model service is not on bazel yet.",
+      "time": "11:33",
+      "timestamp": "1730226815.812909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "ex: [2024-10-29T16:48:38.010Z] [FAIL]    shared-utils/py-utils/refiner-utils (EXTRA_BAZEL_ARGS=\"--config=ci\"): exit status 2",
+      "time": "11:35",
+      "timestamp": "1730226937.083669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "refiner-utils",
+      "time": "11:35",
+      "timestamp": "1730226940.137819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```shared-utils/py-utils/builder-utils ```",
+      "time": "11:36",
+      "timestamp": "1730227004.289939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```shared-utils/py-utils/docops-lib```",
+      "time": "11:37",
+      "timestamp": "1730227020.794209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mattfichman❯ bazel build ...\nStarting local Bazel server and connecting to it...\nERROR: /home/owner/.cache/bazel/_bazel_owner/99c13e9d3f9affca3e421b943f545ec7/external/pypi_deps_torch/BUILD.bazel:29:11: no such package '@pypi_deps_nvidia_cublas_cu11//': The repository '@pypi_deps_nvidia_cublas_cu11' could not be resolved: Repository '@pypi_deps_nvidia_cublas_cu11' is not defined and referenced by '@pypi_deps_torch//:_pkg'\nERROR: Analysis of target '//shared-utils/py-utils/data-api-utils/src/py/instabase/data_api_utils:data_api_utils' failed; build aborted: \nINFO: Elapsed time: 6.045s\nINFO: 0 processes.\nFAILED: Build did NOT complete successfully (616 packages loaded, 36751 targets configured)```",
+      "time": "11:37",
+      "timestamp": "1730227057.378489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "cc @sean.donohoe maybe",
+      "time": "11:38",
+      "timestamp": "1730227084.844889",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mattfichman❯ bazel build //shared-utils/py-utils/data-api-utils/src/py/instabase/data_api_utils\nERROR: /home/owner/.cache/bazel/_bazel_owner/99c13e9d3f9affca3e421b943f545ec7/external/pypi_deps_torch/BUILD.bazel:29:11: no such package '@pypi_deps_nvidia_cublas_cu11//': The repository '@pypi_deps_nvidia_cublas_cu11' could not be resolved: Repository '@pypi_deps_nvidia_cublas_cu11' is not defined and referenced by '@pypi_deps_torch//:_pkg'\nERROR: Analysis of target '//shared-utils/py-utils/data-api-utils/src/py/instabase/data_api_utils:data_api_utils' failed; build aborted: \nINFO: Elapsed time: 0.194s\nINFO: 0 processes.\nFAILED: Build did NOT complete successfully (0 packages loaded, 1031 targets configured)```\nThis reproduces it exactly",
+      "time": "11:56",
+      "timestamp": "1730228164.054439",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "hey sorry, just going through pings now -- to me this seems like something must have recently changed with https://github.com/instabase/instabase/blob/master/third-party/bazel/py/requirements_py39.in, going through recent changes now",
+      "time": "11:57",
+      "timestamp": "1730228250.522589",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Yeah looks like it got dropped in https://github.com/instabase/instabase/pull/64202/files#diff-f53226c8eaed5b6b3b632bd2035ce44e946036a7aeb82cb0f5deb6635cd1a408L348, we'll need to add those back for these builds to pass. I'll also look into why this wasn't caught in pre-merge for that PR",
+      "time": "11:59",
+      "timestamp": "1730228366.114469",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Narrowed it down to this:\n\n```diff --git a/shared-utils/py-utils/docops-lib/src/py/instabase/docops_lib/old_implementations/checkbox/BUILD.bazel b/shared-utils/py-utils/docops-lib/src/py/instabase/docops_lib/old_implementations/checkbox/BUILD.bazel\nindex 422bdb6dfb8..d7d2945173a 100644\n--- a/shared-utils/py-utils/docops-lib/src/py/instabase/docops_lib/old_implementations/checkbox/BUILD.bazel\n+++ b/shared-utils/py-utils/docops-lib/src/py/instabase/docops_lib/old_implementations/checkbox/BUILD.bazel\n@@ -15,11 +15,8 @@ py_library(\n         \"@protos//instabase/protos/doc_types:core_types_py_proto\",\n         \"@protos//instabase/protos/geometry_types:geometry_types_py_proto\",\n         requirement(\"opencv-python\"),\n-        requirement(\"torch\"),\n         requirement(\"numpy\"),\n         requirement(\"pillow\"),\n-        requirement(\"torchvision\"),\n         requirement(\"mypy_extensions\"),\n-        requirement(\"fastai\"),\n     ],\n )```",
+      "time": "12:05",
+      "timestamp": "1730228746.825239",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Anything torch-related",
+      "time": "12:05",
+      "timestamp": "1730228751.072129",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah OK, makes sense :slightly_smiling_face: thanks!",
+      "time": "12:06",
+      "timestamp": "1730228781.616349",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yep, not sure why they got dropped but re-running pip-compile added them back in my environment, will have a PR up shortly",
+      "time": "12:06",
+      "timestamp": "1730228783.484789",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "PR ready for review at https://github.com/instabase/instabase/pull/64569 (@mfichman / @Cody Boggs / @Aaron Tami )",
+      "time": "12:14",
+      "timestamp": "1730229280.659949",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "ah apologies @mfichman, thanks for spotting that @sean.donohoe!\n\nI think this may have been dropped because I was having trouble running pip-compile in python 3.7 with the following in our requirements.base.in (http://requirements.base.in): `sqlparse~=0.5`. It seems like this sqlparse version is only available in python >= 3.8\n\nTo bypass this, I temporarily replaced `sqlparse~=0.5`  with `sqlparse==0.2.4` (this is the version pinned in requirement_py37.txt) which led to a successful pip-compile.\n\nIn the future, what would be the right course of action to run pip-compile on python 3.7 while keeping intact our `sqlparse~=0.5`  requirement?",
+      "time": "13:56",
+      "timestamp": "1730235418.128419",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "No worries at all and not on you whatsoever, CI should have caught this for you anyway! And I added a `.python-version` file in my PR to ensure people are using the right version going forward, so you should be all good as long as you're running pyenv :smile:",
+      "time": "14:33",
+      "timestamp": "1730237606.101869",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-29.json",
+    "message_count": 22,
+    "start_time": "1730219442.002809",
+    "end_time": "1730237606.101869",
+    "is_thread": true
+  }
+}

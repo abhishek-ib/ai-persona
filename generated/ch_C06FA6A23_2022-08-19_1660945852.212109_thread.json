@@ -1,0 +1,193 @@
+{
+  "id": "ch_C06FA6A23_2022-08-19_1660945852.212109_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Yash Botadra",
+    "Anil",
+    "shiqi",
+    "Xi Cheng",
+    "Yiqing"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Is anyone having issues with `job-service` related tasks on dogfood? I’m getting this in Solution Builder:\n```{\"msg\": \"Error encountered while trying to start the builder add file job: err: Error occurred executing GRPC method: Request /job_service.JobService/StartJob failed. Error code=INTERNAL, Error=(13, 'internal'), Message: Panic Triggered: runtime error: invalid memory address or nil pointer dereference. Non-retriable error.. when updating job-service while starting job: 83037632-58fa-4ef1-938d-a53c3f1166c1.\"}```",
+      "time": "14:50",
+      "timestamp": "1660945852.212109",
+      "is_reply": false
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "This looks like a segfault in job service @lenny @Anil",
+      "time": "15:07",
+      "timestamp": "1660946828.058819",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Haha I tried to run a flow and got error\n```Error running the flow: [File_service_v2 Enabled] Error occurred executing GRPC method: Request /file_service.FileService/Rm failed. Error code=INTERNAL, Error=(13, 'internal'), Message: Panic Triggered: runtime error: invalid memory address or nil pointer dereference. Non-retriable error... Please see the logs for more details```\n:stuck_out_tongue:",
+      "time": "15:13",
+      "timestamp": "1660947223.320559",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Lol can you help send me a log/backtrace? I am in hospital rn- something seems off deep in the stack as we see this in both job service and file service",
+      "time": "15:15",
+      "timestamp": "1660947341.583109",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I don’t see any error logs in file-service or job-service - hunting for them.",
+      "time": "15:21",
+      "timestamp": "1660947662.630829",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "^ this is from api-server-apps",
+      "time": "15:21",
+      "timestamp": "1660947669.708209",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "FYI system tests (both ml-infra and “regular”) failed with similar errors",
+      "time": "15:22",
+      "timestamp": "1660947745.968059",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "This is really strange",
+      "time": "15:23",
+      "timestamp": "1660947786.993489",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "no file-service restarts but file-service memory becomes high? (this is unrelated but just found this interesting)",
+      "time": "15:23",
+      "timestamp": "1660947815.990479",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "the high memory is likely due to stress test,",
+      "time": "15:24",
+      "timestamp": "1660947850.562719",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Something is really strange, I just tried to delete on dogfood UI, and it failed, but I don't see logs showing up in the log explorer. I can only assume the request went to a bad pod for some reason",
+      "time": "15:27",
+      "timestamp": "1660948034.116539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "One way to troubleshoot this is to deploy master to a sandbox and see if the issue persists. If not, then this can be GCP related",
+      "time": "15:51",
+      "timestamp": "1660949489.643619",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "qq as 22.08 GA will happen soon, do we see this on UAT by any chance?",
+      "time": "16:23",
+      "timestamp": "1660951419.585529",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Just checked on UAT. Seems fine to me",
+      "time": "16:27",
+      "timestamp": "1660951645.893619",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "We can also let the system tests to finish on UAT to be sure. There are a couple of jobs in progress.\n\nAlso, we can use the `coreservices-2` sandbox to verify if this is a GCP issue or an issue on master. A deployment (https://jenkins.instabase.com/job/instabase-sandbox-provisionser/2875/) to the sandbox off of master has been started by Victor recently.",
+      "time": "16:28",
+      "timestamp": "1660951710.895909",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "I just tried deleting a tiny file from the UI on the `coreservices-2` sandbox (https://coreservices-2.aws.sandbox.instabase.com/admin/test/fs/Instabase%20Drive/) and it seems to be working fine. @Paul H can you try running whatever test you are running on that sandbox and confirm if you see any issues?\n[Edit]: Just FYI, system tests on UAT also passed. So we’re good there.",
+      "time": "17:04",
+      "timestamp": "1660953852.392929",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "even redeployment doesn't seem to help in this case",
+      "time": "18:12",
+      "timestamp": "1660957935.249419",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Sorry, I'm out at the moment but running any flow should trigger the issue. I can run one when I get back later today if no one does it by then",
+      "time": "18:26",
+      "timestamp": "1660958815.318619",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "I just tried to delete a file and it hits that error above saying \"invalid mem\" .",
+      "time": "18:30",
+      "timestamp": "1660959053.999489",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Let’s create an incident? <!subteam^S02FJA6A7U5>",
+      "time": "18:33",
+      "timestamp": "1660959201.598569",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "Created <#C03UTRSP77B|>",
+      "time": "18:40",
+      "timestamp": "1660959626.168149",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-08-19.json",
+    "message_count": 21,
+    "start_time": "1660945852.212109",
+    "end_time": "1660959626.168149",
+    "is_thread": true
+  }
+}

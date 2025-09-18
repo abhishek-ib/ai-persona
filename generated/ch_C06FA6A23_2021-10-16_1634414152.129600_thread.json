@@ -1,0 +1,162 @@
+{
+  "id": "ch_C06FA6A23_2021-10-16_1634414152.129600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Mohit",
+    "Anil",
+    "kunal",
+    "Xi Cheng",
+    "Anant",
+    "Heymian",
+    "Matt Weaver"
+  ],
+  "messages": [
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "instabase.com (http://instabase.com) is painfully slow right now -- in a demo and most things take minutes to load",
+      "time": "12:55",
+      "timestamp": "1634414152.129600",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Looks like a file service issue. Nothing is running (rabbitmq queues are empty). 1 (2?) pods are just spinning.",
+      "time": "13:25",
+      "timestamp": "1634415940.129700",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "cc @Xi Cheng",
+      "time": "13:26",
+      "timestamp": "1634415972.130100",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "https://instabase.com/grafana/d/a164a7f0339f99e89cea5cb47e9be617/kubernetes-compute-resources-workload?orgId=1&refresh=10s&var-datasource=1.%20Victoriametrics&var-cluster=&var-namespace=instabase-prod&var-workload=deployment-file-tservice&var-type=deployment",
+      "time": "13:27",
+      "timestamp": "1634416028.130300",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "Yep — looks like flow steps were taking ~40s, mostly because of writeFile calls that took 32s at 98th %tile. Looks like it’s gone back to normal since then. Does 12:44pst align with the slowness you were seeing?",
+      "time": "13:28",
+      "timestamp": "1634416093.130600",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "I’ve quarantined the affected pod (`deployment-file-tservice-5c6b496fcb-h6wd6`), in case we want to follow up to investigate what was going on here. cc <!subteam^S01DXHX6FPT>",
+      "time": "13:37",
+      "timestamp": "1634416679.131300",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Anil @kunal I saw 2 our of 10 filt-tservice pods using about 300m CPUs a moment ago, but this can be that the file walker calling list_dir to index files. I don't think this can cause major slowness on the platform? Other than that, the memory and CPU usages from file service pods look normal. I do see that some writeFile requests taking long, looking into it",
+      "time": "13:41",
+      "timestamp": "1634416861.131800",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "^ I see. I looked at the Nginx dashboard, there were a number of 500s. I looked at a bunch of dashboards and only the file service one looked weird.\n\nFrom the nginx dashboard. There are a good number of 5xx errors from nginx around 12:40 when Anant was demoing.",
+      "time": "14:14",
+      "timestamp": "1634418894.132700",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "Yes 12:44 sounds about right",
+      "time": "14:44",
+      "timestamp": "1634420696.133600",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Weaver",
+      "user_id": "U01B8GFNUAC",
+      "message": "@Anant we (SE team) have stopped using Instabase.com (http://Instabase.com) due to its instability.\n\nhttps://demo-2.aws.sandbox.instabase.com is the most stable environment we have. I just DMed you account details to login (made you site admin)",
+      "time": "15:30",
+      "timestamp": "1634423428.135000",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "We started seeing these errors since past 4 days, the last peak in the chart (errors seen by app-tasks in downstream services) correlates to today’s error times.\n\ncc: @Xi Cheng @Heymian in case this is related to the switch to unary RPCs we shipped to prod earlier this week (https://instabase.slack.com/archives/C02BA79EK1C/p1634267541061300).\n\ncc: @Naveen Let’s use learnings from this investigation to improve flow dashboard (https://instabase.com/grafana/d/fRvp36D7k/flow-dashboard-alpha?orgId=1&refresh=30s&from=now-7d&to=now). :slightly_smiling_face:",
+      "time": "16:32",
+      "timestamp": "1634427164.135300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "ahh 4 days sounds aligned with when we made the switch unary. :( we’ll def investigate",
+      "time": "16:37",
+      "timestamp": "1634427451.137300",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "_May the force be with you._ :v:",
+      "time": "16:37",
+      "timestamp": "1634427470.137500",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi folks, thanks for the reporting and followups. I am actively investigating the ongoing issue here. This seems to have to do with the latest change that switches the file read/write method to grpc unary, and I have seen that the response time in grpc-file-service is higher than expected. @Mohit Yes we switched to unary grpc and turned on v2 4 days ago.",
+      "time": "17:51",
+      "timestamp": "1634431899.137800",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Providing some incremental updates here. The write call that took ~30s to complete (as mentioned by @kunal) came from a huge write request for a 440MB file, the expected response time in this case is actually right in the ballpark. @Anant, this came from a file named `pytorch_model.bin`  in the demos folder under one of your drives. Just wanted to check to make sure that you'd expect this file to be this large?",
+      "time": "20:21",
+      "timestamp": "1634440865.138300",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Mohit Can you point me to the logs in app-tasks that have the grpc file service errors? There are two kinds in the graph you show. The NOT_FOUND is really just indicating a file doesn't exist. The other one is DEADLINE_EXCEEDED, but it seems that there is really just a few. Have you or any one in your team run into issues of running flows after we turn on the unary grpc call on prod?",
+      "time": "20:24",
+      "timestamp": "1634441046.138500",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "Yes that file was supposed to be 440MB. Some files might be as big as 4-5 GB too",
+      "time": "21:20",
+      "timestamp": "1634444407.139900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-10-16.json",
+    "message_count": 17,
+    "start_time": "1634414152.129600",
+    "end_time": "1634444407.139900",
+    "is_thread": true
+  }
+}

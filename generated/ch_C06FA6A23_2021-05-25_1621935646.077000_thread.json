@@ -1,0 +1,166 @@
+{
+  "id": "ch_C06FA6A23_2021-05-25_1621935646.077000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Gunjan",
+    "Naveen",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "<!here>, I am trying to insert data into a blob column in a table on oracle db using database api inside a UDF. I am getting \"ORA-01704: string literal too long\" error. Is there a way to send large blob values using database API to oracle?",
+      "time": "02:40",
+      "timestamp": "1621935646.077000",
+      "is_reply": false
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "@Gunjan can you confirm the type of column is CLOB?",
+      "time": "03:05",
+      "timestamp": "1621937153.077200",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "its BLOB. I am sending hex string and then using hextoraw function",
+      "time": "03:07",
+      "timestamp": "1621937220.077400",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "seems like hextoraw doesn’t support CLOB as input i guess (https://docs.oracle.com/cd/B19306_01/server.102/b14200/functions064.htm) ?",
+      "time": "03:10",
+      "timestamp": "1621937451.077600",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "But I am not sending CLOB as input",
+      "time": "03:11",
+      "timestamp": "1621937485.077800",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "the max size should be max of CHAR/VARCHAR2/NVARCHAR2, right?",
+      "time": "03:12",
+      "timestamp": "1621937567.078000",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "what is the size of data that you’re sending?",
+      "time": "03:12",
+      "timestamp": "1621937578.078200",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "I know that the size of the data I am sending is too big. as I can insert smaller values. I am trying to see if I can send the data in chunks. May be use insert query first and then update queries later to append the new value to existing blob or something like that. So far its not working.",
+      "time": "03:14",
+      "timestamp": "1621937692.078400",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "I am looking for suggestion and if we have done it in the past, then a code sample will be helpful as well",
+      "time": "03:15",
+      "timestamp": "1621937738.078600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "how large is your data? the answer will vary",
+      "time": "10:32",
+      "timestamp": "1621963938.078900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "is it larger than 32kb, or larger than 65kb? And what does your query look like?",
+      "time": "10:32",
+      "timestamp": "1621963961.079100",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "I can not concretely state the size of the data. In Natwest environment, we are extracting information from there documents and then creating json of that. That json needs to be transfered to their database as a blob",
+      "time": "10:34",
+      "timestamp": "1621964051.079400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "https://github.com/instabase/instabase/pull/19364",
+      "time": "10:34",
+      "timestamp": "1621964082.079600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I’ve had to do some very nasty things to get large uploads to work with oracle in our internal db accessor. I think if you’re using the API (uses our generic ORM, there’s a chance it might not be supported, I would have to check )",
+      "time": "10:36",
+      "timestamp": "1621964163.079900",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "I am using database api from postflow udf. I tried passing something like that. It was a insert query though and it returned operation not permitted",
+      "time": "10:39",
+      "timestamp": "1621964362.080100",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "So I guessed that PL/SQL might not be supported",
+      "time": "10:39",
+      "timestamp": "1621964378.080300",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "I ended up adding a function for concatenating blob values in my test db and using that from udf via multiple update queries while sending json as a hex string in chunks. I have also asked AIme to ask NatWest team to add the same function in their DB",
+      "time": "10:40",
+      "timestamp": "1621964451.080500",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "If there is an other way, I will be happy to update my code with the same",
+      "time": "10:41",
+      "timestamp": "1621964474.080700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-05-25.json",
+    "message_count": 18,
+    "start_time": "1621935646.077000",
+    "end_time": "1621964474.080700",
+    "is_thread": true
+  }
+}

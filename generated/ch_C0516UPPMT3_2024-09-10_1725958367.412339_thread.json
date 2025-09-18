@@ -1,0 +1,153 @@
+{
+  "id": "ch_C0516UPPMT3_2024-09-10_1725958367.412339_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "david.lee",
+    "Nico",
+    "Hamish",
+    "Rakesh",
+    "Nithin",
+    "Anshu"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Thanks everyone.\n• @Rakesh checkboxes and table options unfortunately make no difference. \n• @Ananya the prompt for MRZ here still has a high error rate. Often MRZ looks correct, but running a simple length check as validation exposes issues (see code below)",
+      "time": "01:52",
+      "timestamp": "1725958367.412339",
+      "is_reply": false
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "I will hold off replying for a few hours, but unless anyone has a solution here I think the only way around this is just to catch errors using a validation rule. Currently on his 6 sample docs, we are seeing only 1 correct result though so this won't be good enough for this use case unfortunately",
+      "time": "01:54",
+      "timestamp": "1725958446.332069",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "@Hamish\nAnother OCR we can try would be the Google OCR (uses online cloud google API) - and see if that does any better. Enable Latin characters check to try this out.",
+      "time": "03:05",
+      "timestamp": "1725962720.158499",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Thanks @Rakesh I tried this also but no improvement",
+      "time": "03:06",
+      "timestamp": "1725962763.615729",
+      "is_reply": true
+    },
+    {
+      "sender": "Nithin",
+      "user_id": "UNXFBRZ6D",
+      "message": "@Hamish - all the fields in MRZ should be available in the Visual region of the passport. \nDo they still need MRZ values?",
+      "time": "05:25",
+      "timestamp": "1725971122.888339",
+      "is_reply": true
+    },
+    {
+      "sender": "Nithin",
+      "user_id": "UNXFBRZ6D",
+      "message": "Also, what is the impact of losing this?",
+      "time": "05:26",
+      "timestamp": "1725971177.639769",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "I haven't qualified this yet, but they seem to have placed a lot of emphasis on this. If anyone can help with my ask here I think this could be really useful by referring to the document text inside AI Hub: https://instabase.slack.com/archives/CKBRX13L5/p1725971618975399",
+      "time": "05:35",
+      "timestamp": "1725971703.869269",
+      "is_reply": true
+    },
+    {
+      "sender": "Nithin",
+      "user_id": "UNXFBRZ6D",
+      "message": "@Hamish\nFollowing are my observations on samples link (https://aihub.instabase.com/review/549031b5-4f80-4941-98ab-92b6641c3afe) you shared, Please correct me if there are any other issues which is missing.\n\n• 02a89e77-9cce-46c1-a647-536e1f50d68e__Passport 4.pdf - First Line is extracting fine and second line is missed\n• 6251e269-568a-4651-ac07-e596365b6e08__Passport.pdf - I don't see any issue, both MRZ lines are coming fine\n• 9afe28d0-6ee7-43b1-ba2b-21a2d82dea64__Sample File 2.pdf - Both lines of MRZ is extracting, but 2 is missing in last line. \nAlso, Can you share your Build Project to review the prompt?",
+      "time": "06:24",
+      "timestamp": "1725974660.322009",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "There is some inconsistency with extraction. If I run the same doc 10 times I get the right answer sometimes and the wrong answer others (same with sample files). Those observations seem largely correct. I can but it's in a non-IB org, so I would have to invite you. I'm using the prompt given in the projects for the Marketplace Passport App",
+      "time": "06:28",
+      "timestamp": "1725974886.804009",
+      "is_reply": true
+    },
+    {
+      "sender": "Nithin",
+      "user_id": "UNXFBRZ6D",
+      "message": "Cool!\n\nIf the observations I saw is similar to what you are seeing, we can add post processing to get entire information.\n\nAlgorithm for post-processing:\n1. Check if extracted MRZ has two lines. \n    a. If single line, find out which line is missing by referring OCR metadata and attach the data to output\n2. Check if both lines of MRZ has complete data\n    a. If No, fill the complete line data",
+      "time": "06:32",
+      "timestamp": "1725975129.218019",
+      "is_reply": true
+    },
+    {
+      "sender": "Nithin",
+      "user_id": "UNXFBRZ6D",
+      "message": "@Pramod Munemanik / @Anshu - Can we prioritise to add above logic in our Passport app and share this with Hamish?",
+      "time": "06:32",
+      "timestamp": "1725975159.211569",
+      "is_reply": true
+    },
+    {
+      "sender": "Anshu",
+      "user_id": "U03DZA2A43V",
+      "message": "@Nithin Yes we can add the additional logic to capture the full value for `MRZ code` Will let this group know once we publish the app with the latest changes.",
+      "time": "07:17",
+      "timestamp": "1725977871.052379",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Thanks @Anshu, if you can share the project when you do so also that would be great",
+      "time": "07:24",
+      "timestamp": "1725978293.498879",
+      "is_reply": true
+    },
+    {
+      "sender": "Nico",
+      "user_id": "U032TAS2YAW",
+      "message": "Thank you all!",
+      "time": "07:27",
+      "timestamp": "1725978478.140919",
+      "is_reply": true
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "Hi team, I've been playing around with a custom function to take the OCR text and extract MRZ from it. I think we've found a solution that works for now.\n\nA bit hacky for now but it is consistent and all sample docs I've tested so far pass the validation test (which is just checking that string length is 88).\n\nI'm just identifying rows from the document text that contain \"<\", removing whitespace, and joining. If that doesn't work (some MRZs' 2nd rows don't contain the filler character), just look for 2 rows with 44 chars each, and join them. Else, return an error string. If we encounter other scenarios we can address them but this seems to work for now.\n\nAttaching screenshots below",
+      "time": "11:25",
+      "timestamp": "1725992715.751109",
+      "is_reply": true
+    },
+    {
+      "sender": "Nithin",
+      "user_id": "UNXFBRZ6D",
+      "message": "cc @Vinay Thapa",
+      "time": "23:43",
+      "timestamp": "1726037037.301739",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-09-10.json",
+    "message_count": 16,
+    "start_time": "1725958367.412339",
+    "end_time": "1726037037.301739",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "id": "ch_C06FA6A23_2025-07-18_1752853690.528109_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "raman.goel",
+    "Gaurav Saini",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Gaurav Saini is there a reason we're on Weaviate 1.24 instead of the latest (1.31)? Just wondering. cc @sudeep too in case you know",
+      "time": "08:48",
+      "timestamp": "1752853690.528109",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "IIRC there were problems with cleanly upgrading it in the past.",
+      "time": "08:49",
+      "timestamp": "1752853790.946069",
+      "is_reply": true
+    },
+    {
+      "sender": "Gaurav Saini",
+      "user_id": "U02DRKLCSSV",
+      "message": "hey yes. IBWeaviate has the proxy layer over weaviate which caused a lot of issues last time we tried to upgrade and is significant effort. weaviate-titan which we deployed for search is on 1.29. The plan was to move to the new weaviate in Q2 and deprecate IBWeaviate but it got deprioritized. Chatbots are still getting moved to weaviate-titan with converse and build slated for early Q3 at which point we 'll deprecate IBWeaviate.",
+      "time": "09:03",
+      "timestamp": "1752854590.793939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I was specifically looking at IBWeaviate",
+      "time": "10:18",
+      "timestamp": "1752859122.193669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ty!",
+      "time": "10:18",
+      "timestamp": "1752859132.208509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Context: Trying to fix the Dockerfile for it, and I noticed it is not on chainguard and is doing a bunch special stuff, incl installing weaviate from source. I'll just try to make it work as-is for now.",
+      "time": "10:19",
+      "timestamp": "1752859178.374119",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "cc adding @raman.goel to add context on the current builds for weaviate images. btw the decision to build them from source was to allow us to patch vulnerabilities for weaviate versions that did not have upstream fixes. By building our own image we are able to selectively update some of these affected packages.",
+      "time": "11:30",
+      "timestamp": "1752863408.051679",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "To allay confusion: we are using `go install` pinned to a specific version (which builds from source)",
+      "time": "12:01",
+      "timestamp": "1752865309.681629",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "We are currently pinned to a specific version of Weaviate due to data loss encountered during an attempted upgrade to the latest version while using the Weaviate proxy (details here (https://instabase.slack.com/archives/C082JPN8BNX)).\n\nSince we are unable to upgrade to the latest available version, we cannot mark the vulnerabilities as *REQUIRES VENDOR FIX*. To address this, we cloned the upstream source code, resolved the Go dependencies using `go get`, and built the image manually using `go build`.\n\nAdditionally, since Weaviate is still under active development, their team is sometimes not fully aware of potential data loss scenarios. Given this uncertainty, I prefer not to upgrade to newer versions too frequently. For this reason, I’ve also modified the Weaviate Titan Dockerfile to build internally, giving us more control over the image and its dependencies.",
+      "time": "14:35",
+      "timestamp": "1752874552.256769",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-07-18.json",
+    "message_count": 9,
+    "start_time": "1752853690.528109",
+    "end_time": "1752874552.256769",
+    "is_thread": true
+  }
+}

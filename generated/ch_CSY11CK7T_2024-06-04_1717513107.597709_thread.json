@@ -1,0 +1,248 @@
+{
+  "id": "ch_CSY11CK7T_2024-06-04_1717513107.597709_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Arjun",
+    "Jessica",
+    "Weiming Wu",
+    "Aayush",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "`create-deployment` and `edit-deployment` failed to add upstream integration (error: `\"Error occurred executing GRPC method: Request /job_service.JobService/AddCronJob failed. Error code=INTERNAL, Error=(13, 'internal'), Message: Failed to add job to the cron scheduler. Error: max_scheduled_jobs(50) limit reached. Non-retriable error\"`)\n`advanced-app` failed to find the right dom element\n`converse-app` was waiting for a call to load records that never happened\nhttps://cloud.cypress.io/projects/cfhedy/runs/10780/overview?roarHideRunsWithDiffGroupsAndTags=1",
+      "time": "07:58",
+      "timestamp": "1717513107.597709",
+      "is_reply": false
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "it looks like these tests are all also consistently failing on master cc @Jessica @Weiming Wu",
+      "time": "08:02",
+      "timestamp": "1717513352.967489",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for converse-app, i think it’s a flaky failure https://instabase.slack.com/archives/C053QKXEL3B/p1717456431324169?thread_ts=1717455995.671129&cid=C053QKXEL3B",
+      "time": "08:59",
+      "timestamp": "1717516764.893999",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Thanks, will take a look at this asap this morning!",
+      "time": "09:01",
+      "timestamp": "1717516868.528599",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "It looks like advanced-apps has the opposite problem as our app store tests - the element it's looking for is at the top of the scroll (and we've run it enough now that the page now scrolls) and it doesn't know to go up :man-facepalming::skin-tone-2:\nI'll get it fixed momentarily",
+      "time": "09:19",
+      "timestamp": "1717517985.919179",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "For the deployments one, looks like we're coming up against an env config limit. I'm going to try increasing it for now and hopefully take it out completely later",
+      "time": "09:26",
+      "timestamp": "1717518373.319119",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "This is also a real failure btw, we wouldn't have wanted to come up against this in prod. So mission successfully failed!",
+      "time": "09:30",
+      "timestamp": "1717518641.812729",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "btw the advanced-apps fix is here: https://github.com/instabase/instabase/pull/58220",
+      "time": "10:12",
+      "timestamp": "1717521171.779389",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "actually nvm it seems converse-app is consistently failing in all recent CI runs :disappointed:\nhttps://cloud.cypress.io/projects/cfhedy/runs/10795/overview\nhttps://cloud.cypress.io/projects/cfhedy/runs/10794/overview",
+      "time": "10:38",
+      "timestamp": "1717522735.928139",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "My PR fixing the number of scheduler jobs is merged - unfortunately it is a backend change so it'll be a while until it's deployed",
+      "time": "10:49",
+      "timestamp": "1717523355.568339",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we can trigger a backend deployment for crafting-aihub manually! should we do that? (see the Jenkins link in the pinned post in <#C05L87V014J|>)",
+      "time": "11:01",
+      "timestamp": "1717524110.587249",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "true, I feel like we might as well since people will be blocked either way",
+      "time": "11:02",
+      "timestamp": "1717524145.433669",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yeah good idea, I’ll do that",
+      "time": "11:19",
+      "timestamp": "1717525179.426689",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "has anyone had `converse-app` succeed in a recent CI run? is anyone working on a fix?\n\nbased on a cursory glance at recent runs, it seems to always be failing bc of the `loadRecords` wait",
+      "time": "12:07",
+      "timestamp": "1717528059.627019",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "based on this (https://cloud.cypress.io/projects/cfhedy/analytics/top-failures?branches=%5B%5D&browsers=%5B%5D&chartRangeMostCommonErrors=%5B%5D&chartRangeSlowestTests=%5B%5D&chartRangeTopFailures=%5B%5D&committers=%5B%5D&cypressVersions=%5B%5D&flaky=%5B%5D&operatingSystems=%5B%5D&runGroups=%5B%5D&specFiles=%5B%5D&status=%5B%7B%22label%22:%22Passed%22,%22value%22:%22PASSED%22%7D,%7B%22label%22:%22Failed%22,%22value%22:%22FAILED%22%7D%5D&tags=%5B%7B%22disabled%22:false,%22label%22:%22ci%22,%22labelProperties%22:%7B%22color%22:%22%23dadade%22%7D,%22suggested%22:false,%22value%22:%22ci%22%7D%5D&tagsMatch=ANY&timeInterval=WEEK&timeRange=%7B%22startDate%22:%222024-06-03%22,%22endDate%22:%222024-06-04%22%7D&viewBy=TEST_CASE), it is failing 91% of the time over the past 2 days in CI, and in total has failed 58/64 times",
+      "time": "12:09",
+      "timestamp": "1717528152.438259",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "in the past 7 days (https://cloud.cypress.io/projects/cfhedy/analytics/top-failures?branches=%5B%5D&browsers=%5B%5D&chartRangeMostCommonErrors=%5B%5D&chartRangeSlowestTests=%5B%5D&chartRangeTopFailures=%5B%5D&committers=%5B%5D&cypressVersions=%5B%5D&flaky=%5B%5D&operatingSystems=%5B%5D&runGroups=%5B%5D&specFiles=%5B%5D&status=%5B%7B%22label%22:%22Passed%22,%22value%22:%22PASSED%22%7D,%7B%22label%22:%22Failed%22,%22value%22:%22FAILED%22%7D%5D&tags=%5B%7B%22disabled%22:false,%22label%22:%22ci%22,%22labelProperties%22:%7B%22color%22:%22%23dadade%22%7D,%22suggested%22:false,%22value%22:%22ci%22%7D%5D&tagsMatch=ANY&timeInterval=WEEK&timeRange=%7B%22startDate%22:%222024-05-28%22,%22endDate%22:%222024-06-04%22%7D&viewBy=TEST_CASE) though the failure rate was only 46% so it feels like something has changed recently",
+      "time": "12:10",
+      "timestamp": "1717528234.356949",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "I'm looking at the converse-app test. Looks like some api query param changed in the load records call which isn't matching what the cy.wait expects. Creating a fix",
+      "time": "13:21",
+      "timestamp": "1717532518.350479",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "Fix: https://github.com/instabase/instabase/pull/58242",
+      "time": "13:31",
+      "timestamp": "1717533068.709339",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the fix has been merged! see the successful run of `converse-app` in CI here https://cloud.cypress.io/projects/cfhedy/runs/10817",
+      "time": "14:00",
+      "timestamp": "1717534854.943009",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Jessica did you already deploy your backend fix for the # of scheduler jobs? i’m getting failures for `edit-deployment` and `create-deployment` bc of the max # of scheduler jobs in https://cloud.cypress.io/projects/cfhedy/runs/10822/test-results",
+      "time": "15:45",
+      "timestamp": "1717541128.616579",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I think the deployment failed",
+      "time": "15:45",
+      "timestamp": "1717541140.791969",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm i think this is the one triggered by jessica, and it succeeded https://instabase.slack.com/archives/C05L87V014J/p1717532571186989",
+      "time": "15:50",
+      "timestamp": "1717541414.993719",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "There's a chance it was already rerunning after failing and my changes didn't get picked up, the UI wasn't very clear. I'm reluctant to try again since we're approaching the time it would redeploy anyways...",
+      "time": "15:52",
+      "timestamp": "1717541533.334399",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yeah makes sense, let’s wait for the auto-deployment then",
+      "time": "15:52",
+      "timestamp": "1717541574.053799",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m also seeing some 502 errors in the non-deployment tests in this run https://cloud.cypress.io/projects/cfhedy/runs/10822\n\nidk why since i don’t see any errors logs in `crafting-aihub`’s api-server, i guess i’ll just hope that these errors won’t occur when crafting-aihub is re-deployed?",
+      "time": "15:54",
+      "timestamp": "1717541667.902249",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I've been seeing a lot of those too - I figured it was from the deployments on crafting",
+      "time": "16:08",
+      "timestamp": "1717542514.550129",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i don’t see an ongoing deployment for crafting-aihub in https://jenkins.instabase.com/job/SAAS-AWS/job/deploy-saas-aws-preprod/ or https://sandbox.console.instabase.com/customer/Engineering/tenant/crafting-aihub/info\n\nso i’m asking sean about it here https://instabase.slack.com/archives/C05L87V014J/p1717545437843289?thread_ts=1717533650.679119&cid=C05L87V014J",
+      "time": "16:57",
+      "timestamp": "1717545478.605909",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm `create-deployment` and `edit-deployment` are still failing in CI runs - i think we need to modify `deployment-configs/chart/templates/job-service/deployment.yml` since `core-services/job-service/deployment/env/deployment-config.json` won’t be referenced in configs for SaaS environments\n\ni’m not sure if we actually want to change this default for all SaaS environments, so i just updated the value in Deployment Manager for crafting-aihub (see patch (https://crafting-aihub.test.instabase.com/deployment-manager/configs?patch=1717566468420))\n\nhopefully this will unblock `create-deployment` and `edit-deployment` runs going forward, but i’m also seeing some UI failures in `edit-deployment` :disappointed: (see screenshot)",
+      "time": "22:49",
+      "timestamp": "1717566573.007369",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-06-04.json",
+    "message_count": 28,
+    "start_time": "1717513107.597709",
+    "end_time": "1717566573.007369",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "id": "ch_C0516UPPMT3_2024-02-01_1706782235.429379_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Bastiane",
+    "Vishnu",
+    "Lee",
+    "Serena",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Hey @Vishnu thanks for the explanation. That does makes sense to me as I know how it works under the covers but I think this could be confusing for users. Maybe we need info about this in the UI somewhere.\n\nI have 2 projects i’ve using list of objects on and it hasn’t been reliable enough to use - but shows promise. Is it possible to submit these use cases so we start using these to benchmark when the feature is ready? I was getting quite strange results, in the end it was better to jump back to reasoning prompts.",
+      "time": "02:10",
+      "timestamp": "1706782235.429379",
+      "is_reply": false
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "@hannah @Bastiane for visibility.",
+      "time": "02:10",
+      "timestamp": "1706782248.514379",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "That would be very helpful. I'll set up some time with you so I can get a clearer picture of how you need to use this feature and we'll add your cases to our benchmarks.",
+      "time": "02:40",
+      "timestamp": "1706784038.443819",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Great thanks. I’ll collate the documents and use cases - we currently have 2 which are fairly urgent, which this feature would be great to solve",
+      "time": "02:45",
+      "timestamp": "1706784319.433229",
+      "is_reply": true
+    },
+    {
+      "sender": "Bastiane",
+      "user_id": "U046R81BMM4",
+      "message": "@Vishnu I know there are still certain limitations with this feature. Please keep us posted after the discussion with Lee",
+      "time": "08:35",
+      "timestamp": "1706805349.019849",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "Lee and I caught up earlier today. Here is the summary:\n• Adding new attributes to fields changes the results (sometimes negatively) of list of objects. This doesn't make sense to the user immediately since they don't know that the whole field is actually being re run, and the attributes are not extracted in isolation.\n• Users would expect to see the order of attributes to be preserved in the results.\n• Users are not really adding descriptions to their attributes. This causes a *huge* drop in accuracy, and we would really like to nudge users to give proper descriptions to attributes to get the best results.\n• In some documents, the initial extraction is very good, but lower in the document (in long docs) the results lose accuracy. In one document we also saw lots of objects towards the end with all fields set to null, which is unexpected as we should filter these. I will investigate both items.\n• One bug here is that when configuring a list of objects field, the prompt is auto populated with the field name. However, in the backend in ibllm we are expecting the \"prompt\" key to be an optional description of the object, which should be empty by default, and the field name key to be the name of the object. Since the \"prompt\" is populated with the same text as the name, this is lowering the accuracy as we will essentially tell the LLM something like \"We want to extract and object named `name`. The description of `name` is : `name` :disappointed: \n• I will be adding the documents from Lee's use case to our benchmarks to track the improvements.\ncc @lydia",
+      "time": "09:29",
+      "timestamp": "1706808572.307419",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "In the frontend, we actually don’t allow the “prompt” to be empty - is this something we can work around in the backend?\n\ni know that in all other cases (Text, Table) the prompt should never be empty",
+      "time": "10:16",
+      "timestamp": "1706811408.848759",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "we could ignore it if its the same as the field name i suppose. although from the user's perspective it is not quite clear that this prompt should be a description of the object (since its auto populated the same way as basic extraction fields are)",
+      "time": "10:22",
+      "timestamp": "1706811741.813329",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think it’s confusing if we have different requirements for the “prompt” input, depending on the data type\n\ni agree we can ignore the prompt if it’s the same as the field name, but i agree that it’d be ideal to provide guidance that the prompt should be a description of the object\n\nwe’ll have field descriptions in 24.06 as well, which makes this even more confusing :disappointed: maybe we should just not show “prompt” and only show “description” for the “list of objects” data type? does the “list of objects” extraction pipeline use field descriptions yet?",
+      "time": "10:45",
+      "timestamp": "1706813121.185329",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "yeah that would make sense. list of objects does not yet use the \"description\" field but we can just change to using that rather than prompt for the object description sent to llm.\nI also think we need some way to push the user to provide _some_ sort of description for each attribute. i would even go as far as to make it mandatory. this pipeline has to be very generalizable, so it does depend a lot on the user's descriptions to get good results.",
+      "time": "11:26",
+      "timestamp": "1706815572.858849",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "> we could ignore it if its the same as the field name i suppose. although from the user's perspective it is not quite clear that this prompt should be a description of the object (since its auto populated the same way as basic extraction fields are)\nOn this point, I think maybe it's a miscommunication on the interface? The field name in all of our fields is not the same as the prompt. We initialize them to be the same, because in most cases, the user names the field something that would be a sensible prompt, but we wanted to separate the two in the case where the user might have some specific field name preferences that don't make sense to the LLM.\n\nBased on this, I would assume that we pass the value here (see screenshot) is the \"prompt\", and when we add field description with EPD-1179 (https://instabase.atlassian.net/browse/EPD-1179), that would be the description field.\n\nAm I understanding what you're saying correctly?",
+      "time": "11:39",
+      "timestamp": "1706816378.938499",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Are we passing the field name in to the llm here? \n\nIf so I don’t think we should do that. Customers treat this as a label. Not as a method of improving extraction.",
+      "time": "11:41",
+      "timestamp": "1706816517.562069",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "I see, yes at the moment we use the name of the field as the object name in list of object extraction. @lydia yes we had discussed using the top level prompt of the field as the description of the object, so at the moment the \"prompt\" (Directors in this example) is incorrectly being used as the description. we need to use the prompt as the object name instead as per Lee's point, and start passing in the \"description\" field as the object description in list of objects extraction.",
+      "time": "11:55",
+      "timestamp": "1706817329.354859",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Lee to clarify, we are not passing the field name to the llm\n\nLydia was explaining that by default the prompt is set as the field name. This is caused by our current field creation user flow, which we are revisiting for https://instabase.atlassian.net/browse/EPD-935",
+      "time": "12:11",
+      "timestamp": "1706818301.027039",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Vishnu is this an accurate summary?\n1. we will show both “short prompt” and “description” for “list of objects” fields (see https://instabase.slack.com/archives/C05EQQJGN7L/p1706559008966049?thread_ts=1706047244.735679&cid=C05EQQJGN7L)\n2. we want to encourage users to specify a description for object attributes. maybe we can change the placeholder text to encourage this more heavily?",
+      "time": "12:13",
+      "timestamp": "1706818386.104269",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "wait I'm not following because it sounds like @Vishnu and @Serena are saying different things? To clarify, does the list-of-objects llm prompt have both a \"name/prompt\" field and a \"description\" field? And in my directors example, what do those fields get set to?\n\nI would expect it to be:\n{\"prompt\": \"Directors\",\n\"description\": null}\nDescription would be null since there is no way to set a description right now in the product.",
+      "time": "12:17",
+      "timestamp": "1706818643.758469",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "your field would be sent as\n```{ \"name\" : \"Directors\", \"prompt\" : \"Directors\", \"prompt_schema\" : ..., \"description\" : null}```\nand in list of objects, we would use the \"name\" as the \"object_name\", the \"prompt\" as the \"object description\". which is not correct behaviour. i've created https://instabase.atlassian.net/browse/DR-3230 to fix this.",
+      "time": "12:21",
+      "timestamp": "1706818909.435359",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-02-01.json",
+    "message_count": 17,
+    "start_time": "1706782235.429379",
+    "end_time": "1706818909.435359",
+    "is_thread": true
+  }
+}

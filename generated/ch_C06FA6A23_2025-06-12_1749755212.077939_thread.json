@@ -1,0 +1,36 @@
+{
+  "id": "ch_C06FA6A23_2025-06-12_1749755212.077939_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "<!here> Howdy!\nQuick update on the \"CI Pre-Merge is Horrible HALP\" effort. :slightly_smiling_face:\n\n*The What & When*\nTomorrow morning, June 13, 2025, I'll be merging a change that consolidates our bazel test invocations. Instead of running potentially hundreds of discrete make commands that just invoke Bazel, we'll have one giant bazel test invocation that lets Bazel do what it's supposed to do.\n\n*The Why*\nIn short, early experiments running apples-to-apples comparisons (lots-o-tests) yielded:\n• Runtime reduced by ~55%\n    ◦ Split: 86 minutes\n    ◦ Consolidated: 39 minutes\n• Average node CPU utilization increased by 56 percentage points, or 333%\n    ◦ Split - Avg. CPU util: 24%\n    ◦ Consolidated - Avg. CPU util: 80%\n• More consistent / sustained disk I/O:\n    ◦ IOPs: ~2x sustained IOPs increase (Split ~1000 IOPs, Consolidated ~2000 IOPs)\n    ◦ IO throughput: ~2.5x sustained throughput increase (Split ~100 MB/s, Conslidated ~250 MB/s\n    ◦ IO Utilization: ~1.3x sustained IO-Util-% increase (Split ~75% avg. under load, Consolidated ~100% sustained under load)\n(Note that these numbers are from my notes, and not trivially queryable right now. Data work is happening to automate it all, but it's been fraught with dragon-y caves. :slightly_smiling_face: )\n\n*The Uh-Oh...?*\nNear as I can tell, this should be a transparent change. That said, our code base doesn't obey standard laws of causality, so... :man-shrugging::skin-tone-3:  Hence scheduling the merge for tomorrow morning, when I can watch it throughout the day to ensure I didn't explode the world. :sweat_smile:",
+      "time": "12:06",
+      "timestamp": "1749755212.077939",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":x: :left_right_arrow: :white_check_mark:   *The \"Whoops!\"*\n(I put this here to make it a little more noticeable. :smile:)\n\nIn the event of catastrophe, I've rigged it such that it's a one-word deletion to revert to the previous behavior:\n\n```sed -Ei 's/run-grouped-test-changes.json/run-test-changes.json/g' shared-utils/test-utils/Makefile```",
+      "time": "12:12",
+      "timestamp": "1749755553.175489",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-06-12.json",
+    "message_count": 2,
+    "start_time": "1749755212.077939",
+    "end_time": "1749755553.175489",
+    "is_thread": true
+  }
+}

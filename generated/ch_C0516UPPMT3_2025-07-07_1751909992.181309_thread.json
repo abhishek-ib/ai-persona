@@ -1,0 +1,45 @@
+{
+  "id": "ch_C0516UPPMT3_2025-07-07_1751909992.181309_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "jack.robbins",
+    "Matt Vielkind"
+  ],
+  "messages": [
+    {
+      "sender": "Matt Vielkind",
+      "user_id": "U04HBN6BZRB",
+      "message": "Hi team- there appears to be some inconsistencies (plus a SDK bug) in how deployments run when you have a scheduler configured v. when you trigger a deployment manually via the SDK.\n\nConsider you have a deployment connected to the `input` folder containing two subfolders (Submission1 and Submission2). If I configure the deployment to run on a schedule then Submission1 and Submission2 will be processed as their own runs with their own outputs, which is the intended behavior given the docs.\n\nIf I keep the same `input` folder and configure the deployment to work without a scheduler and manually trigger the deployment to run with the `manual_upstream_integration` flag set in the SDK then 2 things happen:\n1. There is a bug that incorrectly says: `ValueError: Either batch_id or input_dir is required.` As the docs are written as long as the upstream configuration is set in the deployment then I should be able to run the deployment with the `manual_upstream_integration` flag set to `True`. If I comment out this line (https://github.com/instabase/instabase/blob/94ca01ccfaa44c78b99ddf2ed44da8f5f3ac757e/sdk/sdk/aihub/aihub.py#L319) in the SDK I can at least get the deployment to run.\n2. After getting the deployment to run I checked the results and get a message, \"No documents found\". If I remove the subfolders and directly load the files into the `input` folder the deployment will run processing the files, so the issue appears to happen only when a subfolder is present.\nMy expectation is that whether you run a deployment manually or via the scheduler that the behavior would be consistent where regardless of what method you use that subfolders in the connected upstream drive are processed as individual runs.",
+      "time": "10:39",
+      "timestamp": "1751909992.181309",
+      "is_reply": false
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "Thanks for submitting this Matthew! Can you share if the customer is currently blocked by any of these issues?\n\ncc @Anil when he's back, but the behavior with `manual_upstream_integration` seems clearly wrong (https://docs.instabase.com/api-sdk/api-reference/runs/run-deployment#request.body.manual_upstream_integration). For the 2nd issue we should check what filters are in place & why for detecting files for the different run methods.",
+      "time": "14:12",
+      "timestamp": "1751922746.865229",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Vielkind",
+      "user_id": "U04HBN6BZRB",
+      "message": "Overall, we need to review the various ways a customer can run a deployment and document the behavior of each while ensuring there are no bugs. Each of them should work with files and processing subfolders.\n\nThis is another from MunichRE. The original ask was around running a deployment via the API by defining the `input_dir` and `output_dir`. This wasn't entirely behaving as they expected. Using the example above if the set the `input_dir` to \"/input/Submission1\" then submission 1 would be processed successfully. They want to be able to set \"/input\" as `input_dir` and have it process each sub-folder individually, but that doesn't happen you end up getting the \"No documents found\" message for the run. I was testing the `manual_upstream_integration` parameter as an alternative since that's more tightly coupled with the scheduling behavior. Since that's not a working option I'm going to suggest they either orchestrate and make an API call for each subfolder or rely on the scheduler with the upstream connector.\n\nThere have now been 3 platform issues with running deployments found with MunichRE:\n• Disabling \"Remove source files\" on a deployment does not process subfolders in the integration (ZD 9876 (https://instabase.zendesk.com/agent/tickets/9876))\n• `manual_upstream_integration` parameter does not work as expected when running a deployment with the SDK\n• Uncertain behavior when defining `input_dir` parameter when running a deployment when sub-folders exist. Are subfolders expected to be processed when this parameter is defined or not?\nOne constant pattern is all of these occur when trying to process subfolders. Not sure if there is a gap in our testing for those scenarios.",
+      "time": "18:32",
+      "timestamp": "1751938377.246569",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-07-07.json",
+    "message_count": 3,
+    "start_time": "1751909992.181309",
+    "end_time": "1751938377.246569",
+    "is_thread": true
+  }
+}

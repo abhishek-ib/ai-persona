@@ -1,0 +1,209 @@
+{
+  "id": "ch_CSY11CK7T_2025-01-30_1738253372.002599_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Xindi Xu",
+    "Anil",
+    "Udit",
+    "Weiming Wu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "What does something like this mean for cypress where the 3 checks passed, but then it says Cypress run failure, error.\n\nWhen I go to the cypress run itself, only non-blockign tests failed. I find this happening in my PRs alot.",
+      "time": "08:09",
+      "timestamp": "1738253372.002599",
+      "is_reply": false
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Yea I think we're running into problems with Cypress reporting results correctly to Github.\nWe've seen plenty of runs that fail and report a \"failure\" generically. I think it started happening a day or two ago because I definitely remember seeing it report the exact failures as recently as yesterday morning.\nWho has the skillset to investigate this? :grimacing:",
+      "time": "11:07",
+      "timestamp": "1738264052.529129",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Heck, maybe it's something wrong on the Github script - Results fails because of the \"Print Cypress results URL\" step:",
+      "time": "11:09",
+      "timestamp": "1738264198.444759",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Xindi Xu do you know if there's any way to get more logs for why the \"Print Cypress results URL\" step failed?",
+      "time": "11:56",
+      "timestamp": "1738267018.628109",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Open up the \"print Cypress result URL\" to see more. The most relevant parts are variables in \"env\".",
+      "time": "12:00",
+      "timestamp": "1738267221.917469",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Usually, this indicates sandbox being unhealthy or tests timed out",
+      "time": "12:00",
+      "timestamp": "1738267253.455019",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for this example (https://github.com/instabase/instabase/actions/runs/13039090959/job/36380221073?pr=67482), i know tests timed out\n\nhow do you know which part of the variables in `env` is the problem?",
+      "time": "12:02",
+      "timestamp": "1738267328.407969",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "`STATUS_NON_BLOCKING_1` is empty so I'll look into \"Cypress (1) > ... non-blocking\" and I see \"Error: the operation was canceled\", which means time out.",
+      "time": "12:03",
+      "timestamp": "1738267426.267749",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah all `STATUS_*` variables need to be non-empty for the script to successfully run? that makes sense then",
+      "time": "12:06",
+      "timestamp": "1738267589.954069",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "in this case (https://github.com/instabase/instabase/actions/runs/13039090959/job/36431705393?pr=67482), tests did not time out, but somehow `FAILURES_BLOCKING_*` are all empty, even though `FAILURES_NON_BLOCKING_*` were not empty\n\nit seems this also caused the script to fail",
+      "time": "12:09",
+      "timestamp": "1738267742.573559",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Cypress (2) > ... blocking tests ended with this error so it failed to generate `FAILURES_BLOCKING_2`\nend var",
+      "time": "12:11",
+      "timestamp": "1738267864.796889",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah i see...",
+      "time": "12:12",
+      "timestamp": "1738267977.620429",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "just googling \"This socket has been ended by the other party\" with Cypress brings up a lot of results :smiling_face_with_tear:",
+      "time": "12:15",
+      "timestamp": "1738268124.664029",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i looked at a Cypress run's results and found out that digitization jobs in Build projects are failing with this error `Error encountered while starting OCR tasks: err: Error occurred executing GRPC method: Request /job_service.JobService/StartFlow failed. Error code=UNAVAILABLE, Error=(14, 'unavailable'), Message: no healthy upstream. Retries left 0 when updating job-service while starting flow: 74071ea6-8b17-4747-a236-5bf68a8358d9`\n\nthis probably applies for all jobs (ex: app runs) :grimacing: :notlikeblob:",
+      "time": "12:16",
+      "timestamp": "1738268192.351229",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "job-service keeps on segfaulting and restarting in crafting-cyp (https://crafting-cyp.test.instabase.com/deployment-manager/logs?deployments=job-service&pod=deployment-job-service-9c778c4d4-xb2xg&container=job-service)\n\n@Anil can you help take a look? this is blocking all frontend PRs because of Cypress CI",
+      "time": "12:18",
+      "timestamp": "1738268302.226129",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i realized my screenshot wasn't very helpful :sweat_smile: the segfault is occurring in `loadStateOfRunningJob` -> `GetMetadata`",
+      "time": "12:20",
+      "timestamp": "1738268427.603289",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "does this point to master? we just merged in a db migration - maybe that wasn’t run",
+      "time": "12:22",
+      "timestamp": "1738268524.810079",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yes this environment uses master",
+      "time": "12:22",
+      "timestamp": "1738268536.516289",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yes there was a deployment issue earlier https://instabase.slack.com/archives/CCY413CSU/p1738225683392449\n\nhow can we manually run the db migration to fix the env?",
+      "time": "12:23",
+      "timestamp": "1738268580.543649",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "<!subteam^S02FJA6A7U5> can you help re-run the migration? the migration works fine - it ran correctly on aihub-sandbox and dogfood\ncan you re-trigger the push",
+      "time": "12:27",
+      "timestamp": "1738268862.270059",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "cc @Abhishek Adupa",
+      "time": "12:28",
+      "timestamp": "1738268886.163369",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "“This socket has been ended by the other party” Ah, this is most likely related to my change a few days back (https://github.com/instabase/instabase/pull/67359). I’ll take a look\n\nEDIT: Yeah, it’s this change. Looks like new PRs are not using the new Crafting webpack script (https://github.com/instabase/instabase/blob/master/third-party/crafting/snapshot/roles/workspace/files/daemons/webpack.yaml) so it’s defaulting to `yarn bundle-local`, which spins up webpack w/ websockets and causing this error. Working with Sean to get it working.",
+      "time": "14:08",
+      "timestamp": "1738274936.689629",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "okay, updated the `cypress` snapshot in Crafting to use the new script. Let me know if you see the “socket has been ended by the other party” error again",
+      "time": "16:16",
+      "timestamp": "1738282618.267389",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-01-30.json",
+    "message_count": 23,
+    "start_time": "1738253372.002599",
+    "end_time": "1738282618.267389",
+    "is_thread": true
+  }
+}

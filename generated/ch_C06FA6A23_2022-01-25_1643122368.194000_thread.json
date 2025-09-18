@@ -1,0 +1,134 @@
+{
+  "id": "ch_C06FA6A23_2022-01-25_1643122368.194000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Heymian",
+    "Sabyasachi Roy",
+    "Junwon Jang"
+  ],
+  "messages": [
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "steps:\n```1. checkout latest master\n2. run `python provisioner.py start lite`\n3. run `python provisioner.py status lite` and i noticed that core-platform-services failed. Attached are the logs from the failure\n4. from /instabase/core-services/core-platform-services, run `make build-docker run-docker`\n5. when running `ppy status` again, i notice that the service is now running, but i still get an error when trying to access local drive files. So here, i think some of the core-platform-services are working but not all```",
+      "time": "06:52",
+      "timestamp": "1643122368.194000",
+      "is_reply": false
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "Thanks I will try them out.",
+      "time": "07:31",
+      "timestamp": "1643124662.194500",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "@Junwon Jang: Do you know if\n```python provisioner.py start lite```\nis supposed to run all the services? When I run it, other than a few services most of them were down (not specific to core-platform-service)\n\n```INFO - Service=core-platform-service IMAGE=instabase/core-platform-service  status=Up 24 seconds Run_mode=Docker\nINFO - Service=api-server                      status=Up     Run_mode=local\nINFO - Service=api-server-apps                 status=Down. Please see webserver/api-server-apps/api-server-apps.log for details\nINFO - Service=apps-server                     status=Down. Please see webserver/apps-server/apps-server.log for details\nINFO - Service=celery-app-tasks                status=Down. Please see distributed-tasks/celery/app-tasks/celery-app-tasks.log for details\nINFO - Service=celery-core-tasks               status=Up     Run_mode=local\nINFO - Service=conversion-service              status=Down. Please see data-services/doc-services/conversion-service/conversion-service.log for details\nINFO - Service=docops-service                  status=Down. Please see data-services/doc-services/docops-service/docops-service.log for details\nINFO - Service=file-tservice                   status=Down. Please see core-services/file-tservice/thrift-file-service/file-tservice.log for details\nINFO - Service=grpc-file-service               status=Down. Please see core-services/file-tservice/grpc-file-service/grpc-file-service.log for details\nINFO - Service=job-service                     status=Down. Please see core-services/job-service/job-service.log for details\nINFO - Service=license-service                 status=Down. Please see core-services/license-service/license-service.log for details\nINFO - Service=ocr-service                     status=Down. Please see data-services/ocr-services/ocr-service/ocr-service.log for details\nINFO - Service=pdf-tservice                    status=Down. Please see data-services/pdf-services/pdf-tservice/pdf-tservice.log for details\nINFO - Service=rabbitmq                        status=Down. Please see third-party/docker/rabbitmq/rabbitmq.log for details\nINFO - Service=redis                           status=Down. Please see third-party/docker/redis/redis.log for details\nINFO - Service=runner-service                  status=Down. Please see core-services/runner-service/runner-service.log for details\nINFO - Service=server-nginx                    status=Down. Please see webserver/server-nginx/server-nginx.log for details\nINFO - Service=webapp                          status=Up     Run_mode=local```",
+      "time": "07:38",
+      "timestamp": "1643125098.194800",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "ya usually all of them except pdf and docops services work",
+      "time": "07:39",
+      "timestamp": "1643125158.195400",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "For the core-platform-service not running initially I think it may have been because it was already running. Atleast the error logs seems to suggest that it could not bind to ports. So may be there was a leftover process/docker still running.\n\nLooking at the second part.\n\n> but i still get an error when trying to access local drive files. So here, i think some of the core-platform-services are working but not all\nWhat do I need to \"access local drive files\". Sorry, I am not very familiar with the steps that people usually run. So will need more details/help here",
+      "time": "07:46",
+      "timestamp": "1643125579.195900",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "Any idea what the exact set of services I need running. I want to individually run them. Right now not all of them are running and I am not 100% sure about the source of the problems. This will help me",
+      "time": "07:56",
+      "timestamp": "1643126219.196100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "if you look at the main eng onboarding setup doc there is a list of “required services”",
+      "time": "09:13",
+      "timestamp": "1643130805.196300",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "Ok. I started those services successfully. Then I hit http://localhost:5000/sabyasachiroy (which is what I had done the last time). I checked browser debugging tools (network). Do not see any failures there. The output is empty though. I am assuming that is not the endpoint to hit?\n\nIn the logs attached, I see a series of service starts and killed in very quick succession. Then it starts and after 1 hour of being idle starts showing this error\n```2022/01/21 13:19:19 ERROR utils/status/status.go:146 -- [NOT_FOUND]: Key ENV/CONFIG/SITE/DISALLOW_USER_OWNED_REPOS not found```\nThis fills most of the log. And then at the end it has errors:\n```2022/01/21 15:58:13 ERROR utils/db/session/dbsession.go:323 -- Prepare statement failed: user=\"\" ConnectString=\"instabase-non-prod-oracle.cyt8gw1zk6xv.us-east-1.rds.amazonaws.com:1521/dogfood (http://instabase-non-prod-oracle.cyt8gw1zk6xv.us-east-1.rds.amazonaws.com:1521/dogfood)\" stats=busy=0 open=0 max=1000 maxLifetime=1h0m0s timeout=5m0s waitTimeout=30s params={authMode:0 connectionClass:<nil> connectionClassLength:0 purity:0 newPassword:<nil> newPasswordLength:0 appContext:<nil> numAppContext:0 externalAuth:0 externalHandle:<nil> pool:0xe205e30 tag:<nil> tagLength:0 matchAnyTag:0 outTag:<nil> outTagLength:0 outTagFound:0 shardingKeyColumns:<nil> numShardingKeyColumns:0 superShardingKeyColumns:<nil> numSuperShardingKeyColumns:0 outNewSession:0}: ORA-12541: TNS:no listener\n2022/01/21 15:58:13 ERROR accountservice/handler/account.go:1036 -- Fail: Account not found (junwon)```",
+      "time": "09:48",
+      "timestamp": "1643132904.197700",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "The logs above is not my logs. I have not been able to repro this locally at all",
+      "time": "09:52",
+      "timestamp": "1643133131.197900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "oh don’t hit :5000, just do `localhost`. do our instructions still say 5000. o.O",
+      "time": "12:18",
+      "timestamp": "1643141903.201200",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "No, it did not say that. I used 5000 because the earlier problem was repro'ed using that. Now I have http://localhost/sabyasachiroy running. It is spinning. I see connecting to rabbit-mq is a problem in the logs but not sure if I need to have rabbitmq up (it is not part of the required services).\n\nAlso, on the browser console log I see errors indicating someone is still trying to connect to port 6000 (repo). Not sure if this is happening directly from the browser or somewhere else (I dont see that error in the logs generated by the services).",
+      "time": "20:25",
+      "timestamp": "1643171141.203900",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "I have been to work around that problem and hev been browsing local file system for some time. Don't see the issue yet.\n\n@Junwon Jang: Did you hit these issues while browsing manually or any script was run against it. Did it happen relatively soon or after some duration of browsing?",
+      "time": "20:39",
+      "timestamp": "1643171957.204300",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "i got that console error in your screenshot, and it happened as soon as i started up all the services. But i just rebased master, but i just tried running the prebuilt image of core-platform-service and its working now (but its weird because i definitely tried runnign it as prebuilt before too).",
+      "time": "21:29",
+      "timestamp": "1643174951.204500",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "thanks for looking into this and sorry if i wasted any of ur time :sob:",
+      "time": "21:29",
+      "timestamp": "1643174977.204700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-01-25.json",
+    "message_count": 14,
+    "start_time": "1643122368.194000",
+    "end_time": "1643174977.204700",
+    "is_thread": true
+  }
+}

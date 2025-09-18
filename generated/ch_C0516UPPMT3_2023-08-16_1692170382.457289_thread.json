@@ -1,0 +1,187 @@
+{
+  "id": "ch_C0516UPPMT3_2023-08-16_1692170382.457289_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "fernando",
+    "pauline.comising",
+    "shiqi",
+    "Lee",
+    "shaunak",
+    "Serena",
+    "lydia",
+    "Rafal"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "On the point about prov tracking causing the issues we are seeing with different results in build vs run, could we turn off prov tracking for complex prompts in build? \n\nAt the moment if you ask a question about something which isn’t a simple field extraction the results are basically useless as it’s generating a response rather than extracting and then can’t match to anything on the page.",
+      "time": "00:19",
+      "timestamp": "1692170382.457289",
+      "is_reply": false
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "@fernando we will be releasing in the next 2hrs new ibllm version `1.1.18` with the “sleep fix”\nonto which branch we should do a “bump ibllm” PR so this will be picked up for prod release\ncc @vineeth",
+      "time": "08:50",
+      "timestamp": "1692201014.014179",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "I'm not familiar - in what file is the version bumped?",
+      "time": "08:53",
+      "timestamp": "1692201180.569649",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "@Rafal could you link me to the ibllm_1.1.18.ibsolution file too, so I can add it to ibsolutions automatically published when upgrading?",
+      "time": "09:04",
+      "timestamp": "1692201880.124689",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "@fernando what I mean is what branch you’re going to use for 23.07 prod deployment (“sleep fix” is a blocker bug for 23.07 GA - so we need to fix it before)",
+      "time": "09:10",
+      "timestamp": "1692202233.733299",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "here is an example of the PR that we need to do for 1.1.18 (https://github.com/instabase/instabase/pull/43716)",
+      "time": "09:35",
+      "timestamp": "1692203714.471379",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "Discussed with @Rafal via DM. This version is applied via patches, so we need it on the release-23.07.0 branch",
+      "time": "09:35",
+      "timestamp": "1692203735.684919",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "@vineeth just helped with preparing a bump PR - https://github.com/instabase/instabase/pull/45306\nibllm 1.1.18 is published to the prod and uat sandbox and is available also in google drive (https://drive.google.com/drive/u/0/folders/1mD8K1TGoF7Y4FbUWS5HE2XRDykCOyodr)\ncc @fernando, @pauline.comising",
+      "time": "11:03",
+      "timestamp": "1692209002.041709",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": ":merged:\nI tested that on UAT when manually setting the ibllm to 1.1.18\nit generates a refiner script with the fix, so looks good",
+      "time": "12:51",
+      "timestamp": "1692215465.482629",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Rafal the patch also needs to go into webapp?",
+      "time": "13:25",
+      "timestamp": "1692217552.230049",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "no, `AIHUB_MODEL_VERSION` only needs to be set for `apps-server`, `api-server`, and `celery-app-tasks`",
+      "time": "13:28",
+      "timestamp": "1692217739.531459",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "has this changed recently?  Until 23.04, someone had asked me to change this for `webapp` as well.",
+      "time": "13:32",
+      "timestamp": "1692217936.463299",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it has never been used in `webapp` , but for some reason, `AIHUB_MODEL_VERSION` is included in `webserver/webapp/deployment/env/deployment-config.json` and `webserver/webapp/deployment/env/env-template.jinja.yml`\n\nmaybe that’s why this person got confused and asked you to change it for `webapp`",
+      "time": "13:34",
+      "timestamp": "1692218041.111929",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "chime in here since I can't find anybody to help answering about this betafix request https://github.com/instabase/instabase/pull/45280\nplease help respond to this thread thanks https://instabase.slack.com/archives/CGQ7BD72A/p1692217392910109",
+      "time": "13:36",
+      "timestamp": "1692218170.302029",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@shiqi that fix isn’t related to this. the fix here is going into 23.07",
+      "time": "14:17",
+      "timestamp": "1692220636.990149",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "if those yml files are changed in the PR, will that override `\"aihub_model_version\": \"1.1.17\"` code in deployment-config.jsons? I still see lines like this in the release-23.07.0 branch that I had to update during the 1.1.17 bump, should these values be updated and cherry picked too?",
+      "time": "14:17",
+      "timestamp": "1692220679.843629",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@pauline.comising can you link your PR for the 1.1.17 bump?",
+      "time": "14:19",
+      "timestamp": "1692220755.451829",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "sure thing, here's that PR (https://github.com/instabase/instabase/pull/44084/files#diff-42db6ee7350561c7174b99e4ccf04a5417e12f5d524865ab362410f155df15f9)",
+      "time": "14:20",
+      "timestamp": "1692220811.861079",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "idk how that PR would have caused the desired change - based on my understanding, the deployment-config.json files are only used for local development\n\nall deployed environments use the environment variables specified in the `deployment-configs` folder - you can see the `deployment-…-aihub-model-configs.yml` patches in this folder (https://github.com/instabase/instabase/tree/master/deployment-configs/environment-patches/saas-advanced-patches/saas-hierarchial-patches/customer/aihub)",
+      "time": "14:23",
+      "timestamp": "1692221003.240539",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "oh interestingg, im wondering how we were able to reflect provenance changes after that pr then, but okok, ya I see a yml-updating PR for 1.1.17 made during the same time :see_no_evil:",
+      "time": "14:25",
+      "timestamp": "1692221109.710919",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-08-16.json",
+    "message_count": 20,
+    "start_time": "1692170382.457289",
+    "end_time": "1692221109.710919",
+    "is_thread": true
+  }
+}

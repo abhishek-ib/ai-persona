@@ -1,0 +1,133 @@
+{
+  "id": "ch_C08L4K42H9C_2025-07-28_1753738860.493989_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "jaden"
+  ],
+  "messages": [
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "hello! I was working on this ticket (https://instabase.atlassian.net/browse/AUTO-119) and was wondering if anyone knew how to access the Accuracy Report page on the UI?",
+      "time": "14:41",
+      "timestamp": "1753738860.493989",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Yeah, let me create a video for you real quick.",
+      "time": "14:58",
+      "timestamp": "1753739912.117909",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Here's a video, you can also see me struggling to find it too :sweat_smile:",
+      "time": "15:01",
+      "timestamp": "1753740094.392979",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "thank you!",
+      "time": "15:07",
+      "timestamp": "1753740425.772009",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "on mine, for some reason the BE `/bulk_status` endpoint keeps returning PENDING state and 0 for progress. The progress bar keeps hanging whenever i manually upload files as dataset, or when i run a test accuracy. Is there any prerequisite things I need such as permissions?",
+      "time": "15:30",
+      "timestamp": "1753741807.445099",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "It might be an issue with your crafting sandbox. What's the sandbox name?",
+      "time": "16:13",
+      "timestamp": "1753744384.230529",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "https://instabase.sandboxes.site/sandboxes/jadenlee?cw=dev",
+      "time": "16:15",
+      "timestamp": "1753744506.721869",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I see that your PID for `model-service` is high, which suggests it's repeatedly boot looping",
+      "time": "16:25",
+      "timestamp": "1753745110.351399",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Going into the logs, I see the AWS 401 permission issues, which I think is related to the crafting issues last week",
+      "time": "16:25",
+      "timestamp": "1753745144.230369",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I'm going to ssh into your box and see what's up",
+      "time": "16:25",
+      "timestamp": "1753745152.713499",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "i see thanks for guiding me through this Paul! Ill take a look at the aws crafting issue threads",
+      "time": "16:28",
+      "timestamp": "1753745310.451279",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Ah, your docker config was missing one of the remote docker registries, which I believe we use to pull the base image for model-service:\n```owner@dev:~/instabase$ cat ~/.docker/config.json\n{\n  \"credHelpers\": {\n     \"gcr.io (http://gcr.io)\": \"gcloud\",\n     \"549230430157.dkr.ecr.us-east-2.amazonaws.com (http://549230430157.dkr.ecr.us-east-2.amazonaws.com)\": \"ecr-login\"\n  }\n}```\nI've gone ahead and added the new line as per Matt's comment (https://instabase.slack.com/archives/C05L87V014J/p1753388110844289)",
+      "time": "16:28",
+      "timestamp": "1753745326.966809",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Now it looks like model-service is building now (https://instabase.sandboxes.site/logviewx/instabase/jadenlee/dev/daemon/model-service%40instabase). Once that's complete, you should be able to make a ground truth",
+      "time": "16:29",
+      "timestamp": "1753745379.216319",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "it works now tysm!",
+      "time": "16:39",
+      "timestamp": "1753745980.922359",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-07-28.json",
+    "message_count": 14,
+    "start_time": "1753738860.493989",
+    "end_time": "1753745980.922359",
+    "is_thread": true
+  }
+}

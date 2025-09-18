@@ -1,0 +1,152 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-01-28_1738093820.517239_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Sayan",
+    "ayesha.ali",
+    "pauline.comising",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I'm having some trouble overriding some aws keys in api-server (it seems). I was wondering if someone could help me take a look into it.\n\n*The What*: be able to run UDFs\n*How*: lambda setup doc (https://docs.google.com/document/d/1YA1mqwNzrxFUN2m1hLT3-IooyJ6lPvShug76mL6A2Pg/edit?tab=t.0#heading=h.410iwzj43cpb)\n*Issue I'm facing*: So all services but api-server and CAT are using the S3Dogfood user AWS credentials. However, when following the instructions, changing the aws credentials in env-local-overrides, env-local-secrets, and the CLI, I get the following error (:thread:) indicating that we're still using the old credentials. Is there another way I could override the old credentials?\n\nThis is on my local machine because I'm currently having trouble setting up crafting but will tackle that in that in a couple mins as well",
+      "time": "11:50",
+      "timestamp": "1738093820.517239",
+      "is_reply": false
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "This is the error in api-server logs when creating a UDF in build\n\n```level=ERROR time=2025-01-28 11:48:14,657 msg=\"Uncaught exception in webserver while handling request: Error=An error occurred (AccessDeniedException) when calling the ListVersionsByFunction operation: User: arn:aws:iam::083423824311:user/S3DogfoodUser is not authorized to perform: lambda:ListVersionsByFunction on resource: arn:aws:lambda:us-east-1:083423824311:function:-default-udf because no identity-based policy allows the lambda:ListVersionsByFunction action. Traceback=Traceback (most recent call last):;File \"/Users/sayan/instabase/webserver/api-server/build/py/instabase/utils/web/handler_util_v2.py\", line 409, in inner_func;return f(*args, **kwargs);File \"/Users/sayan/instabase/webserver/api-server/build/py/instabase/utils/oauth2/oauth2.py\", line 260, in wrapped_f;return f(*args, **kwargs);File \"/Users/sayan/instabase/webserver/api-server/build/py/instabase/api_server_apps/handler/api/v2/aihub_build.py\", line 5180, in post;opaque_dependency_id = udf_executor.get_latest_dependency_env(;File \"/Users/sayan/instabase/webserver/api-server/build/py/instabase/lambda_impl/udf_impl.py\", line 90, in get_latest_dependency_env;lambda_version = self._get_latest_version(;File \"/Users/sayan/instabase/webserver/api-server/build/py/instabase/lambda_impl/udf_impl.py\", line 103, in _get_latest_version;response = self._lambda_client.list_versions_by_function(;File \"/Users/sayan/Library/Caches/pypoetry/virtualenvs/api-server-smpoqbGA-py3.9/lib/python3.9/site-packages/botocore/client.py\", line 357, in _api_call;return self._make_api_call(operation_name, kwargs);File \"/Users/sayan/Library/Caches/pypoetry/virtualenvs/api-server-smpoqbGA-py3.9/lib/python3.9/site-packages/botocore/client.py\", line 676, in _make_api_call;raise error_class(parsed_response, operation_name);botocore.exceptions.ClientError: An error occurred (AccessDeniedException) when calling the ListVersionsByFunction operation: User: arn:aws:iam::083423824311:user/S3DogfoodUser is not authorized to perform: lambda:ListVersionsByFunction on resource: arn:aws:lambda:us-east-1:083423824311:function:-default-udf because no identity-based policy allows the lambda:ListVersionsByFunction action;\"  path=\"/Users/sayan/instabase/webserver/api-server/build/py/instabase/utils/web/handler_util_v2.py:413\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_3\" trace_id=\"\"```",
+      "time": "11:51",
+      "timestamp": "1738093874.846389",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Cc @ayesha.ali @jtau @pauline.comising if you have some context on this",
+      "time": "12:02",
+      "timestamp": "1738094528.217969",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "mm i'm able to save udfs to my build project using:\n```{\n    \"base\": {\n        \"aws_access_key_id\": \"...\",\n        \"aws_secret_access_key\": \"...\",\n        \"aws_session_token\": ...\",\n        \"namespace\": \"insan-use2-local-testing-instabase\",\n        \"aws_default_region\": \"us-west-1\"\n    }\n}```\nin my `env_local_overrides.json`",
+      "time": "12:15",
+      "timestamp": "1738095347.366079",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "did you compile/restart celery-app-tasks/api-server? the other services shouldn't be compiled/restarted w/ this cuz they should use the S3Dogfood dogfood credentials",
+      "time": "12:15",
+      "timestamp": "1738095356.578179",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ya we've tried this, and oddly enough when we check the `env-local` file for api-server and celery-app-tasks that show the env variables, sayan says it shows the lambda aws keys :thinking_face:",
+      "time": "13:06",
+      "timestamp": "1738098400.445689",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Sayan @pauline.comising it seems that you've already met to discuss this?\n\n@Sayan let me know if you still can't figure it out during your 1:1 with Pauline, i can also hop on a screenshare with you afterwards",
+      "time": "13:17",
+      "timestamp": "1738099077.771609",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Yep, yesterday and async today we've completed the setup steps and debugging tips I've tried in the past, but there's this disconnect between the lambda keys that show up in his `env-local` files and the one used in build thats returning this access denied error :pensive:",
+      "time": "13:25",
+      "timestamp": "1738099531.292779",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "@ayesha.ali originally was manually exporting namespace and aws_default_region but even then the issue still was there after adding that to `env-local-overrides.json` and restarting CAT / api-server.",
+      "time": "13:44",
+      "timestamp": "1738100646.742429",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "@Serena I just set up a 1:1 with you in an hr if that works for you",
+      "time": "13:44",
+      "timestamp": "1738100665.289669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi all! I think there is a larger problem here, which is that the `aws_access_key_id` env var is used by _both_ api-server for UDFs and core-platform-service for S3 bucket access.\n\nIn the long term, we need to do one of the following:\n\n1. Change UDFs to use a different env var to configure AWS that doesn't collide with the env var core-platform-service uses for S3\n2. Create a combined AWS key that has permissions to write UDFs and S3's dogfood bucket for dev work\nNot sure what team should take this up, but it seems pretty important for people who are developing with UDFs.",
+      "time": "13:46",
+      "timestamp": "1738100814.037289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@pauline.comising I think you may be the right person to look into this? But I'm unsure.",
+      "time": "13:47",
+      "timestamp": "1738100869.070429",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ya i agree with longterm solutions, though the way we’ve gotten around this in the past is using s3 for cps and all other services then lambda for cat and api-server",
+      "time": "13:48",
+      "timestamp": "1738100895.453079",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "+1, agree with the long-term solution, but it should still be possible for Sayan to get his local env working",
+      "time": "13:53",
+      "timestamp": "1738101206.021579",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "issue came down to \"aws_default_region\" being set to \"us-west-1\" vs \"us-east-1\" (the former was in the doc but it should have actually been the latter which was as the AWS UI said)",
+      "time": "15:08",
+      "timestamp": "1738105695.547349",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Thanks @Serena ++ for quickly jumping on a call with me to debug this issue",
+      "time": "15:08",
+      "timestamp": "1738105736.698279",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-01-28.json",
+    "message_count": 16,
+    "start_time": "1738093820.517239",
+    "end_time": "1738105736.698279",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "id": "ch_C06FA6A23_2022-09-21_1663774936.155579_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "kunal",
+    "shaunak",
+    "shikhar",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "shikhar",
+      "user_id": "U029CDFVCF4",
+      "message": ":wave: Hello!\nA change to introduce Control Plane base configs for Elasticsearch is ready to be merged. This is a breaking change, and would need a one-time extra step from folks updating their control plane sandboxes after the commit is merged to master.\n\nTo successfully deploy a sandbox after this change, you would need to keep:\n• `Update deployment`  unchecked\n• `Delete and recreate workloads` checked\nwhen running the sandbox deployment pipeline. Thanks!",
+      "time": "08:42",
+      "timestamp": "1663774936.155579",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@shikhar is it possible to make this non breaking?  We should avoid folks making any manual changes at it requires a lot of overhead.",
+      "time": "11:42",
+      "timestamp": "1663785739.146939",
+      "is_reply": true
+    },
+    {
+      "sender": "shikhar",
+      "user_id": "U029CDFVCF4",
+      "message": "Unfortunately the change needs to modify some immutable labels in the spec which would cause a conflict on a normal sandbox redeploy (where these options are different by default), so these options need to be checked to delete and recreate. Not sure if this could have been done differently, was holding off on this change for some time to take a less intrusive path but did not find anything. cc @sudeep @kunal",
+      "time": "11:50",
+      "timestamp": "1663786228.978629",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "Is it breaking? CP sandboxes presumably don't have ES at all today, right?",
+      "time": "12:06",
+      "timestamp": "1663787190.706099",
+      "is_reply": true
+    },
+    {
+      "sender": "shikhar",
+      "user_id": "U029CDFVCF4",
+      "message": "they use the old style deployment to deploy ES currently",
+      "time": "12:07",
+      "timestamp": "1663787222.815299",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "> @shikhar is it possible to make this non breaking?  We should avoid folks making any manual changes at it requires a lot of overhead.\nAgreed on avoiding manual changes, however this is a debt we have already been in process of paying out. It's the same change as the rest of the services that were moved over from legacy deployments to CP, where we updated the labels to not use `-dogfood` etc in app labels.\n\nAs we continue to move the last set over i think this is going to happen. The customers moving over to CP from legacy configs will also have the same breakages across all other services too where labels change.\n\n~In case of sandboxes that were deployed with CP only since beginning - i dont think those should break as they are missing ES.~ @shikhar confirmed that this was deployed using legacy style configs on CP sandboxes so would break as well.",
+      "time": "12:11",
+      "timestamp": "1663787505.054409",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "I think we also discussed having a way to delete a deployment from CP to help make this easier for other services as well. @kunal is this something we can consider doing in CP?",
+      "time": "12:12",
+      "timestamp": "1663787579.171229",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "It breaks rolling restarts so we’ve avoided deleting and re-creating resources in CP. We only do this for jobs today. The other option is to just patch on the old label to avoid the one time conflict I think.",
+      "time": "12:14",
+      "timestamp": "1663787689.093469",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Actually let me clarify i meant deleting a deployment in isolation (not all deployments) and re-deploying it selectively from CP. (given that this is a one time migration activity). One way will be to provide a delete option from the k8s dashboard in control-plane. we can chat more about this separately. We should not carry forward the broken labels through patches as well because that's debt that we have already fixed for other services and this one should follow through same path as well. it would not be a good idea to maintain a label patch for one service as well.",
+      "time": "12:19",
+      "timestamp": "1663787997.261209",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-09-21.json",
+    "message_count": 9,
+    "start_time": "1663774936.155579",
+    "end_time": "1663787997.261209",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "ch_C05L87V014J_2024-11-06_1730900360.130619_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "pauline.comising"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Hey team, I'm trying to use a specific, non ib-dev-readonly aws profile for crafting ppy (for udf lambda support), and I was wondering: other than `Environment Variables for Sandbox`, `env-local.json` and `{service-path}/deployment/local/docker-env.json` ppy-compiled services, where else are env vars (ie `AWS_ACCESS_KEY_ID`) set? I'm noticing my aws configuration on `env-local.json` is being overridden  (`AWS_ACCESS_KEY_ID` is exported twice) in `{service-path}/tmp/env-local` by the default profile aws key, but I'm not sure where it's coming from. I also don't see this key present in `Environment Variables for Sandbox`. How can I remove this default aws key override st I can manually configure the correct keys for each service?",
+      "time": "05:39",
+      "timestamp": "1730900360.130619",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@pauline.comising, if you're on crafting, the secret keys (including aws_access_key_id) are loaded from env-local-secrets.json, which is mounted in from Crafting's secrets store.\n\nI did fix an issue with the AWS key in the Crafting secrets store yesterday, so you may want to resync your sandbox to get the latest version of the env-local-secrets.json file.",
+      "time": "07:06",
+      "timestamp": "1730905610.404729",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Got it! so the order of env var exporting for `{service-path}/tmp/env-local` is env-local > env-local-secrets > env-local-overrides. Adding my lambda aws keys to env-local-overrides and recompiling + restarting celery-app-tasks resolved the original security token error! Now I'm facing a `(ResourceNotFoundException)` lambda error so moved discussion to this thread (https://instabase.slack.com/archives/C05QXFB9PUN/p1730907625531299). Thankss",
+      "time": "07:51",
+      "timestamp": "1730908304.817439",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-11-06.json",
+    "message_count": 3,
+    "start_time": "1730900360.130619",
+    "end_time": "1730908304.817439",
+    "is_thread": true
+  }
+}

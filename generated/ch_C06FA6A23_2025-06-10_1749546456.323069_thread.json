@@ -1,0 +1,199 @@
+{
+  "id": "ch_C06FA6A23_2025-06-10_1749546456.323069_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Badri",
+    "Cody Boggs",
+    "Prashant Kikani",
+    "Victor Zeng"
+  ],
+  "messages": [
+    {
+      "sender": "Badri",
+      "user_id": "U011B9QCHDM",
+      "message": "I m facing CI errors for my PR - https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-71092/24/pipeline/\nMy changes are only within IBLLM, but facing CI errors outside of IBLLM. Are these errors related to the above discussion?\nI m facing this since yesterday after code cut time. I had it all passing before that and haven't changed much on the PR after that.",
+      "time": "02:07",
+      "timestamp": "1749546456.323069",
+      "is_reply": false
+    },
+    {
+      "sender": "Badri",
+      "user_id": "U011B9QCHDM",
+      "message": "Facing a little different set of issues in my next run - https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-71092/26/pipeline",
+      "time": "02:55",
+      "timestamp": "1749549303.347139",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "I was also facing above issues for my Excel detection PR:\nhttps://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-70920/8/pipeline/",
+      "time": "03:19",
+      "timestamp": "1749550746.071619",
+      "is_reply": true
+    },
+    {
+      "sender": "Badri",
+      "user_id": "U011B9QCHDM",
+      "message": "cc - @Atinder",
+      "time": "03:20",
+      "timestamp": "1749550836.646959",
+      "is_reply": true
+    },
+    {
+      "sender": "Badri",
+      "user_id": "U011B9QCHDM",
+      "message": "Hi @Cody Boggs, any idea on this?",
+      "time": "08:11",
+      "timestamp": "1749568297.166029",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":eyes:",
+      "time": "08:12",
+      "timestamp": "1749568347.134349",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Damn, yea this is happening elsewhere too\nhttps://instabase.slack.com/archives/C035SLYCJ9X/p1749567341964849?thread_ts=1749551816.837779&cid=C035SLYCJ9X",
+      "time": "08:13",
+      "timestamp": "1749568393.082899",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Wonder if we just need a new snapshot @Victor Zeng?",
+      "time": "08:14",
+      "timestamp": "1749568448.638779",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Or if with `uv` we might perhaps just do away with that whole thing, since it can take installs from 8-12 minutes down to 4-6 seconds. :melting_face: :rocket:",
+      "time": "08:14",
+      "timestamp": "1749568483.032839",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "If uv can make the pip install issues go away, that would be great.",
+      "time": "11:50",
+      "timestamp": "1749581400.841769",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@Victor Zeng I think it's worth an experiment at some point once slow pre-merge is handled, but it'd be a bit of a wag right now (even though I'm the one who brought it up, sorry lol)\n\nDo you know if a fresh snapshot would do the trick here? Or is this a weird poetry behavior we haven't hade to account for in the past?",
+      "time": "13:35",
+      "timestamp": "1749587752.296979",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Yah. A new snapshot would probably help.",
+      "time": "13:42",
+      "timestamp": "1749588150.623969",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Okie doke\nI don't think you'll have access to do so at this point since we moved the world to core-infra, but I\"ll get one kicked off shortly",
+      "time": "13:43",
+      "timestamp": "1749588180.987959",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "TLDR; for some reason, we have the cuda version of pytroch installed.",
+      "time": "13:44",
+      "timestamp": "1749588248.688229",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "```\n[2025-06-10T13:54:29.169Z] Traceback (most recent call last):\n[2025-06-10T13:54:29.169Z]   File \"/root/.cache/bazel/_bazel_root/eecbca7b87c7c33fd2d8ffba03ee98a3/sandbox/processwrapper-sandbox/2750/execroot/__main__/bazel-out/k8-fastbuild/bin/shared-utils/py-utils/docops-lib/test/unit/py/instabase/docops_lib/docops_lib_test.runfiles/pypi_deps_torch/site-packages/torch/__init__.py\", line 318, in _load_global_deps\n[2025-06-10T13:54:29.169Z]     ctypes.CDLL(global_deps_lib_path, mode=ctypes.RTLD_GLOBAL)\n[2025-06-10T13:54:29.169Z]   File \"/root/.cache/bazel/_bazel_root/eecbca7b87c7c33fd2d8ffba03ee98a3/execroot/__main__/external/python3_9_x86_64-unknown-linux-gnu/lib/python3.9/ctypes/__init__.py\", line 374, in __init__\n[2025-06-10T13:54:29.169Z]     self._handle = _dlopen(self._name, mode)\n[2025-06-10T13:54:29.169Z] OSError: libcudart.so.12: cannot open shared object file: No such file or directory```",
+      "time": "13:44",
+      "timestamp": "1749588275.753599",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "This is interesting. From the uv documentation (https://docs.astral.sh/uv/guides/integration/pytorch/#installing-pytorch):\n> PyTorch would be installed from PyPI, which hosts CPU-only wheels for Windows and macOS, and GPU-accelerated wheels on Linux (targeting CUDA 12.4):",
+      "time": "13:59",
+      "timestamp": "1749589186.682919",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":anguished: Intereseting",
+      "time": "14:34",
+      "timestamp": "1749591249.433319",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "That's only for poetry replacement though I think? ie: `uv add` is for uv-managed project structures, we're only doing `uv pip install -r third-party/bazel/py/requirements_py39_linux.txt` in pre-merge",
+      "time": "14:34",
+      "timestamp": "1749591288.883719",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "These are py-utils, so it's the bazel requirements.",
+      "time": "14:35",
+      "timestamp": "1749591308.679809",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "@Cody Boggs I've update the bazel requirements.txt file to use the cpu version of pytorch. https://github.com/instabase/instabase/pull/71290",
+      "time": "15:12",
+      "timestamp": "1749593550.176649",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Woohoo! Thanks @Victor Zeng!!",
+      "time": "15:29",
+      "timestamp": "1749594580.564449",
+      "is_reply": true
+    },
+    {
+      "sender": "Badri",
+      "user_id": "U011B9QCHDM",
+      "message": "Thank You, CI passes for me now.",
+      "time": "22:51",
+      "timestamp": "1749621104.981279",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-06-10.json",
+    "message_count": 22,
+    "start_time": "1749546456.323069",
+    "end_time": "1749621104.981279",
+    "is_thread": true
+  }
+}

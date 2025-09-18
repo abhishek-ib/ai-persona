@@ -1,0 +1,94 @@
+{
+  "id": "ch_C06FA6A23_2025-05-06_1746553543.789589_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "jayapandian.ponraj",
+    "Heymian",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "> The way you’re supposed to do this is to have Bazel manage its own parallelism but unfortunately… we can’t do that yet because our codebase hasn’t been converted over, so we have half our stuff (all python) on non Bazel and most of our Go stuff on Bazel.\n@Heymian i have a silly question - should / can we run python and go CI tests as separate. Why is python on non bazel a blocker for what is already on Bazel? Pardon learning some ropes here :slightly_smiling_face:",
+      "time": "10:45",
+      "timestamp": "1746553543.789589",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Once we have everything on Bazel, you can just do:\n```bazel test //...```\nAnd then bazel will be able to fully own finding all the modules, determining it's own parallelism (based on how much resourcing the builder has) and running whatever is needed (and checking for cached results)",
+      "time": "10:48",
+      "timestamp": "1746553733.741909",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "right - and today if we do that - would that not run the bazel tests for whatever is on bazel currently?",
+      "time": "11:04",
+      "timestamp": "1746554671.656809",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "and also determine parallelism on it's own -- ie why is python coverage on bazel a problem",
+      "time": "11:05",
+      "timestamp": "1746554703.389739",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "it doesn't work :disappointed: because we have half migrated our python modules to bazel (the BUILD.bazel files) are there, and bazel doesn't know to ignore them.",
+      "time": "11:05",
+      "timestamp": "1746554759.654019",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "When we chatted with Sean, his proposal was to restructure the entire codebase under two top level folders: `py` and `go` to help facilitate this better.\n\nDiscussing this with Matt, he proposed moving as much code as we can under shared-utils/py-utils and shared-utils/go-utils, and strip out all the code in the services except a shell.",
+      "time": "11:07",
+      "timestamp": "1746554866.223889",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "just FYI this was my change to group at least go modules into shared Bazel commands for CI. https://github.com/instabase/instabase/pull/70259/files",
+      "time": "11:08",
+      "timestamp": "1746554913.816429",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "We need to crack this parallelism issue if we aspire to have a faster CI.\nWe have loads of CPU(16 of them) on the PR build machine which is barely used.\n\nPart-1: Test orchestration in `shared-utils/test-utils/Makefile` - ref (https://github.com/instabase/instabase/blob/master/shared-utils/test-utils/Makefile#L20-L54) needs more parallelisation. This has `-j` param set at 1 or 4 currently.\n\nPart-2: parallelise test execution within a module in both go and python. I check in python and we use unittest which is serial in nature. ref (https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/build-python.mk#L232).\nWe will need to migrate to `pytest pytest-xdist` or use `unittest-parallel` . This migration is not straightforward as I see the test failing when run in parallel. The same test when run with parallelism set to 1 succeed, so we are running into tests running into each other. PFA some suggestions from Cursor.\n\nPart-3: Variability in test run duration. The same tests when run multiple times run for varying amounts of time. Am not fully able to explain this yet.",
+      "time": "21:27",
+      "timestamp": "1746592031.998639",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "Created this one PR to add progress indicator - https://github.com/instabase/instabase/pull/70436/files",
+      "time": "23:43",
+      "timestamp": "1746600200.456859",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-05-06.json",
+    "message_count": 9,
+    "start_time": "1746553543.789589",
+    "end_time": "1746600200.456859",
+    "is_thread": true
+  }
+}

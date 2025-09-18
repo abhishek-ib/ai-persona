@@ -1,0 +1,93 @@
+{
+  "id": "ch_C06FA6A23_2019-12-10_1575965602.211200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Has anyone else had problems `make build-thrift`. I’m seeing these errors. I’m in a python 3.7 venv. Not sure if it has anything to do with that Python.framework/Versions/3.6/… bit, but I’m not sure how to change that:\n```Traceback (most recent call last):\n  File \"/Users/heymian/src/instabase/shared-utils/py-utils/typing-utils/../../../shared-utils/py-utils/typing-utils/src/py/scripts/gen_thrift.py\", line 760, in <module>\n    main()\n  File \"/Users/heymian/src/instabase/shared-utils/py-utils/typing-utils/../../../shared-utils/py-utils/typing-utils/src/py/scripts/gen_thrift.py\", line 747, in main\n    _create_thrift_mypy_stub(args)\n  File \"/Users/heymian/src/instabase/shared-utils/py-utils/typing-utils/../../../shared-utils/py-utils/typing-utils/src/py/scripts/gen_thrift.py\", line 610, in _create_thrift_mypy_stub\n    python_binary_path, use_py3)\n  File \"/Users/heymian/src/instabase/shared-utils/py-utils/typing-utils/../../../shared-utils/py-utils/typing-utils/src/py/scripts/gen_thrift.py\", line 597, in _run_stubgen\n    raise IOError(u'Error when running stubgen {}'.format(err))\nOSError: Error when running stubgen b'Traceback (most recent call last):\\n  File \"/Library/Frameworks/Python.framework/Versions/3.6/bin/stubgen\", line 7, in <module>\\n    from mypy.stubgen import main\\n  File \"mypy/stubgen.py\", line 59, in <module>\\n  File \"mypy/build.py\", line 35, in <module>\\n  File \"mypy/nodes.py\", line 9, in <module>\\nAttributeError: module \\'mypy_extensions\\' has no attribute \\'trait\\'\\n'```",
+      "time": "00:13",
+      "timestamp": "1575965602.211200",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "I believe mypy comes with stubgen installed already",
+      "time": "00:39",
+      "timestamp": "1575967181.211500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i think the problem is that your “stubgen” refers to a stubgen installed in Python3.6 which probably no longer exists, and you’re using Python 3.7",
+      "time": "00:40",
+      "timestamp": "1575967207.211700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "when i do “which stubgen” i get:\n\n/Users/davidlluncor/GitHub/venv-instabase37/bin/stubgen",
+      "time": "00:41",
+      "timestamp": "1575967278.211900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "if your stubgen points to something else, I think you need to reinstall your mypy, and make sure that “python” refers to Python 3.7 in your virtualenv",
+      "time": "00:41",
+      "timestamp": "1575967310.212100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "try:\n\npip install -U mypy==0.701",
+      "time": "00:42",
+      "timestamp": "1575967378.212300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "from your Python 3 virtualenv, then hopefully your stubgen is pointing to a location inside your Python3.7 venv",
+      "time": "00:43",
+      "timestamp": "1575967404.212500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "ah if i do `which stubgen` i get:\n`/Library/Frameworks/Python.framework/Versions/3.6/bin/stubgen`",
+      "time": "00:46",
+      "timestamp": "1575967606.212700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "`sudo rm -rf /Library/Frameworks/Python.framework/Versions/*` worked for me!",
+      "time": "00:52",
+      "timestamp": "1575967946.212900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-12-10.json",
+    "message_count": 9,
+    "start_time": "1575965602.211200",
+    "end_time": "1575967946.212900",
+    "is_thread": true
+  }
+}

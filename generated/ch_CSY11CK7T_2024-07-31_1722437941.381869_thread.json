@@ -1,0 +1,207 @@
+{
+  "id": "ch_CSY11CK7T_2024-07-31_1722437941.381869_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "danny.lan",
+    "Jessica",
+    "Arjun",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "@danny.lan seeing `aihub-extraction` fail consistently because the Federal Exemptions field is expecting `Federal Exemptions: 20` but the reasoning field is consistently returning `The federal exemptions listed in the document are 20.`  Tagging you since you made this change recently. I think I’m going to skip this on CI for now.\n\nAlso seeing `aihub-quick-clean-refinement`  and `aihub-refinement` timing out because extraction is taking too long so will increase the timeout.\n\n`aihub-split-classification` is consistently failing because the backend is not returning the correct page information. This seems to be somehow related to the fact that we aren’t able to load the file because i’m seeing that the doc widget isn’t loading the thumbnail either. Not sure if the above three failures are related to this as well",
+      "time": "07:59",
+      "timestamp": "1722437941.381869",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Will these be quick fixes, or can you put up a quick PR to skip them in CI?",
+      "time": "09:22",
+      "timestamp": "1722442976.862339",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "the PR to fix/skip them was just merged!",
+      "time": "09:23",
+      "timestamp": "1722442994.958879",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "https://github.com/instabase/instabase/pull/60621",
+      "time": "09:23",
+      "timestamp": "1722443000.841709",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Oh nice, thanks!",
+      "time": "09:24",
+      "timestamp": "1722443055.736719",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "@Serena we’ve recently updated `aihub-extraction` and `aihub-refinement` to not mock the calls right? so it could be something in the model changed to change the result",
+      "time": "09:27",
+      "timestamp": "1722443264.997809",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I have little context but i’m not surprised that a reasoning field returned an entire sentence, as opposed to what it’s currently expecting of `Federal Exemptions: 20`",
+      "time": "09:28",
+      "timestamp": "1722443309.380629",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I think reasoning prompts might be the most vulnerable to variability in the model response, so it might be tricky to test this idk",
+      "time": "09:28",
+      "timestamp": "1722443327.239469",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for the `Federal Exemptions` field in AI Hub, i think we can just make the check more lenient, ex: `contains(/federal exemptions.*20/i)`",
+      "time": "09:52",
+      "timestamp": "1722444765.105649",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think aihub-split-classification is failing becuase the `Enable split classification?` modal isn’t appearing, so this seems to be an actual bug",
+      "time": "09:53",
+      "timestamp": "1722444813.138529",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "i thought so @Serena and spent some time looking into it. The reason the modal isn’t appearing is because the backend is returning `page_start: -1`  and `page_end: -1` (which really means that the backend wasn’t able to get any page info about the doc). We need this page info on the frontend to determine whether or not to show the modal.",
+      "time": "09:54",
+      "timestamp": "1722444879.482629",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "however on aihub-sandbox and master, the page data is being returned",
+      "time": "09:54",
+      "timestamp": "1722444890.308609",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm then that’s a bug in the digitization backend that we’ll need to fix",
+      "time": "09:55",
+      "timestamp": "1722444952.877519",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> however on aihub-sandbox and master, the page data is being returned\nyou observed this on your crafting dev sandbox and on aihub-sandbox already?",
+      "time": "09:56",
+      "timestamp": "1722444973.470009",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I don’t think it’s a bug i think it’s an issue with the crafting-cyp sandbox/cluster",
+      "time": "09:56",
+      "timestamp": "1722444989.510879",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "okay wait I had tested on aihub-sandbox but not tested on my crafting dev box — I do actually see the same bug  :lolcry:",
+      "time": "09:58",
+      "timestamp": "1722445103.558909",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "so I think you’re right",
+      "time": "09:58",
+      "timestamp": "1722445109.048409",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "it’s annoying that aihub-sandbox cypress hasn’t been running so we could better diagnose when this started happening",
+      "time": "09:59",
+      "timestamp": "1722445184.162299",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "presumably the most recent change here is Daniel’s email attachment PR, and that wasn’t able to test cypress properly so it’s possible it’s that :question:",
+      "time": "10:00",
+      "timestamp": "1722445214.155819",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yeah agreed (for context for others, arjun already started the process of fixing the aihub-sandbox pipeline in a separate thread (https://instabase.slack.com/archives/C029ZG026GZ/p1722435537583999?thread_ts=1721849223.137179&cid=C029ZG026GZ))",
+      "time": "10:02",
+      "timestamp": "1722445349.296559",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "ah okay, I’m able to repro on aihub-sandbox too rn, I think I tested before a successful re-deploy which is why I saw this  work before. But yeah, split-classification failure is definitely a bug",
+      "time": "10:02",
+      "timestamp": "1722445367.418169",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "daniel is OOO today and tomorrow though, so i won’t tag him :disappointed:",
+      "time": "10:03",
+      "timestamp": "1722445419.144079",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "ya, I’m going to start a thread in <#C05EQQJGN7L|>",
+      "time": "10:04",
+      "timestamp": "1722445451.210849",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-07-31.json",
+    "message_count": 23,
+    "start_time": "1722437941.381869",
+    "end_time": "1722445451.210849",
+    "is_thread": true
+  }
+}

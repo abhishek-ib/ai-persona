@@ -1,0 +1,102 @@
+{
+  "id": "ch_C06FA6A23_2025-05-01_1746116774.421599_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "William Helmrath",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Alright, I don’t think my go fix worked. :cry: I think I just got lucky and didn’t end up with a negative serial number in the cert the few times I tested it.\n\n@William Helmrath did you end up finding any better solution when you were looking at this?",
+      "time": "09:26",
+      "timestamp": "1746116774.421599",
+      "is_reply": false
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "I paused my investigation when you merged your PR but I’ll keep looking into it - my two guesses are:\n1. We can pass in `GODEBUG=x509negativeserial=1` as an CLI arg to the db tests\n2. Figuring out where the negative serial numbers coming from (i don’t think it’s hard-coded bc these tests are flaky) and update them so they’re always positive",
+      "time": "09:48",
+      "timestamp": "1746118137.102049",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yeah sorry, I thought I had it, but definitely just got lucky. It's cropping up randomly still. :disappointed:",
+      "time": "10:04",
+      "timestamp": "1746119050.664749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think I have a fix though!",
+      "time": "10:17",
+      "timestamp": "1746119833.231529",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The fix is: Turn off TLS when testing sqlserver :slightly_smiling_face: seems to have worked!",
+      "time": "10:17",
+      "timestamp": "1746119850.236519",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This line: https://github.com/instabase/instabase/pull/69691/files#diff-8126a07138e8459a5b2cac32bc33ddfb4201a9c5838b6e9da6951a7b9a407498L82",
+      "time": "10:19",
+      "timestamp": "1746119950.037719",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Interesting - I thought I was seeing the errors crop up for postgres specifically but maybe I was misreading the logs",
+      "time": "10:21",
+      "timestamp": "1746120060.023419",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "A big challenge with this bug is not being able to re-create the CI environment. I don’t know how to reproduce these errors in Crafting",
+      "time": "10:22",
+      "timestamp": "1746120145.624039",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "So, it was intermittent even in CI. The issue is that the sqlserver docker container we're using _sometimes_ starts up with a cert that has a negative number in it.",
+      "time": "11:05",
+      "timestamp": "1746122703.124249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Reproducing it involved running `ib start sqlserver` (run some tests) `ib stop sqlserver` in a loop until it happened again...this is an odd one though.",
+      "time": "11:05",
+      "timestamp": "1746122730.135589",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-05-01.json",
+    "message_count": 10,
+    "start_time": "1746116774.421599",
+    "end_time": "1746122730.135589",
+    "is_thread": true
+  }
+}

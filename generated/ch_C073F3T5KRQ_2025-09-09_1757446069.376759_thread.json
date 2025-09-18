@@ -1,0 +1,69 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-09-09_1757446069.376759_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "demetr.starshov"
+  ],
+  "messages": [
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "Hi there,\n\nWanted to check where we are in context of 403 vs 404 errors\nOr, more specifically, if a person tries to do something they shouldn't have doing (e.g. read a review they are not assigned to), should we return the true error (403 - no access) or mask it as (404 - not found) to prevent resource IDs leaking?",
+      "time": "12:27",
+      "timestamp": "1757446069.376759",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "My 2 cents: if they are authenticated but just have no access then we should return a 403. If they’re not authenticated at all, then a 401.\n\nBut we should always return a 401 before checking if the resource exists. Otherwise IDs can leak as you say.",
+      "time": "13:43",
+      "timestamp": "1757450589.111869",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Although I suppose the answer slightly different for multitenant…",
+      "time": "13:43",
+      "timestamp": "1757450634.670349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In that case we don’t want information to leak across orgs",
+      "time": "13:44",
+      "timestamp": "1757450670.545439",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Including info about the presence or absence of a resource",
+      "time": "13:44",
+      "timestamp": "1757450681.393749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "So I guess if the resource is in a different tenant (org), we should return 404.",
+      "time": "13:45",
+      "timestamp": "1757450751.109429",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-09-09.json",
+    "message_count": 6,
+    "start_time": "1757446069.376759",
+    "end_time": "1757450751.109429",
+    "is_thread": true
+  }
+}

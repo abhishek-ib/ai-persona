@@ -1,0 +1,110 @@
+{
+  "id": "ch_C0976HB6ZPT_2025-09-10_1757517381.192349_thread",
+  "type": "channel",
+  "channel_name": "proj-agent-mode",
+  "conversation_type": "thread",
+  "participants": [
+    "Serena",
+    "Anil",
+    "Abhishek Adupa"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Who is the expert on validations? cc @Serena\nWe added OCR confidence but the example from @BG is still failing. Need help figuring out how the validations work.",
+      "time": "08:16",
+      "timestamp": "1757517381.192349",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "cc @Abhishek Adupa",
+      "time": "08:16",
+      "timestamp": "1757517387.059769",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "We can pull in @Sayan\n\nI’m not sure if he’s looked at project-level confidence scores before though\n\nI assume that is the issue here?",
+      "time": "08:18",
+      "timestamp": "1757517500.926779",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "The issue is that even though we set the ocr_confidence value to 1.0, the validations don’t pass.\nIn the legacy run, the ocr_confidence value is set to null and those validations do pass. So I’m assuming we’re setting the confidence value in the wrong place in ibmsg.",
+      "time": "08:23",
+      "timestamp": "1757517789.435189",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Can you get on a call with Sayan post this all hands and figure this out asap",
+      "time": "08:24",
+      "timestamp": "1757517881.760879",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "I think that we calculate the ocr confidence based on the ocr confidence of each provenance word on the ibdoc\n\nI’ll link the relevant py-utils code when I get to the office",
+      "time": "08:24",
+      "timestamp": "1757517887.264589",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Here Sayan modified the py-utils function I’m talking about https://instabase.slack.com/archives/C08L4K42H9C/p1746048470795849?thread_ts=1745973976.911119&channel=C08L4K42H9C&message_ts=1746048470.795849 (https://instabase.slack.com/archives/C08L4K42H9C/p1746048470795849?thread_ts=1745973976.911119&channel=C08L4K42H9C&message_ts=1746048470.795849)",
+      "time": "08:26",
+      "timestamp": "1757517973.072239",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Reached out to Sayan, we’ll meet at office and figure it out",
+      "time": "08:44",
+      "timestamp": "1757519063.891829",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "@Sayan, @Anil - can you lmk if this fix is acceptable? - https://github.com/instabase/instabase/pull/74510\n\nI figured out the issue, the ocr confidence is calculated from the `__modelresult` column part of ibmsg instead of field, I added an if-check to use `ocr_confidence`  if it exists in the field, for legacy runs, that is always set to null",
+      "time": "10:27",
+      "timestamp": "1757525242.481679",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this looks right to me!",
+      "time": "10:28",
+      "timestamp": "1757525312.377139",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i understand if we don't want to do this rn, but we really should add a unit test for this soon for this new logic",
+      "time": "10:29",
+      "timestamp": "1757525347.748439",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0976HB6ZPT",
+    "channel_name": "proj-agent-mode",
+    "date_file": "2025-09-10.json",
+    "message_count": 11,
+    "start_time": "1757517381.192349",
+    "end_time": "1757525347.748439",
+    "is_thread": true
+  }
+}

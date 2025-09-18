@@ -1,0 +1,136 @@
+{
+  "id": "ch_C06FA6A23_2025-05-29_1748532522.254779_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "alex.zhou",
+    "Sayan",
+    "jayapandian.ponraj",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":star: :star: :star:\n\nHi all -- I am merging https://github.com/instabase/instabase/pull/70779 as part of a larger change to support the KG schema. This PR renames `INSTABASE_BACKEND_DB_PARAMS`, which we all know and love, to `DB_PARAMS`.\n\nThis is a large change, so despite my testing I anticipate some blips. If there are major problems, this PR can be reverted without me present. I will monitor `aihub-sandbox` over the next few days to make sure that the change applies cleanly via our config management process. cc @Kerr Yoo",
+      "time": "08:28",
+      "timestamp": "1748532522.254779",
+      "is_reply": false
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "What is the forcing function to change the ENV VAR name ?\n\nIts quiet embedded in a lot of folks' memory so wondering if there is a strong reason to change it.",
+      "time": "08:33",
+      "timestamp": "1748532807.449459",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "We now have the need for two of these, one for the platform database and one for the knowledge graph database. So keeping the original name as is would be confusing.",
+      "time": "08:35",
+      "timestamp": "1748532924.293049",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "so we have `DB_PARAMS` and `DB_PARAMS_KG` which we expect to have in future ?",
+      "time": "08:37",
+      "timestamp": "1748533020.701599",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "To clarify: I do welcome this change. Variable naming is hard anyway.\nJust calling out that we are changing a familiar variable which has been in use for a fair amount of time.",
+      "time": "08:56",
+      "timestamp": "1748534170.152049",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yup, the second one is already in.",
+      "time": "09:03",
+      "timestamp": "1748534633.575369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "KG_DB_PARAMS actually",
+      "time": "09:42",
+      "timestamp": "1748536937.822349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "There are also a bunch of other environment variables that control database options. All of those are already begin with DB_ fortunately!",
+      "time": "09:42",
+      "timestamp": "1748536966.086409",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "@mfichman could you look at these logs (https://instabase.sandboxes.site/logviewx/instabase/sayanbhattacharjee/dev/daemon/weaviate%40instabase) on my crafting sandbox (https://instabase.sandboxes.site/sandboxes/sayanbhattacharjee)? i'm having some issues starting up services like weaviate due to an empty dbparam string\nThis is the error i'm seeing\n```2025/05/29 20:27:19 INFO utils/stats/stats_constants.go:2022 -- Intialising the stats\n2025/05/29 20:27:19 INFO utils/profiler/profiler.go:104 -- Starting profiler with configs {{false false} false  http://pyroscope:4040 false 6060}\n2025/05/29 20:27:19 WARNING utils/profiler/profiler.go:130 -- No profiler configured to run\n2025/05/29 20:27:19 INFO utils/profiler/profiler.go:132 -- Finished starting profiler with configs {{false false} false  http://pyroscope:4040 false 6060}\n2025/05/29 20:27:19 INFO utils/hotconfig/hot_config.go:250 -- Config is nil, waiting for first checkForUpdates to run\n2025/05/29 20:27:19 INFO utils/profiler/profiler.go:65 -- Starting config refresh\n2025/05/29 20:27:19 INFO utils/profiler/profiler.go:70 -- Finished config refresh\n2025/05/29 20:27:19 ERROR utils/db/session/dbsession.go:212 -- SQL DB: Failed to parse DB params: Empty DBParam string\n2025/05/29 20:27:19 ERROR weaviate/main.go:43 -- Failed to create DBSession for HA lease backend.\n2025/05/29 20:27:19 FATAL weaviate/main.go:80 -- failed to get initlaize the db accessor: Empty DBParam string```",
+      "time": "13:33",
+      "timestamp": "1748550789.535289",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Revert PR: https://github.com/instabase/instabase/pull/71028\n\nI was able to start the CS correctly after restarting",
+      "time": "13:49",
+      "timestamp": "1748551774.168069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think you just need to re-sync your sandbox in this case.",
+      "time": "14:48",
+      "timestamp": "1748555328.913869",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Let me try resyncing",
+      "time": "14:51",
+      "timestamp": "1748555476.074979",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Do I need to force update base?",
+      "time": "15:34",
+      "timestamp": "1748558047.226539",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.zhou",
+      "user_id": "U083DU4JNJW",
+      "message": "Getting `SQL DB: Failed to parse DB params` across a few different services.\nTried `make -C shared-utils/go-utils/src/instabase*/utils/db* dev-dbinit` doesn't seem to help.\nResync on crafting UI also didn't seem to help",
+      "time": "16:25",
+      "timestamp": "1748561110.985289",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-05-29.json",
+    "message_count": 14,
+    "start_time": "1748532522.254779",
+    "end_time": "1748561110.985289",
+    "is_thread": true
+  }
+}

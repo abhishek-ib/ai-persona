@@ -1,0 +1,270 @@
+{
+  "id": "ch_C06FA6A23_2019-06-26_1561563557.477200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "dlluncor",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "why do we mypy our test files?",
+      "time": "08:39",
+      "timestamp": "1561563557.477200",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "They can have syntax or type errors too! I find that having mypy for everything reduces the impact of surprise runtime bugs, for code and for test code alike",
+      "time": "10:02",
+      "timestamp": "1561568553.477500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "If test code weren't mypy-ed, then the next person who comes in might have to deal with test code that doesn't execute across PY2 or PY3 because or surprise issues like bytes vs str.",
+      "time": "10:03",
+      "timestamp": "1561568624.477700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Also types just add to overall readability as well",
+      "time": "10:04",
+      "timestamp": "1561568644.477900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hmm i see. I run into a lot of issues with mocking and mypy. we don't tend to reuse much of the test code, so to me it doesn't worth it. for py2/py3 compatibility, we could just run all tests in both to pick up any issues there",
+      "time": "10:30",
+      "timestamp": "1561570227.478100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "as in ^ we are not sharing tests across different modules, where it might be useful to type-enforce the interfaces",
+      "time": "10:30",
+      "timestamp": "1561570256.478300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "typically, unit tests are just one-off",
+      "time": "10:31",
+      "timestamp": "1561570266.478500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Hm. I expect them to be of the similar quality of production code ideally. Is there something about typing that is slowing you down in particular?",
+      "time": "10:49",
+      "timestamp": "1561571395.478700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yea, that it doesn't work well with mocking. it complains about the type of mocked functions",
+      "time": "12:09",
+      "timestamp": "1561576167.478900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "you have to add #type: ignore around mocked objects",
+      "time": "12:09",
+      "timestamp": "1561576187.479100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "why do one-off unit tests need to be of similar quality as production code?",
+      "time": "12:10",
+      "timestamp": "1561576204.479300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "gotcha — happy to help with the type: ignore challenges if you have an example — think it just requires fixing the way we do our typing stubs with the mock library",
+      "time": "12:16",
+      "timestamp": "1561576568.479500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Perhaps @shaunak might have thoughts on typing in tests as well as well as unit-test quality. In my ideal world, I liked what I saw at Google where unit-tests were scrutinized and expected to be of high quality (in terms of readability, the way they were written, covering varying test cases).\n\nI personally tend to look at unit-tests often to understand how code works, and having types rapidly speeds up my understanding of what’s going on to have those annotations",
+      "time": "12:18",
+      "timestamp": "1561576709.479700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I’m not sure how things will work if we disable mypy for tests.\n\nFor instance, if we have arguments that get added into the function, then the tests won’t break because there is no mypy for tests.\n\nI do agree with with David about unit-test being of high quality since I actually look at the unit-tests sometimes to figure out how the usage is done.",
+      "time": "12:42",
+      "timestamp": "1561578135.479900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "here's a concrete example, typically the only thing that is typed in test files is the func signature",
+      "time": "12:55",
+      "timestamp": "1561578944.480100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "",
+      "time": "12:56",
+      "timestamp": "1561578976.480300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "This doesn't add any value from a readability or code quality standpoint, but does require us to make the types work with mocking",
+      "time": "12:56",
+      "timestamp": "1561578997.480700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "and it requires us to implement types manually for third-party libs like mock",
+      "time": "12:57",
+      "timestamp": "1561579032.480900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "if you take a look at this PR, https://github.com/instabase/instabase/pull/10265/files, i had to make changes to mock/__init__.pyi as well as add a #type: ignore for patcher.start()",
+      "time": "12:57",
+      "timestamp": "1561579074.481100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I agree that tests should be clean and readable, but not sure how much value type checking adds.",
+      "time": "12:58",
+      "timestamp": "1561579093.481300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "for your example of args get added to a func, if tests don't break when args change, was there value to the tests in the first place? what are they testing for? if they are just testing that you can call the function with the right signature, presumably we do that else where in the code base. otherwise, why would the function be created if it's not used anywhere?",
+      "time": "12:59",
+      "timestamp": "1561579169.481500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "The mocks don’t help at all with the types :disappointed:.  I have types ignore everywhere for them.\n\nHowever, from a development purposes, I would like us to catch a type error during the `build` / `compile` phase of development rather than having to debug a test.\n\nI would just vote to use compiled languages as a compromise :stuck_out_tongue:",
+      "time": "13:36",
+      "timestamp": "1561581396.481700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "looks like mocker.start() needs some type annotations and then we can get rid of all those type: ignore — I personally try not to use mocks in my tests (personal dislike towards mocks based on my history with them at Google) — but maintaining mypy types in our tests is a code quality standard which would be great to maintain\n\nWith respect to having to add type: ignore everywhere, that’s a symptom of not having the mypy stubs setup in the right place in my opinion — can help with adding those type stubs if you want to point me to all the places where we currently use type: ignore — i can add the mypy stubs for those mock locations",
+      "time": "14:10",
+      "timestamp": "1561583407.481900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "w.r.t. to compiled languages — if you can give me an estimate on the cost of moving our codebase to the compiled languages, then we can see if it’s a feasible approach — i’m a big fan of types as well — however the lack of libraries in different languages gives me the heebie-jeebies for different types of problems",
+      "time": "14:11",
+      "timestamp": "1561583485.482100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Another middle ground I’m realizing is that we can turn off typing for “unittest” and “mock” modules — i agree I don’t see a ton of value in making sure that those specific modules are typed — seems to be causing more headaches than creating value",
+      "time": "14:21",
+      "timestamp": "1561584066.482300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "OK — there’s a path forward here :slightly_smiling_face: — i’m going to change the strictness of our mypy for unit test and regresssion tests; there are some mypy issues we want to catch, but for a lot of those issues you are seeing like with mock and unittest, i dont think those are particularly useful — so going to shut those off",
+      "time": "14:34",
+      "timestamp": "1561584851.482500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I’m confused — we are trading the developmental cost here for figuring out compilation failures v/s debugging the test failures?",
+      "time": "14:35",
+      "timestamp": "1561584940.482700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "not sure what you mean exactly here?",
+      "time": "14:36",
+      "timestamp": "1561584966.482900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Here’s the start of the PR — https://github.com/instabase/instabase/pull/10271/files\nGoing to see what other flags we might want to make slightly more relaxed for testing purposes — the disallow_untyped_decorators=True was causing probably many people lots of problems — so setting that one to False",
+      "time": "14:48",
+      "timestamp": "1561585717.483100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "but for production — we want to make sure we have as strong of types as possible across our code — so i think that’s an important restriction to have for our decorators we use in source code",
+      "time": "14:49",
+      "timestamp": "1561585756.483300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "synced with Shaunak in person — he’s OK with relaxing some mypy flags  for test files only",
+      "time": "15:09",
+      "timestamp": "1561586979.483600",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-06-26.json",
+    "message_count": 31,
+    "start_time": "1561563557.477200",
+    "end_time": "1561586979.483600",
+    "is_thread": true
+  }
+}

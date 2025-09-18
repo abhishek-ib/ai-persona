@@ -1,0 +1,61 @@
+{
+  "id": "ch_C06FA6A23_2022-07-08_1657285302.215319_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "arjoonn"
+  ],
+  "messages": [
+    {
+      "sender": "arjoonn",
+      "user_id": "U02DC5LT8JV",
+      "message": "Does anyone have experience working with axios in node.js?\n\n• I'm trying to send binary data to our filesystem via the write file api.\n• When I read the file back I'm getting something different :sob: .\n• This same example is working in python for me. I'm not sure what I'm doing wrong so any help would be great!\nI'll post the code snippet in the thread.",
+      "time": "06:01",
+      "timestamp": "1657285302.215319",
+      "is_reply": false
+    },
+    {
+      "sender": "arjoonn",
+      "user_id": "U02DC5LT8JV",
+      "message": "```\nasync function writeFile_fn(path, data, options) {\n  //const content = Buffer.isBuffer(data) ? data.toString(\"base64\") : data;\n  //const encoding = Buffer.isBuffer(data) ? \"base64\" : \"utf-8\";\n\n  const url = getUrl(path);\n  const apiArgs = {\n    type: \"file\",\n    cursor: 0,\n    if_exists: \"overwrite\",\n    mime_type: \"application/octet-stream\",\n  };\n  const res = await axios.post (http://axios.post)(url, data, {\n    headers: {\n      \"Instabase-API-Args\": JSON.stringify(apiArgs),\n      \"Content-Type\": \"application/octet-stream\",\n    },\n  });\n  assertApiOk(res);\n  console.log(\"----> writefile\");\n  console.log(res.headers);\n  console.log(res.data);\n  console.log(\"----\");\n  const readback = await readFile_fn(path, options || {});\n  if (readback !== data && data !== readback.toString(\"utf-8\")) {\n    console.log(\"----------------------------------------------\");\n    console.log(data);\n    console.log(\"----------------------------------------------\");\n    console.log(readback);\n    console.log(readback);\n    console.log(\"==============================================\");\n    throw Error();\n  }\n}\n\nasync function readFile_fn(path, options) {\n  let response = await axios.get(getUrl(path), {\n    transformResponse: [\n      function (data, headers) {\n        return data;\n      },\n    ],\n    headers: {\n      \"Instabase-API-Args\": JSON.stringify({\n        type: \"file\",\n        get_content: true,\n      }),\n    },\n  });\n  assertApiOk(response, false);\n  const apiResp = JSON.parse(response.headers[\"instabase-api-resp\"]);\n  console.log(\"----> readfile\");\n  console.log(response.headers);\n  console.log(apiResp);\n  console.log(\"----\");\n  if (apiResp.status !== \"OK\") {\n    throw new ENOENT(path);\n  }\n  if (options !== undefined && options.encoding !== undefined) {\n    return response.data;\n  }\n  return Buffer.from(response.data, \"utf-8\");\n}```",
+      "time": "06:02",
+      "timestamp": "1657285321.005379",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "@arjoonn so we use native fetch to make most of our file system requests from the frontend. I assume fetch is available in node.js as well. You can probably get similar behavior through axios\n```\nfunction write(\n  dataType: string,\n  content: string | ArrayBuffer | { [key: string]: any },\n  completePath: string\n) {\n  const contentType = {\n    text: 'application/text',\n    base64: 'application/text',\n    json: 'application/json',\n  }[dataType];\n  // eslint-disable-next-line camelcase\n  const apiArgs = { type: 'file', if_exists: 'overwrite' };\n  let data = content;\n  if (dataType === 'base64') {\n    // convert array buffer to base64. otherwise, assume `content` is already in base64\n    if (content instanceof ArrayBuffer) {\n      data = arrayBufferToBase64(content);\n    }\n    // $FlowFixMe\n    (apiArgs as any).content_encoding = dataType; // eslint-disable-line camelcase\n  }\n  return AjaxAsync.once({\n    settings: {\n      url: buildUrl(completePath),\n      headers: {\n        'Content-Type': contentType,\n        ...ibHeader(apiArgs),\n      },\n      type: 'POST',\n      data,\n      dataType,\n    },\n    nameForDebug: 'Write',\n  });\n}\n\nasync function once({settings, nameForDebug}) {\n  const { type = 'GET', data, dataType = 'json' } = settings;\n  let { url } = settings;\n  let { headers } = settings;\n  let finalizedData = data;\n  const configs = { method: type };\n  if (dataType === 'json') {\n    headers = { ...headers, 'Content-Type': 'application/json;charset=UTF-8' };\n    finalizedData = JSON.stringify(data);\n  }\n  if (type === 'GET' && data) {\n    \n    url = `${url}?${queryString.stringify(data)}`;\n  } else {\n\n    (configs as any).body = finalizedData;\n  }\n\n  (configs as any).headers = headers;\n  let response;\n  if (\n    settings.tracingEnabled === true &&\n    (window as any).context.tracer_type === 'JAEGER'\n  ) {\n    response = await fetchTrace(url, configs);\n  } else {\n    response = await fetch(url, configs);\n  }\nreturn response\n}```",
+      "time": "07:31",
+      "timestamp": "1657290715.171299",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "I can sync with you directly if you need more help",
+      "time": "07:32",
+      "timestamp": "1657290742.451739",
+      "is_reply": true
+    },
+    {
+      "sender": "arjoonn",
+      "user_id": "U02DC5LT8JV",
+      "message": "I'll try this out. :+1:\nThanks :smile:",
+      "time": "08:51",
+      "timestamp": "1657295464.301029",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-07-08.json",
+    "message_count": 5,
+    "start_time": "1657285302.215319",
+    "end_time": "1657295464.301029",
+    "is_thread": true
+  }
+}

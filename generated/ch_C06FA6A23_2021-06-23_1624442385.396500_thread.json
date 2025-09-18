@@ -1,0 +1,119 @@
+{
+  "id": "ch_C06FA6A23_2021-06-23_1624442385.396500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "Kerry",
+    "Lee",
+    "Aimé"
+  ],
+  "messages": [
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Hi all, few queries and comments:\n\n• What files on IB currently should not be moved, as they link back to a DB. `batch.ibflowresults` the `S1, S2, S3, S4` fodler… anything else?\n• Is there a way that we can highlight in the UI - either by changing colour… or by just preventing anyone from moving them? NatWest have just “tidied” their filesystem and now nothing will open… because all the file paths are wrong. \n• This shouldn’t be allowed to happen really - most users are going to assume the IB filesystem works like any other filesystem. It’s a very easy mistake to make - and potentially NatWest have now lost a bunch of goldens.\nCC @Lee @vineeth @Kerry @Jessica",
+      "time": "02:59",
+      "timestamp": "1624442385.396500",
+      "is_reply": false
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "This confuses quite a lot of people that some of the files can’t be moved. I remember a discussion about this previously where the data currently in the DB was planned to me moved to the filesystem. Is this still planned?",
+      "time": "03:03",
+      "timestamp": "1624442596.396600",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Nothing in the output folder should be moved, and the output folder itself shouldn’t be moved too. The DB keeps tracks of flow run status, and if a flow is paused (like a flow stops at a checkpoint), when resuming the flow the DB needs to know where the latest output data are and resume from there. To solve this problem fundamentally we will want flow runs to be in a location that is read-only for the user and only editable through flow apps. It’s not really related to if data are in the DB or in the FS or both.",
+      "time": "06:30",
+      "timestamp": "1624455059.399600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Is there any quick fix we can do - like change the colour of the output folders so that user know not to move them?",
+      "time": "06:37",
+      "timestamp": "1624455422.399800",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Once the flow has completed does it still need to have a link to the DB at that point? I can understand more during a flow run that it needs to store state somewhere, but once it’s complete people assume the batch.ibflowresults file is a portable record of the extraction results, as thats how is appears in the UI.",
+      "time": "06:40",
+      "timestamp": "1624455632.400000",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Agree with Aime about a way to highlight or block those files from being moved.",
+      "time": "06:40",
+      "timestamp": "1624455656.400200",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "so the data in the DB are what populate the flow dashboard. if you want people to click on review in the flow dashboard to go to the result of a flow, you can’t move the output.",
+      "time": "07:05",
+      "timestamp": "1624457126.400400",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Adding some warning when people try to move / delete things that are part of the flow output is doable. May I know what do customers want to do when they move / remove flow output data?",
+      "time": "07:06",
+      "timestamp": "1624457195.400600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "They were just trying to tidy the folders.",
+      "time": "07:14",
+      "timestamp": "1624457653.400800",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Ok, I can work with @Jessica to see if we can add any warnings in the file system UI when people try to move / delete flow output data",
+      "time": "07:50",
+      "timestamp": "1624459843.402900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Thank you both!",
+      "time": "08:01",
+      "timestamp": "1624460461.403100",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "In the long term, we’re thinking about encapsulating what shouldn’t be moved in a single unit or completely hiding these intermediate outputs from the user in the file system.",
+      "time": "09:03",
+      "timestamp": "1624464220.404500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-06-23.json",
+    "message_count": 12,
+    "start_time": "1624442385.396500",
+    "end_time": "1624464220.404500",
+    "is_thread": true
+  }
+}

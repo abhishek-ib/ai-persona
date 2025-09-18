@@ -1,0 +1,180 @@
+{
+  "id": "ch_C0516UPPMT3_2024-11-22_1732268942.109199_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Vishnu",
+    "Aditi",
+    "hannah",
+    "jordy.vlan",
+    "louisa.gould",
+    "alex.morris",
+    "Hamish",
+    "Kaustubh (KD)",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Hey team, I thought this was really awesome so wanted to share! Project here (https://aihub-uat.internal.instabase.com/build/01934f91-954a-743b-80ba-40517710a111).\n\nYesterday Barclays shared a sample doc for a use case called 'Ultimate Beneficial Ownership' (UBO) with us. This is a very complex problem that no vendor has been able to automate to date. However, due to recent product additions I found that AI Hub was uniquely positioned to allow me to build an accurate V0 solution rapidly. Some of the features required were:\n• Vision Reasoning (the key unlock here)\n• Derived Fields\n• List Extraction\n• Logical Validations\n• External API calls (part of their compliance process it to visit Companies House to verify details)\ncc @Akshay @alex.morris @Aditi",
+      "time": "01:49",
+      "timestamp": "1732268942.109199",
+      "is_reply": false
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "While building the solution I had a couple of pieces of feedback on the feature set:\n1. Vision models were reading text incorrectly sometimes (see Pathfinder Lnr Limited instead of Pathfinder Inc Limited). Combining OCR and vision models could be good? \n2. I had to get hyperspecific with my vision model prompt. It was harder than I expected to get the model to not make mistakes, so I had to turn to chatGPT to reverse engineer a prompt for me \n3. Derived fields sometimes made maths errors or silly mistakes. Can we have an option for a more powerful model? \n@Kaustubh (KD) @jordy.vlan",
+      "time": "01:50",
+      "timestamp": "1732269031.996659",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "1. In our benchmarks we actually found that sending both text and images degrades overall performance for vision reasoning :confused: However, we could think of an internal validation step on tokens that are not present in OCR and what would be the closest matching strings, and then ask an LLM if it should make the correction, or not. Great feedback! \n2. Did you try to use our in-house prompt suggestion as well? Not sure if it would be as powerful though.",
+      "time": "01:55",
+      "timestamp": "1732269324.271239",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Do you mean the enhance prompt button? ChatGPT extended the length and specificity of the prompt significantly more because I was able to take a V0 extraction, ask for corrections, then ask it to create a prompt that would have got me that result from the start",
+      "time": "01:58",
+      "timestamp": "1732269495.752869",
+      "is_reply": true
+    },
+    {
+      "sender": "Aditi",
+      "user_id": "U01T1DD9YBW",
+      "message": "2 things here are really awesome:\n• UBO mapping is one of the most thorniest problems in the KYC space, something banks have struggled with for ages. We've had convos in the past with Barclays, Deutsche, ING, SocGen who all needed to do this, and no tech at that point could. So the fact that we can do this now is huge, and also applicable to a number of our enterprise customers. \n• The other awesome thing is that I spoke to Hamish abut this a couple of days back as he was prepping for the demo. Within a day, he has a solution ready. For UBO, no less. \nThe other parts of this use case will be (i) extraction from text descriptions and contracts to then create that flow chart map, and (ii) intergrations and population of data into CRM systems @Hamish",
+      "time": "02:00",
+      "timestamp": "1732269629.591349",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.morris",
+      "user_id": "U06KJGCPPL4",
+      "message": "This is really cool @Hamish, Akshay mentioned it to me yesterday and it was WOW moment! We spoke to the barclays team yesterday and this was also brought up as a big value driver",
+      "time": "03:40",
+      "timestamp": "1732275604.389389",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.morris",
+      "user_id": "U06KJGCPPL4",
+      "message": "@Hamish can we demo this next thurs with barclays?",
+      "time": "03:40",
+      "timestamp": "1732275629.317799",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Absolutely",
+      "time": "03:49",
+      "timestamp": "1732276197.138139",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "FYI on 1, did a simple sanity check which will likely work quite ok for short sequences:\n```import difflib\nimport regex as re\n\ntext = '''\n'''\n\nmatch = 'Pathfinder Lnr Limited'\ntext_per_lines = text.split('\\n')\ntext_per_chunk = [\n    a for line in text_per_lines for a in re.split(r'(\\s{2,})', line)\n]\n\nOCR_matches = difflib.get_close_matches(match, text_per_chunk, n=5, cutoff=0.6)\nfor best_match in OCR_matches:\n  score = difflib.SequenceMatcher(None, match, best_match).ratio()\n  print(f'{best_match} - {score}')\n  # --> Pathfinder Inc Limited - 0.9090909090909091```\nFor long sequences we might take a proxy like per line / two-lines or depending on how long the answer is, just re-use chunks; then use standard chunk similarity with an LLM call to apply post-correction based on OCRed chunks.",
+      "time": "05:05",
+      "timestamp": "1732280724.868739",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Hey @Hamish thanks for the feedback as usual! #2 is great feedback for the future of prompt enhancements, will follow up separately there cc: @Vishnu\n\nfor number 3. We have done this actually https://instabase.atlassian.net/browse/EPD-3155 so today you are using GPT3.5turbo but that will change with better options soon.\n\ncc: @lydia",
+      "time": "08:00",
+      "timestamp": "1732291228.862869",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "This is an amazing demo and as @Aditi says - historically a VERY difficult problem to solve.\n\nI wonder if we could run a marketing/PG campaign around this specific use case/demo cc: @junie.dinda@louisa.gould?",
+      "time": "09:11",
+      "timestamp": "1732295461.151039",
+      "is_reply": true
+    },
+    {
+      "sender": "louisa.gould",
+      "user_id": "U05NDHLBJAV",
+      "message": "Absolutely we can! This is fantastic stuff!",
+      "time": "09:20",
+      "timestamp": "1732296034.796359",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "@jordy.vlan @Kaustubh (KD) we dont currently have prompt enhancement for vision reasoning fields in the product.",
+      "time": "09:24",
+      "timestamp": "1732296295.594949",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "@Vishnu ah really, why not? It is similar in structure to document reasoning :slightly_smiling_face:",
+      "time": "09:26",
+      "timestamp": "1732296415.217369",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "the feature was added before vision fields. it shouldn't be hard to add it in for vision fields, but would prefer to run some experiments and benchmark before shipping.",
+      "time": "09:29",
+      "timestamp": "1732296549.456589",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "or would you suggest to create a separate pipeline, where we would want the model to emphasize certain qualities?\n\nSay: prompt =\n```give the circled text ```\nextension =\n```'circled statement': {\n       'description':\n       'A statement or piece of text that is circled to draw attention to it. Used for emphasis or to indicate importance.',\n       'common_locations':\n       'Documents with annotations, notes, and forms.',\n       'characteristics': [\n           'Text surrounded by a circle or oval',\n           'Hand-drawn or printed circles', 'Highlights important information'\n       ]\n   }\n--> verbalize this ```",
+      "time": "09:30",
+      "timestamp": "1732296641.356699",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "yeah, we'd definitely want to at least change the base prompt for the optimization task, as it needs to fit the context of the task it is optimizing.",
+      "time": "09:32",
+      "timestamp": "1732296767.644389",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "also we can take some inspiration from openAI's prompt optimization feature.",
+      "time": "09:33",
+      "timestamp": "1732296809.354449",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "On #3, I see from the video that Hamish is testing this on UAT, where the derived field model is already updated to gpt-4o-mini. However, we do have a ticket (https://instabase.atlassian.net/browse/EPD-3154) to add the ability to toggle. @Hamish do you know if the advanced model would have done better? e.g. if you copy-paste the request to ChatGPT with gpt-4o, do you get a better answer?\n\nI'm also curious why you wanted to first create the org structure JSON vs. directly asking the questions in \"Onboarding Company\" or \"Ultimate Beneficiaries\" as visual reasoning fields.",
+      "time": "11:09",
+      "timestamp": "1732302577.997379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-11-22.json",
+    "message_count": 19,
+    "start_time": "1732268942.109199",
+    "end_time": "1732302577.997379",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "id": "ch_CSY11CK7T_2024-10-03_1727980548.192529_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi all, I'm having some webpack troubles. When I run webpack (`yarn bundle-local`), I get some compilation errors. However, they don't seem to make sense, b/c AFAICT, the package that's missing is installed:\n\n```Compiled with problems:\n\nERROR in ./node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist/react-datepicker.min.js 1:139-165\nModule not found: Error: Can't resolve 'date-fns/isDate' in '/home/owner/instabase/webserver/shared/src/js/webpacked/node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist' \nERROR in ./node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist/react-datepicker.min.js 1:166-193\nModule not found: Error: Can't resolve 'date-fns/isValid' in '/home/owner/instabase/webserver/shared/src/js/webpacked/node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist'\nERROR in ./node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist/react-datepicker.min.js 1:194-220\nModule not found: Error: Can't resolve 'date-fns/format' in '/home/owner/instabase/webserver/shared/src/js/webpacked/node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist'\nERROR in ./node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist/react-datepicker.min.js 1:221-251\nModule not found: Error: Can't resolve 'date-fns/addMinutes' in '/home/owner/instabase/webserver/shared/src/js/webpacked/node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist'\nERROR in ./node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist/react-datepicker.min.js 1:252-280\nModule not found: Error: Can't resolve 'date-fns/addHours' in '/home/owner/instabase/webserver/shared/src/js/webpacked/node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist'\nERROR in ./node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist/react-datepicker.min.js 1:281-308\nModule not found: Error: Can't resolve 'date-fns/addDays' in '/home/owner/instabase/webserver/shared/src/js/webpacked/node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist'\nERROR in ./node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist/react-datepicker.min.js 1:309-337\nModule not found: Error: Can't resolve 'date-fns/addWeeks' in '/home/owner/instabase/webserver/shared/src/js/webpacked/node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist'```\nI tried nuking `node_modules` and running `yarn install` again, but no dice. Haven't tried disabling webpack-dev-server yet.",
+      "time": "11:35",
+      "timestamp": "1727980548.192529",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Maybe try deleting `node_modules` and `yarn.lock` and then `yarn install` again?",
+      "time": "11:37",
+      "timestamp": "1727980659.136849",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "~fwiw, `yarn bundle-dev`works fine too~",
+      "time": "11:37",
+      "timestamp": "1727980672.412649",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh, yarn.lock as well?",
+      "time": "11:37",
+      "timestamp": "1727980679.174449",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'll try, thanks",
+      "time": "11:38",
+      "timestamp": "1727980682.987609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Edit `yarn bundle-dev` does _not_ work; it has the same errors that I see in the browser from webpack.",
+      "time": "11:40",
+      "timestamp": "1727980859.253329",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Going to try `arn cache clean` as well.\n\nI think what happened was I was building server-nginx and running webpack at the same time, and they both run yarn in src/js/webpacked. I don't think yarn handles that well.",
+      "time": "11:42",
+      "timestamp": "1727980964.121719",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ohh yea, that could be a problem",
+      "time": "11:43",
+      "timestamp": "1727981013.434539",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think this might solve it:\n\n```diff --git a/webserver/shared/src/js/webpacked/Makefile b/webserver/shared/src/js/webpacked/Makefile\nindex 9e837bd5ecb..1a223dd485e 100644\n--- a/webserver/shared/src/js/webpacked/Makefile\n+++ b/webserver/shared/src/js/webpacked/Makefile\n@@ -35,16 +35,16 @@ JS_PROTO_DEPS = instabase/protos/config/config.proto \\\n        instabase/protos/preferences/preferences.proto\n\n install-deps:\n-       yarn install\n+       flock -x yarn.lock yarn install\n\n bundle-local:\n-       yarn bundle-local\n+       flock -x yarn.lock yarn bundle-local\n\n bundle-dev:\n-       yarn bundle-dev\n+       flock -x yarn.lock yarn bundle-dev\n\n bundle-prod:\n-       yarn bundle-prod\n+       flock -x yarn.lock yarn bundle-prod\n\n # Install dependencies and kick off the webpack dev server - comes with hot reloading!\n build-local: install-deps bundle-local```",
+      "time": "12:15",
+      "timestamp": "1727982958.046239",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-10-03.json",
+    "message_count": 9,
+    "start_time": "1727980548.192529",
+    "end_time": "1727982958.046239",
+    "is_thread": true
+  }
+}

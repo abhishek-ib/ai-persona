@@ -1,0 +1,408 @@
+{
+  "id": "ch_C06FA6A23_2025-06-03_1748966219.370559_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Balaram",
+    "Goto Tools Go Links",
+    "abhijnan",
+    "William Helmrath"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For anyone who sees this:\n```gazelle: error from go list: running '/home/owner/.cache/bazel/_bazel_owner/99c13e9d3f9affca3e421b943f545ec7/external/go_linux_sdk/bin/go /home/owner/.cache/bazel/_bazel_owner/99c13e9d3f9affca3e421b943f545ec7/external/go_linux_sdk/bin/go list -mod=readonly -e -m -json all': verifying github.com/getkin/kin-openapi@v0.131.0/go.mod (http://github.com/getkin/kin-openapi@v0.131.0/go.mod): checksum mismatch\n        downloaded: h1:3OlG51PCYNsPByuiMB0t4fjnNlIDnaEDsjiKUV8nL58=\n        go.sum:     h1:660oXbgy5JFMKreazJaQTw7o+X00qeSyhcnluiMv+Xg=```\nThe fix is to run:\n```cd third-party/bazel/go\nrm go.sum\nbazel run //third-party/bazel/go:update```\nCommit the resulting changes. I have a PR with this fix, but it may take a bit to merge",
+      "time": "08:56",
+      "timestamp": "1748966219.370559",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also need this patch:\n\n```cs/mfichman❯ git diff go.mod\ndiff --git a/third-party/bazel/go/go.mod b/third-party/bazel/go/go.mod\nindex 4ebf8dce01e..0fcac7b7c41 100644\n--- a/third-party/bazel/go/go.mod\n+++ b/third-party/bazel/go/go.mod\n@@ -565,6 +565,7 @@ require (\n        go.opentelemetry.io/contrib/propagators/jaeger (http://go.opentelemetry.io/contrib/propagators/jaeger) v1.35.0 // indirect\n        go.opentelemetry.io/otel/exporters/stdout/stdoutmetric (http://go.opentelemetry.io/otel/exporters/stdout/stdoutmetric) v1.35.0 // indirect\n        go.opentelemetry.io/otel/exporters/stdout/stdouttrace (http://go.opentelemetry.io/otel/exporters/stdout/stdouttrace) v1.35.0 // indirect\n+       go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc (http://go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc) v1.35.0 // indirect\n        go.opentelemetry.io/otel/sdk (http://go.opentelemetry.io/otel/sdk) v1.35.0 // indirect\n        go.opentelemetry.io/otel/sdk/metric (http://go.opentelemetry.io/otel/sdk/metric) v1.35.0 // indirect\n        go.uber.org/automaxprocs (http://go.uber.org/automaxprocs) v1.6.0 // indirect```",
+      "time": "09:00",
+      "timestamp": "1748966413.413189",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go",
+      "time": "09:00",
+      "timestamp": "1748966415.137809",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go",
+      "time": "09:00",
+      "timestamp": "1748966415.138299",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go",
+      "time": "09:00",
+      "timestamp": "1748966415.139009",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go",
+      "time": "09:00",
+      "timestamp": "1748966415.166889",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "cc @abhijnan --- I think maybe you made the last edit here? Just remember to follow the steps in the README.md:\n\n1. Edit go.mod with the new Go dep\n2. Run bazel run //third-party/bazel/go:update\n3. Commit the result\nDon't use `go mod` or anything like that; it doesn't work here.",
+      "time": "09:01",
+      "timestamp": "1748966465.358939",
+      "is_reply": true
+    },
+    {
+      "sender": "abhijnan",
+      "user_id": "U056NM536PP",
+      "message": "That's interesting, I followed the steps mentioned here https://instabase.atlassian.net/wiki/spaces/TI/pages/2102689795/Third+Party+Package+Management. Not sure why this happened",
+      "time": "09:03",
+      "timestamp": "1748966614.476269",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm, OK. Maybe was someone doing a security patch. I'll look into it.",
+      "time": "09:08",
+      "timestamp": "1748966902.895269",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I had to add 2 more packages:\n\n```google.golang.org/genproto/googleapis/api (http://google.golang.org/genproto/googleapis/api)\n google.golang.org/genproto/googleapis/api/httpbody (http://google.golang.org/genproto/googleapis/api/httpbody)```",
+      "time": "09:09",
+      "timestamp": "1748966992.596449",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "@mfichman I reported the same issue here (https://instabase.slack.com/archives/C035SLYCJ9X/p1748965404168779) and put out a fix PR :laughing: - do you have a one out as well?",
+      "time": "09:35",
+      "timestamp": "1748968553.521919",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I do not have a fix yet...it turns out there are a whole bunch of broken deps, some of which are failing in unusual ways (bad patch in deps.bzl, etc.)",
+      "time": "10:01",
+      "timestamp": "1748970065.824929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think we should trace down the last change to `//third-party/deps/bazel` dir and revert the relevant PR(s)",
+      "time": "10:01",
+      "timestamp": "1748970108.677949",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Oof yeah now I’m seeing that a bad weaviate PR (https://github.com/instabase/instabase/commit/d7453f5ad5fced2f118054eec746c03cb11c6ddb) was merged as well",
+      "time": "10:04",
+      "timestamp": "1748970255.363659",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "I’ll put out a fix for that as well",
+      "time": "10:04",
+      "timestamp": "1748970264.687319",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Last 5 patches to this dir:\n```commit 13d3c0b1dd171476a0f4919d209e84de6e176d15\nAuthor: Sayan Bhattacharjee <sayanb06@users.noreply.github.com>\nDate:   Mon Jun 2 11:30:53 2025 -0700\n\n    [VTEST-59439][VTEST-59430][VTEST-59427] Update etcd (#70869)\n\ncommit e4a5afd5aeffff43946838193d7771e98b6408a7\nAuthor: mahanteshmkale <106261191+mahanteshmkale@users.noreply.github.com>\nDate:   Mon Jun 2 20:45:44 2025 +0530\n\n    Upgrade runc to 1.1.12 for vuln fix (#71051)\n\ncommit a42b600c90be1f48b8eaf84ca9d651546853f756\nAuthor: BalaIB <116784329+BalaIB@users.noreply.github.com>\nDate:   Mon Jun 2 20:25:18 2025 +0530\n\n    upgrade kin_openapi (#71022)\n\ncommit d7453f5ad5fced2f118054eec746c03cb11c6ddb\nAuthor: BalaIB <116784329+BalaIB@users.noreply.github.com>\nDate:   Mon Jun 2 20:24:44 2025 +0530\n\n    upgrade-weaviate (#71023)\n\ncommit 2b6aaa768e17219609b411accee45c0622b159b2\nAuthor: Abhijnan Vegi <abhijnan.vegi@instabase.com>\nDate:   Wed May 28 14:22:00 2025 +0530\n\n    [INFRA-3868] Implement opentelemetry based tracing for Golang (1/3) (#70769)\n\n    * Add Otel implementation\n\n    * revert go.mod changes\n\n    * Fix context test\n\n    * fix nits\n\n    * nit```",
+      "time": "10:07",
+      "timestamp": "1748970427.971479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Could be any of those I think",
+      "time": "10:07",
+      "timestamp": "1748970441.591169",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It doesn't look like folks followed the bazel deps instructions, since the checksum didn't change: (https://instabase.atlassian.net/wiki/spaces/TI/pages/2102689795/Third+Party+Package+Management)\n\n```cs/mfichman❯ git show d7453f5ad5fced2f118054eec746c03cb11c6ddb\ncommit d7453f5ad5fced2f118054eec746c03cb11c6ddb\nAuthor: BalaIB <116784329+BalaIB@users.noreply.github.com>\nDate:   Mon Jun 2 20:24:44 2025 +0530\n\n    upgrade-weaviate (#71023)\n\ndiff --git a/third-party/bazel/go/deps.bzl b/third-party/bazel/go/deps.bzl\nindex 1294435afb8..c87360a19be 100644\n--- a/third-party/bazel/go/deps.bzl\n+++ b/third-party/bazel/go/deps.bzl\n@@ -5381,7 +5381,7 @@ def go_dependencies():\n         build_directives = [\"gazelle:proto disable\", \"gazelle:resolve go github.com/golang/protobuf/ptypes @com_github_golang_protobuf//ptypes\"],\n         importpath = \"github.com/weaviate/weaviate\",\n         sum = \"h1:oUqqHEKei52TCNVOmpcbvPuTjNpKuv6fwEg1xOe1heA=\",\n-        version = \"v1.20.5\",\n+        version = \"v1.20.6\",\n     )\n     go_repository(\n         name = \"com_github_weaviate_weaviate_go_client_v4\",\ndiff --git a/third-party/bazel/go/go.mod b/third-party/bazel/go/go.mod\nindex 861c06b5b69..b2908a33de5 100644\n--- a/third-party/bazel/go/go.mod\n+++ b/third-party/bazel/go/go.mod\n@@ -456,7 +456,7 @@ require (\n        github.com/ugorji/go/codec v1.2.12 // indirect\n        github.com/urfave/cli v1.22.12 // indirect\n        github.com/vektra/mockery v1.1.2 // indirect\n-       github.com/weaviate/weaviate v1.20.5 // indirect\n+       github.com/weaviate/weaviate v1.20.6 // indirect\n        github.com/weaviate/weaviate-go-client/v4 v4.9.0 // indirect\n        github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2 // indirect\n        github.com/xlab/treeprint v1.2.0 // indirect\ndiff --git a/third-party/bazel/go/go.sum b/third-party/bazel/go/go.sum\nindex 117377b70e8..80dec0b69c2 100644\n--- a/third-party/bazel/go/go.sum\n+++ b/third-party/bazel/go/go.sum\n@@ -1679,7 +1679,7 @@ github.com/vmihailenco/msgpack/v5 v5.3.4/go.mod h1:7xyJ9e+0+9SaZT0Wt1RGleJXzli6Q\n github.com/vmihailenco/tagparser v0.1.1/go.mod h1:OeAg3pn3UbLjkWt+rN9oFYB6u/cQgqMEUPoW2WPyhdI=\n github.com/vmihailenco/tagparser v0.1.2/go.mod h1:OeAg3pn3UbLjkWt+rN9oFYB6u/cQgqMEUPoW2WPyhdI=\n github.com/vmihailenco/tagparser/v2 v2.0.0/go.mod h1:Wri+At7QHww0WTrCBeu4J6bNtoV6mEfg5OIWRZA9qds=\n-github.com/weaviate/weaviate v1.20.5/go.mod h1:C8BdnDdLfv2+Um2YADM7g6YRrMuMbOx39Q3QXOXkznU=\n+github.com/weaviate/weaviate v1.20.6/go.mod h1:C8BdnDdLfv2+Um2YADM7g6YRrMuMbOx39Q3QXOXkznU=\n github.com/weaviate/weaviate-go-client/v4 v4.9.0/go.mod h1:pSXFBQxghxi6HzgFKkmyy1jNFhsRNvYiT9GSEJ/ie/Q=\n github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=\n github.com/xdg-go/scram v1.0.2/go.mod h1:1WAq6h33pAW+iRreB34OORO2Nf7qel3VV3fjBj+hCSs=```\ncc @Bala",
+      "time": "10:08",
+      "timestamp": "1748970485.152689",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go",
+      "time": "10:08",
+      "timestamp": "1748970486.209749",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go",
+      "time": "10:08",
+      "timestamp": "1748970486.209879",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go",
+      "time": "10:08",
+      "timestamp": "1748970486.246849",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/pbkdf2%7Cgithub",
+      "time": "10:08",
+      "timestamp": "1748970486.260989",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/deps",
+      "time": "10:08",
+      "timestamp": "1748970486.268379",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/deps",
+      "time": "10:08",
+      "timestamp": "1748970486.275819",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go",
+      "time": "10:08",
+      "timestamp": "1748970486.276399",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go",
+      "time": "10:08",
+      "timestamp": "1748970486.276789",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go",
+      "time": "10:08",
+      "timestamp": "1748970486.276899",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/codec%7Cgithub",
+      "time": "10:08",
+      "timestamp": "1748970486.280919",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/scram%7Cgithub",
+      "time": "10:08",
+      "timestamp": "1748970486.303059",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go",
+      "time": "10:08",
+      "timestamp": "1748970486.337949",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/deps",
+      "time": "10:08",
+      "timestamp": "1748970486.339279",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go",
+      "time": "10:08",
+      "timestamp": "1748970486.339909",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/deps",
+      "time": "10:08",
+      "timestamp": "1748970486.355359",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/codec>",
+      "time": "10:08",
+      "timestamp": "1748970486.355779",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/pbkdf2>",
+      "time": "10:08",
+      "timestamp": "1748970486.359769",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/scram>",
+      "time": "10:08",
+      "timestamp": "1748970486.422119",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "That said, this breakage should not have been mergeable",
+      "time": "10:08",
+      "timestamp": "1748970520.000689",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Yeah there were a couple of these PRs merged yesterday where all that was changed was the version number :upside_down_face: - I guess we don’t have a pre-merge check for this",
+      "time": "10:09",
+      "timestamp": "1748970580.747639",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'm going to revert those PRs",
+      "time": "10:13",
+      "timestamp": "1748970796.092959",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "I have a fix for properly updating `kin-openapi` here (https://github.com/instabase/instabase/pull/71116) - the `weaviate` fix is blocked by that",
+      "time": "10:14",
+      "timestamp": "1748970849.984609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/71121",
+      "time": "10:14",
+      "timestamp": "1748970878.079769",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let me merge the reverts first, and then we'll merge yours william. Sg?",
+      "time": "10:14",
+      "timestamp": "1748970892.042349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Just checking that most services build cleanly, then will merge (not going to wait for CI for this one)",
+      "time": "10:17",
+      "timestamp": "1748971075.486859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Merged @William Helmrath",
+      "time": "10:31",
+      "timestamp": "1748971912.151339",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Cool, just rebased the kin-openapi PR",
+      "time": "10:50",
+      "timestamp": "1748973014.649119",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Can I get a force-merge here (https://github.com/instabase/instabase/pull/71116)? All tests are passing except for flaky admiral tests (working on fixing this) and I don’t want to re-run the 2+ hr job",
+      "time": "13:35",
+      "timestamp": "1748982939.025539",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "@MK @Bala FYI",
+      "time": "18:00",
+      "timestamp": "1748998858.941749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Force merged. Thanks, William!",
+      "time": "18:29",
+      "timestamp": "1749000543.665439",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-06-03.json",
+    "message_count": 48,
+    "start_time": "1748966219.370559",
+    "end_time": "1749000543.665439",
+    "is_thread": true
+  }
+}

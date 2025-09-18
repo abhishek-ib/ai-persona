@@ -1,0 +1,102 @@
+{
+  "id": "ch_C0516UPPMT3_2025-03-28_1743168533.800939_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Jason",
+    "Atul Grover",
+    "Chuba"
+  ],
+  "messages": [
+    {
+      "sender": "Atul Grover",
+      "user_id": "U03E1LBAE12",
+      "message": "It is a blocker for integration dev & testing too.",
+      "time": "06:28",
+      "timestamp": "1743168533.800939",
+      "is_reply": false
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "Ok, and are we sure that the customer users will not also have this cert on their devices for front-end access? In the other implementation, the client cert was available for all traffic.",
+      "time": "07:28",
+      "timestamp": "1743172095.839729",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "We have a meeting with them this afternoon, I’ll make that a key point of conversation and report back",
+      "time": "07:29",
+      "timestamp": "1743172165.858859",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "Does not seem like that is an option for them, at least nobody is responding positively whenever I’ve mentioned it.",
+      "time": "11:20",
+      "timestamp": "1743186036.793939",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "ok, I'll explore this.",
+      "time": "11:25",
+      "timestamp": "1743186358.486659",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "If it’s possible to require mTLS auth for Bearer Token based authorization paths, but not require mTLS for cookie based authentication, that could seal it",
+      "time": "11:26",
+      "timestamp": "1743186398.616599",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "Or if we can do either mTLS _or_ cookie authorization, and not require both. Need to look into what nginx is fully capable of on that front.",
+      "time": "11:36",
+      "timestamp": "1743187010.732099",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "cool, I'll get claude working for us :slightly_smiling_face:",
+      "time": "11:51",
+      "timestamp": "1743187907.447679",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "@Jason I haven’t tested the `ssl_client_verify`  part of this, but have tested it generally. Unless I’m missing something I think that this should reject all attempts to hit the `/`  endpoint with any http authorization attached (blocking a sneaky set cookie but using oauth anyway exploit), and block any attempts to use no authorization at all, but allow through requests that have a cookie called `session`  or pass the mtls check (and then the session will be verified downstream). Does this make sense? I’ve been staring at the nginx docs for so long I may have lost track of my original intent :sweat_smile:\n```map $ssl_client_verify $1 {\n    SUCCESS \"1\";\n\tdefault \"0\";\n}\n\nmap $cookie_session $2 {\n\t\"\" \"0\";\n\tdefault \"1\";\n}\n\nmap $http_authorization $3 {\n\t\"\" \"0\";\n\tdefault \"1\";\n}\n\nserver {\n    listen       80;\n    listen  [::]:80;\n    server_name  localhost;\n\n    #access_log  /var/log/nginx/host.access.log  main;\n\tset $all_checks \"${1}${2}${3}\";\n    location / {\n\t\tif ($all_checks = \"000\") {\n\t\t\t#no valid auth whatsoever\n\t\t\treturn 401 \"Unauthorized\";\n\t\t}\n\t\tif ($all_checks = \"001\") {\n\t\t\t#no only a bearer token is present, reject for NW\n\t\t\treturn 401 \"Unauthorized\";\n\t\t}\n\t\tif ($all_checks = \"011\") {\n\t\t\t#a cookie is present but there's a bearer token, don't allow it!\n\t\t\treturn 401 \"Unauthorized\";\n\t\t}\n\t\t#allow all other configurations\n\t\t\n        root   /usr/share/nginx/html;\n        index  index.html index.htm;\n    }\n}```\nso long as this is only applied to `/api`  endpoints I think this won’t interfere with logins which would be my main concern",
+      "time": "13:26",
+      "timestamp": "1743193608.079039",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "Nice, thanks @Chuba I'll get this setup somewhere",
+      "time": "14:54",
+      "timestamp": "1743198884.010049",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-03-28.json",
+    "message_count": 10,
+    "start_time": "1743168533.800939",
+    "end_time": "1743198884.010049",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,463 @@
+{
+  "id": "ch_C06FA6A23_2025-01-24_1737708362.186119_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "Anil",
+    "abhitaker",
+    "astpierre",
+    "Atinder",
+    "sitaram",
+    "abhijnan",
+    "Rakesh",
+    "William Helmrath",
+    "jtau",
+    "Abhinav",
+    "Kai"
+  ],
+  "messages": [
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "<!subteam^S02FJA6A7U5>\nCan you pls check if a new deploy for aihub-sandbox is in progress or if not can we kick it off, the env has been down since morning.\n\nWe have a couple of PoV critical changes we need to validate in aihub-sandbox and backport etc. - aihub-sandbox env is currently down.",
+      "time": "00:46",
+      "timestamp": "1737708362.186119",
+      "is_reply": false
+    },
+    {
+      "sender": "abhijnan",
+      "user_id": "U056NM536PP",
+      "message": "There's an upgrade running for the last 4 hours",
+      "time": "00:47",
+      "timestamp": "1737708438.828439",
+      "is_reply": true
+    },
+    {
+      "sender": "abhijnan",
+      "user_id": "U056NM536PP",
+      "message": "Still stuck on UNDO_TURN_DOWN",
+      "time": "00:47",
+      "timestamp": "1737708460.191259",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "Did you abort it? can see abort on the slack",
+      "time": "01:03",
+      "timestamp": "1737709420.968239",
+      "is_reply": true
+    },
+    {
+      "sender": "abhijnan",
+      "user_id": "U056NM536PP",
+      "message": "yeah, PIAs are running. I'll restart after they complete",
+      "time": "01:04",
+      "timestamp": "1737709479.792329",
+      "is_reply": true
+    },
+    {
+      "sender": "Atinder",
+      "user_id": "U019P6NA1RN",
+      "message": "Any update on this, aihub-sandbox is still down",
+      "time": "04:28",
+      "timestamp": "1737721713.231669",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "Abhijnan had retried the pipeline. However it seems to have stuck on `UNDO TURN DOWN` stage again.\nChecking more",
+      "time": "05:19",
+      "timestamp": "1737724774.978539",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "VMAlert was crashlooping with below as last log\n```│ 2025-01-24T13:18:37.739Z    info    VictoriaMetrics/app/vmalert/config/log/logger.go:52    found 1 files to read from \"Local FS{MatchPattern: \\\"/etc/config/alerting/alerting_rules.yml\\\"}\"                                     │```",
+      "time": "05:22",
+      "timestamp": "1737724956.980979",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "I scaled it to 0 for it proceed, will try to scale back",
+      "time": "05:23",
+      "timestamp": "1737725001.532079",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "VMAlert container got OOMKilled",
+      "time": "05:25",
+      "timestamp": "1737725105.019879",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "Raised the mem limit to 80 from 50m, now getting\n```cannot parse configuration file: failed to parse [/etc/config/recording/recording_rules.yml /etc/config/alerting/alerting_rules.yml]: errors(1)```",
+      "time": "05:27",
+      "timestamp": "1737725244.705049",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "But at least the deployment has proceeded.\ndoing PIA now",
+      "time": "05:30",
+      "timestamp": "1737725420.582959",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "@alex.zhou This PR is causing issue - https://github.com/instabase/instabase/pull/66602",
+      "time": "05:41",
+      "timestamp": "1737726084.468659",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "Also this is an old way to add alerts. Internally we leverage central alerting to add alerts. Here’s the doc for reference - https://docs.google.com/document/d/1kvachuVvgq7GOGxdG5KZtoxxMK-2WnkKuXXFxS8Pc4U/edit?tab=t.0#heading=h.rni9s3s333xl",
+      "time": "05:42",
+      "timestamp": "1737726134.201149",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "@sitaram can you revert this PR",
+      "time": "05:42",
+      "timestamp": "1737726141.592669",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "yes, on it",
+      "time": "05:42",
+      "timestamp": "1737726154.788909",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "https://github.com/instabase/instabase/pull/67349",
+      "time": "05:44",
+      "timestamp": "1737726273.293209",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "PR merged and update was triggered\nit seems to be `Writing new configs` for last 30 mins :confused:",
+      "time": "07:01",
+      "timestamp": "1737730873.283859",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I think the DB for AIHub sandbox needs some truncations as is commonly required for our frequently-deployed sandboxes - @jtau is this something you can task someone with?",
+      "time": "07:05",
+      "timestamp": "1737731132.866429",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Did it time out or is it simply still going?",
+      "time": "07:07",
+      "timestamp": "1737731276.050469",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "its going still right now, Link to pipeline run (https://jenkins.instabase.com/job/SAAS-AWS/job/saas-pipelines/job/install-ib-platform/21044/console)",
+      "time": "07:08",
+      "timestamp": "1737731300.756819",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "just moved to undo turn down",
+      "time": "07:12",
+      "timestamp": "1737731522.175089",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "running PIA now",
+      "time": "07:29",
+      "timestamp": "1737732572.970269",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "30 minutes to write new configs though?\nEven if it doesn't time out :grimacing:",
+      "time": "07:29",
+      "timestamp": "1737732588.174489",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "Some PIA failed",
+      "time": "07:44",
+      "timestamp": "1737733468.911489",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "@William Helmrath can you help take a look at the license action since donagh is out? And triage the other actions based on owners",
+      "time": "07:49",
+      "timestamp": "1737733741.725689",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "looks like a good amount of these terminated due to failed api-server requests. Gonna retry all actions and see if that fixes it",
+      "time": "07:50",
+      "timestamp": "1737733852.398759",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Never seen that happen before… api server being up and healthy but unreachable from PIA?",
+      "time": "07:51",
+      "timestamp": "1737733903.996289",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "What are some of the errors?",
+      "time": "07:52",
+      "timestamp": "1737733921.248339",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Just generic “failed to complete request to api-server” errors",
+      "time": "07:54",
+      "timestamp": "1737734060.527409",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Hmm yeah there’s some pretty bad slowdown in this environment. Platform UI is taking a really long time to load",
+      "time": "07:55",
+      "timestamp": "1737734122.434639",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "License PIA failed again with `unexpected response from license service. StatusCode: 500, Body: {\"msg\": \"Error fetching site_perms in LicensesView. Deadline Exceeded\"`",
+      "time": "07:57",
+      "timestamp": "1737734223.069629",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "seeing some crazy error rates in file-service related to “DEADLINE_EXCEEDED”",
+      "time": "08:16",
+      "timestamp": "1737735408.016609",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "I’m seeing a couple system patches that set the redis statefulset to 0 - does anyone know if this is intentional?",
+      "time": "08:27",
+      "timestamp": "1737736042.310889",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "redis deployment is also set to 0",
+      "time": "08:28",
+      "timestamp": "1737736093.594919",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "That could have come from when @Anil set USE_ELASTICACHE to true. Probably need to delete that patch if I had to guess",
+      "time": "08:29",
+      "timestamp": "1737736191.233119",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Alright deleting both patches",
+      "time": "08:31",
+      "timestamp": "1737736268.213309",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "ah nice that seems to have fixed the slowdown - thanks for the insight @astpierre!",
+      "time": "08:36",
+      "timestamp": "1737736566.767459",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "re-running PIAs",
+      "time": "08:36",
+      "timestamp": "1737736587.529839",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Thank you @astpierre for doing that appropriate troubleshooting to determine the *actual* behavior of this stack last night, instead of making assumptions as to the cause of disruption. :pray::skin-tone-3:",
+      "time": "08:54",
+      "timestamp": "1737737645.073459",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Upgrade completed successfully, aihub-sandbox should be healthy now",
+      "time": "09:03",
+      "timestamp": "1737738209.966309",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "This patch looks to be checked into GitHub as it comes from system. Let’s make sure it g ets removed or updated appropriately there",
+      "time": "09:17",
+      "timestamp": "1737739065.340269",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "weirdly it looks like these were applied manually as I don’t see the patches included in any of the recent deploys - are there other ways that `System` could get listed as the owner?",
+      "time": "09:48",
+      "timestamp": "1737740888.921909",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "@William Helmrath i think it came from this deployment (https://jenkins.instabase.com/job/SAAS-AWS/job/deploy-saas-aws-preprod/33239/parameters/). USE_ELASTICACHE was set to true, so all patches here (https://github.com/instabase/instabase/tree/master/deployment-configs/environment-patches/saas-advanced-patches/saas-managed-redis) were applied by the pipeline (https://github.com/instabase/instabase/blob/master/tools/releasetools/jenkins/pipelines/saas/prepare-install-artifacts.jenkinsfile#L379-L385)",
+      "time": "09:57",
+      "timestamp": "1737741445.588389",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "We want aihub-sandbox to be on elasticache",
+      "time": "10:01",
+      "timestamp": "1737741702.232459",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "cc @Abhinav",
+      "time": "10:01",
+      "timestamp": "1737741705.235529",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "what is missing to enable elasticache ?",
+      "time": "10:10",
+      "timestamp": "1737742206.067049",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "I added USE_ELASTICACHE to maintenance schedule advanced again.",
+      "time": "10:15",
+      "timestamp": "1737742521.690619",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "~I am going to retrigger a manual deployment now with USE_ELASTICACHE= true as well.~ not going to do it. it may overlap with recurring schedule",
+      "time": "10:16",
+      "timestamp": "1737742575.637389",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "i think that's what was missing :this:\n\nthe deployment to use elasticache was successful, but the maintenance defaulted back to remove it which caused breakage since it didnt remove the patches added",
+      "time": "10:16",
+      "timestamp": "1737742606.661289",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@astpierre for folks not familiar\nmaintenance defaulted back to remove it which caused breakage since it didnt remove the patches added - how to fix this?",
+      "time": "10:17",
+      "timestamp": "1737742657.600439",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "or @Abhinav\nhttps://instabase.slack.com/archives/C01N7DV1137/p1736790181600789?thread_ts=1736315836.612699&cid=C01N7DV1137 - I set it in extra parameter.\nWhat else needs to be done",
+      "time": "10:18",
+      "timestamp": "1737742707.485029",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "@Anil Under maintenance tab of the sandbox, you can find the schedule and add params there",
+      "time": "10:18",
+      "timestamp": "1737742711.699349",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "This is only needed if there is a maintenance schedule created.",
+      "time": "10:19",
+      "timestamp": "1737742779.111039",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-01-24.json",
+    "message_count": 54,
+    "start_time": "1737708362.186119",
+    "end_time": "1737742779.111039",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "id": "ch_C06FA6A23_2023-11-01_1698851638.413149_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "youngmok.cho",
+    "shaunak",
+    "Jag",
+    "Heymian",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "I also have recently noticed these errors pop up if you run `make build mypy` in api-server . They rarely pop up in CI and block merging though.",
+      "time": "08:13",
+      "timestamp": "1698851638.413149",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@sean.donohoe can you take a look at these?  I think these are missing from the typed stubs?\n\ncc @Heymian as well.",
+      "time": "08:17",
+      "timestamp": "1698851871.289629",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "cc @youngmok.cho as well since he looking at the stubs as well",
+      "time": "09:08",
+      "timestamp": "1698854909.151359",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Note that these are the account service thrift file stubs. The thrift file hasn’t changed in over a year now, so this is probably due to a change in the pre-merge build env.",
+      "time": "09:09",
+      "timestamp": "1698854997.170159",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "yup I had this issue as well while working on implementing mypy in bazel.\nThis is likely to be due to ttypes.pyi (https://github.com/instabase/instabase/blob/master/shared-utils/py-utils/typing-utils/py3/src/py/stubs/instabase/account/ttypes.pyi) not reachable from AccountService.pyi. I have a fix for it in bazel env, but it’s surprising this happens in our existing make build system.\n\nIt could be that ___init___.pyi is missing under build/instabase/account.\nI can take a look",
+      "time": "09:12",
+      "timestamp": "1698855171.467479",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Got it, what is confusing here is why it worked after rebasing …",
+      "time": "09:16",
+      "timestamp": "1698855405.103189",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Victor Zeng do you know about the missing _init_.py files, are they generated at build time?",
+      "time": "09:25",
+      "timestamp": "1698855944.236169",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "Missed these :sweat_smile:\n```They rarely pop up in CI and block merging though.\nI rebased master and the CI is passed now```\nThat I’m not so sure either…\n\nOne thing I know is when `make build mypy` is called, we dynamically create any missing __init__.pyi in the mypy stubs under /build, since any code in `build/instabase` should be regular packages.",
+      "time": "09:29",
+      "timestamp": "1698856175.798839",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Could be a byproduct of the fork being out of date with master and unrelated changes getting picked up -- still concerning that we have code that doesn't pass mypy in master, though",
+      "time": "09:32",
+      "timestamp": "1698856346.177639",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "As a side note: releng hasn't owned the script (https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/src/py/run_tests_for_affected_code.py) for picking up what tests to run on PRs, we've just been making some minor tweaks to it for the bazel migration. It has a number of problems, one of them being we diff the PR against master on instabase/instabase.git, which leads to a ton of unrelated tests being marked as needing to be run. I would love to update the script to instead do\n1. Detect what files have changed by diffing against the related instabase fork's master\n2. Do a merge with instabase/instabase.git's master and run the tests related to the files found in (1)\nbut I haven't had time -- if anyone else feels like picking this up before one of releng can get to it it would dramatically improve UX with our PR checks :smile:",
+      "time": "09:37",
+      "timestamp": "1698856620.612379",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "At least for the local mypy breakage, there seems to be an assumption in this mypy target (https://github.com/instabase/instabase/blob/8cf143d3da7c2ae4f2d108c76d5028e62eaef434/shared-utils/build-utils/shared/build-python.mk#L123) that you run `make mypy` always after deleting build/ folder, which I don’t think is always the case. The target rsyncs one stubs dir into build/locationA, rsyncs the stubs in build/locationA into build/locationB, and rsyncs another set of stubs into build/locationA.\nI can repro the local mypy error by running `make build mypy` in a module where there’s already an existing build/ folder is.\n\nIt seems to be quite straightforward to make it better: https://github.com/instabase/instabase/pull/49131/files",
+      "time": "10:09",
+      "timestamp": "1698858540.891889",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-11-01.json",
+    "message_count": 11,
+    "start_time": "1698851638.413149",
+    "end_time": "1698858540.891889",
+    "is_thread": true
+  }
+}

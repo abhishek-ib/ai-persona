@@ -1,0 +1,205 @@
+{
+  "id": "ch_C06FA6A23_2020-05-10_1589095955.169700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "abhilash",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "I’m seeing this in celery-app-tasks logs on dogfood. Anyone knows what this means? I’m trying to fix an issue with audit_logs for GS release and am wondering if this could be related.\n```Connect failed: {\"created\":\"@1589095141.842981430\",\"description\":\"Failed to connect to remote host: FD Shutdown\",\"file\":\"src/core/lib/iomgr/lockfree_event.cc (http://event.cc)\",\"file_line\":194,\"os_error\":\"Timeout occurred\",\"referenced_errors\":[{\"created\":\"@1589095141.842970999\",\"description\":\"connect() timed out\",\"file\":\"src/core/lib/iomgr/tcp_client_posix.cc (http://posix.cc)\",\"file_line\":119}],\"target_address\":\"ipv4:10.21.47.121:7068\"}\" ```\n@Aaron Tami @Heymian @shaunak",
+      "time": "00:32",
+      "timestamp": "1589095955.169700",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Does it look like a one-off? And is this a new error?",
+      "time": "01:23",
+      "timestamp": "1589099029.170000",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "It appears repeatedly",
+      "time": "01:26",
+      "timestamp": "1589099177.170200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "can you link me to the logs?",
+      "time": "01:38",
+      "timestamp": "1589099913.170500",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "https://console.cloud.google.com/logs/viewer?interval=NO_LIMIT&project=instabase-dogfood&folder=true&organizationId=396394272939&minLogLevel=0&expandAll=false&timestamp=2020-05-10T07:27:20.720000000Z&customFacets=&limitCustomFacetWidth=true&advancedFilter=resource.type%3D%22container%22%0Aresource.labels.cluster_name%3D%22instabase-main-dogfood-001%22%0Aresource.labels.namespace_id%3D%22instabase-dogfood%22%0Aresource.labels.project_id%3D%22instabase-dogfood%22%0Aresource.labels.zone:%22us-east1-%22%0Aresource.labels.container_name%3D%22celery-app-tasks%22%0Aresource.labels.pod_id:%22deployment-celery-app-tasks-%22&scrollTimestamp=2020-05-10T07:19:28.501196556Z",
+      "time": "01:48",
+      "timestamp": "1589100516.170700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I’m probably going to head to sleep. But I would also go look at search-service logs to see if there’s anything odd there. My guess is this is going to resolve itself the next time app-tasks pushes itself? (or you can manually force push it if you want). Probably need to twiddle some more timeouts on connections, or potentially try upgrading our proto lib if it persists.",
+      "time": "01:49",
+      "timestamp": "1589100542.171000",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "ok thanks heymian. Good night :slightly_smiling_face:\nI didn’t see anything suspicious in search-service. will try to restart celery-app-tasks and see what happens.",
+      "time": "01:50",
+      "timestamp": "1589100605.171200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "What about doc-ops?",
+      "time": "01:50",
+      "timestamp": "1589100651.171400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Not sure if you’ve seen this already, but could be related this? https://instabase.atlassian.net/browse/INSIGHTS-1112 also manifests as GOAWAY errors.",
+      "time": "01:52",
+      "timestamp": "1589100753.171600",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "oh no I hadn’t seen this.",
+      "time": "01:53",
+      "timestamp": "1589100839.171800",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "In this case, was docops trying to talk to search-service?",
+      "time": "01:54",
+      "timestamp": "1589100873.172000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "app tasks is trying to talk to docops. docops is one of the few grpc services we have.",
+      "time": "02:00",
+      "timestamp": "1589101233.172800",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "hmm that shouldn’t be related to audit logs then",
+      "time": "02:01",
+      "timestamp": "1589101305.173000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah but we have grpc clients in app-tasks that talk to search and docops, and we have similar timeout configs on the connections.",
+      "time": "02:02",
+      "timestamp": "1589101363.174500",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "I see",
+      "time": "02:02",
+      "timestamp": "1589101377.175000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "so if it’s happening with doc-ops, it could very well be happening with search service.",
+      "time": "02:03",
+      "timestamp": "1589101384.175400",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "ya. do you know where we set those ?",
+      "time": "02:03",
+      "timestamp": "1589101393.175600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "vaguely, look in `data-services/doc-services/docops-service/src/py/server.py`",
+      "time": "02:04",
+      "timestamp": "1589101457.176000",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "found it. it’s `grpc_max_connection_age_seconds` . Is there a downside of setting it to 30 days?",
+      "time": "02:05",
+      "timestamp": "1589101500.176200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "`data-services/search-services/search-tservice/src/go/src/instabase/searchservice/main.go`",
+      "time": "02:05",
+      "timestamp": "1589101503.176400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "https://github.com/instabase/instabase/pull/13787",
+      "time": "02:05",
+      "timestamp": "1589101519.176600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Tami would know best the trade-offs/fix here. Will let him chime in on the dynamic scaling consideration.",
+      "time": "02:05",
+      "timestamp": "1589101544.176800",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "Sg. Thank you so much heymian :raised_hands:",
+      "time": "02:06",
+      "timestamp": "1589101594.177100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-05-10.json",
+    "message_count": 23,
+    "start_time": "1589095955.169700",
+    "end_time": "1589101594.177100",
+    "is_thread": true
+  }
+}

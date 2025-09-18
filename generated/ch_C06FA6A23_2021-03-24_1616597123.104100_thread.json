@@ -1,0 +1,79 @@
+{
+  "id": "ch_C06FA6A23_2021-03-24_1616597123.104100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Varun Jain",
+    "Hari",
+    "Aaron Tami",
+    "Lee"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Hi all, i’m kicking off a POV with Standard Chartered soon involving Chinese documents. Who is the best person to speak to about the best approach to use for this use case? For example, is it best to use either of these approaches?\n• Marx V3 - zh:en translation - translation looks good, but we lose the spacial integrity in the OCR output. \n• Translation Model \n• (another approach I don’t know of)",
+      "time": "07:45",
+      "timestamp": "1616597123.104100",
+      "is_reply": false
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "@Lee the Microsoft V3 is the best bet we have. The spatial layout is very hard to maintain cos it’s not a one word to one word mapping when translating.. for example 3 words in English might turn out to be 1 word in Chinese etc.. cc: @Aaron Tami",
+      "time": "07:58",
+      "timestamp": "1616597892.108300",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Thanks @Hari i’ll see what I can get out of MS V3",
+      "time": "08:24",
+      "timestamp": "1616599490.108700",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "@Hari As you said, layout is the main challenge.\n\nLee - @Aaron Tami was working on testing the German and Chinese languages for translation services and maybe able to help.",
+      "time": "08:25",
+      "timestamp": "1616599544.108900",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "We have 30+ samples from SC team where they are looking for entity recognition (based on specific keywords for companies in Chinese).\n\nVery strong interest from the trading services / operations teams in China if we can do this well.\n\nFYI - They are also evaluating IBM Watson for the same purpose.",
+      "time": "08:28",
+      "timestamp": "1616599686.109300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Currently for chinese documents we can use Msft Read 3.2 containers in combination with the Msft Translate Containers.\n\nThe current implementation for this is very naive.  We take the entire page text in the source language, and send it to the translation service.  In doing this, we might lose some spatial layout properties of the page.\n\nWe can try to come up with a different approach for partitioning parts of the page that we send to translation into batches, and then reforming the spatial layout of the page.  For things like Chinese to English, it is especially hard because characters can correspond to multiple words and vice versa.\n\nI do think we can make improvements on this, we just need to come up with a better algorithm/approach for how we send text to translation.",
+      "time": "09:50",
+      "timestamp": "1616604628.110500",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "@Lee @Aaron Tami absolutely, losing spatial layout is a big challenge right now. \n\nmany invoice and contract samples had tables. Do you think we should try to detect separate sections / cells and then send the text separately for translation for each block? Would this create issues in reconstructing the document / performance issues due to splitting and putting back together this way?",
+      "time": "09:55",
+      "timestamp": "1616604941.115500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-03-24.json",
+    "message_count": 7,
+    "start_time": "1616597123.104100",
+    "end_time": "1616604941.115500",
+    "is_thread": true
+  }
+}

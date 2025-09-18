@@ -1,0 +1,346 @@
+{
+  "id": "ch_C0516UPPMT3_2024-01-23_1706024739.691999_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Wilson",
+    "andy",
+    "joshbronko",
+    "jean",
+    "Heymian",
+    "Pridhvi Vegesna",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "who wrote this section in our api docs?\nhttps://aihub.instabase.com/docs/aihub/apis/run-apps-api/index.html#uploading-files-to-an-input-folder",
+      "time": "07:45",
+      "timestamp": "1706024739.691999",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @jean maybe?",
+      "time": "08:41",
+      "timestamp": "1706028100.861989",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "Nah, eng writes API docs and we edit them. But the conversation has been moved to <#CM9TARK7U|>. :slightly_smiling_face:",
+      "time": "08:42",
+      "timestamp": "1706028137.852149",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "Thanks for the ping, though, @Serena, it’s very easy to lose track of this channel! :smile:",
+      "time": "08:43",
+      "timestamp": "1706028205.587309",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "https://instabase.slack.com/archives/C0516UPPMT3/p1706026525783149 (https://instabase.slack.com/archives/C0516UPPMT3/p1706026525783149)",
+      "time": "09:00",
+      "timestamp": "1706029252.602129",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "That’s helpful, @joshbronko, thanks.\n\nThe reason this changed was:\n\n> While reviewing the file batches API technical design (https://docs.google.com/document/d/1Yzp9BGkzteCtWiY7p2Mh548rYJFEL05-s4S6_CIszq0/edit) (EPD-780), we learned from the core-services team that the correct way to upload files into the IB file system is by the multipart upload endpoint(s)  of `POST /api/v2/files/upload`. \n> In the run apps API quickstart section of the docs (https://aihub.instabase.com/docs/aihub/apis/run-apps-api/index.html), the current recommendation is to use the `/api/v2/files/<IB_PATH>` synchronous endpoint to upload files. This is not recommended - for large files this endpoint could cause stability issues in our backend (OOMs). \n> We should therefore update the docs to use multipart upload.\nIt sounds like we need a conversation between CS and eng about the way forward. Here’s the ticket that related to this change: https://instabase.atlassian.net/browse/DOCS-732",
+      "time": "09:04",
+      "timestamp": "1706029493.729339",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "cc @Wilson @Adam @andy",
+      "time": "09:07",
+      "timestamp": "1706029673.163899",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "The current state of file upload is to prefer multi-part upload of data. Although this chunking and committing code looks unnecessary to me. I was under the impression that sending a request through `requests` with `requests.post (http://requests.post)(..., files='...')` would automatically send a multipart POST request.",
+      "time": "09:25",
+      "timestamp": "1706030700.756969",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "@Wilson, looks like these changes were added by you. Is this the recommended stub code from the core-services team?",
+      "time": "09:26",
+      "timestamp": "1706030804.777899",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "Yup I wrote this stub code to adhere to the multipart upload convention of our v2/files api, but did not consult with the team for the stub code. Totally agree that this is too overkill - I will follow up with the core services team and get back asap with a path forward",
+      "time": "09:54",
+      "timestamp": "1706032450.036869",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "So I discussed further with @Pridhvi Vegesna  and unfortunately there is no shorthand way to stub the multi-part upload API. The `requests.post(files=...)` approach does not chunk the requests, it puts the entirety of the file content in one request. It does *not* conform with our multipart API convention of chunking & committing.\n\nWe are aligned that the current single file synchronous upload, although simpler to use, is unstable and does not set us up well long term, and multipart upload is the way to go. Also agree that implementing multipart by user is not acceptable. Pridhvi mentioned of possible work to implement internal chunking in the backend, but this is a hacky, improper solution.\n\nSo I believe the long term solution here is to explicitly perform multi-part uploading (just like the stub), but to surface this in an aihub python SDK. We are close to finalizing our roadmap and I believe this is in scope for it cc @andy",
+      "time": "13:37",
+      "timestamp": "1706045854.966979",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "why are we so concerned with uploading multiple files at once via the api? I guess I see creating a batch and adding files to it a fine approach",
+      "time": "13:40",
+      "timestamp": "1706046009.121489",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "If one has to make one call for the batch creation then a seperate call for each file, i dont see that a big deal in the world of apis",
+      "time": "13:41",
+      "timestamp": "1706046089.840029",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "hmm I'm not sure what you mean here, separate call for each file is the current approach. I'm not aware of any way to upload multiple files at once under a single API call. Multi-part upload is uploading a single file in digestible chunks as to not cause stability issues to our backend such as OOMs (out of memory)",
+      "time": "13:42",
+      "timestamp": "1706046178.028719",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "agreed, im not sure why we are focusing on multiple files in a single upload. not sure where this requirement is coming from",
+      "time": "13:43",
+      "timestamp": "1706046208.255069",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "This is about uploading a file in multiple parts, not about uploading multiple files.",
+      "time": "13:44",
+      "timestamp": "1706046242.327199",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "iirc, this is especially relevant for customers who are uploading large files and running into issues.",
+      "time": "13:44",
+      "timestamp": "1706046293.564989",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "But our documentation is forcing all files to this method which is the issue",
+      "time": "13:45",
+      "timestamp": "1706046322.747969",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "We are putitng our issue on the customer which is not a correct way of solving this.",
+      "time": "13:47",
+      "timestamp": "1706046474.809459",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "I agree with you, but neither is recommending they use the unstable single-part process.",
+      "time": "13:48",
+      "timestamp": "1706046537.119859",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "but how often are people uploading large sized documents....we have customers today in enterprise that leverage our files api with no issue....",
+      "time": "13:49",
+      "timestamp": "1706046570.906339",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "In any case, this is an issue for CS and eng to resolve, so my useful contribution to the discussion is limited. :disappear:",
+      "time": "13:49",
+      "timestamp": "1706046587.435499",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "Again I think the best way to solve this is by an SDK that abstracts away all these complications from the user  - we are finalizing our Q1 roadmap and SDK is a part of it",
+      "time": "13:55",
+      "timestamp": "1706046921.127499",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "how does postman work? meaning how would we make postman easy for an end user if we cover it up in an sdk",
+      "time": "13:55",
+      "timestamp": "1706046933.080909",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "our postman collection doesn’t reflect multi-part upload. @Pridhvi Vegesna, is there a file size or type where we are comfortable recommending and supporting the single request file upload from before? or do we not want any traffic to go towards that endpoint?",
+      "time": "14:11",
+      "timestamp": "1706047868.977539",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "I know this may not map 1-1, but Dropbox sets a good precedence for this: https://www.dropbox.com/developers/documentation/http/documentation#files-upload\n\nThey have an `/upload` endpoint that they state supports files that are <150 MB\n\nThey also have a series of `/upload_session/...` endpoints that support multi-part uploads of files up to 350GB.\n\nCC: @Pridhvi Vegesna @Heymian",
+      "time": "14:17",
+      "timestamp": "1706048240.877039",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "I don't have as much experience with the historical instability issues we saw when users uploaded large files via the traditional single request endpoint. So I may be missing context.\n\n*Why did we emphasize using multipart upload over the single upload endpoint:* \n\nThe motivation behind recommending multipart upload is to avoid having to deal with OOMs in our webservices. In a pre aihub world this was especially important for customers who would try to upload 500mb+ files. A 500mb file could balloon and take up to 2gb of memory in webservers causing them to crash (webservers had ~1-2gb of memory per pod). Since uploads can also take a long time (e.g. uploading a 500mb file can take 30+ seconds), we are also prone to crashes not just from a single large file upload, but to parallel semi-large file uploads.\n\n*Why aihub may be more resilient to the instability we previously saw:* \n\nIn a post aihub world, the parameters we are operating in are a little different. First, we have guards at nginx to prevent any incoming http requests with bodies > 105mb. So users can not upload files > 100mb via the single request endpoint to begin with. Second, on aihub.instabase.com (http://aihub.instabase.com), each api-server pods has (6gb memory, min 16 pods)  and each webapp pods has (3gb memory, min 12 pods). Third we autoscale api-server and webapp. While a single upload request to a pre-aihub deployment (e.g. instabase.com (http://instabase.com)) could OOM crash a webserver pod, there will probably need to be hundreds of upload requests (via the single request upload endpoint) with an average upload size of 50mb to crash a webserver (that is all back of the envelope math)\n\n*Why using multipart upload for extra stability is still valuable*\n\nAdmittedly, we may not immediately run into webserver instability issues if we let users upload files via the single request endpoint. But if traffic starts going up heavily it's not hard to imagine that webserver instability popping up again. Multipart upload keeps the average request body size at a safer threshold. We are engineering for resilience at scale.",
+      "time": "15:15",
+      "timestamp": "1706051715.217629",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Even if we all agree on what the tradeoffs are it seems like we have different weights on the importance of 1. api usability vs. 2. infra stability.\n\nIf we can come to a consensus that we are willing to tolerate an incurred risk of webserver OOMs, then letting users upload files up to 25mb-50mb via the single request upload endpoint seems reasonable. Dropbox has a precedent for this.\n\nAlternatively, it seems like an SDK will both be usable and encourage http request patterns that are better for our infra stability. Is there a reason why SDKs are not a better solution here? Can we not tolerate the reduced usability of multipart upload until the SDK becomes available?\n\n> how does postman work? meaning how would we make postman easy for an end user if we cover it up in an sdk\nDo we need to account for postman usability as well? My guess is that if the sdk is built well then it should be easy for developers to tinker around with the sdk and not have a need for postman.",
+      "time": "15:15",
+      "timestamp": "1706051728.267659",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "+1 to Pridhvi’s points here. Anecdotally, our platform has been heavily battle tested with chunks of 10MB  uploads. Between our years of debugging and load testing different on-prem envs, different storage providers, and nginx configs/timeouts, 10MB was picked as a chunk size that has proven able to protect our platform from OOMs and be stable. We don’t know what kind of infra/hardware dropbox is provisioning to their servers, so it’s not that meaningful to draw from Dropboxes’ limits. The takeaway there should be Dropbox also does have different limits from single part uploads and multi-part uploads.",
+      "time": "15:22",
+      "timestamp": "1706052138.573579",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "ya, if we can align on an extremely conservative limit for single part uploads, we can at least unblock most of our AI Hub API use cases until an SDK is ready towards the end of this quarter\n\nagreed on the SDK making postman less necessary too",
+      "time": "15:27",
+      "timestamp": "1706052421.007999",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "fwiw, anecdotally i’ve mainly seen use cases for AI Hub where files are rarely larger than 1-2 MB",
+      "time": "15:27",
+      "timestamp": "1706052446.188709",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "I disagree on the postman comment. It’s wildly used in testing and development. We shouldn’t need an sdk to making file uploads simple. To your point how often are these files super large. We’re over complicating our api making it difficult to consume.",
+      "time": "15:28",
+      "timestamp": "1706052536.316139",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I’m a bit confused about this thread, is the ask to do away with a multi-part upload API? Or just document a limit for the single upload API?\n\nIf the former, we need to keep a multi-part upload approach around, we can document it if needed and add to postman. \n\nTo the second point, we can document a limit of 10MB.",
+      "time": "15:31",
+      "timestamp": "1706052675.022289",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "I’d rather see our current implementation when you need to go over x mb but not force it for the majority of the files we would see",
+      "time": "15:31",
+      "timestamp": "1706052675.220589",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "@Heymian documentation indicates all uploads need to be multipart. Do we need it yes but I like the approach Dropbox took. Separate apis for large documents",
+      "time": "15:33",
+      "timestamp": "1706052818.874359",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "Problem: Josh found the multi-part upload stub code in our docs to be extremely unusable for customers. I think we are all agreed on this statement especially given the expected technical expertise of AI Hub users.\n\nSolution: We will clearly document both single-part and multi-part upload endpoints with an explicit 10MB file size cap on single-part upload. This should unblock API usability for most if not all existing AI Hub use cases. Later this quarter, we will release the SDK to abstract away the usability issues of multi-part upload. This should enable more enterprise use cases.\n\n@Wilson can own the immediate docs updates.",
+      "time": "15:37",
+      "timestamp": "1706053044.683029",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "@andy would single part be the previous put endpoint or would it be a post where one could supply the file payload. Similar to how we handle converse api today.",
+      "time": "15:39",
+      "timestamp": "1706053180.948459",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "yes",
+      "time": "15:39",
+      "timestamp": "1706053195.972679",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "there may have been some miscommunication where multi-part upload completely replaced the file upload stub code in the docs. we should have both workflows documented for customers",
+      "time": "15:40",
+      "timestamp": "1706053237.564689",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "Sounds good to me and the solution makes sense - created a docs ticket (https://instabase.atlassian.net/browse/DOCS-773) for this and thank you @andy for aligning.\n\nFor the ongoing batches work (https://docs.google.com/document/d/1Yzp9BGkzteCtWiY7p2Mh548rYJFEL05-s4S6_CIszq0/edit#heading=h.gf02wd9197ai) to abstract away the filesystem from api users, we can also support single-part file upload via batch - will create a new endpoint for this and update the doc",
+      "time": "15:51",
+      "timestamp": "1706053918.923699",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-01-23.json",
+    "message_count": 40,
+    "start_time": "1706024739.691999",
+    "end_time": "1706053918.923699",
+    "is_thread": true
+  }
+}

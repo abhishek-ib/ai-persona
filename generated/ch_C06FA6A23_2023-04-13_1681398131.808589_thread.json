@@ -1,0 +1,190 @@
+{
+  "id": "ch_C06FA6A23_2023-04-13_1681398131.808589_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hey team! Trying to set up Cypress test for my sandbox. My Cypress test is able to log in and get session cookies. However, the following `cy.visit` would still redirect to the login page. The same code works for dogfood & uat. Anyone knows what might go wrong?",
+      "time": "08:02",
+      "timestamp": "1681398131.808589",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "fyi, cypress can log in by filling out the login form, but the following `cy.request` won't send the cookie to the server so tests that call this fn would also fail",
+      "time": "08:04",
+      "timestamp": "1681398242.462629",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "This is the sandbox (https://cs-saas-uat.aws.sandbox.instabase.com/) and this is the link (https://cs-saas-uat.aws.sandbox.instabase.com/deployment-manager/configs) to DM",
+      "time": "08:05",
+      "timestamp": "1681398304.806299",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Likely something to do with `Cypress.Cookies.preserveOnce()` ? But I also wonder if we set any special patches for the dogfood/uat env to allow cypress to run there.",
+      "time": "08:06",
+      "timestamp": "1681398404.483319",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "usually when i see this locally, there’s something wrong with `core-platform-service` in my local env\n\nbut you’re saying that you’re able to get the session cookie successfully?\n\nstill, do you see any error logs in `core-platform-service` in this sandbox?",
+      "time": "08:15",
+      "timestamp": "1681398926.531639",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Something looks off? Seems like Cypress is trying to visit something without the session cookie :thinking_face:",
+      "time": "08:24",
+      "timestamp": "1681399494.930939",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Well. A workaround, for now, is logging in by filling out the form.  Will look into more later",
+      "time": "08:44",
+      "timestamp": "1681400677.252459",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems to be log in with the username `account`? is that correct?",
+      "time": "08:46",
+      "timestamp": "1681400788.988019",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea... but it shouldn't be the case. The username should be support-testing",
+      "time": "08:47",
+      "timestamp": "1681400830.282639",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "`cy.request` failed with `\"400 Bad Request: The CSRF token is missing.\"`",
+      "time": "08:48",
+      "timestamp": "1681400927.691309",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ah!! I see that CSRF is disabled on dogfood....",
+      "time": "08:55",
+      "timestamp": "1681401316.118869",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Will try to disable that for my sandbox and see if that'd work :crossed_fingers:",
+      "time": "08:55",
+      "timestamp": "1681401335.929499",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Disabling CSRF allows `cy.request` to work!! :blob-bear-dance:",
+      "time": "09:07",
+      "timestamp": "1681402037.447909",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Eric Han i seem to recall you were working on csrf previously?",
+      "time": "10:01",
+      "timestamp": "1681405313.239729",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "I’m not sure how csrf would affect login. CSRF just blocks certain content from being rendered. It shouldn’t do anythign to the session cookie.",
+      "time": "12:05",
+      "timestamp": "1681412701.477219",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "These files look relevant\n• CSRFProtectForAPI: https://github.com/instabase/instabase/blob/4edf0c907383c03038753662347536ac8c0de9[…]ebserver/shared/src/py/instabase/utils/csrf/csrf_protect_api.py (https://github.com/instabase/instabase/blob/4edf0c907383c03038753662347536ac8c0de91f/webserver/shared/src/py/instabase/utils/csrf/csrf_protect_api.py)\n• Call ^ fn for all api endpoints if CSRF is enabled: https://github.com/instabase/instabase/blob/92b6ef1f5c7b0eb751242636896781fb5940bc82/webserver/api-server/src/py/manage_api_server.py\n• Read env var `USE_NTBK` to enable CSRF: https://github.com/instabase/instabase/blob/7d898a806a39afbe1f991d943f50e5f25dc2e2[…]erver/apps-server/src/py/instabase/apps_server/server/config.py (https://github.com/instabase/instabase/blob/7d898a806a39afbe1f991d943f50e5f25dc2e22e/webserver/apps-server/src/py/instabase/apps_server/server/config.py)",
+      "time": "12:09",
+      "timestamp": "1681412980.315269",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I can see how disabling CSRF would allow `cy.request` to work based on the above files. But yea, not sure why `cy.visit` would fail after logging in, even though we've got session cookies",
+      "time": "12:11",
+      "timestamp": "1681413082.195339",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Maybe these 2 lines would disable certain pages from rendering?\nhttps://github.com/instabase/instabase/blob/4edf0c907383c03038753662347536ac8c0de9[…]ebserver/shared/src/py/instabase/utils/csrf/csrf_protect_api.py (https://github.com/instabase/instabase/blob/4edf0c907383c03038753662347536ac8c0de91f/webserver/shared/src/py/instabase/utils/csrf/csrf_protect_api.py#L66-L67)",
+      "time": "12:12",
+      "timestamp": "1681413144.278809",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "ohh i worked on CSP not CSRF :smile:",
+      "time": "12:12",
+      "timestamp": "1681413163.376169",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you everyone for helping out! I'll document my findings and update here :blob-bear-dance:",
+      "time": "12:15",
+      "timestamp": "1681413327.120499",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oops my bad",
+      "time": "12:37",
+      "timestamp": "1681414648.667099",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-04-13.json",
+    "message_count": 21,
+    "start_time": "1681398131.808589",
+    "end_time": "1681414648.667099",
+    "is_thread": true
+  }
+}

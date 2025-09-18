@@ -1,0 +1,215 @@
+{
+  "id": "ch_CSY11CK7T_2024-10-25_1729873123.053419_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Xindi Xu",
+    "Serena",
+    "danny.lan"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "<mailto:support-testing+1@instabase.com|support-testing+1@instabase.com> still have ~60,000 units. We need to actually click \"subscribe\" to get it to use pay as you go plan, but it should work rn. Seeing a license error is definitely unexpected.",
+      "time": "09:18",
+      "timestamp": "1729873123.053419",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "<mailto:cypress-user-64350@instabase.com|cypress-user-64350@instabase.com> still has 500 units from the free trial and no units have been used. I'm guessing that something is wrong with our license checking logic :thinking_face:",
+      "time": "09:20",
+      "timestamp": "1729873202.176619",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "This is the response for <mailto:support-testing+1@instabase.com|support-testing+1@instabase.com> in the linked CI run\n@Victor Zeng - I know that we said we should use the `billing-plan` endpoint to check for the license but I never got a chance to updated it, since the `usage-total` endpoint still works. Has anything changed? Any ideas why this endpoint would return an invalid license?\n\n```GET https://crafting-cyp--pr-64350-cypress-instabase.instabase.site.sandboxes.run/api/v2/licenses/usage-total?product_name=AIHUB\n\n{\n  \"status\": \"OK\",\n  \"credits_used\": 0,\n  \"credits_available\": 0,\n  \"credits_allowed\": 0,\n  \"has_unlimited_overage\": false\n}```",
+      "time": "09:23",
+      "timestamp": "1729873404.858109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw in addition to @danny.lan’s PR, this is also happening on @Paul H’s PR https://cloud.cypress.io/projects/cfhedy/runs/15117",
+      "time": "09:42",
+      "timestamp": "1729874541.973559",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hm, yea. The `usage-total` returns the same info with 0 credit allowed for both new and preexisting user",
+      "time": "09:44",
+      "timestamp": "1729874692.135889",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for now, should we mock the `usage-total` endpoint to unblock the Cypress tests? Would that be sufficient to get around the issue?",
+      "time": "09:45",
+      "timestamp": "1729874746.418889",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, I think so",
+      "time": "10:02",
+      "timestamp": "1729875772.335089",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "has anyone gotten started on this? otherwise i can take a look",
+      "time": "11:53",
+      "timestamp": "1729882386.560249",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "`usage-total` gets the license from license-service, not Metronome. You need to use the `usage` endpoint to get Metronome usage.",
+      "time": "13:17",
+      "timestamp": "1729887475.153749",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Do not use `usage-total` .",
+      "time": "13:18",
+      "timestamp": "1729887510.646489",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "In fact, I should put up a PR to block the usage-total endpoint when a user is connected to Metronome.",
+      "time": "13:19",
+      "timestamp": "1729887570.084899",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Interesting... ~that means on prod, all community users are probably blocked?~ \nOk, in prod, we are calling the `usage` endpoint, not `usage-total`",
+      "time": "13:20",
+      "timestamp": "1729887634.611539",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Why would they be blocked? Frontend calls the `usage` endpoint.",
+      "time": "13:22",
+      "timestamp": "1729887761.972839",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, I was confused. I checked in the browser. We are indeed calling the `usage` endpoint",
+      "time": "13:24",
+      "timestamp": "1729887840.991819",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ah, ok. I know why we are calling `usage-total` in Cypress CI runs.\nFor @Paul H’s PR:\nWe are overwriting the feature flag response based the `env-local-feature-flags.json` file.\nhttps://instabase.slack.com/archives/C058UFAGWTF/p1729787680438039\n`enable_community_metronome` should be set to GA, not IB_OPT_IN",
+      "time": "13:29",
+      "timestamp": "1729888142.445289",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah all of these PRs modify that file, so the same fix will probably CI for all of them? i’ll try for mine now",
+      "time": "13:29",
+      "timestamp": "1729888197.242759",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yes, all these PRs changes the feature-flag file. Let's update `enable_community_metronome` to GA in env-local-feature-flags.json",
+      "time": "13:30",
+      "timestamp": "1729888253.782139",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "thanks for the debugging help! @Xindi Xu @Victor Zeng",
+      "time": "13:31",
+      "timestamp": "1729888282.816599",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw fyi @Liam Callanan for your most recent PR for turning on solution accuracy v2\n\nTLDR Cypress CI will fail unless `enable_community_metronome` is GA in your PR",
+      "time": "13:41",
+      "timestamp": "1729888890.154989",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw the Cypress CI runs for these feature flag changes always timeout (current time limit is 45 min) - did you not encounter this when testing your changes on your PR? @Xindi Xu\n\nsame thing happened for my PR, Danny’s PR, and Paul’s PR",
+      "time": "15:25",
+      "timestamp": "1729895124.259319",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Maybe the sandbox is slower than yesterday? I didn't run into this yesterday.",
+      "time": "15:27",
+      "timestamp": "1729895239.655139",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Should we bump up the time limit again? We are running all the tests so it's definitely possible that they time out",
+      "time": "15:27",
+      "timestamp": "1729895247.848209",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yeah i’m hesitant to bump the time limit since i think most PRs don’t trigger all Cypress tests?\n\nbtw @danny.lan’s PR and @Paul H’s PR are introducing new feature flags, so i don’t think they should trigger any legitimate Cypress failures, so i’m fine with helping them force-merge the PRs\n\nwe were more concerned about PRs that change the stage of existing feature flags, right?",
+      "time": "15:30",
+      "timestamp": "1729895405.760719",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yep, we can force merge those PRs for sure. And yes, one TODO is to check the diff to see if we are actually changing feature flags tiers and trigger Cypress based on that",
+      "time": "15:31",
+      "timestamp": "1729895501.232099",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-10-25.json",
+    "message_count": 24,
+    "start_time": "1729873123.053419",
+    "end_time": "1729895501.232099",
+    "is_thread": true
+  }
+}

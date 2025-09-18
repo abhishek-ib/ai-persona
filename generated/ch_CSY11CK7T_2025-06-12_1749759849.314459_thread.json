@@ -1,0 +1,117 @@
+{
+  "id": "ch_CSY11CK7T_2025-06-12_1749759849.314459_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Sherif"
+  ],
+  "messages": [
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Hi team,\n\nHas anyone encountered this screen before? Just rebased against master and my sandbox is running with no issues.\n\nWhen i clear cookies I can log in, but after I log in I just see this screen again :thinking_rotating:",
+      "time": "13:24",
+      "timestamp": "1749759849.314459",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Oh yes, please re-run db migration: https://docs.google.com/document/d/1mM32cCbi4NFtphnlu1T8rtsc0lsfj3FZWfNrKmui34M/edit?tab=t.0#heading=h.uigwvfmjos5m",
+      "time": "13:26",
+      "timestamp": "1749760004.872719",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Seems like it worked, but it looks like I lost some info related to my account.\n\nex: I already upgraded to commercial, but now don't have my organzation account anymore, and I'm running into this issue when trying to create a new org.",
+      "time": "13:44",
+      "timestamp": "1749761055.032799",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Interesting... can you share your sandbox? I can take a look",
+      "time": "13:44",
+      "timestamp": "1749761090.852859",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Sure thing. Thank you! https://instabase.sandboxes.site/sandboxes/sherifelmetwally?cw=dev",
+      "time": "13:45",
+      "timestamp": "1749761124.728959",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Looks like db-migration didn't complete. The permissions table is empty. I'll run it again",
+      "time": "13:48",
+      "timestamp": "1749761309.301739",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Did I miss a step? I ran\n\n```cd $IB_HOME/shared-utils/go-utils/src/instabase/utils/db\nbazel run tools/dbschema migrate```\nthen\n\n```export DB_PARAMS=\"--dialect=mysql --port=3306 --hostname=mysql --username=root --database=ibdb\"\nbazel run tools/dbmigrate```",
+      "time": "13:50",
+      "timestamp": "1749761424.027879",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Still looking! give me a minute",
+      "time": "13:58",
+      "timestamp": "1749761926.074259",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "OK. Your sandbox should be working now! Can you try again?",
+      "time": "14:01",
+      "timestamp": "1749762095.125219",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Thank you so much! It's working again :slightly_smiling_face:",
+      "time": "14:03",
+      "timestamp": "1749762234.436149",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "A couple of things:\n1. We seed the DB with the prebuilt roles in the post-install action `aihub-license`. I forgot to update the env var default value to true :sweat_smile: . I updated your `env-local-overrides.json` to this and then run the PIA\n```{\n  \"base\": {\n    \"enable_aihub_license_post_install_action\": true,\n    \"enable_setup_prebuilt_roles\": true\n  }\n}```\n2. Then, I rollback back the migration 342 and re-apply the migration. We have to roll back because you already ran the migration so the DB refuse to apply the migration again. Your previous DB migration doesn't do anything because the prebuilt roles are not seeded.",
+      "time": "14:04",
+      "timestamp": "1749762299.906499",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "PR to set the `enable_setup_prebuilt_roles` env var true by default: https://github.com/instabase/instabase/pull/71382",
+      "time": "14:13",
+      "timestamp": "1749762793.059869",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-06-12.json",
+    "message_count": 12,
+    "start_time": "1749759849.314459",
+    "end_time": "1749762793.059869",
+    "is_thread": true
+  }
+}

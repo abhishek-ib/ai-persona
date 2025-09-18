@@ -1,0 +1,95 @@
+{
+  "id": "ch_C06FA6A23_2019-07-25_1564083278.072900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Mohit",
+    "dlluncor",
+    "lydia",
+    "Ashish"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Hey! Just took a look at this and have some questions:\n• Speaking from Python-land and in the spirit of DRY (Don't Repeat Yourself), can we use normal Python exceptions throughout our Python codebase (instead of returning a tuple) and then create IBErrors in the celery decorator? A lot of the document explanation seems very specific to checking on status of jobs, etc -- and it seems like the celery task is a great place to add this notion of IBError, instead of propagating it throughout our code base. The example code is also fairly verbose, so not ideal to have to add everywhere.\n• Have we considered using an error logging system like Sentry for instabase.com (http://instabase.com)? It already implements a lot of stack trace/context variable parsing and displays it in a very nice UI. This would be useful for all the logging.error in our code as well, not just errors that are returned to the user. Would make debugging issues much easier that parsing through logs in StackDriver. I think the latency is also much better than a generic log dumper.",
+      "time": "12:34",
+      "timestamp": "1564083278.072900",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "If the concern is to be able to pass errors between services, can we create Python/Go, etc decorators that handle IBError serialization/deserialization that can just be used at the endpoints instead of throughout the codebase? I'm looking at https://github.com/instabase/instabase/pull/10567/files and it seems error-prone and onerous to require all developers to deal with sysinfo, getting tracebacks etc, when this is built-in functionality to python exceptions",
+      "time": "12:43",
+      "timestamp": "1564083833.073100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "couple topics we might want to have a meeting about:\n   1. In general we’ve not gone the exception route in Python, and rather preferred the Go style of Tuple[ReturnType, Error]. We do so as part of our philosophy that all code should handle exceptions, and Exceptions should only be for unexpected behavior. [if you have an alternate proposal on using Exceptions for expected problems, we should discuss. This would be a different thinking, but certainly we can discuss the pros and cons of it.]\n   2. Sentry sounds really neat and I do think that having a error logging system would be really useful FYI @Ashish and @Mohit are working on a trace logging system that would re-use things like logging.error etc (not the intended goal of IBError)\n   3. We are hoping to use IBError in even things like Flask code, so we can embed a richer history of information associated with the Exception (which normal Python exceptions don’t give you — like which username is this Exception associated with?) — or even — what Flow is this exception associated with?\n   4. Since we don’t have a system currently (or one that I’m aware of that will ship in the next 3 - 5 months) which allows us to fully debug and understand all the stack traces associated with running a Flow — IBError is currently the only way we can accomplish this right now.\n   5. IBError should be a one-line replacement ideally, e.g., instead of None, u’This was an Error’, you do None, IBError.create_from_msg(u’This was an error’)\n   6. As far as I’m aware (perhaps I’m unaware on this point) — raise IOError doesn’t carry along the stack trace history of where that particular exception happened, unless you call traceback.format_exc() at the exact point where the Exception occurs\n\nHappy to chat more over email about it or in person to clarify anything or hear out any alternatives for how we can do stack tracing across the entire Flow Canvas (as well as in any part of our code) — currently as far as I know, exceptions only carry along the string msg, not the entire traceback.\n\nAlso with IBError, we can take exceptions that occurred in Java, C++, etc, and stash those in our Python IBError objects when reading from the Thrift or GRPC Status struct",
+      "time": "13:51",
+      "timestamp": "1564087895.073800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Yes let's chat about it live tomorrow!",
+      "time": "14:16",
+      "timestamp": "1564089393.074000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Thanks for the detailed response!",
+      "time": "14:16",
+      "timestamp": "1564089408.074200",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Definitely :heavy_plus_sign: 1 on sentry. I do wish there was a simpler (less verbose) way for IBError. (Maybe a some simple changes like Creation part can reduce dev effort and verbosity).  @lydia's idea of decorator seem interesting (can also work w IBError) and can simplify things a lot. :thinking_face:",
+      "time": "14:17",
+      "timestamp": "1564089474.074400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@dlluncor i put a meeting on your calendar. feel free to invite any others. you should have edit perms",
+      "time": "14:37",
+      "timestamp": "1564090665.074900",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "@lydia @dlluncor I will love to be part of this discussion",
+      "time": "14:45",
+      "timestamp": "1564091107.075300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Sounds good! Which part about using IBError support is verbose exactly? Not sure if I understand where the verbosity is coming from our an example of it",
+      "time": "15:49",
+      "timestamp": "1564094997.076100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-07-25.json",
+    "message_count": 9,
+    "start_time": "1564083278.072900",
+    "end_time": "1564094997.076100",
+    "is_thread": true
+  }
+}

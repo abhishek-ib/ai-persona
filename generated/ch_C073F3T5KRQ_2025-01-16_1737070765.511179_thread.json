@@ -1,0 +1,142 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-01-16_1737070765.511179_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Do we have any guides on how to get imported proto works in python services. I'm adding a new proto file `perms.proto` and it's imported in `repo_service.proto` . When I run `make build-protos` , we are not generating `_pb2.py` files for the new `perms.proto` file. The unittests in webapp and api server also failed with\n```    from instabase.protos.perms import perms_pb2 as instabase_dot_protos_dot_perms_dot_perms__pb2\nModuleNotFoundError: No module named 'instabase.protos.perms'```",
+      "time": "15:39",
+      "timestamp": "1737070765.511179",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "WIP PR: https://github.com/instabase/instabase/pull/67080\n\nI think it works if I manually add `perms.proto` as a dependency in api-server and webapp's Makefiles but that seems odd because I'd have to add it to all Makefiles that uses `repo_service.proto`",
+      "time": "15:40",
+      "timestamp": "1737070853.733909",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I thought defining dependency in `repo_service/BUILD.bazel` would help but it looks like we are not using bazel for python\nhttps://github.com/instabase/instabase/pull/67080/files#diff-c960e079c57bb7c7c0bcead8857755fc8898494cb3f989c86ca6e37f4d61a893",
+      "time": "15:41",
+      "timestamp": "1737070915.285849",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "idk if this old doc (https://docs.google.com/document/d/13oZcTClAgwbsCfjnMMNTHdBr_Kfzl0YCjVTx5ulvigU/edit?tab=t.0) is helpful, but it does say “The proto must also be included in the service’s Makefile”?",
+      "time": "16:36",
+      "timestamp": "1737074178.605179",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "It depends on the Makefile, Did you add the dependency into core-platform-service's Makefile?",
+      "time": "16:45",
+      "timestamp": "1737074749.670159",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Heymian do you mean adding the `perms.proto` (imported by `repo_service.proto` ) to the makefile?",
+      "time": "16:48",
+      "timestamp": "1737074901.955059",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "it seems like golang services that uses bazel are okay but python services are not",
+      "time": "16:49",
+      "timestamp": "1737074953.303229",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "oh, I thought you just wanted to regenerate the proto stubs?",
+      "time": "16:50",
+      "timestamp": "1737075031.641619",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "If you need them in api-server, you need to add them to the api-server Makefile",
+      "time": "16:50",
+      "timestamp": "1737075054.963839",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "i see... so because `repo_service.proto` imports `perms.proto` , i need to add `perms.proto` to every Makefile that includes `repo_service.proto` as a dependency?",
+      "time": "16:52",
+      "timestamp": "1737075122.553219",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yup",
+      "time": "17:19",
+      "timestamp": "1737076747.702249",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ":lolcry: ok. I was expecting something less manual but makes sense! Thank you :blob-bear-dance:",
+      "time": "17:20",
+      "timestamp": "1737076816.208279",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "lol nope",
+      "time": "17:25",
+      "timestamp": "1737077108.471949",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "until python can move to bazel (instead of our Makefiles), it'll be manual.",
+      "time": "17:25",
+      "timestamp": "1737077141.109099",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Gotcha!",
+      "time": "17:26",
+      "timestamp": "1737077175.935009",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-01-16.json",
+    "message_count": 15,
+    "start_time": "1737070765.511179",
+    "end_time": "1737077175.935009",
+    "is_thread": true
+  }
+}

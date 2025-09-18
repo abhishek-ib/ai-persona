@@ -1,0 +1,127 @@
+{
+  "id": "ch_C06FA6A23_2025-05-20_1747779668.938369_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Cody Boggs",
+    "mfichman",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":wave: :question-block:\n\nHi there! Question: Just how awful an idea is it for me to try to update our version of `protobuf` in `third-party/bazel/py/requirements_py39.in` from `3.20.3` (released in _*2022*_ :sob:) to a more modern version like, say... anything within the last year?  :sweat_smile:",
+      "time": "15:21",
+      "timestamp": "1747779668.938369",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(Obligatory opportunistic pinging of @Heymian @Victor Zeng @mfichman @Ashish and others who have more historical context than me :smile: )",
+      "time": "15:27",
+      "timestamp": "1747780033.923409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Lol do it!",
+      "time": "15:31",
+      "timestamp": "1747780285.917549",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "it's a trap!",
+      "time": "15:32",
+      "timestamp": "1747780320.666149",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Main thing is that we need to update the protoc as well. There's a release support chart here: https://protobuf.dev/support/version-support/#proj-python3",
+      "time": "15:32",
+      "timestamp": "1747780359.784089",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "It needs to be done, so go for it. Just make sure all the unit test pipelines run and deployment comes up and we should be good",
+      "time": "16:25",
+      "timestamp": "1747783558.497369",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "So... none of y'all are making this sound at all like the Bad Idea™ I had assumed it should be.\n:face_with_raised_eyebrow:\n\nI don't trust it.\n\n:joy:\nKidding, I'll give it a shot",
+      "time": "17:12",
+      "timestamp": "1747786365.903809",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Sooo not an option, sadly.\n\nTurns out `onnxconverter-common` has an explicit constraint (https://github.com/microsoft/onnxconverter-common/blob/8d2f85f0a7039a0b0defd6c7509cb905914a4d2f/pyproject.toml#L27) of `protobuf==3.20.2` :upside_down_face:\nCan't upgrade onnxconvert-common (https://pypi.org/project/onnxconverter-common/#history) either as it's never been published at any version higher than 1.14.0 (Aug 2023) that we have installed now. :disappointed:\n\nSeems `model-service` uses it, by way of at least a couple `shared-utils/py-utils` components... and as such is keeping us stuck at a 2-year old version of the onnxconverter-common package and a protobuf version from Sep. 2022. :sob:",
+      "time": "19:58",
+      "timestamp": "1747796293.939549",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Could ostensibly update the requirements spec to pull straight from github where at least the pyproject (https://github.com/microsoft/onnxconverter-common/blob/f7a8eb699caa6f6a78d3bdfbcaf5dfbd43569ebd/pyproject.toml#L27C1-L27C66) constraint is updated to `\"protobuf>=3.20.2\"`, but I suspect that won't pass muster with scans. :grimacing:",
+      "time": "19:59",
+      "timestamp": "1747796394.214639",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ooh\nInteresting\nSo `onnxconverter-common` is only technically required because `skl2onnx==1.16.0`  requires it\n\nLooking at _that_ project's repo... they're dropping (https://github.com/onnx/sklearn-onnx/blob/main/CHANGELOGS.md#1190) that requirement in 1.19.0\n\nJust ... dunno when that'll release :lolcry:",
+      "time": "20:14",
+      "timestamp": "1747797264.218399",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "fwiw’s I tried to also upgrade a few of the ancient python packages last week and ran into a lot of version conflicts as well. We haven’t been updating our bazel packages with python for a long while",
+      "time": "20:26",
+      "timestamp": "1747798012.017369",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Yah. We're basically going to have to find a new valid dependency set. Do we have a ticket for fixing the bazel requirements file?",
+      "time": "20:30",
+      "timestamp": "1747798204.806109",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "And once we fix that, we should add a pre-merge check making sure that the bazel requirements are updated wehn we update the poetry requirements.",
+      "time": "20:30",
+      "timestamp": "1747798234.710799",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-05-20.json",
+    "message_count": 13,
+    "start_time": "1747779668.938369",
+    "end_time": "1747798234.710799",
+    "is_thread": true
+  }
+}

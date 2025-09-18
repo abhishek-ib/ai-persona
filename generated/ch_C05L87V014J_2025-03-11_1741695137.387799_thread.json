@@ -1,0 +1,117 @@
+{
+  "id": "ch_C05L87V014J_2025-03-11_1741695137.387799_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Aayush",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "Hey team, having some issues with crafting lately. Not sure others are facing this or if something is missing in my workflow.\nMost frequently I see -\n\n• UI not reflecting changes after making changes to the frontend code.\n    ◦ Here I usually try commands like `cs up`, `workspace service enable webpack`, `workspace update` `cs build nginx` etc. but I've seen even these not working\n• `ppy status` never works and gets stuck for locally running services in crafting. I've been seeing this in all sandboxes for few months. This is helpful for getting the status of the services in ibdev template.\n• Can we get an option to use the `ibdev` crafting database in `ibdev-backend` template as well? I've seen `ibdev-backend` is generally more stable, and would prefer to use that for everything. I need the common crafting DB for search as it's only set up there. Additionally, can we just use the `ibdev` DB locally using the db string?\n• workspace update/setup sometimes gets stuck in some golang errors, will post details in this thread if I see this again. Also usually find some services not compiling with errors. ppy compile --use-prebuilt also doesn't work so can't use prebuilt images either.\n• Is there a continuously updated doc which contains the Usage guide, FAQ, best practices, list of commands, and the crafting architecture/config details documented? I think this will be very helpful to get people unblocked when issues arise. Confluence guides are currently outdated, and confluence is good for guides which aren't updated often, for crafting I think creating a doc like the Dev setup doc makes more sense.\nHow I'm using crafting:\n• Spin up a sandbox with ibdev or ibdev-backend\n• `workspace setup; cs up;`",
+      "time": "05:12",
+      "timestamp": "1741695137.387799",
+      "is_reply": false
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "cc @Balaram",
+      "time": "05:16",
+      "timestamp": "1741695391.589069",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems that most points will be addressed if you're able to use `ibdev-backend`, instead of `ibdev`?\n\nso it's probably just worth focusing on the third bullet here - ie using a common db to work on search\n\ncc @mfichman",
+      "time": "10:32",
+      "timestamp": "1741714370.591609",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "I have seen some of these issues with the ibdev-backend template as well. `ppy status` doesn't work, if you prefer using ppy for something. Also have seen UI changes not reflecting - will bring up details when I see this again.\n\nAlso I think creating a google doc for the running crafting guide will be very valuable. It can also contain the details of crafting architecture and relevant configuration and code files so people can debug issues independently.",
+      "time": "10:47",
+      "timestamp": "1741715267.035319",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "on an `ibdev-backend` sandbox, you can use `docker ps` to see all running services (besides rabbitmq, redis, opensearch, and the mysql db) - is there a particular reason you need to use `ppy status`?",
+      "time": "10:51",
+      "timestamp": "1741715493.698129",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "It's mainly useful to see the status of services not running on docker but locally (with `ppy compile && ppy start`).",
+      "time": "10:52",
+      "timestamp": "1741715534.841429",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we already have several resources for using `ibdev-backend` (slides (https://docs.google.com/presentation/d/1Fl2QBxoLnP1EIegMcHPC9qRlrBdQKmic_cn_wTb4Wu8/edit#slide=id.g31cbd307c56_0_68), doc 1 (https://docs.google.com/document/d/1yQOCxOISV_ukUxXdPJDoN-rERtOhdVRe7zv1swF1igw/edit?tab=t.0), doc 2 (https://docs.google.com/document/d/1XgxmHi0idz-UoT9hfKhKg0s8099kh2DGWrhvxQbd3-g/edit?tab=t.0#heading=h.hypuww29lzaw)) and troubleshooting `ibdev-backend` (doc (https://instabase.atlassian.net/wiki/spaces/TI/pages/2823651329/Troubleshoot+ibdev-backend+sandbox))\n\nare you asking for a new doc for general crafting architecture and configuration? or more clarification on how to use `ibdev-backend` sandboxes?",
+      "time": "10:53",
+      "timestamp": "1741715634.596459",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> It's mainly useful to see the status of services not running on docker but locally (with `ppy compile && ppy start`)\nwe are trying to move away from running services locally not on docker\n\nso that's why all the commands in the `ibdev-backend` template only support running services in docker\n\neventually if consolidate how engineers run services, we can improve consistency and reduce one-off issues in individual dev environments",
+      "time": "10:56",
+      "timestamp": "1741715778.698409",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": ">  we are trying to move away from running services locally not on docker\nOk, got it. So we are going with docker services only for dev going forward - makes sense.\n\nThanks these docs are great. I think it will be good to have a single place which compiles all these which we can pin on the channel. The doc can the single info point which is updated with the latest practices. Currently the issue is it's hard to find info, and the knowledge around crafting is highly scattered, also it keeps changing.\nDocs on confluence are outdated, and debugging guides are mostly on slack threads.",
+      "time": "11:01",
+      "timestamp": "1741716084.268339",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "If we can improve the knowledge gap issue (established dev processes, crafting architecture and code/config locations), it will make it much easier to debug the issues when the arise. I'm personally seeing issues in crafting frequently, and one failure leads to another and I end up creating a new sandbox - which turns out not working either.",
+      "time": "11:09",
+      "timestamp": "1741716555.906199",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Are all of the issues you see on sandboxes using `ibdev`? Or do you also see a lot of issues on sandboxes using `ibdev-backend`?",
+      "time": "12:39",
+      "timestamp": "1741721975.920599",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "I see issues frequently in ibdev-backend as well. My sandbox started up in problematic state with services crashed. Trying `cs workspace update` gets stuck in this step.\nAnd I'm still blocked on this issue ^, can we prioritise getting the shared DB available in local dev + ibdev backend?",
+      "time": "22:25",
+      "timestamp": "1741757155.074949",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-11.json",
+    "message_count": 12,
+    "start_time": "1741695137.387799",
+    "end_time": "1741757155.074949",
+    "is_thread": true
+  }
+}

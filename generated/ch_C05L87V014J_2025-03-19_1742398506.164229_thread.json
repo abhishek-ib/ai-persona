@@ -1,0 +1,366 @@
+{
+  "id": "ch_C05L87V014J_2025-03-19_1742398506.164229_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I've been running into out of disk space issues a lot in the last few days, I'm running `docker system prune -a` and `sudo rm -rf /home/owner/.cache/*` every few hours. Is there anything else I can do?",
+      "time": "08:35",
+      "timestamp": "1742398506.164229",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "This is my breakdown:\n\n```27.8 GiB [############] /home\n    5.8 GiB [##          ] /usr\n.   4.2 GiB [#           ] /tmp\n.   2.4 GiB [#           ] /var\n. 516.2 MiB [            ] /opt\n.   2.2 MiB [            ] /etc\n.  64.0 KiB [            ] /run\n    0.0   B [            ] /dev\n!   0.0   B [            ] /root\n@   0.0   B [            ]  lib64\n@   0.0   B [            ]  sbin\n@   0.0   B [            ]  lib\n@   0.0   B [            ]  bin\ne   0.0   B [            ] /srv\ne   0.0   B [            ] /sbin.usr-is-merged\ne   0.0   B [            ] /private\ne   0.0   B [            ] /mnt\ne   0.0   B [            ] /media\ne   0.0   B [            ] /lib.usr-is-merged\ne   0.0   B [            ] /boot\ne   0.0   B [            ] /bin.usr-is-merged```\nAnd I'm already out of space:\n\n```owner@dev:~/instabase/core-services/file-service$ make build-docker\nHost OS is linux\nmkdir: cannot create directory '/home/owner/instabase/core-services/file-service/build': No space left on device\nmake: *** [Makefile:34: build-docker] Error 1```",
+      "time": "08:37",
+      "timestamp": "1742398640.560529",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I've tried re-syncing, but even SetupFilesInHome can't even finish because it's out of space as well.",
+      "time": "08:40",
+      "timestamp": "1742398841.486539",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "cc @sean.donohoe or @mfichman any ideas?",
+      "time": "08:51",
+      "timestamp": "1742399490.618879",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey yeah, could you try running ‘sudo ncdu /‘? It’ll take a bit to run, but that’ll give you a GUI breakdown of what’s taking up the most space on your host",
+      "time": "08:58",
+      "timestamp": "1742399915.053489",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yeah the output of that is above",
+      "time": "08:58",
+      "timestamp": "1742399924.561079",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": ":face_palm: sorry, still waking up — I’m not sure based on that output alone, but I’ll take a look in a second",
+      "time": "08:59",
+      "timestamp": "1742399996.482099",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "that'd be great thanks! and good morning :smile:",
+      "time": "09:00",
+      "timestamp": "1742400014.833989",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh, home is probably the bazel cache --do  `rm -rf ~/.bazel`\n\nThat said, 28 GiB is not a lot. My crafting sandbox has 500GiB. They're supposed to dynamically resize -- maybe that is not working for your sandbox?",
+      "time": "09:07",
+      "timestamp": "1742400463.198049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "09:08",
+      "timestamp": "1742400488.915779",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Odd that ncdu only shows about 28 GiB usage above",
+      "time": "09:08",
+      "timestamp": "1742400522.374119",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah it doesn't appear to be anything under /home, its filesystem is mounted with the same device as /, my current suspicion is something under /var is taking up a ton of space (i.e. likely something with docker)",
+      "time": "09:09",
+      "timestamp": "1742400572.836019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm I see",
+      "time": "09:09",
+      "timestamp": "1742400595.187379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Might have to do `sudo ncdu /` if you haven't @Heymian",
+      "time": "09:10",
+      "timestamp": "1742400609.872029",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Oh I guess I ran `ncdu --exclude-kernfs /` I'll try just ncdu",
+      "time": "09:11",
+      "timestamp": "1742400682.831699",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I just ran docker system prune though, and it didn't help",
+      "time": "09:11",
+      "timestamp": "1742400704.687739",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "just from spot checking some snapshots with `du -csh`, it looks like there's a ton of space being taken up by python model dependencies",
+      "time": "09:11",
+      "timestamp": "1742400705.089449",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@Heymian make sure to run `ncdu` with `sudo` too, iirc it just ignores any portions of the filesystem it can't read",
+      "time": "09:12",
+      "timestamp": "1742400731.827049",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "hahaha yeah ok so\n```owner@dev:/$ du -csh /var\n262G    var\n262G    total```",
+      "time": "09:12",
+      "timestamp": "1742400779.446879",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "var/lib/docker? maybe?",
+      "time": "09:13",
+      "timestamp": "1742400802.186809",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "```--- / ------------------------------------------------------------------------------------\n. 106.9 GiB [############] /var\n   28.1 GiB [###         ] /home\n    5.8 GiB [            ] /usr\n    4.2 GiB [            ] /tmp\n  516.2 MiB [            ] /opt\n    2.2 MiB [            ] /etc\n  188.0 KiB [            ] /run\n    8.0 KiB [            ] /root\n    0.0   B [            ] /sys\n.   0.0   B [            ] /proc\n    0.0   B [            ] /dev```",
+      "time": "09:14",
+      "timestamp": "1742400863.510409",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "That still doesn't add up to 500GB",
+      "time": "09:14",
+      "timestamp": "1742400875.045329",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Can you drill down into /var?",
+      "time": "09:14",
+      "timestamp": "1742400896.516189",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Ah I forgot to post this previously, sorry -- I did a `cs down` to free up cpu resources, I think that cleaned up container snapshots and freed up a ton of space",
+      "time": "09:15",
+      "timestamp": "1742400926.041489",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "i.e.\n```df -h\nFilesystem      Size  Used Avail Use% Mounted on\noverlay         451G   92G  359G  21% /\ntmpfs            62G     0   62G   0% /dev\nshm              62G     0   62G   0% /dev/shm\noverlay         200G   50G  151G  25% /etc/hosts\n/dev/nvme8n1    451G   92G  359G  21% /home\noverlay          64M     0   64M   0% /opt/sandboxd/vscode\ntmpfs            62G     0   62G   0% /opt/pkgs\ntmpfs            64M     0   64M   0% /dev/tty```",
+      "time": "09:15",
+      "timestamp": "1742400940.988209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah, interesting. Maybe a container was crashlooping and using a ton of log? Or something",
+      "time": "09:16",
+      "timestamp": "1742400972.792259",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "could be, especially if it was causing a ton of overlay overhead",
+      "time": "09:17",
+      "timestamp": "1742401021.175729",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I have noticed that some of our images, like model service, have been growing like crazy as of late, so I wouldn't be shocked if there's at least one service which requires a colossal amount of resources to run",
+      "time": "09:17",
+      "timestamp": "1742401061.715149",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "also for reference\n```owner@dev:/var$ sudo du -csh *\n0       backups\n1.8M    cache\n4.0K    empty\n56G     lib\n0       local\n0       lock\n2.4G    log\n0       mail\n0       opt\n0       run\n0       spool\n0       tmp\n59G     total\n\nowner@dev:/var/lib$ sudo du -csh *\n47M     apt\n4.0K    buildkit\n0       ca-certificates-java\n3.8M    command-not-found\n4.0K    dbus\n56G     docker\n26M     dpkg\n0       emacsen-common\n0       git\n0       misc\n24K     pam\n0       private\n0       python\n4.0K    sandbox\n4.0K    shells.state\n0       sudo\n268K    systemd\n0       vim\n56G     total```\nso definitely seems to be docker",
+      "time": "09:19",
+      "timestamp": "1742401157.520179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "model-service is getting even bigger? I wonder why...not a lot has changed AFAIK",
+      "time": "09:19",
+      "timestamp": "1742401182.587979",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "erm let me alter my statement with \"the last time I checked on model service\" -- I haven't poked it in a couple months, so I'm not sure if there was anything recent, but I had noticed some docker antipatterns starting to creep back in when we were onboarding to chainguard which were causing massive bloat",
+      "time": "09:21",
+      "timestamp": "1742401264.984999",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "For model-service we just moved it to poetry so there has been some change.",
+      "time": "09:22",
+      "timestamp": "1742401339.850149",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "weirdly enough I don't even see model-service in @Heymian’s sandbox :thonk: might still be worth investigating later with `dive`, but the fact that we don't see it in `docker image ls` makes me think it's likely something else",
+      "time": "09:24",
+      "timestamp": "1742401446.528509",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "So what did you end up doing? In case this happens again, what do I need to delete/clean up? Is it just `cs down`?",
+      "time": "15:37",
+      "timestamp": "1742423849.935719",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I didn’t see the sandbox when it was in the broken state, so I’ll let Sean speak to that. However, I wonder if one or more services was crash looping. That in theory could fill up the desk pretty well, especially since the caching for docker images doesn’t work too well for say, webapp",
+      "time": "15:51",
+      "timestamp": "1742424706.117429",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ohh where do I need to clean that up?",
+      "time": "15:52",
+      "timestamp": "1742424756.689799",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Docker system prune would do it!",
+      "time": "15:53",
+      "timestamp": "1742424783.938249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "To see if a service is crash-looping you can do “cs ps” and look at the restart counter.",
+      "time": "15:53",
+      "timestamp": "1742424808.647649",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I really wish the crafting had a way to limit the number of restarts. But it currently does not.",
+      "time": "15:53",
+      "timestamp": "1742424837.035229",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yeah I did run docker system prune and it was already pruned (I was out of space after running it) so I don’t think that was it.",
+      "time": "15:56",
+      "timestamp": "1742424998.136769",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It’s possible that since the container was running on and off that attached volumes couldn’t get cleaned up. They might be might’ve been filling with logs and stuff.",
+      "time": "15:57",
+      "timestamp": "1742425076.421059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Once Sean stopped all the services, then the prune command could clean that stuff up. anyway that’s just a theory.",
+      "time": "15:58",
+      "timestamp": "1742425128.051649",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ah got it, that seems very possible! Thanks for the help, I’ll try these next time!",
+      "time": "16:01",
+      "timestamp": "1742425299.970899",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-19.json",
+    "message_count": 43,
+    "start_time": "1742398506.164229",
+    "end_time": "1742425299.970899",
+    "is_thread": true
+  }
+}

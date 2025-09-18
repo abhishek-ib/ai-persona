@@ -1,0 +1,338 @@
+{
+  "id": "ch_C06FA6A23_2020-06-10_1591835754.112600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "abhilash",
+    "Kerry",
+    "Jonathan Shih",
+    "Heymian",
+    "Felicia",
+    "Karthik S",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Hey all, I think `master` is a tad borked at the moment -- possibly due to some functionality around `job-service`? (happening in both dogfood and on localhost for me)\n\nSteps to reproduce:\n• Run a flow, such as the default Refiner 5 \"General Extraction Project\" flow\n• Watch it fail with \n```Error occurred executing GRPC method: Retrying request in 1.5s due to StatusCode UNAVAILABLE, Error (14, 'unavailable'), Message connections to all backends failing. Retries left 0```",
+      "time": "17:35",
+      "timestamp": "1591835754.112600",
+      "is_reply": false
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Below, I'll outline some of the things I tried to get it working",
+      "time": "17:36",
+      "timestamp": "1591835793.112700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Do you see any errors on the job-service side?",
+      "time": "17:36",
+      "timestamp": "1591835793.112900",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "So idea 1 was to try and get job service running, but I get lots of seg faults in both docker and localhost, and if I use prebuilt, I get some kind of database error (pasting in one second)",
+      "time": "17:37",
+      "timestamp": "1591835823.113100",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "",
+      "time": "17:38",
+      "timestamp": "1591835905.113500",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "",
+      "time": "17:39",
+      "timestamp": "1591835941.114100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Hrmm looks like we enabled dep of the new DB table without having it first be created.",
+      "time": "17:39",
+      "timestamp": "1591835947.114500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Karthik S @abhilash",
+      "time": "17:39",
+      "timestamp": "1591835953.114700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "did you try disabling flow start/stop?",
+      "time": "17:39",
+      "timestamp": "1591835984.114900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "should remove the dependency on job-service to unblock yourself for now",
+      "time": "17:39",
+      "timestamp": "1591835995.115100",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Ok so option 2 (per @Jonathan Shih’s suggestion) was to disable job service by turning off `enable_job_service` and `enable_flow_pause_resume`  in `distributed-tasks/celery/app-tasks/deployment/env/deployment-config.json` and `webserver/api-server-apps/deployment/env/deployment-config.json`",
+      "time": "17:40",
+      "timestamp": "1591836004.115300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "haha yeah that",
+      "time": "17:40",
+      "timestamp": "1591836016.115500",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "And that results in successful flows (yay!), but for some reason, `s4_merge_files` never gets created",
+      "time": "17:40",
+      "timestamp": "1591836026.115700",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "It only runs s1 through s3...",
+      "time": "17:40",
+      "timestamp": "1591836037.115900",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "(strange)",
+      "time": "17:40",
+      "timestamp": "1591836040.116100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrmm will probably need Abhilash to chime in the changes involved there for why merge files is borked",
+      "time": "17:42",
+      "timestamp": "1591836134.116300",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "Ok - That table is not created",
+      "time": "17:42",
+      "timestamp": "1591836138.116500",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "We need to set that up in the prod.",
+      "time": "17:42",
+      "timestamp": "1591836149.116700",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Nice success message (yay) and output folder that's missing the `s4_merge_records` step",
+      "time": "17:44",
+      "timestamp": "1591836268.116900",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Some fun cache errors from `reduce_flow` which might be the merge files?",
+      "time": "17:47",
+      "timestamp": "1591836423.117500",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "If I instead run a flow with just process files and map records (no apply refiner or merge files), then everything works fine",
+      "time": "17:47",
+      "timestamp": "1591836463.118000",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "*Short-term semi-fix* to the above problem (everything seems to work except merge files):\n\nUpdate these two files:\n• `distributed-tasks/celery/app-tasks/deployment/env/deployment-config.json` \n•  `webserver/api-server-apps/deployment/env/deployment-config.json`\nby scrolling to the bottom and in the \"local\" section, set\n• `\"enable_job_service\": false`\n•  `\"enable_flow_pause_resume\": false`\nand finally restart `api-server-apps` and `celery-app-tasks`\n\ncc @Felicia",
+      "time": "17:52",
+      "timestamp": "1591836755.120700",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Is that a change we should maybe put in master too until job service is fully functional?",
+      "time": "17:53",
+      "timestamp": "1591836794.121000",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "Sure - go ahead Erick",
+      "time": "17:53",
+      "timestamp": "1591836815.121200",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "It'll take a bit to create this TaskTable .",
+      "time": "17:53",
+      "timestamp": "1591836834.121400",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "still can’t seem to get it working, I updated both of those files at the bottom, `job-service` is not running, and I tried to restart `api-server-apps` and `celery-app-tasks` with provisioner as docker as well as compile and as local? @Erick",
+      "time": "19:02",
+      "timestamp": "1591840922.122100",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "Hop on a quick call",
+      "time": "19:02",
+      "timestamp": "1591840979.122400",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "?",
+      "time": "19:02",
+      "timestamp": "1591840979.122600",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "sure! thank you!!",
+      "time": "19:03",
+      "timestamp": "1591841015.122800",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "@abhilash Is job-service required for merge files, and could that be what is causing the s4-merge-files to not produce any output?",
+      "time": "19:29",
+      "timestamp": "1591842570.123000",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "karthik and I hopped on a call and I went back to this commit: 011d1f4e70f6d1de620df4fe6d68005e36bfd7bf and this worked for me",
+      "time": "20:13",
+      "timestamp": "1591845208.123200",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "Never seen this error before",
+      "time": "20:49",
+      "timestamp": "1591847382.123700",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "@Karthik S did you triage this",
+      "time": "20:49",
+      "timestamp": "1591847397.124200",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "I did triage. I believe @tomas  merged his Task table changes. We don’t have task table setup yet in the database",
+      "time": "21:14",
+      "timestamp": "1591848879.125600",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "Ohh no. That change had to be guarded by a different flag",
+      "time": "21:16",
+      "timestamp": "1591848962.126500",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "Can we just revert that instead of disabling job service?",
+      "time": "21:16",
+      "timestamp": "1591848990.127300",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "just to add - i see this message on uat.dogfood too",
+      "time": "21:24",
+      "timestamp": "1591849475.127500",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "@Kerry  - You mean the GrPc error?",
+      "time": "22:08",
+      "timestamp": "1591852118.128200",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "Also I think the change breaks merge files if job service is disabled, so not sure if disabling it is actually a solution",
+      "time": "23:38",
+      "timestamp": "1591857539.128400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-06-10.json",
+    "message_count": 39,
+    "start_time": "1591835754.112600",
+    "end_time": "1591857539.128400",
+    "is_thread": true
+  }
+}

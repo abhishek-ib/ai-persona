@@ -1,0 +1,45 @@
+{
+  "id": "ch_CSY11CK7T_2024-11-15_1731720507.167389_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "crafting-cyp is slow again :blob_sad: (see some examples of recent CI runs with lots of timeouts - 1 (https://cloud.cypress.io/projects/cfhedy/runs/15636/overview/cd4820ea-3562-45b1-9d0d-d98d78b92184?roarHideRunsWithDiffGroupsAndTags=1&runStatus=PASSED&runStatus=FAILED&runStatus=RUNNING&runStatus=CANCELLED&runStatus=ERRORED&runStatus=NOTESTS&runStatus=TIMEDOUT), 2 (https://cloud.cypress.io/projects/cfhedy/runs/15631), 3 (https://cloud.cypress.io/projects/cfhedy/runs/15639/overview?runStatus=PASSED&runStatus=FAILED&runStatus=RUNNING&runStatus=CANCELLED&runStatus=ERRORED&runStatus=NOTESTS&runStatus=TIMEDOUT&roarHideRunsWithDiffGroupsAndTags=1))\n\ni looked at grafana and didn’t see some slow requests in the `api-server` dashboard (https://crafting-cyp.test.instabase.com/grafana/d/-QIHdbK7k/webservers-http?orgId=1&from=now-3h&to=now&var-datasource=default&var-label_name=tenant_id&var-label_value=&var-service=api-server&var-pod=All&var-method=All&var-target=All) (screenshot 1), and a lot of the slow requests depend on db accessors and starting async jobs\n\nfor db accessors, i did see some high request durations in `core-platform-service` in its dashboard (https://crafting-cyp.test.instabase.com/grafana/d/JZ4OSy04z/core-platform-service?orgId=1&from=now-3h&to=now) (screenshot 2)\n• i looked at logs around these high latency calls to `core-platform-service` and see a bunch of `slow db query` logs (https://crafting-cyp.test.instabase.com/grafana/d/JZ4OSy04z/core-platform-service?orgId=1&from=now-3h&to=now), which idk if we can do anything about (screenshot 3)\n• however, i do see a bunch of these errors, which may explain the high latency for `DeactivateUserAccount`? or are these errors expected? @Victor Zeng\n```Failed to delete cy-landing-user-1725410323810_instabase.com (http://cy-landing-user-1725410323810_instabase.com)'s account. Err: Error 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`instabase`.`account_integrations`, CONSTRAINT `account_integrations_account_id_fk` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`))```\nfor async jobs, i saw a few slow tasks (`delete_aihub_project` , `reindex_and_unsplit_documents`) in the celery-app-tasks dashboard (https://crafting-cyp.test.instabase.com/grafana/d/011XhhH7z/celery-service?orgId=1), but the general trend of task duration looks ok",
+      "time": "17:28",
+      "timestamp": "1731720507.167389",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "TLDR i think that the culprit is the slow db queries\n\nis it time to delete a bunch of unnecessary rows from the db? did you do this in the past, or am i imagining things? @Xindi Xu",
+      "time": "17:29",
+      "timestamp": "1731720554.700579",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "For the foreign key constraint one, every time we add a table that references the users table, we have to add the clean-up logic the DeativateUseAccount grpc endpoint. I remembered adding clean up for removing the row in the active org table but I didn’t add clean-up for the account integration table. I’m guessing that we need this since community users are using metronome now.",
+      "time": "18:07",
+      "timestamp": "1731722875.386579",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-11-15.json",
+    "message_count": 3,
+    "start_time": "1731720507.167389",
+    "end_time": "1731722875.386579",
+    "is_thread": true
+  }
+}

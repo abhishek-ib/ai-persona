@@ -1,0 +1,142 @@
+{
+  "id": "ch_CSY11CK7T_2024-08-20_1724173363.703749_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Jessica",
+    "Subash",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Does anyone have spare cycles right now to look into some CSP issues for BoA? Our style-src has unsafe-inline in it and it needs to be removed. Once upon a time Eric identified the issues with it and then decided to use unsafe-inline instead with the note \"will come back if BofA wants stricter CSP\" :joy:  These are the things that need to be resolved:\n\n• TransformComponent-module_container__3NwNd\n    ◦ related to webserver/shared/src/js/webpacked/lib/src/IBFilePreview/filePreviews/ImagePreview.tsx\n    ◦ 'react-zoom-pan-pinch' injectsCss dynamically into the header so it won't work with CSP turned on\n• .styles_react-code-input-container\n    ◦ I think this is related to 'react-code-blocks'\n    ◦ But I wasnt able to find where the css injection actually happens\n• loading file preview css\n    ◦ I'm not sure how to allow for inline styles in an iframe.\nI can look into it if needed but am also working on some product stuff, so wanted to check if anyone has a little extra time.",
+      "time": "10:02",
+      "timestamp": "1724173363.703749",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for the 2nd bullet, i see `react-code-blocks` only used in `core-ui/src/cloud-developers` - can we delete that folder? or is it still used by some customer?",
+      "time": "10:49",
+      "timestamp": "1724176197.604809",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@Subash for cloud-developers",
+      "time": "10:50",
+      "timestamp": "1724176238.153299",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm also okay with just removing react-zoom-pan-pinch if the image preview is the only place we're using it. The FilePreview component is used in a lot of places, but only in the legacy platform",
+      "time": "10:51",
+      "timestamp": "1724176315.609659",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "+1 to removing `react-zoom-pan-pinch`\n\n(i think i added it in one of my onboarding tasks, what a throwback!)",
+      "time": "10:53",
+      "timestamp": "1724176382.558559",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Any ideas what Eric meant for that third bullet point? Where are we using iframes like that?",
+      "time": "10:53",
+      "timestamp": "1724176419.393029",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we use iframes in `lib/src/IBFilePreview/filePreviews/HTMLPreview.tsx` , and the iframe could have inline scripts, i think",
+      "time": "10:54",
+      "timestamp": "1724176485.565639",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Maybe we just leave that one be then and let the CSP block those inline scripts",
+      "time": "10:56",
+      "timestamp": "1724176560.568109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yeah it should be fine for the file preview for HTML files in the File Explorer app to break bc of CSP",
+      "time": "10:56",
+      "timestamp": "1724176594.716349",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "if we just allow it to break, do we need to make any code changes?",
+      "time": "10:57",
+      "timestamp": "1724176622.398279",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm not sure, I'll test it out. We'll also want to look through AI Hub, Eric made these notes a full 19 months ago",
+      "time": "10:57",
+      "timestamp": "1724176657.500009",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "if we did want to allow trusted inline scripts, this Stack Overflow answer (https://stackoverflow.com/a/65880824) has some suggestions",
+      "time": "10:58",
+      "timestamp": "1724176720.978099",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "We already use nonce for scripts",
+      "time": "10:59",
+      "timestamp": "1724176799.443399",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The issue here is that we'd be loading code in the iframe that does not use that",
+      "time": "11:00",
+      "timestamp": "1724176814.440419",
+      "is_reply": true
+    },
+    {
+      "sender": "Subash",
+      "user_id": "U01CPRMS8LV",
+      "message": "It should be fine to remove `react-code-blocks`  from  cloud developers. Let me know if you need help removing this :slightly_smiling_face:",
+      "time": "21:37",
+      "timestamp": "1724215028.761179",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-08-20.json",
+    "message_count": 15,
+    "start_time": "1724173363.703749",
+    "end_time": "1724215028.761179",
+    "is_thread": true
+  }
+}

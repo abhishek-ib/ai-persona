@@ -1,0 +1,94 @@
+{
+  "id": "ch_C06FA6A23_2019-03-06_1551888449.051200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Jesika Haria",
+    "Kerry",
+    "dlluncor"
+  ],
+  "messages": [
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Hey all - think I found a bug in Review OCR? Or is this the expected behavior?\nWas creating a flow that does 1) Process Files -> 2) Apply UDF to fix some orc-ed text in the `text` field in an ibocr file. Opened Apply UDF’s output in Refiner & everything looked normal (content became what I changed). But when I opened Apply UDF’s output in Review OCR, the `View Text` result is something else - it is the original output of Process Files.\n\nI put the buggy files in\nhttps://www.instabase.com/kerry/my-repo/fs/Instabase%20Drive/bugs/apply_udf_ocr_text/\nIf you click on an ibocr file to view in Review OCR, you’ll see the scanned text.\nIf you right click an ibocr to open it in Refiner, you’ll see the content in INPUT_COL is `hello` which is the value in the `text` field in the ibocr.",
+      "time": "08:07",
+      "timestamp": "1551888449.051200",
+      "is_reply": false
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "It seems to me that we would need to use the text from the individual words in that View Text output, because we preserve spacing and the coordinate information is only available on a per word basis. If that’s the case then you might need to change the words as well in the IBOCR to get it to show up",
+      "time": "08:57",
+      "timestamp": "1551891476.055400",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "ah ok - so the view text result is directly calculated from the raw OCR output instead of displaying what’s in the `text` field? if that’s the case what i’m seeing is probably the expected behavior.",
+      "time": "10:41",
+      "timestamp": "1551897687.060100",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "i can’t say with certainty, but given that we’re doing the spacing in that view, i would expect that to be the case. since i dont think the `text` contains the space information by default",
+      "time": "10:46",
+      "timestamp": "1551897978.060400",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "so Process Files output’s `text` field does contain spacing. I’m pretty sure the `text` field is what Refiner reads and puts in INPUT_COL. So it must contain spacing otherwise all the scan functions would not work properly?",
+      "time": "11:27",
+      "timestamp": "1551900468.060600",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "That being said, it is very likely that Review OCR just calculated the text data",
+      "time": "11:32",
+      "timestamp": "1551900721.061000",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "hmm, possibly. also just as possible it’s a straight up bug. maybe @dlluncor knows more?",
+      "time": "11:53",
+      "timestamp": "1551902006.061400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "not sure if I follow the bug completely",
+      "time": "12:00",
+      "timestamp": "1551902452.061600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "current Review OCR will always display the OCR results from the Process File step; the only thing it will show from the Apply Refiner step is in the extracted columns (on the left hand side)",
+      "time": "12:01",
+      "timestamp": "1551902481.061800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-03-06.json",
+    "message_count": 9,
+    "start_time": "1551888449.051200",
+    "end_time": "1551902481.061800",
+    "is_thread": true
+  }
+}

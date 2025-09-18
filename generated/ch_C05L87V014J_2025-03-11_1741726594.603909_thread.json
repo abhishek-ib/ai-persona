@@ -1,0 +1,157 @@
+{
+  "id": "ch_C05L87V014J_2025-03-11_1741726594.603909_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "sean.donohoe",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "The version of Go in the crafting envs is still 1.18, should we be upgrading that to 1.22 or 1.23 (which even is the version our codebase is on)? I noticed `protoc-gen-go` wasn't installed in there for me so I tried to do `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest (http://google.golang.org/protobuf/cmd/protoc-gen-go@latest)` but it complains that it can't install on Go 1.18. Any suggestions for next steps @sean.donohoe?",
+      "time": "13:56",
+      "timestamp": "1741726594.603909",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "that is quite surprising, go should definitely be above that now: https://github.com/instabase/instabase/blob/master/platform/crafting/docker/docker-bake.hcl#L5",
+      "time": "13:57",
+      "timestamp": "1741726651.988899",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "which sandbox is this? I think this should be pretty easy to update with how the new image links its version of go :slightly_smiling_face:",
+      "time": "13:58",
+      "timestamp": "1741726691.119559",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "https://instabase.sandboxes.site/sandboxes/heymian1\n\nI did a `cs sandbox update` this morning",
+      "time": "13:58",
+      "timestamp": "1741726717.229249",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ah, I bet it's related to something with the sandbox existing prior to the switch to an image-based snapshot -- taking a look now!",
+      "time": "13:59",
+      "timestamp": "1741726770.995569",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "thanks!",
+      "time": "13:59",
+      "timestamp": "1741726796.829189",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "that's indeed the issue -- would you be alright if I snapshot the contents of your home directory and rebuild your workspace to pick up the template change? this will save anything in your home directory, but could lose state in other portions of the filesystem if you have anything you want to keep",
+      "time": "14:01",
+      "timestamp": "1741726871.390909",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "or, if you want to do it yourself, you can follow the screenshot linked here!",
+      "time": "14:04",
+      "timestamp": "1741727091.432739",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah go for it",
+      "time": "14:05",
+      "timestamp": "1741727101.769349",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "nothing i need to keep",
+      "time": "14:05",
+      "timestamp": "1741727107.891959",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "(except home dir)",
+      "time": "14:05",
+      "timestamp": "1741727120.403629",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": ":ack: will report back in a couple minutes!",
+      "time": "14:05",
+      "timestamp": "1741727124.551589",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "gah sorry for not pinging here sooner -- your sandbox was updated successfully, but the ongoing issue with traffic interception being flaky is marking it in a bad state :upside_down_face:\n\nit's still good to use for dev work, just doesn't have network access to the crafting-aihub cluster at the moment",
+      "time": "14:31",
+      "timestamp": "1741728671.026289",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ah got it, thanks! Is that a separate bug being worked on? Or is that just my env",
+      "time": "15:16",
+      "timestamp": "1741731392.170509",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "separate bug in the crafting cluster (https://instabase.slack.com/archives/C05L87V014J/p1741384182730119?thread_ts=1741374254.519599&cid=C05L87V014J) (i.e. nothing we own), the crafting devs are still root causing",
+      "time": "15:19",
+      "timestamp": "1741731559.113399",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think there's still something wrong with my sandbox, I'm missing more libraries:\n\n```Traceback (most recent call last):\n  File \"/home/owner/myenv/bin/pip\", line 5, in <module>\n    from pip._internal.cli.main import main\nModuleNotFoundError: No module named 'pip'```\nand\n```(myenv) owner@dev:~/instabase$ git commit --amend\nTraceback (most recent call last):\n  File \"/home/owner/myenv/bin/pre-commit\", line 5, in <module>\n    from pre_commit.main import main\nModuleNotFoundError: No module named 'pre_commit'```\nI assume these are supposed to already be installed?",
+      "time": "19:46",
+      "timestamp": "1741747568.967709",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Okay, sandbox is very borked. I don't even have go installed anymore.",
+      "time": "19:52",
+      "timestamp": "1741747970.810389",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-11.json",
+    "message_count": 17,
+    "start_time": "1741726594.603909",
+    "end_time": "1741747970.810389",
+    "is_thread": true
+  }
+}

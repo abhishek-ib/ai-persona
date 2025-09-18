@@ -1,0 +1,186 @@
+{
+  "id": "ch_C0516UPPMT3_2024-06-03_1717437457.095269_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "BG",
+    "Anil",
+    "Udit",
+    "andy",
+    "Jessica",
+    "Elan Sharony",
+    "Adam"
+  ],
+  "messages": [
+    {
+      "sender": "BG",
+      "user_id": "U03R8NRBJ9H",
+      "message": "<!here>: Was playing around the Deploy Preview. The whole page got stuck a couple of times. Had to delete cookies to get to reload anything. Even after that i couldn't add a drive input folder on the upstream integrations to create a valid deployment. Wondering what is going wrong here! Any thoughts/ suggestions?",
+      "time": "10:57",
+      "timestamp": "1717437457.095269",
+      "is_reply": false
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "CC: @Adam @Jessica @Udit\n\nlooks like a potentially legitimate bug that we should track in a ticket",
+      "time": "10:59",
+      "timestamp": "1717437577.485769",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "can you send the network request error message that comes back when you try to create the upstream integration?",
+      "time": "11:05",
+      "timestamp": "1717437914.041469",
+      "is_reply": true
+    },
+    {
+      "sender": "BG",
+      "user_id": "U03R8NRBJ9H",
+      "message": "It just says Unable to add upstream integration\nURL: https://aihub.instabase.com/deployments/018fdf33-3417-72f4-b4d9-aec23eaef84e/configuration",
+      "time": "11:28",
+      "timestamp": "1717439296.380369",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "@BG can you send the request and response payload based on the Network tab when you inspect the page?",
+      "time": "11:29",
+      "timestamp": "1717439369.556489",
+      "is_reply": true
+    },
+    {
+      "sender": "BG",
+      "user_id": "U03R8NRBJ9H",
+      "message": "Payload\n```{schedule: \"\", name: \"\",…}\nname\n: \n\"\"\nparameters\n: \n{input_dir: \"ib-internal/bharadwaj.goteti/fs/Google Drive/My Drive/AIHub-Connected-Drive\",…}\nschedule\n: \n\"\"\n```\nResponse\n```{\n    \"message\": \"While creating org admin account: While creating org admin repo: User does not have permission to make changes to the org\"\n}```\nDont understand why i dont have access to my Gdrive? I could add Google drive for output folder and not input folder?",
+      "time": "12:55",
+      "timestamp": "1717444530.674389",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Ah this is an issue with the environment! @Elan Sharony what was the resolution for when we run into this?",
+      "time": "13:20",
+      "timestamp": "1717446045.754279",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Ah that’s an issue with the lazy create of the runner account. Are we back to site admin vs marketplace admin testing? Could be that things were passing on sandbox internal when they actually shouldn’t have been. The resolution for this can be to use the ib-system-admin account for this creation rather than the marketplace admin account",
+      "time": "13:22",
+      "timestamp": "1717446160.757139",
+      "is_reply": true
+    },
+    {
+      "sender": "BG",
+      "user_id": "U03R8NRBJ9H",
+      "message": "What do you mean by System admin vs. Marketplace admin? I thought the platform had only one admin access atleast on AI hub?",
+      "time": "13:29",
+      "timestamp": "1717446543.746709",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Sorry this is a backend implementation question about a mismatch between the configuration of our internal dev sandbox and prod. We have some system accounts taking actions when you add upstream integrations and I want to make sure that those system accounts are configured identically across all environments",
+      "time": "13:30",
+      "timestamp": "1717446642.300369",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "ah actually this issue may have been fixed since 24.20 but just not backported. Previously, we were attempting to create a private org repo for the runner system account which seems to be the failure point here. Since the account will only write to user workspaces, we removed this logic here (https://github.com/instabase/instabase/pull/57241/files#diff-e5ee941dc01d07ef9bce3dbe960afc624eca7b14b7804a9faf3ef60d5e54bf0f)",
+      "time": "13:39",
+      "timestamp": "1717447172.904749",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "In the interim, we could flip the marketplace admin account to be a site admin on prod. But a backport of that PR will fix it",
+      "time": "13:42",
+      "timestamp": "1717447329.237979",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Could we do that temporarily to unblock people while we backport it?",
+      "time": "13:44",
+      "timestamp": "1717447478.877169",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "I think so, @Adam any deployment permissioning risk on making marketplace admin a site admin until we're able to backport/deploy?",
+      "time": "13:51",
+      "timestamp": "1717447900.416739",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Technically I think we have the marketplace admin running flows to generate sample results right now, but the button to do that shouldn’t be accessible to users. Ideally we would never let a flow run get permissions elevated to admin but I think right now sample files are already gated to only site admins. Should be fine for now!",
+      "time": "13:57",
+      "timestamp": "1717448256.532589",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Moved here- we'll need someone with prod site admin access to make that change\nhttps://instabase.slack.com/archives/C05BJCNKZAM/p1717448766480909",
+      "time": "14:07",
+      "timestamp": "1717448870.518079",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Updated aihub_marketplace_admin to site admin",
+      "time": "14:31",
+      "timestamp": "1717450278.426639",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "",
+      "time": "14:31",
+      "timestamp": "1717450291.906629",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Let me know when this can be reverted.",
+      "time": "14:31",
+      "timestamp": "1717450318.014319",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "sweet thanks @Anil!",
+      "time": "14:33",
+      "timestamp": "1717450420.339649",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-06-03.json",
+    "message_count": 20,
+    "start_time": "1717437457.095269",
+    "end_time": "1717450420.339649",
+    "is_thread": true
+  }
+}

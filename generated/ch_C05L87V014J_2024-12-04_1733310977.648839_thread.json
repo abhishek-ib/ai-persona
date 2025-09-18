@@ -1,0 +1,808 @@
+{
+  "id": "ch_C05L87V014J_2024-12-04_1733310977.648839_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "mfichman",
+    "jordy.vlan",
+    "Serena",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "While the Azure OCR seems to pass correctly, these entity model requests just completely freeze up everything (15 minutes and counting):",
+      "time": "03:16",
+      "timestamp": "1733310977.648839",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Do you see the same error as me for the entity model request?",
+      "time": "04:30",
+      "timestamp": "1733315415.393329",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I figure you should see something different since the entity models are actually installed in dogfood’s database.",
+      "time": "04:30",
+      "timestamp": "1733315437.346069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Today I’m going to work on running the model registry post-install action so that these models get installed into my sandbox’s DB.\n\nBut that step shouldn’t be necessary if you’re connected to dogfood’s DB.\n\nCc @Yash Botadra do you know if models installed in dogfood will work if you run model service locally?",
+      "time": "04:31",
+      "timestamp": "1733315486.992889",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Separately, we should also figure out what is causing the retries. If the model doesn’t exist, then I figure entity detection should immediately get skipped without retries.",
+      "time": "04:33",
+      "timestamp": "1733315588.638109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For what it’s worth I don’t think this is a problem with crafting. I strongly suspect the same exact problem would happen on a laptop.",
+      "time": "04:33",
+      "timestamp": "1733315616.192649",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "I see a similar error, after 22 minutes I got this: (`celery-app-tasks`)\n```[2024-12-04 11:00:29,713] [MainProcess/ThreadPoolExecutor-13_0] {/home/owner/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/flow/runnables/process_file/entity_util.py:219} INFO - [trace_id=] - job-id=b6d74184-25a3-4706-8edc-624025fe5832 task-id=b6d74184-25a3-4706-8edc-624025fe5832-Stage2 username=jvlinsta stage-id=Stage2 step=process_files Running Entity Inference: 6507e64e-1406-428c-b004-2827bc18dd20__001_genuine.pdf_p0.JPEG\n[2024-12-04 11:00:29,715] [MainProcess/ThreadPoolExecutor-13_1] {/home/owner/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/flow/runnables/process_file/entity_util.py:219} INFO - [trace_id=] - job-id=b6d74184-25a3-4706-8edc-624025fe5832 task-id=b6d74184-25a3-4706-8edc-624025fe5832-Stage2 username=jvlinsta stage-id=Stage2 step=process_files Running Entity Inference: 6507e64e-1406-428c-b004-2827bc18dd20__001_genuine.pdf_p0.JPEG\n[2024-12-04 11:22:07,843] [MainProcess/ThreadPoolExecutor-13_1] {/home/owner/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/flow/runnables/process_file/entity_util.py:229} ERROR - [trace_id=] - job-id=b6d74184-25a3-4706-8edc-624025fe5832 task-id=b6d74184-25a3-4706-8edc-624025fe5832-Stage2 username=jvlinsta stage-id=Stage2 step=process_files Errored running entity inference for 6507e64e-1406-428c-b004-2827bc18dd20__001_genuine.pdf_p0.JPEG: Traceback (most recent call last):\n  File \"/home/owner/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/flow/runnables/process_file/entity_util.py\", line 77, in run\n    response = self.model_service_client.run(req)\n  File \"/home/owner/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/model_service/sdk.py\", line 90, in wrapper\n    raise ModelServiceException(e) from None\ninstabase.model_service.sdk.ModelServiceException: (ModelServiceException(...), 'Concurrent RPC limit exceeded! (StatusCode.RESOURCE_EXHAUSTED)')```",
+      "time": "04:49",
+      "timestamp": "1733316545.588009",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "For me there is 30 minutes between each retry of the entity model,\n\n\n> level=INFO time=2024-12-04 11:31:46,120 msg=“Run model inference” model_id=“ModelID(name=signature_model, version=0.0.4, is_project_model=False, username=system)” timeout=“800” external_model=“False” path=“/model-service/py/instabase/model_service/handler.py:106” process=“MainProcess” thread=“ThreadPoolExecutor-2_0” trace_id=“4ef2f95a7f2d64aa”\n> level=ERROR time=2024-12-04 12:03:06,309 msg=“Failed model inference”",
+      "time": "04:53",
+      "timestamp": "1733316782.112499",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Do you have the model service timeout reconfigured in your environment? I wonder if that’s the cause.",
+      "time": "05:27",
+      "timestamp": "1733318820.692169",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Judging by the logs above, it looks like the timeout is set to 800 seconds - which would be about 13 minutes per retry. x two retries is about 30 minutes.",
+      "time": "05:28",
+      "timestamp": "1733318909.286189",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For what it’s worth you’re getting a different area code for model service than what I see. I see invalid argument. It looks like you’re seeing resource exhausted.",
+      "time": "05:29",
+      "timestamp": "1733318948.009969",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Not sure where this timeout would be setup",
+      "time": "05:34",
+      "timestamp": "1733319281.620209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, if you're not sure, then it's probably the default!",
+      "time": "07:04",
+      "timestamp": "1733324647.538929",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Serena do you know why the entity models time-out? Is the sandbox using the same S3 buckets / database as dogfood.instabase.com (http://dogfood.instabase.com)? If not, maybe we need to run post-install actions locally to install them..?",
+      "time": "08:23",
+      "timestamp": "1733329433.568549",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Also, is this a recent issue? Does it work locally?",
+      "time": "08:24",
+      "timestamp": "1733329453.358039",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Locally is the problem @lydia",
+      "time": "08:24",
+      "timestamp": "1733329470.563789",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "The entity models have never worked locally for me, so I always get the model registration not found error that Matt got\n\nI don’t know why the entity models are timing out for Jordy",
+      "time": "08:25",
+      "timestamp": "1733329523.403129",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "RE the entity detection timeout due to \"model registration not found\", I think that is not recent. I remember seeing the same problem 2-3 months ago; I worked around it somehow.",
+      "time": "08:25",
+      "timestamp": "1733329536.931159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "RE entity detection timeout Jordy is seeing: I think that is new",
+      "time": "08:26",
+      "timestamp": "1733329574.039189",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I see two errors reported in this thread:\nmissing model registration\nentity detection timeout.\n\nI assume a person only hits one or the other, and not both?",
+      "time": "08:26",
+      "timestamp": "1733329599.018309",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "missing model registration - this seems like a db clone issue? The model is not available in the Marketplace table?",
+      "time": "08:26",
+      "timestamp": "1733329607.044969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, missing model registration has a known cause. Let's focus on the other issue (Jordy's)",
+      "time": "08:27",
+      "timestamp": "1733329631.311119",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "timeout - would need to look at model-service logs - I'm guessing it's not able to download the model?",
+      "time": "08:27",
+      "timestamp": "1733329641.876879",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "on dogfood.platform.instabase.com (http://dogfood.platform.instabase.com), we all share the same S3 bucket, which would contain the model. Is that still the case for AI Hub dev? Also, is this just an issue for local dev, or also on crafting?",
+      "time": "08:28",
+      "timestamp": "1733329704.739239",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@jordy.vlan what do you see in your model-service logs?",
+      "time": "08:29",
+      "timestamp": "1733329766.012399",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "> level=INFO time=2024-12-04 11:31:46,120 msg=“Run model inference” model_id=“ModelID(name=signature_model, version=0.0.4, is_project_model=False, username=system)” timeout=“800” external_model=“False” path=“/model-service/py/instabase/model_service/handler.py:106” process=“MainProcess” thread=“ThreadPoolExecutor-2_0” trace_id=“4ef2f95a7f2d64aa”\n> level=ERROR time=2024-12-04 12:03:06,309 msg=“Failed model inference”",
+      "time": "08:46",
+      "timestamp": "1733330773.373079",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "will paste the full log here",
+      "time": "08:46",
+      "timestamp": "1733330782.067129",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> Is that still the case for AI Hub dev?\nwe’re still connecting to the db in dogfood.instabase.com (http://dogfood.instabase.com), so we use all drives referenced in that db - i assume this applies to the S3 bucket used to store marketplace models as well\n\n> is this just an issue for local dev, or also on crafting?\nentity models don’t work on either for most people (i assume the reader team must have some way to fix this to do local testing?)\n\nhowever, it’s unclear whether missing model registration or entity detection timeout is the root cause for everyone -> we usually advise people to remove entity models from Reader settings as a workaround",
+      "time": "09:12",
+      "timestamp": "1733332354.125749",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Dropping my complete log for model-service here:",
+      "time": "10:20",
+      "timestamp": "1733336436.712409",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@jordy.vlan for now, are you unblocked by removing the entity models? Separately, we can have someone help us debug what's going on. Maybe @Yash Botadra someone on your team could help see why the entity models aren't running in model-service on crafting?",
+      "time": "10:21",
+      "timestamp": "1733336463.786459",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "btw @jordy.vlan I thought your original issue was with accessing images on ibdocs. How did that turn into entity model issues?",
+      "time": "10:21",
+      "timestamp": "1733336501.406459",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "almost 6 hours later, it finally does any `ibllm` tasks :\n> level=INFO time=2024-12-04 16:40:40,040 msg=“Run model inference” model_id=“ModelID(name=ibllm, version=2.1.0, is_project_model=False, username=system)” timeout=“10099” external_model=“True” path=“/model-service/py/instabase/model_service/handler.py:106” process=“MainProcess” thread=“ThreadPoolExecutor-2_0” trace_id=“ef8e5c170a3d7701\"",
+      "time": "10:22",
+      "timestamp": "1733336538.247379",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "I am blocked because I cannot even get a single file processed in Build. The flow goes as:\nupload files -> do OCR -> currently blocking entity models -> try and make a vision reasoning field",
+      "time": "10:24",
+      "timestamp": "1733336688.559659",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Did you try removing the entity models in the Reader config? Recommended here (https://instabase.slack.com/archives/C05L87V014J/p1733258771015549?thread_ts=1733242246.041289&cid=C05L87V014J)",
+      "time": "10:25",
+      "timestamp": "1733336731.536599",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "I will try again. Though loading the project showed me that the ibreader profile had those entity models again. Removed them from here: http://localhost/apps/text-editor/testorgjvl/jvlinsta/fs/Instabase%20Drive/aihub[…]-7f71-8cd3-25cce236b785/project/reader_profiles/default.ibreader (http://localhost/apps/text-editor/testorgjvl/jvlinsta/fs/Instabase%20Drive/aihub/0192c396-9a43-7f71-8cd3-25cce236b785/project/reader_profiles/default.ibreader)",
+      "time": "10:30",
+      "timestamp": "1733337025.308139",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "You need to create a new project after you edit the setting",
+      "time": "10:30",
+      "timestamp": "1733337048.691229",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "I ran workspace update to reflect that diff that Matt made :wink:",
+      "time": "10:30",
+      "timestamp": "1733337051.340859",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i don’t think you can manually modify the reader settings via the text editor",
+      "time": "10:30",
+      "timestamp": "1733337052.996909",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Really? I always used to do that to change the `ocr_page_type` to default",
+      "time": "10:31",
+      "timestamp": "1733337097.662119",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "does workspace update work for whatever service is involved?",
+      "time": "10:31",
+      "timestamp": "1733337099.232269",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Long thread, but IIUC, Jordy’s sandbox is using the dogfood db but still failing on entity model inference. The failure is _not_ due to missing model registration. Is that correct?\nIf yes, Jordy, can you check what enable_model_store is set to in job-service and model-service configs? If it is missing or is set to true, set it to false and restart both services.\n(Meanwhile, I’ll check what it is by default and update it if incorrect)",
+      "time": "10:32",
+      "timestamp": "1733337128.113299",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "will answer you soon @Yash Botadra\nremoving the entity models in the reader allowed me to get a file OCRed :slightly_smiling_face:",
+      "time": "10:36",
+      "timestamp": "1733337390.675859",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Looking at Jordy's model-service logs, I don't see any \"missing registration\" message. Instead, I see a bunch of connection reset pika errors (are those related?), but otherwise, no logs between \"Got RunModel request\" at 14:06 and \"Acquiring lock\" right after, to \"Failed model inference\" at 14:36:52.\n\n@Yash Botadra I see a ton of pika/ rabbitmq connection errors, including one message about \"Could not export entity\" - are those related?",
+      "time": "10:37",
+      "timestamp": "1733337428.599529",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Though a simple field (‘what is the title’) is giving me strange results in model-service, almost as if it spawens way more fields",
+      "time": "10:37",
+      "timestamp": "1733337442.813889",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@jordy.vlan let's focus on the model-service entity model issue - this new issue sounds more related to ibllm code?",
+      "time": "10:38",
+      "timestamp": "1733337491.292379",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "RabbitMQ errors are unrelated. The connection is required in case models are being unregistered. Otherwise, these errors can be ignored",
+      "time": "10:38",
+      "timestamp": "1733337496.188199",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Yash, do entity models work for you on crafting? I'm wondering if this is a general setup issue that needs to be addressed, since it sounds like nobody has gotten them to work on crafting :confused:",
+      "time": "10:39",
+      "timestamp": "1733337544.991519",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "My crafting box is not and has never been connected to dogfood db. So unless I publish these models, it is expected to see the “model registration not found” errors with entity models.",
+      "time": "10:40",
+      "timestamp": "1733337615.290599",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "ok, let’s keep focus; document reasoning does work",
+      "time": "10:41",
+      "timestamp": "1733337667.836719",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "If after investigating, you think the new issue is related to crafting and not ibllm code issues, can you start a new thread about that?",
+      "time": "10:41",
+      "timestamp": "1733337710.226859",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Btw, have your file-service issues (the original message) also been resolved? Was the root cause the entity models not running?",
+      "time": "10:42",
+      "timestamp": "1733337735.604739",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Yash Botadra is running entity models on crafting something your team can help with? It's important that people are able to run them locally, to be able to test changes around signature or barcode detection",
+      "time": "10:43",
+      "timestamp": "1733337780.300429",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "file-service issues still TBD; working project: https://ppy-server-nginx--jordyvlan-instabase.instabase.site.sandboxes.run/build/0192c396-9a43-7f71-8cd3-25cce236b785\nNow testing vision reasoning, though model-service seems to be hanging for already 2 minutes when trying this.",
+      "time": "10:44",
+      "timestamp": "1733337864.842329",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "have to logout now for an hour or two; but will come back later tonight.\nFeel free to try anything on my crafting sandbox in the meanwhile.",
+      "time": "10:46",
+      "timestamp": "1733337970.777499",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Yeah same issue as original happens again\nsee model-service logs from 18:44 to 18:48\n```level=INFO time=2024-12-04 18:44:01,964 msg=\"Pika version 1.3.0 connecting to ('169.254.16.2', 5672)\"  path=\"/home/ibuser/.local/lib/python3.9/site-packages/pika/adapters/utils/connection_workflow.py:179\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_0\" trace_id=\"\"\nlevel=INFO time=2024-12-04 18:44:01,965 msg=\"Socket connected: <socket.socket fd=19, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('172.17.0.6', 34084), raddr=('169.254.16.2', 5672)>\"  path=\"/home/ibuser/.local/lib/python3.9/site-packages/pika/adapters/utils/io_services_utils.py:345\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_0\" trace_id=\"\"\nlevel=INFO time=2024-12-04 18:44:01,965 msg=\"Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f216b0429d0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f216b0429d0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>).\"  path=\"/home/ibuser/.local/lib/python3.9/site-packages/pika/adapters/utils/connection_workflow.py:428\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_0\" trace_id=\"\"\nlevel=INFO time=2024-12-04 18:44:01,980 msg=\"AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f216b0429d0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>\"  path=\"/home/ibuser/.local/lib/python3.9/site-packages/pika/adapters/utils/connection_workflow.py:293\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_0\" trace_id=\"\"\nlevel=INFO time=2024-12-04 18:44:01,980 msg=\"AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f216b0429d0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>\"  path=\"/home/ibuser/.local/lib/python3.9/site-packages/pika/adapters/utils/connection_workflow.py:725\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_0\" trace_id=\"\"\nlevel=INFO time=2024-12-04 18:44:01,980 msg=\"Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f216b0429d0> params=<ConnectionParameters host=rabbitmq port=5672 virtual_host=/ ssl=False>>\"  path=\"/home/ibuser/.local/lib/python3.9/site-packages/pika/adapters/blocking_connection.py:453\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_0\" trace_id=\"\"\nlevel=INFO time=2024-12-04 18:44:01,980 msg=\"Created channel=1\"  path=\"/home/ibuser/.local/lib/python3.9/site-packages/pika/adapters/blocking_connection.py:1261\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_0\" trace_id=\"\"\nlevel=ERROR time=2024-12-04 18:47:58,748 msg=\"Error reading processed image file: testorgjvl/jvlinsta/fs/Instabase Drive/aihub/0192c396-9a43-7f71-8cd3-25cce236b785/documents/out/original/images/dc5add87-592e-4d17-a0ca-5233fe5fa3ba__rebuttal_AURC.pdf_p0.JPEG.jpeg - Failed to read file: Could not connect to path: aihub/0192c396-9a43-7f71-8cd3-25cce236b785/documents/out/original/images/dc5add87-592e-4d17-a0ca-5233fe5fa3ba__rebuttal_AURC.pdf_p0.JPEG.jpeg. Repo_owner testorgjvl. Repo_name jvlinsta. Mount_point Instabase Drive. Reason: Error occurred executing GRPC method: Request /file_service.FileService/Connect failed. Error code=DEADLINE_EXCEEDED, Error=(4, 'deadline exceeded'), Message: Deadline Exceeded. Retries left 0\"  path=\"/model-service/py/instabase/ibllm/code_labs/utils/vision_utils.py:63\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-16_0\" trace_id=\"\"\nlevel=ERROR time=2024-12-04 18:48:05,128 msg=\"Error reading processed image file: testorgjvl/jvlinsta/fs/Instabase Drive/aihub/0192c396-9a43-7f71-8cd3-25cce236b785/documents/out/original/images/dc5add87-592e-4d17-a0ca-5233fe5fa3ba__rebuttal_AURC.pdf_p1.JPEG.jpeg - Failed to read file: Could not connect to path: aihub/0192c396-9a43-7f71-8cd3-25cce236b785/documents/out/original/images/dc5add87-592e-4d17-a0ca-5233fe5fa3ba__rebuttal_AURC.pdf_p1.JPEG.jpeg. Repo_owner testorgjvl. Repo_name jvlinsta. Mount_point Instabase Drive. Reason: Error occurred executing GRPC method: Request /file_service.FileService/Connect failed. Error code=DEADLINE_EXCEEDED, Error=(4, 'deadline exceeded'), Message: Deadline Exceeded. Retries left 0\"  path=\"/model-service/py/instabase/ibllm/code_labs/utils/vision_utils.py:63\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-16_1\" trace_id=\"\"\nlevel=INFO time=2024-12-04 18:48:05,129 msg=\"IBLLM executed extraction in 257.7480 seconds\" trace_id=\"0c67607d6171037d\" path=\"/model-service/py/instabase/ibllm/model/observability/logging/utils.py:64\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-15_0\" trace_id=\"0c67607d6171037d\"\nlevel=ERROR time=2024-12-04 18:48:05,135 msg=\"Exception 0\"  path=\"/model-service/py/instabase/ibllm/model/model.py:335\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-15_0\" trace_id=\"0c67607d6171037d\"\nlevel=ERROR time=2024-12-04 18:48:05,135 msg=\"Traceback: Traceback (most recent call last):\n  File \"/model-service/py/instabase/ibllm/model/model.py\", line 313, in run\n    result = self._run_util(\n  File \"/model-service/py/instabase/ibllm/model/model.py\", line 125, in _run_util\n    result = extraction(request, custom_params)\n  File \"/model-service/py/instabase/ibllm/model/observability/tracing/utils.py\", line 129, in wrapped\n    raise error\n  File \"/model-service/py/instabase/ibllm/model/observability/tracing/utils.py\", line 124, in wrapped\n    r = func(*args, **kwargs)\n  File \"/model-service/py/instabase/ibllm/model/observability/logging/utils.py\", line 61, in wrapper\n    raise e\n  File \"/model-service/py/instabase/ibllm/model/observability/logging/utils.py\", line 58, in wrapper\n    result = function(*args, **kwargs)\n  File \"/model-service/py/instabase/ibllm/model/tasks/extraction.py\", line 865, in extraction\n    basic_field_results, advanced_field_results, object_multi_occurrence_result, table_field_results, vision_reasoning_results = asyncio.run(\n  File \"/pyenv/versions/3.9.17/lib/python3.9/asyncio/runners.py\", line 44, in run\n    return loop.run_until_complete(main)\n  File \"/pyenv/versions/3.9.17/lib/python3.9/asyncio/base_events.py\", line 647, in run_until_complete\n    return future.result()\n  File \"/model-service/py/instabase/ibllm/model/tasks/extraction.py\", line 722, in run_all_pipelines_async\n    return await asyncio.gather(basic_field_pipeline, reasoning_field_pipeline,\n  File \"/model-service/py/instabase/ibllm/model/tasks/extraction.py\", line 522, in run_vision_reasoning_field_extraction\n    return await _extract_vision_fields(  # type: ignore\n  File \"/model-service/py/instabase/ibllm/model/tasks/extraction.py\", line 565, in _extract_vision_fields\n    document.get_images(ibfile_wrapper)\n  File \"/model-service/py/instabase/ibllm/code_labs/document.py\", line 192, in get_images\n    return [self.images[page] for page in page_scope]\n  File \"/model-service/py/instabase/ibllm/code_labs/document.py\", line 192, in <listcomp>\n    return [self.images[page] for page in page_scope]\nKeyError: 0\nlevel=INFO time=2024-12-04 18:48:05,135 msg=\"IBLLM executed run in 257.7556 seconds\"  path=\"/model-service/py/instabase/ibllm/model/observability/logging/utils.py:64\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-15_0\" trace_id=\"0c67607d6171037d\"```",
+      "time": "10:50",
+      "timestamp": "1733338202.706619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```Repo_name jvlinsta. Mount_point Instabase Drive. Reason: Error occurred executing GRPC method: Request /file_service.FileService/Connect failed. Error code=DEADLINE_EXCEEDED, Error=(4, 'deadline exceeded'), Message: Deadline Exceeded. Retries left 0\" path=\"/model-service/py/instabase/ibllm/code_labs/utils/vision_utils.py:63\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-16_1\" trace_id=\"\"```\nThis is very strange. Maybe more crafting network issues? Maybe  fileservice is having trouble connecting to the s3 bucket...?",
+      "time": "10:52",
+      "timestamp": "1733338377.524329",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "@lydia there’s not much we can do with running the entity models from the infra side tbh. The problem is not just about entity models, it’s with any model really. If the model is not published, model-service won’t be able to run it.\nI think what Matt is attempting to do (trying to get the post install action to run on crafting) will fix the issue properly.",
+      "time": "10:53",
+      "timestamp": "1733338402.197949",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "FWIW I do not see the same DeadlineExceeded problem in my sandbox",
+      "time": "10:55",
+      "timestamp": "1733338553.799369",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Yash Botadra in jordy's case, I don't think it's an issue of the model not being published? From the model-service logs, it's actually not clear what the failure is",
+      "time": "12:06",
+      "timestamp": "1733342779.490429",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Or do you mean the issue is we need to republish the model locally? It won't redownload it from the Marketplace S3 bucket?",
+      "time": "12:06",
+      "timestamp": "1733342816.113249",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@jordy.vlan what do you see in file-service logs?",
+      "time": "12:08",
+      "timestamp": "1733342930.207249",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "I see this strange error:\n> 2024/12/04 18:31:09 ERROR fileservice/handler/file.go:1790 -- [INVALID]: ListDir on a file is not allowed\n> 2024/12/04 18:31:09 ERROR fileservice/handler/file.go:321 -- [ERROR][list_dir] Username: jvlinsta, Path: testorgjvl/jvlinsta/fs/Instabase Drive/aihub/0192c396-9a43-7f71-8cd3-25cce236b785/project/reader_profiles/default.ibreader, Err: rpc error: code = InvalidArgument desc = ListDir on a file is not allowed, Time: 58ms, Size: 0Bytes\n> 2024/12/04 18:31:09 INFO fileservice/handler/file.go:318 -- [stat] Username: jvlinsta, Path: testorgjvl/jvlinsta/fs/Instabase Drive/aihub/0192c396-9a43-7f71-8cd3-25cce236b785/project/reader_profiles/default.ibreader, Time: 66ms, Size: 0Bytes\n> 2024/12/04 18:31:09 ERROR fileservice/handler/acl.go:52 -- [INTERNAL]: Failed to initialize Principal (Err: User (84d145db-09bf-474b-9cad-8fffa92fc2b6) not found)\n> 2024",
+      "time": "12:44",
+      "timestamp": "1733345086.156599",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "That user doesn't exist in dogfood's DB. Recommend you restart all your services, and flush redis",
+      "time": "12:49",
+      "timestamp": "1733345347.472849",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```Copyright (c) 1982, 2022, Oracle.  All rights reserved.\n\nLast Successful login time: Wed Dec 04 2024 20:48:32 +00:00\n\nConnected to:\nOracle Database 19c Standard Edition 2 Release 19.0.0.0.0 - Production\nVersion 19.13.0.0.0\n\nSQL> select * from users where id = '84d145db-09bf-474b-9cad-8fffa92fc2b';\n\nno rows selected```",
+      "time": "12:49",
+      "timestamp": "1733345349.890259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Not sure how you got in this state",
+      "time": "12:49",
+      "timestamp": "1733345374.576629",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```SQL> select public_id, users.id from users, accounts where account_id = accounts.id and public_id = 'jvlinsta';\nPUBLIC_ID\n--------------------------------------------------------------------------------\nID\n--------------------------------------------------------------------------------\njvlinsta\n992fb0cd-e104-496a-8387-c3db71974065```\n^ This is your actual user ID",
+      "time": "12:51",
+      "timestamp": "1733345467.273549",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This kind of thing can happen if you switch between dogfood/local DB",
+      "time": "12:51",
+      "timestamp": "1733345481.872509",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "ok, strange :thonk:  Best to make a fresh account with another email?",
+      "time": "12:51",
+      "timestamp": "1733345515.952609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mfichman❯ redis-cli -h redis\nredis:6379> flushall\nOK\nredis:6379>```",
+      "time": "12:52",
+      "timestamp": "1733345534.501089",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Try this^\nBut creating a new account with a different public_id may also work.",
+      "time": "12:52",
+      "timestamp": "1733345554.034239",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "created a completely new account on dogfood with a token, following https://instabase.atlassian.net/wiki/spaces/IT/pages/956465261/How+to+create+an+Instabase.com+account\n\nThen followed this method to upgrade to commercial and allow setting internal preview features (http://localhost/apps/aihub-admin/organizations): https://instabase.slack.com/archives/C06FA6A23/p1732532534103469?thread_ts=1732112757.253659&cid=C06FA6A23\n\nNow uploading a document, and  file-service still gives:\n> 2024/12/04 21:22:39 ERROR fileservice/handler/acl.go:52 -- [INTERNAL]: Failed to initialize Principal (Err: User (84d145db-09bf-474b-9cad-8fffa92fc2b6) not found)\n> 2024/12/04 21:22:39 ERROR fileservice/handler/file.go:321 -- [ERROR][list_dir] Username: 84d145db-09bf-474b-9cad-8fffa92fc2b6, Path: goldens-tester/system-test-repo-d0d0d314-1/fs/Instabase Drive, Err: rpc error: code = Internal desc = Failed to initialize Principal, Time: 25ms, Size: 0Bytes\nNot sure if these errors can just be ignored?\nFYI, I already did the redis flushall as well :slightly_smiling_face:",
+      "time": "13:25",
+      "timestamp": "1733347541.081179",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "when doing flushall I still saw some hanging tasks from the buggy account being aborted and then freezing everything up again",
+      "time": "13:31",
+      "timestamp": "1733347871.774749",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@jordy.vlan i thought you already cleared rabbitmq and restarted your services? so the tasks from the buggy account should no longer be running",
+      "time": "13:34",
+      "timestamp": "1733348093.019619",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "will do this again then :slightly_smiling_face:",
+      "time": "13:45",
+      "timestamp": "1733348749.069189",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Something is not right with your environment if you keep getting that Failed to initialize Principal error. I suspect that file-service is somehow misconfigured, and may need to be restarted. Are you using `make runlocal` ? Can you check:\n\n```grep INSTABASE_BACKEND_DB_PARAMS core-services/file-service/tmp/env_local\ngrep INSTABASE_BACKEND_DB_PARAMS core-services/file-service/tmp/docker_env_local.list```",
+      "time": "13:52",
+      "timestamp": "1733349168.400329",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "```both give no response; I always used ppy compile/restart aihub --as-aihub```",
+      "time": "13:55",
+      "timestamp": "1733349356.629909",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "can you run `ls core-services/file-service/tmp`?\n\nif you run `ppy restart aihub --as-aihub`, it should generate an `env_local` file in that folder",
+      "time": "14:03",
+      "timestamp": "1733349808.601089",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "env_local  hotconfig",
+      "time": "14:09",
+      "timestamp": "1733350172.952309",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "why is `core-services/file-service/tmp/env_local` completely empty??? :surprised-pikachu:",
+      "time": "14:14",
+      "timestamp": "1733350494.297509",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m going to restart file-service to see if `core-services/file-service/tmp/env_local` gets created correctly",
+      "time": "14:15",
+      "timestamp": "1733350523.555439",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "nope still empty",
+      "time": "14:15",
+      "timestamp": "1733350555.935329",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "yeah was just gonna say that it weirdly is empty and so is `env-local-secrets.json`",
+      "time": "14:16",
+      "timestamp": "1733350571.073319",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "your services are currently all down\n\nin `core-services/file-service/file-service.log`, i see errors from `get_env_local()`",
+      "time": "14:18",
+      "timestamp": "1733350693.105639",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "is someone else modifying `shared-utils/build-utils/shared/env-local-secrets.json`? i see a swp file for it\n\nwe need this to not be empty so that `ppy start file-service --as-aihub` can succeed",
+      "time": "14:21",
+      "timestamp": "1733350899.180799",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "jordy -- your sandbox needs a resync",
+      "time": "14:23",
+      "timestamp": "1733350980.807879",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'll click it for you. That will fix the secrets file.",
+      "time": "14:23",
+      "timestamp": "1733351010.259269",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You also have some env var overrides:\n\n```    env:\n      - API_SERVER_ENABLED=0\n      - WEBAPP_ENABLED=0\n      - API_SERVER_LITE_ENABLED=0\n      - WEBPACK_ENABLED=0\n      - WEBPACK_LITE_ENABLED=0```\nAre you sure you want those disabled?",
+      "time": "14:24",
+      "timestamp": "1733351052.697689",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "no clue, I have never set those",
+      "time": "14:24",
+      "timestamp": "1733351071.770409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmmm interesting",
+      "time": "14:24",
+      "timestamp": "1733351077.468159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I cleared that for you, just to be sure we don't have any diff with the base template.",
+      "time": "14:25",
+      "timestamp": "1733351152.609509",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "@Serena now env_local seems fine :slightly_smiling_face:",
+      "time": "14:43",
+      "timestamp": "1733352223.099039",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i also don’t see any more `Failed to initialize principal` errors in the file-service logs! :tada:",
+      "time": "14:45",
+      "timestamp": "1733352323.700459",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Awesome - thanks for jumping in to help @mfichman @Serena!\n\nIs the takeaway here that Jordy's env_local wasn't actually generated correctly? And it manifested as lots of (somewhat cryptic) initialization error messages in file-service? Should the service start up if env_local is empty?",
+      "time": "14:58",
+      "timestamp": "1733353131.907859",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m not sure what the takeaway is besides re-syncing to use the latest template :disappointed:\n\nsince env_local wasn’t getting generated, `file-service` wasn’t even running\n\nwhen Jordy previously had `file-service` running with these `Failed to initialize principal` errors, some `env_local` file must have been generated successfully",
+      "time": "15:00",
+      "timestamp": "1733353213.621649",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Now still getting some other strange errors in file-service:  :cry: sorry\n```2024/12/04 22:59:21 [WARN] relay: publisher got error: Failed to encode message! Got: Cannot assert type proto.Message for {\"job_id\":\"19d79338-5504-4bd1-babc-29e409829b95\",\"copy_req\":{\"context\":{\"username\":\"jordy.instabase_gmail.com\"},\"src_con_params\":{\"repo_owner\":\"jordyondogfood\",\"repo_name\":\"jordy.instabase_gmail.com\",\"mount_point\":\"Instabase Drive\",\"username\":\"jordy.instabase_gmail.com\"},\"dst_con_params\":{\"repo_owner\":\"jordyondogfood\",\"repo_name\":\"jordy.instabase_gmail.com\",\"mount_point\":\"Instabase Drive\",\"username\":\"jordy.instabase_gmail.com\"},\"src_path\":\"aihub/019393df-c10c-7b03-8d91-aef98ea8be76/documents/staging/a9fda8df-89f5-4898-90fd-46ebe578384c/X_014.jpeg\",\"dst_path\":\"aihub/019393df-c10c-7b03-8d91-aef98ea8be76/documents/input/73010158-fcc6-479c-bae9-8a3c72d2fc65__X_014.jpeg\"}}\n2024/12/04 22:59:21 [DEBUG] relay: publisher retrying in 5.124s\n2024/12/04 23:00:54 [ERR] relay: publisher giving up after 30 attempts\n2024/12/04 23:00:54 ERROR utils/taskqueue/rabbitmq_exporter.go:79 -- [UNAVAILABLE]:```",
+      "time": "15:00",
+      "timestamp": "1733353243.935499",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "that error implies that `file-service` is using different protobuf definitions from another service",
+      "time": "15:06",
+      "timestamp": "1733353590.128929",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’d recommend rebuilding and restarting `api-server` and `celery-app-tasks` - those 2 seem like the most likely offenders",
+      "time": "15:06",
+      "timestamp": "1733353610.181329",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "will do that and check back in the morning :slightly_smiling_face:",
+      "time": "15:10",
+      "timestamp": "1733353834.241219",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-04.json",
+    "message_count": 98,
+    "start_time": "1733310977.648839",
+    "end_time": "1733353834.241219",
+    "is_thread": true
+  }
+}

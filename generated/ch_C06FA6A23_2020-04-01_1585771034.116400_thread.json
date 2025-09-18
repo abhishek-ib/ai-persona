@@ -1,0 +1,191 @@
+{
+  "id": "ch_C06FA6A23_2020-04-01_1585771034.116400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Mohit",
+    "Chetan",
+    "Heymian",
+    "will"
+  ],
+  "messages": [
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Hey @Chetan is it accurate to think that the tests in travis are run from the container image in the branch being PRed?",
+      "time": "12:57",
+      "timestamp": "1585771034.116400",
+      "is_reply": false
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "We updated the jenkins/travis container but https://travis-ci.com/github/instabase/instabase/jobs/310703906 is still pulling down the previous version of the image",
+      "time": "12:57",
+      "timestamp": "1585771060.116500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "and so the tests fail",
+      "time": "12:58",
+      "timestamp": "1585771084.116800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "nope — they’re hardcoded to a version tag set in `build-stack.mk (http://build-stack.mk)`",
+      "time": "12:58",
+      "timestamp": "1585771094.117000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "jk the version tag is in `deploy.mk (http://deploy.mk)` with the name `JENKINS_IMAGE_TAG`",
+      "time": "12:58",
+      "timestamp": "1585771132.117200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I set the version in `deploy.mk (http://deploy.mk)`",
+      "time": "12:58",
+      "timestamp": "1585771133.117400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": ":smile:",
+      "time": "12:58",
+      "timestamp": "1585771137.117600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "But does it use the value from `deploy.mk (http://deploy.mk)` on master or from the PR branch?",
+      "time": "12:59",
+      "timestamp": "1585771157.117800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I think it is using the value from the PR branch",
+      "time": "12:59",
+      "timestamp": "1585771186.118000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "uses the PR branch",
+      "time": "13:02",
+      "timestamp": "1585771330.118200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yup",
+      "time": "13:02",
+      "timestamp": "1585771365.118400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "So to fix this particular case we need to pull in the change with the right version to pass the test",
+      "time": "13:02",
+      "timestamp": "1585771369.118600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "not sure what you’re trying to do exactly, but i would make the PR just set the expected version in deploy.mk (http://deploy.mk).",
+      "time": "13:04",
+      "timestamp": "1585771444.118800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "and when youre ready to bump it, update it in that PR",
+      "time": "13:04",
+      "timestamp": "1585771457.119000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "We already bumped it, but that is good to know for the future",
+      "time": "13:22",
+      "timestamp": "1585772572.119300",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@will/@Heymian, can you confirm this, coz i remember travis did not pick up the latest jenkins image tag for me (https://travis-ci.com/github/instabase/instabase/builds/154170740), until i merged the jenkins img tag into master from another PR (https://github.com/instabase/instabase/pull/13111).",
+      "time": "15:56",
+      "timestamp": "1585781775.119900",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "and this was 2 weeks ago ish, so pretty recent",
+      "time": "15:56",
+      "timestamp": "1585781796.120100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrm, i’m fairly confident travis looks at the current tag in deploy.mk (http://deploy.mk) to figure out which image to download. At least that’s how I used to test out my jenkins images without affecting anyone else. Not sure if anything has changed since.",
+      "time": "15:58",
+      "timestamp": "1585781906.120400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yea i’m fairly confident at that too",
+      "time": "15:58",
+      "timestamp": "1585781932.120700",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "okay. just confirming —  so, if i have a PR that has jenkins img w `new_latest_tag`, travis will use image w `new_latest_tag` to run tests against that PR. correct?",
+      "time": "16:00",
+      "timestamp": "1585782047.120900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yes.",
+      "time": "16:02",
+      "timestamp": "1585782122.121200",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-04-01.json",
+    "message_count": 21,
+    "start_time": "1585771034.116400",
+    "end_time": "1585782122.121200",
+    "is_thread": true
+  }
+}

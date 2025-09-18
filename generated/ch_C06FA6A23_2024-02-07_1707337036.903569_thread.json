@@ -1,0 +1,78 @@
+{
+  "id": "ch_C06FA6A23_2024-02-07_1707337036.903569_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Cody Boggs",
+    "donagh"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":wave: :yellow_circle: I don't know who best to hand this to, but `webapp` is failing to deploy in the 23.01 release sandbox:\nhttps://jenkins.instabase.com/job/deploy-release-sandbox/job/release-23.01.0/2071/console\n\nPods are logging the following as they crashloop:\n```Traceback (most recent call last):\n  File \"/home/ibuser/.local/lib/python3.9/site-packages/gunicorn/arbiter.py\", line 602, in spawn_worker\n    sys.exit(self.WORKER_BOOT_ERROR)\nSystemExit: 3\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"instabase/shared/gunicorn_hooks_config.py\", line 36, in __delete_pid\n    Path('{}/{}'.format(GUNICORN_STATE_DIR, pid)).unlink()\n  File \"/opt/python-3.9.15/lib/python3.9/pathlib.py\", line 1354, in unlink\n    self._accessor.unlink(self)\nFileNotFoundError: [Errno 2] No such file or directory: '/dev/shm/gunicorn/pids/18'\nError removing file for pid: 17, curpid: 15\n[Errno 2] No such file or directory: '/dev/shm/gunicorn/pids/17'\nTraceback (most recent call last):\n  File \"/home/ibuser/.local/lib/python3.9/site-packages/gunicorn/arbiter.py\", line 209, in run\n    self.sleep()\n  File \"/home/ibuser/.local/lib/python3.9/site-packages/gunicorn/arbiter.py\", line 357, in sleep\n    ready = select.select([self.PIPE[0]], [], [], 1.0)\n  File \"/home/ibuser/.local/lib/python3.9/site-packages/gunicorn/arbiter.py\", line 242, in handle_chld\n    self.reap_workers()\n  File \"/home/ibuser/.local/lib/python3.9/site-packages/gunicorn/arbiter.py\", line 525, in reap_workers\n    raise HaltServer(reason, self.WORKER_BOOT_ERROR)\ngunicorn.errors.HaltServer: <HaltServer 'Worker failed to boot.' 3>\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/ibuser/.local/lib/python3.9/site-packages/gunicorn/arbiter.py\", line 642, in kill_worker\n    os.kill(pid, sig)\nProcessLookupError: [Errno 3] No such process\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"instabase/shared/gunicorn_hooks_config.py\", line 36, in __delete_pid\n    Path('{}/{}'.format(GUNICORN_STATE_DIR, pid)).unlink()\n  File \"/opt/python-3.9.15/lib/python3.9/pathlib.py\", line 1354, in unlink\n    self._accessor.unlink(self)\nFileNotFoundError: [Errno 2] No such file or directory: '/dev/shm/gunicorn/pids/17'\n[2024-02-07 20:13:14 +0000] [15] [WARNING] Worker with pid 19 was terminated due to signal 15\n[2024-02-07 20:13:14 +0000] [15] [WARNING] Worker with pid 18 was terminated due to signal 15\n[2024-02-07 20:13:14 +0000] [15] [INFO] Shutting down: Master\n[2024-02-07 20:13:14 +0000] [15] [INFO] Reason: Worker failed to boot.```",
+      "time": "12:17",
+      "timestamp": "1707337036.903569",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@donagh might be looking intot his ..",
+      "time": "12:39",
+      "timestamp": "1707338355.140449",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":+1:",
+      "time": "12:43",
+      "timestamp": "1707338610.959779",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "This is new to me, i was fixing a werkzeug and python 3.7 incompatibility issue. It is possible gunicorn is using werkzeug in which case my work may have touched this, but it isn't immediately obvious. @Cody Boggs I'll spin up a 23.01 sandbox with my changes reverted and check if the issue goes away",
+      "time": "12:49",
+      "timestamp": "1707338993.328659",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "gunicorn is used by Flask / Werkzeug ...",
+      "time": "12:54",
+      "timestamp": "1707339277.179719",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": ":ok_hand: gotcha, digging in now",
+      "time": "12:55",
+      "timestamp": "1707339304.207649",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Testing a `flask-wtf` upgrade on a sandbox to confirm webapp will come up",
+      "time": "17:20",
+      "timestamp": "1707355213.619739",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-02-07.json",
+    "message_count": 7,
+    "start_time": "1707337036.903569",
+    "end_time": "1707355213.619739",
+    "is_thread": true
+  }
+}

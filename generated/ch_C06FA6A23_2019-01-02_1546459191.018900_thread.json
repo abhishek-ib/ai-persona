@@ -1,0 +1,181 @@
+{
+  "id": "ch_C06FA6A23_2019-01-02_1546459191.018900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Jesika Haria",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "what is the recommended python version to use for celery worker services like app tasks, 2 or 3? im getting import future errors with 3",
+      "time": "11:59",
+      "timestamp": "1546459191.018900",
+      "is_reply": false
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "```\nInstabaseRun(\"Cel-App\", \"distributed-tasks/celery/app-tasks\", go_to_instabase_root, \"make build-docker run-docker threadsafe\")\n\ndelay 1\nInstabaseRun(\"Cel-Img\", \"distributed-tasks/celery/image-tasks\", go_to_instabase_root, \"make build-docker run-docker\")\n\ndelay 1\nInstabaseRun(\"Cel-Web\", \"distributed-tasks/celery/webdriver-tasks\", go_to_instabase_root, \"make build-docker run-docker\")\n```\n@Jesika Haria",
+      "time": "12:01",
+      "timestamp": "1546459303.019200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i don’t think they work under 3 (i think there’s syntax porting we have to do still, i’ve accidentally run them there).",
+      "time": "12:02",
+      "timestamp": "1546459335.019400",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "ah kk cool, trying that out! ive messed up my python2 venv somehow, so will try the docker route failing which will fall back to setting up a python2 venv again",
+      "time": "12:13",
+      "timestamp": "1546460029.019600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yea, i’ve been running all the celery workers via docker and it’s been fine. lmk if you have issues!",
+      "time": "12:28",
+      "timestamp": "1546460898.019900",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "i ran into a no module named ocr issue, so just redownloading py2 venv",
+      "time": "12:51",
+      "timestamp": "1546462289.020100",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "did you run into that?",
+      "time": "12:51",
+      "timestamp": "1546462292.020300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "nope. which server was saying that?",
+      "time": "12:53",
+      "timestamp": "1546462392.020500",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "app-tasks",
+      "time": "13:05",
+      "timestamp": "1546463106.021000",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "seems to finally be able to run locally with a fresh venv",
+      "time": "13:05",
+      "timestamp": "1546463151.021200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "that’s interesting. i’ve only run it with docker and `source ~/projects/instabase/venv/bin/activate && cd ~/projects/instabase && cd distributed-tasks/celery/app-tasks && make build-docker run-docker threadsafe` seems to work fine.",
+      "time": "13:06",
+      "timestamp": "1546463166.021400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "but good that you got it figured out :thumbsup:",
+      "time": "13:06",
+      "timestamp": "1546463170.021600",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "hmm, perhaps i need to blow away my local docker image cache for this image or something?",
+      "time": "13:09",
+      "timestamp": "1546463351.021800",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "do you often rebuild celery app-tasks? imagine docker is too slow for that case?",
+      "time": "13:09",
+      "timestamp": "1546463382.022000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "always — nah not at all. cache-ing is very effective.",
+      "time": "13:09",
+      "timestamp": "1546463397.022200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "but once in a while if something changes in early in the dockerfile, for sure.",
+      "time": "13:10",
+      "timestamp": "1546463423.022400",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "lol, yeah for sure",
+      "time": "13:10",
+      "timestamp": "1546463437.022600",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "cool, good to know.",
+      "time": "13:10",
+      "timestamp": "1546463450.022800",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "thanks!",
+      "time": "13:10",
+      "timestamp": "1546463454.023000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "but i doubt the cache has something to do with it. we can debug if you’d like, that’s the image/server i use most for my OCR rotation correction stuff.",
+      "time": "13:11",
+      "timestamp": "1546463464.023200",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-01-02.json",
+    "message_count": 20,
+    "start_time": "1546459191.018900",
+    "end_time": "1546463464.023200",
+    "is_thread": true
+  }
+}

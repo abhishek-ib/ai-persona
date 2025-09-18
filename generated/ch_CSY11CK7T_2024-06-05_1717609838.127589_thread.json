@@ -1,0 +1,135 @@
+{
+  "id": "ch_CSY11CK7T_2024-06-05_1717609838.127589_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Weiming Wu",
+    "Xindi Xu",
+    "CJ",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "`view-my-hub` has concurrency issue. It wants 4 conversations but got 8. (example run (https://cloud.cypress.io/projects/cfhedy/runs/10860/overview/a020950e-8d6e-4a91-9b11-e19c7b076790?roarHideRunsWithDiffGroupsAndTags=1))",
+      "time": "10:50",
+      "timestamp": "1717609838.127589",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @Weiming Wu",
+      "time": "10:53",
+      "timestamp": "1717609996.795029",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Weiming Wu are you planning on fixing these? If not, could we skip these tests?",
+      "time": "13:17",
+      "timestamp": "1717618648.589319",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Trying to fix them is a bit trickier than I expected... Conversations are created every test run but not projects, so I have to make projects be created on each test run as well",
+      "time": "13:18",
+      "timestamp": "1717618713.385999",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we saw a different cause of failure in this test run (https://cloud.cypress.io/projects/cfhedy/runs/10879/) on Xindi’s PR - conversations were correctly shown in the earlier test result (“displays projects and conversations”) but disappeared in the later test result (“supports searching in conversations page”)\n\ni think that it’s possible for a different test run to delete all Converse projects while this test run is in progress",
+      "time": "14:31",
+      "timestamp": "1717623067.010229",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Previously, _all_ Converse projects were being deleted by other test suites, so this test also did the same (forces a reset to a blank canvas to then put My Hub projects to check), so it definitely is a potential issue still",
+      "time": "14:33",
+      "timestamp": "1717623196.449659",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "i've seen view-my-hub fail due to this several times today",
+      "time": "15:03",
+      "timestamp": "1717625023.674089",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Maybe we shouldn't delete all converse projects... since we don't have good test isolation, \"delete all\" functions will break a lot of other tests",
+      "time": "15:05",
+      "timestamp": "1717625137.819609",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "It looks like view-my-hub is the only test that's clearing all conversations now",
+      "time": "15:05",
+      "timestamp": "1717625144.384449",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "(At least that's what I'm seeing by tracing the endpoint URL)",
+      "time": "15:06",
+      "timestamp": "1717625175.323969",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "so I'll remove that and make it do what Jessica recommended in the PR:\n• Create projects and conversations with a random suffix\n• Add a before call to remove any projects and conversations older than 10 min",
+      "time": "15:07",
+      "timestamp": "1717625250.620509",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "also, we can’t require that 4 conversations exist\n\nsince other tests could also be creating conversations as well, there could be more than 4",
+      "time": "15:08",
+      "timestamp": "1717625286.077519",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "It checks that 4 conversations starting with \"My Hub\" exists, so we can make it search for \"My Hub {suffix}\" instead",
+      "time": "15:08",
+      "timestamp": "1717625337.853629",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Ok the fix is finally merged! You can now rebase and hope that your CI's pass :smiling_face_with_tear:",
+      "time": "15:51",
+      "timestamp": "1717627918.391369",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-06-05.json",
+    "message_count": 14,
+    "start_time": "1717609838.127589",
+    "end_time": "1717627918.391369",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "id": "ch_CSY11CK7T_2024-10-24_1729782607.253189_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Liam Callanan",
+    "Xindi Xu",
+    "Jessica",
+    "Udit"
+  ],
+  "messages": [
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Hey, is anyone else seeing issues with `apps/src/aihub/__e2e__/Settings/Account/edit-account.spec.ts` ?\nI’m seeing cypress runs (https://cloud.cypress.io/projects/cfhedy/runs/15067/overview/a8fc3196-5605-4712-bb26-342c1c12d506/replay?roarHideRunsWithDiffGroupsAndTags=1&ts=1729779784085.4&att=1) failing on `request POST --- /api/v2/organizations/cypress-drive-tests/users/remove` because it’s taking too long\ncc <!subteam^S07855GV3GV>",
+      "time": "08:10",
+      "timestamp": "1729782607.253189",
+      "is_reply": false
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "Seems like it failed twice this morning but was passing yesterday",
+      "time": "08:27",
+      "timestamp": "1729783662.548119",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "the endpoint itself works fast when I run it manually",
+      "time": "08:29",
+      "timestamp": "1729783773.463009",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "yeah I only started seeing this today",
+      "time": "08:29",
+      "timestamp": "1729783776.439939",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@Xindi Xu I saw this yesterday too",
+      "time": "08:47",
+      "timestamp": "1729784844.144649",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "the same endpoint works fine and fast on crafting-cyp.test environment and the same sandbox used in the test its failing on when running it from the UI :melting_face:",
+      "time": "08:54",
+      "timestamp": "1729785254.735869",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, not sure why this endpoint takes a while sometimes. We can increase the time out to 60s for now...",
+      "time": "09:04",
+      "timestamp": "1729785868.547029",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "When we remove users from the org, we do scan thru the groups, and repos tables and remove them from the org groups and org workspaces.",
+      "time": "09:05",
+      "timestamp": "1729785926.856479",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Do you have a link to the trace?",
+      "time": "09:05",
+      "timestamp": "1729785942.073349",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "since its timing out, cypress isn't printing out the request object in console when clicking on it",
+      "time": "09:08",
+      "timestamp": "1729786103.586139",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ah, i mean jaeger tracing",
+      "time": "09:09",
+      "timestamp": "1729786178.493489",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "how can I get the jaeger tracing from replaying a cypress test for a call that timed out? I'm not sure how to see the request object and get the trace id then",
+      "time": "09:15",
+      "timestamp": "1729786550.535899",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "well... something is going wrong with Jaeger in crafting-cyp. I can't find any queries to this endpoint. I'll check back later today",
+      "time": "09:15",
+      "timestamp": "1729786552.640459",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I just search using the operation name and limit by the timeframe :sweat_smile:",
+      "time": "09:16",
+      "timestamp": "1729786602.578269",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "ah, can you check if you see the calls to users/add ?",
+      "time": "09:17",
+      "timestamp": "1729786631.015629",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "yep, i did that and nothing shows up",
+      "time": "09:17",
+      "timestamp": "1729786664.827359",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "ah okay nvm then",
+      "time": "09:18",
+      "timestamp": "1729786687.030439",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "I'll put up a pr that increases timeout and see if it works for now then",
+      "time": "09:18",
+      "timestamp": "1729786739.607499",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you!",
+      "time": "09:19",
+      "timestamp": "1729786774.871509",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Trace: https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22nxp%22:%[…]3878%22,%22to%22:%221729799893878%22%7D%7D%7D&orgId=1 (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22nxp%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D,%22queryType%22:%22search%22,%22service%22:%22api-server%22,%22operation%22:%22%2Fapi%2Fv2%2Forganizations%2F%3Cstring:org_name%3E%2Fusers%2Fremove%22%7D%5D,%22range%22:%7B%22from%22:%221729789093878%22,%22to%22:%221729799893878%22%7D%7D,%22fif%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22query%22:%223d5813a648491a9a%22,%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D%7D%5D,%22range%22:%7B%22from%22:%221729789093878%22,%22to%22:%221729799893878%22%7D%7D%7D&orgId=1)\n\nThere are 2831 calls to check if user is in an org repo. Because we never clean up repos in the org, we have 2831 repos. Each takes around 1-2ms but ended up taking a while...\nI'll put up a fix soon.",
+      "time": "13:32",
+      "timestamp": "1729801928.191089",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-10-24.json",
+    "message_count": 20,
+    "start_time": "1729782607.253189",
+    "end_time": "1729801928.191089",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,376 @@
+{
+  "id": "ch_C06FA6A23_2020-03-13_1584148999.312800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "achao",
+    "Heymian",
+    "will",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Hey all, @Heymian, @will, @shaunak was trying to run a golden test but I keep getting that the polling is failing. Sometimes I get “An unexpected exception occurred”. Is there something unstable on dogfood right now?\n\nSorry for the late ping, but still trying to fix the goldens since I’m done with my meetings",
+      "time": "18:23",
+      "timestamp": "1584148999.312800",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "First one I got:\n\nThe following tests failed:\n Test_name: delete-previous-output.\n Error=Error getting job status for job_id=22f00f71-0136-4250-960c-3392c168a41c. Http ErrorCode=502 \nSee the output results: /Users/davidlluncor/GitHub/instabase/webserver/api-server-apps/build/golden-test/py/tmp/golden_results_1584148794.765986.txt\n\nThe following tests failed:\n Test_name: multiflow_v2_binary_adp.\n Error=Failed to start the flow job. {‘status’: ‘ERROR’, ‘msg’: ‘An unexpected error occurred.’}",
+      "time": "18:26",
+      "timestamp": "1584149178.313500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Those were the two different failures",
+      "time": "18:26",
+      "timestamp": "1584149204.313700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Hmm. 502 means whatever is behind the proxy didn’t answer",
+      "time": "18:27",
+      "timestamp": "1584149240.314800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Would that be the file service?",
+      "time": "18:28",
+      "timestamp": "1584149280.315400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "api-server-apps is the first endpoint that gets hit. so perhaps that didn’t respond in time?\n\nwhen we do a job polling, that is also api-server-apps",
+      "time": "18:28",
+      "timestamp": "1584149313.315600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Not sure if it is related, but it is complaining about boto3",
+      "time": "18:32",
+      "timestamp": "1584149560.316500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I can look more closely in a bit, i am not at a computer at the moment.",
+      "time": "18:33",
+      "timestamp": "1584149591.317500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Ok, I fixed the bug in the rollout monitoring, I’ll have to go through these all again, my automated search and replace didn’t work and they all have the wrong service path. :grimacing:",
+      "time": "18:37",
+      "timestamp": "1584149858.318000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Just the dogfood ones, the dogfood alt jobs I did myself because I had to fix other stuff",
+      "time": "18:37",
+      "timestamp": "1584149875.318200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "got it. K good to know, thanks!",
+      "time": "18:41",
+      "timestamp": "1584150073.318400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Do you know why api-server started needing boto3?",
+      "time": "18:44",
+      "timestamp": "1584150252.318600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "no idea actually. Perhaps a question for @achao and @Heymian?",
+      "time": "18:44",
+      "timestamp": "1584150267.318800",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "hmmmm not aware it did, let me see",
+      "time": "18:45",
+      "timestamp": "1584150321.319700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Hard to say when exactly, but within the last 7 hours for sure",
+      "time": "18:45",
+      "timestamp": "1584150341.319900",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "i dont see it in requirements.txt",
+      "time": "18:46",
+      "timestamp": "1584150369.320100",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "api-server-apps you mean?",
+      "time": "18:46",
+      "timestamp": "1584150376.320300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "no, api-serv er",
+      "time": "18:46",
+      "timestamp": "1584150385.320500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "https://console.cloud.google.com/kubernetes/deployment/us-east1-c/instabase-main-dogfood-001/instabase-dogfood/deployment-api-server?project=instabase-dogfood&tab=overview&deployment_overview_active_revisions_tablesize=50&duration=PT1H&pod_summary_list_tablesize=20&service_list_datatablesize=20",
+      "time": "18:46",
+      "timestamp": "1584150405.320700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Looks like an SQS dep? @dlluncor\n```\nTraceback (most recent call last):\n  File \"manage.py\", line 35, in <module>\n    from instabase.server.main import ApiServer\n  File \"/instabase-api-server/py/instabase/server/main.py\", line 22, in <module>\n    from instabase.clients_factory_utils import clients_factory\n  File \"/instabase-api-server/py/instabase/clients_factory_utils/clients_factory.py\", line 14, in <module>\n    from instabase.sqs_utils.sqs import SQSMgr\n  File \"/instabase-api-server/py/instabase/sqs_utils/sqs.py\", line 5, in <module>\n    import boto3\nModuleNotFoundError: No module named 'boto3'```",
+      "time": "18:48",
+      "timestamp": "1584150533.321000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "We added a bunch of imports",
+      "time": "18:48",
+      "timestamp": "1584150535.321200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "api-server won’t come up",
+      "time": "18:48",
+      "timestamp": "1584150536.321400",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "i see it",
+      "time": "18:50",
+      "timestamp": "1584150614.321600",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "yup @Erickadded the import I believe",
+      "time": "18:50",
+      "timestamp": "1584150622.321800",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "https://github.com/instabase/instabase/pull/12964/files",
+      "time": "18:52",
+      "timestamp": "1584150726.322000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "docops isn’t coming up either\n```\"/instabase-server/py/instabase/apps/services/ocr/_private/msft_util.py\", line 9, in <module> import requests ModuleNotFoundError: No module named 'requests'```",
+      "time": "18:52",
+      "timestamp": "1584150729.322200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "That one’s likely @Aaron Tami",
+      "time": "18:53",
+      "timestamp": "1584150782.322500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "What is the relative urgency of these fixes? I think we should be able to fix it Monday before code cut",
+      "time": "18:59",
+      "timestamp": "1584151184.322700",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Oh I didn’t realize the redis client needed boto3 hmm. Just curious but why? Should I just access the client via app.x instead of putting it in clients factory?",
+      "time": "20:06",
+      "timestamp": "1584155210.324400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Ah we should add clients_factory to a worker-side lib. It was only intended for the worker side, app-tasks, websriver-tasks, etv",
+      "time": "20:45",
+      "timestamp": "1584157506.324600",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Gotcha gotcha",
+      "time": "20:45",
+      "timestamp": "1584157532.324900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "We typically get the clients from the current_app and then pass it down through the various callers from the Blueprint in Flask",
+      "time": "20:45",
+      "timestamp": "1584157554.325700",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Sounds good. I think it was set up like this in api server apps and that’s why I copied it",
+      "time": "20:46",
+      "timestamp": "1584157591.326600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Ah I see. Gotcha. I'll sync with the author to make sure I understand the thought process",
+      "time": "20:48",
+      "timestamp": "1584157727.326900",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "I think it might have been you — the lines seem to be from a PR from a year ago called “More tracking for Flow V2 and Metaflow V2 timing (#9219)“?",
+      "time": "20:51",
+      "timestamp": "1584157869.327100",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Do you think it’s worth it for me to update api-server to get rid of the clients_factory before the code cut, or do you think it makes more sense to wait and figure out the best way forward?\n\nAlso happy to chat on Monday when everyone’s back in the office — or rather — back online :blush:",
+      "time": "20:52",
+      "timestamp": "1584157971.327300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "I'd say we should get dogfood and docker containers to build",
+      "time": "20:55",
+      "timestamp": "1584158107.327500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "@will do we have alerts when things don't run because of dep failures. We have an auto-build process and Jenkins attached to it I believe?",
+      "time": "20:55",
+      "timestamp": "1584158135.327700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "@Erick top  pri  would be to get dogfood to a stable state",
+      "time": "20:57",
+      "timestamp": "1584158270.327900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "The quick fix could just be a revert of the PR, and we can look into a better way to get the original PR in, on Monday.",
+      "time": "21:00",
+      "timestamp": "1584158415.328100",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "I’m fixing it now for api-server :slightly_smiling_face:",
+      "time": "21:00",
+      "timestamp": "1584158429.328300",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Testing it now",
+      "time": "21:00",
+      "timestamp": "1584158435.328500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "ah cool, ok. Didn’t want to take too much time out of your friday evening :slightly_smiling_face:",
+      "time": "21:01",
+      "timestamp": "1584158475.328700",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Haha all good. It’s a quick one",
+      "time": "21:01",
+      "timestamp": "1584158512.328900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-03-13.json",
+    "message_count": 44,
+    "start_time": "1584148999.312800",
+    "end_time": "1584158512.328900",
+    "is_thread": true
+  }
+}

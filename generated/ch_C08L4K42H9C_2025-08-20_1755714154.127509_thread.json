@@ -1,0 +1,53 @@
+{
+  "id": "ch_C08L4K42H9C_2025-08-20_1755714154.127509_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I have a question for this particular function (https://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpacked/apps/src/aihub/pages/ViewApp/utils.ts#L56) that transforms field names:\n```export const adjustSchemaFieldName = (fieldName: string) =>\n  fieldName\n    // if leading number is escaped, remove escape character\n    .replace(/^_([0-9])/, '$1')\n    // replace all single underscores with space\n    .replace(/([^_])_(?!_)/g, '$1 ')\n    // replace all double underscores with single underscore\n    .replace(/__/g, '_');```\nMore specifically, the 3rd `.replace()` call. We have double underscore prefixed field names to denote internal/hidden fields (e.g. `__model_result`). Is the rule `.replace(/__/g, '_');` specifically for rendering these hidden fields as `_model_result` on the frontend? Or are there other cases where we can have double underscores?\n\nEDIT: DW I answered my own question.",
+      "time": "11:22",
+      "timestamp": "1755714154.127509",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "No wait, you can have valid double underscores within field names. I have:\n• a field `ending_balance` in build\n• it appears as `ending_balance` in GET `/schema`\n• but appears as `ending__balance` in POST `/open-files`\nSo it seems like it's to match HR's fields to the schema fields? hmmmm",
+      "time": "11:27",
+      "timestamp": "1755714436.699299",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yes this logic is for matching Human Review's field names to the schema!\n\nthe problem is that field names cannot have spaces in Refiner since the field names must be usable as Python variable names",
+      "time": "13:04",
+      "timestamp": "1755720297.800209",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "some context from an old thread - example (https://instabase.slack.com/archives/C01234BEXD2/p1711580094370459)",
+      "time": "13:08",
+      "timestamp": "1755720480.126819",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-08-20.json",
+    "message_count": 4,
+    "start_time": "1755714154.127509",
+    "end_time": "1755720480.126819",
+    "is_thread": true
+  }
+}

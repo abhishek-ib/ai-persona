@@ -1,0 +1,37 @@
+{
+  "id": "ch_C0516UPPMT3_2024-12-03_1733249622.612729_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Liam Callanan",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Liam Callanan we’re already using `<Input type=\"number\" />` from Pollen in this case (https://github.com/instabase/javascript-packages/blob/b7403ab/packages/doc-widget/src/docWidget/Toolbar.tsx#L205-L219)\n\nto not show keywords, i guess we need to set `autocomplete=\"off\"` - should this be done for all `type=\"number\"` cases?\n\nfor the +/-/. characters, i don’t think there’s a way to disallow +/-/. characters with pure html (spec (https://html.spec.whatwg.org/multipage/input.html#number-state-(type%3Dnumber)) allows for floating points) - should we add a `type=\"count\"` to disallow non-numeric characters?",
+      "time": "10:13",
+      "timestamp": "1733249622.612729",
+      "is_reply": false
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "yup, add `autocomplete=\"off\"`.\n\n> should we add a `type=\"count\"` to disallow non-numeric characters?\nthat would be problematic for 3 main reasons:\n• `type` is an html-specified value & does not refer to custom layers on top an html input.\n• Adding `count` is a dangerous pattern which would bloat `Input` as we introduce more & more custom types\n• Custom types like `count` may benefit from / require different prop type restrictions which would get very complex if built directly into `Input`\nWhat you’re looking for is a wrapper around `Input` called `CounterInput` or something w/ its own restricted set of props & built-in validation.\nThat way I could also add storybook entries for each new custom input type that builds on top of `Input`.\n\nMight be good to discuss which types could be beneficial during Frontend guild to gauge how useful these special types would be",
+      "time": "10:23",
+      "timestamp": "1733250195.861809",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-12-03.json",
+    "message_count": 2,
+    "start_time": "1733249622.612729",
+    "end_time": "1733250195.861809",
+    "is_thread": true
+  }
+}

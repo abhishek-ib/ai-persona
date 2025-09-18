@@ -1,0 +1,62 @@
+{
+  "id": "ch_C06FA6A23_2025-01-23_1737661187.809109_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "astpierre",
+    "Cody Boggs",
+    "Gauti"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "<!here> I'm going to be shoe-horning a chainguard-migrated version of `conversion-service` into `aihub-sandbox` so I can run system tests against it. The service builds and runs seemingly fine, but has evidently failed system tests in prior attempts.\n*If you run into problems on `aihub-sandbox` before I announce that I've rolled back my change in this thread - be patient, it'll be rolled back when I'm done.*",
+      "time": "11:39",
+      "timestamp": "1737661187.809109",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Testing is done (failed), `aihub-sandbox` is currently undergoing its scheduled deployment so it'll be rolled to the proper image shortly",
+      "time": "12:38",
+      "timestamp": "1737664685.752059",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Hi, @Cody Boggs, aihub-sandbox deployment has not gone through since you rolled back the changes. It keeps on failing on install-ib-platform (https://jenkins.instabase.com/job/SAAS-AWS/job/saas-pipelines/job/install-ib-platform/21012/console).\nIt has broken the aihub-sandbox (https://aihub-sandbox.internal.instabase.com/) completely.\nCc: @Balaram <!subteam^S02FJA6A7U5>",
+      "time": "19:53",
+      "timestamp": "1737690792.590729",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "I dont think what put aihub-sandbox into a bad state is related to the testing earlier today.\n\nTesting was canarrying an image for conversion-service in aihub-sandbox and then running the PIAs to confirm it was working, but since it failed, the next deploy cleaned up the image change (which it did based on DM (https://aihub-sandbox.internal.instabase.com/deployment-manager/dashboard/deployments/apps/v1/conversion-service/deployment-conversion-service-7dbdbb74bd-gq2cd))\n\nWhat caused the wider breakage was this deploy earlier today (https://jenkins.instabase.com/job/SAAS-AWS/job/deploy-saas-aws-preprod/33239/parameters/) where Elasticache was re-enabled. Based on the error I found in api-server `Error: secret \"elasticache-auth-token\" not found`, this led me to a thread (https://instabase.slack.com/archives/CCY413CSU/p1736541977634429?thread_ts=1736498163.984299&cid=CCY413CSU) suggesting we need to delete the patch created to enable Elasticache. I will go ahead and delete that patch and hopefully things turn up properly again\n\ncc @Anil",
+      "time": "22:25",
+      "timestamp": "1737699931.194069",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "aihub-sandbox is back up and running. the current deploy might fail as it seems stuck in undo_turndown even though all deployments are now up and running. The next deploy should be successful.",
+      "time": "23:01",
+      "timestamp": "1737702095.238969",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-01-23.json",
+    "message_count": 5,
+    "start_time": "1737661187.809109",
+    "end_time": "1737702095.238969",
+    "is_thread": true
+  }
+}

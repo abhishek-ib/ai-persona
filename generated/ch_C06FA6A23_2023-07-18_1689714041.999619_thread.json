@@ -1,0 +1,110 @@
+{
+  "id": "ch_C06FA6A23_2023-07-18_1689714041.999619_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Venkatesh",
+    "Dominic Fannjiang",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "Hi Team,\n\nI am trying to convert a table_annotation using the `convert_to_extracted_tables_list`\nThe one major difference I see between the `TableExtractionPredictionInstanceDict` and the table_annotation_dictionary is that the cell has the `text` key and also it tries to calculate the tracker which is okay in this case to be done.\nI added the text key ahead of passing my list of dictionaries to the function. Based on the implementation, it should have given be an `ExtractedTablesList, None` with the same number of rows and columns. However, I got the following result\n\n```[[null], null]```\nCould someone help me here please?\nLink to refiner (https://instabase.com/apps/refiner-v5/edit/venkatesh/venkatesh-sandbox/fs/Instabase%20Drive/colpal%20scalable%20flow/modules/blah.refiner/refiner.ibrefiner?%2Fapps%2Frefiner-v5%2Fedit%2Fvenkatesh%2Fvenkatesh-sandbox%2Ffs%2FInstabase+Drive%2Fcolpal+scalable+flow%2Fmodules%2Fblah.refiner%2Frefiner.ibrefiner=), script (https://instabase.com/apps/text-editor/venkatesh/venkatesh-sandbox/fs/Instabase%20Drive/colpal%20scalable%20flow/modules/blah.refiner/scripts/run_model.py) and the annotations (https://instabase.com/apps/text-editor/venkatesh/venkatesh-sandbox/fs/Instabase%20Drive/colpal%20scalable%20flow/modules/blah.refiner/scripts/table_annotations.py?%2Fapps%2Ftext-editor%2Fvenkatesh%2Fvenkatesh-sandbox%2Ffs%2FInstabase+Drive%2Fcolpal+scalable+flow%2Fmodules%2Fblah.refiner%2Fscripts%2Ftable_annotations.py=)\n\ncc: @Ganan Prabaharan",
+      "time": "14:00",
+      "timestamp": "1689714041.999619",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @Dominic Fannjiang",
+      "time": "14:05",
+      "timestamp": "1689714345.450959",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Just curious, what are you ultimately trying to do? are you trying to get ML studio table annotations into refiner?",
+      "time": "14:14",
+      "timestamp": "1689714848.111999",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "I am trying to create a ground truth for comparison with the final output for the test records. The reason being, we are making improvements to the model prediction in the refiner. Currently, we have the model accuracy but we would like to calculate the solution accuracy post these improvements",
+      "time": "14:15",
+      "timestamp": "1689714948.898359",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "why does this require hardcoding a table annotation dictionary and trying to convert it to an ExtractedTablesList object?",
+      "time": "14:17",
+      "timestamp": "1689715048.844879",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "I'm asking because we didn't intend `convert_to_extracted_tables_list` to be used in UDFs, so I'm seeing if you absolutely need to use it. If you really need to use it, then I'd suggest looking at that function's definition in the platform and debugging the code to see what the issue is. Right off the bat, I can see that your table annotation dictionary doesn't include any provenance information for the cell's text, which `convert_to_extracted_tables_list` needs. However, I don't think that would cause the function to just return `[[null], null]`. to debug this, I would just do what I suggested, which is to use UDFs to debug the actual platform code itself line by line",
+      "time": "14:26",
+      "timestamp": "1689715619.996539",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "provenance information is optional based on the function definition. The result won't have a tracker and that's okay for me because these are going to be just ground truths. I am looking into the code to see why am I not getting the correct number of table elements at the moment but would be great if you can also look into it if you have more context about the implementation. We are trying to automate table ground truth creation. With this method, we can get it done in a day which would otherwise take a couple of weeks to do it manually. At the moment, the export annotations as ground truth option does not work for tables.\n\nhttps://instabase.slack.com/archives/C02KS5FHZEE/p1688719606865199",
+      "time": "14:33",
+      "timestamp": "1689716038.930359",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "@andy does exporting as ground truth not work for tables? if not, we should put this in the backlog",
+      "time": "14:35",
+      "timestamp": "1689716146.675229",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think Venkatesh is referring to the “Export annotations as csv” feature in ML Studio",
+      "time": "14:36",
+      "timestamp": "1689716188.303839",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "Okay I have a copy of the `fns_common.py` in my refiner UDF. Runs okay as all imports are available on app-tasks. Should be able to debug this one myself hopefully.",
+      "time": "14:40",
+      "timestamp": "1689716435.690599",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "okay I am able to use the `get_text_as_nested_list` and get the actual table. Maybe this is just the way the UI handles table cell text without provenance. As far the `class ExtractedTable` goes, it works as expected. I am sorted for now. Thank you",
+      "time": "14:58",
+      "timestamp": "1689717498.486619",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-07-18.json",
+    "message_count": 11,
+    "start_time": "1689714041.999619",
+    "end_time": "1689717498.486619",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,327 @@
+{
+  "id": "ch_C06FA6A23_2019-07-09_1562706202.179500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Ted",
+    "dlluncor",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "trying to read a file from disk and getting an error telling me it doesn’t exist (spoiler alert: it does). I’m using `ibfile.read_file` with `clients_factory.file_client` from inside a flow v2 mapping function (`flow/v2/mappers/step/*` code) and am getting back error:\nNew error msg: (without run_id):\n```\nError reading image file as user chetan: Failed to read file: Cannot open a non-existent file in r mode. Path: chetan/my-repo/fs/Instabase Drive/redactor/data/out/s1_process_files/images/document-3.pdf_p0.jpg.JPEG\n```\n\nOld error msg:\n```\nError reading file: Failed to read file: Cannot open a non-existent file in r mode. Path: chetan/my-repo/fs/Instabase Drive/redactor/data/run_chetan/2019-07-09-16:44:40/85464426-77c2-4812-8e65-2ae0bc8f2a76/out/s1_process_files/images/document-3.pdf_p0.jpg.JPEG\n```\n\nanyone know how to debug this?",
+      "time": "14:03",
+      "timestamp": "1562706202.179500",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "so these jpeg typically get written async — so you might want to check to see whether this file is truly being written asynchronously or synchronously — and then we should sync with Karthik on the right strategy on how to handle this",
+      "time": "14:09",
+      "timestamp": "1562706574.179800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "@dlluncor i’m not sure that’s it — if i re-run the binary (on the same data, so the previously-written jpeg write is present), i still get this error.",
+      "time": "14:14",
+      "timestamp": "1562706845.180000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "if async write was the problem, we would expect with run_id off, the _first_ run would hit this problem but subsequent runs would work successfully",
+      "time": "14:14",
+      "timestamp": "1562706864.180200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "how do you re-run a flow with the same run ID?",
+      "time": "14:14",
+      "timestamp": "1562706879.180400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i run it with no run ID at all.",
+      "time": "14:14",
+      "timestamp": "1562706896.180600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "interesting — the path you shared indicates you are using run ID somewhere --- not currently sure — i’d probably ask Karthik to help with the debugging",
+      "time": "14:15",
+      "timestamp": "1562706931.180800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "ah yea — i changed that to test after seeing your initial comment @dlluncor",
+      "time": "14:16",
+      "timestamp": "1562706976.181000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Are you writing the images into the virtual file system?",
+      "time": "14:48",
+      "timestamp": "1562708900.181800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "I'm not sure how things work anymore with respect to that... but I know in the past that the files in S3 weren't necessarily the files visible within a flow binary",
+      "time": "14:48",
+      "timestamp": "1562708921.182000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Flow's view of the world was a subset of S3's view of the world",
+      "time": "14:49",
+      "timestamp": "1562708951.182200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "@shaunak recommended hitting S3 for these images, as otherwise the virtual file system would become too large (esp for the ~80% of cases where images are not needed)",
+      "time": "14:49",
+      "timestamp": "1562708964.182400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Each step, at its end, has to manually write into Flow's virtual filesystem which files should remain visible in the flow pipeline",
+      "time": "14:49",
+      "timestamp": "1562708970.182600",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Got it.",
+      "time": "14:50",
+      "timestamp": "1562709009.182800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "And you're super sure that the file being read doesn't exist?",
+      "time": "14:50",
+      "timestamp": "1562709029.183000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "(e.g.. you've got logs saying \"I'm trying to read x/y/z.jpg... it doesn't exist!\" and you are 100% certain it is not only there, but there from a prior run so there's no eventual-consistency issue?)",
+      "time": "14:51",
+      "timestamp": "1562709064.183200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "If the parenthetical is true... gosh, that's weird... I'd maybe look to make sure that your S3 File Client is valid?",
+      "time": "14:51",
+      "timestamp": "1562709084.183400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Reading from S3 inside flow binary is, I think, something we haven't done before... so might be worth just making sure that the file client has proper permissions",
+      "time": "14:51",
+      "timestamp": "1562709107.183600",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "E.g., you could create a fixed file (/a/b/test.jpg) and just hard code its path in to read",
+      "time": "14:52",
+      "timestamp": "1562709120.183800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "And verify that you can read that.",
+      "time": "14:52",
+      "timestamp": "1562709125.184000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "If you can do that... then move /a/b/test.jpg into the same FOLDER that you're trying to read the other file from... then verify you can read that.",
+      "time": "14:52",
+      "timestamp": "1562709141.184200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Then hard code in the actual file you're trying to read...",
+      "time": "14:52",
+      "timestamp": "1562709147.184400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "In other words.. I'd back off from the problem and try to get a working \"Just read this constant file\" situation going",
+      "time": "14:52",
+      "timestamp": "1562709164.184600",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Then slowly evolve that until it looks identical to the actual situation",
+      "time": "14:52",
+      "timestamp": "1562709172.184800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "And see where the error arises",
+      "time": "14:52",
+      "timestamp": "1562709177.185000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Just checking, have you set the `write_converted_image` to True?",
+      "time": "14:55",
+      "timestamp": "1562709351.185200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yea. i can open the image with a text editor: https://www.instabase.com/apps/text-editor/chetan/my-repo/fs/Instabase%20Drive/redactor/data/out/s1_process_files/images/document-3.pdf_p0.jpg.JPEG @shaunak",
+      "time": "15:00",
+      "timestamp": "1562709601.185400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "kk will try appending `/` @Ted and reading a file at a constant path",
+      "time": "15:00",
+      "timestamp": "1562709629.185600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Those are 2 different files @Chetan",
+      "time": "15:01",
+      "timestamp": "1562709686.185800",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "what is the code you are using?",
+      "time": "15:01",
+      "timestamp": "1562709707.186000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "@shaunak i’ve been re-running it with run_id turned off since david’s initial comment (added the new error message to the initial comment)",
+      "time": "15:03",
+      "timestamp": "1562709836.186300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "not sure what you mean by “what is the code you are using” @shaunak",
+      "time": "15:05",
+      "timestamp": "1562709900.186500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Can you show paste the coe snippet from the PR?",
+      "time": "15:05",
+      "timestamp": "1562709920.186700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "also did you use @Ted’s suggestion to use  `/`chetan/…",
+      "time": "15:05",
+      "timestamp": "1562709949.186900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "aah thanks. prepending a `/` to the path worked… @Ted @shaunak @dlluncor",
+      "time": "15:15",
+      "timestamp": "1562710503.187100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "@dlluncor your initial comment is still a problem though… in reality if we run this code with a run_id, we need to make sure converted_images are written before this step runs… anyone know how we can enforce that?",
+      "time": "15:17",
+      "timestamp": "1562710675.187400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Yes, it is not that hard to do: You’ll have to pass in a flag which denotes whether the write to image should be sync or not (only enabled if visual* step is part of the Flow).\n\nAnd, in process files, you’ll have to make sure that `converted_image_write_executor` waits until all the writes are successful.",
+      "time": "15:27",
+      "timestamp": "1562711267.187600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "yes — @Karthik S has some ways we can do that — please sync with him on it",
+      "time": "15:40",
+      "timestamp": "1562712004.187800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-07-09.json",
+    "message_count": 38,
+    "start_time": "1562706202.179500",
+    "end_time": "1562712004.187800",
+    "is_thread": true
+  }
+}

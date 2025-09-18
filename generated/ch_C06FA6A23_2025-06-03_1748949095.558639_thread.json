@@ -1,0 +1,1107 @@
+{
+  "id": "ch_C06FA6A23_2025-06-03_1748949095.558639_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "Sayan",
+    "pauline.comising",
+    "William Helmrath",
+    "Heymian",
+    "Victor Zeng",
+    "Aayush",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "Facing the same issue with this PR: https://github.com/instabase/instabase/pull/71097 (blocked on CI)\ncc @Balaram",
+      "time": "04:11",
+      "timestamp": "1748949095.558639",
+      "is_reply": false
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "heyo @Charles and @Aayush if you cherry-pick cody's PR (https://github.com/instabase/instabase/pull/71033/files?diff=split&w=1) to your PR, does it resolve the issue?",
+      "time": "06:29",
+      "timestamp": "1748957344.556659",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Unfortunately in my PRs that I've added it to and my test PR (https://github.com/instabase/instabase/pull/71102/files), I'm getting `RUNTEST OUTPUT: Error: unknown flag: --noexperimental_python_import_all_repositories\"` even though when I run `make bazel-build bazel-test EXTRA_BAZEL_ARGS=\"--config=ci --noexperimental_python_import_all_repositories\"` on crafting it works :thinking_face: So I've updated my PR to run `bazel version` for `bazel-build` so I can hopefully see how that bazel version aligns with my crafting sandbox - `Bazelisk version: v1.25.0`",
+      "time": "06:37",
+      "timestamp": "1748957847.098819",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Damn, I was afraid of that. I suspect the \"unkown flag\" error is coming from Go tests, not Python. :sob:\n@pauline.comising in `run_tests_for_affected_code.py` I imagine there's discrete logic for \"Python tests in Bazel\" vs. \"Go tests in Bazel\" and I suspect I was just ham-handed in my change. Could you look at that script and see if there's a \"Python+Bazel only\" way to add that flag instead? :grimacing:",
+      "time": "07:46",
+      "timestamp": "1748961974.925689",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "I can, but I'm seeing this error for test suites in `shared-utils/py-utils` so python suites are failing with unknown flag :0",
+      "time": "07:47",
+      "timestamp": "1748962075.753759",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Nooooo!\nThat's... actually quite bizarre. :thonk:\n\nWhich ones specifically??",
+      "time": "08:11",
+      "timestamp": "1748963461.317899",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Oo, so if you take a look at this PR (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-71102/3/pipeline/) run (or a previous one) almost 100 fail, for example `shared-utils/py-utils/test-utils` `shared-utils/py-utils/fetcher-utils` `shared-utils/py-utils/rate-limiting-utils` etc :smiling_face_with_tear:",
+      "time": "08:29",
+      "timestamp": "1748964540.707659",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "holy crap hahaha",
+      "time": "08:42",
+      "timestamp": "1748965340.456999",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Welp, nevermind that fix then. lol\n\nSo this was definitely a potential outcome, sadly.\nIf you can find a means by which to apply that flag to _only_ the failing tests with giant `PYTHONPATH` strings (from the Loki query I shared yesterday), then we might be OK. Otherwise, converting them away from Bazel tests is the only thing I can think of. :disappointed:",
+      "time": "08:43",
+      "timestamp": "1748965420.758769",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Keep in mind that there is a pre-commit hook (https://instabase.slack.com/archives/C06FA6A23/p1748627763915359) that will auto-generate the `test-cmds-*.json` files under `shared-utils/test-utils/src`, so updating the specific commands for the affected test suites directly in those files isn't an option, sadly. :head-desk:",
+      "time": "08:46",
+      "timestamp": "1748965587.994689",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Cody Boggs is there any way to fix this ASAP? almost all backend PRs have been blocked for multiple days (basically anything that affects `shared-utils/py-utils`)",
+      "time": "09:11",
+      "timestamp": "1748967111.948689",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Sadly it's just the way Bazel works. :man-shrugging::skin-tone-3:\nThe flag discussed here is the only means I know of to make this go away _within bazel_, but as Pauline learned - we can't apply it to all tests. :sob:\n\nThe fastest fix is to exempt the affected modules from Bazel entirely, presumably by way of some flag(s) in `run_tests_for_affected_code.py` - and if I'm honest, I'm not a good candidate for that because I can't seem to wrap my head around that script. :grimacing:",
+      "time": "09:17",
+      "timestamp": "1748967458.412559",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "It is worth noting though that if there are tests being run for code that you know you didn't change, I think it's fine to  (with sufficient review) just force-merge those PRs if this is the only error coming up. :disappointed:",
+      "time": "09:18",
+      "timestamp": "1748967512.823929",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "force-merging is ok as an exception, but do we have a plan for how we're going to fix this soon?\n\nthis is blocking almost all backend PRs from getting merged -> i am not comfortable with force-merging all of these",
+      "time": "09:19",
+      "timestamp": "1748967596.828919",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc'ing @Victor Zeng @William Helmrath if you have any ideas since you've recently edited run_tests_for_affected_code.py (https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/src/py/run_tests_for_affected_code.py)",
+      "time": "09:23",
+      "timestamp": "1748967818.434439",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "In that case I'd say that if almost all backend code changes are triggering nearly all of our 'unit' tests, then that same script is the culprit, and needs to be fixed :grimacing: And I haven't a clue how it works yet, I haven't gotten that far",
+      "time": "09:23",
+      "timestamp": "1748967821.143879",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "That said, again - if anyone can figure out how to properly target only the failing py-utils modules with the bazel flag we're talking about, then this should go away... assuming it doesn't break those tests in other ways. It's sadly the risk of Bazel (which is why I think we need to be rid of it)",
+      "time": "09:24",
+      "timestamp": "1748967897.038269",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "What’s the issue here? anyone free for a sync in 15-ish mins?",
+      "time": "09:26",
+      "timestamp": "1748967981.099509",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> The fastest fix is to exempt the affected modules from Bazel entirely, presumably by way of some flag(s) in `run_tests_for_affected_code.py`\nit seems that script has a `MODULES_PARTIALLY_MIGRATED_TO_BAZEL` list -> for those modules (https://github.com/instabase/instabase/blob/d69be7a/shared-utils/build-utils/shared/src/py/run_tests_for_affected_code.py#L677-L680), we run `make build test`, not `make bazel-build bazel-test`\n\nshould we just add these `shared-utils/py-utils` modules to `MODULES_PARTIALLY_MIGRATED_TO_BAZEL` ?",
+      "time": "09:27",
+      "timestamp": "1748968035.297659",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Seems reasonable to me lol",
+      "time": "09:28",
+      "timestamp": "1748968104.050209",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah that makes sense, thanks for taking a look Cody, and I can join a sync, and ye I can test that out :pray:",
+      "time": "09:28",
+      "timestamp": "1748968112.155049",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@William Helmrath @pauline.comising happy to sync shortly. I'll refuel the go-go-mug (coffeeeeeeee) and start a zoom in this <#C035SLYCJ9X|>",
+      "time": "09:28",
+      "timestamp": "1748968137.791709",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> If you can find a means by which to apply that flag to _only_ the failing tests with giant `PYTHONPATH` strings\ni'm skeptical this `--noexperimental_python_import_all_repositories` flag will work if it already fails for multiple modules in Pauline's linked CI build (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-71102/3/pipeline/)\n\nsee how the first module in Cody's Grafana query (https://grafana.infra.instabase.com/explore?schemaVersion=1&panes=%7B%22l84%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22count+by+(test_path)+(count_over_time(%7Bservice_name%3D%5C%22jenkins-preprod%5C%22%7D%5Cn%7C+ci_pipeline_id+%3D~+%60instabase/PR-.+%60+%7C%3D+%60Argument+list+too+long%60+%7C+regexp+%60k8-fastbuild/bin(?%3Ctest_path%3E.+)/test%5C%5C.runfiles%60+%7C+test_path+!%3D+%5C%22%5C%22%5B1h%5D))%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22code%22,%22direction%22:%22forward%22%7D%5D,%22range%22:%7B%22from%22:%22now-24h%22,%22to%22:%22now%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22table%22%7D%7D%7D%7D&orgId=1) is `checkpoint-utils` and the flag doesn't work for `checkpoint-utils`\n\nas @pauline.comising said, we probably need to check the bazel version on the CI nodes for the flag to work",
+      "time": "09:30",
+      "timestamp": "1748968216.683769",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i can't join the sync, but thank you team for jumping on this!",
+      "time": "09:31",
+      "timestamp": "1748968276.858759",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea that's unfortunately a risk there. :grimacing:\nFor a number of those modules it does actually work, like `data-api-utils` and ... some others I tried, I forget :sweat_smile:\nBut yea the other import-based issues from last week prevented me from doing more",
+      "time": "09:31",
+      "timestamp": "1748968281.207489",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "We'll be sure to say very nice things about you behind your back @Serena :smile:",
+      "time": "09:31",
+      "timestamp": "1748968299.393859",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I made this PR (https://github.com/instabase/instabase/pull/71120) based on recs from cursor. Will keep an eye on if it fixes anything. tl;dr it adds modules with long args\n\n```MODULES_WITH_LONG_ARGS = [\n    \"shared-utils/py-utils/test-utils\",\n    \"shared-utils/py-utils/fetcher-utils\",\n    \"shared-utils/py-utils/rate-limiting-utils\",\n    \"shared-utils/py-utils/reader-utils\",\n    \"shared-utils/py-utils/recipe-utils\",\n    \"shared-utils/py-utils/refiner-utils\",\n]```",
+      "time": "09:31",
+      "timestamp": "1748968312.103889",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":+1:",
+      "time": "09:32",
+      "timestamp": "1748968326.586419",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I haven't a clue why some Python tests will work and others fail - it's bizarre, because they all use the same `rules_python` code I'd think",
+      "time": "09:32",
+      "timestamp": "1748968355.260629",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "> as @pauline.comising said, we probably need to check the bazel version on the CI nodes for the flag to work\nAh ya, I added (https://github.com/instabase/instabase/pull/71102/commits/7be6465841bcf0a1a00873d80dba6d03a0f73a55) `bazel version` to the `cmd` list and didn't see it print out in the cicd, if anyone has tips on how to actually get the command to run, but ya :smiling_face_with_tear:",
+      "time": "09:35",
+      "timestamp": "1748968533.196739",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "We use bazelisk, so whatever version is in `.bazelversion` is the one that gets downloaded and run :slightly_smiling_face:",
+      "time": "09:36",
+      "timestamp": "1748968599.901499",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Also @Sayan can I bug you to add the Cursor prompt you used into the PR description?\nI think that would be helpful in general if we all did so, else it's hard for anyone else to potentially try to refine it :sweat_smile:",
+      "time": "09:37",
+      "timestamp": "1748968648.027369",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(perhaps a helpful thing to request of all EPD more broadly and loudly, but that's another day)",
+      "time": "09:37",
+      "timestamp": "1748968673.274229",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I copied and pasted this entire thread from Pauline's initial message down to your comment above mine and asked it to suggest a fix",
+      "time": "09:38",
+      "timestamp": "1748968688.711829",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Fascinating!\nOk, can you describe that briefly in the PR then? In case it works, we can trace back. It'd be sufficient to just say \"copied this slack thread to cursor and requested a fix\" and then add a link to this thread :slightly_smiling_face: :pray::skin-tone-3:",
+      "time": "09:38",
+      "timestamp": "1748968735.947919",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Cody Boggs, can you just revert your changes in the meantime until we figure out a longer term fix and understand these Bazel implications?",
+      "time": "09:59",
+      "timestamp": "1748969957.004339",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I know you said it was a large PR, but no one else is working in the code, so a revert should be doable? It’s not worth the overhead of blocking all eng. And Bazel is complicated, so without full understanding of the implications and proper testing, I don’t think we can trial and error our way here and avoid reverts.",
+      "time": "10:01",
+      "timestamp": "1748970114.252139",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "We can, but it will unwind the work on speeding up CI by way of losing all our telemetry for py tests :disappointed:\n\nAlso there has been work done by @abhijnan to add the same otel deps (and then some) that might be hard to unwind as well :disappointed:",
+      "time": "10:02",
+      "timestamp": "1748970143.880999",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yes, let’s unwind. This is blocking all of eng. We can find less disruptive ways to get telemetry, and properly test the change.",
+      "time": "10:02",
+      "timestamp": "1748970176.735319",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "CI that is consistently broken is worse than slow CI. :slightly_smiling_face:",
+      "time": "10:04",
+      "timestamp": "1748970259.169019",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "We really can't sadly lol\n\nThis is the entire scope of the 'fast CI project'\n\nWe're working out a forward fix actively, this moment, so rolling back messily doesn't seem right just yet :grimacing:",
+      "time": "10:05",
+      "timestamp": "1748970348.388299",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "why can’t we revert?",
+      "time": "10:06",
+      "timestamp": "1748970389.216729",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "the forward fix is already not fast enough given when this change went in and how long eng hasn’t being able to merge code.",
+      "time": "10:07",
+      "timestamp": "1748970431.575049",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "As I'm knee-deep in the forward fix right now, it would be slower to roll back, and I'll post up when I have more info and time :slightly_smiling_face:",
+      "time": "10:10",
+      "timestamp": "1748970617.100289",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Okie doke, the \"right now\" fix is testing on this PR (https://github.com/instabase/instabase/pull/71124)\n\nIt does *temporarily* disable the `python-unit-tests` pre-commit check, because that script regenerates the relevant commands files that determine how each module's tests are run. This regeneration is non-conditional, it seems, so even once the band-aid fix is merged to master, the next commit anyone tries will both fail _and_ rebuild the files, thus rebreaking Bazel Python tests.\n\nDoing this \"scalpel\" work in the labyrinthian `run_tests_for_affected_code.py` script is either nonviable or too slow to solve right now, so as a break-fix this is the solution - a lumberjack fix while we wait for the surgeon, if you will. :smile:\n\nI'll watch pre-merge for this PR and update things as needed, but for now this is the best path forward to get things moving I think.",
+      "time": "11:01",
+      "timestamp": "1748973690.248009",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Pulled in @pauline.comising's inert comments to get the relevant tests to run too, it's chugging away here (https://jenkins.instabase.com/job/instabase/view/change-requests/job/PR-71124/4/console)\n\nIt's running a bunch of tests aside from the 5 'main modules' that are relevant, but that's just how it goes for now. lol\n\nFor the curious, once the list of failing test calls are whittled down to their 'main' package, it yields:\n```/shared-utils/py-utils/builder-utils\n/shared-utils/py-utils/checkpoint-utils\n/shared-utils/py-utils/data-api-utils\n/shared-utils/py-utils/refiner-utils\n/shared-utils/py-utils/validations-utils```",
+      "time": "11:26",
+      "timestamp": "1748975172.457129",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Gah, the python script regenerates them too, on their way from the committed JSON to the merged temporary 'run these' JSON\n:sob:",
+      "time": "11:52",
+      "timestamp": "1748976730.093639",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ok, into the script we go then :dead:",
+      "time": "11:52",
+      "timestamp": "1748976742.106669",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah interesting, I also tried out the PR (https://github.com/instabase/instabase/pull/71102) fix to stop running `shared-utils/py-utils` in bazel and it looks to have successfully done that :woman-bowing::skin-tone-2: aka ~100 failures down to 7 and I can see that the failed suites in `shared-utils/py-utils` run `make clean build test` which is indeed not bazel! The failures are coming from mypy and actually failed units (I dont know how these failures exist from just comment changes, but alas :sleepy:)",
+      "time": "11:55",
+      "timestamp": "1748976927.510019",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "I'm going to add the `run_tests_for_affected_code.py` change to my blocked PRs and report back on that and remove comments from the fix PR in the case it unblocks my PRs and we feel comfy with merging the fix for now :+1:",
+      "time": "11:57",
+      "timestamp": "1748977067.874799",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Omg that's perfect lol",
+      "time": "11:59",
+      "timestamp": "1748977163.188269",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea the giant blanket PR of \"add the --no-whatevers flag to everything\" is not a good testbed at this point, so it'll be good to see what it does on yours!",
+      "time": "11:59",
+      "timestamp": "1748977192.011359",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "yess, will get back with outcome asap",
+      "time": "12:05",
+      "timestamp": "1748977551.307589",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":pray::skin-tone-3: :crossed_fingers::skin-tone-3:",
+      "time": "12:05",
+      "timestamp": "1748977556.677739",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Not sure if this is applicable, but I found this here (https://stackoverflow.com/questions/76278427/what-is-the-max-length-we-can-setup-for-environment-variable-in-linux) \n\n>The short answer is on modern Linux distros the arg max limit is 1/4 of the stack size. The default stack size is 8 MB so the default arg max is 2 MB. Use the ulimit command to increase the stack size. P.S., I find it hard to believe you truly have no option but to put so much data in a single env var.",
+      "time": "12:14",
+      "timestamp": "1748978089.894729",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea, I saw something similar, but frustratingly ulimits don't carry over nicely across process namespaces (containers) nor does Bazel play by the normal rules :sob:",
+      "time": "12:47",
+      "timestamp": "1748980058.531009",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Alrighty, eod update from me is that this PR (https://github.com/instabase/instabase/pull/71126) with just the script change to migrate py-utils off bazel passes cicd (since only a handful are run with no other files changed). When I apply this fix to other PRs, I notice consistently failing units and some suites with mypy import issues (see cicd logs (https://grafana.infra.instabase.com/explore?schemaVersion=1&panes=%7B%22y1b%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bservice_name%3D%60jenkins-preprod%60%7D%20%7C%20ci_pipeline_id%20%3D%20%60instabase%2FPR-71102%60%20%7C%20ci_pipeline_run_number%20%3D%205%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22code%22,%22direction%22:%22forward%22,%22maxLines%22:3000%7D%5D,%22range%22:%7B%22from%22:%22now-6h%22,%22to%22:%22now%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22columns%22:%7B%220%22:%22Time%22,%221%22:%22Line%22%7D,%22visualisationType%22:%22logs%22,%22labelFieldName%22:%22labels%22%7D%7D%7D%7D&orgId=1) for PR with comments in many files), which I think might have to do with the build folder being generated diff (with diff dep folders) with this migration off of bazel? I'm kind of inclined to do some quick temp fix such as commenting out newly failing tests to unblock people and figure out a way to quickly fix the module import failures, but open to other options as accumulating this tech debt and finding time to fix it seems tough.\n\nMy main question though - when can/should the migrating py-utils off bazel PR be merged? Is there anything else I should test before merging? Should I include the commenting out failing units in the PR before merging or do it in a follow up? etc. cus ya I think this can decrease the noise in unit failures, but doesn't completely unblock all PRs cc: @Serena @Cody Boggs",
+      "time": "13:56",
+      "timestamp": "1748984183.829559",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it's good to know that the tests succeed if we move these modules off of bazel\n\nbut it seems that moving modules off of bazel is a relatively big decision?\n\n> I'm kind of inclined to do some quick temp fix such as commenting out newly failing tests to unblock people and figure out a way to quickly fix the module import failures, but open to other options as accumulating this tech debt and finding time to fix it seems tough.\n@mfichman can you provide some guidance on this since you've thought about this recently?",
+      "time": "14:00",
+      "timestamp": "1748984401.871979",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Having found a bit of breathing room I have some breathing room to give a bit of context about why I want this fixed forward and not reverted, and hopefully give a more succinct explanation of what's happening here.\n\nBazel's `rules_python` code, when building up a context in which to run unit tests, accumulates every directory containing any files needed for the requested tests into the `PYTHONPATH` environment variable.\nThis includes:\n• Path to every package containing our code for which we are running one more unit tests.\n• Path to every package *direct* *dependency* package, internal or external.\n• Path to every package *indirect dependency*, internal or external - for _*every dependency*_, direct or indirect.\nFor reference, we currently define in `third-party/bazel/py/requirements_py39.in` , *136* direct dependencies.\n\nWhen we run `pip-compile` to find all transitive dependencies based on that file, we build `third-party/bazel/py/requirements_py39_linux.txt`, with *269* total dependencies.\n\nTo demonstrate, I build a suuuuper tiny little bazel-enabled py-util, `cody-debug` , that just has a single code file, and runs a single test. The 'application code' is just two lines, and lists no direct dependencies, while it's single unit test depends only on the module code being tested, at least per the BUILD.bazel files. Running bazel test on that contrived example from a clean workspace yields:\n\n• Entries: 45\n• Components of every entry:\n• Prefix: `/home/owner/.cache/bazel/_bazel_owner/9fc0e062b1d93ceecdd77e6ee927b893/sandbox/processwrapper-sandbox/3/execroot/__main__/bazel-out/k8-fastbuild/bin/`\n    ◦ Size: `149` bytes (increases with sandbox counter int)\n• Code path: `shared-utils/py-utils/cody-account-utils/test/unit/py/instabase/cody_account_utils/`\n    ◦ Size: `83` bytes (direct correlate to path length in our repo)\n• runfiles path: `cody_account_utils_test.runfiles/`\n    ◦ Size: `33` bytes (linear correlate to length of our Bazel rule labels)\n• Bazel-ified package name+path for the depedency: `pypi_deps_backoff/site-packages`\n        ▪︎ Sizes for my example: Smallest == `267` bytes, largest == `359` bytes\n• Largest is, predictably, the reference to the test's target code for which we're... running tests...\n    ◦ `/home/owner/.cache/bazel/_bazel_owner/9fc0e062b1d93ceecdd77e6ee927b893/sandbox/processwrapper-sandbox/3869/execroot/__main__/bazel-out/k8-fastbuild/bin/shared-utils/py-utils/cody-account-utils/test/unit/py/instabase/cody_account_utils/cody_account_utils_test.runfiles/__main__/shared-utils/py-utils/cody-account-utils/test/unit/py/instabase/cody_account_utils`",
+      "time": "14:07",
+      "timestamp": "1748984846.581529",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "In comparison, quick stats for our _actual_ (and fairly simple) `account-utils` test run:\n• Entries: `181`\n• Shortest entry is `253` bytes, longest is `335`\n• Total `PYTHONPATH` size is `51,910` bytes, ~52 KB. :sob:\nAnd that's a small one. :upside_down_face:",
+      "time": "14:12",
+      "timestamp": "1748985127.817999",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Testing on a pre-otel commit to see what the delta is - while I only added 4 deps, there's no telling how many got pulled in because ... _drumroll please_... :sparkles: BAZEL :sparkles:",
+      "time": "14:19",
+      "timestamp": "1748985545.343059",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "K, the commit just prior to otel introduction to py-utils tests:\n1. Contrived example code stats:\n    a. Entries: `5`  (`40` fewer than with otel) --> :dead: :heavy_multiplication_x: :one:\n    b. Size: `1,533` / ~1.5 KB (`12,030` / ~12 KB smaller than with otel) --> :dead: :heavy_multiplication_x: :two: \n2. `account-utils` stats:\n    a. Entries: `161` (`20` fewer than with otel)  : --> :dead: :heavy_division_sign: :two:\n    b. Size: `46,086` / ~46 KB (`5,824` / ~6 KB smaller than with otel) --> :dead: :heavy_division_sign: :two:",
+      "time": "14:30",
+      "timestamp": "1748986214.792519",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Makes sense as some (half, I guess?) of the deps needed for otel are also needed in other things, so it ultimately didn't add anything  once the list was de-duplicated by bazel.. I think",
+      "time": "14:30",
+      "timestamp": "1748986256.431269",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@Serena FWIW, none of our \"service\" Python code is tested via Bazel, only the stuff in `shared-utils/py-utils` - but I do think I was expecting we'd only be moving the \"affected\" py-utils tests off of Bazel. :sweat_smile:\n\nIf we do merge the change from @pauline.comising , we'll indeed be dropping _all_ python testing out of Bazel... which honestly, I'd love to do - but we'd also be losing the telemetry we rolled out last week. The only tests that current spit out spans to Tempo are those run by Bazel. :lolcry: I don't know how best to instrument the non-bazel ones yet.\n\nIf we do this change, then we will have also obviate the need for it because it will achieve the same undesired effect of dropping all Python unit test telemetry. :grimacing:\n\n@pauline.comising I'll take a look at the script some more now and see if I can make it a more targeted approach that only exempts the affected tests. If that doesn't seem doable, I'll figure out a revert for the rest of it and see what else breaks from that too :upside_down_face:",
+      "time": "14:36",
+      "timestamp": "1748986610.111089",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ok let's hold off on merging Pauline's PR then\n\nthere's no point in merging it if we're eliminating the telemetry, which was the whole reason for this breaking change",
+      "time": "14:55",
+      "timestamp": "1748987700.924989",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Half true, yes - it's not so much a breaking change a \"contributing to an existing breakage\" change. lol\n\nto be clear, only one or two _new_ suite failures are from the added test deps, and they just happen to be suites targeted by `run_tests_for_affected_code.py` more than usual lately. :disappointed:",
+      "time": "14:58",
+      "timestamp": "1748987929.462149",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Imagine the cartoon scenes wherein a character is on one end of a log, which is teetering on the edge of a sheer cliff. Then a feather lands on the \"in the air\" side of that log, and _poof_ they plummet.\n\nThe telemetry change was the feature on the log of a couple packages. The others seeing this error have been lying shattered at the bottom of that cliff for a while. :sweat_smile:",
+      "time": "15:02",
+      "timestamp": "1748988122.493709",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Can we run ulimit inside the docker image?",
+      "time": "15:10",
+      "timestamp": "1748988657.025499",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Used to be that it wasn't possible to persist it, but that might be outdated info. I'll look.",
+      "time": "15:14",
+      "timestamp": "1748988846.082449",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(I can't even run `run_tests_for_affected_code.py` locally because `ModuleNotFoundError: No module named 'instabase'`... though it ran yesterday :sob:)",
+      "time": "15:14",
+      "timestamp": "1748988894.876409",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Lovely. Can you do `make bazel-test` in one of the affected shared utils?",
+      "time": "15:18",
+      "timestamp": "1748989137.017489",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I tried that in refiner utils and still got the argument error",
+      "time": "15:19",
+      "timestamp": "1748989191.342159",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea I can reproduce the args issue locally with bazel no problem\nI wanted to tinker with the run_tests script to see what it's actually doing, but it won't even launch lol",
+      "time": "15:21",
+      "timestamp": "1748989310.951379",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Also it looks like I might have been thinking of Kubernetes-bound containers being largely 'static' for ulimits, but since we control the runtime on pre-merge I might be able actually use the docker run flags if they still work :crossed_fingers::skin-tone-3:",
+      "time": "15:22",
+      "timestamp": "1748989360.358479",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Yah. I think if you can get the refiner-utils test working on a Jenkins machine, then we should be good.",
+      "time": "15:24",
+      "timestamp": "1748989482.437859",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "HOT DAMN\nSee, folks, this is why brains need firmware updates and memory purges, because I was operating on a decade-old version of my mental model of containers. :joy:\n\nSeems like `--ulimit` works and plays nice (ie: persists) in the container's pid namespace, so that's a win over days of old. I'll test locally first and then try it out in jenkins and see what we get\n\nThanks for the find @Victor Zeng!!",
+      "time": "15:34",
+      "timestamp": "1748990050.997349",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Don't get too excited yet, it might still go :boom: lol",
+      "time": "15:35",
+      "timestamp": "1748990123.930899",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Aw man, refiner-utils uses `torch`, we'll be here til next week waiting for that one\n:lolcry:",
+      "time": "15:36",
+      "timestamp": "1748990195.245629",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Feel free to piggy back off this PR: https://github.com/instabase/instabase/pull/71107",
+      "time": "15:39",
+      "timestamp": "1748990344.458249",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "It updates the metronome utils, which is imported by virtually everything.",
+      "time": "15:39",
+      "timestamp": "1748990364.965339",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Wow, crafting has a default of _*64 MB*_  for stack size\n:lolcry:  That means we're presumably chewing up _more than _*16 MB with our build commands*_\n\n:tableflip:\n\nOk\nWe'll see where we land lol",
+      "time": "15:45",
+      "timestamp": "1748990702.618339",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Crap, and I can't make it any higher because Crafting has imposed a hard limit that matches the soft limit of 64 MB\nSo these still won't work in crafting, annoyingly :sob:\n\nWill at least try the CI run and see what we get",
+      "time": "15:48",
+      "timestamp": "1748990928.227429",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Yah. https://instabase.slack.com/archives/C03B865Q74K/p1720816174251139",
+      "time": "15:49",
+      "timestamp": "1748990959.552209",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":man-facepalming::skin-tone-3:",
+      "time": "15:57",
+      "timestamp": "1748991422.610109",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Here is the raw test script for `refiner-utils` generated by bazel.",
+      "time": "16:02",
+      "timestamp": "1748991739.209319",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "The `python_imports` on L460 is *15.12* KB (15486 Characters) long, and this is before it gets converted to a python path.",
+      "time": "16:03",
+      "timestamp": "1748991806.388599",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea I was just digging into that very thing lol",
+      "time": "16:07",
+      "timestamp": "1748992051.945639",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yet the entire generated command is only 232K",
+      "time": "16:15",
+      "timestamp": "1748992507.717369",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Running a test of the ulimit change here (https://jenkins.instabase.com/job/instabase/job/PR-71130/2/console)\nWill be a while before we see if it helps :upside_down_face:",
+      "time": "16:15",
+      "timestamp": "1748992510.429679",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "For anyone following along, here (https://github.com/bazel-contrib/rules_python/issues/792#issuecomment-1264463207) is a GitHub thread about the `PYTHONPATH`  issue.",
+      "time": "16:24",
+      "timestamp": "1748993040.180709",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea, this was what I thought might come up if we tried to for all targets\n> The basic side effect is that every immediate-sub directory under the runfiles root will no longer be added to PYTHONPATH. see here (https://github.com/bazelbuild/bazel/blob/master/src/main/java/com/google/devtools/build/lib/bazel/rules/python/python_stub_template.txt#L192-L197)\n> \n> The basic implication here is that Python libraries that _don't_ include their repo name in their import statements will break. Python libraries that _do_ include their repo name in their import statements will be OK.\nWound up being a bizarre and not-reproducible 'unrecognized argument' error instead, but yea... lol",
+      "time": "16:26",
+      "timestamp": "1748993172.718189",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":sob:\nNo dice\n\n```17:32:51  OSError: [Errno 7] Argument list too long: '/root/.cache/bazel/_bazel_root/eecbca7b87c7c33fd2d8ffba03ee98a3/sandbox/processwrapper-sandbox/2077/execroot/__main__/bazel-out/k8-fastbuild/bin/shared-utils/py-utils/apps/libs/fetcher/diligence-sites-util/test/unit/py/instabase/data_api_utils/dau_test.runfiles/python3_9_x86_64-unknown-linux-gnu/bin/python3'```",
+      "time": "16:47",
+      "timestamp": "1748994440.850649",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "That's with a stack size of 128 MB",
+      "time": "16:47",
+      "timestamp": "1748994446.006359",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Which is already just bonkersly big lol",
+      "time": "16:47",
+      "timestamp": "1748994456.913379",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Yah.",
+      "time": "16:51",
+      "timestamp": "1748994681.563029",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Retried locally from the commit  prior to otel, and the sizes aren't all that far off\n```─> wc -c *\n129535 refiner-utils-before-otel.txt\n137237 refiner-utils-with-otel.txt```\nSo all-in, 7,702 bytes delta, only 7.7 KB doesn't seem like it should be the kicker re: the stack size idea\nSo that sucks lol",
+      "time": "16:58",
+      "timestamp": "1748995087.615719",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I have one more last-ditch effort before I give up, stand by please",
+      "time": "16:58",
+      "timestamp": "1748995102.382569",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "HA!\nI found the actual limit, I think. lol",
+      "time": "17:26",
+      "timestamp": "1748996778.136489",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I'll follow up in a bit after I eat some dinner and make my brain work again",
+      "time": "17:26",
+      "timestamp": "1748996795.646559",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Quick update just before I forget everything in light of the yummy Korean stew my wife is making :smile:\n\n1. Quick-fix is actually the easiest of the options available and I feel more the sufficiently silly for not having thought of it til now - just update the `bazel test` invocations in the `Makefile` for affected modules. :man-facepalming::skin-tone-3: PR here (https://github.com/instabase/instabase/pull/71132), test running here (https://jenkins.instabase.com/job/instabase/job/PR-71132/1/). Dear sweet baby cthulu, I hope it works. :lolcry: \n2. So, there's a lot of really irritating stuff about Linux, and it turns out, the sysconf parameter `SC_NL_ARGMAX` just might be one of them. :upside_down_face: \nI remembered seeing the option to query sysconf parameters via Python's `os.sysconf()` function, but I didn't know the names to pass it for sure - so `os.sysconf_names` to the rescue.\nThat yields a list of 130+ parameters, but the interesting ones were:\n```[...]\n  \"SC_ARG_MAX\": 0,\n[...]\n  \"SC_NL_ARGMAX\": 119,\n[...]```\nSeemed odd that `SC_ARG_MAX` is effectively 'unlimited', but I hadn't seen the `SC_NL_ARGMAX` one in a hot minute.\n\nCompliments of the ever helpful (lulz) GNU docs on Output Conversion Syntax (https://ftp.gnu.org/old-gnu/Manuals/glibc-2.2.3/html_node/libc_182.html):\n>  An optional specification of the parameter used for this format. Normally the parameters to the `printf` function are assigned to the formats in the order of appearance in the format string. But in some situations (such as message translation) this is not desirable and this extension allows an explicit parameter to be specified. The param-no part of the format must be an integer in the range of 1 to the maximum number of arguments present to the function call. Some implementations limit this number to a certainly upper bound. The exact limit can be retrieved by the following constant.\n> Macro: *NL_ARGMAX*\n>  The value of `ARGMAX` is the maximum value allowed for the specification of an positional parameter in a `printf` call. The actual value in effect at runtime can be retrieved by using `sysconf` using the `_SC_NL_ARGMAX` parameter see section Definition of  (https://ftp.gnu.org/old-gnu/Manuals/glibc-2.2.3/html_node/libc_636.html#SEC647)`sysconf`. Some system have a quite low limit such as @math{9} for System V systems. The GNU C library has no real limit.",
+      "time": "17:51",
+      "timestamp": "1748998308.260969",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "And compliments of ChatGPT because I'm lazy and not super bright:\n```-> cat foo.c\n#include <unistd.h>\n#include <stdio.h>\n\nint main() {\n    long argmax = sysconf(_SC_NL_ARGMAX);\n    if (argmax == -1) {\n        perror(\"sysconf\");\n        return 1;\n    }\n    printf(\"Maximum length of an argument string in the current locale: %ld bytes\\n\", argmax);\n    return 0;\n}\n\n-> gcc -o foo foo.c && ./foo\nMaximum length of an argument string in the current locale: 4096 bytes```",
+      "time": "17:53",
+      "timestamp": "1748998426.943459",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I don't think the `119` value from Python actually maps onto the kernel constant, but honestly I don't really know. I'm not entirely sure that is _the_ limit that matters, since neither \"119 entries\" nor \"4096 bytes of env vars\" or anything else really tracks all that well. :thonk:",
+      "time": "18:01",
+      "timestamp": "1748998883.527259",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(this (https://www.gnu.org/software/libc/manual/2.28/html_node/Error-Codes.html#index-Argument-list-too-long) is cute: \"Macro: _int_ *E2BIG '*Argument list too long.' Used when the arguments passed to a new program being executed with one of the `exec` functions (see Executing a File) occupy too much memory space. This condition never arises on GNU/Hurd systems.\"",
+      "time": "18:08",
+      "timestamp": "1748999301.295229",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "rules_python: Hold my PYTHONPATH",
+      "time": "18:13",
+      "timestamp": "1748999625.680909",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Getting the _kernel's_ `_SC_ARG_MAX` value yields `6291456`, which is precisely 6 MB. :thonk:",
+      "time": "18:15",
+      "timestamp": "1748999757.199449",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh, this is neat-o too.\nFrom the generated bazel script...\n```def ExecuteFile(python_program, main_filename, args, env, module_space,\n                coverage_entrypoint, workspace, delete_module_space):\n  # type: (str, str, list[str], dict[str, str], str, str|None, str|None) -> ...\n  \"\"\"Executes the given Python file using the various environment settings.\n\n  This will not return, and acts much like os.execv, except is much\n  more restricted, and handles Bazel-related edge cases.\n\n  Args:\n    python_program: (str) Path to the Python binary to use for execution\n    main_filename: (str) The Python file to execute\n    args: (list[str]) Additional args to pass to the Python file\n    env: (dict[str, str]) A dict of environment variables to set for the execution\n    module_space: (str) Path to the module space/runfiles tree directory\n    coverage_entrypoint: (str|None) Path to the coverage tool entry point file.\n    workspace: (str|None) Name of the workspace to execute in. This is expected to be a\n        directory under the runfiles tree.\n    delete_module_space: (bool), True if the module space should be deleted\n        after a successful (exit code zero) program run, False if not.\n  [...]\n  \"\"\"```\nWonder what those restrictions might be :thonk:",
+      "time": "18:31",
+      "timestamp": "1749000691.413719",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Rats, one more I missed I guess\n```19:19:17    bazel-bin/shared-utils/py-utils/apps/libs/fetcher/diligence-sites-util/test/unit/py/instabase/data_api_utils/dau_test_dummy_out```\nfailed",
+      "time": "18:34",
+      "timestamp": "1749000869.363659",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh and\n```19:17:40    bazel-bin/shared-utils/py-utils/sheet-utils/test/common_test_dummy_out```",
+      "time": "18:35",
+      "timestamp": "1749000905.437339",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Based on the stack trace, we're running the test using os.execv\n\n```def _RunExecv(python_program, main_filename, args, env):\n  # type: (str, str, list[str], dict[str, str]) -> ...\n  \"\"\"Executes the given Python file using the various environment settings.\"\"\"\n  os.environ.update(env)\n  os.execv(python_program, [python_program, main_filename] + args)```",
+      "time": "18:39",
+      "timestamp": "1749001153.256469",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "```==================== Test output for //shared-utils/py-utils/refiner-utils/test:test:\nTraceback (most recent call last):\n  File \"/home/owner/.cache/bazel/_bazel_owner/99c13e9d3f9affca3e421b943f545ec7/sandbox/processwrapper-sandbox/2082/execroot/__main__/bazel-out/k8-fastbuild/bin/shared-utils/py-utils/refiner-utils/test/test.runfiles/__main__/shared-utils/py-utils/refiner-utils/test/test\", line 559, in <module>\n    Main()\n  File \"/home/owner/.cache/bazel/_bazel_owner/99c13e9d3f9affca3e421b943f545ec7/sandbox/processwrapper-sandbox/2082/execroot/__main__/bazel-out/k8-fastbuild/bin/shared-utils/py-utils/refiner-utils/test/test.runfiles/__main__/shared-utils/py-utils/refiner-utils/test/test\", line 544, in Main\n    ExecuteFile(\n  File \"/home/owner/.cache/bazel/_bazel_owner/99c13e9d3f9affca3e421b943f545ec7/sandbox/processwrapper-sandbox/2082/execroot/__main__/bazel-out/k8-fastbuild/bin/shared-utils/py-utils/refiner-utils/test/test.runfiles/__main__/shared-utils/py-utils/refiner-utils/test/test\", line 351, in ExecuteFile\n    _RunExecv(python_program, main_filename, args, env)\n  File \"/home/owner/.cache/bazel/_bazel_owner/99c13e9d3f9affca3e421b943f545ec7/sandbox/processwrapper-sandbox/2082/execroot/__main__/bazel-out/k8-fastbuild/bin/shared-utils/py-utils/refiner-utils/test/test.runfiles/__main__/shared-utils/py-utils/refiner-utils/test/test\", line 374, in _RunExecv\n    os.execv(python_program, [python_program, main_filename] + args)\nOSError: [Errno 7] Argument list too long: '/home/owner/.cache/bazel/_bazel_owner/99c13e9d3f9affca3e421b943f545ec7/sandbox/processwrapper-sandbox/2082/execroot/__main__/bazel-out/k8-fastbuild/bin/shared-utils/py-utils/refiner-utils/test/test.runfiles/python3_9_x86_64-unknown-linux-gnu/bin/python3'```",
+      "time": "18:39",
+      "timestamp": "1749001175.350709",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Documentation here: https://docs.python.org/3.9/library/os.html#os.execv",
+      "time": "18:40",
+      "timestamp": "1749001211.158379",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea I've been tinkering with that, trying to repro with a simplified case",
+      "time": "19:01",
+      "timestamp": "1749002496.092069",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "And did. lol",
+      "time": "19:01",
+      "timestamp": "1749002498.195929",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "",
+      "time": "19:04",
+      "timestamp": "1749002656.551549",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "So I printed the entire generated environment from the bazel generated script, and got the snippet I attached. I exported that generated pythonpath string as my own local `PYTHONPATH` env var... and voila:\n```─> export PYTHONPATH=\"$(cat runexecv-env.json|jq -r '.PYTHONPATH')\"\n─> env\nzsh: argument list too long: env```",
+      "time": "19:04",
+      "timestamp": "1749002660.956429",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(PR has the other two fixes in now, rerunning. Didn't see any other failures than those two, but it also hadn't completed yet, so :crossed_fingers::skin-tone-3:  that I caught the rest)",
+      "time": "19:14",
+      "timestamp": "1749003263.881439",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Well for the curious - the exactly limit, determined by way of \"change stuff til it breaks\", is precisely *`0.125` MB,* or *`131,060` bytes.*\n\nAnd some _extra_ fun facts:\n• Only environment variables contribute to this particular issue.\n• The limit applies to *each* environment variable independently:\n    ◦ A `PYTHONPATH` env var of 131,060 bytes will work\n    ◦ A `MYOTHERVAR` env var of 131,060 bytes will work\n    ◦ Setting BOTH of those env vars, at 131,060 bytes *each* will work\n    ◦ Bumping either of those env vars to 131,06*1* bytes will fail with `Argument list too long`\n• The total path entries doesn't matter, only total byte count.\n• The length of the env var's _name_ contributes to the total size limit, but that's not optional in Python anyway (and would only save 9 Bytes max :joy:)\n• It's a kernel limit, NOT made more restrictive by Python itself - setting any env var in my crafting box to one byte over this limit yields `Argument list too long`\n:upside_down_face:\n\nThe most fun fact? For `refiner-utils`, the only headroom we had prior to the Otel change was a whopping *`1,526` bytes.* :rolling_on_the_floor_laughing: \n\nAnd at the average path length of ~242 bytes (on my crafting box anyway), that meant we could add between 4 and 6 new dependency packages, direct or indirect, before it would tip over.",
+      "time": "20:13",
+      "timestamp": "1749006819.177879",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Turns out this is from a kernel parameter, MAX_ARG_STRLEN (https://github.com/torvalds/linux/blob/master/include/uapi/linux/binfmts.h#L15C1-L15C40), calculated as `PAGE_SIZE * 32`\nAnd `PAGE_SIZE` on most any linux environment ever is `4096` bytes, and I _think_ it's non-configurable on 64-bit architectures... but I might be misremembering\n```─> getconf PAGE_SIZE\n4096```\nSo we end up with...\n```PAGE_SIZE = 4096\nMAX_ARG_STRLEN = 32 * PAGE_SIZE => 131,072\nMAX_ARG_KB = MAX_ARG_STRLEN / 1024 => 128```\nAnd if we consider that the ENTIRE env var definition is a single string counted toward that limit:\n```len(\"PYTHONPATH\") == 10\nlen(\"=\") == 1\nlen($PYTHONPATH) == 131060\nlen(\"\\0\") == 1```\nWe get `10 + 1 + 131060 + 1 == 131,072 bytes`\n\n:hat-tip: :nerd_face:",
+      "time": "20:37",
+      "timestamp": "1749008255.284229",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "HOT DAMN\nhttps://jenkins.instabase.com/job/instabase/view/change-requests/job/PR-71132/3/",
+      "time": "20:41",
+      "timestamp": "1749008471.660209",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "QUICK MERGE IT BEFORE IT GETS SCARED AND RUNS AWAY",
+      "time": "20:41",
+      "timestamp": "1749008480.404819",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "So we’re only over by 131072 - 131060 = 12 bytes??? :sobbadobbasob:",
+      "time": "20:41",
+      "timestamp": "1749008487.107109",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "https://github.com/instabase/instabase/pull/71132",
+      "time": "20:41",
+      "timestamp": "1749008497.165399",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Stamped",
+      "time": "20:43",
+      "timestamp": "1749008610.544199",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh no no that was just me tinkering right at the boundary\nThe otel change pushed us up to ~137,236 bytes, so we were over by 6,176 bytes (for refiner-utils)",
+      "time": "20:43",
+      "timestamp": "1749008611.115389",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Merged!",
+      "time": "20:43",
+      "timestamp": "1749008635.746319",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Thanks Victor",
+      "time": "20:43",
+      "timestamp": "1749008637.877639",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ohhh ok, that makes more sense :sweat_smile:",
+      "time": "20:44",
+      "timestamp": "1749008642.295429",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "There MIGHT still be some things that crap out this way - because I might not have caught them all. But The same fix should work for them too, we just need to see them fail to know they're hitting this cap. :sob:",
+      "time": "20:45",
+      "timestamp": "1749008704.147479",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Interesting. I wonder if enabling huge pages would increase the limit.",
+      "time": "20:51",
+      "timestamp": "1749009113.036769",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "THP is an option but I don't _think_ it will affect this, as the page size is still 4096 - it just gives a virtual mapping of lots of pages to make one 'huge page'. But it might work anyway :man-shrugging::skin-tone-3:",
+      "time": "20:56",
+      "timestamp": "1749009403.155399",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Regardless, it's ridiculous how Bazel does things :joy:",
+      "time": "20:57",
+      "timestamp": "1749009420.325239",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Sadness",
+      "time": "20:57",
+      "timestamp": "1749009426.810769",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Looks like someone already tried that, and it didn't work.",
+      "time": "20:58",
+      "timestamp": "1749009494.213009",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "https://stackoverflow.com/questions/33051108/how-to-get-around-the-linux-too-many-arguments-limit (https://stackoverflow.com/questions/33051108/how-to-get-around-the-linux-too-many-arguments-limit)",
+      "time": "20:58",
+      "timestamp": "1749009495.178289",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":blob_sad:",
+      "time": "21:06",
+      "timestamp": "1749009964.928879",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-06-03.json",
+    "message_count": 135,
+    "start_time": "1748949095.558639",
+    "end_time": "1749009964.928879",
+    "is_thread": true
+  }
+}

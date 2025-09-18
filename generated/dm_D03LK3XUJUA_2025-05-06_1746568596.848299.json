@@ -1,0 +1,24 @@
+{
+  "id": "dm_D03LK3XUJUA_2025-05-06_1746568596.848299",
+  "type": "dm",
+  "participants": [
+    "Abhishek Adupa"
+  ],
+  "messages": [
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "is it okay if it’s a pl/sql script —\n\n```DECLARE\n  TYPE job_id_table IS TABLE OF VARCHAR2(255);\n  job_ids job_id_table;\n\n  v_cutoff_epoch_seconds NUMBER := \n    (CAST(TO_TIMESTAMP('2022-05-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS') AS DATE) - DATE '1970-01-01') * 86400;\n\n  tasks_deleted_count NUMBER := 0;\n  jobs_deleted_count  NUMBER := 0;\nBEGIN\n  LOOP\n    -- Bulk collect up to 100 job IDs matching the criteria\n    SELECT id\n    BULK COLLECT INTO job_ids\n    FROM (\n      SELECT id\n      FROM jobs\n      WHERE job_type = 'FLOW'\n        AND (start_time / 1e9) < v_cutoff_epoch_seconds\n        AND ROWNUM <= 100\n    );\n\n    EXIT WHEN job_ids.COUNT = 0;\n\n    -- Delete related tasks\n    FORALL i IN 1 .. job_ids.COUNT SAVE EXCEPTIONS\n      DELETE FROM tasks WHERE job_id = job_ids(i);\n    tasks_deleted_count := SQL%ROWCOUNT;\n\n    -- Delete jobs\n    FORALL i IN 1 .. job_ids.COUNT SAVE EXCEPTIONS\n      DELETE FROM jobs WHERE id = job_ids(i);\n    jobs_deleted_count := SQL%ROWCOUNT;\n\n    -- Log how many were deleted\n    DBMS_OUTPUT.PUT_LINE('Deleted ' || tasks_deleted_count || ' tasks and ' || jobs_deleted_count || ' jobs.');\n\n    COMMIT;\n  END LOOP;\nEND;\n/```",
+      "time": "14:56",
+      "timestamp": "1746568596.848299",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "dm_id": "D03LK3XUJUA",
+    "date_file": "2025-05-06.json",
+    "message_count": 1,
+    "start_time": "1746568596.848299",
+    "end_time": "1746568596.848299"
+  }
+}

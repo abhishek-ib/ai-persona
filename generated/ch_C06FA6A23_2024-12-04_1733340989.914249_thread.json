@@ -1,0 +1,162 @@
+{
+  "id": "ch_C06FA6A23_2024-12-04_1733340989.914249_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Hari",
+    "sudeep",
+    "pauline.comising",
+    "jayapandian.ponraj",
+    "sean.donohoe",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Hey team, I've opened a 24.01-enterprise backport (https://github.com/instabase/instabase/pull/65866/files) and cicd is failing with the below error, before it even reaches unit test suites. Any recommendations here?\n```[2024-12-04T19:02:30.024Z]   Preparing metadata (setup.py): started\n[2024-12-04T19:02:30.425Z]   Preparing metadata (setup.py): finished with status 'error'\n[2024-12-04T19:02:30.425Z]   error: subprocess-exited-with-error\n[2024-12-04T19:02:30.425Z]   \n[2024-12-04T19:02:30.425Z]   × python setup.py egg_info did not run successfully.\n[2024-12-04T19:02:30.425Z]   │ exit code: 1\n[2024-12-04T19:02:30.425Z]   ╰─> [3 lines of output]\n[2024-12-04T19:02:30.425Z]       error in en_coref_md setup command: 'install_requires' must be a string or list of strings containing valid project/version requirement specifiers; Expected end or semicolon (after name and no valid version specifier)\n[2024-12-04T19:02:30.425Z]           spacy>=>=2.0.0\n[2024-12-04T19:02:30.425Z]                ^\n[2024-12-04T19:02:30.425Z]       [end of output]\n[2024-12-04T19:02:30.425Z]   \n[2024-12-04T19:02:30.425Z]   note: This error originates from a subprocess, and is likely not a problem with pip.\n[2024-12-04T19:02:30.425Z] error: metadata-generation-failed\n[2024-12-04T19:02:30.425Z] \n[2024-12-04T19:02:30.425Z] × Encountered error while generating package metadata.\n[2024-12-04T19:02:30.425Z] ╰─> See above for output.\n[2024-12-04T19:02:30.726Z] make: *** [/instabase_dir/shared-utils/build-utils/shared/../../../shared-utils/build-utils/shared/build-common.mk:43: configure-tools] Error 1\n[2024-12-04T19:02:30.726Z] make: Leaving directory '/instabase_dir/shared-utils/build-utils/shared'\n[2024-12-04T19:02:31.326Z] make: *** [Makefile:51: docker-pr-merge-check] Error 2```",
+      "time": "11:36",
+      "timestamp": "1733340989.914249",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Dealing with the same on a 23.10 backport -- I'm pretty confident we should just delete https://github.com/instabase/instabase/blob/release-24.01.0-enterprise/tools/devtools/code-dependencies/python/requirements.base.in#L80, that dependency should be handled by services' poetry configs",
+      "time": "11:54",
+      "timestamp": "1733342055.310879",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "There are multiple reports of this affecting 23.10 and 24.01 backports. Curious how release certification is not impacted. :open_mouth:",
+      "time": "16:29",
+      "timestamp": "1733358573.833909",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "The dependency was first added 6 years ago: https://github.com/instabase/instabase/pull/8298\n\nI am wondering if the model dev can confirm if this is safe to get rid of completely",
+      "time": "16:30",
+      "timestamp": "1733358633.860799",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": ">  Curious how release certification is not impacted\nI am guessing this is because this dep is only used for building the CI image.",
+      "time": "16:32",
+      "timestamp": "1733358733.927769",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Certification's most likely fine because we don't need to use `tools/devtools/code-dependencies/python/requirements_py37.txt` for image builds -- would be great if we could even scope the dependency to just model service, `requirements_py37.txt` has been a pain in pre-merge for some time now and iirc most of our services don't need it in the more recent releases",
+      "time": "16:32",
+      "timestamp": "1733358755.046749",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Yeah I can’t find any references to this package in the main repo. ibformers doesn’t seem to have any references either.\nBut since this predates me joining IB, I am thinking it’s safer to ask the model dev team before removing the package.\nI’ll cross post it to one of their channels.",
+      "time": "16:34",
+      "timestamp": "1733358877.049769",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "also, just to clarify, this dependency is already dropped in 24.07 onward, so it would just be removing for 24.04 - 23.10",
+      "time": "16:36",
+      "timestamp": "1733359000.878979",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Yeah it was dropped in this PR (https://github.com/instabase/instabase/pull/56241) back in April. So 24.04 is also apparently good.",
+      "time": "16:38",
+      "timestamp": "1733359134.325679",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Asked the team\nhttps://instabase.slack.com/archives/C0547PV8ZME/p1733359285407859",
+      "time": "16:42",
+      "timestamp": "1733359339.746879",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "Cant view the linked msg.. Did we make any progress here ?\nIts blocking a lot of backports.",
+      "time": "21:24",
+      "timestamp": "1733376247.270449",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "There are no updates on that thread yet :disappointed:",
+      "time": "21:24",
+      "timestamp": "1733376289.646279",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "Is there anyone who I can ping to get attention on this ?\n@Rakesh @Balaram would you know ?",
+      "time": "21:29",
+      "timestamp": "1733376599.814929",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Maybe <!subteam^S06395ZEFSL> ?",
+      "time": "21:30",
+      "timestamp": "1733376643.693539",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "cc: @sudeep @Kerry",
+      "time": "23:38",
+      "timestamp": "1733384330.637049",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "@Hari can your team help on this?",
+      "time": "23:41",
+      "timestamp": "1733384508.345509",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "@Sławek Biel @vineeth do you guys context on this dependency?",
+      "time": "23:45",
+      "timestamp": "1733384700.209319",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-12-04.json",
+    "message_count": 17,
+    "start_time": "1733340989.914249",
+    "end_time": "1733384700.209319",
+    "is_thread": true
+  }
+}

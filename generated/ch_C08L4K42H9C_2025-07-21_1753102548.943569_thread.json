@@ -1,0 +1,53 @@
+{
+  "id": "ch_C08L4K42H9C_2025-07-21_1753102548.943569_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "jack.robbins",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@jack.robbins how is EPD-4574 similar to this issue?",
+      "time": "05:55",
+      "timestamp": "1753102548.943569",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "actually this seems to be a backend error\n\nthe frontend is comparing the result of `/api/v2/documents/review/count` with the number of docs already fetched (see line (https://github.com/instabase/instabase/blob/6d104ab/webserver/shared/src/js/webpacked/apps/src/aihub/pages/Workspaces/review/ReviewTable/hooks/useInfiniteScrollingReviewDocuments.ts#L62)) to set `hasNextPage`\n-> if `hasNextPage` is true, the frontend will keep calling fetchNextPage (https://github.com/instabase/instabase/blob/6d104ab/webserver/shared/src/js/webpacked/apps/src/aihub/pages/Workspaces/review/ReviewTable/hooks/useInfiniteScrollingReviewDocuments.ts#L64), which will keep calling `/api/v2/documents/review/list`\n\nthe problem is that for some reason, `/api/v2/documents/review/count` returns 2, even though there are no docs in the escalation queue (see screenshots of requests in UAT workspace (https://aihub-uat.internal.instabase.com/workspaces/review/documents?workspace=hoangpaul-workspace))",
+      "time": "06:19",
+      "timestamp": "1753103972.225239",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "@Serena both involved human review and showed 'Error occurred executing GRPC method' messages",
+      "time": "08:29",
+      "timestamp": "1753111785.056489",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oh i see what you're saying, i don't think the `'Error occurred executing GRPC method'` message here is relevant\n\nso i think they're separate issues",
+      "time": "08:30",
+      "timestamp": "1753111859.373629",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-07-21.json",
+    "message_count": 4,
+    "start_time": "1753102548.943569",
+    "end_time": "1753111859.373629",
+    "is_thread": true
+  }
+}

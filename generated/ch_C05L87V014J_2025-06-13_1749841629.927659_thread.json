@@ -1,0 +1,231 @@
+{
+  "id": "ch_C05L87V014J_2025-06-13_1749841629.927659_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "mfichman",
+    "Serena",
+    "prateek.tenkale"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "On the latest master, I'm getting some error regarding `ibdoc_to_json` from webapp, when I do `cs restart webapp`\n```#16 0.776 instabase/protos/ibdoc/ibdoc.proto:11:1: Import \"instabase/protos/flow/flow_correction.proto\" was not found or had errors.\n#16 0.776 instabase/protos/ibdoc/ibdoc.proto:219:14: \"flow.CaseReviewPayload\" is not defined.```",
+      "time": "12:07",
+      "timestamp": "1749841629.927659",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It works now after reverting this commit:\nhttps://github.com/instabase/instabase/commit/baf0be8c3c2d29e8107cf8bfb94e87e13b8cbb23\n@prateek.tenkale",
+      "time": "12:15",
+      "timestamp": "1749842149.180559",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Thanks Xindi!",
+      "time": "12:18",
+      "timestamp": "1749842325.535119",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "after all the protobuf struggles on that PR :smiling_face_with_tear:",
+      "time": "12:29",
+      "timestamp": "1749842965.383679",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Time to throw cursor agent mode at it? LOL",
+      "time": "12:30",
+      "timestamp": "1749843015.623649",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Aghh these issues never go away",
+      "time": "12:30",
+      "timestamp": "1749843021.539159",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "It finally passed on CI but then webapp doesn't compile :disappointed:",
+      "time": "12:30",
+      "timestamp": "1749843042.474369",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I think if you delete the test file it should also work, but yeah I need to figure this out",
+      "time": "12:30",
+      "timestamp": "1749843057.590289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If y’all really get stuck, I can take a look. There’s probably some old crufty stuff in there that we can straighten out.",
+      "time": "12:31",
+      "timestamp": "1749843076.036919",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I saw this issue locally but thought it was fine because CI passed",
+      "time": "12:31",
+      "timestamp": "1749843080.163219",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Thanks @mfichman yeah I think I just need to add the dependency somewhere",
+      "time": "12:31",
+      "timestamp": "1749843100.778959",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Tldr is that I imported a proto file from another package and it caused a bunch of issues where I had to update proto_library, py_proto_library, and go_proto_library in some of the BUILD.bazel files to resolve on CI",
+      "time": "12:32",
+      "timestamp": "1749843176.987049",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw this issue is causing deployments from master to fail (example (https://instabase.slack.com/archives/CCY413CSU/p1749845215226579?thread_ts=1749844846.903739&cid=CCY413CSU))\n\n@prateek.tenkale are you working on the fix now? if not, should we revert your PR?",
+      "time": "13:14",
+      "timestamp": "1749845649.471969",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Eating lunch but was planning on looking into it after",
+      "time": "13:14",
+      "timestamp": "1749845685.303419",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "You can go ahead with the revert",
+      "time": "13:14",
+      "timestamp": "1749845692.910099",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Sorry for the inconvenience!",
+      "time": "13:15",
+      "timestamp": "1749845709.393179",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i'll let you create the revert or the forward fix! let's just merge one of the two before EOD",
+      "time": "13:19",
+      "timestamp": "1749845986.656699",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Sounds good, if I can’t figure out the fix by eod I’ll create a revert pr that we can force merge",
+      "time": "13:20",
+      "timestamp": "1749846030.665639",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "This one was really annoying :lolcry: but I finally got it",
+      "time": "16:35",
+      "timestamp": "1749857738.274909",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "PR to fix: https://github.com/instabase/instabase/pull/71427",
+      "time": "16:35",
+      "timestamp": "1749857745.705609",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "@Serena can we force merge?",
+      "time": "16:36",
+      "timestamp": "1749857785.169709",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Also just curious, why do we need the ibdoc_to_json code to be written in cpp? As we add more proto dependencies to `ibdoc.proto` we may have to continually make more `CMakeList.txt` files as well as change several `BUILD.bazel` files",
+      "time": "16:41",
+      "timestamp": "1749858098.966959",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i'm not sure - @Gaurav Saini do you know why the ibdoc_io_json code needs to be in c++?",
+      "time": "17:19",
+      "timestamp": "1749860347.103309",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@prateek.tenkale you should be able to merge yourself, but i can click merge for you!\n\n[edit] merged :tada:",
+      "time": "17:29",
+      "timestamp": "1749860963.814149",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Ah shoot I thought only you had force merge privileges, I left my apartment",
+      "time": "18:11",
+      "timestamp": "1749863503.247469",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Thank you for merging!",
+      "time": "18:11",
+      "timestamp": "1749863503.802529",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-06-13.json",
+    "message_count": 26,
+    "start_time": "1749841629.927659",
+    "end_time": "1749863503.802529",
+    "is_thread": true
+  }
+}

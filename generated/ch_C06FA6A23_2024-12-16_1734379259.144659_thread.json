@@ -1,0 +1,78 @@
+{
+  "id": "ch_C06FA6A23_2024-12-16_1734379259.144659_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Kerry",
+    "Anant"
+  ],
+  "messages": [
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "so I did create a sandbox (https://https--anant-instabase.instabase.site.sandboxes.run/) with the latest master branch -- why it doesn't let me create a converse project. I was able to create a build project but then when I tried to create a field for extraction -- it failed. Note: this is not urgent -- I want to just see aspects of our engineering (from dev env, to changing code to debugging to deploying to customer) and the complexity in that.",
+      "time": "12:00",
+      "timestamp": "1734379259.144659",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The cool thing about crafting is: anyone can take a look at the logs from your sandbox, or even log in and experiment (with permission of course).",
+      "time": "12:31",
+      "timestamp": "1734381069.452909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I started with https://instabase.sandboxes.site/logviewx/instabase/anant/dev/daemon/celery-app-tasks%40instabase\n\nand searched for \"ERROR.\" Got this:\n\n```[2024-12-16 19:26:06,140] [ForkPoolWorker-12/ThreadPoolExecutor-7_0] {/instabase/workers/celery-app-tasks/py/instabase/aihub_utils/index_util.py:71} INFO - [trace_id=0ab2ea19b22934d4] - Response: {'start_time': 1734377200.0, 'end_time': 1734377200.0, 'model_result': {'custom_result': {'tabular_error': 'Document type is not supported.', 'raw_prompt_and_completion': {'raw_input_prompts': [], 'model_name': [], 'raw_output_responses': []}, 'cached_index': 'IB_AI_LABS_0193d0ee_8f76_72f4_84fb_3e864542b983', 'document_id': '1', 'token_usage_stats': [{'completion_tokens': 0.0, 'prompt_tokens': 330.0, 'total_tokens': 330.0, 'model_name': 'text-embedding-ada-002'}, {'total_tokens': 330.0, 'model_name': 'text-embedding-ada-002', 'completion_tokens': 0.0, 'prompt_tokens': 330.0}], 'traceback': None, 'tabular_path': None, 'tabular_traceback': None, 'error': None}}}```\nNot sure if it's relevant, but it's a start",
+      "time": "12:32",
+      "timestamp": "1734381122.436519",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```level=ERROR time=2024-12-16 19:26:04,426 msg=\"Document type is not supported.\"  path=\"/model-service/py/instabase/ibllm/model/tabular_data_framework/table_identification/tabular_initialization.py:99\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-29_0\" trace_id=\"0ab2ea19b22934d4\"```\n^ from model-service as well",
+      "time": "12:37",
+      "timestamp": "1734381458.385899",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Looks like it may have been the problem described in this thread (https://instabase.slack.com/archives/C05L87V014J/p1734085884662099)",
+      "time": "12:48",
+      "timestamp": "1734382128.657979",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "+ @Kerry our master branch shouldn't be broken at any point in time -- we should force remove PRs that break master",
+      "time": "12:57",
+      "timestamp": "1734382634.237879",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i'll take a look later; i don't think master is broken, because aihub-sandbox is running fine. i think we might be still missing some setup steps in the post-install actions.",
+      "time": "13:20",
+      "timestamp": "1734384037.252349",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-12-16.json",
+    "message_count": 7,
+    "start_time": "1734379259.144659",
+    "end_time": "1734384037.252349",
+    "is_thread": true
+  }
+}

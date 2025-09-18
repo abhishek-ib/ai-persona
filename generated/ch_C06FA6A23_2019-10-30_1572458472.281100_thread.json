@@ -1,0 +1,223 @@
+{
+  "id": "ch_C06FA6A23_2019-10-30_1572458472.281100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "will",
+    "Aaron Vontell",
+    "Heymian",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Is there a reason why Jenkins builds the docker image from some pushed version rather than just building it directly from that specific commit’s version of the Jenkins Dockerfile?",
+      "time": "11:01",
+      "timestamp": "1572458472.281100",
+      "is_reply": false
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "that would take forever. like literally hours.",
+      "time": "11:01",
+      "timestamp": "1572458497.281300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Oh I see XD",
+      "time": "11:01",
+      "timestamp": "1572458516.281500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": ":joy::point_up_2:",
+      "time": "11:02",
+      "timestamp": "1572458520.281700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Our docker image for Jenkins really takes that long? Even with caching?",
+      "time": "11:02",
+      "timestamp": "1572458541.281900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "11GB and growing every day",
+      "time": "11:02",
+      "timestamp": "1572458554.282100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Oh geez",
+      "time": "11:02",
+      "timestamp": "1572458558.282300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i assume you’re talking about travis, in which case no cache is ever present.",
+      "time": "11:02",
+      "timestamp": "1572458565.282700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "gift that just keeps on giving",
+      "time": "11:02",
+      "timestamp": "1572458570.282900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "but even if we cached, worst case scenario is still hours and hours.",
+      "time": "11:03",
+      "timestamp": "1572458582.283100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "It’s about 20 minutes in a worst case scenario in Jenkins, but we have a lot more control over how things are deployed.",
+      "time": "11:06",
+      "timestamp": "1572458787.283300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "If you are interested being one of the early adopters @Aaron Vontell I will likely want to get with you this quarter",
+      "time": "11:07",
+      "timestamp": "1572458830.283500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "building the entire jenkins container from scratch is 20 minutes? howso @will",
+      "time": "11:07",
+      "timestamp": "1572458836.283700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Building 25 individual services is much much faster than building one monolith jenkins image that does it all. :slightly_smiling_face:",
+      "time": "11:07",
+      "timestamp": "1572458869.283900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "last time i checked you couldn’t run `make build` in them because service dependencies were missing thrift. that no longer the case i assume? @will",
+      "time": "11:08",
+      "timestamp": "1572458906.284100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Basically moving things out of the jenkins container allows us to spin up  more tasks in parallel and makes the tasks individually",
+      "time": "11:08",
+      "timestamp": "1572458912.284300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "makes more sense albeit just image tasks can take >60 minutes locally. how the speed up to 20? presumably using some mega large GCP machine as the jenkins host? @will",
+      "time": "11:09",
+      "timestamp": "1572458949.284500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Yeah, basically. Plus you have a hot cache from building regularly (they currently build every hour) so you only have to do the deltas.",
+      "time": "11:09",
+      "timestamp": "1572458985.284700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yea albeit long tails always exist with cached build processes. but good to know that’s coming :partyparrot:",
+      "time": "11:11",
+      "timestamp": "1572459071.284900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "The longest services currently clock in at between 15 and 20 minutes with a cold cache, and there is only four of them iirc.",
+      "time": "11:14",
+      "timestamp": "1572459249.285300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "pretty good then. i guess cold cache timings shouldn’t be done on macbook pros lol.",
+      "time": "11:14",
+      "timestamp": "1572459290.285500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Yeah, I am not sure what the difference in performance there… in theory my MBP should outperform the GCP instances I build on, but in practice it doesn’t usually.",
+      "time": "11:15",
+      "timestamp": "1572459334.285700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@will definitely would be happy to test out and maybe brainstorm some ways to improve this",
+      "time": "11:15",
+      "timestamp": "1572459336.285900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Maybe greater efficiencies in the docker daemon since linux is first class citizen?",
+      "time": "11:15",
+      "timestamp": "1572459354.286100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "mac docker is definitely more neglected",
+      "time": "11:23",
+      "timestamp": "1572459822.286400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-10-30.json",
+    "message_count": 25,
+    "start_time": "1572458472.281100",
+    "end_time": "1572459822.286400",
+    "is_thread": true
+  }
+}

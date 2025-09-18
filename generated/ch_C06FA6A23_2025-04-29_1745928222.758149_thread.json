@@ -1,0 +1,247 @@
+{
+  "id": "ch_C06FA6A23_2025-04-29_1745928222.758149_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Cody Boggs",
+    "Heymian",
+    "abhishekk"
+  ],
+  "messages": [
+    {
+      "sender": "abhishekk",
+      "user_id": "U082ZDHE63H",
+      "message": "Hi @Heymian, I rebased my branch on latest master, but the CI failed again. Did I miss anything?\n\nIt is failing for *deleting a non-existent db schema* (not sure why it is named `failed`, maybe some sub-command failed)\n```12:10:26  PostgreSQL dialect detected. Setting up KG schema...\n12:10:26  KG schema setup successfully completed.\n12:10:26  2025/04/29 06:23:09 level=ERROR path=utils/db/session/dbsession.go:592 msg=\"SQL DB: no such table: failed\" operation=db/session/DBSessionImpl.Exec query=\"DROP TABLE failed\"\n12:10:26  2025/04/29 06:25:27 level=ERROR path=utils/db/session/dbsession.go:592 msg=\"SQL DB: Error 1051 (42S02): Unknown table 'ns_1aecf159_bbf8_4b18_9d5f_f0ab31163922.failed'\" operation=db/session/DBSessionImpl.Exec query=\"DROP TABLE failed\"\n12:10:26  2025/04/29 06:29:53 level=ERROR path=utils/db/session/tx.go:70 msg=\"SQL DB: pq: table \\\"failed\\\" does not exist\" operation=db/session/TxImpl.Exec query=\"DROP TABLE failed\"\n12:10:26  2025/04/29 06:32:06 level=ERROR path=utils/db/session/tx.go:70 msg=\"SQL DB: ORA-00942: table or view does not exist\" operation=db/session/TxImpl.Exec query=\"DROP TABLE failed\"\n12:10:26  2025/04/29 06:35:41 level=ERROR path=utils/db/session/dbsession.go:592 msg=\"SQL DB: mssql: Cannot drop the table 'failed', because it does not exist or you do not have permission.\" operation=db/session/DBSessionImpl.Exec query=\"DROP TABLE failed\"\n12:10:26  -- Test timed out at 2025-04-29 06:40:20 UTC --```",
+      "time": "05:03",
+      "timestamp": "1745928222.758149",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think those error messages in the log are a red herring. There is a test that attempts to drop a table that doesn’t exist; that’s where those messages come from. The true problem is that the test out. you can see that in the last line. Did the overall CI build time out?",
+      "time": "06:56",
+      "timestamp": "1745935015.864819",
+      "is_reply": true
+    },
+    {
+      "sender": "abhishekk",
+      "user_id": "U082ZDHE63H",
+      "message": "Yes @mfichman, the overall test failed.\nhttps://jenkins.instabase.com/job/instabase/view/change-requests/job/PR-69579/17/console",
+      "time": "07:53",
+      "timestamp": "1745938411.816299",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In that case -- if it's just a timeout -- you should retry.",
+      "time": "08:27",
+      "timestamp": "1745940461.216619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, CI has been taking a lot longer recently. We need to allocate someone to look into why.",
+      "time": "08:27",
+      "timestamp": "1745940478.377749",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Is it taking longer on every PR? Every commit? Certain tests?",
+      "time": "08:28",
+      "timestamp": "1745940503.946319",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Anecdotally: every PR I do seems slower. But my PRs end up causing all Python tests to re-run, b/c core services.",
+      "time": "08:29",
+      "timestamp": "1745940561.360489",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "It seems longer on every PR. Python ones are 2 hrs+. Even all Go test ones are taking 1.5 hrs which I thought Bazel caching was supposed help with.",
+      "time": "08:29",
+      "timestamp": "1745940562.887249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The Go tests used to take ~30 min. We do need to allocate someone to deep dive.",
+      "time": "08:30",
+      "timestamp": "1745940622.030549",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea that's odd, I expected it to take a lot longer for a day or so as everyone got master pulled into their branches and such but this is longer than it should be",
+      "time": "08:31",
+      "timestamp": "1745940692.095159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I could think of a number of explanations (no particular order):\n\n1. Engflow is slow/performance problem there\n2. Engflow is not actually being used\n3. CI databases are slow/overloaded\n4. We just have more tests now, and need to prune some\n5. Tests are doing silly stuff, like sleep-busy-waiting\n6. The code that decides when Python tests should run is too aggressive or broken\n7. Problem w/ the Jenkins runners\n8. Not enough threads -- low resource util\n9. Other Jenkins resource issue (CPU/mem/disk)\n10. Flaky tests are causing people to rerun things more, causing strain on the system overall\nThere's probably more :slightly_smiling_face:",
+      "time": "08:33",
+      "timestamp": "1745940792.757079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hard to know until someone really digs in though",
+      "time": "08:33",
+      "timestamp": "1745940831.012429",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh for sure, these are all things that have been true / possible culprits for quite some time now (ie: my entire time at IB I suspect, and then some) :joy:\n\nI'm more thinking \"if the slow-down started with the 1.24 Go upgrade, then ... Whyyyyy???\"\nBut I've also just assumed that it started with the upgrade - if it's just been getting progressively slower and slower, that's... even more disconcerting, to a degree. :grimacing:\n\nI'll try to pull some data and see what's what. Historical bits might be hard to pin down with the migration and all, but the last week or so should be solid and I can try to put together a clean way to see the slow bits in one pane of glass",
+      "time": "08:58",
+      "timestamp": "1745942281.197219",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "_<Cody adds item number 717145 to his TODO list>_",
+      "time": "08:58",
+      "timestamp": "1745942302.049849",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yeah it's been gradual/longer than the last week so it's not just due to the go 1.24 upgrade unfortunately.",
+      "time": "09:00",
+      "timestamp": "1745942403.749909",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Okie doke, that's helpful. And actually perhaps _less_ worrisome, but only because bazel is still quite blackbox-ish to me so this is more tractable, weirdly. lol\n\nScarier to handle \"oh crap this one change has weird emergent properties\" than \"we do unit testing wrong at Instabase\" :joy:",
+      "time": "09:07",
+      "timestamp": "1745942859.674169",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Seeing as I rather love doing visualization / telemetry work, and I'm still rather miserable today, I'll bump this up on my list to try and generate the beginnings of a game plan for addressing this :+1: :sneezing_face:",
+      "time": "09:15",
+      "timestamp": "1745943342.974149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I would start by looking at a build and trying to find the long poles in the tent (python? go? CI runner boot time? etc.)",
+      "time": "10:07",
+      "timestamp": "1745946456.625319",
+      "is_reply": true
+    },
+    {
+      "sender": "abhishekk",
+      "user_id": "U082ZDHE63H",
+      "message": "@mfichman the CI failed again. This time with following error:\n```01:12:11  2025/04/29 19:23:22 ERROR utils/db/accessor/role_accessor.go:47 -- [NOT_FOUND]: Could not find an entry for provided roleUUID (Err: code = NOT_FOUND, msg = Not found, wrappedErr = sql: no rows in result set)\n01:12:11  PostgreSQL dialect detected. Setting up KG schema...\n01:12:11  KG schema setup successfully completed.\n01:12:11  PostgreSQL dialect detected. Setting up KG schema...\n01:12:11  KG schema setup successfully completed.\n01:12:11  OOPS: 2379 passed, 33 skipped, 1 FAILED\n01:12:11  --- FAIL: Test (2442.18s)\n01:12:11  FAIL\n01:12:11  Execution result: https://tektite.cluster.engflow.com/actions/executions/ChCXhEurON5Sy6JUfxODX02xEgdkZWZhdWx0GiUKIPThVwpC8lKhPkC2FBCmZtzXaW3Krfv_Lg8a7kiIIUQiEIsD```\nPipeline: PR-69579/18/execution/node/43/log (https://jenkins.instabase.com/job/instabase/view/change-requests/job/PR-69579/18/execution/node/43/log/)\n\nCould you please help me again?",
+      "time": "12:59",
+      "timestamp": "1745956749.218239",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Sure -- my trick is to grep for  `FAIL:`",
+      "time": "13:00",
+      "timestamp": "1745956824.075499",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```15:42:11  FAIL: shared-utils/go-utils/src/instabase/utils/db/accessor/ingestion_item_accessor_test.go:332: DBAccessorTestSuite.TestGetUnreferencedTempFiles\n15:42:11  \n15:42:11  Dialect: oracle\n15:42:11  shared-utils/go-utils/src/instabase/utils/db/accessor/ingestion_item_accessor_test.go:381:\n15:42:11      c.Assert(actualIDs, DeepEquals, expectedIDs)\n15:42:11  ... obtained []int64 = []int64{12, 13, 14}\n15:42:11  ... expected []int64 = []int64{9, 10, 14}\n15:42:11  ... Difference:\n15:42:11  ...     [0]: 12 != 9\n15:42:11  ...     [1]: 13 != 10```\nLooks like a single flaky test. I'll see if I can fix it. In the meantime, you can force-merge the PR, since it only has this one single flaky test failure.",
+      "time": "13:01",
+      "timestamp": "1745956877.002299",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, test definitely has an ordering bug in it that makes it flaky. Will fix.",
+      "time": "13:03",
+      "timestamp": "1745957010.341729",
+      "is_reply": true
+    },
+    {
+      "sender": "abhishekk",
+      "user_id": "U082ZDHE63H",
+      "message": "Sure @mfichman :thank_you:",
+      "time": "13:03",
+      "timestamp": "1745957037.958929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Would you like me to force-merge it for you?",
+      "time": "13:04",
+      "timestamp": "1745957086.769659",
+      "is_reply": true
+    },
+    {
+      "sender": "abhishekk",
+      "user_id": "U082ZDHE63H",
+      "message": "I've pushed the branch again. It would be great if you could help with the force merge.\nPR: instabase/pull/69579 (https://github.com/instabase/instabase/pull/69579)",
+      "time": "13:12",
+      "timestamp": "1745957545.144049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/70210",
+      "time": "13:12",
+      "timestamp": "1745957551.280129",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If you pushed it again, then we have to let CI run again :disappointed:",
+      "time": "13:12",
+      "timestamp": "1745957558.167249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If it does fail again with another flaky test problem, I will force merge. Lmk!",
+      "time": "13:13",
+      "timestamp": "1745957586.972669",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-04-29.json",
+    "message_count": 28,
+    "start_time": "1745928222.758149",
+    "end_time": "1745957586.972669",
+    "is_thread": true
+  }
+}

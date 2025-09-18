@@ -1,0 +1,166 @@
+{
+  "id": "ch_CSY11CK7T_2024-06-05_1717618163.186039_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "CJ",
+    "Xindi Xu",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Are we tracking number of PRs that broke something and got caught by Cypress CI?\nI feel frustrated about the Cypress CI merge blocking... and hoping that we are seeing the benefit of this outweighs the frustration :cypress-fire:",
+      "time": "13:09",
+      "timestamp": "1717618163.186039",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "As of the frontend guild last week, people agreed that the benefits were outweighing the frustrations - I know this week has been worse though",
+      "time": "13:13",
+      "timestamp": "1717618409.531459",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "oh i missed last week's guild",
+      "time": "13:13",
+      "timestamp": "1717618435.943539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm thinking of starting to track the number of times Cypress caught any real bugs. Personally, I haven't seen any from my PRs so i'm not seeing the benefits",
+      "time": "13:16",
+      "timestamp": "1717618592.747439",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Several of the failures this week have been real failures, and I know in Build in particular people have caught things in their own PRs. I think you're in a unique situation @Xindi Xu that the types of PRs you're making are triggering a ton of unrelated Cypress tests :confused:",
+      "time": "13:17",
+      "timestamp": "1717618675.571949",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think it's fine that we trigger these tests if they can pass consistently. Run time is less of an issue.",
+      "time": "13:19",
+      "timestamp": "1717618759.511259",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Right, my point was that might be why you're finding them less useful and more frustrating then others might be",
+      "time": "13:20",
+      "timestamp": "1717618801.239209",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I would love input from others on this too! I understand this week might be feeling different from last week",
+      "time": "13:25",
+      "timestamp": "1717619114.659739",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I wonder if we can change the merge blocking mechanism while we are working on fixing these tests. We are still seeing cypress test failures on master. If it fail on master, I think it's very unlikely that it will pass on CI. Plus, we have sandbox deployment and test concurrency issues to solve.\n\nSome ideas.\n1. Only re-run the tests that failed in the previous run on the PR.\n2. Update get-changed-specs.js to only include relevant Cypress tests. I understand that this is hard to do... For example, changing contexts might affect all the app. Depending on what kind of change it is, we may or may not want to run certain tests. \n3. Add a PR label to skip cypress check. We'll still minor the Cypress test results but if the failures are not related to the changes, consider it okay to merge",
+      "time": "13:30",
+      "timestamp": "1717619443.561509",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ">  I understand this week might be feeling different from last week\nYea, based on the stats (note that these won't capture actual test failures due to bugs), failure rate for week 4 is higher than week 3 and so far this week (week 5) is much higher than before (85%)",
+      "time": "13:34",
+      "timestamp": "1717619693.501369",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "i'll note that the tests that are blocking PRs are ones that were consistently passing in CI before. the question is: how did their failures get introduced? if it was a backend PR, then we wouldn't run cypress CI, so that's one possible explanation. but that doesn't seem to be the case for some of the recent failures. assuming that people aren't ignoring the results from cypress CI, we only merge cypress tests if they pass on CI in the first place",
+      "time": "13:43",
+      "timestamp": "1717620196.800589",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The converse and deployment failures yesterday were real failures from backend stuff",
+      "time": "13:44",
+      "timestamp": "1717620299.331309",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "One more possibility: it could be conflicts between PRs. Both PR has Cypress tests passed but with both of their changes, the test breaks.\nAlso force merging",
+      "time": "13:45",
+      "timestamp": "1717620301.976639",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yeah one issue with tests not passing is that it encourages force merging, which introduces more failures :pensive:",
+      "time": "13:46",
+      "timestamp": "1717620369.657259",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "i've looked at 1—it turns out getting this information is hard because cypress cloud doesn't have a nice api. 2 is cool but the question is still how. 3 is easy but i fear it's counterproductive.",
+      "time": "13:50",
+      "timestamp": "1717620630.438099",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "3 - basically replace asking managers to do force merging. If managers aren't strict about force merging rn, it's basically the same behavior as now",
+      "time": "13:51",
+      "timestamp": "1717620715.907719",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "1 - understood. I don't think this is the long term solution anyways. If the later commit actually breaks the test that passed previously, we don't be able to catch that",
+      "time": "13:53",
+      "timestamp": "1717620793.339819",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "We can discuss further in our next frontend guild!",
+      "time": "15:55",
+      "timestamp": "1717628127.804879",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-06-05.json",
+    "message_count": 18,
+    "start_time": "1717618163.186039",
+    "end_time": "1717628127.804879",
+    "is_thread": true
+  }
+}

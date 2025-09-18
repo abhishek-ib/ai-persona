@@ -1,0 +1,136 @@
+{
+  "id": "ch_C05L87V014J_2025-07-21_1753141759.192189_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "mfichman",
+    "Xindi Xu",
+    "Jet",
+    "demetr.starshov"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Adding to the AWS ECR issues lately, our Cypress PR sandboxes are failing to spin up because of it (see screenshot). The posted workarounds do not work. This is blocking frontend PRs from being merged.\n\nSince we use Cypress Crafting snapshots and we have seeming removed these references from our codebase, it's been difficult to debug or put a hacky solution. If anyone has any ideas of some hack solutions, or could take a look at this? <!subteam^S02FJA6A7U5>\n```==========================================================================\n| Output of '/usr/local/bin/aws ecr get-login-password --region us-east-2'\n--------------------------------------------------------------------------\n\n\nAn error occurred (UnrecognizedClientException) when calling the GetAuthorizationToken operation: The security token included in the request is invalid.\n\n--------------------------------------------------------------------------\n| End of Output\n==========================================================================\n\n2025-07-21T23:40:20Z    ERROR   Failed to run base environment setup steps      {\"error\": \"logging in to ECR: '/usr/local/bin/aws ecr get-login-password --region us-east-2' failed with exit status 254\"}```",
+      "time": "16:49",
+      "timestamp": "1753141759.192189",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I've tried the following:\n1. Modify `ecr-login` as per workaround\n2. Adding `AWS_ACCESS_KEY_ID` and other env vars through the Crafting UI\n3. running `aws configure` on the box to set the variables",
+      "time": "16:54",
+      "timestamp": "1753142051.382319",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "actually I got an idea, lemme test this",
+      "time": "17:04",
+      "timestamp": "1753142690.425089",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "did you add the token too?",
+      "time": "17:21",
+      "timestamp": "1753143675.247119",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "you can export then comment out the first 2 line of the ecr-login script.",
+      "time": "17:22",
+      "timestamp": "1753143741.640729",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "cc me",
+      "time": "17:39",
+      "timestamp": "1753144753.067009",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Paul H / @Xindi Xu maybe now is a good time to switch the template we use for the cypress sandboxes?",
+      "time": "19:10",
+      "timestamp": "1753150206.048969",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "@mfichman while we can switch Cypress to the `ibdev-backend` template, we will still have the ECR log in issue, no? Assuming it's just a matter of rotating secrets, both templates will be resolved by the same solution",
+      "time": "19:19",
+      "timestamp": "1753150743.061679",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, but that template is based on a docker image, so it’s easier to modify.",
+      "time": "19:29",
+      "timestamp": "1753151388.780649",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm planning on looking into switching over this sprint! +1 with the ECR log in issue. We'll need to apply the same fix as other crafting sandboxes",
+      "time": "19:30",
+      "timestamp": "1753151450.835129",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We can in theory build a new image for the other template, but it will take some time. And since we want to switch anyway for other reasons, maybe it makes sense to do it now.",
+      "time": "19:31",
+      "timestamp": "1753151473.927359",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I have a hack fix which I will post soon, so that should give us some time to switch over",
+      "time": "19:31",
+      "timestamp": "1753151495.878799",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": ":thinking_face:The easiest fix is to update the secret on crafting UI based on your cred. Your cred will be expired in 6 hours, probably. The risk is that everyone can see you and use your cred, probably.",
+      "time": "19:33",
+      "timestamp": "1753151586.722059",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Honestly, that would be the easiest solution but I don't have the confidence to update the AWS secrets for all crafting sandboxes!",
+      "time": "19:39",
+      "timestamp": "1753151948.755599",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-21.json",
+    "message_count": 14,
+    "start_time": "1753141759.192189",
+    "end_time": "1753151948.755599",
+    "is_thread": true
+  }
+}

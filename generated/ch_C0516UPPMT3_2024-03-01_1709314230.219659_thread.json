@@ -1,0 +1,118 @@
+{
+  "id": "ch_C0516UPPMT3_2024-03-01_1709314230.219659_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Dominic Fannjiang",
+    "Serena",
+    "Arjun"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "also, thanks for checking Build! at least Converse doesn’t have this issue…",
+      "time": "09:30",
+      "timestamp": "1709314230.219659",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Arjun do you have time to look into this before code cut on monday?",
+      "time": "09:30",
+      "timestamp": "1709314258.408289",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I don’t think i’ll have time to look into this before code cut. Seems that the hook we’re using to get tables is  getting triggered after the project settings changes but isn’t waiting for the digitization job to finish",
+      "time": "09:34",
+      "timestamp": "1709314487.639919",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ohhh hmm i can try to take a look today then",
+      "time": "09:39",
+      "timestamp": "1709314770.625609",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think i encountered this locally last week, but i thought it was just my local env :disappointed:",
+      "time": "10:13",
+      "timestamp": "1709316823.967379",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m not able to locally reproduce the bug bc of this issue https://instabase.slack.com/archives/C05EQQJGN7L/p1701996418337679\n\nibllm checks for `ocr_page_type` to end with `layout_v3` before deciding to detect table entities :smiling_face_with_tear:\n\nso i’ve been trying to investigate via logs on aihub-sandbox",
+      "time": "16:08",
+      "timestamp": "1709338116.610509",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i confirmed that the correct Reader config is used for redigitization, so i think this is a backend bug\n\nspecifically, in the `reindex_and_unsplit_documents` task, `create_index_per_document` never succeeds (example logs (https://aihub-sandbox.internal.instabase.com/deployment-manager/logs?deployments=celery-app-tasks&container=celery-app-tasks&text_filter=ec281&start_time=1709336587297000000&end_time=1709337487297000000), screenshot 1)\n\nhowever, in `aihub-build-insert-db-and-weaviate`, `create_index_per_document` does succeed (example logs (https://aihub-sandbox.internal.instabase.com/deployment-manager/logs?deployments=celery-app-tasks&container=celery-app-tasks&text_filter=80b95a7a&start_time=1709327465924000000&end_time=1709338265924000000), screenshot 2)",
+      "time": "16:16",
+      "timestamp": "1709338604.368139",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Dominic Fannjiang do you know how `reindex_and_unsplit_documents` should work? it seems you/Daniel have touched this code  (https://github.com/instabase/instabase/blame/e85fee1/distributed-tasks/celery/app-tasks/src/py/instabase/tasks/apps/aihub/tasks.py#L942)the most\n\nunfortunately this is a bug in Build projects regardless of whether split classification is on",
+      "time": "16:18",
+      "timestamp": "1709338698.452339",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Arjun i created a separate ticket to track the frontend bug that you mentioned (https://instabase.atlassian.net/browse/INSIGHTS-6150) https://instabase.atlassian.net/browse/INSIGHTS-6150\n\nbut i won’t be able to test until the backend bug is resolved ^",
+      "time": "16:28",
+      "timestamp": "1709339284.794859",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "@Serena Can you see if passing in orgname here (https://github.com/instabase/instabase/blob/6999e55d09af95a7eb69368f9179484969911105/shared-utils/py-utils/aihub-utils/src/py/instabase/aihub_utils/aihub_apps_util.py#L1698) in the context object fixes it? cc @Cheryl Zhou",
+      "time": "16:32",
+      "timestamp": "1709339570.023889",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "table entities never work in my local env rn, so i’m not currently able to verify https://instabase.slack.com/archives/C0516UPPMT3/p1709338116610509?thread_ts=1709147700.620029&cid=C0516UPPMT3",
+      "time": "16:34",
+      "timestamp": "1709339644.017729",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "backend fix here https://github.com/instabase/instabase/pull/54127",
+      "time": "17:16",
+      "timestamp": "1709342206.817219",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-03-01.json",
+    "message_count": 12,
+    "start_time": "1709314230.219659",
+    "end_time": "1709342206.817219",
+    "is_thread": true
+  }
+}

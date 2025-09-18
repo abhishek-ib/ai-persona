@@ -1,0 +1,69 @@
+{
+  "id": "ch_CSY11CK7T_2025-07-25_1753464115.385669_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i see this error for Cypress tests using <mailto:support-testing+jenkins-org-user@instabase.com|support-testing+jenkins-org-user@instabase.com> on aihub-uat.internal.instabse.com (http://aihub-uat.internal.instabse.com) (example (https://cloud.cypress.io/projects/cfhedy/runs/20968/test-results/02033965-f49f-48fc-aeb9-5c19134249d2/replay?actions=%5B%5D&att=1&browsers=%5B%5D&groups=%5B%5D&isFlaky=%5B%5D&modificationDateRange=%7B%22startDate%22:%221970-01-01%22,%22endDate%22:%222038-01-19%22%7D&orderBy=EXECUTION_ORDER&oses=%5B%5D&pc=log-https://aihub-uat.internal.instabase.com-693__command-logs&specs=%5B%7B%22label%22:%22apps/src/aihub/__e2e__/Landing/send-product-feedback.spec.ts%22,%22value%22:%22%5B%5C%22808c8c5d-269e-46a4-a802-9000d130341b%5C%22%5D%22%7D%5D&statuses=%5B%5D&testingTypesEnum=%5B%5D&ts=1753453076593.7998))\n```Error: License validation failed for user support-testing.jenkins-org-user_instabase.com (http://support-testing.jenkins-org-user_instabase.com). If you are using a Commercial account, please specify your organization name in the IB-Context header.```\nbut when i manually log in as this user, i don't see this error :confused_dog:  (see screenshot)\n\nany suggestions? maybe we should just remove this Cypress test since we're not showing the google form anymore anyways, right? @Xindi Xu",
+      "time": "10:21",
+      "timestamp": "1753464115.385669",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, all requests sent from Cypress need to have the IB-context header set to the org now.\nWhen we log in via browser, we have the interceptor logic to set the IB-context for every fetch fn.",
+      "time": "11:14",
+      "timestamp": "1753467275.374609",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Probably that user's community license is expired. We can extend it for now.",
+      "time": "11:14",
+      "timestamp": "1753467293.242589",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ok so another reason that we're getting this error is that we log in using `fetch(.../account/login, ...)` in Cypress tests?",
+      "time": "11:43",
+      "timestamp": "1753468998.613759",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, i do have a solution but probably not going to fix it for uat rn.\n\nhttps://github.com/instabase/instabase/pull/72681/files#diff-68d49e03f187b97db383315b8f596e8b95872377332dde4acca79a86d0f78922",
+      "time": "11:51",
+      "timestamp": "1753469499.165719",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Confirmed that this user has no metronome plan, so all tests failed. I added a community plan.\n\nSeems like this user hasn't had a community plan since Oct 17, 2024. It only becomes a problem because we deprecate community context in 25.30",
+      "time": "16:16",
+      "timestamp": "1753485411.240379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-07-25.json",
+    "message_count": 6,
+    "start_time": "1753464115.385669",
+    "end_time": "1753485411.240379",
+    "is_thread": true
+  }
+}

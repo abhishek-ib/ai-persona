@@ -1,0 +1,126 @@
+{
+  "id": "ch_C06FA6A23_2019-03-25_1553537664.364900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "Jessica",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm working on getting launcher to work for public repos, and right now I'm not able to retrieve the databases and drives for a public repo because authentication fails. Here's the handler for drives that I'm using: https://github.com/instabase/instabase/blob/master/webserver/api-server/src/py/instabase/handler/api/v1/drive.py#L56\n\nHow do I make it so that this doesn't fail for public repos?",
+      "time": "11:14",
+      "timestamp": "1553537664.364900",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "What’s the error exacxtly?",
+      "time": "11:43",
+      "timestamp": "1553539388.365500",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Authentication token not found. Please provide a valid auth token.",
+      "time": "11:43",
+      "timestamp": "1553539430.365700",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Sounds like it works as designed - the reason it worked before was because we weren't loading the drives this way, from the api",
+      "time": "11:44",
+      "timestamp": "1553539458.365900",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "We were just passing the drives into the page via context",
+      "time": "11:44",
+      "timestamp": "1553539478.366100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "oh i see. interesting, i’m actually not sure how internal calls via our API works. But externally you should have to generate and add an auth token to the request",
+      "time": "11:46",
+      "timestamp": "1553539572.366300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@dlluncor can you shed some light on how this works?",
+      "time": "11:47",
+      "timestamp": "1553539622.366500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "hey Jessica, you’re trying list drives via AJAX for public repos (when the user is signed out)?",
+      "time": "11:51",
+      "timestamp": "1553539887.366700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "so if in fact you are trying to do an AJAX request to list drives, we might have to consider decorators = [allow_public_access] in the backend if we do in fact what non-logged in users to be able to access our API",
+      "time": "11:57",
+      "timestamp": "1553540273.366900",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yup that's right! so that would make it so that for public repos only, logged out users could reach the api?",
+      "time": "11:58",
+      "timestamp": "1553540313.367100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "ya…let me chat with Heymian + infra team on what kind of solution we want here",
+      "time": "11:58",
+      "timestamp": "1553540336.367300",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Thanks!",
+      "time": "11:59",
+      "timestamp": "1553540343.367500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "The work to fix this is being tracked here: https://app.asana.com/0/465776099085358/1115860960556854",
+      "time": "17:33",
+      "timestamp": "1553560433.375400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-03-25.json",
+    "message_count": 13,
+    "start_time": "1553537664.364900",
+    "end_time": "1553560433.375400",
+    "is_thread": true
+  }
+}

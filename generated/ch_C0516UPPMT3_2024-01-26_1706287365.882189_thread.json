@@ -1,0 +1,121 @@
+{
+  "id": "ch_C0516UPPMT3_2024-01-26_1706287365.882189_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Vishnu",
+    "danny.lan",
+    "CJ",
+    "Serena",
+    "lydia",
+    "Bas"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@danny.lan looking at the video, I saw two bugs:\n• when changing the data type to table, the Final Result section still said \"single field\"\n• when the user switched back to \"single field\" after enabling object detection, it doesn't look like it reran the field. It just showed the same output as before and there was no loading state to show that it was running.\nDid you also observe those bugs?",
+      "time": "08:42",
+      "timestamp": "1706287365.882189",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "> with object detection on, the model interprets the entire document as a table, and returns the value as a table even without using the `Table` data type. This is currently the expected behaviour\nI don't think this is true. With extraction mode / single field, it doesn't invoke the table extraction pipeline, so it wouldn't return the form recognizer table.",
+      "time": "08:43",
+      "timestamp": "1706287420.556699",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "> • when changing the data type to table, the Final Result section still said “single field”\n> • when the user switched back to “single field” after enabling object detection, it doesn’t look like it reran the field. It just showed the same output as before and there was no loading state to show that it was running.\nI see your point here, when we switch to “Table” we don’t automatically rerun extraction as a “Table” until the user clicks “Send prompt”. After object detection completes, we rerun the prompt as “Single Field” instead, which is why the final result shows “Single Field” and switching back to “Single Field” from “Table” doesn’t appear to extract anything, its using the cached “Single Field” result from earlier.\nIn this case the “Single Field” result is slightly different from the “Table” result, it says “Table with 11 rows and 2 columns” before the actual table, which is what led to my conclusion\n@CJ @Serena Thoughts on sending the prompt automatically if a user changes the data type? I feel like the user will always want to rerun the prompt immediately after changing data type",
+      "time": "09:50",
+      "timestamp": "1706291415.735019",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "i don't think the user will always want to rerun after changing the data type; for example, if i change to list and want to add attributes",
+      "time": "09:51",
+      "timestamp": "1706291461.604179",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "to summarize, there are 2 points of confusion\n\nfirst point of confusion is caused by how field changes are saved\n• when the user changes the prompt or data type, we show a play button and a “Run all” button, but we don’t immediately save the changes or rerun the prompt\n• after redigitizing, we re-run the prompt with the “Single field” data type, not the “Table” data type\n    ◦ this is why we don’t rerun the field after the user switches from “Table” back to “Single field”\n• you’ll need to click “Run all” or the play button to run the prompt with the “Table” data type\n• this is expected behavior, but we know the UI is confusing\n    ◦ @CJ is scoping out this auto-saving ticket (https://instabase.atlassian.net/browse/EPD-1249), which may help\nsecond point of confusion is when table values show up\n• when the model returns a Markdown table or JSON 2D array, regardless of whether the model’s answer comes from TDF, the frontend will show the value as a table\n• in Bas’s project with FR turned on, the model returns a Markdown table for the “Extract all text” prompt, regardless of whether the data type is “Single Field” or “Table”\n    ◦ this is expected\ni think this addresses all 3 “bugs” you pointed out? @lydia",
+      "time": "09:54",
+      "timestamp": "1706291656.888029",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Ah ok thanks the detailed explanations.\n\nI think then, the only point to follow up on is, why are we re-running the field as single field after switching to table / redigitizing, instead of rerunning the field with the new data type (e.g. table)? Is that because we only rerun with saved field values after redigitization?",
+      "time": "12:52",
+      "timestamp": "1706302333.641629",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "The other piece I find a bit odd is the results of Extraction/Single Field looks like it's returning all form recognizer tables, but I wouldn't expect that behavior. The should only happen in Reasoning mode with \"Extract all tables\" query cc @Vishnu if you would expect this to happen?",
+      "time": "13:00",
+      "timestamp": "1706302850.225539",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> why are we re-running the field as single field after switching to table / redigitizing, instead of rerunning the field with the new data type (e.g. table)?\nregardless of re-digitizing, when you change the prompt / type (extraction vs reasoning) / data type, the frontend doesn’t immediately run those changes\n\nthe frontend only runs these changes when you click the play button in the prompt input or “Run all”\n\nwe don’t auto-run these changes because the user may still want to make more changes before running the new prompt",
+      "time": "13:16",
+      "timestamp": "1706303811.058939",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "@lydia in the basic mode its just returning back all the text, not going through TDF at all (verified in the logs). it just looks structured but if you look carefully its not actually the table output (at 1:24 in the video).",
+      "time": "13:23",
+      "timestamp": "1706304192.870079",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "The result at 1:24 is the output without form recognizer, which is what I would expect the output of single field with form recognizer enabled (at 2:12 in the video), but the result is different - it returns the entire FR table",
+      "time": "13:33",
+      "timestamp": "1706304802.745609",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "hmm maybe im missing something. at 1:33 Bas turns on object recognition, and then runs the prompt 'extract all text' set as a Table field, and we get back the TDF table. this is working as per my expectation, not sure if im misunderstanding :thinking_face:",
+      "time": "15:18",
+      "timestamp": "1706311096.532739",
+      "is_reply": true
+    },
+    {
+      "sender": "Bas",
+      "user_id": "U0290LSC5QA",
+      "message": "@Vishnu default selection of field with output X, change to table and object detection to generate output Y, change back to selection of field - output remains Y even though on top it says Single Field again",
+      "time": "15:23",
+      "timestamp": "1706311385.484739",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-01-26.json",
+    "message_count": 12,
+    "start_time": "1706287365.882189",
+    "end_time": "1706311385.484739",
+    "is_thread": true
+  }
+}

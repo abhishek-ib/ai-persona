@@ -1,0 +1,166 @@
+{
+  "id": "ch_C05L87V014J_2024-10-15_1729021124.909019_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "daniel",
+    "Victor Zeng"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "How does one increase the credits for an Enterprise account? The `Team Rocket Enterprise` org on Crafting is out of credits =(\ncc @Victor Zeng since Xindi is out",
+      "time": "12:38",
+      "timestamp": "1729021124.909019",
+      "is_reply": false
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I'm not sure what you mean by increase credits. They should be on post-paid billing.",
+      "time": "14:19",
+      "timestamp": "1729027168.457959",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Ah interesting. I’ll show you the error when I try to run a flow:\n```Error:Error occurred executing GRPC method: Request /license_service.LicenseService/GetValidLicenseForProduct failed. Error code=PERMISSION_DENIED, Error=(7, 'permission denied'), Message: Credit exhausted for user=hoangpaul.meowth_instabase.com (http://hoangpaul.meowth_instabase.com) for product=AIHUB. Non-retriable error\"```\nOn closer inspection, it seems like we’re still using licenses? I was under the impression they were all phased out for Metronome by now.",
+      "time": "14:33",
+      "timestamp": "1729027984.574639",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Hmmmm. That's on crafting-aihub, right?",
+      "time": "14:36",
+      "timestamp": "1729028213.637879",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "`hoangpaul.meowth_instabase.com (http://meowth_instabase.com)` is provisioned for Metronome.",
+      "time": "14:37",
+      "timestamp": "1729028242.714019",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "https://app.metronome.com/sandbox/customers/c89ecff6-1241-41f7-aed5-5e741f9022e7",
+      "time": "14:37",
+      "timestamp": "1729028250.394649",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Why is the flow trying to check license-service?",
+      "time": "14:37",
+      "timestamp": "1729028278.136019",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "And why is it checking the community license?",
+      "time": "14:38",
+      "timestamp": "1729028297.893209",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Those are some very good questions. I’ve been trying to run a Ground Truth dataset, which runs a flow under the hood. @daniel is there anything fancy that happens when we trigger a flow to generate a GT? It’s the `/creation-run` endpoint btw.",
+      "time": "14:41",
+      "timestamp": "1729028471.202439",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Though, I know that flows used to check license-service when executing. But again, I thought that all changed when we migrated to metronome.",
+      "time": "14:41",
+      "timestamp": "1729028503.322279",
+      "is_reply": true
+    },
+    {
+      "sender": "daniel",
+      "user_id": "U039ZHK0MQF",
+      "message": "hmm we didn’t add any specific logics to check for license, aside from kicking off a flow run. @pauline.comising do we check license-service in gt set authentication check?",
+      "time": "14:50",
+      "timestamp": "1729029044.600649",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "From previous experience, 99% of the time this is the result of someone dropping the orgname in flow code.",
+      "time": "14:53",
+      "timestamp": "1729029233.359099",
+      "is_reply": true
+    },
+    {
+      "sender": "daniel",
+      "user_id": "U039ZHK0MQF",
+      "message": "https://github.com/instabase/instabase/blob/master/webserver/api-server/src/py/instabase/api_server_apps/handler/api/v2/ground_truth_sets.py#L824\nare you suggesting removing this line?",
+      "time": "14:57",
+      "timestamp": "1729029471.061619",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I think what Victor is saying is that when he’s seen a bug like this, someone wrote buggy code that was missing the orgname. But I think you just uncovered that we’re passing in the orgname correctly.",
+      "time": "15:12",
+      "timestamp": "1729030322.225129",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Looking through the Python code, we’re still doing license service checks in the flow execution code. So it seems to me that we still need to ensure licenses have enough credit via the Admin app. I think I can take it from here. Thanks y’all for sanity checking for me.\n\nReference:\nhttps://github.com/instabase/instabase/blob/a8939bf10a67f22f135abfe5da76f90a8d1a78[…]handler/src/py/instabase/flow_handler/run_deployed_solutions.py (https://github.com/instabase/instabase/blob/a8939bf10a67f22f135abfe5da76f90a8d1a78e5/shared-utils/py-utils/flow-handler/src/py/instabase/flow_handler/run_deployed_solutions.py#L110)",
+      "time": "15:13",
+      "timestamp": "1729030419.184829",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "This is correct. The license check code falls back to license service when a community user is not connected to metronome m",
+      "time": "15:17",
+      "timestamp": "1729030622.897599",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Can you send me a link to where that happens in the code @Victor Zeng? I haven’t seen that part yet and I just want to confirm =)",
+      "time": "15:18",
+      "timestamp": "1729030708.762949",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "This is the license check code: https://github.com/instabase/instabase/blob/d3bea881697a4616f049cd2a7f10cb74f0e9eb[…]y-utils/license-utils/src/py/instabase/license_utils/license.py (https://github.com/instabase/instabase/blob/d3bea881697a4616f049cd2a7f10cb74f0e9eba7/shared-utils/py-utils/license-utils/src/py/instabase/license_utils/license.py#L252)",
+      "time": "15:19",
+      "timestamp": "1729030756.500469",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-10-15.json",
+    "message_count": 18,
+    "start_time": "1729021124.909019",
+    "end_time": "1729030756.500469",
+    "is_thread": true
+  }
+}

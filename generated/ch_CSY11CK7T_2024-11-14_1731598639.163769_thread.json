@@ -1,0 +1,143 @@
+{
+  "id": "ch_CSY11CK7T_2024-11-14_1731598639.163769_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Chuba",
+    "dg",
+    "Jessica",
+    "Udit"
+  ],
+  "messages": [
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "Hey team, trying to get this sorted with JPMC still, we just got off of a long call with them about this and they are very resistant to upgrading now that they can see the vulnerability fixes in the patch notes, and are therefore aware of python package updates between versions. (i.e. they kept saying they’re okay to go to .39 because that’s before we started logging CVE fixes, so they can’t see the package updates)\n\nThey’re approaching a code freeze and are worried that these fixes could affect their solutions in ways that they do not expect, unless they can get a full promise from our team that they will be unaffected, which we’re obviously unable to give.\n\nThat leaves us with the unfortunate ask of how much effort it would be to backport the fix to the existing release-24.04.37-jpmc branch and certify the new nginx image for them as a one off, or if we should commit to them that we are fully unable to accommodate. Giving them just the individually updated .43 image that will be certified today seems overly risky.",
+      "time": "07:37",
+      "timestamp": "1731598639.163769",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@Udit I would think that wouldn't be too hard, right?",
+      "time": "08:58",
+      "timestamp": "1731603524.900429",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "it would not be hard to backport into a specific 24.04 branch. The fix changes are solely frontend changes and as long as the 24.04 branch is not too far back, there should not be any difference in the frontend code for it that makes it not possible.",
+      "time": "09:00",
+      "timestamp": "1731603609.923549",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "It’s only 6 release weeks back, so I imagine nothing too significant, and most of the changes since then have just been vulnerability fixes it looks like. Also I’m surprised that the image being changed here would be `nginx`, I would have expected `webapp` ?",
+      "time": "09:08",
+      "timestamp": "1731604134.514169",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "@Jessica do you have more context on why its only `nginx`? Is there no image for something like `webpack`?",
+      "time": "09:11",
+      "timestamp": "1731604276.995269",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "In production the minified bundles are served through nginx - there is no webpack image",
+      "time": "09:12",
+      "timestamp": "1731604327.710219",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "webapp is the backend service and is not affected by this. Any frotnend changes will always require a new nginx image",
+      "time": "09:12",
+      "timestamp": "1731604370.707959",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "@Udit any update on the effort here? As it stands we’re still stalled on 24.04's general certification regardless, but once we have that it’d be good to be able to compare the two paths for JPMC (and we’re of course going to be very clear with them that this is not a path toward bug fixing that we can support long term if we do backport to their offshoot branch)",
+      "time": "10:33",
+      "timestamp": "1731609214.569209",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "are we going forward with me putting a backport for `release-24.04.37-jpmc branch` ? I can do that today in that case",
+      "time": "10:38",
+      "timestamp": "1731609492.024629",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "Yes, I think we’ll have to. We will dedicate resources long-term to making sure they don’t get stuck in such a state where we need one-off’s in the future.",
+      "time": "10:42",
+      "timestamp": "1731609758.878949",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "Backport PR here: https://github.com/instabase/instabase/pull/65112\n\nLets wait till CI passes on it before merging",
+      "time": "10:58",
+      "timestamp": "1731610738.814329",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "@Udit looks like CI has passed :raised_hands:",
+      "time": "12:23",
+      "timestamp": "1731615792.139889",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "merged!",
+      "time": "12:23",
+      "timestamp": "1731615816.031729",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "Thanks everyone :slightly_smiling_face:",
+      "time": "12:23",
+      "timestamp": "1731615823.571719",
+      "is_reply": true
+    },
+    {
+      "sender": "dg",
+      "user_id": "U028XL59K9T",
+      "message": "Thank you @Udit @Jessica !!",
+      "time": "20:38",
+      "timestamp": "1731645520.357219",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-11-14.json",
+    "message_count": 15,
+    "start_time": "1731598639.163769",
+    "end_time": "1731645520.357219",
+    "is_thread": true
+  }
+}

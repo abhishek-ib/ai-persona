@@ -1,0 +1,191 @@
+{
+  "id": "ch_C05L87V014J_2025-02-20_1740079704.302349_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "sean.donohoe",
+    "Arek",
+    "Udit"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I’m getting a 502 on the crafting cluster itself — is this a known issue?\nhttps://crafting-aihub.test.instabase.com/",
+      "time": "11:28",
+      "timestamp": "1740079704.302349",
+      "is_reply": false
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "Yah my personal sandbox is getting a 502 as well",
+      "time": "11:28",
+      "timestamp": "1740079724.292459",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "deployment manager is giving a 504 as well =(\nhttps://crafting-aihub.test.instabase.com/deployment-manager/",
+      "time": "11:29",
+      "timestamp": "1740079744.692799",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "hm not. 502, but it just does not return any webpage",
+      "time": "11:29",
+      "timestamp": "1740079757.287659",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "cc <!subteam^S02FJA6A7U5>",
+      "time": "11:30",
+      "timestamp": "1740079802.815859",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "```An error occurred (ResourceNotFoundException) when calling the DescribeCluster operation: No cluster found for name: insan-use2-crafting-aihub-eks-cluster.```\nWhen i try to connect to the cluster",
+      "time": "11:34",
+      "timestamp": "1740080066.243429",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Is it possible it was entirely deleted?",
+      "time": "11:34",
+      "timestamp": "1740080071.984069",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "<!subteam^S08AA13VAFQ>, anything happened recently?",
+      "time": "11:36",
+      "timestamp": "1740080185.112829",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "that's the wrong cluster haha, it's `intes-use2-crafting-aihub-eks-cluster` -- you also don't need to request an EKS config, the cluster is reachable by default with kubectl from any sandbox",
+      "time": "11:40",
+      "timestamp": "1740080436.806319",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I'm taking a look now but I'm not aware of any changes that have gone in recently",
+      "time": "11:40",
+      "timestamp": "1740080451.678699",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "haha mb",
+      "time": "11:41",
+      "timestamp": "1740080476.731889",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "thanks for taking a look",
+      "time": "11:41",
+      "timestamp": "1740080480.735199",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ah, looks like the cluster is being upgraded, I think this is just temporary downtime while the upgrade rolls out",
+      "time": "11:41",
+      "timestamp": "1740080505.790659",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "merp nope, I'm wrong, there aren't any active rollouts afaict :thonk: I do see a bunch of pods still trying to come up though -- anyone know if someone adjusted k8s resources manually recently?",
+      "time": "11:43",
+      "timestamp": "1740080586.173229",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "mmm looks like envoy isn't passing readiness checks on most containers, could be a problem with mesh manager",
+      "time": "11:44",
+      "timestamp": "1740080678.379839",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "....or not, seems to be running fine :upside_down_face: I'm going to trigger an upgrade in case it helps reset things",
+      "time": "11:47",
+      "timestamp": "1740080824.000599",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I am very unsure of what's going on, but it seems tied to these logs being spewed everywhere by envoy\n```[warning][config] [./source/common/config/grpc_stream.h:201] StreamAggregatedResources gRPC config stream to mesh_manager closed since 478s ago: 14, upstream connect error or disconnect/reset before headers. reset reason: connection failure```",
+      "time": "11:58",
+      "timestamp": "1740081501.483479",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I forgot to update this but this has been resolved about an hour ago. Thanks @sean.donohoe @Arek!",
+      "time": "15:26",
+      "timestamp": "1740093991.495889",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "oh was that you @Paul H? I thought the cluster just magically came back after I restarted calico enough times :sweat_smile:",
+      "time": "15:27",
+      "timestamp": "1740094066.665729",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I didn’t do anything, so it was definitely magic :sparkles:",
+      "time": "15:29",
+      "timestamp": "1740094196.479429",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "turn it off and on again",
+      "time": "15:30",
+      "timestamp": "1740094223.327109",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-02-20.json",
+    "message_count": 21,
+    "start_time": "1740079704.302349",
+    "end_time": "1740094223.327109",
+    "is_thread": true
+  }
+}

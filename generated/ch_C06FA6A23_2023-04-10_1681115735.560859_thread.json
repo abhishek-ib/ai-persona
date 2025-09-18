@@ -1,0 +1,287 @@
+{
+  "id": "ch_C06FA6A23_2023-04-10_1681115735.560859_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "jayapandian.ponraj",
+    "Serena",
+    "Ashwin"
+  ],
+  "messages": [
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "This is the installation I am trying to reset password for - https://aihub.dev.instabase.com/control-plane/dashboard/deployments",
+      "time": "01:35",
+      "timestamp": "1681115735.560859",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Ashwin can you help here? i’m also not familiar with how to do this in DM :sweat_smile:",
+      "time": "08:43",
+      "timestamp": "1681141418.084589",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "actually if this environment is already deployed, you can change the admin password by clicking on the profile icon -> clicking “Update profile”",
+      "time": "08:46",
+      "timestamp": "1681141571.381319",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "@jayapandian.ponraj we dont have functionality to reset the password from DM after installation. Based on the saas install script, it looks like we use the same default password as non-saas environments",
+      "time": "08:47",
+      "timestamp": "1681141633.678789",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Username would be <mailto:admin@instabase.com|admin@instabase.com>",
+      "time": "08:47",
+      "timestamp": "1681141646.011979",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "https://github.com/instabase/instabase/blob/1e750e29cc2d417439d70087892951bf1023239f/tools/deploytools/IaC/terraform/saas/_scripts/install.py#L187",
+      "time": "08:48",
+      "timestamp": "1681141694.397279",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "yeah the default passwd used to work everywhere, but somehow it does not work in this particular installation only. So wondering where the passwd is decided? This stack has different IB codebase, so can that influence it ?",
+      "time": "08:59",
+      "timestamp": "1681142352.842109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "which branch was deployed to this sandbox?",
+      "time": "09:00",
+      "timestamp": "1681142411.816539",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "`20.1.0-ailabs`",
+      "time": "09:01",
+      "timestamp": "1681142508.577919",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "@jayapandian.ponraj maybe someone from the ai labs team changed the password",
+      "time": "09:08",
+      "timestamp": "1681142925.639489",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "I tried creating a fresh stack from scratch with the same branch and that too did not have the default password..... no one even knew about the stack I created from scratch, hence i dont think anyone changed it and forgot to tell me about it.",
+      "time": "09:10",
+      "timestamp": "1681143020.566909",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "I think I know why",
+      "time": "09:27",
+      "timestamp": "1681144040.854179",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Its bc the dbmigrate job didnt get the patch with the db credentials",
+      "time": "09:27",
+      "timestamp": "1681144061.203169",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "https://aihub.dev.instabase.com/control-plane/configs?targetObject=job-dbmigrate",
+      "time": "09:27",
+      "timestamp": "1681144065.460979",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Same issue as https://instabase.slack.com/archives/C01N7DV1137/p1678411603526909",
+      "time": "09:28",
+      "timestamp": "1681144097.213369",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "So the fix implemented there didnt make into into this deployment is my guess",
+      "time": "09:28",
+      "timestamp": "1681144111.381409",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Oh wait",
+      "time": "09:29",
+      "timestamp": "1681144162.389439",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "That fix was sandbox specific, this one needs to receive the patch against the job-dbmigrate label. So either the patch wasnt applied or the label wasnt created",
+      "time": "09:31",
+      "timestamp": "1681144278.881629",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "```kind: Job\nspec:\n  template:\n    spec:\n      containers:\n        - name: CONTAINER_NAME\n          env:\n            - name: INSTABASE_BACKEND_DB_PARAMS\n              valueFrom:\n                secretKeyRef:\n                  name: control-plane-db-backend-params\n                  key: db_string```\nLet me try applying this patch manually",
+      "time": "09:34",
+      "timestamp": "1681144448.764459",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "I checked a working SAAS pipeline stack and there is no config found for \"job-dbmigrate\"",
+      "time": "09:34",
+      "timestamp": "1681144476.141189",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "https://aihub.dev.instabase.com/control-plane/configs?targetObject=job-dbmigrate",
+      "time": "09:36",
+      "timestamp": "1681144562.111689",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "It works now :bananadance:\nyou rock dude. :rock:",
+      "time": "09:39",
+      "timestamp": "1681144792.797259",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "Can you give me a gist of what fixed it and why other SAAS stacks did not need this.",
+      "time": "09:40",
+      "timestamp": "1681144811.644509",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "So to fix it, I applied the same database patch that our deployments get to the db migrate job https://aihub.dev.instabase.com/control-plane/configs?patch=1681144667552",
+      "time": "09:42",
+      "timestamp": "1681144946.634129",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "So this is my theory why our saas environments work and the ailabs deployment didnt:\n\nThe SaaS environments are running 23.01 with cp 0.6, whereas this one is running the latest master (~23.04) but still using cp 0.6. The db migrate job was added to the base configs sometime between 23.01 and 23.04, and the DM part of it would be included in the 23.04 release",
+      "time": "09:43",
+      "timestamp": "1681145035.771269",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "I think a workaround here would be to build deployment manager on the same branch that ailabs is being deployed from",
+      "time": "09:44",
+      "timestamp": "1681145056.099509",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "(@mfichman please correct me if im wrong here on the release timelines)",
+      "time": "09:44",
+      "timestamp": "1681145092.029289",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "Interesting... this is something to keep in mind for overall SAAS update to 23.04 as well.",
+      "time": "09:45",
+      "timestamp": "1681145129.891399",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "With the SaaS environments** it should be fine bc the 23.04 release bundle will include the 23.04 DM",
+      "time": "09:45",
+      "timestamp": "1681145152.632599",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": ":hide:",
+      "time": "09:48",
+      "timestamp": "1681145331.813009",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "we are not yet using the DM from rel bundle, but we soon will. Or atleast b4 23.04",
+      "time": "09:49",
+      "timestamp": "1681145396.032179",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "@Aaron Tami look Ashwin fixed the login issue",
+      "time": "09:50",
+      "timestamp": "1681145423.917249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Thanks @Ashwin!",
+      "time": "10:04",
+      "timestamp": "1681146247.189709",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-04-10.json",
+    "message_count": 33,
+    "start_time": "1681115735.560859",
+    "end_time": "1681146247.189709",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "id": "ch_C05L87V014J_2025-04-21_1745265520.571149_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Goto Tools Go Links",
+    "Abhishek Adupa"
+  ],
+  "messages": [
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Hi team,\nI’m running into issue while trying to bring up search-service on crating, tried on few sandboxes - build fails on 403 from ECR. Does anyone have any suggestions on how to fix this?\n\n```#16 ERROR: error writing manifest blob: failed commit on ref \"sha256:3d6754893f7ee457af325463134cada68ab6d6c1eedf6abcf58cca277dc96f20\": unexpected status from PUT request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/search-tservice/manifests/cache: 403 Forbidden\n------\n > exporting cache to registry:\n------\nERROR: failed to solve: error writing manifest blob: failed commit on ref \"sha256:3d6754893f7ee457af325463134cada68ab6d6c1eedf6abcf58cca277dc96f20\": unexpected status from PUT request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/search-tservice/manifests/cache: 403 Forbidden\nmake: *** [Makefile:86: build-docker] Error 1```\nsandbox (https://instabase.sandboxes.site/sandboxes/abhishekadupa3?cw=dev)",
+      "time": "12:58",
+      "timestamp": "1745265520.571149",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Abhishek Adupa can you try to re-authenticate with ECR? Run the `ecr-login` script (link).",
+      "time": "12:59",
+      "timestamp": "1745265571.081389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "There is a background task that runs `ecr-login` every 4h, but sometimes the session seems to expire early (not sure why yet).",
+      "time": "12:59",
+      "timestamp": "1745265591.411779",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "did you miss adding hyperlink?",
+      "time": "13:00",
+      "timestamp": "1745265614.945349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah 1 sec :slightly_smiling_face:",
+      "time": "13:00",
+      "timestamp": "1745265619.625629",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/blob/eece41e8c69067def7c8dbfe93d3c06d85afa8b9/.sandbox/ibdev-backend/scripts/ecr-login",
+      "time": "13:00",
+      "timestamp": "1745265637.094989",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": ":thank_you:",
+      "time": "13:00",
+      "timestamp": "1745265643.036279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "NP!",
+      "time": "13:00",
+      "timestamp": "1745265654.016289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, did you just restore your sandbox from sleep?",
+      "time": "13:01",
+      "timestamp": "1745265676.986369",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "I didn’t it was up. But I think this has been a consistent issue over the last few days on all my sandboxes. I didn’t need search-service before, but I need it today to test something with Metronome.",
+      "time": "13:03",
+      "timestamp": "1745265801.377679",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "I did run the script and got `login succeeded`, but the search service build still fails on the same issue.\n```aws ecr get-login-password --region=us-east-2 | docker login --username=AWS --password-stdin $REGISTRY\n\nWARNING! Your credentials are stored unencrypted in '/home/owner/.docker/config.json'.\nConfigure a credential helper to remove this warning. See\nhttps://docs.docker.com/go/credential-store/\n\nLogin Succeeded ```",
+      "time": "13:07",
+      "timestamp": "1745266040.594929",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/credential-store/>",
+      "time": "13:07",
+      "timestamp": "1745266041.971839",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm. Can you try `docker pull  549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/search-tservice (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/search-tservice)` ?\n?",
+      "time": "13:09",
+      "timestamp": "1745266198.049069",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "```owner@dev:~/instabase$ docker pull  549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/search-tservice (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/search-tservice)\nUsing default tag: latest\nError response from daemon: failed to resolve reference \"549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/search-tservice:latest (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/search-tservice:latest)\": 549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/search-tservice:latest (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/search-tservice:latest): not found\nowner@dev:~/instabase$ docker images\nREPOSITORY                                                                          TAG       IMAGE ID       CREATED          SIZE\ninstabase/search-tservice                                                           latest    9c300319cc8e   10 minutes ago   516MB```",
+      "time": "13:11",
+      "timestamp": "1745266260.217009",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Never mind, I'm seeing the same. Let me look into it.",
+      "time": "13:11",
+      "timestamp": "1745266275.060889",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Thank you Matt! :slightly_smiling_face:",
+      "time": "13:11",
+      "timestamp": "1745266285.117419",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "^ figured it out (sorry for the delay). A while back I set up caching for Crafting docker builds to speed them up. The cache is stored in an ECR registry, but it was full. I fixed that with a retention policy.",
+      "time": "17:24",
+      "timestamp": "1745281444.129429",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Thank you Matt, works now :tada:",
+      "time": "17:26",
+      "timestamp": "1745281575.171939",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-04-21.json",
+    "message_count": 18,
+    "start_time": "1745265520.571149",
+    "end_time": "1745281575.171939",
+    "is_thread": true
+  }
+}

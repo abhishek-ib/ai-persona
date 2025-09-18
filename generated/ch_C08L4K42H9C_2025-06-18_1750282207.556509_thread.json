@@ -1,0 +1,37 @@
+{
+  "id": "ch_C08L4K42H9C_2025-06-18_1750282207.556509_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "Sherif",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "cc @Serena\n\nOkay I debugged the issue with @ayesha.ali (tysm Ayesha)\n\nThe root cause of the issue appears to be related to the handling of UDF arguments during the edit workflow. Specifically, when a user edits a UDF, we correctly send the following payload to the `/udfs` endpoint:\n```{\n  \"name\": \"class_fields\",\n  \"data_type\": \"FIELD\",\n  \"value\": \"class_fields\"\n}```\nHowever, during schema updates, the `/schema` endpoint is called with a list of expanded arguments such as:\n```[\n  {\n    \"name\": \"License.First Name\",\n    \"data_type\": \"FIELD\",\n    \"value\": \"License.First Name\"\n  },\n  {\n    \"name\": \"License.udf\",\n    \"data_type\": \"FIELD\",\n    \"value\": \"License.udf\"\n  },\n  {\n    \"name\": \"Financial Documents.Account Name\",\n    \"data_type\": \"FIELD\",\n    \"value\": \"Financial Documents.Account Name\"\n  }\n]```\nThese expanded arguments are then persisted into the `projects_udf_table`.\n\nAs a result, when `/udfs/run` is invoked *before* the `projects_udf_table` is updated, it returns a `200 OK` because the original `class_fields` argument is used. However, *after* the update, the argument list no longer includes `class_fields`, and instead includes its expanded field paths. This leads to a mismatch between the UDF function signature and the way the function body accesses its data.\nFor example, the generated function signature becomes:\n\n```def debugging(License.First Name, context = {}, keys = {}, **kwargs):\n    return class_fields['License']['First Name']['value']```\nThis is invalid syntax due to the use of dotted field names as Python function arguments. The correct format should be:\n\n```def debugging(class_fields, context = {}, keys = {}, **kwargs):\n    return class_fields['License']['First Name']['value']```\nTemporarily commenting out the following block in `ai_hub_project_accessor.go` resolves the issue by preventing the incorrect update of arguments in the `projects_udf_table`:\n```//  update the args field in the project_udfs table\nif err := db.UpdateProjectUdfsTableArgs(ctx, *refinementLine.UdfID, udfArgs); err != nil {\n\treturn err\n}```\nSo a fix may require some backend changes I believe.",
+      "time": "14:30",
+      "timestamp": "1750282207.556509",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "great debugging!! @ayesha.ali @Sherif\n\nso do we want to handle updates of args in the `projects_udf_table` differently for single-class udfs vs cross-class udfs?\n\nor should we never call `db.UpdateProjectUdfsTableArgs` when the `/schema` endpoint is called for both single-class udfs and cross-class udfs?",
+      "time": "14:46",
+      "timestamp": "1750283197.810709",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-06-18.json",
+    "message_count": 2,
+    "start_time": "1750282207.556509",
+    "end_time": "1750283197.810709",
+    "is_thread": true
+  }
+}

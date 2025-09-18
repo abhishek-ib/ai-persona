@@ -1,0 +1,159 @@
+{
+  "id": "ch_C06FA6A23_2022-10-03_1664806893.845039_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "Mohit",
+    "Kerry",
+    "Elan Sharony"
+  ],
+  "messages": [
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Morning team, wanted to provide awareness on a file compression change to flow that has just been merged to dogfood. The contents of the change is as follows:\n• any cache `set`  interaction will first compress the payload, before persisting to cache\n• any cache `get`  interaction will first decompress the payload, before returning to client\nIn our testing, we've observed that the CPU hit we incur for compression/decompression is minimal (<5 % increase) compared to the drop in Redis memory usage and network I/O (> 90% reduction). By reducing flow's memory footprint, less data is transferred over the network which in turn helps flow to run faster, and more importantly *bring down the cost of running IB* for any of our clients. If interested, here is a document (https://docs.google.com/document/d/1yef8gQx19PLU8VjZMUrWgLFt00ASSjxKFWj25ANfRtc/edit#heading=h.qviuoybtk82c) which contains our testing results and other information related to the change. Please let me know if you have any questions!\n\ncc @Mohit",
+      "time": "07:21",
+      "timestamp": "1664806893.845039",
+      "is_reply": false
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi Elan, this is awesome. Does this also mean when compression takes place, the actual payload stored in the file system (not the cache) is also compressed? I am working on the file service cache layer so would love to take this into consideration",
+      "time": "09:50",
+      "timestamp": "1664815805.975399",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "> Does this also mean when compression takes place, the actual payload stored in the file system (not the cache) is also compressed?\nno, we are starting with and currently its cache only. elan cmiiw",
+      "time": "09:51",
+      "timestamp": "1664815904.501649",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Hey Xi, for now this compression/decompression only occurs with cache interactions- not file system. But I agree it would be another nice addition, and easy to implement with the new compression py util",
+      "time": "09:52",
+      "timestamp": "1664815955.019229",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "woohoo! excited to see this work finally comes to dogfood, this is great!",
+      "time": "09:53",
+      "timestamp": "1664816003.979619",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Xi, the idea here is to roll out in phases. Although extensive load tests, forward-backward compatibility tests etc were performed we still want to ensure we cover all our bases before this change is enabled for file system where files are stored for longer durations.",
+      "time": "09:54",
+      "timestamp": "1664816075.441719",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Thanks for the context. I think the broader question to ask is whether we should consider supporting compressing files in general? If we could reduce many of the file content by 90% using compression that does seem like a useful thing to consider. Also, one thing here is that the cached content is compressed but actual content in file system is not, so that is a deviations of the data format. There can be backward compatibility issues if we move toward this direction.",
+      "time": "09:57",
+      "timestamp": "1664816232.166859",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "> There can be backward compatibility issues if we move toward this direction.\nThere wont be, compression utils takes care of this divergence automatically. This was part of our tests to simulate a situation where mistakenly/intentionally compression is enabled/disabled/enabled\nFile reads for files written in all three windows are successful and taken care of by compression utils.\n\n Good question, Xi.",
+      "time": "10:02",
+      "timestamp": "1664816535.205779",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Yes, chances are we can always try decompressing in the client library to take care of this. I will give more thoughts on this",
+      "time": "10:12",
+      "timestamp": "1664817141.334969",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "We rely on file’s magic headers to efficiently check whether a file was compressed or not.",
+      "time": "10:17",
+      "timestamp": "1664817467.740269",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "^ we are able to detect if a file is compressed or not without having to read in the whole file contents",
+      "time": "10:19",
+      "timestamp": "1664817547.623829",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Elan Sharony Yes we can, but as far as I can tell from this PR (https://github.com/instabase/instabase/pull/29851) we currently are reading the whole content from redis and call the decompress method from the library to do the work right? That's ok because I think the predominant pattern we have in application is to read the whole file.",
+      "time": "10:26",
+      "timestamp": "1664817984.300429",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "And thinking this more broadly for file system, there are some questions around extending this to file system because I wonder how we'd support 1) reading from a byte-range, 2) append to write. I will look into this a bit more.",
+      "time": "10:28",
+      "timestamp": "1664818103.284969",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "File was anyways read in the memory?\n1. File read is called.\n2. Datastore reads the file from cache\n3. Compression utils checks the header, if the header is set, it decompresses the payload _in-place with the apt method_, else its a no-op\n4. File is returned to the client.\nFor file system ops, an interesting challenge will be byte-range reads/writes.",
+      "time": "10:30",
+      "timestamp": "1664818234.732309",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "For byte range reads/writes, we can still refer to the header, but the challenge becomes that\n• file parts are dependent on each other or some file level metadata file\n• block size must be fixed or known.",
+      "time": "10:32",
+      "timestamp": "1664818362.685439",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Whenever `ztsd`  decompress is called, the first thing it will do is check the magic number. So if a file isn't compressed for whatever reason, it won't bother to read the rest of the file contents. This is shown in our results as well. Decompression on a non-compressed payload takes the same amount of time across various payload sizes",
+      "time": "10:33",
+      "timestamp": "1664818392.377959",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@Xi Cheng streaming is supported tho, fyi - https://raw.githack.com/facebook/zstd/release/doc/zstd_manual.html#Chapter9",
+      "time": "10:36",
+      "timestamp": "1664818594.354979",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-10-03.json",
+    "message_count": 17,
+    "start_time": "1664806893.845039",
+    "end_time": "1664818594.354979",
+    "is_thread": true
+  }
+}

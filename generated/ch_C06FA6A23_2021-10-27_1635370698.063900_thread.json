@@ -1,0 +1,185 @@
+{
+  "id": "ch_C06FA6A23_2021-10-27_1635370698.063900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Anil",
+    "sudeep",
+    "kunal",
+    "Xi Cheng",
+    "Nidhi",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "is dogfood slow for anyone? i can’t load any folder in the file system",
+      "time": "14:38",
+      "timestamp": "1635370698.063900",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m also getting deadline_exceeded errors when trying to load logs",
+      "time": "14:39",
+      "timestamp": "1635370768.064100",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Anil is the dogfood deploy still running?",
+      "time": "14:41",
+      "timestamp": "1635370867.064500",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "No it's done. Out for a short errand, will take a look in sometime",
+      "time": "14:42",
+      "timestamp": "1635370979.065200",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "lots of errors in file-tservice about connecting with mount-tservice, if that’s helpful",
+      "time": "14:48",
+      "timestamp": "1635371312.065600",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "Looking into this — we just put resource limits onto all services. But, resource usage for mount, file, job, api-server, api-server-apps all look okay to me.",
+      "time": "14:49",
+      "timestamp": "1635371391.065800",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "also this request duration for file-tservice is nuts! :scream:",
+      "time": "15:03",
+      "timestamp": "1635372229.066600",
+      "is_reply": true
+    },
+    {
+      "sender": "Nidhi",
+      "user_id": "U0179LPQK29",
+      "message": "I’ve been seeing issues with thrift file service connect calls as well.\nThe connect call goes through mount service which then gets the mount info from either redis or the DB.",
+      "time": "15:22",
+      "timestamp": "1635373350.067000",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi all, reverted a potential break PR and redeploying dogfood at the moment",
+      "time": "15:36",
+      "timestamp": "1635374218.067200",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "thanks, looking at the logs now to catch up on this issue",
+      "time": "15:37",
+      "timestamp": "1635374248.067400",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "mount-service CPU went to 0 and memory kept increasing during that 1 hr",
+      "time": "15:48",
+      "timestamp": "1635374928.068300",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "One info that might help: when I re-deployed dogfood, I redeployed redis too. So the cache was restarted.",
+      "time": "15:53",
+      "timestamp": "1635375211.068900",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "there are some DB load yeah: https://dogfood.instabase.com/grafana/d/anTj9iEMz/database-operation?orgId=1&refresh=5s",
+      "time": "15:55",
+      "timestamp": "1635375301.069100",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "But the 99-percentile response time doesn't look too bad?",
+      "time": "15:56",
+      "timestamp": "1635375390.069300",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "hmm, it did spike for the brief instant - but things returned to normal look like.\nthere are no logs in mount-tservice, https://console.cloud.google.com/kubernetes/deployment/us-east1-c/instabase-main-dogfood-001/instabase-dogfood/deployment-mount-tservice/logs?project=instabase-dogfood",
+      "time": "16:03",
+      "timestamp": "1635375813.073100",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@Xi Cheng let me know if I can be helpful in anyway. I don't have much to go on here.\nWe should try to add back the limits and ensure that golden burst can be handled.",
+      "time": "16:05",
+      "timestamp": "1635375924.073400",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Anil If we could root-cause the problem that'd be great. We should understand what was going on here. Another approach would be taking an incremental approach to add limit from service to service. That'd be less disruptive. Chances are it is only 1 or a few services that make the platform unstable, and it'd useful to find them out.",
+      "time": "16:44",
+      "timestamp": "1635378282.073600",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "hey folks - just checking in here do we still need to look into this, or is this resolved?",
+      "time": "20:25",
+      "timestamp": "1635391550.074100",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@sudeep We reverted the change and dogfood is back to sane, but we need to understand why this happens, namely putting resource limit breaks dogfood completely, where we don't see many services reaching the limit/.",
+      "time": "20:27",
+      "timestamp": "1635391669.074400",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Got it @Xi Cheng! will spend some time thinking about this later today :slightly_smiling_face:",
+      "time": "20:29",
+      "timestamp": "1635391765.074600",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-10-27.json",
+    "message_count": 20,
+    "start_time": "1635370698.063900",
+    "end_time": "1635391765.074600",
+    "is_thread": true
+  }
+}

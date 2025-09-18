@@ -1,0 +1,230 @@
+{
+  "id": "ch_C05L87V014J_2025-06-03_1748961830.259579_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "anik.b",
+    "mfichman",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "I'm experiencing significant performance issues and frequent 502 Gateway errors in my crafting environment when using the `ib-backend` template. frontend sometimes result in 502 errors, backend API requests sometimes result in 502 errors and environment builds can take over three hours. Is anyone else encountering similar problems?\n\nURL: https://https--anikb-instabase.instabase.site.sandboxes.run/\n\ncc:@Weiming Wu",
+      "time": "07:43",
+      "timestamp": "1748961830.259579",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "That is quite unusual. Have you looked to see if the services are healthy? Are they restarting a bunch? Use “cs ps”\n\nAlso - when reporting problems with crafting, please always include the URL of your sandbox. Then folks can take a look directly.",
+      "time": "07:45",
+      "timestamp": "1748961931.985569",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "I've included the URL. Currently, the crafting env seems to be stuck loading, despite my internet connection being stable.",
+      "time": "07:55",
+      "timestamp": "1748962510.709729",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "https://instabase.slack.com/archives/D08PZCKU4F9/p1748964727130559",
+      "time": "08:36",
+      "timestamp": "1748964982.054239",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "I believe this may be helpful",
+      "time": "08:36",
+      "timestamp": "1748964998.887009",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Where are you, geographically speaking?",
+      "time": "08:38",
+      "timestamp": "1748965101.305219",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "He’s in India",
+      "time": "08:38",
+      "timestamp": "1748965109.112159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Well, that could account for some of the lag -- I think you can change the region (?) but let me check.",
+      "time": "08:38",
+      "timestamp": "1748965134.035729",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Are other engineers in India able to load the UI of their crafting sandboxes?\n\nIt seems this could be a region-specific issue we need crafting to look at",
+      "time": "08:38",
+      "timestamp": "1748965138.883659",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Checking your sandbox now",
+      "time": "08:39",
+      "timestamp": "1748965159.541819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Homepage loaded fine for me (I'm in US-East); checking the logs too",
+      "time": "08:39",
+      "timestamp": "1748965172.460179",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Homepage loads fine for me but not for Anik\n\nHe already tried on multiple browsers and devices (but he can’t change his region :lolcry: )",
+      "time": "08:40",
+      "timestamp": "1748965210.817459",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes :slightly_smiling_face: But we can probably change the region the sandbox is running in.",
+      "time": "08:40",
+      "timestamp": "1748965230.635209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Services look healthy:\n\n```owner@dev:~$ cs ps\nREPO      NAME                KIND            ENABLE PID   RESTART START    EXIT     STATUS ERROR\n          bazel-remote        DAEMON          Yes    1381          13:49:31                      \ninstabase api-server          DAEMON          Yes    1799          13:49:31                      \ninstabase celery-app-tasks    DAEMON          Yes    1472          13:49:31                      \ninstabase control-plane       DAEMON          Yes    1801          13:49:31                      \ninstabase conversion-service  DAEMON          Yes    1452          13:49:31                      \ninstabase core-platform       DAEMON          Yes    1794          13:49:31                      \ninstabase file-service        DAEMON          Yes    1805          13:49:31                      \ninstabase job-service         DAEMON          Yes    1812          13:49:31                      \ninstabase license-service     DAEMON          Yes    1386          13:49:31                      \ninstabase model-service       DAEMON          Yes    1387          13:49:31                      \ninstabase ocr-service         DAEMON          Yes    16707 1       13:49:43 13:49:43             \ninstabase search-service      DAEMON          Yes    1432          13:49:31                      \ninstabase server-nginx        DAEMON          Yes    1406          13:49:31                      \ninstabase table-service       DAEMON          Yes    1477          13:49:31                      \ninstabase weaviate            DAEMON          Yes    1395          13:49:31                      \ninstabase weaviate-titan      DAEMON          Yes    1422          13:49:31                      \ninstabase webapp              DAEMON          Yes    1784          13:49:31                      \ninstabase webpack             DAEMON          Yes    52862 2       14:30:39 14:30:39             \ninstabase docker-system-prune JOB 0 */4 * * * Yes                                    Exit:0      \ninstabase ecr-login           JOB 0 */1 * * * Yes                  15:00:00 15:00:01 Exit:0      \ninstabase gcr-login           JOB 0 */1 * * * Yes                  15:00:00 15:00:01 Exit:0  ```",
+      "time": "08:40",
+      "timestamp": "1748965256.672939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@anik.b this is a relatively new sandbox; is it possible it was still building when you created it? The first build can take a while (esp if in India--build cache reads go over the network from US-East)",
+      "time": "08:41",
+      "timestamp": "1748965298.135709",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "The logs that anik shared are from server-nginx, so it seems server-nginx is throttling requests based on zone?",
+      "time": "08:41",
+      "timestamp": "1748965298.329129",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I can't speak to that, but I figure just the roundtrip from India => US-East is going to add a ton of latency. Could very well time out due to TCP stalling as well.",
+      "time": "08:42",
+      "timestamp": "1748965323.299089",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "All the services are running when we checked docker ps, so the build time isn’t the issue",
+      "time": "08:42",
+      "timestamp": "1748965355.112879",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yep. Other folks in India use crafting; but haven't heard too many complaints about latency (maybe people just aren't complaining vocally enough though :upside_down_face:). This is something we should look at -- I'll ask the Crafting folks about region control.",
+      "time": "08:43",
+      "timestamp": "1748965401.679539",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "May help: It worked well for about 10 minutes approximately 7 hours ago and had been performing consistently with only minor hiccups until last week.",
+      "time": "08:43",
+      "timestamp": "1748965432.013949",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmmm. Given it's working for me here in the US, seems like a network issue somewhere along the long path from India => US",
+      "time": "08:44",
+      "timestamp": "1748965490.330609",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "That's what I assume as well, Let me see if changing IP to US in banyan helps.",
+      "time": "08:45",
+      "timestamp": "1748965533.326849",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I've had limited success when accidentally using the wrong tunnel during travel :confused: Worth a shot, but it would be better to run the sandboxes in the India region instead.",
+      "time": "08:47",
+      "timestamp": "1748965650.534349",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "It works! This thing works so well, I'm talking minutes saved per request, with each one zipping by in milliseconds.",
+      "time": "08:50",
+      "timestamp": "1748965817.812549",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Great! Spread the word in India if others have the same issue :slightly_smiling_face:",
+      "time": "08:51",
+      "timestamp": "1748965879.632779",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, the crafting folks got back to me. We can set it up in the India region, but we have to create another EKS cluster/deployment there. Which will take some time. I think we should do it if folks in India are having repeated latency problems though. cc @Ashish",
+      "time": "10:05",
+      "timestamp": "1748970301.428629",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-06-03.json",
+    "message_count": 26,
+    "start_time": "1748961830.259579",
+    "end_time": "1748970301.428629",
+    "is_thread": true
+  }
+}

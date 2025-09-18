@@ -1,0 +1,45 @@
+{
+  "id": "ch_C0516UPPMT3_2025-01-07_1736274096.269999_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Nathaniel",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "Troubling behavior: _Edited_ name and date changes after page sits idle for some time\n\nWhen loading the workspaces tab on MT Prod, initially most Build projects will be listed with an \"Edited {time} ago by {name}\" message that often changes about 30 seconds after the workspaces tab has first loaded.  This seems to be reproducible whenever the page is refreshed, regardless of cookies/cache.\n\nThe initial version seems to be indicating who viewed last and when, while the details that it changes to after sitting seem to be who actually made changes and when those changes were made.  Below SS1 is what I see when I first open the tab (or refresh the page), then SS2 is what shows up about 30 seconds later.\n\nThis odd behavior has spooked an important person at our client Essor, as their business is in a highly regulated industry and tracking changes in case of audit is top of mind for them.  This comes on the heels of some very vocal doubts about our version control tooling built into our platform, so this is seen as a red flag that our DB might not be tracking changes to projects reliably.\n\nIs this expected behavior?  If so, can we perhaps try changing the messaging to differentiate the initially displayed name and date from the later (for example, first we'd say \"Last opened {time} ago by {name}\", then later say \"Edited {time} ago by {name}\")?",
+      "time": "10:21",
+      "timestamp": "1736274096.269999",
+      "is_reply": false
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "cc @fernando.piazza.ctr",
+      "time": "10:21",
+      "timestamp": "1736274114.044169",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@Weiming Wu I'm looking at this code, and it looks like the way we do this is that we:\n1. Load the projects, which have a last updated time on them\n2. Load the locks for the shared projects\n3. While we're waiting for the locks to load, show the last updated time from the projects and show that the owner was the last person to edit them\n4. Once the locks are loaded, show the user who last had the lock as the editor instead and the time they had the lock\nSo @Nathaniel what's happening here is that we're showing the best info we have, and when better info loads, showing that instead.\n\nThe good news is that it's not an issue with how we're actually tracking these things (our info on who last had the lock is reliable), but I'm not sure this is the best logic/display of the info we have. I'll talk with the team and we can figure out a better way to do this.",
+      "time": "11:19",
+      "timestamp": "1736277569.377919",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-01-07.json",
+    "message_count": 3,
+    "start_time": "1736274096.269999",
+    "end_time": "1736277569.377919",
+    "is_thread": true
+  }
+}

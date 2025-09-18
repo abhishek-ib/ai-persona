@@ -1,0 +1,61 @@
+{
+  "id": "ch_CSY11CK7T_2024-01-10_1704931988.151509_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "Arek"
+  ],
+  "messages": [
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Hello everyone and anyone,\nI recently merged a PR which updated moment.js in webpacked to the latest version, and I was trying to backport it to the release branches. Does anyone know why the CI/the tests might be failing https://github.com/instabase/instabase/pull/51827/files?\n\nWhat I did is `npm install moment@latest`\nNow im running `make build && make test` locally to test this and half of the snapshots fail\n\nCan anyone help?",
+      "time": "16:13",
+      "timestamp": "1704931988.151509",
+      "is_reply": false
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "it looks like it’s caused by a bunch of snapshot unit tests failing. Can you try running jest with `--updateSnapshot` locally?\n\nweird that the snapshots are not working though cuz an earlier PR against that branch should’ve caused these tests to fail too",
+      "time": "16:29",
+      "timestamp": "1704932970.239889",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Thanks! That helped with the snapshots failing, but I think the CI is now failing just from the normal unit tests? https://jenkins.instabase.com/job/instabase/job/PR-51827/7/console. From the logs I also dont think this is related to my version bump? But maybe someone who knows more can confirm",
+      "time": "16:59",
+      "timestamp": "1704934755.596919",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "i think the yarn.lock might actually have changed a LOT of stuff. can you revert that file and try to use yarn instead? The diff right now is too big for me to reasonably give suggestions",
+      "time": "17:10",
+      "timestamp": "1704935431.172509",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "so `yarn add moment@^2.30.1` instead?",
+      "time": "17:11",
+      "timestamp": "1704935485.080409",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-01-10.json",
+    "message_count": 5,
+    "start_time": "1704931988.151509",
+    "end_time": "1704935485.080409",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "id": "ch_C05L87V014J_2025-01-16_1737041108.103469_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Goto Tools Go Links",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Is the zshrc wrong?",
+      "time": "07:25",
+      "timestamp": "1737041108.103469",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea...  `sudo -iu owner` mode, which is used in `cs start` commands, can't find nodenv properly. I've been trying all sorts of things but none of them worked.\n`sudo -iu owner nodenv`\nAt first, it's returns `nodenv` not found. After some tweaking, i get it to return `nodenv:11: permission denied: nodenv`",
+      "time": "11:04",
+      "timestamp": "1737054264.782579",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Is there a reason why we have to do `sudo -iu owner make build-docker` instead of `make build-docker` to start crafting daemons?\nhttps://github.com/instabase/instabase/blob/2ed5ce4bc4176769e2b923d61bfc23d188a9972a/.sandbox/ibdev-backend/manifest.yaml\nIs there a reason we have to use",
+      "time": "11:06",
+      "timestamp": "1737054401.643909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes -- running `make build-docker` as root causes problems (changes the permissions of build output files; resets the environment variables; messes with your editor and other things)",
+      "time": "11:21",
+      "timestamp": "1737055298.127889",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "tl;dr that command needs to run as `owner` not `root` in one way or another",
+      "time": "11:22",
+      "timestamp": "1737055354.528199",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Xindi Xu since youw ant to use zsh, you could try:\n\n```sudo -iu owner /usr/bin/bash -c ...```",
+      "time": "11:23",
+      "timestamp": "1737055403.464609",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I don't think that works :disappointed:\nI tried a hacky way and that works so i'm going to stop digging now :sweat_smile:\nI manually set the `PATH` variable in `.zprofile` with the one that's working\n```PATH=\"/usr/local/sbin:/usr/local/bin:/opt/sandboxd/docker:/usr/local/workspace/go/bin:/usr/local/go/bin:/usr/local/poetry/bin:/usr/local/pyenv/bin:/usr/local/pyenv/shims:/usr/local/nodenv/bin:/usr/local/nodenv/shims:/usr/sbin:/usr/bin:/sbin:/bin:/opt/sandboxd/bin:/usr/games:/usr/local/games:/snap/bin\"```",
+      "time": "11:33",
+      "timestamp": "1737056011.693069",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/bin:/usr/local/go/bin:/usr/local/poetry/bin:/usr/local/pyenv/bin:/usr/local/pyenv/shims:/usr/local/nodenv/bin:/usr/local/nodenv/shims:/usr/sbin:/usr/bin:/sbin:/bin:/opt/sandboxd/bin:/usr/games:/usr/local/games:/snap/bin\"```",
+      "time": "11:33",
+      "timestamp": "1737056012.284999",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It's interesting that if I explicitly init nodenv and pyenv in `zshrc` or `zprofile` , their shims paths will be at the front of `PATH`, which is what we want based on the doc (https://github.com/nodenv/nodenv?tab=readme-ov-file#understanding-path). However, that actually broke things.",
+      "time": "11:47",
+      "timestamp": "1737056828.870179",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm good to go now! Thank you so much for your help along the way",
+      "time": "11:47",
+      "timestamp": "1737056872.098889",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-01-16.json",
+    "message_count": 10,
+    "start_time": "1737041108.103469",
+    "end_time": "1737056872.098889",
+    "is_thread": true
+  }
+}

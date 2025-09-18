@@ -1,0 +1,37 @@
+{
+  "id": "ch_C0516UPPMT3_2024-04-22_1713792265.902059_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "avi",
+    "Sławek Biel"
+  ],
+  "messages": [
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Ok, I debugged it a little. The main issue is that the user prompt here is very long (over 3k tokens). This is not really a case we optimized for, all the prompts we use testing/benchmarking are couple sentences at most.\n\nIn multi step we try to keep the whole message queue not cross 6k thousands tokens. And here system prompt + user query is already 4.5K, one search tool invocation and we don’t have space left to read any pages. It falls into a loop trying to read other pages and compress it them but getting very little information out of it.\n\nI don’t see a good way of fixing it with the algorithm today. I can try to make it handle it better and maybe finish quicker rather than keep trying. But it won’t be able to solve it.\n\n@Hari should we enforce a limit on the user prompt? It’s not only multi step. The default model would fail completely on a case like this as well, having no space left for the document content.",
+      "time": "06:24",
+      "timestamp": "1713792265.902059",
+      "is_reply": false
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Thanks Slawek! I was intentionally using a very complex prompt including a document. We are seeing signal from GTM that users want to be able to use queries in their doc and should look into how we can service these kinds of cases in the future. Few thoughts.\n• For now, I'm supportive of adding a limit on the user prompt if we'd like. Totally understand that we are not currently optimised for prompts of this length. But may not be worthwhile to implement given lack of feedback of failures aside from me.\n• In Q2, we want to allow doc upload in user queries (at least for short docs). We should try to figure out how to allow for this. Seems like we'll need some model dev. @Hari @Balaram. Eventually we'll want to support longer docs here too. \nI wrote a PRD today for the doc upload feature for reference - PRD - Upload doc as part of query - Google Docs (https://docs.google.com/document/d/1jhjwuHhHyYj1Iw0DaXc-t7UeLP0U8ghew7MjiGkk160/edit).",
+      "time": "07:21",
+      "timestamp": "1713795676.088639",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-04-22.json",
+    "message_count": 2,
+    "start_time": "1713792265.902059",
+    "end_time": "1713795676.088639",
+    "is_thread": true
+  }
+}

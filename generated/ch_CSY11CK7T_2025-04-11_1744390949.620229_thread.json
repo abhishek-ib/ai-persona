@@ -1,0 +1,118 @@
+{
+  "id": "ch_CSY11CK7T_2025-04-11_1744390949.620229_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Liam Callanan",
+    "Serena",
+    "pauline.comising"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`edit-existing-app` has failed consistently in multiple CI runs (example (https://cloud.cypress.io/projects/cfhedy/runs/18962/overview/2769f431-e583-4069-b75f-5b45a690b24c?roarHideRunsWithDiffGroupsAndTags=1), example (https://cloud.cypress.io/projects/cfhedy/runs/18961/overview/51ae4e06-a3b3-4afc-bc3a-4c935ec618f1?roarHideRunsWithDiffGroupsAndTags=1)) with this error `Failed to create the app. An app with this name already exists. Choose a new name to try again.`\n\n<!subteam^S07855GV3GV> can you look into this?",
+      "time": "10:02",
+      "timestamp": "1744390949.620229",
+      "is_reply": false
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Looks like a 414 due to `ground-truth-sets/list` requesting w/ too many appids at once",
+      "time": "10:58",
+      "timestamp": "1744394311.524839",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "cc @pauline.comising seems like it may be related to https://github.com/instabase/instabase/pull/69075",
+      "time": "11:02",
+      "timestamp": "1744394547.535539",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "interesting! we do try to delete the old app versions (https://github.com/instabase/instabase/blob/4d3426162c25/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/BuildApp/edit-existing-app.spec.ts#L31-L36) though, so why are there so many app version ids?",
+      "time": "11:15",
+      "timestamp": "1744395336.214539",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oh dear there are over 1000 versions, so the delete logic is not working as expected :disappointed:",
+      "time": "11:16",
+      "timestamp": "1744395408.694549",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the problem is that we are listing apps by name and are skipping the first one (https://github.com/instabase/instabase/blob/4d3426162c2500694d61a6f9d49ef2e80818d9e4/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/BuildApp/edit-existing-app.spec.ts#L34) bc we want to keep the current app so that we show the \"Add version\" UI, not the \"Create app\" UI",
+      "time": "11:36",
+      "timestamp": "1744396570.213949",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think we should just always delete and create the app in the `before` block\n\nwe already have logic to create an up-to-date version of the app (https://github.com/instabase/instabase/blob/4d3426162c2500694d61a6f9d49ef2e80818d9e4/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/BuildApp/edit-existing-app.spec.ts#L66-L87) at the start of the test - this change would also eliminate the need for that",
+      "time": "11:37",
+      "timestamp": "1744396664.986119",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Liam Callanan do you have time to make this change today?",
+      "time": "11:38",
+      "timestamp": "1744396709.208249",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "yeah I noticed that, I’ll try to get a fix out today",
+      "time": "11:43",
+      "timestamp": "1744396995.934959",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Oo interesting about not deleting apps. I'm wondering if we expect users to ever run into this overflow with their use cases.\n\nIf not, I'll keep everything as is, if so, the workaround is asking users to delete old, unused apps, but alternatively, I think what can happen is that the GET api handles app ids and the old req params that's always just two things and FE can request depending on whether its viewing a public app or not. This is under the assumption that public apps are published by us and thus we control how many versions are out, but works less if users are expected to create public apps and they can create however many versions they want.",
+      "time": "11:48",
+      "timestamp": "1744397316.301229",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i like the idea of the GET API handling both app ids and the old req params\n\nhowever, for now, i don't think we have any customers with ~1000s of versions for a single app, so i don't think this is high priority to solve right now",
+      "time": "11:53",
+      "timestamp": "1744397606.089479",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "To fix `edit-existing-app.spec.ts` failures, this should clean up the generated app after each run:\nhttps://github.com/instabase/instabase/pull/69760",
+      "time": "13:00",
+      "timestamp": "1744401624.875069",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-04-11.json",
+    "message_count": 12,
+    "start_time": "1744390949.620229",
+    "end_time": "1744401624.875069",
+    "is_thread": true
+  }
+}

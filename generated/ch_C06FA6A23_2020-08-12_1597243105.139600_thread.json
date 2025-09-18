@@ -1,0 +1,255 @@
+{
+  "id": "ch_C06FA6A23_2020-08-12_1597243105.139600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Justin",
+    "ian",
+    "Aaron Tami",
+    "Matt"
+  ],
+  "messages": [
+    {
+      "sender": "ian",
+      "user_id": "UNLE358UT",
+      "message": "@Matt @Aaron Tami RBC is getting an “out of quota” response from the Microsoft billing endpoint. Is there someone at microsoft I (or you guys) can reach out to to get this sorted out? This is holding us back from PoC dev and testing.",
+      "time": "07:38",
+      "timestamp": "1597243105.139600",
+      "is_reply": false
+    },
+    {
+      "sender": "ian",
+      "user_id": "UNLE358UT",
+      "message": "Or could it have something to do with them using the same api key in their UAT and Prod envs?",
+      "time": "07:40",
+      "timestamp": "1597243252.140400",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "@zach can you check to make sure our billing info in azure is imported properly",
+      "time": "08:01",
+      "timestamp": "1597244475.140600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Every time I’ve seen this error it’s been a proxy issue, not an issue with the end point",
+      "time": "08:38",
+      "timestamp": "1597246725.141700",
+      "is_reply": true
+    },
+    {
+      "sender": "ian",
+      "user_id": "UNLE358UT",
+      "message": "Hmmm @Aaron Tami they’re only seeing it in their prod env - any troubleshooting ideas?  Had them roll back the change to UAT, so it’s using the old (wrong) RBS info, in case there was some kind of conflict with both using the same key.",
+      "time": "08:41",
+      "timestamp": "1597246916.142000",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "Seems like a proxy issue",
+      "time": "08:42",
+      "timestamp": "1597246954.142200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Can you ask them to run those same curl commands on the prod pods where they are seeing the error",
+      "time": "08:45",
+      "timestamp": "1597247144.143300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "I am 95% sure this is a proxy error",
+      "time": "08:45",
+      "timestamp": "1597247156.143800",
+      "is_reply": true
+    },
+    {
+      "sender": "ian",
+      "user_id": "UNLE358UT",
+      "message": "@Aaron Tami they’re wondering why that billing error is related to the proxy\n```Billing endpoint connection failed with status 'OutOfQuota'. Api Key is out of quota. You can either upgrade your Azure Cognitive Service in the Azure Portal or wait for additional quota to be made available.\nfail: Microsoft.CloudAI.Containers.Http.CloudClient[0]\n      Billing endpoint connection failed with status 'OutOfQuota'. Api Key is out of quota. You can either upgrade your Azure Cognitive Service in the Azure Portal or wait for additional quota to be made available.```",
+      "time": "09:13",
+      "timestamp": "1597248815.144100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Let me try running with their api key",
+      "time": "09:16",
+      "timestamp": "1597248962.144900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Can you have them run the curl command in prod pods tho?",
+      "time": "09:22",
+      "timestamp": "1597249377.145500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "When the proxy returns an out of quota error, the pod interprets it as a msft endpoint out of quota error",
+      "time": "09:23",
+      "timestamp": "1597249410.146500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "So it could still be a proxy error",
+      "time": "09:23",
+      "timestamp": "1597249416.146900",
+      "is_reply": true
+    },
+    {
+      "sender": "ian",
+      "user_id": "UNLE358UT",
+      "message": "The guy who can is busy, trying to get him",
+      "time": "09:24",
+      "timestamp": "1597249498.147100",
+      "is_reply": true
+    },
+    {
+      "sender": "ian",
+      "user_id": "UNLE358UT",
+      "message": "Why would the proxy return an out of quota error?  Isn’t that a Microsoft error message?",
+      "time": "09:25",
+      "timestamp": "1597249550.147300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Out of quota is a standard http error code",
+      "time": "09:26",
+      "timestamp": "1597249581.148000",
+      "is_reply": true
+    },
+    {
+      "sender": "ian",
+      "user_id": "UNLE358UT",
+      "message": "I’ve never seen that before - standard like 404/500/403/200?",
+      "time": "09:29",
+      "timestamp": "1597249786.148400",
+      "is_reply": true
+    },
+    {
+      "sender": "ian",
+      "user_id": "UNLE358UT",
+      "message": "What happened when you ran with their key?",
+      "time": "09:30",
+      "timestamp": "1597249839.148600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "It’s working fine for me",
+      "time": "09:33",
+      "timestamp": "1597249987.149000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "",
+      "time": "09:36",
+      "timestamp": "1597250204.150200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "I saw this error during my own testing with some http proxys, althought im not sure how i reproduced it.  Whatever error code msft is using to indicate out of quota error is also used by the proxy for some authorization issue",
+      "time": "09:37",
+      "timestamp": "1597250254.150700",
+      "is_reply": true
+    },
+    {
+      "sender": "ian",
+      "user_id": "UNLE358UT",
+      "message": "But nothing that would cause an OCR timeout or the billing stuff, right?",
+      "time": "09:48",
+      "timestamp": "1597250880.151400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "I have never seen msft return any error",
+      "time": "10:25",
+      "timestamp": "1597253134.152100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "when we are using valid keys",
+      "time": "10:25",
+      "timestamp": "1597253142.152300",
+      "is_reply": true
+    },
+    {
+      "sender": "ian",
+      "user_id": "UNLE358UT",
+      "message": "@Aaron Tami you called it, dude\n\n“we know what the issue is now for the Pro, working on the resolution now\n\nwe were always getting 403 Access Denied from the Prod Proxy when accessing from OCP”",
+      "time": "10:36",
+      "timestamp": "1597253795.152500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "lol, when in doubt, always blame the proxy",
+      "time": "10:40",
+      "timestamp": "1597254058.153000",
+      "is_reply": true
+    },
+    {
+      "sender": "ian",
+      "user_id": "UNLE358UT",
+      "message": "i’m writing that down",
+      "time": "10:42",
+      "timestamp": "1597254137.154000",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "I always just blame the developers",
+      "time": "10:43",
+      "timestamp": "1597254239.154900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "if they start having any memory issues with the ocr-msft containers we can blame the msft developers",
+      "time": "11:15",
+      "timestamp": "1597256150.157700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-08-12.json",
+    "message_count": 29,
+    "start_time": "1597243105.139600",
+    "end_time": "1597256150.157700",
+    "is_thread": true
+  }
+}

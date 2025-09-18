@@ -1,0 +1,86 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-04-09_1744246064.081759_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "neerad.phansalkar",
+    "Xindi Xu",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "I set env var `audit_logs_export_endpoint=RABBIT_MQ` and restarted `search-service`. However, I am still not able to see the audit logs in the search service logs. Am I missing a step? (I also don't see the audit-logs in `/apps/audit-logs/`)",
+      "time": "17:47",
+      "timestamp": "1744246064.081759",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "After setting the env var, we need to restart the services that use the env var (i.e. the service that writes audit logs in your use case).",
+      "time": "18:15",
+      "timestamp": "1744247700.673949",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "for example, if you are editing a grpc endpoint in core-platform-service that would populate audit log, you need to do `cs restart core-platform`",
+      "time": "18:16",
+      "timestamp": "1744247785.839119",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I wasn't able to see the audit-logs in the UI last time I tried. But now i wonders, if it would work after setting `audit_logs_export_endpoint` and restarting api-server :thinking_face:\n[edit] I quickly checked the code and I don't see this env var is used in api-server so restarting it is unlikely to make any difference.",
+      "time": "18:17",
+      "timestamp": "1744247836.728499",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "Oh I see. Let me try that in some time.",
+      "time": "18:18",
+      "timestamp": "1744247880.007859",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "Hmm, I can't seem to get that to work either. Does the case matter (`audit_logs_export_endpoint` vs `AUDIT_LOGS_EXPORT_ENDPOINT`)? In any case, I tried setting both, and restarted all services, but still can't get the audit logs through the search-service logs.",
+      "time": "21:04",
+      "timestamp": "1744257846.105129",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "caps shouldn't matter, but all-caps is what we usually do by default",
+      "time": "21:12",
+      "timestamp": "1744258372.335359",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ohh, i think you need to set it in `env-local-overrides.json` . This file is not checked into git so you need to create one yourself.\n\n`shared-utils/build-utils/shared/env-local-overrides.json`",
+      "time": "21:29",
+      "timestamp": "1744259398.904099",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-04-09.json",
+    "message_count": 8,
+    "start_time": "1744246064.081759",
+    "end_time": "1744259398.904099",
+    "is_thread": true
+  }
+}

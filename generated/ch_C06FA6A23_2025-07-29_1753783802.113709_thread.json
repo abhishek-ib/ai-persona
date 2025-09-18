@@ -1,0 +1,382 @@
+{
+  "id": "ch_C06FA6A23_2025-07-29_1753783802.113709_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "sitaram",
+    "mfichman",
+    "raman.goel"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I’ll take a look, but it may be unrelated. RMQ in particular I am sure was working before I merged this.",
+      "time": "03:10",
+      "timestamp": "1753783802.113709",
+      "is_reply": false
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "Got it,\nThere was a RMQ patch that was deleted as part of this PR.\nI added it again.\nIts still failing though, @raman.goel and I am looking into it",
+      "time": "03:10",
+      "timestamp": "1753783857.923479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "What was the patch?",
+      "time": "03:11",
+      "timestamp": "1753783899.452739",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "https://github.com/instabase/instabase/pull/73020/files",
+      "time": "03:12",
+      "timestamp": "1753783961.374479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Not needed anymore",
+      "time": "03:13",
+      "timestamp": "1753784009.935379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I tested without it. What do the logs say?",
+      "time": "03:13",
+      "timestamp": "1753784030.273149",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "logs were added into the thread linked above.",
+      "time": "03:14",
+      "timestamp": "1753784078.426559",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "We can continue discussion for RMQ there as well",
+      "time": "03:14",
+      "timestamp": "1753784091.299289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah, I see - it’s state-dependent. Should be an easy fix: just need to enable that flag as explained in the message.",
+      "time": "03:17",
+      "timestamp": "1753784238.602259",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "which flag are we talking Matt?",
+      "time": "03:20",
+      "timestamp": "1753784440.878899",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ugh. Never mind. Upgrading rabbit looks likes a real PITA. I think we have to revert the rabbit related changes. What a poorly designed system!",
+      "time": "03:24",
+      "timestamp": "1753784699.686839",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "2025-07-29 06:30:19.978549+00:00 [error] <0.209.0> Feature flags: `classic_mirrored_queue_version`: required feature flag not enabled! It must be enabled before upgrading RabbitMQ.\n\n2025-07-29 06:30:19.992300+00:00 [error] <0.209.0> Failed to initialize feature flags registry: {disabled_required_feature_flag,\n\n2025-07-29 06:30:19.992300+00:00 [error] <0.209.0> classic_mirrored_queue_version}",
+      "time": "03:25",
+      "timestamp": "1753784748.352109",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "yeah, we can't upgrade the version of rmq. We need to turn on some feature flag before upgrading",
+      "time": "03:25",
+      "timestamp": "1753784759.111939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "And further, you have to traverse all the minor versions as well",
+      "time": "03:26",
+      "timestamp": "1753784790.880969",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "true..",
+      "time": "03:26",
+      "timestamp": "1753784806.774739",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "rabbit likes to stay inside the hat",
+      "time": "03:27",
+      "timestamp": "1753784824.624829",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Super terrible, so I’ll revert the rabbitmq changes today. Would be great to keep the other changes as is. Truncate I will look at too, but it’s non-critical. I’ll fix it before code cut.",
+      "time": "03:27",
+      "timestamp": "1753784856.653759",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "cool, truncate PIA can be even disabled if needed",
+      "time": "03:27",
+      "timestamp": "1753784875.332439",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If we didn’t use persistent/durable rabbitmq, we could just nuke the whole state dir. Sadly, I think we can’t do that though.",
+      "time": "03:28",
+      "timestamp": "1753784924.471319",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "but in the above PR, I can’t see the version change of RMQ",
+      "time": "03:29",
+      "timestamp": "1753784943.122289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It’s because I changed from using Ubuntu to chainguard. Chainguard must have a more recent version of rabbit.",
+      "time": "03:29",
+      "timestamp": "1753784984.054019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "One thing I can try is to install the exact version we had before. Sometimes chainguard has multiple versions of a package available.",
+      "time": "03:30",
+      "timestamp": "1753785012.825399",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "Oka, one more thing you should verify is that there is no issue with the number of file_descriptors in rmq chainguard image. we have seen this issue in the past.\nhttps://instabase.slack.com/archives/C084W5PAGQJ",
+      "time": "03:32",
+      "timestamp": "1753785127.818439",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":cry:  looks like there was never an incident report for that one",
+      "time": "03:40",
+      "timestamp": "1753785632.499389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmmm number of file descriptors…. should be an easy fix.m with ulimit. I’ll take a look at that next",
+      "time": "03:41",
+      "timestamp": "1753785669.508749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It is a bit odd though because I would think kubernetes would set that on the container level",
+      "time": "03:41",
+      "timestamp": "1753785697.281809",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Anyway, this is a good exercise because I’m sure at some point we’re gonna have to upgrade rabbit to fix a sec vulnerability",
+      "time": "03:42",
+      "timestamp": "1753785765.365509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We should probably have a plan in place before that happens",
+      "time": "03:43",
+      "timestamp": "1753785784.438159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Currently on this version (from the current release)\n\n```$ dpkg -s rabbitmq-server | grep Version\nVersion: 4.1.1-1```",
+      "time": "03:47",
+      "timestamp": "1753786041.529839",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```/instabase $ apk info rabbitmq-server\nWARNING: opening from cache https://apk.cgr.dev/chainguard: No such file or directory\nrabbitmq-server-4.1-4.1.2-r2 description:\nOpen source RabbitMQ. core server and tier 1 (built-in) plugins\n\nrabbitmq-server-4.1-4.1.2-r2 webpage:\n\n\nrabbitmq-server-4.1-4.1.2-r2 installed size:\n74 MiB```",
+      "time": "03:49",
+      "timestamp": "1753786182.950419",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Huh, 4.1.1 vs 4.1.4 -- should be compatible",
+      "time": "03:49",
+      "timestamp": "1753786191.657319",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Maybe I'm mounting the data dir wrong? I did move where it's located within the container, but I fixed the k8s config to match. I'll check it out",
+      "time": "03:50",
+      "timestamp": "1753786209.804539",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "chainguard has the exact version we need available:\n\n```apk add 'rabbitmq-server=4.1.1-r1'```",
+      "time": "03:55",
+      "timestamp": "1753786512.949349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let me try this first, and then we'll see.",
+      "time": "03:55",
+      "timestamp": "1753786519.208769",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/73027",
+      "time": "03:57",
+      "timestamp": "1753786655.200249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "But also:\n\nBefore:\n\n```cs/mfichman❯ git grep -i mnesia\ndeployment-configs/chart/files/env-vars/rabbitmq-ha.yml:RABBITMQ_MNESIA_BASE: \"/etc/rabbitmq-ha/mnesia/3_13\"\ndeployment-configs/chart/templates/rabbitmq-ha/deployment.yml:          mountPath: /etc/rabbitmq-ha/mnesia\ndeployment-configs/default-patches/rabbitmq-new-mnesia-dir-v4_1.yml:            - name: RABBITMQ_MNESIA_BASE\ndeployment-configs/default-patches/rabbitmq-new-mnesia-dir-v4_1.yml:              value: /etc/rabbitmq-ha/mnesia/4_1\ndeployment-configs/environment-patches/saas/rabbitmq-new-mnesia-dir-v4_1.yml:            - name: RABBITMQ_MNESIA_BASE\ndeployment-configs/environment-patches/saas/rabbitmq-new-mnesia-dir-v4_1.yml:              value: /etc/rabbitmq-ha/mnesia/4_1\nshared-utils/build-utils/envdocs/env-docs.json:    \"RABBITMQ_MNESIA_BASE\": {\nshared-utils/build-utils/envdocs/env-docs.json:        \"description\": \"The env to setup the base for the rmq mnesia\",\nshared-utils/py-utils/model-utils/token-matchers/test/unit/py/instabase/model_utils/tokenizers/test_data/words_60k.csv:amnesia\nshared-utils/py-utils/model-utils/token-matchers/test/unit/py/instabase/model_utils/tokenizers/test_data/words_60k.csv:amnesiac\nshared-utils/py-utils/model-utils/token-matchers/test/unit/py/instabase/model_utils/tokenizers/test_data/words_60k.csv:amnesiacs\nshared-utils/py-utils/model-utils/token-matchers/test/unit/py/instabase/model_utils/tokenizers/test_data/words_60k.csv:amnesias\nthird-party/docker/rabbitmq-ha/Dockerfile:                        erlang-mnesia=$SUPPORTED_ERLANG_VERSION \\\nthird-party/docker/rabbitmq-ha/Dockerfile:ENV RABBITMQ_MNESIA_BASE=/etc/rabbitmq/mnesia/3_13\ncs/mfichman❯ nvim third-party/docker/rabbitmq-ha/Dockerfile```",
+      "time": "03:59",
+      "timestamp": "1753786747.118389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "After:\n\n\n```cs/mfichman❯ git grep -i mnesia\ndeployment-configs/chart/templates/rabbitmq-ha/deployment.yml:          mountPath: /home/rabbitmq/mnesia\nshared-utils/py-utils/model-utils/token-matchers/test/unit/py/instabase/model_utils/tokenizers/test_data/words_60k.csv:amnesia\nshared-utils/py-utils/model-utils/token-matchers/test/unit/py/instabase/model_utils/tokenizers/test_data/words_60k.csv:amnesiac\nshared-utils/py-utils/model-utils/token-matchers/test/unit/py/instabase/model_utils/tokenizers/test_data/words_60k.csv:amnesiacs\nshared-utils/py-utils/model-utils/token-matchers/test/unit/py/instabase/model_utils/tokenizers/test_data/words_60k.csv:amnesias\nthird-party/docker/rabbitmq-ha/scripts/init-rabbitmq.sh:export RABBITMQ_MNESIA_BASE=/home/rabbitmq/mnesia```",
+      "time": "04:00",
+      "timestamp": "1753786801.346309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "There is a slight difference here. Originally, we mounted\n\nrabbitmqvol => /etc/rabbitmq-ha/mnesia\nand then set MNESIA_BASE=/etc/rabbitmq-ha/mnesia/4_1\n\nNow, we are mounting\n\nrabbitmqvol => /home/rabbitmq/mnesia\nand set MNESIA_BASE=/home/rabbitmq/mnesia\n\nI think I need to change the latter to\n\nMNESIA_BASE=/home/rabbitmq/mnesia/4_1\n\nto match",
+      "time": "04:01",
+      "timestamp": "1753786868.361149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I put that in this PR as well:\n\nhttps://github.com/instabase/instabase/pull/73027/files\n\nPTAL?",
+      "time": "04:02",
+      "timestamp": "1753786959.563409",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "Great looks good to me!\nThanks :v:",
+      "time": "04:06",
+      "timestamp": "1753787179.502859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```getconf OPEN_MAX\n1048576```\nThe number of FDs is OK; though I hear erlang may not respect it...",
+      "time": "04:17",
+      "timestamp": "1753787835.010389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://instabase.slack.com/archives/C084W5PAGQJ/p1734030245720919?thread_ts=1734027532.454199&cid=C084W5PAGQJ this linked file doesn't exist anymore, so I wonder if this was a bug with a particular rmq version...",
+      "time": "04:44",
+      "timestamp": "1753789463.881909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We also were previously building rabbitmq from source -- even with chainguard. With my updates, we now install the package from the chainguard/alpine package registry. So, I think it's more likely to be configured correctly and not run into the FD issue. Regardless, I'll keep an eye on that.",
+      "time": "04:56",
+      "timestamp": "1753790217.971609",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "We have an alert setup for that as well, so if there would be anything, it would get paged.",
+      "time": "05:02",
+      "timestamp": "1753790546.002539",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Fix for dbtruncate: https://github.com/instabase/instabase/pull/73030",
+      "time": "05:03",
+      "timestamp": "1753790616.300459",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-07-29.json",
+    "message_count": 45,
+    "start_time": "1753783802.113709",
+    "end_time": "1753790616.300459",
+    "is_thread": true
+  }
+}

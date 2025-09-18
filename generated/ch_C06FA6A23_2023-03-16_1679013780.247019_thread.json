@@ -1,0 +1,86 @@
+{
+  "id": "ch_C06FA6A23_2023-03-16_1679013780.247019_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "Dominic Fannjiang",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Hi all, I started getting these errors when running tasks on app-tasks, which I'm building locally\n```set Traceback (most recent call last):\n  File \"/instabase/workers/celery-app-tasks/py/instabase/utils/rpc/pool.py\", line 113, in get_client\n    client = self._clients.get(block=False)\n  File \"/opt/python-3.7.16/lib/python3.7/queue.py\", line 167, in get\n    raise Empty\n_queue.Empty\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/instabase/workers/celery-app-tasks/py/instabase/utils/rpc/pool.py\", line 83, in _create_thrift_client\n    transport.open()\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/thrift/transport/TTransport.py\", line 155, in open\n    return self.__trans.open()\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/thrift/transport/TSocket.py\", line 146, in open\n    raise TTransportException(type=TTransportException.NOT_OPEN, message=msg)\nthrift.transport.TTransport.TTransportException: Could not connect to any of [('192.168.65.2', 9900)]```\nAny ideas about whats going wrong in my local setup?",
+      "time": "17:43",
+      "timestamp": "1679013780.247019",
+      "is_reply": false
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "I wasn't having these issues and have been running tasks locally, and then all of a sudden this started happening",
+      "time": "17:43",
+      "timestamp": "1679013807.315349",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "I noticed in my docker processes that my `app-tasks` service has no ports listed? I wonder if thats related",
+      "time": "17:44",
+      "timestamp": "1679013869.577849",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "you seem to be trying to get a client to file-tservice, which is deprecated (it runs on port 9900). Try checking that you don’t have any env vars with ENABLE_FILE_SERVICE_V2 = false.",
+      "time": "17:53",
+      "timestamp": "1679014394.952539",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Hm I don't see where it could be set to false.\n\nAlso it seems to only be getting a file-tservice client because that line in `pool.py` is failing",
+      "time": "17:57",
+      "timestamp": "1679014636.533579",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "or are you saying it should never get to this `rpc/pool.py` file because that is for the thrift client to file-tservice",
+      "time": "17:57",
+      "timestamp": "1679014677.448269",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah you shouldn’t even be trying to initialize a client to file-tservice.",
+      "time": "17:58",
+      "timestamp": "1679014708.500289",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Dominic Fannjiang I think somehow you are not on the correct code path/ Thrift is gone and any attempt to create a thrift client should fail",
+      "time": "18:17",
+      "timestamp": "1679015841.372159",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-03-16.json",
+    "message_count": 8,
+    "start_time": "1679013780.247019",
+    "end_time": "1679015841.372159",
+    "is_thread": true
+  }
+}

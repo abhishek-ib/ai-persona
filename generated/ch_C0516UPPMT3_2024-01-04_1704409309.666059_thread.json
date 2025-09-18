@@ -1,0 +1,130 @@
+{
+  "id": "ch_C0516UPPMT3_2024-01-04_1704409309.666059_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "hannah",
+    "Eric Han",
+    "avi",
+    "Travis",
+    "Elan Sharony",
+    "Bas"
+  ],
+  "messages": [
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "@Ben Wood and I had a good session with Sixfold today (one of our paying commercial customers). Sixfold is a generative AI company looking to help underwriters. They process various insurance documents that are heavy on handwriting, tables and checkboxes. Interestingly, they don't want to extract structured data from the documents. They're simply looking for a complete transcription of the document. They are then going to use the transcription, plumb it into a vector database and then support their own querying with specific underwriting context. They said the results they get with our transcription are significantly higher than if they use GPT directly to transcribe the document (or if they use a commodity OCR like textract).\n\nSo far they've used the prompt below in Converse and we walked them through how to use the same prompt in a reasoning field in build. The challenge that they're running into is that the transcription breaks after ~2+ pages. From my perspective, it sounds like they may really only need the raw OCR output? But wanted to share here in case there are any other ideas on best way to solve this use case and if exposing raw OCR output is feasible cc: @lydia @Eric Han and all if you have thoughts? Below is the prompt they're using for transcription and here is the google doc (https://docs.google.com/document/d/1dYjHQgE4Ax9PRy4QAM7rIU_QVVp9CxrX/edit) with desired output. For what it's worth they said we had by far the best ability to do this out of the competitors they evaluated (and they shared they evaluated nanonet's new LLM beta offering, Multimodal (https://multimodal.dev),  Base64 (https://base64.ai/), Mea (https://www.meaplatform.com/platform/) - these are likely some of upcoming competitors in this space cc: @Tom @Bas)\n\n> Take a deep breath. This is an insurance application. Transcribe PAGES 1-4 of this document. Take your time and make sure you get everything right. [EXTERMELY IMPORTANT instructions] Where there is a checkbox with a label, only transcribe the label if the relevant checkbox is checked. ONLY transcribe fields that are filled in Insert a paragraph break between different sections of the application. Where there is a table, take time to make sure you add a line break between all values and format the information EXACTLY like this: [row1 name],[column1 name]: [value for row 1, column 1] [row 1 name],[column2 name]: [value for row 1, column 2] [Row 2 name] [column1 name]: [value for row 2, column 1] ETC",
+      "time": "15:01",
+      "timestamp": "1704409309.666059",
+      "is_reply": false
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "this is possible in build with udfs i think. We provide the document text body in the udf context. So this can probably just be piped to a field output. Do they care about the structure of the text or is a big text blob fine?",
+      "time": "15:07",
+      "timestamp": "1704409628.644709",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "how much text are in the documents they’re trying to process?",
+      "time": "15:07",
+      "timestamp": "1704409678.228299",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "They do care about the structure - they want to ideally maintain the same structure of the document with breaks between sections and tables formatting correctly. The documents can be anything from 2-10 pages to 100 page medical forms. When tested on a 2 page form with the prompt above in one field in build call \"Transcription\" with reasoning turned on it actually worked surprisingly well on the spot.",
+      "time": "15:14",
+      "timestamp": "1704410083.588349",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "I think the challenges is it becomes quite brittle as pages increase",
+      "time": "15:15",
+      "timestamp": "1704410111.971309",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "they just want OCR? We could setup a basic OCR output via the the `load_record` endpoint.",
+      "time": "16:00",
+      "timestamp": "1704412801.119469",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "this is available within Human Review and I could construct an export function to save to a text file.",
+      "time": "16:02",
+      "timestamp": "1704412922.179569",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "@Elan Sharony for the text we provide through the udf context, does it retain white spaces and line breaks?",
+      "time": "16:38",
+      "timestamp": "1704415134.484379",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Will confirm shortly, but believe whitespace and line breaks are retained",
+      "time": "16:47",
+      "timestamp": "1704415639.072269",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "So I think UDFs might work with the caveat that the text is smaller than a certain threshold",
+      "time": "16:47",
+      "timestamp": "1704415678.476579",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i don't think just returning the raw OCR text would work -- they also want some reformatting, like formatting the table into some custom format as described in the prompt. so you'll need to pass the OCR text to the model for the model to do that reformatting. the reason why we did better is because our OCR to flat text technique preserves & encodes structure elements like table & checkbox better than other people, i think.\n\nthis feels to me more like the _translate app_ that we had; pass each page to the model, translate it, and combine all pages to be the final output. would it make more sense if we build such an app for them that allows some custom prompt, and they buy that app?\n\nif we have the classic platform, this is probably how i will do:\n\nbuild a flow, set each page as a record in map records\nrun a refiner that uses the given prompt, each record then has a refiner field that's its transcribed content\nuse a map record step or UDF step to combine all records into one. the combined text is the final output.",
+      "time": "17:43",
+      "timestamp": "1704419037.770279",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "```They're simply looking for a complete transcription of the document. They are then going to use the transcription, plumb it into a vector database and then support their own querying with specific underwriting context. ```\nThis scenario sounds quite interesting. We are building \"Converse Apps\" launching in 24.08 (should be demo ready by 24.06 internally). With these Converse Apps, you will be able to create an app to chat with a scoped corpus of docs and chat with it using multidoc. I wonder if we can serve them directly through this?\n\n@Ben Wood do you have a more detailed writeup of their use case? What is the \"specific underwriting context\"? How are they querying these docs? Would love to see if it's a good fit and organise a user research call with them if yes. cc: @Varun Jain",
+      "time": "22:18",
+      "timestamp": "1704435481.274749",
+      "is_reply": true
+    },
+    {
+      "sender": "Bas",
+      "user_id": "U0290LSC5QA",
+      "message": "Thanks @avi . You have the same questions I have. I would love for them to build more of their stack on ai hub than they are currently envisioning. It would strengthen our proposition. Would love to keep posted on developments here and happy to join any sessions where insurance knowledge is helpful",
+      "time": "22:23",
+      "timestamp": "1704435802.220659",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-01-04.json",
+    "message_count": 13,
+    "start_time": "1704409309.666059",
+    "end_time": "1704435802.220659",
+    "is_thread": true
+  }
+}

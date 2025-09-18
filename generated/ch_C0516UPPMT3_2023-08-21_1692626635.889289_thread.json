@@ -1,0 +1,234 @@
+{
+  "id": "ch_C0516UPPMT3_2023-08-21_1692626635.889289_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Kerry",
+    "andy",
+    "Timo Meijrink",
+    "Adam",
+    "Tom",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Timo Meijrink",
+      "user_id": "U02GCQ0JLUC",
+      "message": "I got an email from a prospect trying AI Hub, together we build an app last Friday that worked and we ran a batch through it. He tried to access it today and got an error trying to look at the output. Running the batch again works flawlessly. No urgency right now, because the new run worked, but it did dent the trust in AI hub. Any idea what happened? (we have the jobID in the url, but let me know what else you might need and I can request it); user: <mailto:sigudimetla@deloitte.com|sigudimetla@deloitte.com>",
+      "time": "07:03",
+      "timestamp": "1692626635.889289",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "could this be related to the prod upgrade?\n\n@Adam i know you had to manually fix the sample ibflowresults files for public apps - do we expect the same issue for all previous app runs?",
+      "time": "09:27",
+      "timestamp": "1692635229.697509",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Hmm that depends on where previous app runs were stored. If they are stored in the system repo they will likely no longer work. We might just want to filter those out in the query for past jobs",
+      "time": "09:54",
+      "timestamp": "1692636861.807579",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for an app run started by a user, the results should be stored in the user’s repo, so you’re right - the problem for sample results shouldn’t apply here",
+      "time": "10:06",
+      "timestamp": "1692637617.510979",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Tom i see that you reacted to the original message with a :heavy_plus_sign: - are you saying the same issue for your app batch results? if so, can you provide the link to those results?",
+      "time": "10:12",
+      "timestamp": "1692637930.747389",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "@Serena I think this is a migration issue :grimacing:\n```\"Could not open the Flow binary at system/global/fs/Instabase Drive/Applications/Deployed/All/Instabase/Resume Parser/0.0.9/bin/Resume Parser-0.0.9.ibflowbin. Error: Cannot open a non-existent file in rb mode. Path: system/global/fs/Instabase Drive/Applications/Deployed/All/Instabase/Resume Parser/0.0.9/bin/Resume Parser-0.0.9.ibflowbin\"```\nResults seem to still be referencing the old binary paths. I’m not sure this is resolvable with the same file editing that we used before given the number of affected files",
+      "time": "10:14",
+      "timestamp": "1692638057.282899",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Resolutions here are probably to backport some kind of regex-ish parsing in the results API to do a string replacement to the correct location or just to truncate results to runs after this deploy",
+      "time": "10:15",
+      "timestamp": "1692638119.074779",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i don’t think we should truncate runs to after this deploy - this means users would lose the results of past app runs",
+      "time": "10:18",
+      "timestamp": "1692638338.944939",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "filepath parsing in the results API also doesn’t seem like a sustainable option going forward. it’s a hack that we’d have to live with for a while",
+      "time": "10:50",
+      "timestamp": "1692640202.500029",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "It also isn’t really feasible to track down every results file and replace the path with the new location programmatically, and this is only affecting results from pre-migration. I agree that it’s hacky but it might be our best way of supporting old results going forward",
+      "time": "10:55",
+      "timestamp": "1692640558.535149",
+      "is_reply": true
+    },
+    {
+      "sender": "Tom",
+      "user_id": "UUEDM4T9R",
+      "message": "Sorry for any confusion @Serena, I haven't had the issue, was just highlighting the post given its a live customer engagement and was keen to get to resolution so it doesn't happen again!",
+      "time": "10:56",
+      "timestamp": "1692640561.017839",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "this is a pretty significant issue, need to have a solution to this asap",
+      "time": "10:56",
+      "timestamp": "1692640561.995489",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "@Adam, I think we need to write a script that migrates all old results to new results.\n1. Scan all Apps from the `deployed_solutions` table\n2. Find all jobs associated with each App\n3. Update the results filepath for each job to work with new results",
+      "time": "11:00",
+      "timestamp": "1692640844.928799",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "we can test the script against UAT since the issue is present there too",
+      "time": "11:01",
+      "timestamp": "1692640888.417439",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Do you mean a script that runs outside of the cluster and not by DM like a post-install? Is that achievable using only IB APIs?",
+      "time": "11:02",
+      "timestamp": "1692640924.838389",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "Script that we are going to start writing to complete jobs migration:\n1. Read all the Apps for an environment through an API call\n2. Retrieve all the Jobs run by each App through an API call\n3. For each Job, read the ibflowresults file using the output folder in the response to (2)\n4. Override the binary path locally and write the new ibflowresults file to its current file location\nOpen Questions:\n• @Xindi Xu @Heymian, are read/write API operations open on prod for admin accounts?",
+      "time": "11:32",
+      "timestamp": "1692642727.486579",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Over the weekend, while resolving this issue <#C05NGS082QM|>, we opened up text editor to edit certain files, so I think read/write apis are open on prod, at least after we swap server-nginx to dev mode",
+      "time": "11:37",
+      "timestamp": "1692643049.469619",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "based on the current nginx config, read/write API operations using `/api/v2/files` should be allowed, so we do NOT need to turn on `isAIHubDevEnvironment: true` for the nginx config\n\nwe block read/write operations to `system/global/…/Deployed/…` and `system/global/…/Marketplace/…`, but these paths don’t need to be accessed to override the binary paths in the ibflowresults file in each user repo (example path for the ibflowresults files we need to overwrite: `serena/my-repo/fs/Instabase Drive/app-runs/753d8fa7-3e43-4e0d-a27f-543b1c45ce40/1689893680430/output/batch.ibflowresults`)",
+      "time": "11:37",
+      "timestamp": "1692643073.086469",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "thanks all. also tagging @Pridhvi Vegesna in case any filesystem v2 API questions pop up. would be good to get your help w/ Adam on this :thank_you:",
+      "time": "11:38",
+      "timestamp": "1692643112.307549",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": ":+1: thanks team. let's get this addressed -- think we have a clear solution now",
+      "time": "11:42",
+      "timestamp": "1692643331.877839",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "Mid-day PST update:\n• script is being written by @Adam … a little more than halfway complete\n• goal is to have everything migrated by EOD. if not or the script is taking too long to run, we’ll hand this off to Balaram to help babysit the script\n• @Timo Meijrink, if you need to quickly unblock your customer, you can always re-run your App on the same documents and generate a new batch of results",
+      "time": "13:16",
+      "timestamp": "1692648961.044109",
+      "is_reply": true
+    },
+    {
+      "sender": "Timo Meijrink",
+      "user_id": "U02GCQ0JLUC",
+      "message": "Thanks Andy, we ran it again this morning and it worked :+1:",
+      "time": "13:44",
+      "timestamp": "1692650698.039169",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Update on this:\n\nThe script (https://github.com/instabase/instabase/pull/45520) is finished and we have tested on UAT. We observed that runs using the system repo as their output folder (sample file generation) failed to migrate. Sample file runs have already been resolved in the <#C05NGS082QM|> so we are going to exclude all results files in the system repo from this script and only migrate results in user repos (such reads and writes would have been blocked by the nginx config anyway).\n\nFrom testing on UAT, this took about ~2-3s for each job requiring a migration and ~1s for each job that did not need to be migrated. We can’t easily get a number of jobs on prod, but we can estimate that this will take an hour or two to run.\n\n@Serena I see you’re part of product oncall right now- are you able to run the script on your machine? I am going to be AFK starting at 5pm PST today",
+      "time": "15:38",
+      "timestamp": "1692657493.548259",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Update:\nI’ve finished running the script, so everyone’s old app batches from before the 23.07 deployment should be viewable now!\n\nAdam and I confirmed that our old app batches are fixed.",
+      "time": "17:10",
+      "timestamp": "1692663007.636629",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "thanks all! :raised_hands:",
+      "time": "17:11",
+      "timestamp": "1692663093.402899",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "I can confirm that it works now! Thank you team.",
+      "time": "19:23",
+      "timestamp": "1692671003.443169",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-08-21.json",
+    "message_count": 26,
+    "start_time": "1692626635.889289",
+    "end_time": "1692671003.443169",
+    "is_thread": true
+  }
+}

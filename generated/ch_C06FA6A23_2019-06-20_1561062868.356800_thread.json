@@ -1,0 +1,150 @@
+{
+  "id": "ch_C06FA6A23_2019-06-20_1561062868.356800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "Aaron Vontell",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "What does your header look like?",
+      "time": "13:34",
+      "timestamp": "1561062868.356800",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "{‘Authorization’: ‘Bearer JLCIseL1Xy1B5KpIs1lKl8ivedJEls’}",
+      "time": "13:35",
+      "timestamp": "1561062950.356900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Not too familiar with our credential checking code, but my endpoint looks like this:\n```\n@handler_util.catch_bad_json_request\n  @verify_credentials(OAuth2Scope.REPO)\n  def post(self):\n```",
+      "time": "13:36",
+      "timestamp": "1561062996.357100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "That looks like an invalid URL to me from an api/v1/drives perspective",
+      "time": "13:36",
+      "timestamp": "1561062999.357300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "our code expects that you must provide the repo you are referring to in the URL",
+      "time": "13:36",
+      "timestamp": "1561063008.357500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "in particular this is true when you are requesting something with REPO scope",
+      "time": "13:37",
+      "timestamp": "1561063035.357700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@dlluncor this endpoint works in regression tests, not sure what the difference might be for that vs outside of a regression test",
+      "time": "13:37",
+      "timestamp": "1561063057.357900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Should I be changing the `@verify_credentials(OAuth2Scope.REPO)` to something different?",
+      "time": "13:37",
+      "timestamp": "1561063072.358100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "did you write your regression test to be both cookie based and auth based?",
+      "time": "13:37",
+      "timestamp": "1561063075.358300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "api/v1/drives/unzip is not a sufficient URL",
+      "time": "13:38",
+      "timestamp": "1561063090.358500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "we should be including the root folder we are trying to unzip or something to that effect, perhaps i missed this detail in the code review",
+      "time": "13:38",
+      "timestamp": "1561063110.358700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "you can see other tests which include the auth and cookie based methods",
+      "time": "13:38",
+      "timestamp": "1561063131.359000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "But the problem is that the root folder we are unzipping is not a folder, it’s a file path, so we can’t do `..../api/v1/drives/vontell/workspace/fs/.../my_zip.zip/unzip`",
+      "time": "13:39",
+      "timestamp": "1561063163.359200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I could instead have the url be the destination they want to unzip to, would that be better?",
+      "time": "13:41",
+      "timestamp": "1561063292.360200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "And ah yeah looks like my test was cookie-based only",
+      "time": "13:43",
+      "timestamp": "1561063413.363300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "for consistency with our drive API, let’s use the repo_owner/repo_name/ etc corresponding to the source directory",
+      "time": "13:45",
+      "timestamp": "1561063555.365300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-06-20.json",
+    "message_count": 16,
+    "start_time": "1561062868.356800",
+    "end_time": "1561063555.365300",
+    "is_thread": true
+  }
+}

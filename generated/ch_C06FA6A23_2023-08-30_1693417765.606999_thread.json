@@ -1,0 +1,158 @@
+{
+  "id": "ch_C06FA6A23_2023-08-30_1693417765.606999_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe",
+    "Dominic Fannjiang"
+  ],
+  "messages": [
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "FYI we're looking in to this and trying one more potential fix -- if that doesn't resolve the connection issues then we will merge https://github.com/instabase/instabase/pull/46013 to go back to utilizing database containers on the jenkins workers until the sqlserver issue is root caused (cc @mfichman, <!subteam^S038TM462UX>)",
+      "time": "10:49",
+      "timestamp": "1693417765.606999",
+      "is_reply": false
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "FWIW, I'm now getting this error\n```\n[2023-08-30T17:10:39.543Z] FAIL: rollback_test.go:119: DBRollbackTestSuite.TestRollbackToCheckpoint\n\n[2023-08-30T17:10:39.543Z] \n\n[2023-08-30T17:10:39.543Z] rollback_test.go:121:\n\n[2023-08-30T17:10:39.543Z]     s.setupTest(c, d)\n\n[2023-08-30T17:10:39.543Z] /instabase_dir/shared-utils/go-utils/src/instabase/utils/db/session/testsession.go:91:\n\n[2023-08-30T17:10:39.543Z]     c.Assert(err, IsNil)\n\n[2023-08-30T17:10:39.543Z] ... value mssql.Error = mssql.Error{Number:1802, State:0x4, Class:0x10, Message:\"CREATE DATABASE failed. Some file names listed could not be created. Check related errors.\", ServerName:\"sqlserver-0\", ProcName:\"\", LineNo:1, All:[]mssql.Error{mssql.Error{Number:701, State:0x7b, Class:0x11, Message:\"There is insufficient system memory in resource pool 'default' to run this query.\", ServerName:\"sqlserver-0\", ProcName:\"\", LineNo:1, All:[]mssql.Error(nil)}, mssql.Error{Number:1802, State:0x4, Class:0x10, Message:\"CREATE DATABASE failed. Some file names listed could not be created. Check related errors.\", ServerName:\"sqlserver-0\", ProcName:\"\", LineNo:1, All:[]mssql.Error(nil)}}} (\"mssql: CREATE DATABASE failed. Some file names listed could not be created. Check related errors.\")```",
+      "time": "12:26",
+      "timestamp": "1693423581.866649",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@sean.donohoe I think this is related to the namespace leak issue",
+      "time": "13:11",
+      "timestamp": "1693426285.757059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/46023/files",
+      "time": "13:11",
+      "timestamp": "1693426293.505179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We should probably restart the sqlserver pod again",
+      "time": "13:11",
+      "timestamp": "1693426317.020929",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Yeah I can bounce that now -- do we want to wait to see whether unit tests pass for your PR, or all good just re-triggering?",
+      "time": "13:13",
+      "timestamp": "1693426434.532299",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The build on my branch may not pass regardless, since sqlserver is out of memory.",
+      "time": "13:14",
+      "timestamp": "1693426465.047089",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yep, just wanted to double check haha, bouncing now",
+      "time": "13:14",
+      "timestamp": "1693426488.475829",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let's bounce it -- I'll restart the build if I need to",
+      "time": "13:14",
+      "timestamp": "1693426493.913679",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "new pod's back up :crossed_fingers:",
+      "time": "13:16",
+      "timestamp": "1693426613.363989",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "ran this build (https://jenkins.instabase.com/blue/rest/organizations/jenkins/pipelines/instabase/branches/PR-45765/runs/12/nodes/19/steps/32/log/?start=0) soon after matt's PR was merged, but got errors like\n```FAIL: text_size_test.go:42: DBAccessorTestSuite.TestLargeTextReadWrite\n[2023-08-30T23:42:43.390Z] \n[2023-08-30T23:42:43.390Z] text_size_test.go:46:\n[2023-08-30T23:42:43.390Z]     s.testLargeTextReadWrite(c)\n[2023-08-30T23:42:43.390Z] text_size_test.go:27:\n[2023-08-30T23:42:43.390Z]     c.Assert(err, IsNil)\n[2023-08-30T23:42:43.390Z] ... value *errors.errorString = &errors.errorString{s:\"invalid connection\"} (\"invalid connection\")```",
+      "time": "16:48",
+      "timestamp": "1693439288.778719",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Huh, that one is mysql. Probably a different issue. Can you rerun? That's the only time I've seen that error so far.",
+      "time": "16:49",
+      "timestamp": "1693439360.120289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also saw this:\n\n```2023-08-30T23:42:43.428Z] time=2023-08-30T23:30:02Z level=ERROR path=utils/db/session/dbsession.go:409 msg=\"SQL DB: pq: the database system is shutting down\" operation=db/session/DBSessionImpl.Exec\n[2023-08-30T23:42:43.428Z] \n[2023-08-30T23:42:43.428Z] ----------------------------------------------------------------------\n[2023-08-30T23:42:43.428Z] FAIL: cleanup_test.go:181: DBCleanupTestSuite.TestCleanupSchema2208\n[2023-08-30T23:42:43.428Z] \n[2023-08-30T23:42:43.428Z] cleanup_test.go:183:\n[2023-08-30T23:42:43.428Z]     s.testCleanupSchema2208(c, d)\n[2023-08-30T23:42:43.428Z] cleanup_test.go:72:\n[2023-08-30T23:42:43.428Z]     c.Assert(err, IsNil)\n[2023-08-30T23:42:43.428Z] ... value *errors.errorString = &errors.errorString{s:\"driver: bad connection\"} (\"driver: bad connection\")```\n@sean.donohoe looks like the databases restarted at around 7:42 ET",
+      "time": "16:50",
+      "timestamp": "1693439453.505439",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Roughly 00:00 UTC, which is suspicious.",
+      "time": "16:51",
+      "timestamp": "1693439479.077399",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Looks like both postgres and mysql restarted at about the same time.",
+      "time": "16:52",
+      "timestamp": "1693439522.499119",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey yeah, my apologies, I was setting up the nightly cron job for restarting the databases, should be good now",
+      "time": "17:08",
+      "timestamp": "1693440519.599759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Gotcha! cc @Dominic Fannjiang :arrow_up: If you retry, should all be good now :slightly_smiling_face:",
+      "time": "17:17",
+      "timestamp": "1693441053.657139",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-08-30.json",
+    "message_count": 17,
+    "start_time": "1693417765.606999",
+    "end_time": "1693441053.657139",
+    "is_thread": true
+  }
+}

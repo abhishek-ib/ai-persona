@@ -1,0 +1,167 @@
+{
+  "id": "ch_C06FA6A23_2020-06-09_1591749023.073300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Felicia",
+    "Mohit",
+    "Kerry",
+    "Jonathan Shih"
+  ],
+  "messages": [
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "not sure who to tag, @Jonathan Shih? I’m running a flow (https://dogfood.instabase.com/apps/flow/edit/ib_eng/tests/fs/Test%20Drive/tests/golden-dataset-tests/ScanBoxTests/w2/golden.ibflow#) that doesn’t have a pre flow udf step, but it’s been stuck on “Running Pre-Flow UDF” for a while now on dogfood.",
+      "time": "17:30",
+      "timestamp": "1591749023.073300",
+      "is_reply": false
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "oh I thought it was just a problem with my local. That’s happening to me too",
+      "time": "17:31",
+      "timestamp": "1591749064.073500",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "Well I’m in the middle of debugging it, so I guess I’ll take ownership of this for now. Unless someone else knows what’s up",
+      "time": "17:31",
+      "timestamp": "1591749095.073700",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@Felicia just ran your flow, this seems to be the error\n```msg\t\n\"IBError('Custom Script Folder Execution exception: Your script is attempting to import from a ib.custom. library which is not provided in the list of modules to load. import specified: ib.custom.us_markets.get_name_or_address')\"\nspan.kind\t\n\"consumer\"\nstack\t\n\"  File \"/home/ibuser/.local/lib/python3.7/site-packages/celery/app/trace.py\", line 385, in trace_task\n    R = retval = fun(*args, **kwargs)\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/celery/app/trace.py\", line 648, in __protected_call__\n    return self.run(*args, **kwargs)\n  File \"/instabase/workers/celery-app-tasks/py/instabase/registry/tasks.py\", line 2187, in prep_flow_v2\n    flow_binary_data=binary_data, flow_input_str=flow_input_str)\n  File \"/instabase/workers/celery-app-tasks/py/instabase/flow/util/udf_hooks.py\", line 59, in run_prep_udf_blocking\n    flow_input.get_resource_reader_config())\n  File \"/instabase/workers/celery-app-tasks/py/instabase/flow/util/task_lib.py\", line 94, in execute_custom_function_from_scripts_dir\n    log_err=True)\n\"```",
+      "time": "17:36",
+      "timestamp": "1591749417.074000",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "source: https://dogfood.instabase.com/jaeger/trace/286c4c7e7adff5fd",
+      "time": "17:37",
+      "timestamp": "1591749425.074200",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "@Mohit how do you log into that?",
+      "time": "17:38",
+      "timestamp": "1591749495.074500",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "password is in 1pass under “tracing”",
+      "time": "17:38",
+      "timestamp": "1591749526.074700",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": ":+1: thanks",
+      "time": "17:39",
+      "timestamp": "1591749540.074900",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "thanks @Mohit! let me look at that. there are scripts in the scripts folder, i’ll need to get rid of them :thinking_face: ,my refiner shouldn’t be using any scripts",
+      "time": "17:39",
+      "timestamp": "1591749596.075100",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "for future, you can always run a flow,\n• go to https://dogfood.instabase.com/jaeger\n• select api-server-apps in sidebar under “service”\n• Click “Find traces” to see what is going on \nas documented here (https://docs.google.com/document/d/1DMNxhIu3py_qZhuSxxOHJLet3jUg_hDkaEhjkQ0XO2c/edit#heading=h.lu30o248hoz0)\nFeel free to reach out to me if you have questions about tracing :slightly_smiling_face:",
+      "time": "17:41",
+      "timestamp": "1591749713.075300",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "removing all those scripts from my scripts folder worked, my flow completed",
+      "time": "17:48",
+      "timestamp": "1591750123.075800",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": ":100:",
+      "time": "17:48",
+      "timestamp": "1591750139.076000",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@Felicia\ni ll add username=felicia based search also (so that you can directly see all your flow runs in jaeger UI), its already there for flow v2 :slightly_smiling_face:",
+      "time": "17:50",
+      "timestamp": "1591750214.076200",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "lol unfortunately, the flow i’m running needs the script, but it’s not importing anything from marketplace…",
+      "time": "17:58",
+      "timestamp": "1591750690.076500",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Felicia - you probably copied that flow from some other repo? :slightly_smiling_face:  `ib.custom.us (http://ib.custom.us)_markets.get_name_or_address` is a UDF in the hidden `.flow/` folder in the `ib_solution/solution` repo.  Your flow is in `ib_eng/tests/` , the `.flow/` folder in this repo doesn’t have a `us_markets` module (see https://dogfood.instabase.com/ib_eng/tests/fs/Test%20Drive/.flow/)\n\n`ib.custom` is importing from the `.flow` folder, and `ib.market` is importing from a marketplace UDF package. `ib.custom`’s scope is a repo, and `ib.market` is the entire env. cc @Jonathan Shih not sure if the errors you see are similar to this.\n\nand @Mohit - tracing is awesome :slightly_smiling_face:",
+      "time": "18:38",
+      "timestamp": "1591753123.076900",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "no haha I’m debugging @Shivam’s flow right now, which doesn’t have any reference to market or custom",
+      "time": "18:39",
+      "timestamp": "1591753170.077100",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "Yeah I copied the project from another folder! But I didn't need any of the functions in the scripts folder. It's good to  know for my flow that it didn't work because of the ib tests repo, thanks @Kerry!",
+      "time": "18:44",
+      "timestamp": "1591753494.077300",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "lol i realized what was my problem… apparently fetcher uses webdriver tasks which i wasn’t running xD",
+      "time": "19:31",
+      "timestamp": "1591756319.077700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-06-09.json",
+    "message_count": 18,
+    "start_time": "1591749023.073300",
+    "end_time": "1591756319.077700",
+    "is_thread": true
+  }
+}

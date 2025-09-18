@@ -1,0 +1,118 @@
+{
+  "id": "ch_C05L87V014J_2025-08-04_1754334885.584769_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "mfichman",
+    "tony.shi"
+  ],
+  "messages": [
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Good afternoon. I seem to be running into permissions issues with file service when accessing files/directories through the org runner accounts on my crafting sandbox (https://https--tonybackend3-instabase.instabase.site.sandboxes.run/).\n```2025/08/04 19:00:15 ERROR /src/fileservice/clients/s3_client.go:419 -- Failure during stat. Path: d4e4646c-17d0-4337-b2e0-3faaca753e9f/app-runs Err: operation error S3: HeadObject, https response error StatusCode: 403, RequestID: 719FCTC5GKXJA2KS, HostID: xuRLUfcxoh0kFUqM7JgC06JkAKjER/lvbD3ObuHxWozMLuTLo0Wx1zSl/RRFb8LIvamSz97YgTPr4kuT/uPR0QdYDIRFB2X+, api error Forbidden: Forbidden\n2025/08/04 19:00:15 ERROR /src/fileservice/handler/file.go:806 -- [INTERNAL]: Failure during mkdir. Could not stat Path app-runs Err Code: INTERNAL, Message: Failure during stat.\n2025/08/04 19:00:15 ERROR /src/fileservice/handler/file.go:324 -- [ERROR][mkdir] Username: tonyorg-runner, Path: tonyorg/tony.shi_instabase.com/fs/Instabase Drive/app-runs, Err: rpc error: code = Internal desc = Failure during mkdir. Could not stat Path app-runs Err Code: INTERNAL, Message: Failure during stat., Time: 21ms, Size: 0Bytes```\nhttps://instabase.slack.com/archives/C05BJCNKZAM/p1754334068678119?thread_ts=1745886274.918409&cid=C05BJCNKZAM\n\n`idfed aws 519787998606 crafting-sandbox-role`  returns the following:\n```{\n\"Version\":1,\n\"AccessKeyId\":\"ASIAXSBOHNWHNBRVQT6Z\",\n\"SecretAccessKey\":\"wXXA4WaMu4JwulMm/voWnQQe9L4SmOC0UtQOffeB\",\n\"SessionToken\":\"FwoGZXIvYXdzECUaDF9mMVz7zLUVCjvWjiK/AkGNxJTpqLXaFqMTrrP7CFsVZ4rkgq51V848bP/tIxWBUBgghai18GvE0+ujzzwtg4CiSmMGCDl/jDDJcEOGIHvrjWSdWuUNtAyDGdXoDkqhc2z9zpKDX9CTgiemcOq7yjQTHDx1zqB85U/fWwRfHunQeO45BlxT/K/OsGjnBk/sjgZLKcA9Hp6mdrgHKBAYsMj2f1EuwE3cQVOLvKq4vNQ0yFWIud8grvFG/X9nAD5UtVa2wQV8ry3M0k3BaYgcO578f6NEwQQblIlTJI8GUkdzjY5Dm6oBaExUe2i2d91wBBJaSbxMR/s/s/Xs9XkWJWcpQMIe0+bPHjlQ5/s0A7OHn/68ZlR2KAFX0q85OvG5UWbAqxpwD8FOc+xiC5NQ3tNKQS0ktQAmKU7d4V4tYa9kmovP30RfbZSvnNxOGqEo/ovExAYyJEKe+Er+hQr7hlsNrUhEI+xl/jkNEvWMNkPo2vXnaRpVoJ6w7g==\"\n}```\n\nI've since spun up several other boxes and they don't have this issue, but they run into other issues of their own :disappointed:",
+      "time": "12:14",
+      "timestamp": "1754334885.584769",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Just to confirm, this error is also happening when you have admin permissions on your IB account?",
+      "time": "12:17",
+      "timestamp": "1754335021.836499",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "(trying to pin down if it's an AWS issue or an IB perm issue)",
+      "time": "12:17",
+      "timestamp": "1754335054.151919",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Yep; I'm both an org admin and a site admin on this IB account",
+      "time": "12:17",
+      "timestamp": "1754335055.762289",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "So weird, I can't even load `/system/global/` . I'll let someone else chime in =(",
+      "time": "12:27",
+      "timestamp": "1754335676.211909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@tony.shi can you run `dbmigrate` just to make sure?",
+      "time": "13:09",
+      "timestamp": "1754338143.120589",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Looks like this moved? Referencing this (https://docs.google.com/document/d/1mM32cCbi4NFtphnlu1T8rtsc0lsfj3FZWfNrKmui34M/edit?tab=t.0#heading=h.uigwvfmjos5m)\n\n```owner@dev:~/instabase/shared-utils/go-utils/src/instabase/utils/db$ bazel run tools/dbmigrate\nERROR: Skipping 'tools/dbmigrate': no such target '//:shared-utils/go-utils/src/instabase/utils/db/tools/dbmigrate': target 'shared-utils/go-utils/src/instabase/utils/db/tools/dbmigrate' not declared in package '' defined by /home/owner/instabase/BUILD.bazel (Tip: use `query \"//:*\"` to see all the targets in that package)\nWARNING: Target pattern parsing failed.\nERROR: no such target '//:shared-utils/go-utils/src/instabase/utils/db/tools/dbmigrate': target 'shared-utils/go-utils/src/instabase/utils/db/tools/dbmigrate' not declared in package '' defined by /home/owner/instabase/BUILD.bazel (Tip: use `query \"//:*\"` to see all the targets in that package)\nINFO: Elapsed time: 0.357s\nINFO: 0 processes.\nFAILED: Build did NOT complete successfully (1 packages loaded)\nERROR: Build failed. Not running target```",
+      "time": "13:48",
+      "timestamp": "1754340501.382909",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Oh...probably because of bazel eh? Trying go native. Do we have a guide for that yet?",
+      "time": "13:49",
+      "timestamp": "1754340573.524249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://docs.google.com/document/d/1gCGkj3D43U52dIxBqJ40yr-pDAlVMedt1HepDSsO6KE/edit?tab=t.0",
+      "time": "13:52",
+      "timestamp": "1754340725.937659",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Updated that linked doc as well!",
+      "time": "13:55",
+      "timestamp": "1754340912.552939",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Got the migration to work with this (https://docs.google.com/document/d/1mM32cCbi4NFtphnlu1T8rtsc0lsfj3FZWfNrKmui34M/edit?disco=AAABo5mq3Ew) change! Still running into the file service issue, but I suspect that's probably related to something else.",
+      "time": "14:05",
+      "timestamp": "1754341535.541299",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "```2025/08/04 21:06:07 INFO /src/fileservice/handler/file.go:321 -- [list_dir] Username: tonyorg-runner, Path: tonyorg/prodWorkspace/fs/azb-test/testFolder, Time: 69ms, Size: 0Bytes\n2025/08/04 21:06:07 ERROR /src/fileservice/clients/s3_client.go:419 -- Failure during stat. Path: d81d0f4b-ae75-4652-a4f7-54716ab7edb2/app-runs Err: operation error S3: HeadObject, https response error StatusCode: 403, RequestID: FSRE2DJS8B0M9SBZ, HostID: PR9VQ48yjdc4iSqU/F16pNKnn2T+8QNyYo1U0QM+//vRyZsprzhvoOvMngeI1/5M1E3cDkvrf/c=, api error Forbidden: Forbidden\n2025/08/04 21:06:07 ERROR /src/fileservice/handler/file.go:324 -- [ERROR][stat] Username: tonyorg-runner, Path: tonyorg/prodWorkspace/fs/Instabase Drive/app-runs, Err: rpc error: code = Internal desc = Failure during stat., Time: 18ms, Size: 0Bytes\n2025/08/04 21:06:07 ERROR /src/fileservice/clients/s3_client.go:419 -- Failure during stat. Path: d81d0f4b-ae75-4652-a4f7-54716ab7edb2/app-runs Err: operation error S3: HeadObject, https response error StatusCode: 403, RequestID: FSRB3E9H00YB5C6V, HostID: tFaCQU6CezQvKy9TCxckcqkmYTOOssBfsG/1sXvhIPbhQpL4N+II8RIRmhEJc5E9fR8KKx8Q6l8=, api error Forbidden: Forbidden```",
+      "time": "14:06",
+      "timestamp": "1754341609.348769",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-08-04.json",
+    "message_count": 12,
+    "start_time": "1754334885.584769",
+    "end_time": "1754341609.348769",
+    "is_thread": true
+  }
+}

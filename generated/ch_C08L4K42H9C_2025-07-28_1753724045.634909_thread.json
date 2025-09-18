@@ -1,0 +1,79 @@
+{
+  "id": "ch_C08L4K42H9C_2025-07-28_1753724045.634909_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "Sherif",
+    "Serena",
+    "Sayan",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I think I found a bug with udf case fields. This (https://aihub-sandbox.internal.instabase.com/build/01984278-1e0f-77c6-a653-0971bb1a942e) is the link to the project in Instabase-Sandbox org. I am trying to generate a case field via a udf which takes in a cross class field as an input. We can generate the field in build, it works correctly; however compiling the program gives this error. When I try to go back to the udf, I see that the case field arg is missing from the udf.",
+      "time": "10:34",
+      "timestamp": "1753724045.634909",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@ayesha.ali could you look into this?",
+      "time": "12:35",
+      "timestamp": "1753731336.356329",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "i don't see a udf field in the project, did u delete it? can u recreate what u were trying to do",
+      "time": "13:02",
+      "timestamp": "1753732923.246009",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Needed to delete it for it to compile. I re-added it and the cross class field is called `udf_field`",
+      "time": "13:09",
+      "timestamp": "1753733347.028749",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "okay so for this one, looks like we're applying the python safe name conversion logic for case fields when that is already being done by the frontend when editing the schema",
+      "time": "13:40",
+      "timestamp": "1753735239.690739",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "for this backend/frontend needs to align on who's doing what, cuz rn i also have extraction for udfs failing on my sandbox b/c the frontend is passing in the function args w/o the python safe name conversion (ss1, also true for derived fields; see that udf fails in ss2)\n\nwe prob should match what's happening in single class fields\n• when editing the schema, inputs to case derived/udf fields that are case fields should be in python safe form  --> already done, current behavior :white_check_mark: \n• when running case-extraction, the frontend should be passing arg names for udf and derived fields in their python safe form --> not currently happening @Sherif @Paul H \n    ◦ in theory, the backend could also change the name in the cases when we're not generating the case program for a flow if we know the frontend is always passing the case field names as is in the extraction payload\n    ◦ but to align with single class fields maybe this change could happen in the frontend \n• when generating flow, backend will not transform the case field input name b/c from the first bullet, the schema should already have the correct name\n    ◦ i can make that change",
+      "time": "14:05",
+      "timestamp": "1753736716.885039",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "I'll make a ticket and work on this :+1:",
+      "time": "14:13",
+      "timestamp": "1753737234.045039",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-07-28.json",
+    "message_count": 7,
+    "start_time": "1753724045.634909",
+    "end_time": "1753737234.045039",
+    "is_thread": true
+  }
+}

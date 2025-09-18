@@ -1,0 +1,159 @@
+{
+  "id": "ch_C06FA6A23_2024-03-27_1711561654.596389_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "CJ",
+    "Xindi Xu",
+    "Heymian",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hey :wave:. I found that working on different tickets often requires me to configure a different set of env vars with different values but sometimes it could be hard to manage them in `env-local.json` and stash/stash pop/merge `env-local.json` across different branches (exp old release branches) are troublesome :sweat_smile: . Running aihub locally will read env vars from `base`, `local` , `aihub-local`, so we don't have a way to group all the changes in one chunk.\nThus, I wanted to add an `overrides` section in the `env-local.json` file so that we can group a set of env vars together. Any env vars set in the `overrides` section will get applied at the end (so override settings from the other sections). I put up a PR (https://github.com/instabase/instabase/pull/55158) here.",
+      "time": "10:47",
+      "timestamp": "1711561654.596389",
+      "is_reply": false
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "YESSSSS if this goes in i no longer have to keep stashing and popping",
+      "time": "10:48",
+      "timestamp": "1711561683.263679",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "What if we just applied the env-local json file last and made that the override.",
+      "time": "10:50",
+      "timestamp": "1711561846.997659",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Trying to see if we can avoid another section/layer of env vars applying. We already have so many layers",
+      "time": "10:52",
+      "timestamp": "1711561925.517449",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "That's a valid concern.\nWe have these layers:\n1. base\n2. either local, docker-local, testing\n3. (optionally) aihub-local\n4. (i want to add an override) that can be applied to both aihub and non-aihub envs. \nhttps://github.com/instabase/instabase/blob/1fc928add198b4c98d3eb2842d90714c936f3bbb/shared-utils/build-utils/stack-local/get-env-local.py#L23-L33\n\nThe problem I have today is that I have to add overrides to multiple sections:\nI want to add a set of env vars for the ST AIHub setup but I need to modify both `local` and `aihub-local` sections. In the `local` section, update the `auth_type: saml` ; in the `aihub-local` update `\"aihub_allow_loginless_users\": false, \"enable_google_auth\": false`. This means when I switch branches, I have to merge 2 sections in the `env-local.json`\n\nMaybe i've been doing things incorrectly. Because I have to switch between aihub and non-aihub envs, I usually just add my overrides to the `base` section and delete the env vars in `local` and `aihub-local` sections. I really just need a single section that can hold all my local settings but I want these settings to apply at last.",
+      "time": "11:12",
+      "timestamp": "1711563165.750779",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "jw, why do we have `aihub-local`, can we squash that with `local`?",
+      "time": "11:45",
+      "timestamp": "1711565112.519789",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think the `local` and `aihub-local` is supposed to only be there for overriding `base` , so what if we just removed the env vars your need to toggle from these two and just left it in base?",
+      "time": "11:46",
+      "timestamp": "1711565173.759939",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "That section adds additional env vars for running aihub env",
+      "time": "11:47",
+      "timestamp": "1711565228.120299",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea that's what I'm doing now, but I everytime i switch branches, i need to merge code from `base`, `local`, and `aihub-local` sections. `base` with added/deleted lines, and `local` and `aihub-local` for deleted lines",
+      "time": "11:47",
+      "timestamp": "1711565267.351239",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Oh i meant, merge in some of your changes. :stuck_out_tongue:\n\nE.g. saml_want_assertion_signed - if that doesn’t work for you locally, it’s not going to work for anyone, so you might as well merge that in?",
+      "time": "11:59",
+      "timestamp": "1711565957.391279",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "enable_google_auth probably should also be disabled for everyone, since I don’t think that works locally?",
+      "time": "11:59",
+      "timestamp": "1711565982.333749",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "So if some of these are things that everyone should have locally, update base, remove it from the local and aihub-local overrides and merge.",
+      "time": "12:00",
+      "timestamp": "1711566030.484369",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "oh no, a lot of these are local settings (`enable_google_auth` should be true in aihub but I want to disable it since I'm working on ST aihub)",
+      "time": "12:00",
+      "timestamp": "1711566051.140079",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Oh I see, okay, another idea (i’m just spitballing here) is there any reason to have the aihub env vars in a separate section?",
+      "time": "12:02",
+      "timestamp": "1711566122.482539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, some env vars should use different values for aihub and non-aihub env. For example, `enable_google_auth` should be true for aihub but false for non-aihub",
+      "time": "12:03",
+      "timestamp": "1711566184.223859",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this is not a great workflow, but previously i would create different copies of `env-local.json` for different local envs (ex: `env-local-aihub.json` vs `env-local-enterprise.json`)\n\nand then i would replace `env-local.json` with one of those copies whenever i wanted to switch from aihub env <-> non-aihub env\n\nthis gets around the need to stash/stash pop/merge",
+      "time": "13:44",
+      "timestamp": "1711572270.688639",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ohh that's a good idea. I'll try it out.",
+      "time": "13:50",
+      "timestamp": "1711572657.114859",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-03-27.json",
+    "message_count": 17,
+    "start_time": "1711561654.596389",
+    "end_time": "1711572657.114859",
+    "is_thread": true
+  }
+}

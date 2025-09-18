@@ -1,0 +1,28 @@
+{
+  "id": "ch_C05L87V014J_2025-07-24_1753388110.844289_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star: :star:\n\n<!channel> Hi all -- we started using a second ECR registry for some images; this broke Crafting image pulls. If you are _still_ having problems with images, please\n\n1. Resync your sandbox (no need to reset the base image)\n2. Check `~/.docker/config.json`\n3. Check `~/.aws/config` \n4. Check `~/.aws/credentials`\n5. \nYou can delete/move the last 3 files with this command, and Crafting will re-create them with the correct content:\n\n```rm -rf ~/.docker ~/.aws```\nFor reference, here is what the two files should look like. Only this configuration works in all cases!\n\n```cs/mfichman❯ cat ~/.docker/config.json\n{\n  \"credHelpers\": {\n     \"gcr.io\": \"gcloud\",\n     \"549230430157.dkr.ecr.us-east-2.amazonaws.com\": \"ecr-login\",\n     \"601729033846.dkr.ecr.us-east-2.amazonaws.com\": \"ecr-login\"\n  }\n}```\n```cs/mfichman❯ cat ~/.aws/config\n[profile default]\nregion = us-east-2\ncredential_process = idfed aws 519787998606 crafting-sandbox-role```\n*Also* if `docker pull` is hanging for you...restart the Docker daemon. Here is the command to use:\n\n```sudo pkill dockerd && sudo pkill containerd && sudo pkill dockerd && sudo pkill containerd```\n(Yes, you have to pkill 2x b/c dockerd tries to exit gracefully when hit with the first SIGTERM.)\n\nIf this *still* doesn't fix your problems: Send me your sandbox link in a DM. Ty all!",
+      "time": "13:15",
+      "timestamp": "1753388110.844289",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-24.json",
+    "message_count": 1,
+    "start_time": "1753388110.844289",
+    "end_time": "1753388110.844289",
+    "is_thread": true
+  }
+}

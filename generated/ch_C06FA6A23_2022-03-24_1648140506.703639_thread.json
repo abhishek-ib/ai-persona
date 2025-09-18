@@ -1,0 +1,186 @@
+{
+  "id": "ch_C06FA6A23_2022-03-24_1648140506.703639_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Yash Botadra",
+    "Naveen",
+    "naveen",
+    "Rahul Tewari",
+    "lenny",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "Go puzzle: what's wrong with this function?\n```func DoStuff() (retErr error) {\n\tdb.BeginTx()\n\tdefer func() {\n\t\tif retErr == nil {\n\t\t\tdb.CommitTx()\n\t\t} else {\n\t\t\tdb.RollbackTx()\n\t\t}\n\t}()\n\n\t// Do some things, db operations, etc\n\n\tif err := SomeOperation(); err != nil {\n\t\treturn err\n\t}\n\n\t// Do some other things, db operations, etc\n\n\treturn nil\n}```",
+      "time": "09:48",
+      "timestamp": "1648140506.703639",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "do we need to return any errors returned by `db.CommitTx` or `db.RollbackTx`?",
+      "time": "10:17",
+      "timestamp": "1648142238.429569",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "ah yeah i guess we should be doing that too...but not what i had in mind :stuck_out_tongue:",
+      "time": "10:18",
+      "timestamp": "1648142297.657459",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "~Is the issue that `err` is defined in the if frame? So when it reaches the deferred `func` it will always be nil?~",
+      "time": "11:07",
+      "timestamp": "1648145260.838469",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the condition in `defer` is checking `retErr` , which is defined as the return variable, though?",
+      "time": "11:08",
+      "timestamp": "1648145302.604229",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "Sorry didn't read closely enough my bad",
+      "time": "11:08",
+      "timestamp": "1648145335.099249",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "all good!",
+      "time": "11:09",
+      "timestamp": "1648145372.180009",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Go newbie here: What’s the purpose of `retErr`?",
+      "time": "12:47",
+      "timestamp": "1648151264.742999",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "Go has named return values (https://go.dev/tour/basics/7), which basically just act as a variable in the function body. you can assign them in the function body, and then when the function returns the value of that variable will be sent back to the caller. the other use for them (as they are used here) is to let you refer to the function's return value in a deferred block, which gets executed as soon as the function ~returns~ exits for any reason",
+      "time": "12:50",
+      "timestamp": "1648151405.869349",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "so in this case, when we `return err`, Go will assign `retErr` to `err` and then call the defer block; in the defer block we then use `retErr` to check if the function encountered an error",
+      "time": "12:51",
+      "timestamp": "1648151484.618259",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "That’s really cool! I wish JS had something like that",
+      "time": "13:09",
+      "timestamp": "1648152564.431169",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "yeah pretty unique feature...don't think I know of any other languages that have it",
+      "time": "13:16",
+      "timestamp": "1648152970.613929",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Possibly has something to do with the TX? The entire function is a critical section — we would want to stay away from blocking on the entire function? Especially if `SomeOperation()` takes a long time. Also, does `CommitTx` and `RollbackTx` close the transaction?",
+      "time": "13:18",
+      "timestamp": "1648153131.238569",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "assume `SomeOperation()` is fast, and yes `CommitTx` and `RollbackTx` will both close the transaction :slightly_smiling_face:",
+      "time": "13:19",
+      "timestamp": "1648153184.749209",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "What does `db.BeginTx()` do? Is `DoStuff()` thread safe?\n\nI was thinking, what if two different threads call `DoStuff()`, will their `BeginTx()` calls result in respective isolated transactions?\n\nDisclaimer: My Go experience is exactly zero lines of code :stuck_out_tongue:",
+      "time": "13:48",
+      "timestamp": "1648154898.470669",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "What if `CommitTx` and `RollbackTx` errors out? (In case of DB connection failure at time of commit or rolling back transaction)\n\nalso I’m assuming db.BeginTx() returns an accessor which is used in subsequent requests (for eg: accessor.CommitTx instead of db.CommitTx), otherwise it will be global level transaction which will be bad",
+      "time": "13:48",
+      "timestamp": "1648154913.257279",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "yeah you're both technically right, I was writing pseudocode — it should be `tx := db.BeginTx()` and `tx.CommitTx()` and `tx.RollbackTx()`. The bug I'm thinking about here can be triggered with a single call to `DoStuff()` though, so you can assume things are properly thread-safe",
+      "time": "13:51",
+      "timestamp": "1648155100.221439",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "ok...people found a few potential pitfalls here, but this was the one I had in mind:\n\nif `DoStuff()` panics, Go will start unwinding the stack and, in the process, execute all of the pending deferred blocks. When we get to the deferred block declared here, we see that `retErr` is nil — so we assume that everything completed successfully, and we dutifully commit the (half-baked) transaction. Once the transaction is committed, Go will finish unwinding the stack and then terminate the program, but our half-transaction will still be persisted to the database.\n\nthis behavior was pretty un-intuitive when I first ran into it so thought it would be worth sharing :slightly_smiling_face:\n\nhttps://go.dev/play/p/put7wH9CYZi",
+      "time": "16:24",
+      "timestamp": "1648164279.126099",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Nice! Thanks for sharing. Curious, what happens if there is an exception during the first `// Do some things, db operations, etc` block? At this point, `retErr` would still be nil and hence the partial transaction would end up being committed?",
+      "time": "17:14",
+      "timestamp": "1648167264.952469",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "Yep, exactly — even if it happens in the second `// Do some other things` block, the same thing would happen",
+      "time": "17:15",
+      "timestamp": "1648167317.982199",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-03-24.json",
+    "message_count": 20,
+    "start_time": "1648140506.703639",
+    "end_time": "1648167317.982199",
+    "is_thread": true
+  }
+}

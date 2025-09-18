@@ -1,0 +1,97 @@
+{
+  "id": "ch_C06FA6A23_2024-03-19_1710862488.820169_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Anil",
+    "CJ",
+    "sanjay.gk",
+    "Jag",
+    "Sławek Biel",
+    "Victor Zeng"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "** ignore this for now - needs some mypy fixes **\nMinor note for eng folks:\nIn our python codebase, we use types from the typing module. You can now use native types directly instead. Instead of\n```from typing import Dict, List, Text, Tuple, Set ```\nuse\n```dict, list, str, tuple, set```\nFor example:\n```def process_items(items: list[str]) -> dict[str, int]:\n    ...\n\nnames: set[str] = {\"Alice\", \"Bob\", \"Charlie\"}```\nhttps://chat.openai.com/share/d3766468-92b3-4422-912b-abd667b6ad4f",
+      "time": "08:34",
+      "timestamp": "1710862488.820169",
+      "is_reply": false
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "I remember this being introduced in Python 3.9, but I believe this didn't work in shared-utils? Does it work now?",
+      "time": "08:36",
+      "timestamp": "1710862560.986259",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Does this pass mypy? I remember few months back reverting `dict` to `typing.Dict` because of ci failures",
+      "time": "08:39",
+      "timestamp": "1710862760.152329",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "did we upgrade to 3.9??? omg???",
+      "time": "08:45",
+      "timestamp": "1710863149.110459",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "we use python3.9 but mypy still runs with 3.7 in shared-utils\n```shared-utils/py-utils/typing-utils/configs/mypy_for_tests_py3.ini```\nchanging to `python_version = 3.9` in the above file ensures mypy works correctly with dict.\n\nWithout this change, it returns an error\n```TYPECHECKING FAILURE: mypy exited with code 1\ninstabase/flow_lib/flow_step.py:19: error: \"dict\" is not subscriptable, use \"typing.Dict\" instead\nFound 1 error in 1 file (checked 16 source files)```\nLet me follow-up with rel-eng to fix this.",
+      "time": "09:02",
+      "timestamp": "1710864154.875939",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "This is great.",
+      "time": "20:44",
+      "timestamp": "1710906284.400249",
+      "is_reply": true
+    },
+    {
+      "sender": "sanjay.gk",
+      "user_id": "U06JYGY9NN5",
+      "message": "This is good! But `typing` provides much more complex types. And also ensures backward compatibility and code uniformity.",
+      "time": "21:56",
+      "timestamp": "1710910569.957659",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I'd prefer that we standardize on the modern types, especially since the old `typing` generics are deprecated in 3.9 and may be removed in future versions of python.",
+      "time": "22:02",
+      "timestamp": "1710910968.310229",
+      "is_reply": true
+    },
+    {
+      "sender": "sanjay.gk",
+      "user_id": "U06JYGY9NN5",
+      "message": "Ah I see. Makes sense. Didn't notice the deprecations from typing module.",
+      "time": "22:08",
+      "timestamp": "1710911316.602919",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-03-19.json",
+    "message_count": 9,
+    "start_time": "1710862488.820169",
+    "end_time": "1710911316.602919",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "id": "ch_C06FA6A23_2022-01-12_1642009712.072900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Mohit",
+    "Aaron Tami"
+  ],
+  "messages": [
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@Aaron Tami @Kai is there a testing document? We want to understand the decision making and testing around impact of missing persistence in flow. [What happens to flow’s performance/reliability if non-persistent redis is killed during the flow run vs the same in pre-split world?]\ncc: @Rakesh",
+      "time": "09:48",
+      "timestamp": "1642009712.072900",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "hey @Mohit we don't have a testing document yet, we can look into putting one together.  We did do some tests with rilling Redis and Rabbitmq without persistent, and specifically with Redis, we would see two things.\n1. ocr-msft would start to fail\n2. long running celery jobs, such as copies and move would start to fail as well\nIn addition to this, some of our customers are already running with some redis persistence (GS and JPMC), so splitting redis into two will help alleviate a lot of the persistence load there.\n\nAll this being said, I think we need to do more testing on how effective our persistence right now is... The way we are using AOF with flushing, it could be up to 30 seconds before redis actually gets persisted, which doesn't really do us any good.  The hope is after we get the redis split correctly working, we can experiment with other, more frequent persistence configurations.",
+      "time": "10:21",
+      "timestamp": "1642011702.077400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-01-12.json",
+    "message_count": 2,
+    "start_time": "1642009712.072900",
+    "end_time": "1642011702.077400",
+    "is_thread": true
+  }
+}

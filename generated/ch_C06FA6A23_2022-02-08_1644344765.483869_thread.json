@@ -1,0 +1,200 @@
+{
+  "id": "ch_C06FA6A23_2022-02-08_1644344765.483869_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Josh Xie",
+    "kunal",
+    "arun",
+    "lydia",
+    "Rafal"
+  ],
+  "messages": [
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "Question: for customers/POVs that don't re-deploy or update their pods, do we need to consider container recycle / restart? Would we run into issues if we have containers running for a very long period of time? Have we considered automated periodic rolling container restart?",
+      "time": "10:26",
+      "timestamp": "1644344765.483869",
+      "is_reply": false
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "This is something that we’ve had on the backlog: https://instabase.atlassian.net/browse/CINFRA-57. Technically, you should not run into any issues because containers should be stable over time but practically some of them memory leaks so periodically restarting pods is helpful.",
+      "time": "10:30",
+      "timestamp": "1644345021.836669",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "Awesome, great to know! Thank you @kunal!",
+      "time": "10:31",
+      "timestamp": "1644345062.616549",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "are there certain services that you’re thinking about?",
+      "time": "10:31",
+      "timestamp": "1644345081.706469",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "I was thinking about celery workers. for example, model-training-tasks, where we do a lot of load_packages & download.\nhaven't run into any issues yet. Just wanted to check if this topic has already been discussed in the past :slightly_smiling_face:",
+      "time": "10:36",
+      "timestamp": "1644345396.831059",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "@Rafal @arun  out of curiosity/maybe totally random: if we run ibformers on the same pods for months (say > 8 months) without restarting/recycling, do you foresee any issues? jpmc still use April release and don't want any downtime makes me think that this could be the case for training pods in the future.",
+      "time": "10:47",
+      "timestamp": "1644346055.818259",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "This shouldn't be an issue for model-training-tasks as of this PR https://github.com/instabase/instabase/pull/22961",
+      "time": "10:51",
+      "timestamp": "1644346295.564569",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "Possible issues could come up with huggingface cache or cached base models however. Not sure if/how we invalidate those caches.",
+      "time": "10:52",
+      "timestamp": "1644346343.391839",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "yeah, also thought about possible problems with cache",
+      "time": "10:52",
+      "timestamp": "1644346370.193899",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "After decoupling huggingface, the cache size should be pretty fixed? \nBut this is actually a problem for release before 22.1.0! :joy: Such as October release right? The cache size will keep increasing :sweat_smile:",
+      "time": "10:54",
+      "timestamp": "1644346498.726039",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "oh actually, dataset cache may also increase unbounded?",
+      "time": "10:55",
+      "timestamp": "1644346539.749069",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "wow this went real quick from my first \"shouldn't be an issue\" response :joy:",
+      "time": "10:56",
+      "timestamp": "1644346564.216439",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "We don't recycle dataset cache? 🫣",
+      "time": "10:56",
+      "timestamp": "1644346577.240389",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "yeah\ndatasets cache might be a challenge here\nwe re-download datasets if modified_date of dataset got changed",
+      "time": "10:56",
+      "timestamp": "1644346616.305239",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "That could increase unbounded if the pods running for few months or even a year straight... Maybe we should have a patch to recycle caches (base model & dataset)? Fyi @lydia @kunal",
+      "time": "10:58",
+      "timestamp": "1644346715.608769",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "for the base models, we are actually on pretty much the same situation as before 22.1\ntransformers also wouldn’t download the same base model again if a given model is already cached",
+      "time": "10:58",
+      "timestamp": "1644346720.847199",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "but, agree\nit will be a problem for caching datasets\n• we cannot switch it off - some datasets wouldn’t fit in memory\n• if we clear it after each training we might lose some performance — there are a lot of training jobs (different hyperparams) on the same dataset — currently it’s not redownloaded if modified date didn’t change\nmaybe we could introduce some threshold for model-training-tasks which will clear `.cache/huggingface` if directory size exceeded this threshold?",
+      "time": "11:22",
+      "timestamp": "1644348134.957909",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "Perhaps this is a good use case for https://instabase.atlassian.net/browse/CINFRA-57 (https://instabase.atlassian.net/browse/CINFRA-57)?",
+      "time": "11:23",
+      "timestamp": "1644348196.057559",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "That would solve the issue, but leaves open how often we should run it. And it feels a bit like overkill, since recycling pods is a sort of last-resort for memory-leaky programs. We'd need to avoid recycling pods with running jobs. This issue of cache management could be resolved by us properly managing our cache instead.\n\nIn response to @Rafal’s reply, I was thinking maybe we could have a configurable cache size, or separate cache volume mounted at `/home/ibuser/.cache`. Eviction when cache exceeds allowed size/volume is full/at threshold (either LRU, or clear the entire cache)",
+      "time": "11:32",
+      "timestamp": "1644348735.895279",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hey Josh - just very quickly jumping in here - is this for JPMC’s classifier issue or another escalation?",
+      "time": "12:07",
+      "timestamp": "1644350854.358399",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "@lydia this is just a future improvement. Jpmc's issue is resolved.",
+      "time": "12:08",
+      "timestamp": "1644350891.056429",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ah gotcha. ok!",
+      "time": "12:08",
+      "timestamp": "1644350921.274839",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-02-08.json",
+    "message_count": 22,
+    "start_time": "1644344765.483869",
+    "end_time": "1644350921.274839",
+    "is_thread": true
+  }
+}

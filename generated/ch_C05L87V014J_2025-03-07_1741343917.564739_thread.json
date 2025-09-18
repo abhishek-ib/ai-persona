@@ -1,0 +1,190 @@
+{
+  "id": "ch_C05L87V014J_2025-03-07_1741343917.564739_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "jemin.jain",
+    "mfichman",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "jemin.jain",
+      "user_id": "U085JC8GY0M",
+      "message": "Hey team,\nNot able to see document being indexed after adding the drive in crafting sandbox: https://instabase.sandboxes.site/sandboxes/jeminjain1\nCan someone help/guide me investigate this?",
+      "time": "02:38",
+      "timestamp": "1741343917.564739",
+      "is_reply": false
+    },
+    {
+      "sender": "jemin.jain",
+      "user_id": "U085JC8GY0M",
+      "message": "Seeing this error in core-plaftform service\n\n`2025/03/07 13:01:09 ERROR coreplatformservice/repo/handler/repo.go:139 -- Fail: Repo (agent-obs-1/my-repo) not found. Err: sql: no rows in result set`\n`2025/03/07 13:01:09 ERROR coreplatformservice/account/handler/org_settings.go:303 -- [ACCESS_DENIED]: Access denied`\n`2025/03/07 13:01:14 ERROR coreplatformservice/repo/handler/repo.go:139 -- Fail: Repo (agent-obs-1/my-repo) not found. Err: sql: no rows in result set`\n`2025/03/07 13:01:14 ERROR coreplatformservice/account/handler/org_settings.go:303 -- [ACCESS_DENIED]: Access denied`\n`2025/03/07 13:01:26 ERROR coreplatformservice/repo/handler/repo.go:139 -- Fail: Repo (agent-obs-1/my-repo) not found. Err: sql: no rows in result set`\n`2025/03/07 13:01:26 ERROR coreplatformservice/account/handler/org_settings.go:303 -- [ACCESS_DENIED]: Access denied`\n`2025/03/07 13:01:29 ERROR coreplatformservice/account/handler/org_settings.go:303 -- [ACCESS_DENIED]: Access denied`",
+      "time": "05:02",
+      "timestamp": "1741352543.596369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Are you logged in as the `admin` user for the sandbox? If so, log out and create an account as a non-admin user + create a new org account to go with it.",
+      "time": "05:31",
+      "timestamp": "1741354291.198399",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You also need to turn on the right feature flags in Settings. Here's my settings:",
+      "time": "05:31",
+      "timestamp": "1741354313.209109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "05:32",
+      "timestamp": "1741354342.143319",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Finally, search has an org-opt-in feature flag. For your search org, you need to turn on the feature flag in /apps/aihub-admin. Lmk if you have questtions.",
+      "time": "05:32",
+      "timestamp": "1741354369.892989",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "05:35",
+      "timestamp": "1741354515.707289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh, one more thing: Add the drive as a workspace drive, not an org drive.",
+      "time": "05:35",
+      "timestamp": "1741354550.660579",
+      "is_reply": true
+    },
+    {
+      "sender": "jemin.jain",
+      "user_id": "U085JC8GY0M",
+      "message": "Unrelated but any idea on this error :\nBut getting this error on this crafting env:\nhttps://instabase.sandboxes.site/sandboxes/jeminjain?cw=dev\n\nLogs: https://instabase.sandboxes.site/logviewx/instabase/jeminjain/dev/task/setup%3ABuild%3Ainstabase",
+      "time": "05:42",
+      "timestamp": "1741354975.590909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, that's a red herring. I think audit logs are misconfigured in crafting; someone should fix that :slightly_smiling_face:",
+      "time": "05:47",
+      "timestamp": "1741355237.327929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I take it back. It looks like there's a network issue with the crafting kubernetes cluster:\n\n\ncc @sean.donohoe",
+      "time": "05:51",
+      "timestamp": "1741355474.712219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "However, it doesn't seem to be affecting my sandbox's operation",
+      "time": "05:53",
+      "timestamp": "1741355622.277699",
+      "is_reply": true
+    },
+    {
+      "sender": "jemin.jain",
+      "user_id": "U085JC8GY0M",
+      "message": "i can only see these logs in the Build:Instabase phase and my endpoint is not active yet.\nIts been 36mins so i guess its something problematic",
+      "time": "05:55",
+      "timestamp": "1741355744.775409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm, yeah seems so. I may not be running into the problem you are b/c my sandbox is already initialized.",
+      "time": "05:56",
+      "timestamp": "1741355807.281309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I am able to connect to your rabbit/mysql/redis instances though:\n```\nowner@dev:~$ mysql -u root -h mysql\nWelcome to the MySQL monitor.  Commands end with ; or \\g.\nYour MySQL connection id is 488\nServer version: 8.3.0 MySQL Community Server - GPL\n\nCopyright (c) 2000, 2025, Oracle and/or its affiliates.\n\nOracle is a registered trademark of Oracle Corporation and/or its\naffiliates. Other names may be trademarks of their respective\nowners.\n\nType 'help;' or '\\h' for help. Type '\\c' to clear the current input statement.\n\nmysql> ^DBye```",
+      "time": "05:57",
+      "timestamp": "1741355850.649939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It looks like the problem is `cs k8s intercept start`",
+      "time": "05:58",
+      "timestamp": "1741355916.176359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```owner@dev:~$ pstree -a $(pgrep build)\nuinit\n  |-bash /home/owner/instabase/.sandbox/ibdev-backend/hooks/build\n  |   `-bash /home/owner/instabase/.sandbox/ibdev-backend/scripts/init-connectors\n  |       `-make dev-setup -C /home/owner/instabase/tools/connectors\n  |           `-sh -c . tmp/env_local && ./dev-setup.sh\n  |               `-bash ./dev-setup.sh\n  |                   `-cs k8s intercept start --expose sandbox-jeminjain/dev:7600+8601 -I crafting-aihub\n  |                       `-32*[{cs}]```",
+      "time": "05:58",
+      "timestamp": "1741355938.703169",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'll ask the crafting folks",
+      "time": "05:59",
+      "timestamp": "1741355948.643979",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In the meantime, I killed the `cs k8s intercept start` command that was hanging, and now the build is making progress again. Will update when Crafting gets back to me.",
+      "time": "06:01",
+      "timestamp": "1741356117.517489",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey there! Is this still causing issues for people? I'm taking a look at the cluster now, but in the past this has resulted from one of two causes:\n1. The crafting-aihub cluster gets deployed, causing active interception states to degrade (usually from a pod being used as an interception mirror getting bounced)\n2. Interception states become inconsistent in the crafting daemonsets under the namespace in the crafting-aihub cluster\nFor (1), I unfortunately don't have a good answer other than running `cs ssh -W <YOUR-SANDBOX>/dev -- sh -c 'sudo kill -9 $(pgrep cs)'` to kill any hung `cs` processes, then `cs k8s intercept stop` to clear out any potential interception state\n\nFor (2), I'm still waiting to hear from the crafting devs on why this happens sometimes, but we previously needed to bounce their daemons (https://instabase.slack.com/archives/C05L87V014J/p1740071570707619?thread_ts=1740071200.922059&cid=C05L87V014J) and then clearing any hung processes with the same ssh command above",
+      "time": "09:01",
+      "timestamp": "1741366889.728119",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "This should be working again, confirmed with the crafting devs that it was cause (2)\n\nFolks who are still experiencing issues with connecting to crafting-aihub should run\n1.  \n    a. `cs ssh -W <YOUR-SANDBOX>/dev -- sh -c 'sudo kill -9 $(pgrep cs)'` , if running from your laptop terminal\n    b. `sudo kill -9 $(pgrep cs)` if running from your sandbox terminal",
+      "time": "09:50",
+      "timestamp": "1741369849.208989",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-07.json",
+    "message_count": 21,
+    "start_time": "1741343917.564739",
+    "end_time": "1741369849.208989",
+    "is_thread": true
+  }
+}

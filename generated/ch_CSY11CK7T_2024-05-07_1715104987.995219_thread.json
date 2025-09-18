@@ -1,0 +1,201 @@
+{
+  "id": "ch_CSY11CK7T_2024-05-07_1715104987.995219_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Xindi Xu",
+    "CJ",
+    "Aayush",
+    "lydia",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi all! Xindi and I have a few questions about making Cypress tests merge-blocking. I think it's a great idea, but we're wondering how these situations are handled:\n\n1. If the backend changes, it can break the fontend. Are we creating a sandbox with a dedicated backend for each PR? Or will these kinds of bugs just escape?\n2. Concurrency -- if multiple PRs run at once, some Cypress tests break. Do we have a provision for this? More test will run in parallel if we make PRs merge-blocking, making these failures more likely.\n3. Isolation -- sometimes Cypress tests fail b/c they don't start with a \"clean state.\" I figure this will be more likely with every PR running against the sandbox. Hopefully we're also using a sandbox that does not allow regular user logins, since people can manually break orgs/users that tests depend on. (We've experienced this with system tests).",
+      "time": "11:03",
+      "timestamp": "1715104987.995219",
+      "is_reply": false
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "For 2. and 3. I think a new sandbox is provisioned for each PR and the cypress tests are run against that",
+      "time": "11:05",
+      "timestamp": "1715105141.063659",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "for 1 they escape—they'll get caught after crafting-aihub gets updated with the new backend, which takes up to 4 hours. we don't run cypress tests for backend stuff for this reason.*\n\nfor 2 we don't, this is one of the big open issues... note that cypress runs tests in a similar order between each PR, so it'll be fine as long as CI starts with like, a 10 minute ish gap.\n\n*well, we have a github action called cypress tests (https://github.com/instabase/instabase/blob/master/.github/workflows/cypress-no-op.yml) that runs on them, but it's a no-op, and it exists for github reasons",
+      "time": "11:05",
+      "timestamp": "1715105157.685819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ">  as long as CI starts with like, a 10 minute ish gap.\nHmm...do you think this is good enough?",
+      "time": "11:06",
+      "timestamp": "1715105197.779629",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "> a new sandbox is provisioned for each PR and the cypress tests are run against that\nwhile this is true, the provisioned sandboxes share the same crafting-aihub backend. so they're not isolated",
+      "time": "11:07",
+      "timestamp": "1715105273.216259",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "> while this is true, the provisioned sandboxes share the same crafting-aihub backend. so they're not isolated\nOh got it, so are the projects etc also shared between these?",
+      "time": "11:08",
+      "timestamp": "1715105312.920939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@CJ I wonder if we can \"lock\" or serialize the cypress tests instead, to avoid the concurrency issues. Since it sounds like creating a fresh sandbox per PR will not be possible in short order.",
+      "time": "11:16",
+      "timestamp": "1715105807.956579",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "For isolation, would running tests in different user accounts/orgs help?",
+      "time": "11:17",
+      "timestamp": "1715105828.103259",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "My main concern on the merge blocking is that I rarely see CI tests being green on my PRs with each run including 5~8 test failures. (Mostly tests on build/converse so I don't have context on why it failed :cry: )",
+      "time": "11:18",
+      "timestamp": "1715105914.585409",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "> running tests in different user accounts\nit would, but then the concern would be speed. an isolated cypress test would create a new project and then upload documents before starting the test proper. the idea behind the current tests is that we reuse projects so we don't have to go through the upload step. the time difference here is something like 15 seconds w/o uploading vs 90 seconds with (with _huge_ variance), times 30 something projects.\n\n> rarely see CI tests being green on my PRs with each run including 5~8 test failures\ni'm watching ci cypress runs—my belief (though correct me if i'm wrong) is that we have a tail of tests that fail constantly, rather than a random subset of tests that fail with each ci; this is the data i got from the analytics (https://cloud.cypress.io/projects/cfhedy/analytics/top-failures?branches=%5B%5D&browsers=%5B%5D&chartRangeMostCommonErrors=%5B%5D&chartRangeSlowestTests=%5B83736%2C93038%5D&chartRangeTopFailures=%5B10%2C15%5D&committers=%5B%5D&cypressVersions=%5B%5D&flaky=%5B%5D&operatingSystems=%5B%5D&runGroups=%5B%5D&specFiles=%5B%5D&status=%5B%7B%22label%22%3A%22Passed%22%2C%22value%22%3A%22PASSED%22%7D%2C%7B%22label%22%3A%22Failed%22%2C%22value%22%3A%22FAILED%22%7D%5D&tags=%5B%7B%22disabled%22%3Afalse%2C%22label%22%3A%22ci%22%2C%22labelProperties%22%3A%7B%22color%22%3A%22%23dadade%22%7D%2C%22suggested%22%3Afalse%2C%22value%22%3A%22ci%22%7D%5D&tagsMatch=ANY&timeInterval=WEEK&timeRange=%7B%22startDate%22%3A%222024-05-06%22%2C%22endDate%22%3A%222024-05-07%22%7D&viewBy=TEST_CASE). the tests that have a failure rate <15% seem like they fail only when most tests in the suite fail anyway",
+      "time": "11:25",
+      "timestamp": "1715106341.870469",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "> Mostly tests on build/converse so I don't have context on why it failed\nthe logic for testing which cypress tests to rerun is quite coarse. for example, the BuildApp/dependencies.test.ts (https://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/BuildApp/dependencies.test.ts) mean that all the build tests rerun if there's a change that touches, say, `ProjectWrapper`. we could definitely make it sharper",
+      "time": "11:30",
+      "timestamp": "1715106606.325789",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The dependency makes sense.\nAre we actively fixing those tests that failed constantly?",
+      "time": "11:31",
+      "timestamp": "1715106692.914449",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "yes—cf the <#C029ZG026GZ|> messages from serena lol. i'm reluctant to flip the switch to make ci blocking until i see consistent green ci runs",
+      "time": "11:32",
+      "timestamp": "1715106748.784039",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "(also, you might want to rebase master—there've been a lot of cypress fixes in the past day or so)",
+      "time": "11:37",
+      "timestamp": "1715107033.098959",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "yep, I did",
+      "time": "11:37",
+      "timestamp": "1715107049.641009",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I saw Kerry's message (https://instabase.slack.com/archives/C029ZG026GZ/p1715022957644719) saying that we'll make it blocking today? Are we pushing it back since we still have more Cypress tests to fix?",
+      "time": "11:43",
+      "timestamp": "1715107419.934169",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "On the concurrency issue, @CJ has told me that this is not practically an issue, since tests rarely start at the same time (except with Converse test - btw @CJ did you resolve that with the Converse team?)",
+      "time": "14:33",
+      "timestamp": "1715117595.864289",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "\"not practically an issue\" means a 10ish minute gap between CI tests. in the last week i've noticed this happen on average once a day (which is consistent with what i remember from past months) so it could be an issue",
+      "time": "14:39",
+      "timestamp": "1715117964.175009",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Re: concurrency -- they rarely start concurrently _now_, but if every FE PR is running them -- I'm not sure that will hold true for long.",
+      "time": "14:39",
+      "timestamp": "1715117970.089729",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "(it has been the case that every FE PR has been running cypress ci for ~months now)",
+      "time": "14:39",
+      "timestamp": "1715117993.261229",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, I didn't realize that. Do you know the false failure rate?",
+      "time": "14:40",
+      "timestamp": "1715118028.678149",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we don’t know the false failure rate since there have always been some consistently failing cypress tests (up until yesterday, when we skipped the last consistently failing test)",
+      "time": "14:41",
+      "timestamp": "1715118089.619359",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-05-07.json",
+    "message_count": 22,
+    "start_time": "1715104987.995219",
+    "end_time": "1715118089.619359",
+    "is_thread": true
+  }
+}

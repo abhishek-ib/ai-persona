@@ -1,0 +1,87 @@
+{
+  "id": "ch_C06FA6A23_2024-06-05_1717629710.345059_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Sunny Khatri",
+    "Anil",
+    "Nikolaos Kofinas",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Yash Botadra @Nikolaos Kofinas says logs are missing in ML Studio - is it that the logs are available in model-training worker, but not in ML Studio itself? @Nikolaos Kofinas for Bofa's issue (https://instabase.slack.com/archives/C02KS5FHZEE/p1717429955264239?thread_ts=1717012003.049619&cid=C02KS5FHZEE) - can you elaborate on where the logs are missing (is it from ML Studio or from the model-training worker logs?)",
+      "time": "16:21",
+      "timestamp": "1717629710.345059",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I'm trying to understand if this is an issue with how we're capturing logs to show in ML Studio, or with the logging itself",
+      "time": "16:22",
+      "timestamp": "1717629728.375369",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "there is a problem with the info logs in python, we get all the info logs from ibformers but we don’t get the info lgos from trasnformers. That means that all the logs during train (e.g. epoch, loss, etc) are lost and we dont know what happens there.",
+      "time": "16:25",
+      "timestamp": "1717629926.847839",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I am training a model on uat.dogfood, and I am seeing the logs in Grafana (https://uat.dogfood.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22q0O%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22ray-model-training-worker%5C%22%7D%20%7C%3D%20%60%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%22now-5m%22,%22to%22:%22now%22%7D%7D%7D&orgId=1), but I don't see them in ML Studio. Can you take a look at the Grafana link and confirm if you see the expected transfomers logs there?",
+      "time": "16:38",
+      "timestamp": "1717630720.019559",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Anil @Yash Botadra do you know how ray worker training logs are shipped to ML Studio? Is it using rabbitmq as a log handler to ship logs for display in ML Studio? It seems like the Grafana log handler is capturing the logs, but whatever is responsible for capturing logs for showing in ML Studio - btw this is using the /api/v1/classifier/logs/{JOB_ID} endpoint",
+      "time": "16:43",
+      "timestamp": "1717630986.590039",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Nikolaos Kofinas since the logs are in Grafana - can you check with Bofa / Jet if you can get the logs directly from ray-worker? it should be there",
+      "time": "16:52",
+      "timestamp": "1717631541.106799",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "This thread has become quite long. Might make sense to start a new one for this issue. It doesn't seem to be related to the previous issue we fixed.",
+      "time": "16:54",
+      "timestamp": "1717631692.679439",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Hmm, I see the RabbitMQHandler in the ray code. So the logic is the same what happens in model-service or app-tasks.",
+      "time": "16:54",
+      "timestamp": "1717631695.059249",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-06-05.json",
+    "message_count": 8,
+    "start_time": "1717629710.345059",
+    "end_time": "1717631695.059249",
+    "is_thread": true
+  }
+}

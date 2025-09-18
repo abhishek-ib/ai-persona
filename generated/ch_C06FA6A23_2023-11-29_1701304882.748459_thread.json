@@ -1,0 +1,37 @@
+{
+  "id": "ch_C06FA6A23_2023-11-29_1701304882.748459_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yiqing",
+    "peter"
+  ],
+  "messages": [
+    {
+      "sender": "peter",
+      "user_id": "U02NAREL9L7",
+      "message": "*SaaS Research Series - P&G*\n\nA second customer for people who have reading they'd like to queue up :smile:\n\nThis update on the SaaS Research Series is with P&G. I talked to James, who is the lead admin (of 3) of the Instabase SaaS deployments at P&G. Overall, P&G’s experience on SaaS has been positive, but there are a few important areas that we can improve on to make their experience even better. James has also been using ICC regularly to check license usage, but hasn’t been aware of the newer ICC features.\n\nOne good quote from James that captures the need for us to improve upon what we offer today - “It feels like we have to work around the platform instead of SaaS meeting customers where they are.”\n\nOverall SaaS / Summary\n• IB is used in conjunction with other third party tools to delivery end to end solutions\n    ◦ Have aggressive plans to increase IB adoption\n• Experience is very positive. IB is used as part of suite of tools to serve P&G’s customers \n• Called out 4 areas of improvement: Solution Migration, Model Training, Telemetry, Issue Resolution\n• Waiting on IB fixes can cost P&G a lot of money - since contractor teams wait around before fix arrives, but still need to be paid\nSolution Migration\n• This is a major pain point, and particularly around moving models, which are multiple gigs in size\n• Downloading model can break in the middle, and sometimes the browser will not report a failure\n    ◦ Sometimes a failure is only discovered when uploading the model again - which means they need to take a lot of time to redownload and reupload the model\n• Copying folder structure over between diff deployments is manual and also painful\n• Otherwise, the actual flows/dependencies/etc didn’t seem like a major issue\n• Changelogs of models takes place on Confluence\n    ◦ Would like to be able to write custom changelogs on-platform, since not all IB devs have access to P&G Confluence\nModel Training\n• @ peak, train 5-6 models a week. Currently 3-4 a week\n• Waiting in line to train models takes a lot of time - would like to be able to train models in parallel\n    ◦ Have asked for a second dev env, or more GPUs, to try to solve this\n• Model training pain led to the quote @ top of these notes\nTelemetry\n• Want to get more data about field-level metrics, e.g. what goes to human review, how long, accuracy, etc.\n    ◦ Integrates this data with data from other third party systems to get end to end picture of solution performance\n• P&G has built customer telemetry solutions due to lack of data from IB\n• I brought up deployed solutions but they mention they haven’t been able to use it - likely need to have a followup here to understand why\nIssue Resolution\n• James feels that daily scrum @ P&G has lots of people blocked on open tickets (with support or SolEng)\n• Has asked for more open communication, e.g. office hours to get support\n• At one time was waiting for a fix w/ 2.5 week estimate, but fix was delayed\n    ◦ This delay cost P&G money since they pay for professional services even while blocked on IB supplying a fix\nCloud Console\n• Uses this frequently for checking license usage - feels like it works well, exactly like it should\n• Wasn’t aware of newer features such as network rules\n• Secrets feature will be valuable\n    ◦ Currently developers write their own secrets on the system - no way to centrally manage\n    ◦ Painful when moving to prod, since most devs don’t have prod access\n    ◦ Secrets feature will provide admins with a lot of visibility & new control\nLink to full notes here (https://docs.google.com/document/d/1Vyl7Eq9M3yVyAp2sZugskmYPIsv4Cjv1PB1yBjYPyeQ/edit).",
+      "time": "16:41",
+      "timestamp": "1701304882.748459",
+      "is_reply": false
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "Just discussed the model training related issue with Peter.\n\nhttps://grafana.console.instabase.com/d/rayDefaultDashboard/ray-cluster-dashboard?orgId=1&v[…]_03-36-39_716414_8&var-Instance=All&from=now-2d&to=now (https://grafana.console.instabase.com/d/rayDefaultDashboard/ray-cluster-dashboard?orgId=1&var-datasource=pg-dev-stats&var-SessionName=session_2023-11-27_03-36-39_716414_8&var-Instance=All&from=now-2d&to=now)\n\nAfter reviewing the above dashboard, it’s clear that all jobs are running smoothly without any failures and there was no job blocked by the running job. I spoke with Peter, and he explained that the customer has been submitting jobs one at a time intentionally due to only having a single GPU. Their goal is to run multiple jobs simultaneously. In our current GPU setup, with each job using about 8.39 out of 15 GB of memory (dashboard (https://grafana.console.instabase.com/d/rayDefaultDashboard/ray-cluster-dashboard?orgId=1&var-datasource=pg-dev-stats&var-SessionName=session_2023-11-27_03-36-39_716414_8&var-Instance=All&from=1701133756491&to=1701306556491&viewPanel=18)), doesn’t allow for two jobs to run on one GPU. To meet the customer’s needs, we should consider adding more T4 GPUs, or changing the GPU type to A10 (24GB), enabling the parallel running of multiple jobs. cc @Heymian",
+      "time": "17:10",
+      "timestamp": "1701306628.900809",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-11-29.json",
+    "message_count": 2,
+    "start_time": "1701304882.748459",
+    "end_time": "1701306628.900809",
+    "is_thread": true
+  }
+}

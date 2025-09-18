@@ -1,0 +1,150 @@
+{
+  "id": "ch_C06FA6A23_2022-10-11_1665494547.643199_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "songeun.you",
+    "pauline.comising",
+    "Arjun"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Good morning team :slightly_smiling_face: Despite pulling master a handful of times after the monaco PR (https://github.com/instabase/instabase/pull/31370)'s been merged and recompiling my services, I'm still getting a localhost `monaco is not defined` error after logging in, and I'm unable to try and jump to other urls for local testing.\nI've recompiled all services included in `ppy compile lite` locally, as docker using prebuilt, and as docker without prebuilt. I've also made sure to `make build-local` in `webserver/shared/src/js/webpacked` and use the `RELOAD=true` flag for webapp, apps-server, and server-nginx, yet I can't seem to get rid of the monaco bug. All services included in `ppy status lite` are up, and on the frontend side, I've only found `celery-webdriver-tasks` to be down, but I'm getting dependency errors trying to download necessary imports to compile this service. Does anyone know what else I should try?",
+      "time": "06:22",
+      "timestamp": "1665494547.643199",
+      "is_reply": false
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I’m not sure but I know that celery-webdriver-tasks being down likely isn’t the issue. It’s always down for me too and I have no issue running locally",
+      "time": "07:31",
+      "timestamp": "1665498707.891989",
+      "is_reply": true
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "Try hard refreshing?",
+      "time": "08:19",
+      "timestamp": "1665501542.958839",
+      "is_reply": true
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "I also got the monaco error the first time I pulled from master today, it disappeared after I switched around to different branches and came back to master though",
+      "time": "08:19",
+      "timestamp": "1665501584.090409",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "i've tried hard refreshing but let me switch around and back",
+      "time": "09:14",
+      "timestamp": "1665504891.679489",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "switching around and recompiling frontend services didnt seem to do the trick, did you recompile everything?",
+      "time": "09:23",
+      "timestamp": "1665505430.282289",
+      "is_reply": true
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "Hmm I didn't have to recompile, I assumed it was because some of the old code was cached in the frontend",
+      "time": "09:26",
+      "timestamp": "1665505589.028529",
+      "is_reply": true
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "When you compare your repo to the monaco PR's, do you have the code that jessica added?",
+      "time": "09:26",
+      "timestamp": "1665505605.527439",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "mhmm, yepp, i checked that the PR changes went through, and just checking, does hard refreshing clear the cache?",
+      "time": "09:27",
+      "timestamp": "1665505651.935879",
+      "is_reply": true
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "hard refreshing clears the browser's cache for a specific page and forces it to load the latest version",
+      "time": "09:28",
+      "timestamp": "1665505713.364799",
+      "is_reply": true
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "If you go directly to other pages, do any of them work? or is the entire site blocked for you?",
+      "time": "09:29",
+      "timestamp": "1665505776.331979",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "i've tried jumping to pages like apps/ml-studio, but because it just brings me back to the login page since my login info isnt saved, I can't jump anywhere else and always get the monaco bug on the `https://localhost/account/login` page",
+      "time": "09:30",
+      "timestamp": "1665505840.140969",
+      "is_reply": true
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "Ahhh one thing I can think of is that the monaco fix wasn't applied to the login page. From the PR, I don't see a corresponding file for the login page",
+      "time": "09:33",
+      "timestamp": "1665506032.647269",
+      "is_reply": true
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "Hmm never mind, login works fine for me in incognito",
+      "time": "09:35",
+      "timestamp": "1665506135.371019",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "ya, I was thinking that it might not be as tied to the specific PR, but still wasn't sure what would make this bug persist past pulling latest master and recompiling :(",
+      "time": "09:57",
+      "timestamp": "1665507428.864929",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "just wanted to add this sc bc to me it looks slightly different than the one I got before that someone said was the monaco bug",
+      "time": "13:07",
+      "timestamp": "1665518840.724229",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-10-11.json",
+    "message_count": 16,
+    "start_time": "1665494547.643199",
+    "end_time": "1665518840.724229",
+    "is_thread": true
+  }
+}

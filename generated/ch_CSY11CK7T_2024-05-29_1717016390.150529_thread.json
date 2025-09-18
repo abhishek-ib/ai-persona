@@ -1,0 +1,152 @@
+{
+  "id": "ch_CSY11CK7T_2024-05-29_1717016390.150529_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "CJ",
+    "Arjun",
+    "Travis",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "`aihub-single-classification.spec.ts` failed 3 times: https://cloud.cypress.io/projects/cfhedy/runs/10514/overview/b6a90f0b-d3a0-47e2-b38d-8b4318d296da?roarHideRunsWithDiffGroupsAndTags=1",
+      "time": "13:59",
+      "timestamp": "1717016390.150529",
+      "is_reply": false
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "oof, investigating :/",
+      "time": "14:01",
+      "timestamp": "1717016471.212759",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "also yeah i've been noticing this ughhh",
+      "time": "14:01",
+      "timestamp": "1717016482.991899",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "this might fix it https://github.com/instabase/instabase/pull/58002",
+      "time": "14:06",
+      "timestamp": "1717016808.058639",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "got the same failure.",
+      "time": "14:32",
+      "timestamp": "1717018344.547399",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "your fix seems to work!",
+      "time": "14:33",
+      "timestamp": "1717018394.355029",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "this is me",
+      "time": "14:34",
+      "timestamp": "1717018464.373569",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "so desperate i didnt even spell it correctly",
+      "time": "14:34",
+      "timestamp": "1717018474.324309",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "git needs a spellchecker",
+      "time": "14:34",
+      "timestamp": "1717018493.071389",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm it seems single-classification is still flaky in Xindi’s CI run after rebasing :disappointed: https://cloud.cypress.io/projects/cfhedy/runs/10545/test-results/ba4c61b0-c014-4055-8[…]2%2C%22label%22%3A%22FAILED%22%7D%5D&testingTypesEnum=%5B%5D (https://cloud.cypress.io/projects/cfhedy/runs/10545/test-results/ba4c61b0-c014-4055-8567-4ca070e9a136?actions=%5B%5D&browsers=%5B%5D&groups=%5B%5D&isFlaky=%5B%5D&modificationDateRange=%7B%22startDate%22%3A%221970-01-01%22%2C%22endDate%22%3A%222038-01-19%22%7D&orderBy=EXECUTION_ORDER&oses=%5B%5D&specs=%5B%5D&statuses=%5B%7B%22value%22%3A%22FAILED%22%2C%22label%22%3A%22FAILED%22%7D%5D&testingTypesEnum=%5B%5D)",
+      "time": "16:20",
+      "timestamp": "1717024812.242059",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "not sure if related but seeing an error in parsing the schema from api here (https://cloud.cypress.io/projects/cfhedy/runs/10549/overview/3e68bddd-42cb-4fc6-a4bd-8043d9bfe204/replay?att=1&roarHideRunsWithDiffGroupsAndTags=1&ts=1717026915403.889)",
+      "time": "17:35",
+      "timestamp": "1717029301.640569",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "seeing same issue as others too",
+      "time": "17:51",
+      "timestamp": "1717030313.272709",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the single-classification failure in Xindi’s run is different from yours\n\nthe failure in Xindi’s run is the same failure that CJ tried to fix earlier today - even though the classification job status correctly returns “Other” as the class label for the document, the UI still shows “Vehicle Registration” (see screenshot 1)\n\nthe failure in your run is caused by the `POST /schema` request somehow timing out - the response is not shown in the Cypress test replay, but somehow we still try to process a response from `POST /schema` that doesn’t include `last_edited_at` (see screenshot 2)",
+      "time": "21:10",
+      "timestamp": "1717042229.540339",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah i was wrong, the failure in Arjun’s run is the same as the one in Xindi’s run\n\ni was looking at attempt 3 in Arjun’s run (which has the schema parsing error), but attempt 1 in Arjun’s run has the issue where the UI shows “Vehicle Registration” instead of “Other” as the class label",
+      "time": "21:53",
+      "timestamp": "1717044833.257989",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for the issue where “Other” should be shown as the class label, i think there may still be a race condition\n\nfor a previous classification job, we correctly call `PUT /class-labels` , after which we render the new classification results (screenshot 1)\n\nhowever, for the last classification job, we do not call `PUT /class-labels`, and we never render the new classification results even though the job is complete (screenshots 2 and 3)",
+      "time": "22:00",
+      "timestamp": "1717045208.772539",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think that we don’t call `PUT /class-labels` in the second case bc of this check (https://github.com/instabase/instabase/commit/693b8b429000206bb1f613c798e78ddcee9e0044#diff-c830e004f80b1599ddde14168b953e5557776e7005e536ea9d30b493be94a17cR80)\n\nin the first case, note that the `POST /schema` call occurs before the `POST /classification` call\n\nin the second case, note that the `POST /schema` call occurs after the `POST /classification` call\n\ni’ll leave it for CJ to figure out tomorrow why the order of the calls is switched in the second case :sweat_smile:",
+      "time": "22:01",
+      "timestamp": "1717045300.238309",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-05-29.json",
+    "message_count": 16,
+    "start_time": "1717016390.150529",
+    "end_time": "1717045300.238309",
+    "is_thread": true
+  }
+}

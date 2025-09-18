@@ -1,0 +1,127 @@
+{
+  "id": "ch_CSY11CK7T_2025-05-19_1747680652.547669_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Xindi Xu",
+    "William Helmrath",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Cypress weekly summary May 12-16\n*Summary*: Cypress broken for the entire week soz\n• Monday: File upload and extraction errors due to us rotating the OpenAI API key thread (https://instabase.slack.com/archives/CSY11CK7T/p1747156438635109)\n    ◦ Resolved temporarily on Tuesday 3:31pm by re-using the `ibdev-backend` key\n    ◦ Resolved permanently on Tuesday 5:27pm with a dedicated API key. \n    ◦ Thanks @Victor Zeng \n• Wednesday: Extraction failing for community users due to passing a bad org ID and no longer ignoring errors thread (https://instabase.slack.com/archives/CSY11CK7T/p1747260027390859)\n    ◦ A backend fix (https://github.com/instabase/instabase/pull/70721) was merged Thursday 8pm.\n    ◦ An issue with CI deployment prevent this from going out, resolved Sunday afternoon.\n        ▪︎ I’m still seeing this issue on `crafting-cyp` for community users, @Serena ~can you continue this investigation?~ nvm, we just needed to redeploy\n    ◦ Thanks @Sayan @Serena @Xindi Xu \n• Friday: File upload and extraction errors due to changes in how we do tracing thread (https://instabase.slack.com/archives/CSY11CK7T/p1747438513218749)\n    ◦ Resolved today at 12:39am by reverting the changes.\n    ◦ Thanks @abhijnan",
+      "time": "11:50",
+      "timestamp": "1747680652.547669",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "> • A backend fix (https://github.com/instabase/instabase/pull/70721) was merged Thursday 8pm.\nCorrection: the backend fix was opened at that time, but CI kept failing due to various issues, so I just merged it in this morning.",
+      "time": "11:52",
+      "timestamp": "1747680732.224059",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Ah, that makes sense. Would explain why it’s still an issue atm",
+      "time": "11:52",
+      "timestamp": "1747680763.574849",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea... maybe we should redeploy? But somehow everytime i redeploy, things breaks...",
+      "time": "11:53",
+      "timestamp": "1747680801.665789",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Good idea. I’ll fire it off",
+      "time": "11:53",
+      "timestamp": "1747680830.667059",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Let's just redeploy all services. I have no idea which services are affected :sweat_smile:",
+      "time": "11:54",
+      "timestamp": "1747680898.996969",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Hah, yep deployment errors out:\n```Unexpected error while starting base config update: Max retries reached: <Response [500]>```\nI’ll try again once more. If this doesn’t work, we can wait until 5pm for the automated deployment.",
+      "time": "12:45",
+      "timestamp": "1747683952.603719",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc <!subteam^S02FJA6A7U5> for the base config update issue",
+      "time": "13:20",
+      "timestamp": "1747686003.660349",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "what environment is this?",
+      "time": "13:21",
+      "timestamp": "1747686103.617339",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "https://sandbox.console.instabase.com/customer/Engineering/tenant/crafting-cyp/info",
+      "time": "13:21",
+      "timestamp": "1747686117.126329",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "It looks like the current update is going through, let me check the logs for the failed update",
+      "time": "13:24",
+      "timestamp": "1747686298.294129",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "`2025/05/19 19:30:24 ERROR controlplane/handler/configs/base_config_handler.go:275 -- GetFileContent failed: GetFileContentByFileName failed: Unsupported file type: text/plain; charset=utf-8. File: /var/tmp/network-policies.zip`\n\nWe’ve seen this in the past when the size of the base configs table gets too big, I’ll go in and truncate the DB in a sec",
+      "time": "13:31",
+      "timestamp": "1747686713.273859",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Ok just truncated the DB and everything looks healthy and is loading faster, stats below:",
+      "time": "14:46",
+      "timestamp": "1747691172.365889",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-05-19.json",
+    "message_count": 13,
+    "start_time": "1747680652.547669",
+    "end_time": "1747691172.365889",
+    "is_thread": true
+  }
+}

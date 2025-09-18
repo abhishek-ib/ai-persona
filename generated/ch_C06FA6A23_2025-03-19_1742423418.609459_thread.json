@@ -1,0 +1,61 @@
+{
+  "id": "ch_C06FA6A23_2025-03-19_1742423418.609459_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Is anyone seeing this unit test failure with file services (target `//core-services/file-service/src/go/src/instabase/fileservice/clients:clients_test`) in CI? Seems like something to do with s3 test client?\n```\n[2025-03-19T22:06:01.068Z] 2025/03/19 22:05:42 ERROR fileservice/clients/s3_client.go:443 -- [NOT_FOUND]: Failure during stat - file not found. Path: testDir0\n[2025-03-19T22:06:01.068Z] \n[2025-03-19T22:06:01.068Z] ----------------------------------------------------------------------\n[2025-03-19T22:06:01.068Z] FAIL: core-services/file-service/src/go/src/instabase/fileservice/clients/client_test.go:2201: ClientTestSuite.TestRm\n[2025-03-19T22:06:01.068Z] \n[2025-03-19T22:06:01.068Z] core-services/file-service/src/go/src/instabase/fileservice/clients/client_test.go:2207:\n[2025-03-19T22:06:01.068Z]     s.testRm(c, clientType, client)\n[2025-03-19T22:06:01.068Z] core-services/file-service/src/go/src/instabase/fileservice/clients/client_test.go:971:\n[2025-03-19T22:06:01.069Z]     c.Assert(client.Rm(ctx, largeDirPath, fsvc.NodeInfo_FOLDER).Code(), Equals, expStatusCode)\n[2025-03-19T22:06:01.069Z] ... obtained status.Code = 0 (\"OK\")\n[2025-03-19T22:06:01.069Z] ... expected status.Code = 6 (\"CANCELLED\")```",
+      "time": "15:30",
+      "timestamp": "1742423418.609459",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "This one is likely me, though I'll admit, I don't understand why. It showed up in my PR deleting a database table (did not touch file-service), but it failed once out of my two runs, and I couldn't reproduce locally, so I chalked it up to flakiness.",
+      "time": "15:33",
+      "timestamp": "1742423619.770189",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ":eyes: I see. i'll try running it again",
+      "time": "15:36",
+      "timestamp": "1742423819.873839",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I'm looking at the test again too, especially since you also hit it, it must mean it's going to happen more. It's a time-based test (which I don't like), so a quick fix might be I try to increase the wait time.",
+      "time": "15:39",
+      "timestamp": "1742423961.835219",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I put up an attempted fix, and my PR CI passed. If you still hit it, can you try rebasing on master and let me know if you still run into it?",
+      "time": "21:58",
+      "timestamp": "1742446709.016449",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-03-19.json",
+    "message_count": 5,
+    "start_time": "1742423418.609459",
+    "end_time": "1742446709.016449",
+    "is_thread": true
+  }
+}

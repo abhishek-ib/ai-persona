@@ -1,0 +1,45 @@
+{
+  "id": "ch_C06FA6A23_2022-06-02_1654205347.279799_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Radhika Patwari",
+    "Pridhvi Vegesna"
+  ],
+  "messages": [
+    {
+      "sender": "Radhika Patwari",
+      "user_id": "U03DL4AU29X",
+      "message": "Hello Pridhvi, I am working on stats/ folder on grpc agent in golang. I upgraded go to 1.18 in my M1. I am suddenly facing a lot of `go mod tidy`  issues after upgrade. It would be great if you can help me in this.\n\nError :\n```[2022-06-02T09:28:33.042Z] cd /instabase_dir/core-services/license-service/../../shared-utils/go-utils/src/instabase/utils/db && go mod tidy \n\n...\n...\n...\n\n[2022-06-02T09:28:33.042Z] go: downloading golang.org/x/xerrors (http://golang.org/x/xerrors) v0.0.0-20200804184101-5ec99f83aff1\n\n[2022-06-02T09:28:33.042Z] instabase/utils/db/session imports\n\n[2022-06-02T09:28:33.042Z] \tinstabase/utils/stats imports\n\n[2022-06-02T09:28:33.042Z] \tinstabase/protos/stats: malformed module path \"instabase\": missing dot in first path element```\n\nIssue thread - https://instabase.slack.com/archives/G01KL0ALC75/p1654165195465339 [Not sure if this is accessible to you]\n\nExact issue -\nWe have added grpc agent in golang in `stats/`  folder. The agent uses `stats.proto`  and requires to build the dependency `build-stats-go-proto` . As a result, all services (including shared and third-party libraries) which use go dependencies require us to explicitly add this dependency in their `Makefile`.\n\nOn running `license service`  even after adding dependencies, unit tests are failing. Actually, it is going into `db/` and running the command `go mod tidy`. Since it is not going through `db/Makefile`, it does not have the `stats.pb.go` file. As a result, `go mod tidy` is failing.\n\nPR failing. - https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-26937/3/pipeline/",
+      "time": "14:29",
+      "timestamp": "1654205347.279799",
+      "is_reply": false
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Unfortunately, this is an artifact of our usage of mockery. When running `make test`  in our services, we go into our shared-utils and generate mocks of some of the shared-util code for unit testing purposes. In order for `mockery` to be applied, we first have to switch go's module context to the module mockery is being run in. In the case of license-service, we are generating mocks in the `db`  shared util, so we run `go mod tidy` in the db shared-util. Because instabase/protos/stats does not exist under any path specified in the go.mod for the `db` shared-util, go mod tidy complains.\n\nA quick solution would be to 1. Convert line 22 in the makefile of license service (https://github.com/instabase/instabase/blob/7fd778f11e417257a28f527ad76612a269156a15/core-services/license-service/Makefile#L22) so that it also calls the build target of `db` shared util before running `go mod tidy`. This will create a build folder that `go` can look through for resolving dependencies. 2. Add `build-stats-go-proto` to the `build` target for the `db` shared util. 3. Add an entry in the go.mod of `db` shared util for an `instabase` folder.\n\nI've pushed a commit to your PR (https://github.com/instabase/instabase/pull/26937/commits/c8a542a2d980b13184c502b9ac753ffa819ff834) with the above steps ^, you may need to replicate them across other shared-utils that import the stats library.",
+      "time": "16:01",
+      "timestamp": "1654210916.043359",
+      "is_reply": true
+    },
+    {
+      "sender": "Radhika Patwari",
+      "user_id": "U03DL4AU29X",
+      "message": "however similar to license service, there might be some other services, shared libraries and third-party dependencies that show a common behaviour. Similar changes will be needed in all these for successful run of the repo.",
+      "time": "22:20",
+      "timestamp": "1654233646.134559",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-06-02.json",
+    "message_count": 3,
+    "start_time": "1654205347.279799",
+    "end_time": "1654233646.134559",
+    "is_thread": true
+  }
+}

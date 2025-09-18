@@ -1,0 +1,167 @@
+{
+  "id": "ch_C06FA6A23_2020-02-13_1581622287.452300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "rahul",
+    "Kerry",
+    "Karthik S",
+    "dlluncor"
+  ],
+  "messages": [
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Anyone seeing significant slowness when running flows? I’m getting it on both prod and dogfood running a simple test flow on 4 files",
+      "time": "11:31",
+      "timestamp": "1581622287.452300",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "there’s a significant pause on dogfood between `Finished Pre-flow UDF` and the next step :thinking_face: @dlluncor",
+      "time": "11:33",
+      "timestamp": "1581622432.452400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "we’ll look into it @Kerry . I’ll have @Karthik S and @rahul help me here",
+      "time": "11:37",
+      "timestamp": "1581622670.452600",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i think there’s some unstableness in the flow backend, I’m getting intermittent errors.",
+      "time": "11:40",
+      "timestamp": "1581622801.452900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i ran this flow and it happened super quickly: https://dogfood.instabase.com/apps/flow/edit/ib_eng/tests/fs/Test%20Drive/tests/general/single-flows/workflows/apply-udf-out-dir.ibflow#",
+      "time": "11:40",
+      "timestamp": "1581622817.453300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "could you send a link to the Flow that you are running @Kerry?",
+      "time": "11:40",
+      "timestamp": "1581622832.453500",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "https://dogfood.instabase.com/apps/flow/run/ib_solutions/solutions/fs/Instabase%20Drive/pre-built/us-markets/_generated/_generated_test/all/build/bin/metaflow-2020-02-06-16:32:02.ibflowbin\n\nrunning it on this input https://dogfood.instabase.com/ib_solutions/solutions/fs/Instabase%20Drive/pre-built/us-markets/sol-mkt-uat/test-input-data-2/input/\n\n@dlluncor",
+      "time": "11:42",
+      "timestamp": "1581622940.453700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "it actually worked fine for me — here are my results: https://dogfood.instabase.com/ib_solutions/solutions/fs/Instabase%20Drive/pre-built/us-markets/sol-mkt-uat/test-input-data-2/run_dlluncor/2020-02-13-19:49:57/a25b4fa8-1fc5-4584-b954-3729695dfc14/",
+      "time": "11:57",
+      "timestamp": "1581623858.454100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i dont know how to debug the Flow proceeding slowly — i think it might be a lot of tasks being scheduled on Rabbitmq cc: @shaunak but I dont really know how to debug this",
+      "time": "11:58",
+      "timestamp": "1581623897.454300",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i guess it just took a very long time for me, and i got errors once in a while",
+      "time": "11:58",
+      "timestamp": "1581623898.454500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "FYI Karthik thinks this could be a PY2 to PY3 issue if you look into your UDFs that are written @Kerry",
+      "time": "12:00",
+      "timestamp": "1581624028.454800",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "Lemme run this in the local host and see where the error stems from",
+      "time": "12:03",
+      "timestamp": "1581624190.455000",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Note that most of my runs go through successfully, they are just very slow, and some of them didn’t complete and returned the error message in the screenshot",
+      "time": "12:04",
+      "timestamp": "1581624246.455200",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "I can give the job id of the run that failed if that’s helpful",
+      "time": "12:05",
+      "timestamp": "1581624319.455400",
+      "is_reply": true
+    },
+    {
+      "sender": "rahul",
+      "user_id": "USC1G2ZKR",
+      "message": "Hey @Kerry I think I see what you mean, but my guess is that it only _seems_ that the prep flow UDF is taking a long time because its the last thing that performs any message updates in the prep_flow_v2 task, after which celery might take a while to queue the next task (map_flow_v2, etc.). See:\n\nhttps://github.com/instabase/instabase/blob/master/distributed-tasks/celery/app-tasks/src/py/instabase/registry/tasks.py#L2106-L2107",
+      "time": "12:05",
+      "timestamp": "1581624351.455600",
+      "is_reply": true
+    },
+    {
+      "sender": "rahul",
+      "user_id": "USC1G2ZKR",
+      "message": "The actual code sits within udf_hooks.py (https://github.com/instabase/instabase/blob/master/shared-utils/py-utils/flow/server/src/py/instabase/flow/util/udf_hooks.py)",
+      "time": "12:06",
+      "timestamp": "1581624376.455900",
+      "is_reply": true
+    },
+    {
+      "sender": "rahul",
+      "user_id": "USC1G2ZKR",
+      "message": "I’m not sure about the error tho, never seen that before so might be what karthik and david were talking about.",
+      "time": "12:06",
+      "timestamp": "1581624403.456200",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "thanks for the explanation @rahul",
+      "time": "12:07",
+      "timestamp": "1581624438.456400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-02-13.json",
+    "message_count": 18,
+    "start_time": "1581622287.452300",
+    "end_time": "1581624438.456400",
+    "is_thread": true
+  }
+}

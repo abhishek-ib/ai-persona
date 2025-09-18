@@ -1,0 +1,160 @@
+{
+  "id": "ch_C0516UPPMT3_2025-05-08_1746720150.353739_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "alagu",
+    "Nathaniel",
+    "Kaustubh (KD)",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "UX feature request:\nA major pain point of working in Build is that the Front End gets bogged down by large files and the model update operations keep trying to auto run as we're typing out prompts, so everything gets slow as molasses.  Instead, there could be a toggle that allows us to edit prompts/cleaning/validations without having any documents actively displayed and also turns off any automatic model calls.\n\n*Sometimes it'll take me literal hours* to copy+paste the same cleaning prompt between multiple fields (which might be improved via our PFR for reusable functions/prompts), *when it should only take like 15 minutes* if everything wasn't trying to do a bunch of unnecessary stuff.",
+      "time": "09:02",
+      "timestamp": "1746720150.353739",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> *Sometimes it'll take me literal hours* to copy+paste the same cleaning prompt between multiple fields (which might be improved via our PFR for reusable functions/prompts)\nIs the slowness happening when you're viewing a single doc? or only when the results table is open?",
+      "time": "10:18",
+      "timestamp": "1746724734.203369",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "Both.  But it's definitely worse when I have the results table open.  I have to be vigilant about ensuring that either I'm in single doc view OR I am only viewing 1 field, then I can open the results table.  The formula is:\n`results table / all fields = guaranteed webpage unresponsive crash`",
+      "time": "10:39",
+      "timestamp": "1746725943.987789",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> `results table / all fields = guaranteed webpage unresponsive crash`\nyeah we're aware of this (EPD-4087 (https://instabase.atlassian.net/browse/EPD-4087)) :disappointed: but we haven't been able to prioritize frontend resources for this since we've been trying to deliver case management ASAP",
+      "time": "11:14",
+      "timestamp": "1746728059.900139",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "can you share a screen recording of the slowness occurring when you're viewing a single doc?\n\nor is this on Fannie Mae's environment, in which case this is basically impossible?",
+      "time": "11:14",
+      "timestamp": "1746728097.524509",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "Yeah, this is FM's env.  And all the docs have PII, so I shouldn't even use my phone.  Though it happens in others, even MT Prod.  I probably won't have time to find and record an example this week, but I can try to circle back on it later.\n\nWhile that ticket would be helpful, what I'm proposing here is a bit different functionality that (seems to me) would be useful even if that ticket was already implemented perfectly.  Basically, it'd be helpful to have a way to turn off unnecessary operations (such as model calls or displaying a doc) to go in and quickly edit fields.  As a plus, this should be a lot easier to implement than optimizing the FE performance any further.",
+      "time": "11:32",
+      "timestamp": "1746729137.316699",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i agree that your idea about turning off unnecessary operations would be effective, but i'm concerned that it would introduce a confusing user experience\n\nex: users less familiar with Build won't know to turn this on, so even with this feature, we won't have solved the problem for those users\n\ncc @Kaustubh (KD) @alagu in case you have thoughts as well",
+      "time": "13:25",
+      "timestamp": "1746735914.994589",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "Fair point. It'd require some careful design to get the UX right.",
+      "time": "13:34",
+      "timestamp": "1746736478.192009",
+      "is_reply": true
+    },
+    {
+      "sender": "alagu",
+      "user_id": "U016JL6UURG",
+      "message": "This is great feedback - we should def consider when thinking through the prompt iteration ux.",
+      "time": "13:36",
+      "timestamp": "1746736572.811459",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Yeah tbh I think the right answer answer here is to do less on the frontend so be able to handle this. I would much rather fix the ticket that Serena mentioned than try to design around the issue.",
+      "time": "13:40",
+      "timestamp": "1746736844.945189",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Just curious, to fix this would we need to implement virtual scrolling? I'd imagine this is happening because we're trying to render too many / too large UI components at once right?",
+      "time": "13:51",
+      "timestamp": "1746737468.440629",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "I imagine that fixing the main ticket would require that, but for this simpler proposal, my suggestion would be to completely disable document rendering (force the view with no document selected, such as when you haven't uploaded any files with a given class).\n\n@Kaustubh (KD) I get that inclination, but my opinion is that this kind of functionality would be useful even in a world where that ticket is already fixed.  Unless we can reduce the IO response time from all models down to consistently 0.5 seconds or less, for even very complex calls like visual reasoning, then turning off the auto-resending of the updated prompt will always be useful.",
+      "time": "14:02",
+      "timestamp": "1746738171.610169",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@prateek.tenkale we already have virtualized scrolling\n\nthe issues are (1) the amount of content on the page, (2) we are re-rendering too often, (3) we have inefficient query keys in `react-query` -> and there may be more reasons for frontend slowness yet to be discovered :lolcry:",
+      "time": "14:14",
+      "timestamp": "1746738868.088799",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Nathaniel in the meantime to unblock you, maybe it'd be faster to edit the schema via an API call?\n\nwe don't have external-facing docs for this API since customers shouldn't be manually calling it, but you could look at how the Build UI calls `POST /api/v2/aihub/build/projects/<project-id>/schema` to figure it out",
+      "time": "14:16",
+      "timestamp": "1746739012.942849",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "in the long-term we need to do the following\n1. improve frontend performance of Build UI\n    a. no matter how many docs / classes / fields in a project and no matter how many edits, the frontend should remain performant\n2. provide affordances for bulk edits\n    a. ex: reusable functions/prompts across multiple fields in a project",
+      "time": "14:19",
+      "timestamp": "1746739149.322549",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "Thank you.  We're not Blocked, just Slowed. :sweat_smile:\n\nThis post is mainly to present a suggestion for future UX improvement.  And this issue isn't unique to Fannie Mae either; I've experienced it everywhere, even MT Prod.\n\nUnfortunately, FM's network is blocking all API access. :(",
+      "time": "14:23",
+      "timestamp": "1746739431.720609",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oh right i forgot about the api access restrictions! :sobbadobbasob:\n\nand yes, this is definitely an issue for all AI Hub customers using Automate",
+      "time": "14:25",
+      "timestamp": "1746739503.592819",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-05-08.json",
+    "message_count": 17,
+    "start_time": "1746720150.353739",
+    "end_time": "1746739503.592819",
+    "is_thread": true
+  }
+}

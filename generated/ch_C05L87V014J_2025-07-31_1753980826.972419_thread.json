@@ -1,0 +1,141 @@
+{
+  "id": "ch_C05L87V014J_2025-07-31_1753980826.972419_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "neerad.phansalkar",
+    "mfichman"
+  ],
+  "messages": [
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "@mfichman Did how we build/push connectors locally in crafting change after the recent Crafting, and refactoring (https://github.com/instabase/instabase/pull/72370) changes? I'm getting `push access denied, repository does not exist or may require authorization: authorization failed: no basic auth credentials` when pushing, so we don't seem to have push permissions (pulls from the repo work correctly).",
+      "time": "09:53",
+      "timestamp": "1753980826.972419",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Checking it out now. I think this is more related to the AWS keys rotation than the other changes.",
+      "time": "10:00",
+      "timestamp": "1753981241.392829",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Can you run `make push-dev` in one of the connector dirs and send me the log?",
+      "time": "10:01",
+      "timestamp": "1753981293.987389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also run:\n\n```docker pull 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/connector-gdrive (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/connector-gdrive)```",
+      "time": "10:02",
+      "timestamp": "1753981356.921899",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "Here's the push log.",
+      "time": "10:04",
+      "timestamp": "1753981460.358249",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "I had already run pull. Here's the log from that:\n```docker pull 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/connector-gdrive:latest (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/connector-gdrive:latest)\nlatest: Pulling from instabase-dev/connector-gdrive\n82c46e521f5e: Download complete \n38551ae8b007: Download complete \n02bfbb8fccfe: Download complete \n729f52bd1830: Download complete \nd09aa61f03cd: Download complete \n8eb116d0e11f: Download complete \n2726e237d1a3: Download complete \ndc616d341f56: Download complete \n22033106fd45: Download complete \n1839ae9896b6: Download complete \nDigest: sha256:39c8f607b7f2f1b833edc2ddd3ca6e7e7879e9bd8ab4c1eb42ed153cc8fad0e3\nStatus: Downloaded newer image for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/connector-gdrive:latest (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/connector-gdrive:latest)\n549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/connector-gdrive:latest (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/connector-gdrive:latest)```",
+      "time": "10:04",
+      "timestamp": "1753981489.729569",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm, yeah seems like a permissions issue",
+      "time": "10:04",
+      "timestamp": "1753981493.245129",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I have the same problem trying to push:\n```docker push 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/connector-gdrive:mfichman (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/connector-gdrive:mfichman)```",
+      "time": "10:05",
+      "timestamp": "1753981510.570059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let me see if I can fix the credentials on crafting-sandbox-role",
+      "time": "10:05",
+      "timestamp": "1753981536.006599",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, there are two problems: The AWS_ACCESS_KEY from env-local is interfering, and I had to update the Crafting AWS role",
+      "time": "10:12",
+      "timestamp": "1753981964.098509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The first problem needs a PR; second problem is now fixed",
+      "time": "10:12",
+      "timestamp": "1753981974.706309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "1 sec",
+      "time": "10:12",
+      "timestamp": "1753981976.954039",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```diff --git a/shared-utils/build-utils/shared/build-connector.mk b/shared-utils/build-utils/shared/build-connector.mk\nindex f48bc1cbe57..4abd57189ea 100644\n--- a/shared-utils/build-utils/shared/build-connector.mk\n+++ b/shared-utils/build-utils/shared/build-connector.mk\n@@ -7,7 +7,9 @@ include $(project_dir)/shared-utils/build-utils/shared/build-job.mk\n\n .PHONY: dev-push\n dev-push: build-docker build-env-local\n-       @. tmp/env_local && \\\n+       . tmp/env_local && \\\n+           unset AWS_SECRET_ACCESS_KEY && \\\n+           unset AWS_ACCESS_KEY_ID && \\\n                docker tag instabase/$(SERVICE_NAME) $$CONNECTOR_IMAGE_REGISTRY/$(SERVICE_NAME):$$CONNECTOR_IMAGE_TAG && \\\n                docker push $$CONNECTOR_IMAGE_REGISTRY/$(SERVICE_NAME):$$CONNECTOR_IMAGE_TAG```\npatch",
+      "time": "10:13",
+      "timestamp": "1753982034.621939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "PR https://github.com/instabase/instabase/pull/73202",
+      "time": "10:15",
+      "timestamp": "1753982137.215779",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "Great, thank you! Working now! :raised_hands:",
+      "time": "10:31",
+      "timestamp": "1753983099.971219",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-31.json",
+    "message_count": 15,
+    "start_time": "1753980826.972419",
+    "end_time": "1753983099.971219",
+    "is_thread": true
+  }
+}

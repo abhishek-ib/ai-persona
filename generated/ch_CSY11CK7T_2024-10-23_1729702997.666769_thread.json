@@ -1,0 +1,118 @@
+{
+  "id": "ch_CSY11CK7T_2024-10-23_1729702997.666769_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Liam Callanan",
+    "Xindi Xu",
+    "Udit"
+  ],
+  "messages": [
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Hey @Udit <!subteam^S07855GV3GV> It seems there’s some issues w/ review-manager/reviewer tests:\n• The tests wait for `listDocuments2` but `listDocuments2` is listening for the wrong url search params: fixing with https://github.com/instabase/instabase/pull/64228\n• Both tests expect an empty results table at some point (`cy.contains(/Your work here is done.|No results/g);`) but the tables have data. Is this expected or is there an actual bug?\n    ◦ https://cloud.cypress.io/projects/cfhedy/runs/14993/overview/8cf54601-81d4-4643-a50d-[…]y?att=1&roarHideRunsWithDiffGroupsAndTags=1&ts=1729701547180 (https://cloud.cypress.io/projects/cfhedy/runs/14993/overview/8cf54601-81d4-4643-a50d-fc26b931a517/replay?att=1&roarHideRunsWithDiffGroupsAndTags=1&ts=1729701547180)",
+      "time": "10:03",
+      "timestamp": "1729702997.666769",
+      "is_reply": false
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "nope they should see empty tables so I'll have to look into that. Thanks!",
+      "time": "10:07",
+      "timestamp": "1729703223.192499",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "@Liam Callanan the PR you have open that removes the search params is actually needed for the tables to be empty. Although, the core problem is that the page does not go back to the page with the job id search inputted. So the fix is something else and not removing the query param",
+      "time": "10:12",
+      "timestamp": "1729703578.927389",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "Do you want to switch the tests to non-blocking in your PR while I investigate and fix them?",
+      "time": "10:13",
+      "timestamp": "1729703598.411529",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Updated https://github.com/instabase/instabase/pull/64228\n\nBut if you find the fix before CI passes on the PR above then it may be worth fixing directly",
+      "time": "10:22",
+      "timestamp": "1729704165.534559",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "sounds good",
+      "time": "10:23",
+      "timestamp": "1729704213.313919",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "real fix here: https://github.com/instabase/instabase/pull/64239 -- have to see if it actually passes CI though",
+      "time": "11:33",
+      "timestamp": "1729708393.690059",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "I think we might need to force cypress to run all tests when a feature flag is moved from OPT_IN to OPT_OUT/GA since this seems to be a common issue",
+      "time": "11:35",
+      "timestamp": "1729708553.717979",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "Yah, this has happened to me multiple times",
+      "time": "11:40",
+      "timestamp": "1729708805.735559",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I agree. I worked on this briefly. https://github.com/instabase/instabase/pull/59880\nThe problem I run into is that the backend is not deployed with the feature flag stage changes, so we need to mock the feature flag stage. We'll need some code to:\n1. run all tests if file paths `env-local.json` was changed\n2. mock the feature flag stages based on that file.",
+      "time": "11:54",
+      "timestamp": "1729709684.007789",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I can look into this again later this week.",
+      "time": "11:55",
+      "timestamp": "1729709727.427959",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://instabase.atlassian.net/browse/CS-5467",
+      "time": "12:12",
+      "timestamp": "1729710742.688219",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-10-23.json",
+    "message_count": 12,
+    "start_time": "1729702997.666769",
+    "end_time": "1729710742.688219",
+    "is_thread": true
+  }
+}

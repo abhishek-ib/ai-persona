@@ -1,0 +1,208 @@
+{
+  "id": "ch_CSY11CK7T_2024-04-18_1713457582.692919_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Kerry",
+    "Travis",
+    "Serena",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems that the toast changes (https://github.com/instabase/instabase/pull/54755) broke a lot of Cypress tests on enterprise - examples below, for a complete list see https://cloud.cypress.io/projects/cfhedy/runs/8964/test-results\n• apps/src/document-refiner/__e2e__/refiner-settings.spec.ts\n• apps/src/solution-builder/__e2e__/refiner/create_refiner.spec.ts\n• apps/src/validations/__e2e__/validations-run-results.spec.ts\n• apps/src/solution-builder/__e2e__/models/run-model.spec.ts\nfyi @Xindi Xu",
+      "time": "09:26",
+      "timestamp": "1713457582.692919",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "well... kinda expected :sweat_smile:",
+      "time": "09:28",
+      "timestamp": "1713457722.296819",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Are we still trying to maintain the enterprise cypress tests? My impression is that no one is actively fixing these failing tests",
+      "time": "09:29",
+      "timestamp": "1713457765.324939",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think we should maintain them since these releases still go out to customers",
+      "time": "09:30",
+      "timestamp": "1713457840.883189",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "but we can confirm with @Kerry",
+      "time": "09:31",
+      "timestamp": "1713457877.330459",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hey we should",
+      "time": "09:31",
+      "timestamp": "1713457919.579809",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "We'll need to schedule time to fix these. I don't think I can fix all 93 failing specs (esp some have been failing for a while).",
+      "time": "09:32",
+      "timestamp": "1713457966.521999",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "If we don't have time for this release, we can revert my PRs for updating toasts on the enterprise release branch",
+      "time": "09:33",
+      "timestamp": "1713458016.193649",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Kerry what do you think? Should we schedule time to try to fix these failing cypress test? or should we revert my changes?",
+      "time": "09:36",
+      "timestamp": "1713458198.511449",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "We have 36 more failing tests in 24.04 than 24.01.",
+      "time": "09:39",
+      "timestamp": "1713458349.146089",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "sorry was in a meeting. @Xindi Xu -- is your toast fix a bug fix? or an UX improvement?",
+      "time": "10:15",
+      "timestamp": "1713460538.892029",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I consider it as a UX improvement. Some components are firing off old toasts but are used in AIHub. I decided to swap to use the new version of toast so that toasts across AIHub have consistent styling.",
+      "time": "10:17",
+      "timestamp": "1713460633.288509",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm also trying to find out what are the extra failing tests in 24.04",
+      "time": "10:17",
+      "timestamp": "1713460678.614319",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Yeah @Xindi Xu @Serena can I let you two chat offline & make the call as to whether to revert or stick with the broken tests (fixing all of them before UAT seems impossible given the amount of tests). here's a few points to consider:\n• The customer impact of improving purely the UI/UX of the classic platform is small. \n    ◦ We are no longer selling the classic platform (we sell AI Hub) to new customers; existing customers rely on sol eng heavily \n• We still need to keep all key user journeys in the classic platform bug-free \n    ◦ Still need to fix bugs on the classic platform; there'll be very few new features added to the classic platform going forward, maintaining stability is the key so we don't create problems for ourselves \n• That being said it's not that if we revert this PR cypress will go to green -- lots of tests already broken before this change \n    ◦ Does this PR break a lot of new tests that increase our risk of key user journeys broken & not being captured by the tests?  \nIf we can't make a call / there're points that you want to discuss with me, DM anytime and I can hop on a call :slightly_smiling_face:",
+      "time": "10:27",
+      "timestamp": "1713461256.677809",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "here are the additional failed tests in 24.04, comparing to 24.01:\n```apps/src/document-refiner/__e2e__/builder_create_refiner.spec.ts\napps/src/flow-review/__e2e__/results/flow-review-continue-flow-options.spec.ts\napps/src/flow-review/__e2e__/results/flow-review-field-editor.spec.ts\napps/src/flow-review/__e2e__/results/flow-review-grid-view.spec.ts\napps/src/flow-review/__e2e__/results/flow-review-keyboard-shortcuts.spec.ts\napps/src/flow-review/__e2e__/results/flow-review-nested-field-editor.spec.ts\napps/src/flow-review/__e2e__/results/flow-review-time-tracking.spec.ts\napps/src/ml-studio/__e2e__/dataset_settings/add-files.spec.ts\napps/src/ml-studio/__e2e__/dataset_settings/add-single-file.spec.ts\napps/src/ml-studio/__e2e__/dataset_settings/manage-associated-models.spec.ts\napps/src/ml-studio/__e2e__/model_project_evaluation/model-project-evaluate.spec.ts\napps/src/refiner/__e2e__/refiner-marketplace-outside-sb.spec.ts\napps/src/solution-builder/__e2e__/annotation_sets/reload_annotation_set.spec.ts\napps/src/solution-builder/__e2e__/refiner/run_refiner.spec.ts\napps/src/validations/__e2e__/validations-run-results.spec.ts```",
+      "time": "11:36",
+      "timestamp": "1713465366.976709",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think we should be able to do a pretty quick find-and-replace to fix the tests that check toasts - if you don’t have time, i can try to do this today/tomorrow",
+      "time": "11:49",
+      "timestamp": "1713466182.299949",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Serena @Xindi Xu can you give an estimate of how much time we'll need to fix the Cypress tests? Also consider if there are Cypress tests we can turn off. As Kerry said, the goal is to keep all key user journeys in the classic platform bug-free, and running Cypress tests is an automated way of doing that, vs. having to manually test all the user flows. The goal is to create less work for ourselves :smile:",
+      "time": "14:29",
+      "timestamp": "1713475776.202479",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'd estimate at least 30 mins for identifying why it's failing and fixing for each test. These new failing tests might come from other changes than the toast updates.",
+      "time": "14:32",
+      "timestamp": "1713475953.947839",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "My take on this;\nGiven that we've been ignoring Cypress test runs on the enterprise platform and relying on manual UATs, I don't think we need to spend more time trying to fix these new failing tests. These failing tests are not just caused by the toast upgrades, but might also come from React version updates, Pollen changes, etc. If needed, I can look deeper and try to answer how many new tests were broken by the toast update. Based on my initial look, it breaks 8 spec files (by searching `[data-testid=\"insta-toast-container\"]` )\nI agree with Serena that we can do a quick find-and-replace fix to bring down the number. However, I don't think this would add much value to the user experience.",
+      "time": "14:50",
+      "timestamp": "1713477055.342129",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "I think the amount of time needed to update these cypress tests isn’t worth it. Unless there’s specific proof the new toasts has caused breakings.",
+      "time": "15:21",
+      "timestamp": "1713478882.994779",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "https://github.com/instabase/instabase/pull/56253\n\nit only took about an hour to do (most of which was just running the tests), and i think this will fix over 10 tests, which we’d otherwise get pinged about every time there’s a patch 24.04 release certification",
+      "time": "16:40",
+      "timestamp": "1713483616.582389",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "I want to clarify - we have not been ignoring Cypress test runs\n\nPersonally, I de-prioritized investigating Cypress failures until the UAT week for enterprise releases - since we aren’t building new features, we should expect Cypress results to not change too much\n\nIf there are Cypress tests breaking for actual reasons (Pollen upgrade, UI changes, etc), then we should fix those tests. Otherwise, the next time we have to do manual UAT, we again won’t be able to rely on Cypress tests, and we’ll have to manually test everything again. We shouldn’t rely on individual engineers’ memory of how to manually test the enterprise platform to ensure stability.\n\nIf there are flaky tests that are hard to debug, I agree we don’t need to spend a lot of time debugging them.",
+      "time": "16:40",
+      "timestamp": "1713483617.597299",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Approved! Thank you for fixing these :woman-bowing:",
+      "time": "16:47",
+      "timestamp": "1713484043.594689",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-04-18.json",
+    "message_count": 23,
+    "start_time": "1713457582.692919",
+    "end_time": "1713484043.594689",
+    "is_thread": true
+  }
+}

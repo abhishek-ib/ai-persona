@@ -1,0 +1,216 @@
+{
+  "id": "ch_C06FA6A23_2021-03-24_1616626863.127800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Mohit",
+    "Anil",
+    "shaunak",
+    "arun",
+    "Justin"
+  ],
+  "messages": [
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "@shaunak @Anant accidentally ran a job on instabase.com (http://instabase.com) instead of dogfood.instabase.com (http://dogfood.instabase.com), how can I cancel it? the job ID is 6f2744b4-7467-42b7-ada5-eeb257c76674",
+      "time": "16:01",
+      "timestamp": "1616626863.127800",
+      "is_reply": false
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "Should be able to kill it right from flow dashboard!",
+      "time": "16:10",
+      "timestamp": "1616627455.128300",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "it's not a flow job but a run_train_classifier task :disappointed:",
+      "time": "16:12",
+      "timestamp": "1616627532.128500",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "gg",
+      "time": "16:18",
+      "timestamp": "1616627897.128800",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "There might be an api idk @Anil ?",
+      "time": "16:18",
+      "timestamp": "1616627910.129300",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "job is still pending, but i'm not sure how/if it's possible to remove it from some celery queue -- if it's been picked up by the app-tasks worker then it's probably not possible to kill?",
+      "time": "16:20",
+      "timestamp": "1616628022.129500",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "just let it run it's course - there is no API to kill it currently",
+      "time": "16:21",
+      "timestamp": "1616628119.129900",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "rip ok",
+      "time": "16:22",
+      "timestamp": "1616628129.130100",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "just brainstorming, what if we do this via a UDF:\n```from celery.task.control import revoke\nrevoke('6f2744b4-7467-42b7-ada5-eeb257c76674', terminate=True)```\n(assuming we run it enough times to ensure this is executed by a worker in same same app-tasks pod executing `6f2744b4-7467-42b7-ada5-eeb257c76674`)",
+      "time": "16:24",
+      "timestamp": "1616628296.130400",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "i'll give that a try",
+      "time": "16:38",
+      "timestamp": "1616629100.130800",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "testing it out locally rn",
+      "time": "16:38",
+      "timestamp": "1616629113.131000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "That is a cool idea :slightly_smiling_face:",
+      "time": "16:38",
+      "timestamp": "1616629125.131400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "The system is looking great right now, so I wouldn’t worry too much about it",
+      "time": "16:39",
+      "timestamp": "1616629163.131600",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "we can make it a part of UI to cancel long running tasks, testing rn, will post result here.\n\nTested in local: Revoke works as expected. :muscle:",
+      "time": "16:39",
+      "timestamp": "1616629172.131800",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "but we can add it in future as a generic API cancelation",
+      "time": "16:39",
+      "timestamp": "1616629178.132000",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "lol looks like the job finished",
+      "time": "16:39",
+      "timestamp": "1616629180.132200",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Mohit we use revoke to cancel flow tasks :slightly_smiling_face:",
+      "time": "16:40",
+      "timestamp": "1616629206.132500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "we just need to make a generic UI to cancel every job / task",
+      "time": "16:40",
+      "timestamp": "1616629225.132800",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "I was looking for how we use revoke in our codebase and just noticed that in the flow “Cancel API” we just update the jobs table setting flow state to be CANCELLED and do not revoke the actual worker task (https://github.com/instabase/instabase/blob/f4ca0f2209d4f88591726a7e2bee50eb5ad71679/webserver/api-server-apps/src/py/instabase/handler/api/v1/jobs.py#L411). Am I missing some context/implementation? @shaunak",
+      "time": "16:56",
+      "timestamp": "1616630211.133400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Ah, the new task API uses the cancel mode.  In addition to it, we cancel long running tasks using the remote control feature",
+      "time": "16:57",
+      "timestamp": "1616630263.133800",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "What is the remote control feature? How long do we allow a task to run before we cancel it using this feature?",
+      "time": "17:02",
+      "timestamp": "1616630536.134000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Every task has a timeout associated with it.  Once the timeout is exceeded the task is terminated using the revoke feature (which was called remote control in some old celery docs :wink: ).  This is only implemented in Flow V2.  For other tasks, we have a soft and hard timeout set and that is automatically handled by celery.",
+      "time": "17:04",
+      "timestamp": "1616630683.134200",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Ah! okay. Our timeouts range from 1min to more than 1.5 hours (https://github.com/instabase/instabase/blob/f4ca0f2209d4f88591726a7e2bee50eb5ad71679/shared-utils/py-utils/config-utils/src/py/instabase/config_utils/config.py#L283) with most of them being 5 minutes (https://github.com/instabase/instabase/blob/f4ca0f2209d4f88591726a7e2bee50eb5ad71679/shared-utils/py-utils/config-utils/src/py/instabase/config_utils/config.py#L274). I have an idea, will document my thoughts and get back once i get some bandwidth for this. :sweat_smile:",
+      "time": "17:27",
+      "timestamp": "1616632058.134400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Absolutely!!  Would love to capture as much info as possible on getting the correct abstraction here.  The current timeouts were more of a guess based on our past experiences.",
+      "time": "17:48",
+      "timestamp": "1616633321.134600",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-03-24.json",
+    "message_count": 24,
+    "start_time": "1616626863.127800",
+    "end_time": "1616633321.134600",
+    "is_thread": true
+  }
+}

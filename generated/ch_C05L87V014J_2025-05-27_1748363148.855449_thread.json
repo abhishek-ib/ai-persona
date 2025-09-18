@@ -1,0 +1,190 @@
+{
+  "id": "ch_C05L87V014J_2025-05-27_1748363148.855449_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "astpierre",
+    "mfichman",
+    "Sayan"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Hi team, I'm having an issue with crafting. For the past couple of days, I've been getting errors with git that the filesystem is full and there's no more space left. This is causing an issue with the system startup and committing on git. Could someone take a look at my sandbox (https://instabase.sandboxes.site/sandboxes/sayanbhattacharjee?cw=dev) to help debug this?",
+      "time": "09:25",
+      "timestamp": "1748363148.855449",
+      "is_reply": false
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "error for system config:\n\n```E0527 16:26:20.257688 ..nv/cmd_wsinit.go:509 patch /home/owner/.config/crafting/sandbox/etc/gitconfig: write /home/owner/.config/crafting/sandbox/etc/gitconfig: write /home/owner/.config/crafting/sandbox/etc/gitconfig: no space left on device error=patch /home/owner/.config/crafting/sandbox/etc/gitconfig: write /home/owner/.con...\nFatal: patch /home/owner/.config/crafting/sandbox/etc/gitconfig: write /home/owner/.config/crafting/sandbox/etc/gitconfig: write /home/owner/.config/crafting/sandbox/etc/gitconfig: no space left on device.```",
+      "time": "09:26",
+      "timestamp": "1748363204.991579",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "https://instabase.slack.com/archives/C05L87V014J/p1746657675737049",
+      "time": "09:28",
+      "timestamp": "1748363292.851629",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": ":lolcry:\n```owner@dev:~/instabase$ docker system prune -a\nWARNING! This will remove:\n  - all stopped containers\n  - all networks not used by at least one container\n  - all images without at least one container associated to them\n  - all build cache\n\nAre you sure you want to continue? [y/N] y\nTotal reclaimed space: 0B```",
+      "time": "09:29",
+      "timestamp": "1748363352.079669",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "can you try a\n```docker volume prune```",
+      "time": "09:33",
+      "timestamp": "1748363620.915759",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Same thing happened, 0B removed",
+      "time": "09:34",
+      "timestamp": "1748363661.443179",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "hmm\ncan you do `docker system df -v` to see the usage?",
+      "time": "09:34",
+      "timestamp": "1748363691.649739",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "```owner@dev:~$ docker system df -v\nImages space usage:\n\nREPOSITORY                                                                          TAG       IMAGE ID       CREATED   SIZE      SHARED SIZE   UNIQUE SIZE   CONTAINERS\n549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/buchgr/bazel-remote-cache (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/buchgr/bazel-remote-cache)   latest    ad3d9eab9ed9             38.2MB    0B            38.19MB       1\n\nContainers space usage:\n\nCONTAINER ID   IMAGE                                                                                      COMMAND                  LOCAL VOLUMES   SIZE      CREATED       STATUS       NAMES\n98e7d3175039   549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/buchgr/bazel-remote-cache:latest (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/buchgr/bazel-remote-cache:latest)   \"/bazel-remote-linux…\"   1               -1B       2 hours ago   Up 2 hours   nice_albattani\n\nLocal Volumes space usage:\n\nVOLUME NAME   LINKS     SIZE\nbazel-cache   1         2.119GB\n\nBuild cache usage: 0B\n\nCACHE ID   CACHE TYPE   SIZE      CREATED   LAST USED   USAGE     SHARED```",
+      "time": "09:36",
+      "timestamp": "1748363774.234139",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "should we remove `bazel-remote-linux`?",
+      "time": "09:57",
+      "timestamp": "1748365070.393559",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "you can try :shrug: cant hurt i _suppose_",
+      "time": "09:58",
+      "timestamp": "1748365112.009019",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "i think it didn't help, the container is back up again with -1B of space",
+      "time": "10:06",
+      "timestamp": "1748365581.424179",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "ack, i'll flag it to the crafting team",
+      "time": "10:06",
+      "timestamp": "1748365616.217129",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "This is somewhat of a productivity blocker now, I am unable to save / edit files which is not great",
+      "time": "10:28",
+      "timestamp": "1748366893.066689",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Also cc @mfichman if you have any ideas",
+      "time": "10:28",
+      "timestamp": "1748366919.961839",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "understood! I've shared this info with crafting including its severity",
+      "time": "10:33",
+      "timestamp": "1748367237.458809",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "they came back with\n```sudo rm -fr /var/lib/docker/*```",
+      "time": "10:34",
+      "timestamp": "1748367246.266839",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "also they shared\n\n> I've temporarily increased the volume of your sandbox, please get into the box and delete files. Don't rely on `docker system prune` or `docker system df`, they never work and I don't know the reason. If you want to clean up, simply `sudo rm -fr /var/lib/docker/*`",
+      "time": "10:34",
+      "timestamp": "1748367290.917849",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "@Sayan lmk if that fixes your sandbox",
+      "time": "10:48",
+      "timestamp": "1748368121.151079",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Sounds good! Thank you for the fix. it seems to be able to save files and will follow up if the issue persists. I ran the command as well. Do you know if the `sudo rm -fr /var/lib/docker/*` can be run on startup",
+      "time": "11:11",
+      "timestamp": "1748369515.700759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yikes",
+      "time": "11:14",
+      "timestamp": "1748369664.872579",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, there is a background task that runs `docker system prune`, but sometimes it isn't able to GC stuff if containers are still running. You can try doing `cs stop` to stop all the containers, then manually `docker system prune`.\n\nI find that this space issue only happens when a process is crash looping. Unfortunately, there isn't a way to set the max restarts in Crafting, so the daemons restart forever :laughing:",
+      "time": "11:15",
+      "timestamp": "1748369744.430959",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-05-27.json",
+    "message_count": 21,
+    "start_time": "1748363148.855449",
+    "end_time": "1748369744.430959",
+    "is_thread": true
+  }
+}

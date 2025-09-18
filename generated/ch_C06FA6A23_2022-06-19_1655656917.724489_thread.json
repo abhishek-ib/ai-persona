@@ -1,0 +1,86 @@
+{
+  "id": "ch_C06FA6A23_2022-06-19_1655656917.724489_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "kunal",
+    "shaunak",
+    "shiqi"
+  ],
+  "messages": [
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "control-plane on UAT hasn't been very consistent since yesterday afternoon, with several timeouts...did we change anything infrastructure-wise there? the Jenkins job refactor didn't change the control plane deployment step, so I am wondering what could be the cause. they all passed after the rerun",
+      "time": "09:41",
+      "timestamp": "1655656917.724489",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@kunal @jtau",
+      "time": "09:53",
+      "timestamp": "1655657632.034299",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "control plane isn’t deployed as part of the pipelines — in dogfood, there is a separate job to deploy control plane: https://jenkins.instabase.com/job/deploy-control-plane-dogfood/. In UAT, it is manually deployed to the environment whenever we need to.",
+      "time": "10:05",
+      "timestamp": "1655658324.442649",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "@shaunak @shiqi can someone point me to the new environments / what issue we are seeing?",
+      "time": "10:05",
+      "timestamp": "1655658343.424109",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "Looking at the gcp envs, things seem okay to me",
+      "time": "10:07",
+      "timestamp": "1655658449.832859",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "@kunal it is not urgent but there were few failures in <#CCY413CSU|>\nhttps://instabase.slack.com/archives/CCY413CSU/p1655607462289149\nhttps://instabase.slack.com/archives/CCY413CSU/p1655619237227039\nhttps://instabase.slack.com/archives/CCY413CSU/p1655636448786349",
+      "time": "10:10",
+      "timestamp": "1655658632.594829",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "oh interesting — they are all different errors. I’m not sure what the root cause would be but I’ll try to interpret them all. Are things stable now, once we are done working on the environment? If this re-occurs, then we should take a deeper look but the service looks okay to me right now.\n\nThis one looks like the backend is unavailable; nginx cannot route request to control plane backend.\n```22:57:41  HTTP/2 502 \n22:57:41  server: nginx\n22:57:41  date: Sun, 19 Jun 2022 02:57:41 GMT\n22:57:41  content-type: text/plain\n22:57:41  content-length: 21\n22:57:41  via: 1.1 google\n22:57:41  alt-svc: h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000\n22:57:41  \n22:57:41  {\"msg\":\"Bad Gateway\"}\n22:57:41  Not all deployments were successful!```\nThis one is that the deployment took too long to start up, so the job is timed out.\n```02:13:56  error: deployment \"deployment-server-nginx\" exceeded its progress deadline```\nSeems similar to the first one, backend went down in between the connection.\n```100 2332k    0     0  100 2332k      0  19599  0:02:01  0:02:01 --:--:--     0\n07:00:48  curl: (56) OpenSSL SSL_read: Connection reset by peer, errno 104```",
+      "time": "10:14",
+      "timestamp": "1655658893.946669",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "Thanks @kunal, for the insight! I will keep an eye on this, maybe they happened during our scaling down the dogfood infra and if that is the case it should be settled now",
+      "time": "11:30",
+      "timestamp": "1655663415.370319",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-06-19.json",
+    "message_count": 8,
+    "start_time": "1655656917.724489",
+    "end_time": "1655663415.370319",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,271 @@
+{
+  "id": "ch_C06FA6A23_2023-09-22_1695400596.231689_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shiqi",
+    "Heymian",
+    "lydia",
+    "Ashwin"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Ashwin for the tornado update you made, did you rebuild the Jenkins image afterwards? Do you know if we still need to manually rebuild the Jenkins image?",
+      "time": "09:36",
+      "timestamp": "1695400596.231689",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Hey Lydia, we install all python dependencies as part of the build process for python containers so no need to rebuild the jenkins image as far as Im aware",
+      "time": "10:09",
+      "timestamp": "1695402553.930239",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Don't we use the jenkins image for running the shared-util unit tests?",
+      "time": "10:09",
+      "timestamp": "1695402578.049709",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Im pretty sure the dependencies are installed during the `make test` command for each of the various services / shared-utils (which the unit test pipelines use), @shiqi can you confirm?",
+      "time": "10:17",
+      "timestamp": "1695403054.827289",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Shared-utils doesn’t use a venv in the unit test jenkins image, and they are not installed during “make test”. Only the services do that.",
+      "time": "10:18",
+      "timestamp": "1695403132.829909",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "btw @Heymian can you point me to the test spec file again? the one that says which ones should use venvs. we also need to set up ibllm tests to run in the ibllm model-service venv",
+      "time": "10:19",
+      "timestamp": "1695403173.994809",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "I see, so does that mean the jenkins image needs to be rebuilt with the python packages built in?",
+      "time": "10:20",
+      "timestamp": "1695403210.477299",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Do you know what version of python the jenkins container uses?",
+      "time": "10:20",
+      "timestamp": "1695403220.200189",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "To @Ashwin yes, if the library is needed in a py-utils module’s unit tests you need to rebuilt. It will pull for. the requirments37.in (http://requirments37.in) file that Lydia referenced earlier in the thread.",
+      "time": "10:20",
+      "timestamp": "1695403244.191479",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "so it's possible we have a very outdated jenkins image? if we rely on engs remembering to rebuild it..",
+      "time": "10:21",
+      "timestamp": "1695403301.132619",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Also this line (https://github.com/instabase/instabase/blob/master/tools/releasetools/jenkins/Dockerfile#L18) makes me think it's still using python 3.7 for the non-venv tests?",
+      "time": "10:22",
+      "timestamp": "1695403365.224449",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "The unit tests should fail if it’s out of date or missing. Or sometimes version bumps if they don’t cause backwards incompatibility breakages, also will continue to pass. Usually if a new library is introduced and eng added unit tests, it’ll get caught.",
+      "time": "10:22",
+      "timestamp": "1695403365.407849",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "correct, it is using py3.7",
+      "time": "10:22",
+      "timestamp": "1695403376.769569",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh right, this was the original comment you made. that the unit tests are still run in python3.7",
+      "time": "10:23",
+      "timestamp": "1695403412.708759",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yup",
+      "time": "10:23",
+      "timestamp": "1695403416.720389",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ok so steps for me are:\n1. update the python requirements\n2. run all the unit tests in my local 3.9 venv\n3. build the Jenkins docker image\n4. run all the unit tests in the jenkins image\n5. get a review on my PR\n6. push the Jenkins image\n7. merge my PR",
+      "time": "10:26",
+      "timestamp": "1695403560.258389",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Can you clarify what you’re trying to do? You just want to bring the requirements.txt file for py-utils unit tests up to date?",
+      "time": "10:26",
+      "timestamp": "1695403615.957359",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Or is this related to ibllm?",
+      "time": "10:27",
+      "timestamp": "1695403624.083359",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Yea I just wanted to bring the requirements.txt for unit tests up-to-date",
+      "time": "10:27",
+      "timestamp": "1695403640.599349",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "not related to ibllm. so this is definitely lower priority",
+      "time": "10:27",
+      "timestamp": "1695403660.481829",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ah okay got it. Then for #3, you will have to use a local 3.7 venv.",
+      "time": "10:27",
+      "timestamp": "1695403661.521539",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Or wait, are you going to attempt to bring things up to 3.9?",
+      "time": "10:28",
+      "timestamp": "1695403731.441189",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yes, that was what I was trying to do :sweat_smile: but maybe that's too ambitious",
+      "time": "10:29",
+      "timestamp": "1695403752.819519",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "lol",
+      "time": "10:30",
+      "timestamp": "1695403826.914469",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "do you know what the timeline to moving to bazel is? will the jenkins image be replaced soon?",
+      "time": "10:30",
+      "timestamp": "1695403840.723399",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i would _love_ for you to do that. :smile: but it may take you weeks",
+      "time": "10:30",
+      "timestamp": "1695403842.029259",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i’m not exaggerating when I said there were thousands of mypy errors and then unit test failures.",
+      "time": "10:31",
+      "timestamp": "1695403860.771019",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i see :disappointed:",
+      "time": "10:31",
+      "timestamp": "1695403882.577109",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "maybe we just do ibllm first then :stuck_out_tongue:",
+      "time": "10:31",
+      "timestamp": "1695403906.288239",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I have a WIP version of the requirements 3.9 file… if you want to start from there. But the process is extremely tedious and painful. Every py-util modules will spring up mypy and library errors, then you figure out which library version is needed to support python 3.9 and keep bumping until the conflict errors go away. I got through maybe… 3 modules out of our 100.",
+      "time": "10:33",
+      "timestamp": "1695404017.407589",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "@youngmok.cho",
+      "time": "12:15",
+      "timestamp": "1695410146.056689",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-09-22.json",
+    "message_count": 31,
+    "start_time": "1695400596.231689",
+    "end_time": "1695410146.056689",
+    "is_thread": true
+  }
+}

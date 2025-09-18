@@ -1,0 +1,346 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-06-24_1750748463.757819_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Goto Tools Go Links",
+    "astpierre",
+    "sitaram",
+    "Jeff",
+    "Pridhvi Vegesna",
+    "Abhinav"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Jeff :eyes: can you elaborate? What makes you think that the error is coming from this line",
+      "time": "00:01",
+      "timestamp": "1750748463.757819",
+      "is_reply": false
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Ah, the error is from this line (https://github.com/instabase/instabase/blob/master/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/account/handler/account.go#L473), within the functio that is invoked by `deleteUserRepos`",
+      "time": "00:03",
+      "timestamp": "1750748603.168009",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase/coreplatformservice/account/handler/account",
+      "time": "00:03",
+      "timestamp": "1750748604.182739",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I think this explains that the error has been existing for a while, since Pridhvi merged made the change on May 25th.",
+      "time": "00:04",
+      "timestamp": "1750748654.074779",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I tried to delete an org on aihub-sandbox and that succeeded. But when I tried to deactivate an user, I also encountered this error.\n\nNo worries, I will open up an PR for my previous changes, along with a fix.",
+      "time": "00:06",
+      "timestamp": "1750748783.470429",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I am unsure where this error coming from though…",
+      "time": "00:07",
+      "timestamp": "1750748843.460219",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ":eyes: Are you saying that some calls in this function made cps crash?",
+      "time": "00:07",
+      "timestamp": "1750748852.025719",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Ah no, I was trying to root cause the deactivate user failure. The cps crash is most likely unrelated. Failing to delete a user should not cause the cps to crash.",
+      "time": "00:09",
+      "timestamp": "1750748967.471349",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ahh ok. Yea, that's unrelated to this thread :sweat_smile:",
+      "time": "00:10",
+      "timestamp": "1750749005.165509",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "My bad. But I guess unfortunately, the revert probably wouldn’t help much…",
+      "time": "00:14",
+      "timestamp": "1750749248.416509",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "tbh, i don't think the `[ACCESS_DENIED]: Requestor can't perform actions (ORG:read) in ORG (93ebcae8-29db-442b-9eb8-782439e8b53b)`  is related to crash-looping:\n\nLogs: https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22llz%22:%[…]22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1 (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22llz%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22core-platform-service%5C%22%7D%20%7C%3D%20%60Exiting%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22forward%22%7D%5D,%22range%22:%7B%22from%22:%22now-6h%22,%22to%22:%22now%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1)\n\nThe logs before the line \"exiting\" vary a lot:\n• checking ORG:read perm\n• checking SITE_APP:use_app perm\n• simply just setting up grpc handlers (exit right after starting)",
+      "time": "00:16",
+      "timestamp": "1750749403.823539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "<!subteam^S02FJA6A7U5> can anyone look into why cps is crashing on crafting-cyp? Seems like it's not related to the application code",
+      "time": "00:17",
+      "timestamp": "1750749477.323049",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "Looks like the liveness probe is failing, it is causing pod to be restarted.\n```Liveness probe errored: rpc error: code = NotFound desc = failed to exec in container: failed to load task: no running task found: task 71dbab454ef6ee8600125d0100a065f45387931908d6d1fd8383efe5e12a2ebf not found: not found```\nLiveness probe\n```                - /bin/sh\n                - -c\n                - nc -w 1 0.0.0.0 8600 && nc -w 1 0.0.0.0 8601 && nc -w 1 0.0.0.0 8602```",
+      "time": "04:10",
+      "timestamp": "1750763456.871289",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Nice! We found the root cause",
+      "time": "09:27",
+      "timestamp": "1750782474.205479",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "How do we fix this issue? Looks like cps is still restarting",
+      "time": "09:29",
+      "timestamp": "1750782556.841089",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "<!subteam^S02FJA6A7U5> bumping this :point_up:.  Could we look into a fix? It causes lots of Cypress tests to timeout and thus blocks frontend PRs from merging",
+      "time": "11:30",
+      "timestamp": "1750789839.803129",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "i see a bunch of `2025/06/24 18:42:46 ERROR utils/perms/helpers.go:40 -- [ACCESS_DENIED]: Requestor can't perform actions (ORG:read) in ORG (34062aa3-1a2b-4914-979a-0052bc90003b)`",
+      "time": "11:43",
+      "timestamp": "1750790593.670279",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "sorry just catching up on thread",
+      "time": "11:44",
+      "timestamp": "1750790646.731109",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "It’s not clear if liveness probes are failing because of a program crash (which then causes liveness probes to fail because the server has stopped) or because of some environment issue that is interfering with liveness probes",
+      "time": "11:45",
+      "timestamp": "1750790750.897919",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "can we clean up the DB entries so we dont have the flooding of ACCESS_DENIEDs? cc @Jeff",
+      "time": "11:50",
+      "timestamp": "1750791057.557249",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "i also saw a slow query log\n```2025/06/24 18:49:42 level=WARNING path=utils/db/session/stats_utils.go:317 msg=\"SQL DB: Slow query\" args_count=2 duration_ms=2444 operation=query query=\"SELECT ```",
+      "time": "11:51",
+      "timestamp": "1750791087.263019",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@astpierre I don't think the application code and the log lines are related to the crashing. The error rate for `GetMountPoints` is pretty high. This endpoint does org perm check in a loop so that might explain why we see a ton of these logs.",
+      "time": "11:52",
+      "timestamp": "1750791162.386629",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "> org perm check in a loop so that might explain why we see a ton of these logs\nis it a continuous loop though? i restarted the deployment ~10m ago and still seeing these errors flood\nhttps://crafting-cyp.test.instabase.com/deployment-manager/dashboard/deployments/apps/v1/cor[…]m-service-64684b665c-kqvsf/logs/core-platform-service (https://crafting-cyp.test.instabase.com/deployment-manager/dashboard/deployments/apps/v1/core-platform-service/deployment-core-platform-service-64684b665c-kqvsf/logs/core-platform-service)",
+      "time": "11:55",
+      "timestamp": "1750791326.454489",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "it seems pretty aligned to when the issue first began, no?",
+      "time": "11:56",
+      "timestamp": "1750791392.922019",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://crafting-cyp.test.instabase.com/grafana/goto/Bn5zpBEHg?orgId=1\nUnfortunately, it is. We need to fix this endpoint. 433 calls to `CheckPerms` in a single `/api/v2/mounts/list` call, which calls `GetMountPoints`\n\nHowever, from the log volumes trends we saw above, we started to have the flooding of the logs starting Jun 10th, but the cps crashing issue starts yesterday\n\nhttps://instabase.slack.com/archives/C073F3T5KRQ/p1750721854569269?thread_ts=1750709889.580189&cid=C073F3T5KRQ",
+      "time": "11:58",
+      "timestamp": "1750791493.692649",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "<!subteam^S02FJA6A7U5> any updates on this? CPS is still restarting randomly",
+      "time": "17:55",
+      "timestamp": "1750812916.989359",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "I suspect errors in cps killing the process making the liveness fails.\n```19:56:29\nINFO\n2025/06/25 00:56:29 ERROR utils/perms/helpers.go:40 -- [ACCESS_DENIED]: Requestor can't perform actions (SITE:manage_users) in SITE (SITE)\n19:56:29\nINFO\n2025/06/25 00:56:29 ERROR utils/perms/helpers.go:40 -- [ACCESS_DENIED]: Requestor can't perform actions (SITE:manage_users) in SITE (SITE)\n19:56:29\nINFO\n2025/06/25 00:56:29 ERROR utils/perms/helpers.go:40 -- [ACCESS_DENIED]: Requestor can't perform actions (SITE:manage_users) in SITE (SITE)\n20:01:52\nINFO\n2025/06/25 01:01:52 ERROR coreplatformservice/account/handler/org.go:883 -- [INVALID]: Missing name\n\n20:02:11\nINFO\n2025/06/25 01:02:11 ERROR coreplatformservice/repo/handler/repo.go:586 -- trace_id=\"d7001b353fa55d9d\" Repo not found: code = NOT_FOUND, msg = Record not found: sql: no rows in result set. Repo context is username:\"guest\"\n20:02:11\nINFO\n2025/06/25 01:02:11 ERROR coreplatformservice/account/handler/account.go:1100 -- Fail: Account with username (license.txt) not found\n\n20:02:39\nINFO\n2025/06/25 01:02:39 ERROR coreplatformservice/repo/handler/repo.go:586 -- trace_id=\"2865103520f6040d\" Repo not found: code = NOT_FOUND, msg = Record not found: sql: no rows in result set. Repo context is username:\"guest\"\n20:02:39\nINFO\n2025/06/25 01:02:39 ERROR coreplatformservice/account/handler/account.go:1100 -- Fail: Account with username (wp-json) not found```",
+      "time": "18:21",
+      "timestamp": "1750814505.717969",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "it might be OOMing too due to continuous checks. checking...",
+      "time": "18:23",
+      "timestamp": "1750814611.553649",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "yep. OOMkilled\n```containerID: <containerd://ca1659651f94d0bea63039fcc429be6346c4c8e5d6e5243111666126ef0140d>6\n    image: 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/core-platform-service:tami-crafting-cyp-25.06.24-1c19dfb05abbc711613d96aeec9a728e80761dc6\n    imageID: 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/core-platform-service@sha256:f2219d13633211043e9b23f3e5bb7a94aee203bc4a7b7c143b7e85d60465bb8b\n    lastState:\n      terminated:\n        containerID: <containerd://e40eb511256799f81f22092239d6bd39eb8456ef0c33e64c3894f6d903e7089>2\n        exitCode: 0\n        finishedAt: \"2025-06-25T00:31:47Z\"\n        reason: OOMKilled\n        startedAt: \"2025-06-25T00:31:06Z\"```",
+      "time": "18:28",
+      "timestamp": "1750814907.859019",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I see! Do you know if OOMing was caused by lots of error logging, or by actually performing DB checks?",
+      "time": "18:45",
+      "timestamp": "1750815904.519999",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "Cant say for sure. Best bet would be to match pod logs with restart time.",
+      "time": "18:46",
+      "timestamp": "1750816006.022289",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "What do you mean by \"match pod logs with restart time\"? Do you mean finding the logs right before the pod exits?",
+      "time": "18:48",
+      "timestamp": "1750816109.537549",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "Yep",
+      "time": "18:48",
+      "timestamp": "1750816123.536839",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I looked at 3 examples. The lines before \"exit\" varies\nhttps://instabase.slack.com/archives/C073F3T5KRQ/p1750749403823539?thread_ts=1750709889.580189&cid=C073F3T5KRQ",
+      "time": "18:49",
+      "timestamp": "1750816188.905509",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "You can also check memory usage graphs in grafana",
+      "time": "18:51",
+      "timestamp": "1750816285.340509",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I guess this just means that various operation cause cps to OOM?",
+      "time": "18:52",
+      "timestamp": "1750816348.258219",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22zwp%22:%[…]9000%22,%22to%22:%221750810947000%22%7D%7D%7D&orgId=1 (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22zwp%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22core-platform-service%5C%22%7D%20%7C%3D%20%60%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22backward%22%7D%5D,%22range%22:%7B%22from%22:%221750810709000%22,%22to%22:%221750810947000%22%7D%7D%7D&orgId=1)",
+      "time": "19:09",
+      "timestamp": "1750817365.723099",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "and\nhttps://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22zwp%22:%[…]9000%22,%22to%22:%221750810947000%22%7D%7D%7D&orgId=1 (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22zwp%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22core-platform-service%5C%22%7D%20%7C%3D%20%60%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22backward%22%7D%5D,%22range%22:%7B%22from%22:%221750810709000%22,%22to%22:%221750810947000%22%7D%7D%7D&orgId=1)",
+      "time": "19:09",
+      "timestamp": "1750817377.128849",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "This PR should fix the issue where we throw a ton of \"requestor can't perform actions\" lines: https://github.com/instabase/instabase/pull/71633",
+      "time": "19:20",
+      "timestamp": "1750818033.245629",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hopefully this fixes the OOM issue too!",
+      "time": "19:21",
+      "timestamp": "1750818068.357869",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-06-24.json",
+    "message_count": 40,
+    "start_time": "1750748463.757819",
+    "end_time": "1750818068.357869",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "id": "ch_C0516UPPMT3_2024-05-28_1716933929.615989_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Nathaniel",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "I'm working in Build on Prod to help with a demo tomorrow, but am having trouble getting tables to be consistently formatted like a table (instead of as text).  Based on @Sławek Biel’s post here, the best I can do is get 11/12 docs to be formatted correctly with a similar prompt:\nhttps://instabase.slack.com/archives/C0516UPPMT3/p1709714640991089?thread_ts=1709667819.944719&cid=C0516UPPMT3\n\nI can simply remove this file from the project for the demo, but I haven't found a rhyme or reason as to why the formatting breaks, so am slightly concerned that this might happen again with a different file during tomorrow's demo.\n\nPlease advise if I'm missing something that can make this work better.  I've tried using an extraction prompt with the table data format selected, but even with the advanced model, find that it doesn't work as well as using the reasoning prompt.  I've also tried using a Clean prompt saying \"If not already formatted as a table, format this data as a table.\" which fixes the ones with poor formatting, but ends up breaking the ones that had proper formatting.\n\nIt looks like the problem could be that sometimes the model wants to output a space as the first character, which breaks the platform's table detection.",
+      "time": "15:05",
+      "timestamp": "1716933929.615989",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "just curious, what happens if you add a custom function to this field to delete any leading spaces? does that fix the formatting in the UI?",
+      "time": "15:32",
+      "timestamp": "1716935565.556779",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "I tried it with the cleaning prompt \"if the first character is a space, delete it\", which just resulted in more tables with formatting issues.  But that's a good call, I can just fix that more precisely with custom code...",
+      "time": "15:36",
+      "timestamp": "1716935770.969209",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yeah, just to confirm whether the leading space is actually the issue",
+      "time": "15:37",
+      "timestamp": "1716935836.019489",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "You're right.  Looks like there isn't a leading space.  While it appears that way on the display of the table in the interface.  The logs show that the model is attempting to output the table in Markdown formatting, instead of the tabular formatting that everything else is using (compare these 2 screenshots).",
+      "time": "17:06",
+      "timestamp": "1716941196.407589",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "you could try to strip the ```markdown and ``` lines then?",
+      "time": "17:08",
+      "timestamp": "1716941291.178949",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "That worked and adding \"Do not output markdown formatting\" did not seem to work.\n\nBut also now a different doc that had a properly displayed table before is now showing up with ````plaintext`  at the front instead.  Fixing this one is a bit trickier since the plaintext version doesn't have the formatting elements to make the frontend recognize it as a table.  I can just exclude this file, but it's a bit frustrating not knowing if the model will behave or choose to output different formatting tomorrow.",
+      "time": "17:33",
+      "timestamp": "1716942833.419929",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yeah we don’t provide much additional instruction to the model in reasoning mode\n\nif you want more consistent formatting, you’ll have to play around with the reasoning prompt",
+      "time": "17:36",
+      "timestamp": "1716942960.986509",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "Gotcha.  Thanks for the quick replies.  So that I can give it a proactive prompt, is there a name for the specific type of formatting that our system reads as a table?",
+      "time": "17:40",
+      "timestamp": "1716943208.076159",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "our UI handles Markdown tables and JSON objects",
+      "time": "18:06",
+      "timestamp": "1716944763.140519",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "Thanks!  With that in mind, I got it to behave by using a prompt that specifies to extract the table as a JSON table, then I used a clean prompt to convert from JSON to the tabular format that the UI can handle.  I wouldn't do this for a prod solution, but I just need to run a demo tomorrow.  :sweat_smile:",
+      "time": "20:40",
+      "timestamp": "1716954052.102569",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-05-28.json",
+    "message_count": 11,
+    "start_time": "1716933929.615989",
+    "end_time": "1716954052.102569",
+    "is_thread": true
+  }
+}

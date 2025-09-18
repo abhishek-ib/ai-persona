@@ -1,0 +1,136 @@
+{
+  "id": "ch_C0516UPPMT3_2024-09-24_1727187507.838149_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "hannah",
+    "pauline.comising",
+    "Arjun",
+    "Hamish",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "*Solution Accuracy Feedback*\nOverall: wow this going to be so valuable, really exciting stuff happening here! My biggest critique is something about the UX feels really unintuitive and difficult to navigate. If I wasn't making a conscious effort to explore I'd miss a lot of value/information here I feel.\n\n1. Noticed some odd behaviour (see video) where first time creating a GT set I get a different view to subsequent times.\n2. I found the message at step 3 confusing. Asking the user to close the window and then follow some steps they can't immediately do feels like a risk. I'd prefer to be taken to a loading screen that I can leave but if I return to the page it shows me the loading page or something.\n3. In the HR screen its not clear how I finish the process of creating the test set. Do I click 'Submit and continue' or 'Mark document as reviewed'? I feel like I should be guided through this more\n4. The 'view accuracy report' button is very small and hidden. For such an important end product I didn't realise it even existed at first. I also think the \"run-like interface\" is quite clunky and I'd prefer a dashboard or nicer UI. I'd also expect some graphs around performance field to filed or against different versions perhaps (a bit like the metrics for deployments)\n5. I like the GT table results. Although I find it misleading that green ticks are given even if I don't have validations in my project. I'd also expect to be able to open up the documents from this table to understand where my model might have gone wrong",
+      "time": "07:18",
+      "timestamp": "1727187507.838149",
+      "is_reply": false
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "Thanks for the feedback @Hamish!\n\ncc @hannah @Serena — this concern around the transition into/out of human review has come up multiple times — I think it’s something we should actively look into",
+      "time": "07:23",
+      "timestamp": "1727187825.766049",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "Regarding #5: @pauline.comising how hard would it be to update the backend so that the frontend can tell the difference between validation rules passing and no validation rules? Right now since we only return the validation failures the frontend doesn’t know the difference (",
+      "time": "07:25",
+      "timestamp": "1727187903.332579",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Good question, let me check whether outputted records store whether fields have validation rules or not",
+      "time": "07:53",
+      "timestamp": "1727189588.773259",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Alrighty, it wouldn't be too hard to add some indication of whether a field has validation rules passing or no validation rules (we just need to start storing whether a field has rules)!\n\nThough for this, I recall us discussing how the check mark for no validations is a good hint to the user that if some accuracies are low, they should add validations (or was this a note on how to calculate validated accuracy), do we still think this? And just to clarify, would the recommendation here adding a third indicator (or a third option of no indicator) for fields without validations? :woman-bowing::skin-tone-2:",
+      "time": "08:35",
+      "timestamp": "1727192144.354349",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "re 5: Human Review is able to show a gray minus sign if there are no validation rules\n\nAre we not able to use the same logic for the accuracy test frontend? @Arjun",
+      "time": "09:03",
+      "timestamp": "1727193822.073879",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "the way the frontend retrieves/reads the results in human review vs accuracy tests are different — we have different apis",
+      "time": "09:04",
+      "timestamp": "1727193869.622629",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "so it’s a matter of including the relevant information in the `GET /accuracy-tests/<reportID>data` api",
+      "time": "09:05",
+      "timestamp": "1727193903.861859",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "but yes the information exists in the stored results",
+      "time": "09:05",
+      "timestamp": "1727193918.246239",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah right, so we’ll need the backend changes Pauline described\n\n@pauline.comising we should be consistent with Build and Human Review and show a 3rd icon in this case (the gray minus in a circle) -> this icon can still serve the purpose of indicating that they should add validations",
+      "time": "09:05",
+      "timestamp": "1727193958.750629",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "re 1: i agree it’s confusing -> i think we should rethink the end-to-end flow for ground truth set creation in combination with 2 and 3",
+      "time": "09:13",
+      "timestamp": "1727194388.056779",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it’s not that useful to explain since this isn’t the ideal UX anyways, but for future reference (in case i forget), this is why the different screens appear in the screen recording\n1. when you click “Accuracy tests”, we show you the “Accuracy tests” page\n2. when you click “Create ground truth set”, we show you a modal and also switch you to the “Ground truth sets” page\n    a. at this point, we haven’t loaded the info about the associated Build project’s documents, so that’s why the default selected “File source” option is “Upload files”\n    b. that’s why you see the “Ground truth sets” page after you close the modal\n3. when you go back to the “Accuracy tests” page and click “Create ground truth set” again, we have finished loading the info on the documents in the Build project, so the default selected “File source” option is now “Project files”\n@Arjun should we show a loading state in the modal while the project files info is being loaded? this would at least resolve the discrepancy in the default selected “File source” (2a and 3)",
+      "time": "09:14",
+      "timestamp": "1727194452.252209",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @Jianqi Xing on 4 - any suggestions on how to make the link to the accuracy report more prominent?",
+      "time": "09:14",
+      "timestamp": "1727194480.175079",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Thanks so much for the feedback @Hamish! Agree that we need to continue to iterate on the flow. The largest consideration is that running the app to generate model produced values can be a long operation, so we don't want users to be blocked during this period, but we can definitely figure out how to make the flow easier to follow.\n\nAgree with @Serena - that the immediate changes we should make are:\n• Make the accuracy report more prominent\n• Use the same pattern in HR where if there are no validations there is just a grey check check mark - versus green when it's passing and red when it's failed\nAnd separately @Jianqi Xing @Serena @Arjun we should chat about:\n• Can we leverage toasts notifications (or another pattern) to ensure continuity between the run starting, completing and then being ready to review to guide the user through the process?\n• How could we change the HR screen to be more intuitive? Fwiw, I also find this super confusing when you're doing normal human review too, so I think we should figure out a better pattern that works for both use cases\n• When we disable things - we need to make sure it's clear why and ideally provide information on hover.  For example, it's not clear to the user why the name project files is disabled (in hamish example). I saw this a few times as well when testing myself.",
+      "time": "09:46",
+      "timestamp": "1727196411.883319",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-09-24.json",
+    "message_count": 14,
+    "start_time": "1727187507.838149",
+    "end_time": "1727196411.883319",
+    "is_thread": true
+  }
+}

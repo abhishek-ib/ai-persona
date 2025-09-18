@@ -1,0 +1,443 @@
+{
+  "id": "ch_C06FA6A23_2024-04-11_1712851626.369969_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "lydia",
+    "Ashwin",
+    "Arek",
+    "pauline.comising",
+    "William Helmrath",
+    "jtau",
+    "donagh"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "24.01 looks to be timing out still",
+      "time": "09:07",
+      "timestamp": "1712851626.369969",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "23.10 should also be unblocked now",
+      "time": "09:25",
+      "timestamp": "1712852700.400509",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Will look into 24.01",
+      "time": "09:25",
+      "timestamp": "1712852705.615829",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "24.01 failed during the undo turn down stage but interestingly enough nothing is up, for whatever reason everything is scaled to 0 right now.",
+      "time": "09:59",
+      "timestamp": "1712854767.351799",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Maybe from the last upgrade we aborted, we never scaled up",
+      "time": "09:59",
+      "timestamp": "1712854779.728369",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "@Kerr Yoo what is the best way to clean up these patches",
+      "time": "09:59",
+      "timestamp": "1712854787.498219",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "They should just be in the DM UI",
+      "time": "10:00",
+      "timestamp": "1712854800.279869",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Could it be similar to this https://instabase.slack.com/archives/C01N7DV1137/p1712786452360269?thread_ts=1712782501.605629&cid=C01N7DV1137 @Arek is fixing the bug",
+      "time": "10:00",
+      "timestamp": "1712854806.026189",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Wdym by in the DM UI @Arek?",
+      "time": "10:00",
+      "timestamp": "1712854815.070639",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Like in the patch list",
+      "time": "10:00",
+      "timestamp": "1712854823.407469",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Ack, I guess its a hibernate patch",
+      "time": "10:01",
+      "timestamp": "1712854863.691059",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "From April 9th",
+      "time": "10:01",
+      "timestamp": "1712854870.950219",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "https://release-24-01.internal.instabase.com/deployment-manager/configs?targetLabel=Deployment&patch=1712682810989 deleting this",
+      "time": "10:01",
+      "timestamp": "1712854876.850969",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Do upgrade scale to zero patches show up as hibernate patches?",
+      "time": "10:02",
+      "timestamp": "1712854955.866079",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "I dont see any hibernate pipeline runs on april 9th",
+      "time": "10:02",
+      "timestamp": "1712854970.626509",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Everything is scaled up now except ray head\n\n```E0411 .743703917 82 ssl_transport_security.cc:1421] (http://ssl_transport_security.cc:1421]) Handshake failed with fatal error SSL_ERROR_SSL: error:1000007d:SSL routines:OPENSSL_internal:CERTIFICATE_VERIFY_FAILED.```",
+      "time": "10:08",
+      "timestamp": "1712855302.092019",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "^ pretty sure this is the same cert error that you fixed for 23.10",
+      "time": "10:10",
+      "timestamp": "1712855456.665989",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Interesting.. let me check the last base config\n\nhttps://github.com/instabase/instabase/blob/release-24.01.0-enterprise/deployment-configs/chart/templates/ray-head/secret.yml the values are templated here, so its a different RC than 23.10",
+      "time": "10:14",
+      "timestamp": "1712855642.793749",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Youre right the cert is wrong here",
+      "time": "10:15",
+      "timestamp": "1712855711.562729",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "looks like the cert was changed here (https://github.com/instabase/instabase/pull/54847/files#diff-075a7f68e1b85c3fc4e9ce7c3eadee0f3710e5947baeb277ed3cf929cef25c30)",
+      "time": "10:17",
+      "timestamp": "1712855848.388229",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "@pauline.comising ^ can we fix the bad backport? Looks like there were some erroneous changes included",
+      "time": "10:24",
+      "timestamp": "1712856260.182819",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "This is blocking 24.01 certify, so this needs to be fixed asap",
+      "time": "10:27",
+      "timestamp": "1712856421.104129",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Can we revert for now?",
+      "time": "10:27",
+      "timestamp": "1712856434.604989",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Ah I didn't catch this in the review :disappointed:",
+      "time": "10:28",
+      "timestamp": "1712856496.315059",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "So the cert-related changes in that backport were autogenerated, so I'm less familiar with what the fix should be, but does that template show what the value should be? If its a quick fix, id prefer to make a fix PR than revert",
+      "time": "10:28",
+      "timestamp": "1712856514.515989",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "The PR includes some incorrect changes to the values file, which arent autogenerated",
+      "time": "10:28",
+      "timestamp": "1712856534.561529",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "+1 to reverting there are a lot of extra changes in here that need to be removed and we should unblock",
+      "time": "10:29",
+      "timestamp": "1712856554.434659",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "We should match the cert content with what's in master - specifically the ca_cert and ca_key in values.yaml",
+      "time": "10:29",
+      "timestamp": "1712856554.883149",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "So something went wrong during the backport process",
+      "time": "10:29",
+      "timestamp": "1712856555.195449",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Revert might be fastest",
+      "time": "10:29",
+      "timestamp": "1712856571.774219",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "@jtau values file was collapsed due to size :confused:",
+      "time": "10:29",
+      "timestamp": "1712856574.707519",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Sounds good, lets revert also to give time to validate the fixes",
+      "time": "10:29",
+      "timestamp": "1712856589.199169",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Revert PR: https://github.com/instabase/instabase/pull/55945",
+      "time": "10:30",
+      "timestamp": "1712856614.379559",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "@lydia can you merge backport? Jtau just stepped out for lunch",
+      "time": "10:31",
+      "timestamp": "1712856717.079659",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "merged the revert",
+      "time": "10:37",
+      "timestamp": "1712857068.159409",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Ashwin @pauline.comising Once you all figure out the various issues, can you give a summary of how we can catch this better in the future? It sounds like the PR has unexpected code? I thought the original backport PR was tested on a 24.01 sandbox and reviewed? I would have expected both of those steps to catch any unexpected code changes.",
+      "time": "10:40",
+      "timestamp": "1712857226.134209",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Yepp, I'm wondering if there were/are some jenkins logs when updating my 24.01 test sandbox (https://sandbox.console.instabase.com/customer/Engineering/tenant/piasv2-24-01/info) that could've alerted us of these issues, since only focusing on the control plane deployment and post-install runs didn't catch this. Will take a look and discuss",
+      "time": "10:45",
+      "timestamp": "1712857532.895839",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "The ray cert on @pauline.comising’s 24.01 sandbox was manually patched to the correct value: https://instabase.slack.com/archives/C01N7DV1137/p1711407725433369?thread_ts=1711393277.413409&cid=C01N7DV1137\n\nSo the problem didn't show up when deploying to that sandbox",
+      "time": "10:52",
+      "timestamp": "1712857969.931889",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I've gotten slightly lost in the thread, sorry - just a heads-up that 23.10 release sandbox is still stuck on\n```12:15:32  {'upgradeProgress': {'validated': False, 'started': True, 'rollbackRequested': False, 'paused': False, 'failedWithError': None, 'currentStageName': 'UNDO_TURN_DOWN', 'currentStageStatus': 'UNDERWAY'}}\n12:15:32  Upgrade in progress at stage: UNDO_TURN_DOWN```\nAnd is about to time out :disappointed:",
+      "time": "11:16",
+      "timestamp": "1712859378.260239",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "@Cody Boggs which deployments are stuck?",
+      "time": "11:28",
+      "timestamp": "1712860118.110489",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Typo'd and said 23.01, sorry - 23.10 is what I meant lol One sec",
+      "time": "11:30",
+      "timestamp": "1712860204.615759",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ray head and model training worker",
+      "time": "11:30",
+      "timestamp": "1712860240.285549",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "In a meeting rn, but is it the same cert issue?",
+      "time": "11:34",
+      "timestamp": "1712860483.373429",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "For ray-head:\n```ConnectionError( ConnectionError: Could not find any running Ray instance. Please specify the one to connect to by setting the `--address` flag or `RAY_ADDRESS` environment variable. ```\nTraining worker is stuck pending",
+      "time": "11:53",
+      "timestamp": "1712861633.818289",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Ray head is failing with the same cert issue again, hm\n\n```E0411 .980934217 8 ssl_transport_security.cc:1421] (http://ssl_transport_security.cc:1421]) Handshake failed with fatal error SSL_ERROR_SSL: error:1000007d:SSL routines:OPENSSL_internal:CERTIFICATE_VERIFY_FAILED.```",
+      "time": "12:07",
+      "timestamp": "1712862438.508619",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Thats on me, I think I applied the patch which pinned the value to the wrong env",
+      "time": "12:08",
+      "timestamp": "1712862508.784799",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "However, the actual fix (fixing the template value) is in the code now (it wasn’t in at the time the upgrade was kicked off). so it should be pulling it correctly the next time we update",
+      "time": "12:09",
+      "timestamp": "1712862551.413179",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Can you try again @Cody Boggs",
+      "time": "12:09",
+      "timestamp": "1712862557.431109",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Okie doke on it!",
+      "time": "12:09",
+      "timestamp": "1712862564.815219",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Good things happening on 23.10 :slightly_smiling_face:",
+      "time": "13:06",
+      "timestamp": "1712865978.516129",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(still waiting for system-tests to complete before I certify... :coffin: )",
+      "time": "14:35",
+      "timestamp": "1712871316.618999",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "23.10 system tests failed\nhttps://jenkins.instabase.com/job/system-tests/7638/console\n\n```16:30:23  ERROR [878.033s]: test_split_classification_normal (test_ml_studio.TestMLStudio)\n16:30:23  This is a single monolithic test suite that tests the backend for the\n16:30:23  ----------------------------------------------------------------------\n16:30:23  Traceback (most recent call last):\n16:30:23    File \"/tmp/workspace/system-tests/shared-utils/py-utils/system-tests/build/py/instabase_test/test_ml_studio.py\", line 2186, in test_split_classification_normal\n16:30:23      model='split_classification')\n16:30:23    File \"/tmp/workspace/system-tests/shared-utils/py-utils/system-tests/build/py/instabase_test/test_ml_studio.py\", line 764, in _create_project_and_train_model\n16:30:23      training_job_id, max_retries=40, retry_interval_secs=20)\n16:30:23    File \"/tmp/workspace/system-tests/shared-utils/py-utils/system-tests/build/py/instabase_test/system_utils/system_test_ml_studio_user.py\", line 408, in wait_for_training_job\n16:30:23      f'wait_for_training_job() timeout for training job id {training_job_id} after {max_retries} retries ({retry_interval_secs} secs each)'\n16:30:23  Exception: wait_for_training_job() timeout for training job id 922b1151-abef-4c0b-a61e-13bf545cb6e9 after 40 retries (20 secs each)\n16:30:23  \n16:30:23  ----------------------------------------------------------------------\n16:30:23  Ran 57 tests in 7839.895s\n16:30:23  \n16:30:23  FAILED (errors=7, skipped=6)```\nOthers too but not copying all those heh",
+      "time": "16:38",
+      "timestamp": "1712878719.343739",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-04-11.json",
+    "message_count": 52,
+    "start_time": "1712851626.369969",
+    "end_time": "1712878719.343739",
+    "is_thread": true
+  }
+}

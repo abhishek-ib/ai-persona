@@ -1,0 +1,77 @@
+{
+  "id": "ch_C06FA6A23_2023-08-30_1693455210.458259_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Heymian",
+    "Arpan"
+  ],
+  "messages": [
+    {
+      "sender": "Arpan",
+      "user_id": "U033X89DJ77",
+      "message": "Hi Team, we’re seeing the below error in aihub-uat:\n`AttributeError: module 'instabase.registry' has no attribute 'tasks'`\nLooks like it’s coming from this (https://github.com/instabase/instabase/blob/master/distributed-tasks/celery/model-training-tasks/shared/start-worker.sh#L23) file.\nCan someone help with fixing this issue?\nHere’s the full log:\n```Usage: celery [OPTIONS] COMMAND [ARGS]...\nTry 'celery --help' for help.\nError: Invalid value for '-A' / '--app':\nUnable to load celery application.\nWhile trying to load the module instabase.registry.tasks the following error occurred:\nTraceback (most recent call last):\nFile \"/home/ibuser/.local/lib/python3.9/site-packages/celery/app/utils.py\", line 383, in find_app\nsym = symbol_by_name(app, imp=imp)\nFile \"/home/ibuser/.local/lib/python3.9/site-packages/kombu/utils/imports.py\", line 64, in symbol_by_name\nreturn getattr(module, cls_name) if cls_name else module\nAttributeError: module 'instabase.registry' has no attribute 'tasks'\nDuring handling of the above exception, another exception occurred:\nTraceback (most recent call last):\nFile \"/home/ibuser/.local/lib/python3.9/site-packages/celery/bin/celery.py\", line 58, in convert\nreturn find_app(value)\nFile \"/home/ibuser/.local/lib/python3.9/site-packages/celery/app/utils.py\", line 386, in find_app\nsym = imp(app)\nFile \"/home/ibuser/.local/lib/python3.9/site-packages/celery/utils/imports.py\", line 104, in import_from_cwd\nreturn imp(module, package=package)\nFile \"/opt/python-3.9.15/lib/python3.9/importlib/__init__.py\", line 127, in import_module\nreturn _bootstrap._gcd_import(name[level:], package, level)\nFile \"<frozen importlib._bootstrap>\", line 1030, in _gcd_import\nFile \"<frozen importlib._bootstrap>\", line 1007, in _find_and_load\nFile \"<frozen importlib._bootstrap>\", line 986, in _find_and_load_unlocked\nFile \"<frozen importlib._bootstrap>\", line 680, in _load_unlocked\nFile \"<frozen importlib._bootstrap_external>\", line 850, in exec_module\nFile \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\nFile \"/model-training-tasks/py/instabase/registry/tasks.py\", line 46, in <module>\nfrom instabase.content.filehandle_v2.grpc_file_client import GRPCFileClient\nFile \"/model-training-tasks/py/instabase/content/filehandle_v2/grpc_file_client.py\", line 4, in <module>```",
+      "time": "21:13",
+      "timestamp": "1693455210.458259",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "This error typically means that a python library is missing. If you look at more logs you should see some other message that should tell you which import is missing.",
+      "time": "21:53",
+      "timestamp": "1693457600.250709",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Separately, we shouldn’t even be running model-training-tasks-gpu anymore. So this error should not have any impact. What is the issue?",
+      "time": "21:53",
+      "timestamp": "1693457629.000119",
+      "is_reply": true
+    },
+    {
+      "sender": "Arpan",
+      "user_id": "U033X89DJ77",
+      "message": "Yes, looks like this is the import that’s missing,\n`ModuleNotFoundError: No module named 'magic'`",
+      "time": "21:55",
+      "timestamp": "1693457748.060019",
+      "is_reply": true
+    },
+    {
+      "sender": "Arpan",
+      "user_id": "U033X89DJ77",
+      "message": "Issue is that this error is causing model-training-tasks-gpu to fail and triggering saas-alerts (https://instabase.slack.com/archives/C04MMPYRRL1/p1693448929925049).",
+      "time": "21:57",
+      "timestamp": "1693457859.854809",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrm, I believe we turned this down to 0 replicas, so this should not be running. Can you mark the alert as “ok”? I’ll tag Yiqing and Fernando on this tomorrow to take a closer look?",
+      "time": "22:00",
+      "timestamp": "1693458032.728559",
+      "is_reply": true
+    },
+    {
+      "sender": "Arpan",
+      "user_id": "U033X89DJ77",
+      "message": "sure, sounds good, thanks @Heymian :thankyou:",
+      "time": "22:22",
+      "timestamp": "1693459326.609069",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-08-30.json",
+    "message_count": 7,
+    "start_time": "1693455210.458259",
+    "end_time": "1693459326.609069",
+    "is_thread": true
+  }
+}

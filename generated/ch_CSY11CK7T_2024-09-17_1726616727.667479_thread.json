@@ -1,0 +1,142 @@
+{
+  "id": "ch_CSY11CK7T_2024-09-17_1726616727.667479_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Xindi Xu",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@Xindi Xu I'm running into some problems with org creation on two separate PRs: https://github.com/instabase/instabase/actions/runs/10912502186/job/30287573972?pr=62498 and https://github.com/instabase/instabase/actions/runs/10912524389/job/30287347722?pr=62531. They're both PRs from last week that I just rebased, and I'm wondering if they're trying to create new orgs with the same names.",
+      "time": "16:45",
+      "timestamp": "1726616727.667479",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think both failed at `Metronome.add_plan_to_customer` with `\"The plan date range must not overlap with the customer\\'s existing plans\"` (trace ID: 9cb01f80f80b0eee, 78183336307b3113)\n@Victor Zeng",
+      "time": "16:53",
+      "timestamp": "1726617239.324449",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Is this similar to this issue (https://instabase.slack.com/archives/CSY11CK7T/p1726520008451329) we found yesterday that we should check if the customer has a plan before adding plans?",
+      "time": "16:57",
+      "timestamp": "1726617474.418459",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Jessica Similar to the issue I linked above. The org is created more than 1 day ago. We use an idempotency_key to add plans to Metronome. However, Metronome flushes their idempotency_key after 24 hours so Metronome tries to add plans and we got into this issue.\nWe might have gotten these issues before but we ignored the error and continued with Cypress tests. This is now blocking Cypress because of this PR (https://github.com/instabase/instabase/pull/62648) I merged in this morning.",
+      "time": "17:02",
+      "timestamp": "1726617772.553749",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think aborting Cypress when we failed to create orgs makes sense, but it's annoying in this case that the org is setup correctly but the endpoint fails... :cry:",
+      "time": "17:04",
+      "timestamp": "1726617880.853999",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Is this the same org?",
+      "time": "17:20",
+      "timestamp": "1726618805.533949",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I can go in and delete the billing plan from the history",
+      "time": "17:20",
+      "timestamp": "1726618817.227049",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "No. 4 different orgs are affected:\ncypress-org-62531\ncypress-org-drives-62531\ncypress-org-62498\ncypress-org-drives-62498\n\ncreate org for cypress-org-drives-62531 and cypress-org-drives-62498 didn't run because the creating the other 2 orgs failed.",
+      "time": "17:21",
+      "timestamp": "1726618888.723339",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I cleared the plan for these 4 orgs.",
+      "time": "17:23",
+      "timestamp": "1726619027.758589",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I think we can rerun?",
+      "time": "17:24",
+      "timestamp": "1726619059.709059",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Re-running now.",
+      "time": "17:25",
+      "timestamp": "1726619103.503359",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Fix PR: https://github.com/instabase/instabase/pull/62702",
+      "time": "17:43",
+      "timestamp": "1726620234.910469",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Looks like re-run failed. Not sure why.",
+      "time": "17:44",
+      "timestamp": "1726620264.185079",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Is Metronome caching the error with the idempotency key?",
+      "time": "17:44",
+      "timestamp": "1726620277.585359",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "We ran into this before right? Metronome had a bug where they cache the errored op’s idempotency key",
+      "time": "17:46",
+      "timestamp": "1726620389.411749",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-09-17.json",
+    "message_count": 15,
+    "start_time": "1726616727.667479",
+    "end_time": "1726620389.411749",
+    "is_thread": true
+  }
+}

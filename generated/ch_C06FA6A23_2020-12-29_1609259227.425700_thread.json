@@ -1,0 +1,184 @@
+{
+  "id": "ch_C06FA6A23_2020-12-29_1609259227.425700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "abhitaker",
+    "Eric Han",
+    "Aaron Vontell",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Hihi, resetting up my dev environment and running into the issue where localhost doesn't receive any data. webapp is running - I get a response at localhost:5000 though the css is missing, which makes sense if that's supposed to come from server-nginx. The server-nginx docker is up but doesn't seem to be receiving any requests. I see no logs being printed",
+      "time": "08:27",
+      "timestamp": "1609259227.425700",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "What happens if you just navigate to localhost without the 5000?",
+      "time": "08:27",
+      "timestamp": "1609259270.426300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "that's where i get the \"didn't send any data\" error message",
+      "time": "08:28",
+      "timestamp": "1609259295.426500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "do you know who owns the nginx container now that will is gone?",
+      "time": "08:29",
+      "timestamp": "1609259340.426700",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "hey lydia, did you run `make run-docker-proxy` or `make run-docker`?\nfirst one is the correct command for local setup",
+      "time": "08:33",
+      "timestamp": "1609259606.426900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i started it using python provisioner.py start --as-docker",
+      "time": "08:38",
+      "timestamp": "1609259903.427200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "lemme try restarting my computer. i remember having these heisenbugs with nginx a lot. will thought maybe there was some issue with the docker communication? has anyone else run into connection issues with server-nginx that seem to go away if you restart docker or your laptop?",
+      "time": "08:41",
+      "timestamp": "1609260105.427400",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "provisioner script by default uses run-docker-proxy, so it’s fine on that front.\ncan you check if the url is `http://..` instead of `https://..`.\nmaybe try this variation too",
+      "time": "08:44",
+      "timestamp": "1609260290.427600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "it is http://",
+      "time": "08:45",
+      "timestamp": "1609260311.427800",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "try this: https://localhost/account/login?next=%2F\nif this doesn’t work then maybe restart the system :sweat_smile:",
+      "time": "08:47",
+      "timestamp": "1609260439.428000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "nope doesn't work. i think the issue is localhost is not connecting to the server-nginx container",
+      "time": "08:47",
+      "timestamp": "1609260475.428200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "thanks!",
+      "time": "08:48",
+      "timestamp": "1609260499.428400",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "did you figure this out?",
+      "time": "09:59",
+      "timestamp": "1609264748.431600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "still doesn't seem to work",
+      "time": "10:54",
+      "timestamp": "1609268075.431900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "maybe i should rebuild the image locally?",
+      "time": "10:54",
+      "timestamp": "1609268085.432100",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "ya there might be something wrong with the prebuilt image",
+      "time": "11:11",
+      "timestamp": "1609269099.432300",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i ran into this this morning too, just saw this message - rebuilding nginx locally works for me",
+      "time": "11:31",
+      "timestamp": "1609270291.432500",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "`make clean build-docker run-docker-proxy`",
+      "time": "11:31",
+      "timestamp": "1609270304.432700",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "it took a long time to build nginx though :slightly_smiling_face:",
+      "time": "11:31",
+      "timestamp": "1609270310.432900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yup that did it :slightly_smiling_face: took awhile cause i had a bunch of tooling updates to make sigh",
+      "time": "11:46",
+      "timestamp": "1609271203.433100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-12-29.json",
+    "message_count": 20,
+    "start_time": "1609259227.425700",
+    "end_time": "1609271203.433100",
+    "is_thread": true
+  }
+}

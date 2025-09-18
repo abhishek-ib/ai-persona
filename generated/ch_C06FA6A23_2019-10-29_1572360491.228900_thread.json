@@ -1,0 +1,158 @@
+{
+  "id": "ch_C06FA6A23_2019-10-29_1572360491.228900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Aaron Vontell",
+    "dlluncor",
+    "will"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@dlluncor @Handsome Dave I seem to be getting this issue again, now in Jenkins",
+      "time": "07:48",
+      "timestamp": "1572360491.228900",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "And it seems to be happening in both PY2 and PY3 jenkins tests",
+      "time": "07:50",
+      "timestamp": "1572360625.229300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Line 419 in this log, for instance: https://travis-ci.com/instabase/instabase/jobs/250295172",
+      "time": "07:54",
+      "timestamp": "1572360874.229900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@will this also might be a change I need to get into Jenkins… Not sure what the fix is yet",
+      "time": "07:57",
+      "timestamp": "1572361064.230600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Is it accurate that the steps to reproduce locally are to cd into /instabase_dir/shared-utils/py-utils/nlp-utils` and run `make run-test-local`?",
+      "time": "08:03",
+      "timestamp": "1572361382.230800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "yup that’s correct",
+      "time": "08:04",
+      "timestamp": "1572361456.231000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I use `make clean build test` which I think is the same thing but yeah",
+      "time": "08:04",
+      "timestamp": "1572361471.231200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "My guess is that some recent dep addition or version change caused an increase in a msgpack version somewhere",
+      "time": "08:05",
+      "timestamp": "1572361511.231400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Do you know what version you expect/need?",
+      "time": "08:06",
+      "timestamp": "1572361563.231600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Not 100% sure because this has been a mess of dependencies never being explicitly declared for this, but version 0.4.1 of numpy-msgpack uses `msgpack-python>=0.3.0` and `numpy>=1.9.0`",
+      "time": "08:09",
+      "timestamp": "1572361744.231800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "My local machine has the following, and things seem to work locally:\n\n```msgpack==0.5.6\nmsgpack-numpy==0.4.1\nmsgpack-python==0.5.6```",
+      "time": "08:10",
+      "timestamp": "1572361859.232000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "So it would be interesting to do `pip freeze | grep msgpack`  on Jenkins and see if there is a difference",
+      "time": "08:12",
+      "timestamp": "1572361959.232200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I can take a look when I do the other jenkins stuff this afternoon. Does that work for you?",
+      "time": "08:13",
+      "timestamp": "1572362007.232400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yup! Thanks! Here is the related thread on this issue: https://github.com/explosion/spaCy/issues/2868",
+      "time": "08:13",
+      "timestamp": "1572362021.232600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "We can also pin the version at the bottom of requirements.txt in the Dockerfile and in the requirements.txt and also run “python gen_py3_requirements.py”\n\nI suggest we move requirements.in (http://requirements.in) for webdriver-tasks (and all other services) — but the pinning of the version at the bottom of the Dockerfile and requirements.txt and requirements_py3.txt should be updated",
+      "time": "08:38",
+      "timestamp": "1572363497.232900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Soon I hope to move the jenkins build stuff around to streamline it, when I do I will move it to `requirements.in (http://requirements.in)` as well (if it wasn’t already by then)",
+      "time": "08:39",
+      "timestamp": "1572363567.233100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Also I am mainly worried about here is that since this is failing on Jenkins, this may also mean that our actual deployed services may also be suffering from this bug, and a big demo is coming up Thursday so want to make sure this is addressed beforehand",
+      "time": "09:26",
+      "timestamp": "1572366364.236100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-10-29.json",
+    "message_count": 17,
+    "start_time": "1572360491.228900",
+    "end_time": "1572366364.236100",
+    "is_thread": true
+  }
+}

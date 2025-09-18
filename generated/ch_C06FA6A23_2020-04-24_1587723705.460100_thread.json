@@ -1,0 +1,175 @@
+{
+  "id": "ch_C06FA6A23_2020-04-24_1587723705.460100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "abhilash",
+    "John St",
+    "will"
+  ],
+  "messages": [
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "when switching to a different branch, what’s the fastest way to get all latest things up and running locally? `python provisioner.py compile all` takes forever (probably because it builds a bunch of docker images?)",
+      "time": "03:21",
+      "timestamp": "1587723705.460100",
+      "is_reply": false
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "What I do typically is start up using provisioner every day on latest master. Then throughout the day I’ll switch branches and restart whatever service I’m using manually.",
+      "time": "07:08",
+      "timestamp": "1587737301.461200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "You can also use the prebuilt docker flag to start a service using the docker images built regularly via CI/CD",
+      "time": "07:11",
+      "timestamp": "1587737467.461400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "`--as-docker --use-prebuilt`",
+      "time": "07:11",
+      "timestamp": "1587737505.461600",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "That’s what I do usually john but that process didn’t work well switching between bofa and master branches. Thanks @will for the use-prebuilt flags, that’s awesome!",
+      "time": "07:35",
+      "timestamp": "1587738954.464300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Yeah, some branches are more compatible than others. :grimacing: Since BofA branch is on UAT environment right now, you can pull the running images from that, but if you had to work on a branch that wasn’t getting built regularly from CI/CD the options are a lot more limited.",
+      "time": "07:38",
+      "timestamp": "1587739095.464500",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "I see. So in other words —use-prebuilts will work for bofa and other release branches but not for master?",
+      "time": "07:40",
+      "timestamp": "1587739231.465800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "No, the other way around. `--use-prebuilt` is always `master`.",
+      "time": "07:41",
+      "timestamp": "1587739262.466000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "But if a release is getting autodeployed to UAT, dogfood, or dogfood alt, you can manually pull down and run the images faster than building them, and they will be (relatively) up to date for that branch",
+      "time": "07:41",
+      "timestamp": "1587739298.466400",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "Ok. Do I need to remember this or will provisioner automatically fallback to building locally if it can’t find those images",
+      "time": "07:43",
+      "timestamp": "1587739384.467800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "If provisioner can’t find the images from master when using prebuilt it would just fail.",
+      "time": "07:43",
+      "timestamp": "1587739423.468600",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "Oh ok",
+      "time": "07:44",
+      "timestamp": "1587739444.468900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "but that is pretty unlikely, even if the continuous builds from master failed, you would still be able to pull down the last successful version.",
+      "time": "07:44",
+      "timestamp": "1587739462.469100",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "I use a tmux set up so things can start in parallel instead of in series like in provisioner",
+      "time": "10:04",
+      "timestamp": "1587747853.470200",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "could you share the setup file?",
+      "time": "10:08",
+      "timestamp": "1587748098.470400",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "yep we can hop on a call later I can show you. i have a 1 on 1 let’s meet in 35 minutes?",
+      "time": "10:08",
+      "timestamp": "1587748132.470600",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "I’m going to be sleeping early today, celebrating friday :smile:  Let’s sync up on monday",
+      "time": "10:10",
+      "timestamp": "1587748207.470800",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "sg",
+      "time": "10:10",
+      "timestamp": "1587748220.471000",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "just throw something up on the calendar (my sunday night also works)",
+      "time": "10:10",
+      "timestamp": "1587748252.471200",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-04-24.json",
+    "message_count": 19,
+    "start_time": "1587723705.460100",
+    "end_time": "1587748252.471200",
+    "is_thread": true
+  }
+}

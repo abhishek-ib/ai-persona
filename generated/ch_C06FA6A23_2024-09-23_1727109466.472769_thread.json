@@ -1,0 +1,215 @@
+{
+  "id": "ch_C06FA6A23_2024-09-23_1727109466.472769_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "sean.donohoe",
+    "Nikolaos Kofinas",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "Hello everyone, is there a reason that we are in mypy 0.812?\nFor ibllm we need to upgrade to langchain 0.3.0 which used pydantic 2.5 which doesnt work with 0.812… we need > 1 (I work with 1.11.1) to make it work.",
+      "time": "09:37",
+      "timestamp": "1727109466.472769",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@Heymian might (read: will) have far more helpful context here than I. :-)",
+      "time": "10:09",
+      "timestamp": "1727111341.929719",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "haha in my time we were stuck on mypy 0.701. I’m not that familiar with the python build anymore but thought with the Bazel python work, to avoid conflicts with the newer libraries, Young and @sean.donohoe had to take mypy up to 0.812? I might be misremembering.\n\nBut in general, mypy updates are a huge lift because it requires changes across the code base to bring everything up to the new version.",
+      "time": "10:14",
+      "timestamp": "1727111640.772129",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I do remember Young addressing some stuff related to mypy versions when he was onboarding some py-utils modules, but it's been a while since he left and I am not properly up to date on the state of the python work :disappointed: If we need to update our mypy version please let me know how I can help -- the bazel work for python has taken a lower priority in favor of fedramp, and I don't want to block others from being able to upgrade",
+      "time": "10:20",
+      "timestamp": "1727112050.117129",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "oof… I don’t know how much of a priority right now is to upgrade langchain but since we know that any new release-feature-support for model will come in a newer version then I will argue that it is quite important",
+      "time": "10:46",
+      "timestamp": "1727113606.114599",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "gotcha yeah, makes sense -- @Nikolaos Kofinas do you happen to know how many/which services would be targeting the upgraded langchain? I'm quite tempted to say the ideal path forward for our current situation is to bake the upgraded mypy version into services' `pyproject.toml` and update pre-merge to use those mypy packages rather than the one pre-installed in the pre-merge container",
+      "time": "10:55",
+      "timestamp": "1727114146.410079",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea the central 'tendril-esque' nature of mypy today (or any dependency for that matter) seems like a thing we'd be thrilled to reduce over time",
+      "time": "11:03",
+      "timestamp": "1727114622.203369",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "it will touch the webserver and ibllm for sure",
+      "time": "11:04",
+      "timestamp": "1727114652.716069",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "kk that sounds like it should be manageable :crossed_fingers: @Nikolaos Kofinas do you have some time to try upgrading mypy and langchain for whichever service you are the most comfortable working with? If you have a PR we can use to test some pre-merge changes against I'd be happy to look into adding the logic for dynamically determining the mypy version :slightly_smiling_face:",
+      "time": "11:06",
+      "timestamp": "1727114765.618359",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "yes I am trying that as we speak, (for ibllm) it is painful but getting there",
+      "time": "11:06",
+      "timestamp": "1727114800.450739",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "godspeed good sir",
+      "time": "11:07",
+      "timestamp": "1727114846.538099",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "additionally, I get a ton of errors like:\n```\ninstabase/metronome/client.py:2: error: Library stubs not installed for \"dateutil\" (or incompatible with Python 3.9)\ninstabase/metronome/client.py:4: error: Library stubs not installed for \"requests\" (or incompatible with Python 3.9)\ninstabase/host_agent/utils.py:3: error: Library stubs not installed for \"requests\" (or incompatible with Python 3.9)```\nwhich can be fixed with:\n``` mypy --install-types```\nI am trying to find out where to put this (e.g. in which script)\nmy initial idea was the run_mypy.py  but I dont know if its the correct place",
+      "time": "11:07",
+      "timestamp": "1727114874.708509",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "oh gosh yes, I remember asking Young what was going on with this as well a while ago -- idk why we do it this way (was added far before my time here), but there are a bunch of stubs under shared-utils/py-utils/typing-utils/src/py/stubs (https://github.com/instabase/instabase/tree/master/shared-utils/py-utils/typing-utils/src/py/stubs) that the makefile craziness forces mypy to reference",
+      "time": "11:11",
+      "timestamp": "1727115088.071589",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "in case it helps and you haven't already found it, the exact invocation is https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/build-python.mk#L139",
+      "time": "11:12",
+      "timestamp": "1727115143.151719",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "(it makes sense to have them there because some libraries dont have types (e.g. early langchain))",
+      "time": "11:12",
+      "timestamp": "1727115149.003699",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "yes but\nmypy --install-types\nis a separate call to mypy which requires approval (e.g. hit Y) and downlaods a bunch of files",
+      "time": "11:13",
+      "timestamp": "1727115213.906689",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "I dont think it is proper to run it every time that we build the environment :stuck_out_tongue:",
+      "time": "11:13",
+      "timestamp": "1727115224.963149",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I mean if it's not something we can automate via some reasonable non-interactive mode, then it's the wrong tool. :man-shrugging::skin-tone-3:\n\nI understand removing it wouldn't be trivial (and maybe not even viable), but the point stands. lol",
+      "time": "11:16",
+      "timestamp": "1727115367.000279",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "haha yes, avoiding repeated work where we can is definitely preferred :joy:  it's a bit outside the realm of my current python knowledge, but we might want to investigate whether poetry can just handle this for us -- making things scoped per-service is going to make staged rollouts of changes way easier and significantly reduces the blast radius of bugs",
+      "time": "11:16",
+      "timestamp": "1727115376.127269",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "(imo we should have things structured so we can just do `poetry run mypy ...` instead of all the hacky script layers we have now, but I suspect that's a significant amount of work no one has time to address at the moment :p)",
+      "time": "11:18",
+      "timestamp": "1727115501.323829",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "ok this is going outside of my comfort zone, let me create a branch that will have all the changes and I will ping you then :slightly_smiling_face:",
+      "time": "11:19",
+      "timestamp": "1727115565.365959",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "hahaha :plus1: for me and sounds great, hopefully we can get you unblocked quickly/easily :slightly_smiling_face: Thanks for the discussion and clarification!",
+      "time": "11:20",
+      "timestamp": "1727115617.282429",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "heh yea for sure\nWe expand scope a lot in these convos because of the hyperconnected nature of most of the python bits, but it helps us get incremental changes rolling in a better direction I think.\n\nThanks for taking on the effort to place the crystal-seed whence we might grow a much more reliable process. :slightly_smiling_face: :muscle::skin-tone-3:",
+      "time": "11:22",
+      "timestamp": "1727115773.609409",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(also 'whence (https://www.merriam-webster.com/dictionary/whence)' has definitely grown into one of my favorite unnecessary words, thanks for playing along with Cody's Vocabulary Fun Time :joy:)",
+      "time": "11:25",
+      "timestamp": "1727115942.443439",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-09-23.json",
+    "message_count": 24,
+    "start_time": "1727109466.472769",
+    "end_time": "1727115942.443439",
+    "is_thread": true
+  }
+}

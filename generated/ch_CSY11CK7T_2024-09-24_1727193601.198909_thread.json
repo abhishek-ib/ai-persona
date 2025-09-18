@@ -1,0 +1,286 @@
+{
+  "id": "ch_CSY11CK7T_2024-09-24_1727193601.198909_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Xindi Xu",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "@Xindi Xu can you help me out with some feature flag stuff?\nI’m working a feature flag `ENABLE_AIHUB_REVIEW_QUEUES` that’s in the `IB_OPT_OUT` stage and is marked as an `ENTERPRISE` tier in `feature_flags.py`. I need it do the following for a particular button:\n1. Make the button respect the `IB_OPT_OUT` stage — visible to IB people, hidden to the public\n2. If you’re an IB person that’s commercial, you should see the disabled button (with an upsell)\n3. If you’re an IB person that’s enterprise, you should see the button\nSo naturally, to add 1 & 3, you’d start off with code like so:\n```const enableReviewQueues = useIsFeatureEnabled(...);\n...\nreturn enableReviewQueues && <Button ... />;```\nSo to add 2, you’d do something like this?\n```const enableReviewQueues = useIsFeatureEnabled(...);\nconst { isEnterprise } = useActiveOrganizationContext();\n...\nreturn enableReviewQueues && <Button disabled={!isEnterprise} ... />;```\nbut if you’re in a commercial workspace, then `enableReviewQueues` would resolve to `false` because it’s marked as an `ENTERPRISE` tier in `feature_flags.py`, so would we have to change this to `COMMERCIAL_OR_ABOVE`?\n\nIf so, then we’ll have to do more work when we switch the flag to GA to support “enabling GA enterprise features” from the AIHub Admin panel (see screenshot). Essentially, we’d have to do the following when promoting to GA:\n1. Bump flag to GA as per docs (https://docs.google.com/document/d/1XbszN-7RRfv6uSYcdGzLmcEumy1dYu5xM8Nazp1TJBs/edit#heading=h.ute83e559ays).\n2. Change tier back to `ENTERPRISE` in `feature_flags.py` \n3. Replace `isEnterprise` checks above with `enableReviewQueues` (so that “enabling GA enterprise features” works for commercial users) \n4. Remove conditional rendering using `enableReviewQueues` (so that commercial tier users can see the button), but this means we can’t switch off the feature in prod.\nI feel like I’m missing something :sweat_smile: Let me know if there’s an easier way to do this.",
+      "time": "09:00",
+      "timestamp": "1727193601.198909",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think this is achievable by using 2 feature flags:\n1. Create 2 feature flags `ENABLE_REVIEW_QUEUES_BUTTON` with tier COMMERCIAL and `ENABLE_REVIEW_QUEUES_FEATURE` with tier ENTERPRISE. The stage of these 2 feature flags should always be the same. The \"BUTTON\" one controls if we should show the button and the \"FEATURE\" one controls if the button should be enabled\n2. In code, we do\n```const enableReviewQueuesButton = useIsFeatureEnabled(ENABLE_REVIEW_QUEUES_BUTTON);\nconst enableReviewQueuesFeature = useIsFeatureEnabled(ENABLE_REVIEW_QUEUES_FEATURE);\n\n...\nreturn enableReviewQueuesButton && <Button disabled={!enableReviewQueuesFeature} ... />;\n\n// in Button, show upsell if disabled=true```\n3. Normal Enterprise customers have both feature flags set to true, so they see an enabled button. Normal commercial customers have \"BUTTON\" enabled and \"FEATURE\" disabled, so they see a disabled button + upsell. To turn the feature on for selected commercial customers, use the AIHub Admin app to set `ENABLE_REVIEW_QUEUES_FEATURE` to true.",
+      "time": "09:32",
+      "timestamp": "1727195523.028259",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think this matches the requirements you outlined but lmk if i missed anything!",
+      "time": "09:33",
+      "timestamp": "1727195580.242179",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Hmm wait this is exactly the behavior we have SLAs and we don't have to do this",
+      "time": "09:43",
+      "timestamp": "1727196238.560569",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Ohh maybe the difference was that the SLA button was also gated behind deployments :thinking_face:",
+      "time": "09:46",
+      "timestamp": "1727196415.838189",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "What about:\n```if (isFeatureEnabled && isEnterprise) {\n  return showButton()\n} else if ((!isFeatureInPreview || (isFeatureInPreview && isIBInternal)) && isCommercial) {\n  return showUpsell()\n} else {\n  return null\n}```\nIs that the right logic?",
+      "time": "09:55",
+      "timestamp": "1727196936.898389",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I do think this is going to be a pretty common use case @Xindi Xu. I wonder if we can add some sort of showUpsell flag to the backend logic for cases like these.",
+      "time": "09:56",
+      "timestamp": "1727196985.639299",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, if we can outline all the requirements I can try to incorporate this to the system",
+      "time": "10:01",
+      "timestamp": "1727197282.360279",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "`isFeatureEnabled && isEnterprise` won't work because it'll block us from using the AIHub admin app to give selected commercial customer access.",
+      "time": "10:08",
+      "timestamp": "1727197713.751829",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Maybe we can prioritize making sure that still works then over the second requirement Paul listed",
+      "time": "10:10",
+      "timestamp": "1727197857.487219",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Paul, can you confirm my understanding is correct?\n2 & 3 also applies to external users once the feature is GA'ed:\n2. For commercial users, they see a disabled button + upsell. We can use the admin app to enable the feature for selected commercial customers. Once enabled, they see an enabled button.\n3. For enterprise users, they see an enabled button (feature is enabled for them)",
+      "time": "10:53",
+      "timestamp": "1727200380.196259",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'll let Paul answer too, but this seems right to me. The challenge that we have right here is how to handle showing upsell vs. showing nothing when the feature is in preview. Once it's GAed everything works as expected, because there's no case we'd want to show nothing.",
+      "time": "11:12",
+      "timestamp": "1727201520.656929",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Yup, that's exactly it @Xindi Xu",
+      "time": "15:35",
+      "timestamp": "1727217356.604439",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Q: why do we need to show upsell for preview features? The idea of \"preview\" is that, by default, we don't show anything to users. If they want to try out something, we'll grant access and enable it for them.",
+      "time": "15:38",
+      "timestamp": "1727217489.953379",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I think it's a matter of implementation and gating. I.e., I want to be able to implement the upsell now, but the logic I need to implement changes after it becomes GA",
+      "time": "15:40",
+      "timestamp": "1727217647.799119",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "While in preview, my logic would look like this:\n```if (isFeatureEnabled) {\n  return showButton()\n} else {\n  return null\n}```\nWhile in GA it would look like this:\n```if (isFeatureEnabled) {\n  return showButton()\n} else {\n  return showPreview()\n}```\nAnd we don't have the necessary info to be able to combine those and not change code when a feature is GA'ed",
+      "time": "15:43",
+      "timestamp": "1727217800.616599",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "What if we do this? This means we won't show upsells for features in-preview. Is this what we want?\n```if (isFeatureEnabled) {\n  return showButton()\n}\nif (isFeatureInPreview) {\n  return null\n}\nreturn showUpsell()```",
+      "time": "15:55",
+      "timestamp": "1727218507.573779",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The issue with that logic is that we’d have to do some funky stuff to be able to test the upsell state. I wonder if we need to change the logic that makes it so that internal users always have enterprise features in preview enabled even if they’re on a commercial account",
+      "time": "16:01",
+      "timestamp": "1727218873.170929",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "But then how can we test out if the enterprise features are not showing up in commercial orgs",
+      "time": "16:04",
+      "timestamp": "1727219067.858019",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Yeah, ultimately, I want to test the upsell state now (while it’s in preview) across multiple different buttons/places on AIHub, in preparation for GA. Once the feature is GA’d, I want to perform minimal changes to flip that flag and avoid changing implementation code.",
+      "time": "16:20",
+      "timestamp": "1727220058.938859",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "For now, I’ll use `const { isEnterprise } = useActiveOrganizationContext();` for my use case, which means admins can’t give access in the AIHub Admin Panel. But it seems like we’ll be doing this more often in the future so an inbuilt way would be fantastic",
+      "time": "16:25",
+      "timestamp": "1727220342.122119",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "So we should be able to do this then:\n```if (isFeatureEnabled) {\n  return showButton()\n}\nif (isFeatureInPreview) {\n  return null\n}\nreturn showUpsell()```\nWhen it's ready to GA, we set it to GA in aihub sandbox. An external commercial user will see the upsell. An external enterprise user will see the feature enabled. No code changes is required",
+      "time": "16:29",
+      "timestamp": "1727220565.214759",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Hmm, I think that works logically for me. Let me use this!",
+      "time": "16:43",
+      "timestamp": "1727221400.417499",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I do think the logic is a little funky looking so we should either wrap this in a helper and/or put it in the feature gating doc!",
+      "time": "16:44",
+      "timestamp": "1727221468.860469",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, agreed. Took me a while to understand the request and come up with this haha. We can def add a helper. May also make sense to add to this component\n`lib/src/AIHub/contexts/FeatureFlagsContext/WithFeatureFlagCheck.tsx`",
+      "time": "16:47",
+      "timestamp": "1727221629.250899",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The issue I see with that code is testing the upsell state as an internal user. Either isFeatureEnabled or isFeatureInPreview will always be true for any internal user. In order to test the upsell state we’d need to have a non-internal account.",
+      "time": "17:02",
+      "timestamp": "1727222569.492719",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yep, need to use an external account",
+      "time": "17:03",
+      "timestamp": "1727222601.831939",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I do think it would simplify how we understand things a lot if we didn’t have exceptions to how tier works for internal users",
+      "time": "17:03",
+      "timestamp": "1727222616.062309",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "If you want to test an enterprise feature, you should be using an enterprise account",
+      "time": "17:03",
+      "timestamp": "1727222633.586339",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "~we don't have tier exceptions for internal users. Internal users need to be in the correct tier to receive the preview feature~",
+      "time": "17:04",
+      "timestamp": "1727222665.415689",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Weirdly enough, I would have thought that for an `ENTERPRISE` feature, I would expect calling `isFeatureEnabled` from a commercial account would return `false` — but it seems like that’s not the case (from here and from my testing), correct?\n\nEDIT: ~Maybe it’s because I’m testing from the `paul-s-pokemon` org, which I recently downgraded from enterprise to commercial and there could be some cache/metronome stuff~",
+      "time": "17:04",
+      "timestamp": "1727222695.416539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "sorry, double-checked the code. IB user can use the preview feature regardless of the tier. I _think_ this was built so that we can demo enterprise features in commercial context without turning on the feature for the entire org",
+      "time": "17:08",
+      "timestamp": "1727222916.037799",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "That makes sense, but it’s what is complicating this logic and making it harder to test all 3 states.",
+      "time": "17:17",
+      "timestamp": "1727223471.643199",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-09-24.json",
+    "message_count": 33,
+    "start_time": "1727193601.198909",
+    "end_time": "1727223471.643199",
+    "is_thread": true
+  }
+}

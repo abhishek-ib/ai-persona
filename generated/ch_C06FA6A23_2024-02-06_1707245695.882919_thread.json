@@ -1,0 +1,321 @@
+{
+  "id": "ch_C06FA6A23_2024-02-06_1707245695.882919_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Sayd",
+    "gurkirat",
+    "Travis",
+    "sean.donohoe",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "@sean.donohoe can we use rabbitmq service on crafting and use that?",
+      "time": "10:54",
+      "timestamp": "1707245695.882919",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Depends on what you're trying to do -- if you want an isolated rmq instance to play around with (like what you would do with ppy), then yes -- if you want E2E interception + injection of rabbitmq then most likely no. Crafting interception works conceptually the same as distributed tracing with OTEL -- in order for interception to work for our asynchronous workflows (e.g. a flow job contacting core platform service, etc) we need to update job service, rabbitmq, and any queue readers to propagate Crafting headers to subsequent RPCs",
+      "time": "10:57",
+      "timestamp": "1707245867.662159",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "Gotcha, thank you!",
+      "time": "10:59",
+      "timestamp": "1707245952.531109",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "For sure! Let me know if I can help get something spun up for you :slightly_smiling_face:",
+      "time": "10:59",
+      "timestamp": "1707245979.664679",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "@mfichman @Travis were you able to get it started locally? it seems like `use_prebuilt` is set to False for rmq in provisioner",
+      "time": "11:01",
+      "timestamp": "1707246080.042209",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "I only use crafting now cause I couldn’t get this to work.",
+      "time": "11:01",
+      "timestamp": "1707246101.014909",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "I haven’t tried the use_prebuilt approach though, it looked promising.",
+      "time": "11:01",
+      "timestamp": "1707246115.622489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It worked when I used `--use-prebuilt`, yes",
+      "time": "11:12",
+      "timestamp": "1707246776.169209",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "@Sayd I’m having the same issue as you with the `--use-prebuilt`",
+      "time": "11:36",
+      "timestamp": "1707248169.586959",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think I may have run `ppy compile rabbitmq --use-prebuilt` (which pulls the latest image)",
+      "time": "11:36",
+      "timestamp": "1707248204.720609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OH, and I added `use_prebuilt: True`  to provisioner.py for rabbitmq. It was set to False",
+      "time": "11:37",
+      "timestamp": "1707248273.998329",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "ah, ok things are happening now",
+      "time": "11:41",
+      "timestamp": "1707248466.498679",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "ok it compiled but `ppy start rabbitmq --use-prebuilt` still gets an error",
+      "time": "11:42",
+      "timestamp": "1707248540.330749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Well, shucks:\n\n```❯ docker run -it instabase/rabbitmq\nWARNING: The requested image's platform (linux/amd64) does not match the detected host platform (linux/arm64/v8) and no specific platform was requested\n[2024-02-06 19:44:21,535] {/etc/rabbitmq/rabbitmq_config.py:159} INFO - Creating RabbitMQ configuration definitions...\n[2024-02-06 19:44:21,537] {/etc/rabbitmq/rabbitmq_config.py:47} INFO - Generating config password hash...\n[2024-02-06 19:44:21,537] {/etc/rabbitmq/rabbitmq_config.py:166} ERROR - Encountered an error in initializing RabbitMQ       configuration 'NoneType' object has no attribute 'encode'\nSegmentation fault```",
+      "time": "11:45",
+      "timestamp": "1707248710.954459",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It's broken for me now too. I guess the prebuilt image is now updated, and it's broken in the same way the local build one was.",
+      "time": "11:45",
+      "timestamp": "1707248733.997839",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "anyway to get a log output for something like this?",
+      "time": "11:46",
+      "timestamp": "1707248815.277279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "No, ppy throws away the logs from container startup. I had to do the following:\n\n``` make -C $IB_HOME/third-party/docker/rabbitmq run-docker```",
+      "time": "11:48",
+      "timestamp": "1707248934.519439",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": ":blob_sad:",
+      "time": "12:04",
+      "timestamp": "1707249883.255739",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "If the older prebuilt image worked, maybe try pulling an older image?",
+      "time": "12:06",
+      "timestamp": "1707249989.828229",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "@mfichman do you know which image was working for you?",
+      "time": "12:08",
+      "timestamp": "1707250086.808359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think I may have clobbered it by pulling the latest one :disappointed:",
+      "time": "12:11",
+      "timestamp": "1707250296.247739",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "@sudeep @gurkirat fyi, the latest certified docker image fails",
+      "time": "12:15",
+      "timestamp": "1707250509.227929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Currently trying to use Crafting instead per @sean.donohoe's suggestion",
+      "time": "12:15",
+      "timestamp": "1707250520.482539",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "would it allow you to test local changes to core-platform-services though? You can't just isolate rabbitmq on crafting and everything else would be local from how i understood it",
+      "time": "12:16",
+      "timestamp": "1707250597.054059",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "I'm trying to pull older images of rabbitmq rn and see if it helps",
+      "time": "12:17",
+      "timestamp": "1707250622.233509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In theory, yes according to Sean. You can run `ppy` within your crafting sandbox and make local changes inside that sandbox's git clone. But it's x86 rather than an M1, so you avoid all the M1 issues.",
+      "time": "12:19",
+      "timestamp": "1707250752.041909",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Yep, so if you want to run services like you would on your macbook (i.e. ppy) you're totally good to go\n\nThe caveat I mentioned earlier only applies if you want to _inject_ a rabbitmq container you are running into the crafting-aihub instabase cluster (allows people to say \"I want to interact with a fully deployed instabase cluster through its normal UI, but I want any requests related to my session and the services I'm working on to get forwarded to my containers instead of the pods in the instabase cluster\")",
+      "time": "12:22",
+      "timestamp": "1707250952.629589",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "tried a bunch of older images and it doesn't work, will also set up crafting",
+      "time": "12:33",
+      "timestamp": "1707251587.358689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@sean.donohoe When I create a workspace in Crafting, the only option is \"Frontend Dev Environment.\" Should I select that...?",
+      "time": "12:36",
+      "timestamp": "1707251807.253369",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "no I wouldn't do that -- are you creating through the UI or the CLI? I'm also available to do a quick setup together over huddle if you have 5 min :slightly_smiling_face:",
+      "time": "12:37",
+      "timestamp": "1707251856.920769",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah, OK. I didn't see the CLI option. I'll give that a try and reach out if I get stuck.",
+      "time": "12:38",
+      "timestamp": "1707251935.855449",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Sounds great! If you are still messing with the UI you should be able to create a sandbox using the `ibdev` template, you just need to click the 'templates' button directly (rather than one of the dropdown selections) to see it",
+      "time": "12:39",
+      "timestamp": "1707251995.824209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This is all I see in the UI (no templates button):",
+      "time": "12:41",
+      "timestamp": "1707252064.386339",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "12:41",
+      "timestamp": "1707252083.692399",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Ah shoot yes, I forgot we have one of their experimental UIs enabled :face_palm: -- click that button at the very top that says 'FULL WEB...' and you should see some more options",
+      "time": "12:41",
+      "timestamp": "1707252119.659109",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "is this a way to use just RabbitMQ for local dev? Or is Matt just setting up a enterprise box like I’ve already done?",
+      "time": "17:07",
+      "timestamp": "1707268046.185979",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "looking into this right now",
+      "time": "22:03",
+      "timestamp": "1707285821.887849",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-02-06.json",
+    "message_count": 37,
+    "start_time": "1707245695.882919",
+    "end_time": "1707285821.887849",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "id": "ch_C05L87V014J_2025-01-23_1737677997.324269_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "Heymian",
+    "Balaram"
+  ],
+  "messages": [
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "How do we run system tests on crafting sandboxes? I tried going doing `cd shared-utils/py-utils/system-tests` and `make run-system-test TEST_NAMES=test_deployed_solutions` and I got the error below (details in thread)",
+      "time": "16:19",
+      "timestamp": "1737677997.324269",
+      "is_reply": false
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "```cd /home/owner/instabase/shared-utils/py-utils/system-tests/build/py \nIB_TEST_ENV= python /home/owner/instabase/shared-utils/py-utils/system-tests/build/py/run_system_test.py \"instabase_test.test_deployed_solutions\"\nTraceback (most recent call last):\n  File \"/home/owner/instabase/shared-utils/py-utils/system-tests/build/py/run_system_test.py\", line 10, in <module>\n    from instabase_test.system_utils.system_test_config import load_default_system_test_config\n  File \"/home/owner/instabase/shared-utils/py-utils/system-tests/build/py/instabase_test/system_utils/system_test_config.py\", line 9, in <module>\n    from instabase_test.system_utils import test_config\n  File \"/home/owner/instabase/shared-utils/py-utils/system-tests/build/py/instabase_test/system_utils/test_config.py\", line 10, in <module>\n    import pyotp\nModuleNotFoundError: No module named 'pyotp'\nmake: *** [Makefile:35: run-system-test] Error 1```",
+      "time": "16:20",
+      "timestamp": "1737678010.003289",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Are you running in a poetry env with the necessary python libraries available?",
+      "time": "16:23",
+      "timestamp": "1737678212.960279",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think you can go to api-server for example, and do `poetry shell` to run in an env that will have the system-test dependencies.",
+      "time": "16:24",
+      "timestamp": "1737678242.445569",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "No, I actually have never ran a system test before",
+      "time": "16:24",
+      "timestamp": "1737678250.429059",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Okay, will give that a try",
+      "time": "16:24",
+      "timestamp": "1737678254.333169",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ah, this is true for running tests in any py-utils module, not just sytem-tests",
+      "time": "16:24",
+      "timestamp": "1737678268.504449",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Sounds good!",
+      "time": "16:25",
+      "timestamp": "1737678354.600369",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I tried doing `poetry shell` within `~/instabase/shared-utils/py-utils/system-tests` I get the error below:\n```Poetry could not find a pyproject.toml file in /home/owner/instabase/shared-utils/py-utils/system-tests or its parents```",
+      "time": "16:26",
+      "timestamp": "1737678410.752499",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I see other directories have the `pyproject.toml` file but there isn't one in the directory I'm trying to run a system test for",
+      "time": "16:27",
+      "timestamp": "1737678446.728729",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "oh you should go to api-server",
+      "time": "16:27",
+      "timestamp": "1737678451.317639",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "api-server just because it has the most dependencies in the poetry env, including the system-test ones",
+      "time": "16:28",
+      "timestamp": "1737678506.058379",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Sounds good. I was able to get past that error, but it seems like there's still more things I need to set up.\n\nI tried running `make run-system-test IB_URL_BASE=https://https--ptenkale-instabase.instabase.site.sandboxes.run/  TEST_NAMES=test_deployed_solutions` but I still get the error below:\n```WARNING:root:Unable to load system test config path from TEST_CONFIG_JSON_PATH```",
+      "time": "16:45",
+      "timestamp": "1737679501.506299",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Eventually all tests fail with the error below. I'm assuming there is something that needs to be set for `TEST_CONFIG_JSON_PATH` , do you know what that is?\n\n`File \"/home/owner/instabase/shared-utils/py-utils/system-tests/build/py/instabase_test/system_utils/system_test_case.py\", line 93, in _generate_test_root_path`\n    `isolated_path = '/'.join((path, unique_tag))`\n`TypeError: sequence item 0: expected str instance, NoneType found`",
+      "time": "16:46",
+      "timestamp": "1737679596.010179",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "https://docs.google.com/document/d/1etrCJmRNW_mj4e0sXd5bgKdzhJA8Hcx6VeEe7xDvd8o/edit?tab=t.0\n\n@prateek.tenkale See if this document is helpful",
+      "time": "16:59",
+      "timestamp": "1737680395.551349",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "@Balaram Will take a look! Would you be able to grant access?",
+      "time": "17:14",
+      "timestamp": "1737681250.102539",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "done",
+      "time": "17:18",
+      "timestamp": "1737681522.423189",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "More up to date instructions are here https://instabase.atlassian.net/wiki/spaces/ENG/pages/1616773140/System-Tests",
+      "time": "21:12",
+      "timestamp": "1737695552.136989",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-01-23.json",
+    "message_count": 18,
+    "start_time": "1737677997.324269",
+    "end_time": "1737695552.136989",
+    "is_thread": true
+  }
+}

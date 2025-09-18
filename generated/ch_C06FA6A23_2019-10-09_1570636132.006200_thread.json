@@ -1,0 +1,287 @@
+{
+  "id": "ch_C06FA6A23_2019-10-09_1570636132.006200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ted",
+    "dlluncor",
+    "Heymian",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Is there a test battery I could run on my local machine to try to at least reproduce any errors there so I could debug more actively?",
+      "time": "08:48",
+      "timestamp": "1570636132.006200",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "make test-changes is intended to run all the tests that Travis would run on your local machine. You'll have to run it once in your PY2 venv and a second time in your PY3 venv",
+      "time": "08:56",
+      "timestamp": "1570636600.006400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Awesome, thanks. Will try",
+      "time": "08:57",
+      "timestamp": "1570636638.006600",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "@dlluncor that exists immediately with no tests run for me",
+      "time": "09:01",
+      "timestamp": "1570636917.006800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "```\ncd /Users/eob/instabase/shared-utils/test-utils/src && go run runtest.go -tag changed -file-glob tmp/run-test-changes.json -v -j 1\n----------- DONE -----------\n[TOTAL]: 0  [OK]:0  [FAIL]:0\n```",
+      "time": "09:02",
+      "timestamp": "1570636920.007000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "what branch are you in @Ted? that code runs CI based on what files changed as shown by `git diff master... --name-only`",
+      "time": "09:08",
+      "timestamp": "1570637281.007200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "`eob/r5-recipe`",
+      "time": "09:08",
+      "timestamp": "1570637301.007400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "if you run `make test-changes-in-docker` it’ll run the “test the diffs” inside the jenkins container (which is how i was able to reproduce this locally).",
+      "time": "09:08",
+      "timestamp": "1570637315.007600",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "(And also: wow; that's really fancy! CI tools are magical to me)",
+      "time": "09:08",
+      "timestamp": "1570637315.007800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Awesome, that's really helpful. Will try that.",
+      "time": "09:08",
+      "timestamp": "1570637332.008000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i was seeing a similar issue Ted with 0 tests running. @Chetan this is the issue i was referring to",
+      "time": "09:09",
+      "timestamp": "1570637346.008200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Wow now I know how to turn my computer fan onto `Intercontinental Jetplane Mode` :wink:",
+      "time": "09:16",
+      "timestamp": "1570637762.008400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "ya i’m confused why that happens for me as well — need to ask @Heymian about that — why does “runtest.go” make my computer so hot — even though it’s only running with 1 thread? — run i run “make build mypy” or “make run-test-local” i don’t think my comp gets that hot",
+      "time": "09:20",
+      "timestamp": "1570638042.008600",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Well even with 1 thread, if you keep the pipeline full the CPU will get hot I think.",
+      "time": "09:22",
+      "timestamp": "1570638170.008800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "I think most normal workloads, at the nanosecond level, are still so bursty that the pipeline remains empty most of the time",
+      "time": "09:23",
+      "timestamp": "1570638192.009000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "But if you start shoving data in there such that everyone is just waiting on the CPU",
+      "time": "09:23",
+      "timestamp": "1570638204.009200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "On turns the hovercraft fans",
+      "time": "09:23",
+      "timestamp": "1570638221.009400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "FWIW I think I'm seeing different behavior than what I think was reported",
+      "time": "09:24",
+      "timestamp": "1570638267.009600",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "```\ncd /instabase_dir/shared-utils/test-utils/src && go run runtest.go -tag changed -file-glob tmp/run-test-changes.json -v -j 1\n[OK]      distributed-tasks/celery/image-tasks (test)\n[OK]      shared-utils/py-utils/acl-access (test)\n[OK]      shared-utils/py-utils/app-utils (test)\n[OK]      shared-utils/py-utils/data-export-utils (test)\n[OK]      shared-utils/py-utils/recipe-utils (test)\n[OK]      shared-utils/py-utils/refinerv5-utils (test)\n[OK]      shared-utils/py-utils/visual-refiner/client (test)\n[OK]      shared-utils/py-utils/visual-refiner/server (test)\n[OK]      webserver/api-server (test)\n\n```",
+      "time": "09:24",
+      "timestamp": "1570638269.009800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Image tasks runs first for me, but also passes the test",
+      "time": "09:24",
+      "timestamp": "1570638275.010000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "if it runs on the mac and only fails in the jenkins image, it could be a difference between mac and linux? Especially if we have tests that rely on the local filesystem. Just a random idea.",
+      "time": "09:46",
+      "timestamp": "1570639615.012400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "you can repo? @Heymian?",
+      "time": "09:59",
+      "timestamp": "1570640359.015300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "haven’t tried yet. in calls, can try to look after",
+      "time": "10:00",
+      "timestamp": "1570640428.016200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "(Not helpful) But at least now I see why Jenkins wasn’t failing. It actually doesn’t run the image-task unit tests.",
+      "time": "11:17",
+      "timestamp": "1570645058.018100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "works properly for me in past jenkins images (the one from July, for ex.).",
+      "time": "11:22",
+      "timestamp": "1570645326.018500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Stupid question, does image-tasks work with py3? I’m getting errors as such:\n```\n/instabase/shared-utils/py-utils/typing-utils/src/py/stubs/pandas/__init__.pyi:7: error: Name 'DataFrame' already defined (possibly by an import)\ninstabase/data_api_utils/_sheet/separator_fns.py:86: error: Attribute 'step' already defined on line 80\ninstabase/data_api_utils/_sheet/separator_fns.py:92: error: Attribute 'step' already defined on line 80\ninstabase/data_api_utils/_sheet/separator_fns.py:98: error: Attribute 'step' already defined on line 80\n\n/instabase/distributed-tasks/celery/image-tasks/../../../shared-utils/build-utils/shared/build-python.mk:191: recipe for target 'mypy-unit-tests' failed\n```",
+      "time": "12:08",
+      "timestamp": "1570648087.019100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Never mind! ^ wrong version of mypy.",
+      "time": "12:18",
+      "timestamp": "1570648687.019300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah i still have no idea. i can’t reproduce it anywhere. Out of ideas for what to try, so I’ll have to come back to this later.",
+      "time": "13:16",
+      "timestamp": "1570652190.019500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Erick",
+      "time": "13:17",
+      "timestamp": "1570652240.019900",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "I will plan to just let PRs back up and keep moving on rather than merge assuming it’s a fake error",
+      "time": "13:17",
+      "timestamp": "1570652260.020600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "So I just found the PR that’s causing problems (binary searched a month’s worth of PRs, dang we write a lot of code now), but I can’t see what’s wrong. If anyone has some spare cycles would appreciate some eyes: https://github.com/instabase/instabase/pull/11210",
+      "time": "16:18",
+      "timestamp": "1570663095.022300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I FOUND ITTTTTT https://github.com/instabase/instabase/pull/11374. These __init__.py are going to be a part of my nightmares for a long time to come. And this python unittest tool, could really try to be more forgiving >.> hanging indefinitely seems undesirable and  avoidable.",
+      "time": "17:07",
+      "timestamp": "1570666048.022600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "nice work @Heymian!",
+      "time": "17:22",
+      "timestamp": "1570666931.033000",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-10-09.json",
+    "message_count": 33,
+    "start_time": "1570636132.006200",
+    "end_time": "1570666931.033000",
+    "is_thread": true
+  }
+}

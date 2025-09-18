@@ -1,0 +1,174 @@
+{
+  "id": "ch_CSY11CK7T_2025-03-27_1743116816.528849_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Vishnu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I’m seeing a consistent error in Cypress that’s blocking our PRs. It occurs when we try to run an app, but we get a 500 error “An unexpected error has occurred: Unknown exception”. Looking at the trace (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%225vg%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D,%22query%22:%22eb90d8a2e437adb3%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1), it seems like we’re getting the following Python error:\n```TypeError: update_deployed_solution() got an unexpected keyword argument 'app_release_version'```\nwhich I believe is coming from this PR (https://github.com/instabase/instabase/pull/68543). @Vishnu are you able to take a look?",
+      "time": "16:06",
+      "timestamp": "1743116816.528849",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm i agree with your assessment of the issue, but that PR was merged 2 weeks ago\n\nhow come we're only seeing this issue now?",
+      "time": "16:09",
+      "timestamp": "1743116984.140019",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I’m also wondering why we’re only seeing this issue now",
+      "time": "16:11",
+      "timestamp": "1743117074.872379",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oh i think that we're trying to auto-upgrade the ai runtime in this app version\n\nand the auto-upgrade is triggered by time, so that's why it's appearing now",
+      "time": "16:13",
+      "timestamp": "1743117196.839499",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Would manually upgrading the ai runtime for this app to unblock the Cypress tests?",
+      "time": "16:14",
+      "timestamp": "1743117242.460819",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yes i think so",
+      "time": "16:14",
+      "timestamp": "1743117256.201669",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "ok i’ll give it a shot",
+      "time": "16:14",
+      "timestamp": "1743117266.611049",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we should definitely still have @Vishnu or @pauline.comising add `app_release_version` as an arg for `update_deployed_solution` though :disappointed:\n\n(why doesn't mypy catch this sort of thing? :sobbadobbasob: )",
+      "time": "16:15",
+      "timestamp": "1743117321.849389",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Second bug when trying to update the app :cry:\n```An unexpected error occurred. (Error='AttributeError' object has no attribute 'DESCRIPTOR')```",
+      "time": "16:16",
+      "timestamp": "1743117399.628919",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I feel like we’ve seen this issue before though…",
+      "time": "16:16",
+      "timestamp": "1743117407.345199",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "celery-app-tasks logs  (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%229rm%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22celery-app-tasks%5C%22%7D%20%7C%3D%20%60f11edc%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22backward%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1)for this job say that the error comes from trying to get the project mount path",
+      "time": "16:18",
+      "timestamp": "1743117515.633279",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "seems like we don’t have access to the original build project, which might be why it’s failing to get the project mount path",
+      "time": "16:25",
+      "timestamp": "1743117950.639079",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I’m tempted to re-create this app with the same schema and name, and see if the tests pass. sanity check, any objections @Serena?",
+      "time": "16:26",
+      "timestamp": "1743117994.738989",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Oh wait, I can’t create an app with the same name on the same account :sweat_smile:",
+      "time": "16:29",
+      "timestamp": "1743118148.724149",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "going to have to delete it and recreate it",
+      "time": "16:29",
+      "timestamp": "1743118163.954209",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "No strong objections here",
+      "time": "16:31",
+      "timestamp": "1743118262.401689",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Okay done, “Cypress human review long doc” app seems to be working. Looks like I have to do the same for “cypress-human-review” too",
+      "time": "16:36",
+      "timestamp": "1743118612.343809",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Done, I’m re-running my PR (https://github.com/instabase/instabase/pull/69229) Cypress tests to see if this works.",
+      "time": "16:44",
+      "timestamp": "1743119053.333449",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "i think this is getting triggered now because we set the feature flag to internal opt out. the keyword arg is slightly differently named, and the unit test case for the upgrade case tested for the erroneous kwarg name being used, which is why it passed the original ci. ill put in a fix tomorrow, will need to backport to 25.12",
+      "time": "17:07",
+      "timestamp": "1743120469.009519",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-03-27.json",
+    "message_count": 19,
+    "start_time": "1743116816.528849",
+    "end_time": "1743120469.009519",
+    "is_thread": true
+  }
+}

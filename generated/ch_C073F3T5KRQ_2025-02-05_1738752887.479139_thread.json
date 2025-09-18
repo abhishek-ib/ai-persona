@@ -1,0 +1,110 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-02-05_1738752887.479139_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "puneet",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "One minor thing: you should never use a raw string as a key in a context. Define a new type derived from string and use that instead.",
+      "time": "02:54",
+      "timestamp": "1738752887.479139",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://chatgpt.com/share/67a343bc-3730-8007-bb1e-76f455dc3abd (https://chatgpt.com/share/67a343bc-3730-8007-bb1e-76f455dc3abd)",
+      "time": "02:56",
+      "timestamp": "1738752968.822599",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I wonder: is this going to be a good idea in the long run? Seems a little magical. I prefer explicitly passing the context to where it’s needed within the Go code.\n\nIf we pass the context in this way, we trade the benefits of the type checker and readability for a little convenience when writing the code.",
+      "time": "02:58",
+      "timestamp": "1738753125.409159",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "Hey @Xindi Xu, this does sound like a good idea and we can leverage context propagation to achieve this. Sharing my thoughts below -\n1. We already have context propagation using interceptors (https://github.com/instabase/instabase/blob/ca4a8699441395c7018fb2959d5b803ad02bd7[…]s/grpc-utils/src/py/instabase/utils/grpc/context_interceptor.py) for our grpc client which will propagate metadata from python to golang calls. \n2. In golang we can fetch these key value pairs from the context using this (https://github.com/instabase/instabase/blob/432622bac4ebd93debd77b5fe745bb5919c209ab/shared-utils/go-utils/src/instabase/utils/trace/context/context.go) library.\n3. So, for this scenario you can do something like `Context.set(constants.USERNAME, username)` in webservices, after fetching the username from cookies.\n4. Now this context key will be available across all the services at instabase which have context propagation / tracing support, so you can directly do `context.get(Username)` in golang using the grpc handler context to get the value.\n5. Note that you will have to add the username key  in python (https://github.com/instabase/instabase/blob/3fcca86bd7e9f3a25f97065da68c35ccd6093621/shared-utils/py-utils/tracing-utils/src/py/instabase/tracing/context.py) and golang (https://github.com/instabase/instabase/blob/c60e5ae5a82dbd678a484d26e5a67763641f2d09/shared-utils/go-utils/src/instabase/utils/trace/context/constants.go).\n@mfichman for your concerns -\n> One minor thing: you should never use a raw string as a key in a context. Define a new type derived from string and use that instead. (edited)\nWe have a specific type for context keys both in python (https://github.com/instabase/instabase/blob/3fcca86bd7e9f3a25f97065da68c35ccd6093621/shared-utils/py-utils/tracing-utils/src/py/instabase/tracing/context.py) and golang (https://github.com/instabase/instabase/blob/c60e5ae5a82dbd678a484d26e5a67763641f2d09/shared-utils/go-utils/src/instabase/utils/trace/context/constants.go), and by design raw strings cannot be used when creating a new key.\n> I wonder: is this going to be a good idea in the long run? Seems a little magical. I prefer explicitly passing the context to where it’s needed within the Go code.\nContext can be useful if we want generic details to be passed across all services, we can add validations for these fields to ensure type and null values. For example - Currently we use context to identify synthetic traffic in stats which allows us to scale down when no real traffic is present.",
+      "time": "06:10",
+      "timestamp": "1738764630.517329",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "context.Context is good for cross-cutting concerns (like the one you mentioned) that pass data through code that doesn't care to read the data. Tracing, synthetic traffic, etc. are good examples.\n\nIt is not as good for storing data that the GRPC handler directly processes...like the username/orgname.",
+      "time": "06:14",
+      "timestamp": "1738764888.814309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "pbcontext.Context is defined as:\n\n```message Context {\n    optional string username = 1; \n    optional string orgname = 2;\n    optional bool is_admin = 3;\n    optional bool is_organization_admin = 4;\n    optional string user_email = 5;\n}```",
+      "time": "06:15",
+      "timestamp": "1738764945.078179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Aside: I question whether is_admin, is_organization_admin, user_email should be in there, since those attributes are derived from the username. I see this as a source of bugs (lack of data normalization)",
+      "time": "06:16",
+      "timestamp": "1738765005.980599",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "I didn't realise that we are planning to add 5 fields. I agree that adding all these fields to context would not be ideal as these look like application/handler specific details.",
+      "time": "06:31",
+      "timestamp": "1738765894.730899",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think adding the username is enough.",
+      "time": "10:59",
+      "timestamp": "1738781988.284199",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you for sharing your thoughts!",
+      "time": "11:02",
+      "timestamp": "1738782128.610639",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I agree with Matt that the `pbContext.Context` should include only the username and org name.",
+      "time": "11:06",
+      "timestamp": "1738782361.028919",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-02-05.json",
+    "message_count": 11,
+    "start_time": "1738752887.479139",
+    "end_time": "1738782361.028919",
+    "is_thread": true
+  }
+}

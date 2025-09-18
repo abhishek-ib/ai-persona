@@ -1,0 +1,149 @@
+{
+  "id": "ch_C06FA6A23_2024-12-16_1734369293.008869_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Anant"
+  ],
+  "messages": [
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "I actually started with `ibdev-backend` but it's 2 days and still launching...",
+      "time": "09:14",
+      "timestamp": "1734369293.008869",
+      "is_reply": false
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "Should I do anything different?",
+      "time": "09:15",
+      "timestamp": "1734369300.630239",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'll take a look!",
+      "time": "09:15",
+      "timestamp": "1734369317.707289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Seems to be stuck in a loop pulling the rabbitmq and redis images:\n\n``` [D] rabbitmq     Ready     ✓ Pull:us-docker.pkg.dev/crafting-dev/sandbox/service/rabbitmq-3.11:latest 100%  \n                            ✓ RestoreInitialSnapshot                                                         \n                            ✓ LaunchService                                                                  \n [D] redis        Ready     ✓ Pull:us-docker.pkg.```\nNot 100% clear why, and this is the first time I've seen this. I'll try putting the sandbox to sleep, and waking it again to see if that resolves the issue.",
+      "time": "09:17",
+      "timestamp": "1734369428.086809",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Separately, I'll reach out to Crafting, since those containers are managed by them in this template.",
+      "time": "09:17",
+      "timestamp": "1734369479.719669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah, I see the problem! This is a problem with `node` while building `server-nginx` that is addressed in another PR I'm getting ready. @Vasu ran into the same problem (I did not, b/c my personal snapshot happens to initialize the right `node` version). Will fix this ASAP.\n\n```[1/5] Resolving packages...\n[2/5] Fetching packages...\nerror postcss-load-config@4.0.2: The engine \"node\" is incompatible with this module. Expected version \">= 14\". Got \"12.22.9\"\nerror Found incompatible module.\ninfo Visit https://yarnpkg.com/en/docs/cli/install for documentation about this command.\nmake[1]: *** [Makefile:39: install-deps] Error 1\nmake[1]: Leaving directory '/home/owner/instabase/webserver/shared/src/js/webpacked'\nmake: *** [Makefile:37: prepare] Error 2\nmake: Leaving directory '/home/owner/instabase/webserver/server-nginx'```",
+      "time": "09:23",
+      "timestamp": "1734369814.872399",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Fix here: https://github.com/instabase/instabase/pull/66380\n\nAlso identified another issue: https://github.com/instabase/instabase/pull/66382",
+      "time": "09:55",
+      "timestamp": "1734371719.067329",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Anant: Got your sandbox up. Sorry about the blip!",
+      "time": "10:06",
+      "timestamp": "1734372396.017989",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "no worries at all",
+      "time": "10:33",
+      "timestamp": "1734374027.878289",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "Thank you so much!!",
+      "time": "10:33",
+      "timestamp": "1734374033.793059",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "I got this end-point https://https--anant-instabase.instabase.site.sandboxes.run/",
+      "time": "10:35",
+      "timestamp": "1734374134.524869",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "if I try to login via google -- it says not authorized -- do we get another URL that is not blocked via our SSO",
+      "time": "10:36",
+      "timestamp": "1734374162.241289",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "",
+      "time": "10:38",
+      "timestamp": "1734374332.328229",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, you have to explicitly add the auth redirect URL for your sandbox to allow signup w/ Google. I think we should avoid doing that for every dev sandbox, b/c the list will get quite long. (Note: we are also considering adding a proxy that will redirect to the appropriate sandbox, to avoid this -- but this is WIP).\n\nCan you create an account the old-fashioned way (email + password)?",
+      "time": "10:45",
+      "timestamp": "1734374753.470619",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "yes -- I can. Was wondering if there is a way we can create a domain mapping (http://<abc.sandbox.instabase.com (http://sandbox.instabase.com)|<abc>.sandbox.instabase.com (http://sandbox.instabase.com)>) and our SSO approves everything under *.sandbox.instabase.com (http://sandbox.instabase.com)",
+      "time": "11:04",
+      "timestamp": "1734375886.421199",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Unfortunately, Google does not allow wildcards like that for oauth callbacks -- but we can emulate it using a proxy. We're looking into this for another unrelated project.",
+      "time": "11:11",
+      "timestamp": "1734376285.506799",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-12-16.json",
+    "message_count": 16,
+    "start_time": "1734369293.008869",
+    "end_time": "1734376285.506799",
+    "is_thread": true
+  }
+}

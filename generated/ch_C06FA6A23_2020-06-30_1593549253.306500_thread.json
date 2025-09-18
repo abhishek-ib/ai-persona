@@ -1,0 +1,159 @@
+{
+  "id": "ch_C06FA6A23_2020-06-30_1593549253.306500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Felicia",
+    "Mohit",
+    "Aaron Vontell",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "Running into a weird issue: `Argument 2 to \"join\" of \"Value\" has incompatible type \"List[Value[str]]\"; expected \"List[Union[Value[str], str]]\"``. Casting that argument to `List[Union[Value[Text], Text]]` works, but is there a better way to do this (define the typing in a different way)? because the type of ‘argument 2’ should be compatible with what the function requires",
+      "time": "13:34",
+      "timestamp": "1593549253.306500",
+      "is_reply": false
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Maybe mypy is only evaluating Unions as a top-level type? Might need to change the type to `Union[List[Value[str]], List[str]]` ?",
+      "time": "14:24",
+      "timestamp": "1593552242.306800",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "cc @Aaron Vontell we want to allow the list to have a mix of Value wrapped and raw strings right?",
+      "time": "14:30",
+      "timestamp": "1593552621.307000",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "My suggestion should be the same type definition -- it's just unrolled in a way mypy might understand better (also possible mypy will still fail on it if the underlying problem is something else)",
+      "time": "14:33",
+      "timestamp": "1593552815.307200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@Erick the issue is that with that suggestion, the list can only have one of those types - in this case, the list can be a mix, i.e. `['hello', Value('world')]`",
+      "time": "14:50",
+      "timestamp": "1593553858.307400",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Ah right of course",
+      "time": "14:52",
+      "timestamp": "1593553942.307600",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "So maybe a union of all 3 would be best?",
+      "time": "14:52",
+      "timestamp": "1593553974.307800",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "To make mypy happy at least. `Union[List[Value[str]], List[str], List[Union[Value[str], str]]]`",
+      "time": "14:53",
+      "timestamp": "1593553999.308000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Hmmmm that mayyyy work",
+      "time": "14:59",
+      "timestamp": "1593554363.308200",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "let me tryh that!",
+      "time": "14:59",
+      "timestamp": "1593554374.308400",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "that worked @Erick awesome!!!",
+      "time": "15:23",
+      "timestamp": "1593555819.308600",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@Erick should we need the third one? As a coding practice, should we allow a single list to have both types of objects (coz then on the consumer side, we would need type checks as well to avoid intermixing Value[str] and str coming from a single list obj)?",
+      "time": "15:44",
+      "timestamp": "1593557069.309300",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Apparently that was by design according to @Aaron Vontell. Maybe so refiner functions can consume a mix of upstream results? For example `join([my_udf(INPUT_COL), scan_right(INPUT_COL, 'x')])`, where `scan_right` is provenance_tracked, and `my_udf` is not? Not actually sure what would be attempted here (if `join` would receive mixed inputs, if refiner would value-wrap the first element, or if refiner would unwrap the second).",
+      "time": "15:47",
+      "timestamp": "1593557239.309500",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "hmm this change makes the tests for the join method fail :confused:",
+      "time": "16:16",
+      "timestamp": "1593558995.309700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@Felicia which tests? This is just a mypy change right?",
+      "time": "16:17",
+      "timestamp": "1593559051.309900",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "@Aaron Vontell the join tests in `test_value`\n\n```instabase_unit_tests/instabase/provenance/test_value.py:301: error: Argument 2 to \"join\" of \"Value\" has incompatible type \"List[<nothing>]\"; expected \"Union[List[Value[str]], List[str], List[Union[Value[str], str]]]\"\ninstabase_unit_tests/instabase/provenance/test_value.py:499: error: Argument 2 to \"join\" of \"Value\" has incompatible type \"List[object]\"; expected \"Union[List[Value[str]], List[str], List[Union[Value[str], str]]]\"\ninstabase_unit_tests/instabase/provenance/test_value.py:509: error: Argument 2 to \"join\" of \"Value\" has incompatible type \"List[object]\"; expected \"Union[List[Value[str]], List[str], List[Union[Value[str], str]]]\"\ninstabase_unit_tests/instabase/provenance/test_value.py:514: error: Argument 2 to \"join\" of \"Value\" has incompatible type \"List[object]\"; expected \"Union[List[Value[str]], List[str], List[Union[Value[str], str]]]\"\ninstabase_unit_tests/instabase/provenance/test_value.py:518: error: Argument 2 to \"join\" of \"Value\" has incompatible type \"List[object]\"; expected \"Union[List[Value[str]], List[str], List[Union[Value[str], str]]]\"```",
+      "time": "16:18",
+      "timestamp": "1593559108.310100",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "here: https://github.com/instabase/instabase/pull/14592/files",
+      "time": "16:23",
+      "timestamp": "1593559416.310300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-06-30.json",
+    "message_count": 17,
+    "start_time": "1593549253.306500",
+    "end_time": "1593559416.310300",
+    "is_thread": true
+  }
+}

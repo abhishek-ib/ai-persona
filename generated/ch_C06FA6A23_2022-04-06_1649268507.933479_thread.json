@@ -1,0 +1,86 @@
+{
+  "id": "ch_C06FA6A23_2022-04-06_1649268507.933479_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Dominic Fannjiang",
+    "Adrian"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Hi all, I'm trying to write a unit test in `api-server-apps` to test code like\n```try:\n    if ibfile.exists(path,..., username):\n        ...\nexcept IOError as e:\n    ... (catching the situation where the user doesn't have permission to view the input path)```\nHowever, I'm having trouble creating a user that can only access certain spaces/subspaces. Therefore, my test isn't covering the case where the IOError as caught. Could someone point me to an example where we have a test like this? (if we do)",
+      "time": "11:08",
+      "timestamp": "1649268507.933479",
+      "is_reply": false
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Make `ibfile.exists` a mock and set its `side_effect` to be `IOError`",
+      "time": "11:24",
+      "timestamp": "1649269448.833269",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "ah good point.. thanks",
+      "time": "11:29",
+      "timestamp": "1649269755.872389",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "just curious, where exactly in the code do we raise this `IOError` when the problem is with the permissions? I'm having trouble finding it",
+      "time": "11:56",
+      "timestamp": "1649271398.386029",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": ":point_up:cc: file-service experts @Xi Cheng @Adrian @Cheryl Zhou",
+      "time": "12:41",
+      "timestamp": "1649274078.762719",
+      "is_reply": true
+    },
+    {
+      "sender": "Adrian",
+      "user_id": "U0250G5278C",
+      "message": "I believe in the case of `exists` it would be at line 61 of `ibfile.py` , in `_fs_connect` ; I could be mistaken, though",
+      "time": "12:47",
+      "timestamp": "1649274445.727559",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Yea I see that `exists` calls `_fs_connect`, but I'm more curious about whether we hardcoded raising IOError when the user has insufficient permissions (and if so, where does that happen), or whether that IOError is raised in some open-source library.",
+      "time": "13:02",
+      "timestamp": "1649275331.347279",
+      "is_reply": true
+    },
+    {
+      "sender": "Adrian",
+      "user_id": "U0250G5278C",
+      "message": "I believe an `IOError` is raised in response to any error from `_fs_connect` . I believe the error would originate in `mount.go` ’s `Connect()` .",
+      "time": "13:40",
+      "timestamp": "1649277617.337579",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-04-06.json",
+    "message_count": 8,
+    "start_time": "1649268507.933479",
+    "end_time": "1649277617.337579",
+    "is_thread": true
+  }
+}

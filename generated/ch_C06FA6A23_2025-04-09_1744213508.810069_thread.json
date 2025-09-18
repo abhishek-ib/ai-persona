@@ -1,0 +1,79 @@
+{
+  "id": "ch_C06FA6A23_2025-04-09_1744213508.810069_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Evan",
+    "Arek",
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "Evan",
+      "user_id": "U07TLK6S7PS",
+      "message": "Excellent news, @Victor Zeng this is a solid upgrade from a security standpoint. Getting off Python 3.7 eliminates exposure to unpatched interpreter CVEs, and moving to 3.9 means we stay within the window of active security support. It also unblocks us from using newer, more secure versions of key packages like `cryptography` and `pip`, which have already dropped 3.7. I also appreciate the structured rollout and rollback plan. Great news. And thanks again to @Anil and @Cody Boggs for the lift!",
+      "time": "08:45",
+      "timestamp": "1744213508.810069",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ok, late to the party on the switch and merge, but done now!\n\nI've merged the PR, and in case there's a need to rollback tonight during IST hours...\n\nIn the event of a rollback / revert, first revert this PR (https://github.com/instabase/instabase/pull/69399), then update the cloud builder config on PreProd Jenkins:\n1. Go to https://jenkins.instabase.com/manage/cloud/ec2-build-machine-pr-merge/configure\n2. In the first AMI block, where Description is `jenkins-pr-merge-v1.3.0`, scroll down to the `Init Script` section and copy the \"Old (Py37) snapshot spec\" value\n3. Scroll further down in that same config block and click the `Advanced` button to expand the config block.\n4. Scroll down to `Block device mapping` and overwrite the value there with the one you copied from the `Init script`\n5. Save, then go to https://jenkins.instabase.com/manage/computer/\n6. Do a Find for `ec2-build-machine-pr-merge` and for each node present, click it, then click Delete Agent and confirm. Subsequent CI runs will then kick off new builders with the old snapshot restored.\n\nCC @sudeep @jayapandian.ponraj @raman.goel @gurkirat and folks. :-)",
+      "time": "19:54",
+      "timestamp": "1744253688.481039",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "BTW, im having shared-utils/py-utils/apps/libs/fetcher/diligence-sites-util/test/unit/py/instabase/data_api_utils/ fail off master and its blocking my PR with the error\n```os.execv(python_program, [python_program, main_filename] + args)\nOSError: [Errno 7] Argument list too long:```\nNot sure how to proceed. I found this https://stackoverflow.com/questions/26735006/oserror-errno-7-argument-list-too-long-on-ubuntu-python-calling-bitcoind-cli which makes me think it might be the base image change.\n\nAlthough it also fails locally and it might be a bazel specific problem? https://github.com/bazel-contrib/rules_python/issues/792 claims that there may be too many deps (I think specific to this package, it might actually be the number of files in the testdata data).",
+      "time": "20:26",
+      "timestamp": "1744255589.885659",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Fundamentally it sounds like a bash issue, but we should be able to configure bazel or python to change what command arguments were adding?",
+      "time": "20:27",
+      "timestamp": "1744255677.649539",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "That's an unrelated issue, which happened before the switch.",
+      "time": "20:35",
+      "timestamp": "1744256136.804309",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Thread here: https://instabase.slack.com/archives/C070H1089H8/p1744204261912519",
+      "time": "20:35",
+      "timestamp": "1744256139.590399",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Ah, thanks",
+      "time": "20:35",
+      "timestamp": "1744256148.717839",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-04-09.json",
+    "message_count": 7,
+    "start_time": "1744213508.810069",
+    "end_time": "1744256148.717839",
+    "is_thread": true
+  }
+}

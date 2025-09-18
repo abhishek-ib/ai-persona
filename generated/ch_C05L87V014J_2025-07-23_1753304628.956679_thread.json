@@ -1,0 +1,119 @@
+{
+  "id": "ch_C05L87V014J_2025-07-23_1753304628.956679_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "neerad.phansalkar",
+    "mfichman",
+    "tony.shi",
+    "Abhishek Adupa"
+  ],
+  "messages": [
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "I got my crafting sandbox to work with this (https://instabase.slack.com/archives/C05L87V014J/p1753214590968239) method earlier this morning, but now I'm once again unable to connect to ECR\n```\n#2 [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19\n#2 ERROR: unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/go-db/manifests/19: 401 Unauthorized\n------\n > [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19:\n------\nDockerfile:1\n--------------------\n   1 | >>> FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 AS base\n   2 |     LABEL maintainer=\"Instabase, Inc.\"\n   3 |     \n--------------------\nERROR: failed to build: failed to solve: 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19: failed to resolve source metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19: unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/go-db/manifests/19: 401 Unauthorized\nmake: *** [Makefile:32: build-docker] Error 1```\nIs there an updated fix?",
+      "time": "14:03",
+      "timestamp": "1753304628.956679",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Blasting this out in case people missed it. If you are having trouble with Docker pulls, please check these files:\n\n```cs/mfichman❯ cat ~/.aws/config\n[profile default]\nregion = us-east-2\ncredential_process = idfed aws 519787998606 crafting-sandbox-role\n\n\ncs/mfichman❯ cat ~/.docker/config.json\n{\n  \"credHelpers\": {\n     \"gcr.io\": \"gcloud\",\n     \"549230430157.dkr.ecr.us-east-2.amazonaws.com\": \"ecr-login\"\n  }\n}```",
+      "time": "14:05",
+      "timestamp": "1753304740.061279",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Looks like I have both\n\n```owner@dev:~/instabase$ cat ~/.aws/config\n[profile default]\nregion = us-east-2\ncredential_process = idfed aws 519787998606 crafting-sandbox-roleowner@dev:~/instabase$ \nowner@dev:~/instabase$ cat ~/.docker/config.json\n{\n\t\"auths\": {\n\t\t\"549230430157.dkr.ecr.us-east-2.amazonaws.com\": {\n\t\t\t\"auth\": \"QVdTOmV5SndZWGxzYjJGa0lqb2lXWFE1U0RKNEx6Z3dWVXRCVERZMFExTk1NRWRLYUdGU1UwbDNURU15UjFvME5pdHlRVmQ2UjJNM1ZHbFZRbVJxZFRWdVJVc3ZTWEZUYUc5d1UwTjFVRWQzVWpoT09EazFXalp5VjBndlpFNXJkSGhJVDBKMVppdExhR2QyYzFsVk1tNW1jbmxUUWtoRFNYVlFURk51TmtKb2FWUkhRV0paVUZWYWExVnlSRzlaYmxOS0wwaE5OMmhDTDI1ck1rRTVRVmxPZDFWTFoxWTFSSFJrTm1odVZIZHpVVlJsV0ZkMU9XOU9SM0p1VmxkUmRrbGpWRlZSWVZSUGJISjNWVzlZTmtKNGVIZEhNa0o2YjJwWmJuRm1la281UjBRdlJGSlBaQ3RDWTNoSFdFTkNlVE5vY0dkMlptbEdOMFp3U21OaU5VbFNTbnBRU2tGVWJsQk5lRkY0Y0dsb1VHaFNiVWN6WlUxdE9HcEhiSE5TWkZaWFdVUnNUWEY0Y0U4M1ZuSkJNMUZMUzBOSVUwVkxlR3RTV2pOVmNuSTNjMFJtU0VWdFFWZDZZMG8xZUZCUFNHOXZaVVIxWmtaNFdWSjFibHBMYUVKQmFWWXZSM2xvVVZaWk5HZzNZakJoYkhGUmRUTlBWREp4YUhZNU1YWmFNVmRPYmt0QlpsY3ZMMmxyWWtkelJEWkRhU3RNU25Wd01HaEpUVXhPZDFoVlUxSnNhakZHYjB4NVJXMUJNRlZ5VWxVMFVqWnpXak5NVTNNMGRHRnBZVGRxYjJSemMwcFViMVpaV2xselQwRlhaMWhSTlVwV0t5ODNSVlZOYmxBMFZqUkthVEpsTkd4dGIzSlNNMWw2U3pZeUwwc3pWbXhFZVhaTVREVTFTelZyWm5odU0wTldWbE5rVWxVMlVHOXBSalowTVZacmMyNTVkbmgxY1dGSFFtOTJOazV5VFhkbGJVNW9abkZVVjBSSk1uWnRXVGN2Y1RVelRUbDFaRmRQVG1GUU5rOW5XRWgyYWtOWFZtWlFVRTg0YUZsVmVYTnhSRGRvUWxoa1FXZEljMGRSWVZaRk0xcG5hbFkzU0dFMWNXNHhTMGxFV0ZSeU5GbFhjR2h0ZVhaemN6Z3hlU3MwZEZJclowcDNabGRwVUZCR2RXMUxVSEYwTmpJeFZsWlFVakZXTm5aQldXczVWQ3Q1TmpkNVJucEhkVE5UV2tORVNXNXROMDlDWTFSaWNEVkJXVGhJZWxGQmFqaFdXRk0yVFRWWkt6RmFOMUU1TW1oaFlVMU9TbWRVVFRGdldYSkJaVTlMUm0xUFMwMXRjRU41TTBSNVJYWkVZaXRYVm5WeGNVSmpRMDByU0RRelltdEljbU5XVEUxVVluWXhZVW8zVW5BdlVYUlVPRTlIYkZSWmIyUXpaWFp0TURWSWRVcEZVek5LUzI4MmNWaFVZek5KT0RsSlN6SkxlbVp1V25sTmJHZDFaVmh6TkhGblYyWXZhMEpvZUZKaFVEWmFVVVJGTDBORVUyMXFjSFJtZVZOd1ZsUk1RblIwV1ZoSGQxTjBZa2RwWmpoT2VFVldjM1JYV2psdE1HdDNNamxUUjJkd1NHbEtTMjh3YlhabFVFUTFjRXBsTkhaeEsybDRZMXAyYldaMUsxaHVaV3hqYzIwME5UQjBXRnB2V0ZOclUydE1SbTQyTjJ4Tk5WTkxRVXBtWVRCbFl6SmtTV1JCZGtwelprUjJSazl5Vms1NUwweDFjemxqZW5CMmVHbFpjRGg2UzI4eWNFdzRSSFoyUjJOUFJGTTFjVmhoTm5ScWFsZHlTV2w2U0RZemNYQTRXVWxrYkRNM2FWaHhNVlE1TUZacGNtNTZWbWRYUWxCTGJXbzRSMjFhU0hScGNWcHBOQ3QyYzJKTlVVczNVamxzU0VkT1RtVmpjRXRoUzIxcVVYRldabmRpT1VGS1drZEdNRzVCVkc0M2FpczViemRUYjBZNFp6UnROVlp4T1hsSk4xaFpOVzVPTVRWUk5UTmphVklyTkhBMUszZHJZbUo2UldWQk0yaFJhbFZCWWtSblRHNUtaRkJZVUUxSUwwWXJjbmRhWVhSbmFsbHNTMUl2YUdKUlNIQlFSV2xSV1hWSlltVkRlbU5wY1hoSGJGQnFhbFp4U0hWTlNubHhkRTlDVTNSUFQwRjJaakV2Y0hkbWJUSTFVVVJ2Vm1KTWFIbFBlalU1YzJwQmMwRlpjek13S3pkSGQwdzJhamg0YVZFelNYUk1ZamN6WkZOdVkxSk9ZMEo2UjIxSVdtNVZZM2xNTlRZelFVMXhaa2xTYzFsaksyOUxOVXhpUTFCeWNGRkliazVGYjFkeVVraDRNV2hCWVdobFoyeHhVbGRZVm10aFIyZHVjMVpwTTBkWGRWRlVPVkZIYWpOUGEyWTRWR0o1Y0ZWYVZVVm5lVzVYY1dwaWVuSklTbU5NTUVkSlNteHFPR2hMVEc5RVYzZ3JkakZEY1hNNFVXTjJUVWxxV21kQlBUMGlMQ0prWVhSaGEyVjVJam9pUVZGRlFrRklha0kzTDJsbmQwMW5ORTVRZDJGMWNuaFRTVmw0TkVobWJuaDFSMk12TkRoaVJIZDJkMFJ3VGxsWFdtZEJRVUZJTkhkbVFWbEtTMjlhU1doMlkwNUJVV05IYjBjNGQySlJTVUpCUkVKdlFtZHJjV2hyYVVjNWR6QkNRbmRGZDBobldVcFpTVnBKUVZkVlJFSkJSWFZOUWtWRlJFZE9jalJ3SzFkREwwZ3ZjWFJyUVc5blNVSkZTVUUzUldkcmFucENTMjEzTXpGdmNsSjBZbFYyZFRGYU5FSkNNRVJqV2tWWFNVUXdZWFFyV2pSd1oweFlWVzU0Uld0d1dUTk1SR2RLTkd3dldFaHRXbTk0VUhWbFJsUk5WV1JzWmpOb1RFOVZPRDBpTENKMlpYSnphVzl1SWpvaU1pSXNJblI1Y0dVaU9pSkVRVlJCWDB0RldTSXNJbVY0Y0dseVlYUnBiMjRpT2pFM05UTXhOak13TnpKOQ==\"\n\t\t}\n\t},\n\t\"credHelpers\": {\n\t\t\"gcr.io\": \"gcloud\",\n\t\t\"549230430157.dkr.ecr.us-east-2.amazonaws.com\": \"ecr-login\"\n\t}\n}\nowner@dev:~/instabase$ ```\n\nDeleting the auths key in config.json does not resolve the issue",
+      "time": "14:08",
+      "timestamp": "1753304924.034279",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Update: suspending + restarting the sandbox seems to have fixed it",
+      "time": "14:21",
+      "timestamp": "1753305666.116659",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "@mfichman, some of the services( like model-service) for my sandbox (https://instabase.sandboxes.site/sandboxes/abhishekadupa-may30), still get the error, it seems to be pulling from different registry. I did pull master, resync, hibernate, restart, docker system prune. Can you suggest what I can do to fix it?\n\n```   1 | >>> FROM 601729033846.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17 as base\n   2 |     LABEL maintainer=\"Instabase, Inc.\"\n   3 |     COPY --from=ghcr.io/astral-sh/uv:0.7.16 /uv /uvx /bin/\n--------------------\nERROR: failed to build: failed to solve: 601729033846.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17: failed to resolve source metadata for 601729033846.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17: unexpected status from HEAD request to https://601729033846.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/python/manifests/3.9.17: 401 Unauthorized```",
+      "time": "14:50",
+      "timestamp": "1753307453.857089",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "I'm also getting this error everything time I restart core-platform-service. Suspending + restarting the sandbox resolves it, but it's pretty time-consuming",
+      "time": "15:01",
+      "timestamp": "1753308116.655519",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "replacing the base image in `data-services/model-services/model-service/Dockerfile`\nsolves the issue for model service, changed it to -\n\n```FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17) as base ```",
+      "time": "15:04",
+      "timestamp": "1753308258.201639",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "For me model-service was also failing with\n```ERROR: failed to build: failed to solve: 601729033846.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17 (http://601729033846.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17): failed to resolve source metadata for 601729033846.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17 (http://601729033846.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17): unexpected status from HEAD request to https://601729033846.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/python/manifests/3.9.17: 401 Unauthorized```\nI added\n```\"601729033846.dkr.ecr.us-east-2.amazonaws.com (http://601729033846.dkr.ecr.us-east-2.amazonaws.com)\": \"ecr-login\"```\nto `~/.docker/config.json` to make it work.",
+      "time": "15:38",
+      "timestamp": "1753310308.732429",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "^ that seems to work initially but the container fails on a module import error",
+      "time": "15:41",
+      "timestamp": "1753310492.981329",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "(For me)",
+      "time": "15:41",
+      "timestamp": "1753310502.614979",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "Yeah me too. I think its related to this thread: https://instabase.slack.com/archives/C073F3T5KRQ/p1753303218627059?thread_ts=1753300621.758349&cid=C073F3T5KRQ",
+      "time": "15:42",
+      "timestamp": "1753310540.159809",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Did you also check the AWS “idfed” config?",
+      "time": "19:36",
+      "timestamp": "1753324569.000019",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-23.json",
+    "message_count": 12,
+    "start_time": "1753304628.956679",
+    "end_time": "1753324569.000019",
+    "is_thread": true
+  }
+}

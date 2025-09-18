@@ -1,0 +1,127 @@
+{
+  "id": "ch_C06FA6A23_2021-07-26_1627358434.217400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "shaunak",
+    "Hari",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi folks, there is a recent finding of the consumer timeout behavior by Rabbit-MQ, which might lead to resource leak when a task is taking longer than 30m to complete. I have summarized the finding in the doc below.\n\nTL;DR: In Rabbit-MQ 3.8, the channel/connection for a consumer gets closed by Rabbit-MQ after 30 mins if the task is taking long and an ack hasn’t been sent, causing the Ack from the consumer to fail later (even though the task is successfully completed) and the task to be redelivered and stuck in the queue indefinitely. This behavior seems new in Rabbit-MQ 3.8 and needs to be fully investigated to prevent instability / outage from happening on customers’ side.",
+      "time": "21:00",
+      "timestamp": "1627358434.217400",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "cc @sudeep @Anil",
+      "time": "21:59",
+      "timestamp": "1627361966.217900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "cc @Hari and @lydia as this will impact jobs that take longer than 30 mins.",
+      "time": "21:59",
+      "timestamp": "1627361985.218100",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@sudeep @Anil @Hari @lydia You should be able to access the doc for detailed information.",
+      "time": "22:01",
+      "timestamp": "1627362082.218300",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "And just to clarify, any long-running job may appear being able to complete successfully, but the problem here is that the task for it got stuck in rabbit-mq, causing a resource leak.",
+      "time": "22:02",
+      "timestamp": "1627362143.218500",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Just took a look through this (thanks for the doc/report Xi!). This seems this is a side effect of updating to 3.8.19 in this release for addressing vulnerabilities. I will add a patch to revert timeouts to a much longer period until we identify a better way to handle this. Will cherry-pick this into 21.7.\n\n(Also Xi and I chatted about this earlier - at that point we were not aware if the timeouts were newly introduced, and hence we were looking at other approaches than increasing the global consumer timeout.)",
+      "time": "22:03",
+      "timestamp": "1627362218.218800",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "@Xi Cheng @Anil @Hari @lydia hope this should help ^^",
+      "time": "22:08",
+      "timestamp": "1627362520.219800",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "cc @shaunak",
+      "time": "22:09",
+      "timestamp": "1627362571.220100",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@sudeep Sounds good! Thanks for confirming! Glad that we caught this before hitting customer. :+1:",
+      "time": "22:28",
+      "timestamp": "1627363721.220300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Thanks @Xi Cheng for being super persistent and getting to the bottom of this!",
+      "time": "22:29",
+      "timestamp": "1627363761.220500",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Thanks @Xi Cheng - really appreciate the detailed findings here, and helping get to the root cause here!",
+      "time": "22:30",
+      "timestamp": "1627363820.220800",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@shaunak @sudeep It is no doubt a team effort! You guys gave me the right idea to dig into the issue here.",
+      "time": "22:30",
+      "timestamp": "1627363823.221000",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "Thanks Xi, Sudeep!! This is very helpful info.. Hoping the timeout increase will help for now, but will keep this in mind if we run into any issues at customer places for process files.",
+      "time": "23:07",
+      "timestamp": "1627366052.221200",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-07-26.json",
+    "message_count": 13,
+    "start_time": "1627358434.217400",
+    "end_time": "1627366052.221200",
+    "is_thread": true
+  }
+}

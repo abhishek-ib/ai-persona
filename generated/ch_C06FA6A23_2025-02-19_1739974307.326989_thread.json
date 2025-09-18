@@ -1,0 +1,142 @@
+{
+  "id": "ch_C06FA6A23_2025-02-19_1739974307.326989_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "jtau",
+    "Cody Boggs",
+    "raman.goel"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":wave: Looks like some sandbox builds are failing today:\n1. 24.01 (https://sandbox.console.instabase.com/customer/Official%20Releases/tenant/release-24-01/info) failing to build on `post-install-action-aihub-license` and `post-install-action-license` after Go upgrades (CC: @donagh)\n2. 24.07 (https://sandbox.console.instabase.com/customer/Official%20Releases/tenant/release-24-07/info) is timing out on `UNDO_TURN_DOWN` after 3.5-ish hours (CC: @jtau)",
+      "time": "06:11",
+      "timestamp": "1739974307.326989",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "CC: <!subteam^S08B9RN25ED>",
+      "time": "06:11",
+      "timestamp": "1739974316.244399",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Let's revert the go upgrade for now @donagh\n\nLooking at this page: https://release-24-07.internal.instabase.com/deployment-manager/upgrade, it says `Timed out waiting for configs [\"deployment-search-tservice\" \"statefulset-opensearch-cluster\" \"deployment-jaeger\"].`; statefulset opensearch is crash looping @Cody Boggs",
+      "time": "06:33",
+      "timestamp": "1739975635.276169",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ah gotcha, I just saw that it took almost 4 hours to run and the flood of undo_turn_down and assumed it needs truncated. Still should, as that's a super long runtime :grimacing:",
+      "time": "06:34",
+      "timestamp": "1739975698.886009",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Unless I'm forgetting which of the phases requires a DB truncate :thonk:",
+      "time": "06:35",
+      "timestamp": "1739975744.930369",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Undo turn down just means it was waiting for all the services to turn up / become ready, so that has nothing to do with DB; it's the write configs stage that does",
+      "time": "06:37",
+      "timestamp": "1739975824.823359",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "cc @raman.goel for opensearch",
+      "time": "06:37",
+      "timestamp": "1739975848.508209",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Gotcha, my bad",
+      "time": "06:38",
+      "timestamp": "1739975921.204099",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@jtau revert PR: https://github.com/instabase/instabase/pull/68170",
+      "time": "06:38",
+      "timestamp": "1739975924.267219",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Is there a particular reason we allow to try for so long?\nIt seems like taking more than 10-15 minutes for the services to startup is kinda bonkers, let alone several hours :sweat_smile:\n\n(I know, 10-15 minutes is beyond aspirational for our product, but curious nonetheless)",
+      "time": "06:39",
+      "timestamp": "1739975975.786849",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Time is pretty variable depending on the cluster and size and what we're deploying onto it, so with DM designed in mind for customer clusters as well, it didn't make sense to impose a short time limit; however if we think that's too long, we definitely can fail the pipeline sooner",
+      "time": "06:41",
+      "timestamp": "1739976066.976529",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea, I get that motivation I suppose. Trouble is that it just encourages engineers to deprioritize MTTR by way of assuming startup times don't matter :confused:",
+      "time": "06:44",
+      "timestamp": "1739976246.436239",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(not to mention it means we burn thousands of $$$ per month in Jenkins builders sitting idle while they wait for DM to finish polling pod counts lol)",
+      "time": "06:48",
+      "timestamp": "1739976516.166459",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "For opensearch:\nI have raised the resourcing, because of the less resourcing, it was not able to recover state and getting failed on readiness probe. Opensearch is running fine now and hence search-service and jaeger.",
+      "time": "07:10",
+      "timestamp": "1739977815.803399",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":+1: Thanks!",
+      "time": "07:21",
+      "timestamp": "1739978498.538439",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-02-19.json",
+    "message_count": 15,
+    "start_time": "1739974307.326989",
+    "end_time": "1739978498.538439",
+    "is_thread": true
+  }
+}

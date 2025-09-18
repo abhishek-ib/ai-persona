@@ -1,0 +1,232 @@
+{
+  "id": "ch_C06FA6A23_2020-06-01_1591039296.434900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Mohit",
+    "Nihar Sheth",
+    "will",
+    "Erick",
+    "Ansh Jain"
+  ],
+  "messages": [
+    {
+      "sender": "Nihar Sheth",
+      "user_id": "U014CTLGQJY",
+      "message": "Seeing this error when starting server-nginx locally -- @Mohit any chance this is related to Jaeger?",
+      "time": "12:21",
+      "timestamp": "1591039296.434900",
+      "is_reply": false
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "jaeger and grafana warning can be ignored here, that should not cause the error you are seeing. As @will pointed out, this looks like missing static resources, try rebuilding and restarting nginx?",
+      "time": "12:39",
+      "timestamp": "1591040354.441200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "If you are running it with the RELOAD set to true you do need to run the webpacked server to provide the development versions of the javascript resources",
+      "time": "12:41",
+      "timestamp": "1591040501.441500",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "I believe @Nihar Sheth is just running with the default provisioner command",
+      "time": "12:48",
+      "timestamp": "1591040887.441700",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Is there a make command that needs to be run first in order for that one to work? Maybe just build-locally once and then provisioner will work from then on out?",
+      "time": "12:48",
+      "timestamp": "1591040920.441900",
+      "is_reply": true
+    },
+    {
+      "sender": "Nihar Sheth",
+      "user_id": "U014CTLGQJY",
+      "message": "That's correct, I'm just running `python provisioner.py start server-nginx`",
+      "time": "12:49",
+      "timestamp": "1591040992.442100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "The expected behavior is that you would not need to manually call external targets anymore, if you find that is not true (outside of webpacked with reload), let us know, cause it is a bug. :slightly_smiling_face:",
+      "time": "12:50",
+      "timestamp": "1591041002.442300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "What compile step did you use @Nihar Sheth?",
+      "time": "12:50",
+      "timestamp": "1591041040.442500",
+      "is_reply": true
+    },
+    {
+      "sender": "Nihar Sheth",
+      "user_id": "U014CTLGQJY",
+      "message": "`python provisioner.py compile server-nginx --use-prebuilt --as-docker`",
+      "time": "12:51",
+      "timestamp": "1591041112.442700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I *think* if you use `--as-docker` in the compile step, you will want `--as-docker` in the start step, too",
+      "time": "12:52",
+      "timestamp": "1591041141.442900",
+      "is_reply": true
+    },
+    {
+      "sender": "Nihar Sheth",
+      "user_id": "U014CTLGQJY",
+      "message": "Tried that, same issue",
+      "time": "13:05",
+      "timestamp": "1591041957.443200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I think maybe the regular image got built with the cache from the reload image, you aren’t the only person this is happening to",
+      "time": "13:06",
+      "timestamp": "1591041997.443400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "if you start the webpack server it will work",
+      "time": "13:07",
+      "timestamp": "1591042035.443600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "but you shouldn’t have to",
+      "time": "13:07",
+      "timestamp": "1591042038.443800",
+      "is_reply": true
+    },
+    {
+      "sender": "Nihar Sheth",
+      "user_id": "U014CTLGQJY",
+      "message": "How do I start the webpack server? And is there a way to clear that cache?",
+      "time": "13:09",
+      "timestamp": "1591042152.444000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "in `webserver/shared/src/js/webpacked` run `make build-local`",
+      "time": "13:14",
+      "timestamp": "1591042483.444200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "re: cache I will have to see why that is happening, it would be the cache on the build server",
+      "time": "13:15",
+      "timestamp": "1591042548.444400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ansh Jain",
+      "user_id": "U014GD8QYLC",
+      "message": "Running into the same error: It was working when I hadn't set RELOAD to true, but now it fails to load static assets regardless of what RELOAD is set to.",
+      "time": "13:19",
+      "timestamp": "1591042797.444600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "RELOAD currently requires the change at compile time rather than run time",
+      "time": "13:21",
+      "timestamp": "1591042886.444800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ansh Jain",
+      "user_id": "U014GD8QYLC",
+      "message": "Oh sweet, so I got it to work with RELOAD set to false.",
+      "time": "13:27",
+      "timestamp": "1591043238.445000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "With prebuilt still?",
+      "time": "13:32",
+      "timestamp": "1591043522.445300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I wonder if reload is enabled by defualt or somehting",
+      "time": "13:38",
+      "timestamp": "1591043934.445500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Ah, maybe https://github.com/instabase/instabase/blob/master/provisioner.py#L206-L208",
+      "time": "13:39",
+      "timestamp": "1591043997.445700",
+      "is_reply": true
+    },
+    {
+      "sender": "Nihar Sheth",
+      "user_id": "U014CTLGQJY",
+      "message": "It all of a sudden started working -- works both with and without reload",
+      "time": "14:50",
+      "timestamp": "1591048200.446100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I am not as excited by that as one would hope. If it happens again can you include the tags of the respective images that are getting pulled? Something like `docker image ls -a | grep server-nginx` should do it :slightly_smiling_face:",
+      "time": "15:25",
+      "timestamp": "1591050303.446500",
+      "is_reply": true
+    },
+    {
+      "sender": "Nihar Sheth",
+      "user_id": "U014CTLGQJY",
+      "message": "Sure, will do",
+      "time": "15:45",
+      "timestamp": "1591051552.446700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-06-01.json",
+    "message_count": 26,
+    "start_time": "1591039296.434900",
+    "end_time": "1591051552.446700",
+    "is_thread": true
+  }
+}

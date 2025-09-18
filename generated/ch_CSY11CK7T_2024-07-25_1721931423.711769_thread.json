@@ -1,0 +1,258 @@
+{
+  "id": "ch_CSY11CK7T_2024-07-25_1721931423.711769_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "danny.lan",
+    "Arjun",
+    "Jessica",
+    "Travis",
+    "daniel",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm seeing a bunch Cypress test failures from `buildApp/` in this run (https://cloud.cypress.io/projects/cfhedy/runs/12502/overview?roarHideRunsWithDiffGroupsAndTags=1). All errors are related to `'Failed to add all documents' but continuously found it` when adding files to projects. Did we change the backend?\n\n<!subteam^S07855GV3GV>",
+      "time": "11:17",
+      "timestamp": "1721931423.711769",
+      "is_reply": false
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "my initial thought is that these ran during crafting redeploying.",
+      "time": "11:19",
+      "timestamp": "1721931561.809169",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "but not sure if that’s relevant to cypress sandboxes",
+      "time": "11:19",
+      "timestamp": "1721931571.192949",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The last deployment was done around 5:47am :thinking_face:\nhttps://sandbox.console.instabase.com/customer/Engineering/tenant/crafting-cyp/info",
+      "time": "11:20",
+      "timestamp": "1721931617.455569",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "I was just getting some weird things happening on my craft box, but seems to have stopped. So let’s run those cypress tests again and :crossed_fingers:",
+      "time": "11:22",
+      "timestamp": "1721931746.770509",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I think @daniel merged some changed that broke document uploading",
+      "time": "11:28",
+      "timestamp": "1721932091.567219",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "https://github.com/instabase/instabase/pull/59600",
+      "time": "11:28",
+      "timestamp": "1721932115.565259",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "we’re looking into who can fix it, not sure what we should do until then",
+      "time": "11:30",
+      "timestamp": "1721932208.657209",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Should we revert for now?",
+      "time": "11:31",
+      "timestamp": "1721932262.287919",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "if we revert we’ll have to re-deploy, the necessary frontend change seems simple enough that either @danny.lan or I should be able to fix it but I won’t be able to for the next hour",
+      "time": "11:31",
+      "timestamp": "1721932297.816679",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "https://instabase.slack.com/archives/G01NZFLA9EE/p1721930596667849",
+      "time": "11:35",
+      "timestamp": "1721932500.558709",
+      "is_reply": true
+    },
+    {
+      "sender": "daniel",
+      "user_id": "U039ZHK0MQF",
+      "message": "This bug breaks cypress tests but doesn’t affect functionality. Is it blocking anything?",
+      "time": "11:35",
+      "timestamp": "1721932500.806079",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "yeah, cypress tests need to pass for frontend PR’s to be merged. So this blocks all frontend from merging",
+      "time": "11:35",
+      "timestamp": "1721932529.799669",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "I can make a fix in 30 min, have a meeting now",
+      "time": "11:36",
+      "timestamp": "1721932568.060739",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you team!",
+      "time": "11:41",
+      "timestamp": "1721932876.884859",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "The fix isn’t entirely straightfoward, in addition to the key changing from `overall_result` to `process_result`, the value in the `process_result.success` object no longer returns the `ibdoc_path` but a success message instead (see forwarded message from Daniel above)\n\n@Jessica it looks like this `ibdoc_path` is used here (https://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpacked/apps/src/aihub/pages/BuildApp/hooks/useAddAdditionalDocuments.ts#L100) to determine which documents are newly uploaded?\n\nit might be better to revert the PR for now",
+      "time": "12:40",
+      "timestamp": "1721936422.520109",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I agree. It does look like the same file path is present inside `read_result`  :eyes:",
+      "time": "12:41",
+      "timestamp": "1721936519.601249",
+      "is_reply": true
+    },
+    {
+      "sender": "daniel",
+      "user_id": "U039ZHK0MQF",
+      "message": "doc key is different tho. in `read_result` the doc key has uuid prefix",
+      "time": "12:43",
+      "timestamp": "1721936595.239539",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "let’s revert for now, we don’t want to block all frontend engineers for too long",
+      "time": "12:44",
+      "timestamp": "1721936653.656459",
+      "is_reply": true
+    },
+    {
+      "sender": "daniel",
+      "user_id": "U039ZHK0MQF",
+      "message": "I can put up a PR to update the success message to the ibdoc real quick tho. Not sure about the deployment pattern, is it better to revert or put up a patch PR?",
+      "time": "12:45",
+      "timestamp": "1721936701.297869",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "revert will be a little quicker (we’ll have to redeploy either way so just saving time on time to fix + merge)",
+      "time": "12:45",
+      "timestamp": "1721936758.839249",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "I agree with just reverting",
+      "time": "12:46",
+      "timestamp": "1721936778.324009",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "has the revert been merged and deployed to crafting-cyp?",
+      "time": "14:14",
+      "timestamp": "1721942041.272729",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "@daniel can we merge the revert pr?",
+      "time": "14:15",
+      "timestamp": "1721942122.016319",
+      "is_reply": true
+    },
+    {
+      "sender": "daniel",
+      "user_id": "U039ZHK0MQF",
+      "message": "merged!",
+      "time": "14:16",
+      "timestamp": "1721942164.321809",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "Ty, I’m currently afk is someone able to update crafting cyp?",
+      "time": "14:23",
+      "timestamp": "1721942606.940569",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "is that just here? https://sandbox.console.instabase.com/customer/Engineering/tenant/crafting-cyp/info",
+      "time": "14:24",
+      "timestamp": "1721942670.174199",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "updating now",
+      "time": "14:25",
+      "timestamp": "1721942710.355479",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "the deployment was good so tests should be unblocked now!",
+      "time": "15:40",
+      "timestamp": "1721947259.061869",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-07-25.json",
+    "message_count": 29,
+    "start_time": "1721931423.711769",
+    "end_time": "1721947259.061869",
+    "is_thread": true
+  }
+}

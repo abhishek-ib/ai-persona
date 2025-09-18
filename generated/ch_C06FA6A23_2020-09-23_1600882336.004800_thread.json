@@ -1,0 +1,266 @@
+{
+  "id": "ch_C06FA6A23_2020-09-23_1600882336.004800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+    "Eric Han",
+    "arun",
+    "Heymian",
+    "Thomas Qin",
+    "John St",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Hi all, I’m having an issue with my local. I have not been able to get the following to start up at all in the past 2 weeks. I use the provisioner script to start this up. I know I can start each locally but I’m just curious as to what the issue could be.",
+      "time": "10:32",
+      "timestamp": "1600882336.004800",
+      "is_reply": false
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Things I’ve tried:\n\n• `docker system prune`\n• `ppy compile all --as-docker --use-prebuilt`\n• `ppy start all --reload --as-docker`",
+      "time": "10:33",
+      "timestamp": "1600882393.005100",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Want to hop on a zoom call? I have 15 minutes",
+      "time": "10:42",
+      "timestamp": "1600882920.005300",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Actually, since you're using the prebuilt images, I wonder if those are getting built incorrectly. Has anyone else had this problem?",
+      "time": "10:43",
+      "timestamp": "1600883029.005500",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Updating docker real quick",
+      "time": "10:45",
+      "timestamp": "1600883101.005700",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "I think others have had this issue",
+      "time": "10:45",
+      "timestamp": "1600883107.005900",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "but not sure where that conversation was",
+      "time": "10:45",
+      "timestamp": "1600883113.006100",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Yeah I see this now. Getting `NameError: name 'OAuth2Token' is not defined` in apps-server",
+      "time": "10:45",
+      "timestamp": "1600883140.006300",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "yeah so i had that issue",
+      "time": "10:45",
+      "timestamp": "1600883148.006500",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "the way i resolved it was i went into every single service directory",
+      "time": "10:45",
+      "timestamp": "1600883156.006700",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "did `make clean build-docker run-docker`",
+      "time": "10:46",
+      "timestamp": "1600883163.006900",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "they would work individually",
+      "time": "10:46",
+      "timestamp": "1600883171.007100",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "then i’d shut it down and running via provisioner worked fine",
+      "time": "10:46",
+      "timestamp": "1600883179.007300",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "the “OAtuh2Token” thing blocked me for like 3+ days a few weeks ago, v happy to feel not crazy that other people are seeing it",
+      "time": "10:46",
+      "timestamp": "1600883215.007500",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "I had the same issue using provisioner with prebuilt images yesterday -- Colin's fix of building each image locally worked for me too",
+      "time": "10:53",
+      "timestamp": "1600883580.007700",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "alright I’ll give that a try",
+      "time": "10:53",
+      "timestamp": "1600883620.007900",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "@Heymian @achao @Thomas Qin I think this has something to do with some account-service python stubs.\n\n```Running docker\nTraceback (most recent call last):\n  File \"instabase/storage/fileservice/server.py\", line 25, in <module>\n    from instabase.account import AccountService\n  File \"/instabase/file-tservice/instabase/account/AccountService.py\", line 13, in <module>\n    from .ttypes import *\n  File \"/instabase/file-tservice/instabase/account/ttypes.py\", line 2839, in <module>\n    class OAuth2Client(object):\n  File \"/instabase/file-tservice/instabase/account/ttypes.py\", line 2867, in OAuth2Client\n    (9, TType.LIST, 'tokens', (TType.STRUCT, (OAuth2Token, OAuth2Token.thrift_spec), False), None, ),  # 9\nNameError: name 'OAuth2Token' is not defined```",
+      "time": "10:54",
+      "timestamp": "1600883650.008100",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Seems to only be happening in the prebuilt images though. Building locally (even in docker) works.",
+      "time": "10:54",
+      "timestamp": "1600883676.008300",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "yep file-tservice might have the same issue. @Heymian could be what we talked about a few days ago",
+      "time": "11:01",
+      "timestamp": "1600884095.008500",
+      "is_reply": true
+    },
+    {
+      "sender": "Thomas Qin",
+      "user_id": "U0135LC5BE3",
+      "message": "cc @Nidhi fyi",
+      "time": "11:01",
+      "timestamp": "1600884109.008700",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "@cross talk - a podcast about crosswords - listen on apple podcasts or spotify did you do it for the apps as well? I just did all the core services and still having issues",
+      "time": "11:23",
+      "timestamp": "1600885403.008900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I checked in gcr and the build job and we are still doing hourly pushes of all images with the `scan` tag. If that’s what provisioner is using then it should be able to find it. I’ve never run provisioner before, how do i bring up one serivce with pre-builts to test this this out?",
+      "time": "11:23",
+      "timestamp": "1600885416.009100",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "```python provisioner.py compile MY-SERVICE --as-docker --use-prebuilt\npython provisioner.py start MY-SERVICE --as-docker```",
+      "time": "11:24",
+      "timestamp": "1600885487.009300",
+      "is_reply": true
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "@John St i did it for everything i couldn’t get up when i ran `ppy start all --as-docker`",
+      "time": "11:25",
+      "timestamp": "1600885529.009500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "oh i see it. for some reason it’s still looking for the `scan-py3` tag.",
+      "time": "11:25",
+      "timestamp": "1600885555.009700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "If one of you wants to review? https://github.com/instabase/instabase/pull/15673",
+      "time": "11:28",
+      "timestamp": "1600885729.009900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Thanks @John St. Can you guys pull master and try again? I couldn’t actually run provisioner to try it out since my internet is out and downloading images is just not happening. :stuck_out_tongue:",
+      "time": "11:36",
+      "timestamp": "1600886191.010200",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "I’ll give it a shot",
+      "time": "11:36",
+      "timestamp": "1600886216.010400",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Works for me on `apps-server`",
+      "time": "11:47",
+      "timestamp": "1600886848.010700",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Thanks Heymian!",
+      "time": "11:47",
+      "timestamp": "1600886854.010900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-09-23.json",
+    "message_count": 30,
+    "start_time": "1600882336.004800",
+    "end_time": "1600886854.010900",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "id": "ch_C06FA6A23_2025-03-10_1741623664.206739_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "Heymian",
+    "Ashish"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@Heymian Not to throw a wrench in the works, but if it's at all helpful I managed to dig up some of my old scripts that might be helpful. You can run this from `https://jenkins.instabase.com/manage/script` and `https://prod.jenkins.instabase.com/manage/script`\n\n```import groovy.json.JsonOutput;\n\njobs = [:];\n\nJenkins.instance.getAllItems(Job.class).each{\n  if (\n    !it.fullName.startsWith(\"instabase/PR-\")\n    && !it.fullName.startsWith(\"WIP-DEV\")\n  ) {\n    if (it.getLastBuild()) {\n      jobs[it.fullName] = it.getLastBuild().getTimestampString();\n    }\n  }\n};\n\nprintln JsonOutput.prettyPrint(JsonOutput.toJson(jobs));```\nYields output like\n```{\n    \"admiral-dev-cp-sandbox-provisioner\": \"2 yr 4 mo\",\n    \"admiral-dev-cp-sandbox-provisioner-v2\": \"1 yr 7 mo\",\n    \"admiral-dev-maintenance-callback\": \"1 yr 6 mo\",\n    \"admiral-dev-saas-deploy-v0\": \"1 mo 15 days\",\n    \"admiral-dev-saas-rollback-dm\": \"3 mo 0 days\",\n    \"admiral-dev-sandbox-destroyer\": \"1 mo 25 days\",\n    \"admiral-dev-sandbox-hibernte-revive\": \"10 days\",\n    \"aegis-preprod\": \"3 mo 29 days\",\n    [ ... ]\n}```",
+      "time": "09:21",
+      "timestamp": "1741623664.206739",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Can then run that through something like `jq` to dedupe across the environments and such, or manipulate however you like. It does yield a _lot_ of jobs though, so it might be overloud",
+      "time": "09:21",
+      "timestamp": "1741623697.421429",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "It’s a script that checks all the pipelines for last run? And what’s jq?",
+      "time": "10:20",
+      "timestamp": "1741627240.348679",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I can take a look at the script results and use that as an initial pass. But I want to make sure every pipeline we don’t delete, we explicitly have an owner for and figure out exactly what it does. If we have pipelines we’re not using but forgot to stop running for years, or pipelines no one knows about, those should also get deleted.",
+      "time": "10:23",
+      "timestamp": "1741627389.665959",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yes, per the output snippet, it lists all known jobs and how long it's been since it was last run.\nSo ideally, those that say something like `\"admiral-dev-cp-sandbox-provisioner\": \"2 yr 4 mo\",` would be immediate deletion candidates, and the remainder can be audited as appropriate.\n\n`jq` is a CLI tool for querying and manipulating JSON data, just a common handy utility",
+      "time": "10:24",
+      "timestamp": "1741627476.181459",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Thanks for the initiative, Heymian. Great to see code cleanup getting some love and attention. Everyone, please take a moment to review the pipelines. This will help us towards a cleaner house for all of us.",
+      "time": "20:11",
+      "timestamp": "1741662662.869289",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-03-10.json",
+    "message_count": 6,
+    "start_time": "1741623664.206739",
+    "end_time": "1741662662.869289",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "id": "ch_CSY11CK7T_2024-11-21_1732207040.347519_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "tony.shi",
+    "Serena",
+    "Udit"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "starting a new thread to make crafting-cyp faster since the existing one (https://instabase.slack.com/archives/CSY11CK7T/p1731720507167389) is too long :sweat_smile:\n\nMatt previously identified (https://instabase.slack.com/archives/CSY11CK7T/p1732056476880319?thread_ts=1731720507.167389&cid=CSY11CK7T) that the `docs` table is getting too long and causes slow db queries in crafting-cyp.test.instabase.com (http://crafting-cyp.test.instabase.com)\n\n@tony.shi i see several PRs for this ticket (https://instabase.atlassian.net/browse/FLOW-10295) are merged - can we use your work to bulk delete runs now?",
+      "time": "08:37",
+      "timestamp": "1732207040.347519",
+      "is_reply": false
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Yep. Bulk delete should work now",
+      "time": "08:47",
+      "timestamp": "1732207636.606339",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah it seems bulk deletion is just a UI feature, and we’re still using the endpoint for deleting app runs one at a time under the hood (https://github.com/instabase/instabase/pull/64105/files#diff-9794c9e5d0d51dc8346ba6a8adc1a882296d5d8a3a335026011303ec761f18b2R311)",
+      "time": "09:06",
+      "timestamp": "1732208810.956319",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m also not sure how to get the run ids that we don’t need anymore\n\ni guess we could get a list of all apps that are no longer needed from the db -> delete all runs associated with each app?\n\n<!subteam^S07855GV3GV> could you help investigate?",
+      "time": "09:09",
+      "timestamp": "1732208948.468679",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "Hm yah, is apps no longer needed from DB just (apps that are X days old - list of hardcoded apps always used).",
+      "time": "10:48",
+      "timestamp": "1732214895.872799",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "in reality, any run not used within the last day could just be deleted.\n\nNo cypress test should be using a historic run to test",
+      "time": "10:50",
+      "timestamp": "1732215029.931209",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "Okay will work with @Jag to get a list of historic runs manually and then work with @tony.shi to bulk delete them",
+      "time": "10:53",
+      "timestamp": "1732215226.492919",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> No cypress test should be using a historic run to test\ner i think `view-batch-results` does this for a community context :sweat_smile:",
+      "time": "11:11",
+      "timestamp": "1732216291.757969",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "We should probably change this test to run the app before checking its results. I'll look into it or skip it while we do this change to speed it all up in the meantime.",
+      "time": "11:22",
+      "timestamp": "1732216975.500129",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-11-21.json",
+    "message_count": 9,
+    "start_time": "1732207040.347519",
+    "end_time": "1732216975.500129",
+    "is_thread": true
+  }
+}

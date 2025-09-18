@@ -1,0 +1,170 @@
+{
+  "id": "ch_C0516UPPMT3_2023-09-05_1693922113.597029_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Lee",
+    "Eric Han",
+    "shaunak",
+    "Rakesh",
+    "avi",
+    "Tom Deaney"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I’ve had a few issues this afternoon with prompts requests taking 30 seconds or more to come back with a result, or not at all. This happening in Converse & Build. Is there an issue with AI Hub prod at the moment? This has affected some demos today, with a few more coming later this afternoon",
+      "time": "06:55",
+      "timestamp": "1693922113.597029",
+      "is_reply": false
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "<!subteam^S05BKGLP267>",
+      "time": "06:55",
+      "timestamp": "1693922153.623589",
+      "is_reply": true
+    },
+    {
+      "sender": "Tom Deaney",
+      "user_id": "U03FBGJCMJ9",
+      "message": "I have also seen this issue on prod converse this morning",
+      "time": "07:08",
+      "timestamp": "1693922884.554409",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "<!subteam^S05BKGLP267> Vivek and I are running university workshops tomorrow and day after with Converse and Build. The audience is about 2000 students+faculty on each day. \n\nCan we please investigate what is going on here and improve the latency for Converse and Build?",
+      "time": "07:59",
+      "timestamp": "1693925948.860339",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Nothing seems to be wrong from the infra perspective — no crashes in the infrastructure etc.  I do see some scaleups happening which is expected with load.\n\n<!subteam^S05BKH20B4K> can you please help investigate the issues?",
+      "time": "08:01",
+      "timestamp": "1693926062.128999",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@avi you also need to give people some time to come back and reply.  thank you.",
+      "time": "08:02",
+      "timestamp": "1693926134.241089",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "could be similar to this issue: https://instabase.slack.com/archives/C05BJCNKZAM/p1693914780086919",
+      "time": "08:04",
+      "timestamp": "1693926259.543749",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "it could just be open AI slowness …",
+      "time": "08:05",
+      "timestamp": "1693926327.172159",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Lee what time was this at?",
+      "time": "08:05",
+      "timestamp": "1693926345.152129",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Thanks @shaunak do we have a way to measure how long we take vs how long Open AI take in the process of getting a response? This has been in the last few hours intermittently. Sometimes instant, sometimes timeout.",
+      "time": "08:06",
+      "timestamp": "1693926378.794529",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Shaunak, ack. Didn't mean to bump, meant to just inform the team that we had workshops going on. Apologies and know the team is watching this closely :slightly_smiling_face:",
+      "time": "08:24",
+      "timestamp": "1693927449.312939",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "We do have some observability around calls to openAI.  @Rakesh would have more context on those.",
+      "time": "08:45",
+      "timestamp": "1693928753.957929",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Yes we can plot the LLM metrics, I did last 6 hours and do see some uptick around 3 hrs ago.\nAlso quite a few open AI connection resets and retries around that time frame.\n\nWhat time frame were you seeing timeouts @Lee?",
+      "time": "08:51",
+      "timestamp": "1693929095.978569",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Let's add some error code in the error message so it's clear to us internally that things timed out due to open AI / model response time. cc @Yash Botadra",
+      "time": "09:04",
+      "timestamp": "1693929881.988459",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Seeing few other things that need investigation - let me confirm a bit more with @Yash Botadra on model locking.",
+      "time": "09:04",
+      "timestamp": "1693929889.971389",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "@Rakesh most of the issues I saw were between 2 and 3pm UK time",
+      "time": "09:05",
+      "timestamp": "1693929901.652279",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Yes so that lines up with openAI higher retry rates and errors, need to confirm something else as well.",
+      "time": "09:06",
+      "timestamp": "1693929961.385569",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "There was another issue we found with legacy apps that could cause some congestion in backend. A remediation is in place and fix is in progress by core services team.",
+      "time": "21:20",
+      "timestamp": "1693974032.520189",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-09-05.json",
+    "message_count": 18,
+    "start_time": "1693922113.597029",
+    "end_time": "1693974032.520189",
+    "is_thread": true
+  }
+}

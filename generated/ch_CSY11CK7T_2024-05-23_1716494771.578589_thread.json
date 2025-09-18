@@ -1,0 +1,53 @@
+{
+  "id": "ch_CSY11CK7T_2024-05-23_1716494771.578589_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Weiming Wu",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@Weiming Wu I think there are some issues with concurrent tests for view-my-hub - we create 4 projects where the names are the same each time, so if two are running at the same time and we check that there are 4 elements found by search, there could be 8 instead, like in this run (https://cloud.cypress.io/projects/cfhedy/runs/10329/overview?roarHideRunsWithDiffGroupsAndTags=1). What if we prefixed them all with a uuid instead of \"My Hub\" and searched for that instead?",
+      "time": "13:06",
+      "timestamp": "1716494771.578589",
+      "is_reply": false
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Yea that sounds good. My big concern is that it might not be able to clean up projects if the test runs get cancelled in the middle of executing. It shouldn't affect later runs since the runs be use prefixed project names, it just adds more clutter to the list",
+      "time": "14:10",
+      "timestamp": "1716498621.316719",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I think we can get around that - so we can call them all `My Hub <uuid> N`. And then there's a `deleteProjectIfItExists` util that you can use to delete projects with the `My Hub` prefix that are older than X (we usually do 20) minutes in the before hook. There should be a corresponding util for conversations too that Aayush made.",
+      "time": "14:37",
+      "timestamp": "1716500276.416169",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Ah I didn't know that we have a clean up util for old projects. Makes sense!",
+      "time": "14:38",
+      "timestamp": "1716500333.245099",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-05-23.json",
+    "message_count": 4,
+    "start_time": "1716494771.578589",
+    "end_time": "1716500333.245099",
+    "is_thread": true
+  }
+}

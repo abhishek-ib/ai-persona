@@ -1,0 +1,135 @@
+{
+  "id": "ch_C06FA6A23_2024-05-31_1717185495.344289_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "jordy.vlan",
+    "lydia",
+    "Sunny Khatri"
+  ],
+  "messages": [
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Why is my `model-service` on Crafting overflowing with errors like these:\n> level=ERROR time=2024-05-31 19:57:02,990 msg=“Connection workflow failed: AMQPConnectionWorkflowFailed: 3 exceptions in all; last exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, ‘Connection refused’); first exception - AMQPConnectorSocketConnectError: ConnectionRefusedError(111, ‘Connection refused’)”  path=“/home/ibuser/.local/lib/python3.9/site-packages/pika/adapters/blocking_connection.py:450\" process=“MainProcess” thread=“Thread-7\" trace_id=“”\n> level=ERROR time=2024-05-31 19:57:02,990 msg=“Error in _create_connection().”  path=“/home/ibuser/.local/lib/python3.9/site-packages/pika/adapters/blocking_connection.py:457” process=“MainProcess” thread=“Thread-7” trace_id=“” exception=“Traceback (most recent call last):\n>   File “/home/ibuser/.local/lib/python3.9/site-packages/pika/adapters/blocking_connection.py”, line 451, in _create_connection\n>     raise self._reap_last_connection_workflow_error(error)\n> pika.exceptions.AMQPConnectionError”\n> level=ERROR time=2024-05-31 19:57:02,990 msg=“Failed to connect to RabbitMQ queue for model load exchange: ”  path=“/model-service/py/instabase/model_service/load_subscriber.py:122\" process=“MainProcess” thread=“Thread-7\" trace_id=“”\nI did skip `copy_local_models` when building model-service. All ny other services are running fine.",
+      "time": "12:58",
+      "timestamp": "1717185495.344289",
+      "is_reply": false
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Do you have rabbitmq working ?",
+      "time": "13:00",
+      "timestamp": "1717185619.702069",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "You can set this up via the right package manager.",
+      "time": "13:01",
+      "timestamp": "1717185690.898819",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "I installed it, but how to configure?",
+      "time": "13:09",
+      "timestamp": "1717186173.683879",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "There shouldn't be anything to configure. If its running at its default port, you should be able to connect.",
+      "time": "13:11",
+      "timestamp": "1717186260.685219",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Now a different error when running `model-service`\n> level=ERROR time=2024-05-31 20:42:54,924 msg=“Error in _create_connection().”  path=“/home/ibuser/.local/lib/python3.9/site-packages/pika/adapters/blocking_connection.py:457\" process=“MainProcess” thread=“Thread-7\" trace_id=“” exception=“Traceback (most recent call last):\n>   File “/home/ibuser/.local/lib/python3.9/site-packages/pika/adapters/blocking_connection.py”, line 451, in _create_connection\n>     raise self._reap_last_connection_workflow_error(error)\n> pika.exceptions.ProbableAuthenticationError: ConnectionClosedByBroker: (403) ‘ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.’”",
+      "time": "13:44",
+      "timestamp": "1717188273.548219",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "What's your sandbox name @jordy.vlan",
+      "time": "13:45",
+      "timestamp": "1717188328.809389",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "jordyvlan/dev",
+      "time": "13:45",
+      "timestamp": "1717188347.783329",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":eyes:",
+      "time": "13:45",
+      "timestamp": "1717188352.788659",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "What command are you running to start up model-service?",
+      "time": "13:51",
+      "timestamp": "1717188690.797089",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "> #!/bin/bash\n> set -e\n> IB_HOME=/home/owner/instabase\n> cd $IB_HOME/data-services/model-services/model-service\n> make clean && make build\n> #rm -rf /tmp/models\n> cd $IB_HOME\n> python provisioner.py compile model-service --as-docker\n> python provisioner.py restart model-service --as-docker\n> rm -rf ~/tmp/model-service.log\n> nohup python provisioner.py logs model-service -f > ~/tmp/model-service.log 2>&1 &\n> tail -f ~/tmp/model-service.log",
+      "time": "13:51",
+      "timestamp": "1717188713.975719",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "> `python provisioner.py restart model-service --as-docker`",
+      "time": "13:52",
+      "timestamp": "1717188741.673909",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":+1:\nSpinning up a fresh one to see what I can find",
+      "time": "13:53",
+      "timestamp": "1717188812.361169",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Cody Boggs I'm seeing an issue with submitting celery tasks from api-server, is it a similar issue with rabbitmq? My sandbox is setup with ppy (https://instabase.atlassian.net/wiki/spaces/TI/pages/2213183494/Use+PPY+on+Crafting), which starts rabbitmq. Does that conflict with the rabbitmq that the crafting sandbox is already configured with?",
+      "time": "16:21",
+      "timestamp": "1717197702.771209",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-05-31.json",
+    "message_count": 14,
+    "start_time": "1717185495.344289",
+    "end_time": "1717197702.771209",
+    "is_thread": true
+  }
+}

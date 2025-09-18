@@ -1,0 +1,79 @@
+{
+  "id": "ch_C06FA6A23_2022-01-18_1642526453.121800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "kunal",
+    "Jessica",
+    "Serena",
+    "Saikat"
+  ],
+  "messages": [
+    {
+      "sender": "Saikat",
+      "user_id": "U017S746NKV",
+      "message": "Hey team, @vineeth and I noticed one small bug while trying to check the release version on dogfood.instabase.com (http://dogfood.instabase.com): Whenever we check release version from an app (text-editor, flow, etc) - basically any url that starts with https://dogfood.instabase.com/apps/ - we see a blank value in place of the release version in the pop-up box.\n\nThis works fine when checking the release version from explorer normally.",
+      "time": "09:20",
+      "timestamp": "1642526453.121800",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Thanks, I'll look into this!",
+      "time": "09:24",
+      "timestamp": "1642526695.122500",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "This might be a deployment thing specific to dogfood - it's working fine on uat.dogfood. The environment variables this comes from are not being set. Maybe @kunal? One example of the environment variables that are empty is RELEASE_VERSION",
+      "time": "09:31",
+      "timestamp": "1642527079.122900",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "I think these env variables like `RELEASE_VERSION` are only set for actual releases, so this feature will work in any environment deployed on a specific release.\n\nThis feature won’t work on dogfood though since it’s deployed on master, which I think makes sense because there’s no actual release version for dogfood",
+      "time": "09:38",
+      "timestamp": "1642527500.123200",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "That doesn't quite explain why it shows up in pages served by webapp and not those served by apps-server :thinking_face:",
+      "time": "09:41",
+      "timestamp": "1642527672.124500",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah you’re right, `RELEASE_VERSION` is actually set on all branches, not just release branches",
+      "time": "09:43",
+      "timestamp": "1642527795.124800",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "Ah yeah — this is missing on apps-server, got removed during the control plane migration. This PR (https://github.com/instabase/instabase/pull/23932/files#diff-220aef310467211856592ad6f0ba73dba6f3ba4a60214bacfc90f8b17b61704aR307) adds it back though.",
+      "time": "09:58",
+      "timestamp": "1642528716.127600",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-01-18.json",
+    "message_count": 7,
+    "start_time": "1642526453.121800",
+    "end_time": "1642528716.127600",
+    "is_thread": true
+  }
+}

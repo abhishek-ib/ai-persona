@@ -1,0 +1,169 @@
+{
+  "id": "ch_C0516UPPMT3_2024-02-13_1707817226.869629_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Gwen",
+    "Kerry",
+    "Lee",
+    "Rakesh",
+    "Varun Jain",
+    "Prashant Kikani"
+  ],
+  "messages": [
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "https://instabase.atlassian.net/browse/EPD-1508\n\nanswers are getting skewed by results from intent extractionand getting it completely wrong. It cannot get the right information if scattered around several tables",
+      "time": "01:40",
+      "timestamp": "1707817226.869629",
+      "is_reply": false
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "^Above is a blocker as I’ve promised to show some docs on real estate esque documents which now do not work",
+      "time": "01:45",
+      "timestamp": "1707817545.750339",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "@Rakesh @Lalit - can we please check if we need better prompt engineering here, or there is something else going on?",
+      "time": "01:55",
+      "timestamp": "1707818151.738639",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "This should not be an issue with prompt engineering - the prompt worked before and is a step back from what we used to be able to do",
+      "time": "02:06",
+      "timestamp": "1707818764.387079",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "cc: @Prashant Kikani\nCan you take a look since Lalit is OOO",
+      "time": "02:23",
+      "timestamp": "1707819790.748329",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Sure, taking a look",
+      "time": "02:25",
+      "timestamp": "1707819904.605559",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I think this is an issue with intent classification. It looks like we are not interpreting the prompt as wanting a table when before that wasn’t the case\n\n@Kerry - this feels like one of the use cases / documents we should get into our benchmark testing.",
+      "time": "02:37",
+      "timestamp": "1707820623.717519",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "@Gwen can you share this \"Risk Submission\" file you're using the screenshot?\nI think the file you shared in the JIRA ticket, is not this one..",
+      "time": "02:59",
+      "timestamp": "1707821963.662319",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "@Lee theres two problems here: its thinking we want a table, and thinking (wrongly) that the information we want only exists in one table (it is spread across 4-5)",
+      "time": "03:18",
+      "timestamp": "1707823082.508319",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "@Prashant Kikani my bad here it is:",
+      "time": "03:18",
+      "timestamp": "1707823101.213419",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "Another example of the skew - I’ve asked specifically for the table to be returned as  JSON but it does not.",
+      "time": "03:35",
+      "timestamp": "1707824113.557829",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "",
+      "time": "03:36",
+      "timestamp": "1707824172.035159",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "",
+      "time": "04:10",
+      "timestamp": "1707826247.992639",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "The team will look at the intent classification issue and add your prompt to the benchmark; meanwhile, a couple of things I'd like to explain:\n\nFirst of all, the fact that we can restructure a table into a JSON like the previous screenshot  with our own table detection technique instead of relying on LLM is a big step _forward,_ as it allows the JSON to exceeds the model context window limit and able to scale to more documents. The type of extraction you do here -- returning all insured property address -- is also essentially a multi-occurance extraction type of query that is can't be solve well with raw LLM / converse reasoning. cc @Bastiane @Nikolaos Kofinas if you are working on multi-occurance extraction, this is a good query to test before it GA.\n\nIn a few weeks, Build's field type feature will be GA and that will be how table extraction gets triggered in an extraction use case instead of using the model to decide intent.\n\nLastly, I can't reproduce your results at all -- return a json and return as a table both work fine for me on prod. Just to avoid model confusion, this prompt should also works\n```give me all insured property addresses and their rough year of build. structure this into a json format ```json {address, year}```\nPlease try it out. cc @Gwen @Lee",
+      "time": "07:29",
+      "timestamp": "1707838191.381829",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "@Kerry I’m not seeing those results unfortunately - can i check if object detection is turned on for your project?",
+      "time": "08:13",
+      "timestamp": "1707840793.722609",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "@Kerry just checked - on the default model it is getting the right answer with that prompt, but im seeing the issues on advanced.",
+      "time": "08:16",
+      "timestamp": "1707840961.241899",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "I can't really test since GPT4 has issues right now. Also, all your previous prompts (return as a json...) worked for me with default model. So I hope you are unblock now.",
+      "time": "08:37",
+      "timestamp": "1707842221.250079",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "GPT4 is still very flaky for me but this is another prompt that should work with advanced model. Again, this just shows that the anything relying on model is not always accurate (in this case, advanced does worse than default). With extraction related questions, I would start with default model first as when you eventually has to build an app, this is what Build uses too.\n\nJust some prompt eng to further make it clear to the model that you are not asking for a table but a json.\n```You are a real estate expert, return the following information in a JSON format\n```json\n{\n\"address\": all insured property addresses, \n \"year of build\": an address's rough year of built\n}```",
+      "time": "15:26",
+      "timestamp": "1707866806.032629",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-02-13.json",
+    "message_count": 18,
+    "start_time": "1707817226.869629",
+    "end_time": "1707866806.032629",
+    "is_thread": true
+  }
+}

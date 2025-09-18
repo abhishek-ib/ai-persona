@@ -1,0 +1,229 @@
+{
+  "id": "ch_C06FA6A23_2024-06-28_1719589698.694069_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Sunny Khatri"
+  ],
+  "messages": [
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Hi, I'm hitting this while compiling `celery-app-tasks` . Would someone know how to resolve this ? Thanks !\n```> python provisioner.py compile celery-app-tasks --as-aihub     \n\n     module = imp(module_name, package=package, **kwargs)\n  File \"/Users/sunnykhatri/Library/Caches/pypoetry/virtualenvs/celery-app-tasks-_yoLpc36-py3.9/lib/python3.9/site-packages/celery/utils/imports.py\", line 104, in import_from_cwd\n    return imp(module, package=package)\n  File \"/Users/sunnykhatri/.pyenv/versions/3.9.17/lib/python3.9/importlib/__init__.py\", line 127, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n  File \"<frozen importlib._bootstrap>\", line 1030, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1007, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 984, in _find_and_load_unlocked\nModuleNotFoundError: No module named 'instabase.registry'```",
+      "time": "08:48",
+      "timestamp": "1719589698.694069",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```make -C distributed-tasks/celery/app-tasks clean build```\nDoes this work?",
+      "time": "10:01",
+      "timestamp": "1719594064.766889",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "I did make clean build earlier and that didn't help.",
+      "time": "10:01",
+      "timestamp": "1719594118.916659",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```python --version```\n^",
+      "time": "10:07",
+      "timestamp": "1719594429.970299",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Python 3.9.17",
+      "time": "10:14",
+      "timestamp": "1719594841.569539",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Should be 3.7 IIRC",
+      "time": "10:15",
+      "timestamp": "1719594916.680309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```pyenv shell 3.7```",
+      "time": "10:15",
+      "timestamp": "1719594930.052789",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "and try again",
+      "time": "10:15",
+      "timestamp": "1719594933.194789",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "I also see this before hitting that error. I have successfully compiled this service a few times in the past week or so back with 3.9.17 so not sure if that is is issue.\n```Warning: The current project could not be installed: [Errno 2] No such file or directory: '/Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/README.md'\nIf you do not want to install the current project use --no-root.\nIf you want to use Poetry only for dependency management but not for packaging, you can disable package mode by setting package-mode = false in your pyproject.toml file.\nIn a future version of Poetry this warning will become an error!\nmkdir -p /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/tmp\nmkdir -p /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/tmp/hotconfig && touch /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/tmp/hotconfig/base-hot-config.yml\nCONFIG_NAME=aihub-local \\\n        python /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/../../../shared-utils/build-utils/stack-local/get-env-local.py \\\n        /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/deployment/env/deployment-config.json \\\n        /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/../../../shared-utils/build-utils/shared/env-local.json \\\n        /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/../../../shared-utils/build-utils/shared/env-local-overrides.json \\\n        /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/deployment/local/docker-env.json > /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/tmp/env_local \\\n        echo \"export LEGACY=''\" >> /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/tmp/env_local\ncd /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/build/py && poetry run /bin/bash start-celery-local.sh\nUsage: celery [OPTIONS] COMMAND [ARGS]...\nTry 'celery --help' for help.\n\nError: Invalid value for '-A' / '--app': \nUnable to load celery application.\nWhile trying to load the module instabase.registry.tasks the following error occurred:\nTraceback (most recent call last):\n  File \"/Users/sunnykhatri/Library/Caches/pypoetry/virtualenvs/celery-app-tasks-_yoLpc36-py3.9/lib/python3.9/site-packages/celery/bin/celery.py\", line 58, in convert\n    return find_app(value)\n  File \"/Users/sunnykhatri/Library/Caches/pypoetry/virtualenvs/celery-app-tasks-_yoLpc36-py3.9/lib/python3.9/site-packages/celery/app/utils.py\", line 383, in find_app```",
+      "time": "10:16",
+      "timestamp": "1719595008.625019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm. Try `poetry env remove --all`",
+      "time": "10:17",
+      "timestamp": "1719595032.354429",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "```\nPoetry could not find a pyproject.toml file in /Users/sunnykhatri/instabase or its parents```",
+      "time": "10:17",
+      "timestamp": "1719595059.156509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Well, you have to run that from `/.../celery/app-tasks` :slightly_smiling_face:",
+      "time": "10:17",
+      "timestamp": "1719595074.998159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs❯ cd distributed-tasks/celery/app-tasks/\ncs❯ poetry env remove --all\nDeleted virtualenv: /home/owner/.cache/pypoetry/virtualenvs/celery-app-tasks-EhTOE89x-py3.9\ncs❯ make clean build runlocal```",
+      "time": "10:18",
+      "timestamp": "1719595125.501599",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "`make clean build` works fine, but then `ppy compile` again hitting this.",
+      "time": "10:20",
+      "timestamp": "1719595223.187089",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```make runlocal```\nWhat does this do?",
+      "time": "10:20",
+      "timestamp": "1719595257.243959",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "This is still there. Let me try runlocal as well.\n```CONFIG_NAME=aihub-local \\\n        python /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/../../../shared-utils/build-utils/stack-local/get-env-local.py \\\n        /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/deployment/env/deployment-config.json \\\n        /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/../../../shared-utils/build-utils/shared/env-local.json \\\n        /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/../../../shared-utils/build-utils/shared/env-local-overrides.json \\\n        /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/deployment/local/docker-env.json > /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/tmp/env_local \\\n        echo \"export LEGACY=''\" >> /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/tmp/env_local\ncd /Users/sunnykhatri/instabase/distributed-tasks/celery/app-tasks/build/py && poetry run /bin/bash start-celery-local.sh\nUsage: celery [OPTIONS] COMMAND [ARGS]...\nTry 'celery --help' for help.\n\nError: Invalid value for '-A' / '--app': \nUnable to load celery application.```",
+      "time": "10:21",
+      "timestamp": "1719595278.550759",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Same error:\n```  File \"/Users/sunnykhatri/Library/Caches/pypoetry/virtualenvs/celery-app-tasks-_yoLpc36-py3.9/lib/python3.9/site-packages/kombu/utils/imports.py\", line 59, in symbol_by_name\n    module = imp(module_name, package=package, **kwargs)\n  File \"/Users/sunnykhatri/Library/Caches/pypoetry/virtualenvs/celery-app-tasks-_yoLpc36-py3.9/lib/python3.9/site-packages/celery/utils/imports.py\", line 104, in import_from_cwd\n    return imp(module, package=package)\n  File \"/Users/sunnykhatri/.pyenv/versions/3.9.17/lib/python3.9/importlib/__init__.py\", line 127, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n  File \"<frozen importlib._bootstrap>\", line 1030, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1007, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 984, in _find_and_load_unlocked\nModuleNotFoundError: No module named 'instabase.registry'```",
+      "time": "10:21",
+      "timestamp": "1719595316.202739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Other things to check:\n\n```git diff origin/master -- *env-local.json ```",
+      "time": "10:21",
+      "timestamp": "1719595319.456079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also, send the output of:\n```env | sort ```",
+      "time": "10:22",
+      "timestamp": "1719595348.895939",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "```(base) sunnykhatri@K6FKQ72PVD-Sunny-Khatri instabase % env | sort\nAWS_PROFILE=aws-BaseEng-083423824311\nCOLORTERM=truecolor\nCOMMAND_MODE=unix2003\nCONDA_DEFAULT_ENV=base\nCONDA_EXE=/opt/miniconda3/bin/conda\nCONDA_PREFIX=/opt/miniconda3\nCONDA_PROMPT_MODIFIER=(base) \nCONDA_PYTHON_EXE=/opt/miniconda3/bin/python\nCONDA_SHLVL=1\nCRAFTING_SANDBOX_SERVER_URL=https://instabase.sandboxes.site\nDOCKER_DEFAULT_PLATFORM=linux/amd64\nGITHUB_TOKEN=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\nGIT_ASKPASS=/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass.sh (http://Code.app/Contents/Resources/app/extensions/git/dist/askpass.sh)\nGOPATH=/Users/sunnykhatri/Documents/workspace/go\nHOME=/Users/sunnykhatri\nIB_HOME=/Users/sunnykhatri/instabase\nINSTALLM_API_KEY=bmdpbng6NjB3cj5dKWJiK3BzK2smeWIze3VhTjRvNEQhPz1Z\nINSTALLM_API_URL_BASE=https://installm.prod.instabase.com;SERVICE_WEAVIATE_PORT=8080\nINSTALLM_AUTH_TYPE=Basic\nLANG=en_US.UTF-8\nLOGNAME=sunnykhatri\nMallocNanoZone=0\nNODENV_SHELL=zsh\nOLDPWD=/Users/sunnykhatri/instabase/distributed-tasks\nOPENAI_API_KEY=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\nORACLE_HOME=/usr/local\nORIGINAL_XDG_CURRENT_DESKTOP=undefined\nPATH=/Users/sunnykhatri/.pyenv/versions/3.9.17/bin:/Users/sunnykhatri/.nodenv/shims:/Users/sunnykhatri/.pyenv/shims:/Users/sunnykhatri/Documents/workspace/go/bin:/usr/local/go/bin:/Users/sunnykhatri/Downloads/google-cloud-sdk/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/usr/local/go/bin:/Users/sunnykhatri/.pyenv/versions/3.9.17/bin:/opt/miniconda3/bin:/opt/miniconda3/condabin:/Users/sunnykhatri/.nodenv/shims:/Users/sunnykhatri/Documents/workspace/go/bin:/Users/sunnykhatri/Downloads/google-cloud-sdk/bin:/opt/homebrew/bin:/usr/local/opt/go/libexec/bin:/opt/homebrew/bin:/usr/local/opt/go/libexec/bin\nPKG_CONFIG_PATH=:/usr/local/lib/pkgconfig:/usr/local/lib/pkgconfig\nPWD=/Users/sunnykhatri/instabase\nPYTHONPATH=/Users/sunnykhatri/instabase/data-services/model-services/model-service/build/py:/Users/sunnykhatri/instabase/shared-utils/py-utils/ibllm::/Users/sunnykhatri/instabase/shared-utils/py-utils/agent-utils:/Users/sunnykhatri/instabase/shared-utils/py-utils/test-utils/src/py:/Users/sunnykhatri/instabase/shared-utils/py-utils/ocr-client-lib/test-utils/src/py::/Users/sunnykhatri/instabase/shared-utils/py-utils/ocr-client-lib/src/py\nPYTHONSTARTUP=/Users/sunnykhatri/.vscode/extensions/ms-python.python-2024.8.1/python_files/pythonrc.py\nPYTHONUNBUFFERED=1,\nSHELL=/bin/zsh\nSHLVL=1\nSSH_AUTH_SOCK=/private/tmp/com.apple.launchd.UCOLm552Y4/Listeners\nTERM=xterm-256color\nTERM_PROGRAM=vscode\nTERM_PROGRAM_VERSION=1.90.1\nTMPDIR=/var/folders/35/vt3w7xxj07b6vh0zxp83fyn80000gn/T/\nUSER=sunnykhatri\nUSER_ZDOTDIR=/Users/sunnykhatri\nVSCODE_GIT_ASKPASS_EXTRA_ARGS=\nVSCODE_GIT_ASKPASS_MAIN=/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass-main.js (http://Code.app/Contents/Resources/app/extensions/git/dist/askpass-main.js)\nVSCODE_GIT_ASKPASS_NODE=/Applications/Visual Studio Code.app/Contents/Frameworks/Code (http://Code.app/Contents/Frameworks/Code) Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin)\nVSCODE_GIT_IPC_HANDLE=/var/folders/35/vt3w7xxj07b6vh0zxp83fyn80000gn/T/vscode-git-ac61fbb440.sock\nVSCODE_INJECTION=1\nVSCODE_PATH_PREFIX=/Users/sunnykhatri/.pyenv/versions/3.9.17/bin:\nXPC_FLAGS=0x0\nXPC_SERVICE_NAME=0\nZDOTDIR=/Users/sunnykhatri\n_=/usr/bin/env\n_CE_CONDA=\n_CE_M=\n__CFBundleIdentifier=com.microsoft.VSCode\n__CF_USER_TEXT_ENCODING=0x1F5:0x0:0x0```",
+      "time": "10:23",
+      "timestamp": "1719595400.650829",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Finally, see if you can build off master (remove/stash any changes from your working dir)",
+      "time": "10:23",
+      "timestamp": "1719595401.488029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Your PYTHONPATH looks suspicious. I don't have one set in my environment. Nor PYTHONSTARTUP",
+      "time": "10:24",
+      "timestamp": "1719595460.767409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Try\n\n```unset PYTHONPATH\nunset PYTHONSTARTUP\nmake clean build runlocal```",
+      "time": "10:25",
+      "timestamp": "1719595537.692549",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "This path is explicitly set me to work with some repos. It has been there since long and this service was working fine just couple a week or two back.\n``` {\n   \"base\": {\n-    \"_comment\": \"Local env vars\",\n+    \"_comment\": \"Lifecycle feature flags\",\n     \"auth_provider\": \"\",\n     \"auth_type\": \"basic\",\n     \"azure_model_deployment_map\": \"{\\\"text-davinci-003\\\":\\\"text-davinci-003\\\", \\\"gpt-3.5-turbo\\\": \\\"gpt-35-turbo\\\"}\",\n@@ -29,7 +29,6 @@\n     \"instabase_hostname\": \"localhost\",\n     \"log_level\": \"ERROR\",\n     \"num_executors\": 8,\n-    \"ocr_ari_host\": \"dev.ari.gcloud.instabase.com (http://dev.ari.gcloud.instabase.com)\",\n     \"ocr_ari_host\": \"localhost\",\n     \"ocr_ari_provider\": \"ocr-service\",\n     \"openai_api_base\": \"https://api.openai.com/v1\",\n@@ -48,7 +47,6 @@\n     \"use_flow_batch_mode\": true,\n     \"use_ntbk\": false,\n     \"use_sqs\": \"False\",\n-    \"_comment\": \"Lifecycle feature flags\",\n     \"enable_dummy_feature_a\": \"IB_OPT_IN\",\n     \"enable_dummy_feature_b\": \"ORG_OPT_IN\",\n     \"enable_dummy_feature_c\": \"EXTERNAL_OPT_IN\",\n@@ -157,7 +155,8 @@\n     \"openai_api_type\": \"openai\",\n     \"stripe_publishable_key\": \"pk_test_51MtZvdG94q149KmCLZXzNpYO0I70bm60qSF82MRgTXGn3BuC5NJWLZdSf2Jss9pB8uCIP7LAOXQhDBHTx5Jm2EZg00cZSH0WFY\",\n     \"stripe_secret_key\": \"sk_test_51MtZvdG94q149KmCPzkOPmWjKgiFx5KDY3J3q2qAKwsPxuRsM8eSW9wQ9juA7RwIUsotJiga7ZSStrGPN4M92ToR0003JCQRZc\",\n-    \"use_ntbk\": true\n+    \"use_ntbk\": true,\n+    \"openai_api_key\": \"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\"\n   },\n   \"docker-local\": {\n     \"log_level\": \"INFO\",\n@@ -195,17 +194,17 @@\n     \"es_password\": \"aQiRuP1E4Q3wNfg\",\n     \"elastic_password\": \"aQiRuP1E4Q3wNfg\",\n     \"enable_flow_datastore\": true,\n-    \"model_registry_mount_path\": \"/tmp/models\"\n+    \"model_registry_mount_path\": \"/tmp/models\",\n+    \"openai_api_key\": \"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\"\n   },\n   \"testing\": {\n     \"config_name\": \"testing\",\n     \"config_type\": \"local\",\n     \"instabase_backend_db_params\": \"--dialect=sqlite3 --url=/tmp/unittest.db\",\n     \"localhost\": \"127.0.0.1\",\n-    \"_comment\": \"--HTTP servers\",\n+    \"_comment\": \"Dont use 10100 it has bad behavior with Docker local\",\n     \"http_api_server_port\": \"8100\",\n     \"http_api_server_apps_port\": \"8101\",\n-    \"_comment\": \"--Services\",\n     \"tservice_account_port\": \"10005\",\n     \"tservice_mount_port\": \"10006\",\n     \"tservice_repo_port\": \"10007\",\n@@ -214,11 +213,10 @@\n     \"service_repo_port\": \"10017\",\n     \"grpc_service_file_port\": \"10011\",\n     \"tservice_pdf_port\": \"10009\",\n-    \"_comment\": \"Dont use 10100 it has bad behavior with Docker local\",\n     \"cache_port\": \"6400\",\n     \"log_level\": \"INFO\",\n     \"local_mount_dir\": \"/tmp/instabase_drive\",\n-    \"repo_local_mount_dir\": \"/tmp\",\n+    \"repo_local_mount_dir\": \"/tmp/instabase_drive/localmount\",\n     \"hosted_storage_type\": \"LocalFS\",\n     \"use_ntbk\": false,\n     \"audit_logs_export_endpoint\": \"IN_MEMORY\",\n...skipping...\n     \"azure_model_deployment_map\": \"{\\\"text-davinci-003\\\":\\\"text-davinci-003\\\", \\\"gpt-3.5-turbo\\\": \\\"gpt-35-turbo\\\"}\",\n@@ -29,7 +29,6 @@\n     \"instabase_hostname\": \"localhost\",\n     \"log_level\": \"ERROR\",\n     \"num_executors\": 8,\n-    \"ocr_ari_host\": \"dev.ari.gcloud.instabase.com (http://dev.ari.gcloud.instabase.com)\",\n     \"ocr_ari_host\": \"localhost\",\n     \"ocr_ari_provider\": \"ocr-service\",\n     \"openai_api_base\": \"https://api.openai.com/v1\",\n@@ -48,7 +47,6 @@\n     \"use_flow_batch_mode\": true,\n     \"use_ntbk\": false,\n     \"use_sqs\": \"False\",\n-    \"_comment\": \"Lifecycle feature flags\",\n     \"enable_dummy_feature_a\": \"IB_OPT_IN\",\n     \"enable_dummy_feature_b\": \"ORG_OPT_IN\",\n     \"enable_dummy_feature_c\": \"EXTERNAL_OPT_IN\",\n@@ -157,7 +155,8 @@\n     \"openai_api_type\": \"openai\",\n     \"stripe_publishable_key\": \"pk_test_51MtZvdG94q149KmCLZXzNpYO0I70bm60qSF82MRgTXGn3BuC5NJWLZdSf2Jss9pB8uCIP7LAOXQhDBHTx5Jm2EZg00cZSH0WFY\",\n     \"stripe_secret_key\": \"sk_test_51MtZvdG94q149KmCPzkOPmWjKgiFx5KDY3J3q2qAKwsPxuRsM8eSW9wQ9juA7RwIUsotJiga7ZSStrGPN4M92ToR0003JCQRZc\",\n-    \"use_ntbk\": true\n+    \"use_ntbk\": true,\n+    \"openai_api_key\": \"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\"\n   },\n   \"docker-local\": {\n     \"log_level\": \"INFO\",\n@@ -195,17 +194,17 @@\n     \"es_password\": \"aQiRuP1E4Q3wNfg\",\n     \"elastic_password\": \"aQiRuP1E4Q3wNfg\",\n     \"enable_flow_datastore\": true,\n-    \"model_registry_mount_path\": \"/tmp/models\"\n+    \"model_registry_mount_path\": \"/tmp/models\",\n+    \"openai_api_key\": \"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\"\n   },\n   \"testing\": {\n     \"config_name\": \"testing\",\n     \"config_type\": \"local\",\n     \"instabase_backend_db_params\": \"--dialect=sqlite3 --url=/tmp/unittest.db\",\n     \"localhost\": \"127.0.0.1\",\n-    \"_comment\": \"--HTTP servers\",\n+    \"_comment\": \"Dont use 10100 it has bad behavior with Docker local\",\n     \"http_api_server_port\": \"8100\",\n     \"http_api_server_apps_port\": \"8101\",\n-    \"_comment\": \"--Services\",\n     \"tservice_account_port\": \"10005\",\n     \"tservice_mount_port\": \"10006\",\n     \"tservice_repo_port\": \"10007\",\n@@ -214,11 +213,10 @@\n     \"service_repo_port\": \"10017\",\n     \"grpc_service_file_port\": \"10011\",\n     \"tservice_pdf_port\": \"10009\",\n-    \"_comment\": \"Dont use 10100 it has bad behavior with Docker local\",\n     \"cache_port\": \"6400\",\n     \"log_level\": \"INFO\",\n     \"local_mount_dir\": \"/tmp/instabase_drive\",\n-    \"repo_local_mount_dir\": \"/tmp\",\n+    \"repo_local_mount_dir\": \"/tmp/instabase_drive/localmount\",\n     \"hosted_storage_type\": \"LocalFS\",\n     \"use_ntbk\": false,\n     \"audit_logs_export_endpoint\": \"IN_MEMORY\",\n@@ -235,7 +233,6 @@\n     \"es_password\": \"aQiRuP1E4Q3wNfg\",\n     \"_celery_use_cassandra\": true,\n     \"_celery_cassandra_servers\": \"localhost\",\n-    \"_celery_backend\": \"cassandra\",\n-    \"repo_local_mount_dir\": \"/tmp/instabase_drive/localmount\"\n+    \"_celery_backend\": \"cassandra\"\n   }\n-}\n+}```",
+      "time": "10:26",
+      "timestamp": "1719595581.690039",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, take it or leave it! Out of ideas though :slightly_smiling_face: Best of luck!",
+      "time": "10:26",
+      "timestamp": "1719595603.985689",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "I'll check what else could be going on including PYTHONPATH. thanks for helping have a look !",
+      "time": "10:29",
+      "timestamp": "1719595786.560619",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-06-28.json",
+    "message_count": 26,
+    "start_time": "1719589698.694069",
+    "end_time": "1719595786.560619",
+    "is_thread": true
+  }
+}

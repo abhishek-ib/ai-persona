@@ -1,0 +1,109 @@
+{
+  "id": "ch_CSY11CK7T_2024-05-20_1716228233.908989_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Jessica",
+    "Udit"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@Udit here's a failure of file-list because of a failure in the before hook: https://cloud.cypress.io/projects/cfhedy/runs/10111/overview/7ac50b35-2459-49e1-b1f5-3bcdcebe9756?roarHideRunsWithDiffGroupsAndTags=1, which means that tests also wouldn't retry",
+      "time": "11:03",
+      "timestamp": "1716228233.908989",
+      "is_reply": false
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "yah im seeing this one happen every now and then and it seems related to just running the app and waiting to see the run occur",
+      "time": "11:12",
+      "timestamp": "1716228756.786009",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "What do you think of doing something kind of hacky so that we can take advantage of the retries here? Like putting the before code in the first test instead, or somehow making it work in the beforeach hook?",
+      "time": "11:17",
+      "timestamp": "1716229055.906329",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "hm, if we move it to the first test, is retry automatic or do we have to add that into the test telling it to retry similar to how I see `run-app.spec.ts` do it?",
+      "time": "11:22",
+      "timestamp": "1716229323.265639",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Take a look at this article: https://docs.cypress.io/guides/guides/test-retries\n\nWhen a test fails, it tries to rerun the beforeEach and just the single test that failed. But, I added a new function called `retryableBefore` that makes it so the before can be retried. Maybe that's actually the best thing here - a little refactoring of the test. Here's my PR that added it: https://github.com/instabase/instabase/pull/57586",
+      "time": "11:25",
+      "timestamp": "1716229540.869049",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "oh this helper you made to retry befores seems perfect for the human review ones where they all need the app to actually run properly before any testing can be done",
+      "time": "11:30",
+      "timestamp": "1716229844.411409",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "That would be great to start using it in those, I think I didn't add them in that PR because it would've taken some refactoring because tests depended on the state of the test before",
+      "time": "12:08",
+      "timestamp": "1716232096.250649",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "oh this still wont retry the entire spec, it will just run the before block before an individual test?",
+      "time": "12:22",
+      "timestamp": "1716232977.430179",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yep exactly",
+      "time": "12:23",
+      "timestamp": "1716232998.383839",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Cypress lists having the test cases not depend on the previous test case and I guess that's one of the reasons",
+      "time": "12:24",
+      "timestamp": "1716233043.178359",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "FYI seeing this one again: https://cloud.cypress.io/projects/cfhedy/runs/10135/overview/55f00d31-080f-4ec7-83f0-cd3dd1ccfb2f/replay?roarHideRunsWithDiffGroupsAndTags=1",
+      "time": "13:16",
+      "timestamp": "1716236212.378659",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-05-20.json",
+    "message_count": 11,
+    "start_time": "1716228233.908989",
+    "end_time": "1716236212.378659",
+    "is_thread": true
+  }
+}

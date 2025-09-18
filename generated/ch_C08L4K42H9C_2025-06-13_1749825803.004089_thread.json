@@ -1,0 +1,110 @@
+{
+  "id": "ch_C08L4K42H9C_2025-06-13_1749825803.004089_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "Sherif",
+    "pauline.comising",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "@pauline.comising @ayesha.ali\n\nI have a quick question about `case_fields` when running `udfs` on the cross-class schema tab.\n\nIf a user adds a case_field to their udf, should we include that in the payload to `/case-intra-class` and `udfs/run`? I don't see any examples of that currently.\n\nsomething like...\n```{\n    \"udf_id\": \"109\",\n    \"packet_args\": {\n        \"01976589-c935-737c-bced-7c916d80ace7\": {\n            \"class_fields\": {\n                \"Drivers License\": {\n                    \"first_name\": {\n                      ...\n                    }\n                }\n            },\n            \"case_fields\": {} // <-- include the case field here\n        }\n    }\n}```\nUDF args without case field (regardless of how many class args are selected)\n```[\n    {\n        \"name\": \"class_fields\",\n        \"data_type\": \"FIELD\",\n        \"value\": \"class_fields\"\n    }\n]```\nUDF args with case field\n```[\n    {\n        \"name\": \"class_fields\",\n        \"data_type\": \"FIELD\",\n        \"value\": \"class_fields\"\n    },\n    // example case field\n    {\n        \"name\": \"test__case__field\",\n        \"data_type\": \"FIELD\",\n        \"value\": \"test_case_field\"\n    }\n]```",
+      "time": "07:43",
+      "timestamp": "1749825803.004089",
+      "is_reply": false
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "so yeah, in the same way a single class udf refers to single class fields, a case udf refers to case fields at the top level, so the second two UDF args look good to me. For the first payload, which looks like udfs/run, u don't need a separate dictionary for the case fields, it should all be top level so\n```{\n    \"udf_id\": \"109\",\n    \"packet_args\": {\n        \"01976589-c935-737c-bced-7c916d80ace7\": {\n            \"class_fields\": {\n                \"Drivers License\": {\n                    \"first_name\": {\n                      ...\n                    }\n                }\n            },\n            \"test__case__field\": <value> \n        }\n    }\n}```",
+      "time": "07:50",
+      "timestamp": "1749826225.450469",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "and as for `/case-intra-class` yeah case fields aren't needed here since this endpoint is only used to get the intra class value for a single class field.",
+      "time": "07:52",
+      "timestamp": "1749826326.317549",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Do we need to format the case field name to have double underscores?\nI'm seeing this error\n\n```missing 1 required positional argument: 'test__case__field'```\nalthough I'm sending this.\n```{\n    \"01976589-c935-737c-bced-7c916d80ace7\": {\n        \"class_fields\": {\n            \"Drivers License\": {\n                \"first_name\": {\n                    \"doc_id\": \"140\",\n                    \"data_type\": \"TEXT\",\n                    \"value\": \"SAM\",\n                    \"ocr_confidence\": 0.994,\n                    \"model_confidence\": 0.8807332753088982\n                }\n            },\n            \"Financial Documents\": {}\n        },\n        \"test_case_field\": \"Just testin\"\n    }\n}```",
+      "time": "09:27",
+      "timestamp": "1749832077.119639",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "The error goes away when I add double underscores... it just seems kind of brittle",
+      "time": "09:28",
+      "timestamp": "1749832105.055809",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "yeah so the field name needs to be the \"python safe name\" that u see in the function header in the ui (as it is in single class udfs, i think we saw yesterday that that's not the case yet for case udfs)",
+      "time": "09:32",
+      "timestamp": "1749832361.942909",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Gotcha okay :+1:",
+      "time": "10:37",
+      "timestamp": "1749836258.487059",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "alrighty i got some (low-res) visual proof of it working\n\nStill sometimes i will get a `500` even when all the payloads are the same though...",
+      "time": "10:43",
+      "timestamp": "1749836631.706459",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "ex here, two identical runs yielding different results :thinking_face:",
+      "time": "10:53",
+      "timestamp": "1749837197.254579",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "o lets goo working cases, but dang ya rip the flakiness, do you mind dropping the api-server log errors here to track :,)",
+      "time": "11:06",
+      "timestamp": "1749837963.034839",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "```172.17.0.1 - - [13/Jun/2025:18:10:44 +0000] \"GET /api/v2/mounts/list?repo_owner=sherif-s-org HTTP/1.0\" 200 912 \"https://https--sherifelmetwally-instabase.instabase.site.sandboxes.run/build/01976588-f847-737c-aa60-c482410c0f7c/cross-class\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\"\nlevel=ERROR time=2025-06-13 18:10:44,493 msg=\"payload for UDF: {'udf_function_name': 'unnamed_custom_function', 'udf_function_code': '\\n\\ndef unnamed_custom_function(Drivers License.first_name, first_udf, test_case_field, context = {}, keys = {}, **kwargs):\\n\\t# Import Python packages\\n\\t# import json\\n\\t\\n\\t# Log statements using print()\\n\\t# print(\"This will appear in the logs\")\\n\\t\\n\\t# Return the desired output\\n\\treturn class_fields[\\'Drivers License\\'][\\'first_name\\'][\\'value\\']', 'udf_arguments': {'class_fields': {'Drivers License': {'first_name': {'doc_id': '140', 'data_type': 'TEXT', 'value': 'SAM', 'ocr_confidence': 0.994, 'model_confidence': 0.8807332753088982}}}, 'first_udf': 'TEST STRING', 'test_case_field': 'Just testin', 'context': {}}}\"  path=\"/instabase-api-server/py/instabase/local_impl/udf_impl.py:60\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_5\" trace_id=\"\"\nlevel=ERROR time=2025-06-13 18:10:44,493 msg=\"Uncaught exception in webserver while handling request: Error=invalid syntax (<string>, line 3). Traceback=Traceback (most recent call last):;File \"/instabase-api-server/py/instabase/utils/web/handler_util_v2.py\", line 415, in inner_func;return f(*args, **kwargs);File \"/instabase-api-server/py/instabase/utils/oauth2/oauth2.py\", line 293, in wrapped_f;return f(*args, **kwargs);File \"/instabase-api-server/py/instabase/api_server_apps/handler/api/v2/aihub_build.py\", line 6029, in post;udf_result = udf.run(None, packet_id, args, keys=typed_keys_dict);File \"/instabase-api-server/py/instabase/build_utils/udf_utils/udf.py\", line 214, in run;udf_output = udf_executor.execute(self.lambda_udf_id, params);File \"/instabase-api-server/py/instabase/local_impl/udf_impl.py\", line 73, in execute;exec(fn_code);File \"<string>\", line 3;def unnamed_custom_function(Drivers License.first_name, first_udf, test_case_field, context = {}, keys = {}, **kwargs):;^;SyntaxError: invalid syntax;\"  path=\"/instabase-api-server/py/instabase/utils/web/handler_util_v2.py:422\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_5\" trace_id=\"\"```\n\nYe so this is after like 9 successful runs haha with the same args.",
+      "time": "11:13",
+      "timestamp": "1749838416.683279",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-06-13.json",
+    "message_count": 11,
+    "start_time": "1749825803.004089",
+    "end_time": "1749838416.683279",
+    "is_thread": true
+  }
+}

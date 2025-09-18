@@ -1,0 +1,193 @@
+{
+  "id": "ch_C0516UPPMT3_2024-03-26_1711470039.357509_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Andrew Sherrill",
+    "Hamish",
+    "shaunak",
+    "Vikas Mehta",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Hey team, just finished a demo that didn't go to plan because of some strange behaviour on AI Hub Prod Build. When I tried to 'Create App' from this project (https://aihub.instabase.com/hub/build/c2785529-c132-4d36-aba6-1a66fa665412), I got an error message (I think it just said could not create app). Once I refreshed the project I followed the same steps and was able to create the app the second time. However, when I put through test documents I got strange error behaviour twice. The associated app runs are: 6b9dadb3 and 1bd7d37c.\n\nI also got different (and incorrect) responses to some of the prompts I tried in advance earlier today. The docs and project should be identical. Is there anything that would've caused this change?\n\nCan someone help me figure out whats gone wrong here?\n\n@Andrew Sherrill",
+      "time": "09:20",
+      "timestamp": "1711470039.357509",
+      "is_reply": false
+    },
+    {
+      "sender": "Andrew Sherrill",
+      "user_id": "U03AGG28Y04",
+      "message": "We also worked through the prompts beforehand to ensure that they returned the result that we wanted with 0 feature flags. When we ran during the demo it did not return what we wanted",
+      "time": "09:25",
+      "timestamp": "1711470330.068159",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hmm, we'll take a look here",
+      "time": "09:36",
+      "timestamp": "1711471019.574769",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "this is the log of the error runs\nhttps://aihub.instabase.com/apps/flow/dashboard/6b9dadb3-c14d-444c-9a5d-cc27dc94e007/logs\n\n```\nError pre processing file='ib-internal/hamish.campbell.aihubprod_instabase.com/fs/Instabase Drive/app-runs/40720ffc-c969-4817-a7f3-490b235b7ea7/1711467961592/input/MAGMUTUAL Incident Report Form -- handwritten.pdf' returned error=OCR on image timed out after 300 seconds. Path: ib-internal/hamish.campbell.aihubprod_instabase.com/fs/Instabase Drive/app-runs/40720ffc-c969-4817-a7f3-490b235b7ea7/1711467961592/input/MAGMUTUAL Incident Report Form -- handwritten.pdf```\n@Rakesh <!subteam^S05BKGLP267> can we check if OCR pods are scaled correctly on prod? (Rakesh, feel bad to keep tagging you on something like this -- if you can update the product on call run book to describe how to check this that'll save you lots of time in the future)",
+      "time": "09:43",
+      "timestamp": "1711471406.630439",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "BTW @Hamish I can create an app from your project; do you remember the time that you run into the create app error",
+      "time": "09:45",
+      "timestamp": "1711471508.987149",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "can you also attach your files",
+      "time": "09:45",
+      "timestamp": "1711471529.957439",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "It was around 1540 UK time. (I have tried putting these files through again and the results now look correct btw).",
+      "time": "09:46",
+      "timestamp": "1711471582.977249",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "yeah everything runs correctly now for me too; likely something with the environment. will let the team investigate here cc @shaunak",
+      "time": "09:51",
+      "timestamp": "1711471898.974079",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "before the demo, when did you previously create an app that produced the correct responses? i assume you previously used the same project to create an app that worked as expected",
+      "time": "10:44",
+      "timestamp": "1711475095.513009",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw it’s relevant to note that this project (and thus apps created using this project) has FR turned on for digitization",
+      "time": "10:46",
+      "timestamp": "1711475195.703969",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Tagging @Vikas Mehta in here.  We seem to have 16 OCR pods and 16 form recognizer pods.",
+      "time": "11:03",
+      "timestamp": "1711476199.060349",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Looks like we hit the cirrcuit breakers at 100% for about 8-10 mins (https://aihub.instabase.com/grafana/d/cQZ60C3nz/envoy?orgId=1&var-datasource=default&var-label_name=tenant_id&var-label_value=&var-service=service-ocr-msft-form-recognizer-layout&var-cluster=All&var-short_service=All&var-pod=All&from=1711467601265&to=1711468385701).  @Vikas Mehta can we check on what we have configured as the queue size for form-recognizers?",
+      "time": "11:06",
+      "timestamp": "1711476380.524519",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "queue size for form-recognizer is set to 1",
+      "time": "11:11",
+      "timestamp": "1711476665.001059",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": ">  I also got different (and incorrect) responses to some of the prompts I tried in advance earlier today.\nIs \"wrong\" results here due to digitization failures (FR timeouts?). On digitization failure, do we still allow user to continue?",
+      "time": "11:24",
+      "timestamp": "1711477468.055729",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "@Serena I created a brand new project during the call, but with identical prompts + docs to a project I had been honing these in earlier today. That dry run project + app was created and giving the results I wanted at around 10am UK time\n\nDo we expect that a new project (with identical docs + prompts to a previously created project) should give identical results? (@Vikas Mehta I classify wrong as results that differ from the dry run project I used to build the demo flow)",
+      "time": "11:37",
+      "timestamp": "1711478256.653109",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "@Hamish did you see errors here or just wrong answers to prompts? My thinking is that, if it is former, then retrying digitization for failed docs should help you proceed..",
+      "time": "11:40",
+      "timestamp": "1711478455.654509",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "I didn't see errors here - only wrong answers",
+      "time": "11:45",
+      "timestamp": "1711478702.961539",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "Some observations:\n\n1. Sudden increase in load (number of tasks being processed by celery-app-tasks): https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%2289d%22%3A%7B%2[…]958000%22%2C%22to%22%3A%221711469489000%22%7D%7D%7D&orgId=1 (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%2289d%22%3A%7B%22datasource%22%3A%22victoriametrics%22%2C%22queries%22%3A%5B%7B%22exemplar%22%3Atrue%2C%22expr%22%3A%22sum%28rabbitmq_queue_messages_ready%7Bqueue%3D%5C%22celery%5C%22%7D%29%22%2C%22interval%22%3A%22%22%2C%22legendFormat%22%3A%22Messages+waiting+to+be+processed%22%2C%22refId%22%3A%22A%22%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22victoriametrics%22%7D%7D%2C%7B%22exemplar%22%3Atrue%2C%22expr%22%3A%22sum%28rabbitmq_queue_messages_unacked%7Bqueue%3D%5C%22celery%5C%22%7D%29%22%2C%22hide%22%3Afalse%2C%22interval%22%3A%22%22%2C%22legendFormat%22%3A%22Messages+being+processed+by+celery+workers%22%2C%22refId%22%3A%22B%22%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22victoriametrics%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%221711466958000%22%2C%22to%22%3A%221711469489000%22%7D%7D%7D&orgId=1)\n2. outstanding requests for FR from CAT PoV: https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22YyX%22:%7B%22d[…]1466958000%22,%22to%22:%221711469489000%22%7D%7D%7D&orgId=1 (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22YyX%22:%7B%22datasource%22:%22victoriametrics%22,%22queries%22:%5B%7B%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22victoriametrics%22%7D,%22editorMode%22:%22code%22,%22expr%22:%22sum%28instabase_client_in_progress_requests_total%7Bupstream%3D%5C%22http:%2F%2Flocalhost:25092%5C%22%7D%29%20by%28service,%20upstream%29%22,%22interval%22:%22%22,%22legendFormat%22:%22from%20%7B%7Bservice%7D%7D%20to%20%7B%7Bupstream%7D%7D%22,%22range%22:true,%22refId%22:%22A%22%7D%5D,%22range%22:%7B%22from%22:%221711466958000%22,%22to%22:%221711469489000%22%7D%7D%7D&orgId=1) (~3x of number of CAT workers ~ all celery workers hitting/waiting on FR)\n3. FR processing time per page: https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22lQ-%22:%7B%22d[…]1467732123%22,%22to%22:%221711468885073%22%7D%7D%7D&orgId=1 (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22lQ-%22:%7B%22datasource%22:%22victoriametrics%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22histogram_quantile%280.90,%20sum%20by%20%28le%29%20%28rate%28envoy_cluster_upstream_rq_time_bucket%7Btenant_id%3D%5C%22%5C%22,%20envoy_cluster_name%3D~%5C%22.%2A%28ocr-msft-form-recognizer-layout%29.%2Alocal%5C%22,%20envoy_cluster_name%21~%5C%22.%2A9080-local%5C%22%7D%5B$__interval%5D%29%29%29%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22victoriametrics%22%7D,%22editorMode%22:%22code%22,%22legendFormat%22:%22p95%22%7D,%7B%22refId%22:%22C%22,%22expr%22:%22histogram_quantile%280.50,%20sum%20by%20%28le%29%20%28rate%28envoy_cluster_upstream_rq_time_bucket%7Btenant_id%3D%5C%22%5C%22,%20envoy_cluster_name%3D~%5C%22.%2A%28ocr-msft-form-recognizer-layout%29.%2Alocal%5C%22,%20envoy_cluster_name%21~%5C%22.%2A9080-local%5C%22%7D%5B$__interval%5D%29%29%29%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22victoriametrics%22%7D,%22editorMode%22:%22code%22,%22legendFormat%22:%22p50%22%7D%5D,%22range%22:%7B%22from%22:%221711467732123%22,%22to%22:%221711468885073%22%7D%7D%7D&orgId=1). p90 was much higher than avg, this could be due to variance in input or CPU throttling. Is there any significant input variance here?\n4.   We did hit 100% CPU on some nodes (node level CPU throttling), but not much container level throttling for FR (due to high CPU limit): https://aihub.instabase.com/grafana/d/E3JLUrynk/top-n?from=1711467760688&to=1711468234[…]r-service=ocr-msft-form-recognizer-layout&var-container=All (https://aihub.instabase.com/grafana/d/E3JLUrynk/top-n?from=1711467760688&to=1711468234347&var-datasource=default&var-resource_deployment=All&var-namespace=insaprd-use2-aihub-prd-instabase&var-clients_services=All&var-optional_resource_deployment=All&var-label_name=tenant_id&var-label_value=&orgId=1&var-service=ocr-msft-form-recognizer-layout&var-container=All)",
+      "time": "11:54",
+      "timestamp": "1711479272.354329",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "5. CAT and FR was scaled up (desired replica count) around same time, but FR pods took couple of mins longer to come up (ready state): https://aihub.instabase.com/grafana/d/alJY6yWZz/autoscaling-horizontal-pod-autoscaler?[…]ll&var-model_training_queue=celery-model-training-tasks-gpu (https://aihub.instabase.com/grafana/d/alJY6yWZz/autoscaling-horizontal-pod-autoscaler?from=1711467732123&to=1711468885073&var-datasource=default&var-label_name=tenant_id&var-label_value=&var-cluster=&var-namespace=insaprd-use2-aihub-prd-instabase&orgId=1&var-hpa=autoscaler-ocr-msft-form-recognizer-layout&var-hpa=autoscaler-celery-app-tasks&var-service=service-ocr-msft-form-recognizer-layout&var-service=service-celery-app-tasks&var-deployment=deployment-ocr-msft-form-recognizer-layout&var-deployment=deployment-celery-app-tasks&var-node=All&var-service_base_name=&var-node_pool=All&var-model_training_queue=celery-model-training-tasks-gpu)",
+      "time": "11:58",
+      "timestamp": "1711479508.940689",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "FR baseline replica count is configured with expectation of 10s per page processing time. There are two options here:\n\n1. For build mode, where we expect potentially large spike in load on data-services, use higher deadline than 5 mins. This will help absorb initial surge in traffic while service is being scaled up.\n2. Use higher p95 per page processing time to set the baseline replica for FR and other data services. This will have significant impact on cost of AIHub env. \nFor build mode, using higher deadline is more cost effective esp. if we don't expect this kind of traffic surge in interactive modes. Thoughts?\n\nIndependent of this decision, we still need to investigate why we didn't surface digitization errors and user got wrong answers to prompts.\n\ncc: @shaunak, @Kerry",
+      "time": "12:09",
+      "timestamp": "1711480143.117569",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "+1 to figuring out the digitization errors and why the user got the wrong answers\n\n@Hamish\n1. when was the original project created? the digitization logic may have changed between the creation of the original project and the creation of your new project today -> this would cause different extraction behavior\n2. i see that the linked project in your original message (https://aihub.instabase.com/hub/build/c2785529-c132-4d36-aba6-1a66fa665412) was created today - could you also link the original project where you got your expected extraction results?\n3. i don’t see anything egregiously wrong in the field values in the linked project (https://aihub.instabase.com/hub/build/c2785529-c132-4d36-aba6-1a66fa665412) - can you describe what’s incorrect about these responses?",
+      "time": "12:20",
+      "timestamp": "1711480834.201119",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-03-26.json",
+    "message_count": 21,
+    "start_time": "1711470039.357509",
+    "end_time": "1711480834.201119",
+    "is_thread": true
+  }
+}

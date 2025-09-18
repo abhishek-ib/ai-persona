@@ -1,0 +1,304 @@
+{
+  "id": "ch_C06FA6A23_2025-08-05_1754404410.294069_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Ed",
+    "Jason",
+    "Cody Boggs",
+    "Abhinav"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Cody Boggs / @Abhinav / @astpierre Wondering if you (or anyone else) can confirm that this is the way HTTPS ingestion works for SaaS:\n\n1. nginx listens on port 8081 over HTTP, not HTTPS. (https://github.com/instabase/instabase/blob/50e485c75e27e966b7db1402e632fe4f0e4727d1/deployment-configs/chart/files/nginx.conf#L96)\n2. Port 443 is exposed via the service def, (https://github.com/instabase/instabase/blob/master/deployment-configs/chart/templates/server-nginx/service.yml#L26) and maps `https-nginx`, which is container port `8081`.\n3. Port 80 is also exposed (https://github.com/instabase/instabase/blob/master/deployment-configs/chart/templates/server-nginx/service.yml#L21), but maps to `http-nginx`, which is container port  (https://github.com/instabase/instabase/blob/master/deployment-configs/chart/templates/server-nginx/deployment.yml#L97)`8080`; nginx does _not_ listen on this port, so it's a dead port\n4. HTTPS/TLS termination seems to be done via another layer (terraform ELB?), not by nginx (can someone point me to the configs?)\nMostly wondering about (4)\n\n\n(*) nginx has two configs, one for prod and one for local -- we should fix this (https://github.com/instabase/instabase/blob/50e485c75e27e966b7db1402e632fe4f0e4727d1/webserver/server-nginx/config/nginx-config-template.jinja.yml#L110)",
+      "time": "07:33",
+      "timestamp": "1754404410.294069",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "At a glance that looks accurate. Not sure where the TLS is actually happening, though I'd assume in SaaS it's in the ALB/ELB",
+      "time": "07:39",
+      "timestamp": "1754404755.967819",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "SSL termination can happen either at ELB or nginx\n\nCurrently\nFor SaaS/Sandbox deployments, it happens at ELB. AWS LB controller with ingress annotations handles it. code is in terraform modules repo\nFor Customers Deployments it can happen either one of the two places.\n\nNear Future(few weeks)\nWork is in progress to support ssl termination(on demand) at nginx for SaaS customers also.",
+      "time": "07:41",
+      "timestamp": "1754404898.394119",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, only discussing AI Hub here (not IB Classic -- that's a different story)",
+      "time": "07:57",
+      "timestamp": "1754405844.739029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In AI Hub, nginx is definitely _not_ doing SSL termination (customer VPC/SaaS ST/SaaS MT)",
+      "time": "07:57",
+      "timestamp": "1754405877.655069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Anyway, I'm going to remove the https-nginx port since it isn't actually https in SaaS/AIHub; this is extremely confusing as-is. We can add it back if nginx starts doing SSL termination again in AI Hub.",
+      "time": "07:59",
+      "timestamp": "1754405943.014639",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "For both classic and aihub saas/sandbox setup is same.",
+      "time": "07:59",
+      "timestamp": "1754405957.178069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Can you double-check that? Looking at the code, I don't think what you said is accurate @Abhinav",
+      "time": "07:59",
+      "timestamp": "1754405998.379209",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "current setup does not support ssl termination at all\nhow is it handled for customer vpc is not use this config at all and create a new one :slightly_smiling_face:",
+      "time": "08:00",
+      "timestamp": "1754406009.812049",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "it is the same Terraform code for both legacy and aihub. can you point me to the code where do you see the difference",
+      "time": "08:01",
+      "timestamp": "1754406108.473809",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea customer-managed deployments is something like \"customer provides a cert and writes patches to the nginx setup  to apply via DM\"\nIt's a very hand-rolled weird scenario but it is the only customer-VPC means for non-ELB TLS",
+      "time": "08:02",
+      "timestamp": "1754406168.463159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "So, there are nginx configs that I can't see (that are not checked in) for customer VPCs?",
+      "time": "08:10",
+      "timestamp": "1754406635.168209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Abhinav to answer your question, when I run:\n\n```git diff 24.07.0..origin/master -- webserver/server-nginx/config```\nI see a significant difference. I admit there are fewer differences in the deployment configs:\n```git diff 24.07.0..origin/master -- deployment-configs/chart/templates/server-nginx/```",
+      "time": "08:16",
+      "timestamp": "1754406993.512479",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "got it. that makes sense now. For nginx listen settings, look at deployment configs dir.  You might  see differences with service endpoints added/modified/removed but nginx listen settings wont be changing",
+      "time": "08:20",
+      "timestamp": "1754407246.193589",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, got it.\n\nAnyway, I think the current situation (https-nginx port in the service config not actually being https) is something I plan to address. Any objections to that?",
+      "time": "08:34",
+      "timestamp": "1754408097.314519",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "No objections provided this is updated as well.\nhttps://github.com/instabase/terraform-modules/blob/c9c089197664a598d67712fa988881[…]84da4305/infra/single-tenantable-application-deployment/main.tf (https://github.com/instabase/terraform-modules/blob/c9c089197664a598d67712fa9888818884da4305/infra/single-tenantable-application-deployment/main.tf#L336-L370)\n\nCustomer onprem/vpc deployment might be problematic. Once they upgrade instabase deployment to the changed port version. they would need to update the ingress resource also.\nIf customers are not using ingress and relying on nginx k8s service and they have setup controllers with auto-sync it should work. Otherwise they need to change LB -> nginx port mapping manually.\n@Ed / @Jason can provide more insights on customer setup.",
+      "time": "08:50",
+      "timestamp": "1754409017.253479",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Nope I've always been :confused_dog: by the current configs. lol\n\nAnd yea unfortunately customer VPCs, by virtue of the DM patching scheme, will always potentially have stuff we don't track :sob:",
+      "time": "09:10",
+      "timestamp": "1754410228.912889",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "All of our ingress config has always been required to point to service-server-nginx on port 443. Agreed that this has been confusing and annoying. Things don't work on 80. If we change this, that is great AND we need to let everyone know so that customer deployments get updated and don't suddenly break with a bi-weekly update. That'll be a bad look.",
+      "time": "09:16",
+      "timestamp": "1754410573.603419",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "@mfichman for a customer example, here is a patchset I normally use. this is painful as it needs to be checked when nginx configs are updated by us: https://github.com/instabase/ib-deployments/tree/main/resources/patchsets/AIHubNLB",
+      "time": "09:19",
+      "timestamp": "1754410773.237759",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "@mfichman if you are going ahead with the change, make sure port change is backported to all supported release including legacy 24.07 deployment since Infra code is same across all deployments.\n\nYou can move ingress resource to helm chart and let base configs/helm charts handle it but that would be a bigger change.",
+      "time": "09:33",
+      "timestamp": "1754411588.372159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "What I think I'll do is fix the port mappings internally, but expose nginx for ingress on both port 80 and port 443. When we implement SSL termination for nginx, then we can revisit this. That way, I can avoid (a) backporting to 24.07 and (b) modifying the terraform for the ELB. (Of course, I can also backport it anyway if you like).",
+      "time": "09:52",
+      "timestamp": "1754412731.103679",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Jason thank you for the example -- I'll take a look",
+      "time": "09:52",
+      "timestamp": "1754412768.967579",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "(That sounds great to me. It would be good for the moment to have both 443 and 80 working :slightly_smiling_face: )",
+      "time": "09:52",
+      "timestamp": "1754412778.148059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In the end, I think we should have an env var for the SSL certs, and nginx should automatically serve both HTTP and HTTPS at the container level if enabled.",
+      "time": "10:02",
+      "timestamp": "1754413331.795149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Abhinav here are my proposed changes, if you want to review. I've confirmed they are working in a sandbox.\n\nhttps://github.com/instabase/instabase/pull/73312",
+      "time": "10:02",
+      "timestamp": "1754413348.159469",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "That sounds reasonable. For typical ELB setup we do forced redirect to 80. We'd probably want to do the same if SSL is enabled back to nginx",
+      "time": "10:03",
+      "timestamp": "1754413384.384219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In other words: rather than adding the entire nginx config to a config map, we set env vars to enable/disable SSL and configure SSL certs. That way, there is less surface area to misconfigure.",
+      "time": "10:05",
+      "timestamp": "1754413548.487319",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "I am not sure we can do that with nginx. everything goes in the nginx config file.\nhttps://docs.nginx.com/nginx/admin-guide/security-controls/terminating-ssl-http/",
+      "time": "10:09",
+      "timestamp": "1754413788.394389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It's possible, but you can let me worry about that when the time comes. For now, let's leave it as-is.",
+      "time": "10:10",
+      "timestamp": "1754413852.015689",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ultimately the more 'right' fix is to have everything encrypted on the wire for all cases... but that's an entire \"implement a real service mesh and deprecate mesh-manager\" initiative.\n\nFor now these interim stages seem very reasonable. :slightly_smiling_face:",
+      "time": "11:05",
+      "timestamp": "1754417126.347539",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "we will need this soon to enable mTLS for Nationwide, which will require terminating TLS at server-nginx",
+      "time": "11:09",
+      "timestamp": "1754417398.161199",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Technically they can today, using something like Jason shared I think",
+      "time": "11:49",
+      "timestamp": "1754419793.919539",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(assuming it's a customer-managed install)",
+      "time": "11:50",
+      "timestamp": "1754419802.204629",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "Nationwide is SaaS",
+      "time": "12:05",
+      "timestamp": "1754420728.927449",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Gotcha\nYea I'm no help there, for the moment. lol",
+      "time": "12:17",
+      "timestamp": "1754421450.147849",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-08-05.json",
+    "message_count": 35,
+    "start_time": "1754404410.294069",
+    "end_time": "1754421450.147849",
+    "is_thread": true
+  }
+}

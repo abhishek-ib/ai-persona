@@ -1,0 +1,134 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-08-01_1722548744.650139_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Xindi Xu",
+    "Cheryl Zhou"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I got a unit test error on master locally and in CI (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-60687/2/pipeline). It seems like we might be using an incorrect version of ray :thinking_face: . Has anyone seen this error before?\n```Running tests in instabase_unit_tests.instabase.handler.api.v1.test_model\nE\n======================================================================\nERROR: test_model (unittest.loader._FailedTest)\n----------------------------------------------------------------------\nImportError: Failed to import test module: test_model\nTraceback (most recent call last):\n  File \"/usr/local/pyenv/versions/3.9.17/lib/python3.9/unittest/loader.py\", line 154, in loadTestsFromName\n    module = __import__(module_name)\n  File \"/home/owner/instabase/webserver/api-server/build/test/py/instabase_unit_tests/instabase/handler/api/v1/test_model.py\", line 15, in <module>\n    from ray.dashboard.modules.job.pydantic_models import (DriverInfo, JobDetails,\n  File \"/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/ray/dashboard/modules/job/pydantic_models.py\", line 4, in <module>\n    from ray._private.pydantic_compat import BaseModel, Field, PYDANTIC_INSTALLED\n  File \"/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/ray/_private/pydantic_compat.py\", line 2, in <module>\n    from pkg_resources import packaging\nImportError: cannot import name 'packaging' from 'pkg_resources' (/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/pkg_resources/__init__.py)```",
+      "time": "14:45",
+      "timestamp": "1722548744.650139",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "something related to setuptools? https://github.com/pytorch/serve/issues/3176#issuecomment-2162155926",
+      "time": "15:23",
+      "timestamp": "1722551026.901109",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "oh interesting but i haven't merged my PR yet :thinking_face:",
+      "time": "16:57",
+      "timestamp": "1722556655.589629",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ah oops, I was blind...",
+      "time": "16:58",
+      "timestamp": "1722556683.394869",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "but this is exactly what you said. we have a ray, setuptools version mismatch",
+      "time": "16:58",
+      "timestamp": "1722556720.554179",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "I think we need to revert this: https://github.com/instabase/instabase/pull/60675",
+      "time": "17:00",
+      "timestamp": "1722556834.125219",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, after reverting, the test passed locally.",
+      "time": "17:04",
+      "timestamp": "1722557080.882069",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'll revert the PR then. I really wish we ran unit tests on PRs that update packages :sweat_smile:",
+      "time": "17:05",
+      "timestamp": "1722557145.249669",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "yep go for it!",
+      "time": "17:06",
+      "timestamp": "1722557189.189129",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://github.com/instabase/instabase/pull/60709",
+      "time": "17:08",
+      "timestamp": "1722557297.808999",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ty Cheryl!!",
+      "time": "17:13",
+      "timestamp": "1722557639.770439",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Thanks, @Cheryl Zhou and @Xindi Xu\nAny idea why CI didn’t catch this pre-merge on Raman’s PR?",
+      "time": "18:06",
+      "timestamp": "1722560798.341539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "because the CI didn't run at all when the PR only updates package versions :sweat_smile:",
+      "time": "18:42",
+      "timestamp": "1722562931.973619",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "or i think there might be a CI run now but it's non-blocking",
+      "time": "19:12",
+      "timestamp": "1722564720.125209",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-08-01.json",
+    "message_count": 14,
+    "start_time": "1722548744.650139",
+    "end_time": "1722564720.125209",
+    "is_thread": true
+  }
+}

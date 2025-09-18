@@ -1,0 +1,121 @@
+{
+  "id": "ch_C0976HB6ZPT_2025-09-03_1756913586.453429_thread",
+  "type": "channel",
+  "channel_name": "proj-agent-mode",
+  "conversation_type": "thread",
+  "participants": [
+    "Anil",
+    "ayesha.ali",
+    "pauline.comising",
+    "margaret.tomaszczuk",
+    "Weiming Wu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Hey team, did some more extensive testing for agent mode in build, testing all field types on a multi-class proj (https://aihub-sandbox.internal.instabase.com/build/0198ec23-fd01-7c93-87ac-b6f65a07f4ca) with 22+ fields proj wide, and while a lot of core functionality works, here are the findings that should be communicated as known issues for as long as people can run into them on some env while we fix them:\n\n*New findings (afaik) -* \n• List of objects and tables are extracted in flash extraction jobs but aren't displayed\n    ◦ @ayesha.ali investigated and will add bug fix details in this thread\n• Intermittently, field extraction successfully completes in the split-classification/classification and flash extraction jobs, but entire class schemas return `extraction failed`\n*Pre-existing findings -*\n• reasoning fields used to `\"extract all tables\"` should be migrated to fields (can be field type reasoning, text extraction, table) that have a more in depth description for table extraction (aka not dependent on table extraction during digitization)\n• classification after switching to agent mode fails \n• loading already-extracted fields takes longer than expected\nOther than the expected `\"extract all tables\"` issue, the team can work to prioritize, investigate, and fix these (and/or have temporary workarounds to share), so let us know any thoughts here, and please send any other essential bug/usability fixes that we should look into if they aren't here.",
+      "time": "08:33",
+      "timestamp": "1756913586.453429",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "thanks this sounds reasonable",
+      "time": "08:42",
+      "timestamp": "1756914178.583399",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "as for the Build display bug, the problem is that while we currently return the exact value of the field, Build expects a format where every element in the nested field type is acc a dictionary w/ keys `value`, `confidence`, `provenance`. For example, a list of object value for Doc AI looks like: `[{\"name\": \"blah\", \"amount\": \"blah\"}]` but Build expects `[{\"name\": {\"value: \"blah\", \"confidence\": 1.0, \"provenance: ...}, \"amount\": {\"value: \"blah\", \"confidence\": 1.0, \"provenance: ...}}]` .\n\nThe way that this is handled rn in AI Hub, is that Build uses ibllm's direct model response whereas in an app run, we process ibllm's response to match the refined phrase format (confidence and provenance stored separately). Doc AI automatically returns the format used in app runs, but not Build. The solution here is either to 1) change the response schema to match what ibllm returns/Build expects, which itself is not hard (potentially a more complex schema + response) but would require a lot more work in handling new confidences/provenance/refined phrase processing/testing all changes, or 2) the Build frontend can handle the new value structure @Weiming Wu",
+      "time": "08:54",
+      "timestamp": "1756914867.267639",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "^ Thanks! As for the second bullet, I uploaded a new split-class file and some records/docs successfully display flash-extracted fields, and other don't regardless of multiple retries.\n\nWhen I press retry, a flash extraction job kicks off and the results show values for the fields but the display is still `extraction failed`. I notice there's no `PUT /extracted_fields` API is hit after, so we'd also want to explore FE fixes for this\n\n@Weiming Wu given these, let us know if it'd be helpful to chat abt these to align on fixes synchronously",
+      "time": "09:27",
+      "timestamp": "1756916879.447719",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "In terms of prioritization, I'd say resolving the 2nd and 4th would resolve the most disruptive/scariest errors users could face, then fixing the 1st for essential feature parity (low hanging fruit too, considering the model is generating field values), then 5th. Perhaps @margaret.tomaszczuk to confirm\n\nIt would also be helpful to know whether these need to be backported and to which releases",
+      "time": "09:32",
+      "timestamp": "1756917167.287879",
+      "is_reply": true
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "Thanks @pauline.comising!\n\nCan you please throw these items into this epic, and assign to relevant owners with priorities?\n\nhttps://instabase.atlassian.net/browse/AUTO-518\n\nGiven current state, I think we should officially push customer preview. Can we work on updated estimates?\n\nPer convo with @pauline.comising and @ayesha.ali sounds like Mon would be best case but we'll need some feedback from you @Weiming Wu when you're on, as sounds like the two new findings are mostly FE.",
+      "time": "09:43",
+      "timestamp": "1756917804.089669",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "I think it makes sense to just change the format that the FE expects because I already had to change some of that for Doc AI",
+      "time": "10:03",
+      "timestamp": "1756919019.255469",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> • List of objects and tables are extracted in flash extraction jobs but aren't displayed\n> • When I press retry, a flash extraction job kicks off and the results show values for the fields but the display is still `extraction failed`. I notice there's no `PUT /extracted_fields` API is hit after, so we'd also want to explore FE fixes for this\nthese are the 2 FE bugs for @Weiming Wu, right?\n\n> • classification after switching to agent mode fails\nis this a FE issue or BE issue? @pauline.comising",
+      "time": "10:08",
+      "timestamp": "1756919309.669559",
+      "is_reply": true
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "yes those 2 are FE",
+      "time": "10:20",
+      "timestamp": "1756920043.682929",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah yep, for the classification one, I'm looking into it today to identify",
+      "time": "10:59",
+      "timestamp": "1756922361.071959",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Alrighty, so when looking at the logs (https://aihub-sandbox.internal.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22wae%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22celery-app-tasks%5C%22%7D%20%21%3D%20%60path%20here%21%60%20%7C%3D%20%60aihub-build-split-classify-documents%60%20%7C%3D%20%6001990be3-32fd-7c6d-8325-fc6f46216c9c%60%20%7C%3D%20%60ERROR%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22backward%22%7D%5D,%22range%22:%7B%22from%22:%22now-8h%22,%22to%22:%22now-3h%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1) for sam's classification project, the notable error logs are all `RESOURCE_EXHAUSTED` from `vertex-ai` for all 3 of the files. As sam and we have confirmed, this is flaky and my project copy (https://aihub-sandbox.internal.instabase.com/build/019910cb-6648-7566-af44-22216bc494c6) hasn't reproduced this, but yes, different from the `400` error, so will see what can be done on our end? Tomorrow I'll also try and see whether this `RESOURCE_EXHAUSTED` error just has 1 spike of instances or if it's flakiness is consistent, to further identify prevalence",
+      "time": "14:26",
+      "timestamp": "1756934815.043249",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Not much we can do for 429 right now. First instance of it that I have seen.\nNeed to wait and retry.",
+      "time": "14:38",
+      "timestamp": "1756935516.387349",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0976HB6ZPT",
+    "channel_name": "proj-agent-mode",
+    "date_file": "2025-09-03.json",
+    "message_count": 12,
+    "start_time": "1756913586.453429",
+    "end_time": "1756935516.387349",
+    "is_thread": true
+  }
+}

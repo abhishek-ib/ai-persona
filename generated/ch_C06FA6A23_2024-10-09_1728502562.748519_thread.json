@@ -1,0 +1,85 @@
+{
+  "id": "ch_C06FA6A23_2024-10-09_1728502562.748519_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "William Helmrath"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":alarm: *24.07 certify is blocked*\n\nHowdy! I need some help with failing dependency installs in the `server-nginx` build on `24.07.0-enterprise`\n\nhttps://jenkins.instabase.com/job/deploy-service-v2/1315410/consoleFull\nFailing with things like:\n```12:07:33  Module not found: Error: Can't resolve 'date-fns/endOfMonth' in '/tmp/workspace/8e479a6d-01e9-4ec5-a7d8-9fc1bab6fbb1/webserver/shared/src/js/webpacked/node_modules/@instabase.com/pollen/node_modules/react-datepicker/dist'```\nI have zero clue how anything frontend related works, so I'll need a hand digging into this one\n\nWe can't certify 24.07 until we get this one ironed out :confused:",
+      "time": "12:36",
+      "timestamp": "1728502562.748519",
+      "is_reply": false
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Weird, we’re seeing this in a build off of master as well: https://instabase.slack.com/archives/C058UFAGWTF/p1728502796558259?thread_ts=1728499236.483869&cid=C058UFAGWTF",
+      "time": "12:43",
+      "timestamp": "1728502984.827129",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "I don’t believe anything’s changed recently with our frontend packages though",
+      "time": "12:43",
+      "timestamp": "1728503004.602559",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":man-shrugging::skin-tone-3:\nPerhaps an NPM outage, I'll take a peek",
+      "time": "12:45",
+      "timestamp": "1728503127.407279",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "On a page that means absolutely nothing to me, NPM is up and fine. lol\nhttps://status.npmjs.org/",
+      "time": "12:48",
+      "timestamp": "1728503302.013549",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Small chance it's a weird stuck node, but Jenkins doesn't tell me anything of use so I'm not sure. It seems unlikely, but also... the evidence is mounting. lmao\n\nA spot check of the deploy-service-v2 (https://jenkins.instabase.com/job/deploy-service-v2/) runs today reveals that they are all failing on `server-nginx`, across multiple branches, and they all appear to have been run on the same node that I just deleted.\n\nWe'll see if any of the rebuilds pass. If not there's probably something wacky with the stupid builder and I'll see what I can see",
+      "time": "12:57",
+      "timestamp": "1728503862.749769",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Seems it might get past this nonsense this time: https://jenkins.instabase.com/job/deploy-service-v2/1315420/console",
+      "time": "13:05",
+      "timestamp": "1728504332.345839",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ok, rescinding the :alarm:, just Jenkins being... well, its normal painful self. :upside_down_face:\n\nApologies for the blast, it didn't look like something that was failing due to a builder instance issue by the normal patterns - think we're good now, I'll kick sandboxes again as needed. :+1:",
+      "time": "13:20",
+      "timestamp": "1728505206.445389",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-09.json",
+    "message_count": 8,
+    "start_time": "1728502562.748519",
+    "end_time": "1728505206.445389",
+    "is_thread": true
+  }
+}

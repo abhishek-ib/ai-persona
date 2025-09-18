@@ -1,0 +1,229 @@
+{
+  "id": "ch_C06FA6A23_2024-09-05_1725546837.796709_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Sayd",
+    "Bala"
+  ],
+  "messages": [
+    {
+      "sender": "Bala",
+      "user_id": "U045MQSQYKB",
+      "message": "*Dependency issue encountered while upgrading tornado for celery-webdriver-tasks:*\n\nWhile attempting to upgrade tornado from 6.3.3 to 6.4.1 for celery-webdriver-tasks on the  `release-24.01.0-enterprise` branch, encountered a dependency failure with Scikit-learn. @Sayd, it appears that this issue is likely be related to the changes introduced in the PR (https://github.com/instabase/instabase/pull/62118) couple of days back. Could you please help take a look?\n\ncc: @Abhishek @Balaram\n\n```balam@R2TWVMKHCX-Balamurugan-M webdriver-tasks % poetry add tornado==6.4.1\n\nUpdating dependencies\nResolving dependencies... (3.0s)\n\nPackage operations: 0 installs, 2 updates, 0 removals\n\n • Updating scikit-learn (1.4.dev0 939e376 -> 0.23.2 4e35641): Failed\n\n ChefBuildError\n\n Backend 'setuptools.build_meta:__legacy__' is not available.\n\n at ~/Library/Application Support/pypoetry/venv/lib/python3.9/site-packages/poetry/installation/chef.py:152 in _prepare\n   148│ \n   149│         error = ChefBuildError(\"\\n\\n\".join(message_parts))\n   150│ \n   151│       if error is not None:\n  → 152│         raise error from None\n   153│ \n   154│       return path\n   155│ \n   156│   def _prepare_sdist(self, archive: Path, destination: Path | None = None) -> Path:```",
+      "time": "07:33",
+      "timestamp": "1725546837.796709",
+      "is_reply": false
+    },
+    {
+      "sender": "Bala",
+      "user_id": "U045MQSQYKB",
+      "message": "The tag is different in `release-24.04.0-enterprise` and it is breaking in this release branch.",
+      "time": "08:04",
+      "timestamp": "1725548683.847089",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "It's only breaking in 24.01?",
+      "time": "08:06",
+      "timestamp": "1725548773.828499",
+      "is_reply": true
+    },
+    {
+      "sender": "Bala",
+      "user_id": "U045MQSQYKB",
+      "message": "Yep",
+      "time": "08:06",
+      "timestamp": "1725548784.748459",
+      "is_reply": true
+    },
+    {
+      "sender": "Bala",
+      "user_id": "U045MQSQYKB",
+      "message": "The PR wasn’t backported to 24.04.",
+      "time": "08:08",
+      "timestamp": "1725548881.226129",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "Yes, so we were trying to switch back to older version of scikit-learn for 24.01, 23.07 and 23.10 because some models built on there depend on older version (which was accidentally upgraded recently)",
+      "time": "08:08",
+      "timestamp": "1725548934.577129",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "It seems like because we pinned setuptools in 0.23.2-ib to a `\"setuptools==73.0.1\"` . can you check\n```poetry show setuptools```",
+      "time": "08:15",
+      "timestamp": "1725549342.595209",
+      "is_reply": true
+    },
+    {
+      "sender": "Bala",
+      "user_id": "U045MQSQYKB",
+      "message": "```balam@R2TWVMKHCX-Balamurugan-M webdriver-tasks % poetry show setuptools\n name     : setuptools                                \n version   : 69.5.1                                  \n description : Easily download, build, install, upgrade, and uninstall Python packages \n\nrequired by\n - grpcio-tools *\n - incremental >=61.0\n - scrapy *\n - spacy *\n - zope-event *\n - zope-interface *```",
+      "time": "08:16",
+      "timestamp": "1725549396.755439",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "thanks, and what's your poetry --version?",
+      "time": "08:17",
+      "timestamp": "1725549479.252589",
+      "is_reply": true
+    },
+    {
+      "sender": "Bala",
+      "user_id": "U045MQSQYKB",
+      "message": "1.4.1",
+      "time": "08:18",
+      "timestamp": "1725549498.925139",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "based on this github thread (https://github.com/python-poetry/poetry/issues/7611), the issue seems to be related to the \"modern installer\" introduced in Poetry 1.4.0. A fix was implemented in PR #8517 (https://github.com/python-poetry/poetry/pull/8517), which was included in Poetry 1.7.0. Could you please try upgrade your poetry to 1.8.x and try adding that package again?",
+      "time": "08:19",
+      "timestamp": "1725549568.558379",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "You can run `poetry lock --no-update` after upgrading the poetry to the newer version in the same directory of poetry.toml",
+      "time": "08:20",
+      "timestamp": "1725549615.383969",
+      "is_reply": true
+    },
+    {
+      "sender": "Bala",
+      "user_id": "U045MQSQYKB",
+      "message": "```balam@R2TWVMKHCX-Balamurugan-M webdriver-tasks % poetry add tornado==6.4.1                        \n\nUpdating dependencies\nResolving dependencies... (1.1s)\n\nPackage operations: 0 installs, 2 updates, 0 removals\n\n - Downgrading scikit-learn (1.4.dev0 939e376 -> 0.23.2 4e35641): Failed\n\n ChefInstallError\n\n Failed to install Cython>=0.28.5, <3.0.0, numpy==1.16.0; python_version=='3.7' and platform_system=='AIX', numpy==1.13.3; python_version=='3.6' and platform_system!='AIX' and platform_python_implementation == 'CPython', numpy==1.14.5; python_version=='3.7' and platform_system!='AIX', numpy==1.17.3; python_version>='3.8' and platform_system!='AIX', numpy==1.16.0; python_version=='3.6' and platform_system=='AIX', numpy==1.14.0; python_version=='3.6' and platform_system!='AIX' and platform_python_implementation != 'CPython', scipy>=0.19.1, wheel, numpy==1.17.3; python_version>='3.8' and platform_system=='AIX', setuptools.\n  \n Output:\n Updating dependencies\n Resolving dependencies...\n  \n Package operations: 5 installs, 0 updates, 0 removals\n  \n  - Installing numpy (1.17.3)\n  \n  ChefBuildError\n  \n  Backend subprocess exited when trying to invoke build_wheel\n   \n  Running from numpy source directory.\n  Traceback (most recent call last):\n   File \"/Users/balam/Library/Application Support/pypoetry/venv/lib/python3.9/site-packages/pyproject_hooks/_in_process/_in_process.py\", line 373, in <module>\n    main()\n   File \"/Users/balam/Library/Application Support/pypoetry/venv/lib/python3.9/site-packages/pyproject_hooks/_in_process/_in_process.py\", line 357, in main\n    json_out[\"return_val\"] = hook(**hook_input[\"kwargs\"])\n   File \"/Users/balam/Library/Application Support/pypoetry/venv/lib/python3.9/site-packages/pyproject_hooks/_in_process/_in_process.py\", line 271, in build_wheel\n    return _build_backend().build_wheel(\n   File \"/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmpbeyud5zg/.venv/lib/python3.9/site-packages/setuptools/build_meta.py\", line 421, in build_wheel\n    return self._build_with_temp_dir(\n   File \"/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmpbeyud5zg/.venv/lib/python3.9/site-packages/setuptools/build_meta.py\", line 403, in _build_with_temp_dir\n    self.run_setup()\n   File \"/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmpbeyud5zg/.venv/lib/python3.9/site-packages/setuptools/build_meta.py\", line 503, in run_setup\n    super().run_setup(setup_script=setup_script)\n   File \"/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmpbeyud5zg/.venv/lib/python3.9/site-packages/setuptools/build_meta.py\", line 318, in run_setup\n    exec(code, locals())\n   File \"<string>\", line 443, in <module>\n   File \"<string>\", line 422, in setup_package\n   File \"/private/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmpwofdkzw7/numpy-1.17.3/numpy/distutils/core.py\", line 26, in <module>\n    from numpy.distutils.command import config, config_compiler, \\\n   File \"/private/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmpwofdkzw7/numpy-1.17.3/numpy/distutils/command/config.py\", line 20, in <module>\n    from numpy.distutils.mingw32ccompiler import generate_manifest\n   File \"/private/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmpwofdkzw7/numpy-1.17.3/numpy/distutils/mingw32ccompiler.py\", line 34, in <module>\n    from distutils.msvccompiler import get_build_version as get_build_msvc_version\n  ModuleNotFoundError: No module named 'distutils.msvccompiler'\n   \n  \n  at ~/Library/Application Support/pypoetry/venv/lib/python3.9/site-packages/poetry/installation/chef.py:164 in _prepare\n    160│ \n    161│         error = ChefBuildError(\"\\n\\n\".join(message_parts))\n    162│ \n    163│       if error is not None:\n   → 164│         raise error from None\n    165│ \n    166│       return path\n    167│ \n    168│   def _prepare_sdist(self, archive: Path, destination: Path | None = None) -> Path:\n  \n Note: This error originates from the build backend, and is likely not a problem with poetry but with numpy (1.17.3) not supporting PEP 517 builds. You can verify this by running 'pip wheel --no-cache-dir --use-pep517 \"numpy (==1.17.3)\"'.\n  \n  \n  \n Error:\n  \n\n at ~/Library/Application Support/pypoetry/venv/lib/python3.9/site-packages/poetry/installation/chef.py:102 in install\n     98│       InstalledRepository.load(self._env),\n     99│     )\n   100│     installer.update(True)\n   101│     if installer.run() != 0:\n  → 102│       raise ChefInstallError(requirements, io.fetch_output(), io.fetch_error())\n   103│ \n   104│ \n   105│ class Chef:\n   106│   def __init__(\n\nCannot install build-system.requires for scikit-learn.```",
+      "time": "08:24",
+      "timestamp": "1725549867.565299",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "Thank you! Okay, now we see a numpy related issue, let me try do it on my local machine and see how it goes",
+      "time": "08:28",
+      "timestamp": "1725550136.907319",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "it succeeded for me",
+      "time": "08:31",
+      "timestamp": "1725550270.740349",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "are you using python 3.9.17",
+      "time": "08:32",
+      "timestamp": "1725550353.063779",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "`Poetry (version 1.8.2)`",
+      "time": "08:32",
+      "timestamp": "1725550367.188799",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "https://github.com/instabase/instabase/pull/62230/files",
+      "time": "08:37",
+      "timestamp": "1725550658.161849",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "if this helps",
+      "time": "08:37",
+      "timestamp": "1725550662.041489",
+      "is_reply": true
+    },
+    {
+      "sender": "Bala",
+      "user_id": "U045MQSQYKB",
+      "message": "Python 3.9.17 and poetry 1.8.3",
+      "time": "08:43",
+      "timestamp": "1725550980.394889",
+      "is_reply": true
+    },
+    {
+      "sender": "Bala",
+      "user_id": "U045MQSQYKB",
+      "message": "```balam@R2TWVMKHCX-Balamurugan-M webdriver-tasks % poetry add tornado==6.4.1\n\nUpdating dependencies\nResolving dependencies... (1.1s)\n\nPackage operations: 0 installs, 2 updates, 0 removals\n\n - Downgrading scikit-learn (1.4.dev0 939e376 -> 0.23.2 4e35641): Failed\n\n ChefInstallError```\nNow the error says Downgrading scikit-learn post updating poetry:thinking_face:.",
+      "time": "12:22",
+      "timestamp": "1725564146.220189",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "are there any details of the error",
+      "time": "12:31",
+      "timestamp": "1725564717.521299",
+      "is_reply": true
+    },
+    {
+      "sender": "Bala",
+      "user_id": "U045MQSQYKB",
+      "message": "```Updating dependencies\nResolving dependencies... (1.1s)\n\nPackage operations: 0 installs, 2 updates, 0 removals\n\n - Downgrading scikit-learn (1.4.dev0 939e376 -> 0.23.2 4e35641): Failed\n\n ChefInstallError\n\n Failed to install numpy==1.13.3; python_version=='3.6' and platform_system!='AIX' and platform_python_implementation == 'CPython', setuptools, numpy==1.16.0; python_version=='3.6' and platform_system=='AIX', numpy==1.14.0; python_version=='3.6' and platform_system!='AIX' and platform_python_implementation != 'CPython', wheel, Cython>=0.28.5, <3.0.0, numpy==1.14.5; python_version=='3.7' and platform_system!='AIX', scipy>=0.19.1, numpy==1.17.3; python_version>='3.8' and platform_system!='AIX', numpy==1.16.0; python_version=='3.7' and platform_system=='AIX', numpy==1.17.3; python_version>='3.8' and platform_system=='AIX'.\n  \n Output:\n Updating dependencies\n Resolving dependencies...\n  \n Package operations: 5 installs, 0 updates, 0 removals\n  \n  - Installing numpy (1.17.3)\n  \n  ChefBuildError\n  \n  Backend subprocess exited when trying to invoke build_wheel\n   \n  Running from numpy source directory.\n  Traceback (most recent call last):\n   File \"/Users/balam/Library/Application Support/pypoetry/venv/lib/python3.9/site-packages/pyproject_hooks/_in_process/_in_process.py\", line 373, in <module>\n    main()\n   File \"/Users/balam/Library/Application Support/pypoetry/venv/lib/python3.9/site-packages/pyproject_hooks/_in_process/_in_process.py\", line 357, in main\n    json_out[\"return_val\"] = hook(**hook_input[\"kwargs\"])\n   File \"/Users/balam/Library/Application Support/pypoetry/venv/lib/python3.9/site-packages/pyproject_hooks/_in_process/_in_process.py\", line 271, in build_wheel\n    return _build_backend().build_wheel(\n   File \"/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmpg5q3zuaz/.venv/lib/python3.9/site-packages/setuptools/build_meta.py\", line 421, in build_wheel\n    return self._build_with_temp_dir(\n   File \"/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmpg5q3zuaz/.venv/lib/python3.9/site-packages/setuptools/build_meta.py\", line 403, in _build_with_temp_dir\n    self.run_setup()\n   File \"/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmpg5q3zuaz/.venv/lib/python3.9/site-packages/setuptools/build_meta.py\", line 503, in run_setup\n    super().run_setup(setup_script=setup_script)\n   File \"/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmpg5q3zuaz/.venv/lib/python3.9/site-packages/setuptools/build_meta.py\", line 318, in run_setup\n    exec(code, locals())\n   File \"<string>\", line 443, in <module>\n   File \"<string>\", line 422, in setup_package\n   File \"/private/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmp8ib5bp4d/numpy-1.17.3/numpy/distutils/core.py\", line 26, in <module>\n    from numpy.distutils.command import config, config_compiler, \\\n   File \"/private/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmp8ib5bp4d/numpy-1.17.3/numpy/distutils/command/config.py\", line 20, in <module>\n    from numpy.distutils.mingw32ccompiler import generate_manifest\n   File \"/private/var/folders/bm/ftyky97s71vcfjt5hgf3z8pw0000gn/T/tmp8ib5bp4d/numpy-1.17.3/numpy/distutils/mingw32ccompiler.py\", line 34, in <module>\n    from distutils.msvccompiler import get_build_version as get_build_msvc_version\n  ModuleNotFoundError: No module named 'distutils.msvccompiler'\n   \n  \n  at ~/Library/Application Support/pypoetry/venv/lib/python3.9/site-packages/poetry/installation/chef.py:164 in _prepare\n    160│ \n    161│         error = ChefBuildError(\"\\n\\n\".join(message_parts))\n    162│ \n    163│       if error is not None:\n   → 164│         raise error from None\n    165│ \n    166│       return path\n    167│ \n    168│   def _prepare_sdist(self, archive: Path, destination: Path | None = None) -> Path:\n  \n Note: This error originates from the build backend, and is likely not a problem with poetry but with numpy (1.17.3) not supporting PEP 517 builds. You can verify this by running 'pip wheel --no-cache-dir --use-pep517 \"numpy (==1.17.3)\"'.\n  \n  \n  \n Error:\n  \n\n at ~/Library/Application Support/pypoetry/venv/lib/python3.9/site-packages/poetry/installation/chef.py:102 in install\n     98│       InstalledRepository.load(self._env),\n     99│     )\n   100│     installer.update(True)\n   101│     if installer.run() != 0:\n  → 102│       raise ChefInstallError(requirements, io.fetch_output(), io.fetch_error())\n   103│ \n   104│ \n   105│ class Chef:\n   106│   def __init__(\n\nCannot install build-system.requires for scikit-learn.```",
+      "time": "12:33",
+      "timestamp": "1725564816.194229",
+      "is_reply": true
+    },
+    {
+      "sender": "Bala",
+      "user_id": "U045MQSQYKB",
+      "message": "```ModuleNotFoundError: No module named 'distutils.msvccompiler'```\nSeems there is a dependency on this package",
+      "time": "12:35",
+      "timestamp": "1725564951.531459",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "cc: @Aaron Tami have you encountered this issue before?",
+      "time": "12:41",
+      "timestamp": "1725565295.841649",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "i think it's the issue with numpy version as it's supposed to be `numpy==1.22.3` and not download 1.17",
+      "time": "12:43",
+      "timestamp": "1725565382.952399",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-09-05.json",
+    "message_count": 26,
+    "start_time": "1725546837.796709",
+    "end_time": "1725565382.952399",
+    "is_thread": true
+  }
+}

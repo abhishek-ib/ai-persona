@@ -1,0 +1,138 @@
+{
+  "id": "ch_C06FA6A23_2023-07-06_1688626885.801819_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Xindi Xu",
+    "Balaram",
+    "Ashish",
+    "naveen",
+    "Heymian",
+    "Rohit Jain"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Has anyone been able to make Postman (or cURL) API requests to our customer Saas environments? It seems like CSRF protection is enabled in these environments and is blocking our requests, even if we use an API token (which seems like a bug). Essentially, it seems like we can’t make any direct API calls on these environments.",
+      "time": "00:01",
+      "timestamp": "1688626885.801819",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "cc @Rohit Jain",
+      "time": "00:02",
+      "timestamp": "1688626958.537399",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ":thinking_face: I have CSRF enabled in my local env and I'm able to make requests via Postman with oauth token",
+      "time": "00:10",
+      "timestamp": "1688627409.808669",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Interesting. I was able to make requests to dogfood and prod without hitting the csrf protection. I haven't thought about enabling csrf locally though, which I should test",
+      "time": "00:12",
+      "timestamp": "1688627565.106829",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "But we were hitting csrf protection on a customer environment so there must be something special going on (maybe an extra env variable or something)",
+      "time": "00:14",
+      "timestamp": "1688627643.605059",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "We can enable csrf locally by setting use_ntbk to true.",
+      "time": "00:16",
+      "timestamp": "1688627789.152959",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "cc @Balaram for visibility",
+      "time": "00:29",
+      "timestamp": "1688628578.332909",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "I will connect with @Rohit Jain to understand this issue. This is happening with P&G SaaS dev environment",
+      "time": "00:52",
+      "timestamp": "1688629926.283779",
+      "is_reply": true
+    },
+    {
+      "sender": "Rohit Jain",
+      "user_id": "U02P2NDKQGJ",
+      "message": "CC @Alex Sgueglia @Swathy N",
+      "time": "02:59",
+      "timestamp": "1688637550.346279",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "Thanks Saumya for helping with the API token.\n\nI am able to make API calls from POSTMAN and it is working as expected. I have validated the below APIs\n\nhttps://pg.dev.instabase.com/api/v2/solutions/deployed?state=ACTIVE\n\nhttps://pg.dev.instabase.com/api/v1/spaces/list\n\nhttps://pg.dev.instabase.com/api/v1/flow_metrics/jobs\n\nPls note, the CSRF changes we made for AIHUB will be enabled only when the ENABLE_PUBLIC_AIHUB flag is set to true.",
+      "time": "03:09",
+      "timestamp": "1688638185.432969",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "Connected with @Rohit Jain, we are facing issues only when connecting to Solution Builder APIs which is part of apps-server.\n\nFor apps-server, we are using the default CSRFProtect from flask. So the check to bypass CSRF based on\n\n`request.headers['Origin'] == 'INSTABASE_ORIGIN'`\n\nwon't be valid.",
+      "time": "03:10",
+      "timestamp": "1688638227.208289",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Thanks for looking into this. Let me bring in some backend folks.\n\n@naveen @Heymian We have a custom CSRF implementation in `api-server` that allows users to bypass CSRF by adding an `Origin: INSTABASE_ORIGIN` header. The problem is that `apps-server` is not using our custom implementation (rather, the stock flask one) thus we can’t bypass CSRF and make Postman/cURL calls to SB. I know `apps-server` isn’t meant for public consumption, but for the purposes of SEs needing to do direct calls, should we switch the implementation to stock to our custom one so that they have an escape hatch?\n\nExact code for api-server: Link (https://github.com/instabase/instabase/blob/a4422f95de059f2ea3a20d1efa96be6e1645e2ab/webserver/api-server/src/py/manage_api_server.py#L59)\nExact code for apps-server (note that we’re not using our custom `CSRFProtectForAPI()`): Link (https://github.com/instabase/instabase/blob/a4422f95de059f2ea3a20d1efa96be6e1645e2ab/webserver/apps-server/src/py/manage_apps_server.py#L52)",
+      "time": "11:49",
+      "timestamp": "1688669392.798739",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I didn’t read the full thread, but what edpoint(s) are SE’s trying to call in apps-server? If they need to call it as an API, any reason not to design it as a proper API in api-server?",
+      "time": "13:00",
+      "timestamp": "1688673626.931819",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "They’d like to call the Solution Builder endpoints. These endpoints _should_ live in api-server but they already live in apps-server. Moving them would be an entire effort.",
+      "time": "14:16",
+      "timestamp": "1688678166.116349",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-07-06.json",
+    "message_count": 14,
+    "start_time": "1688626885.801819",
+    "end_time": "1688678166.116349",
+    "is_thread": true
+  }
+}

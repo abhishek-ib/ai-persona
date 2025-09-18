@@ -1,0 +1,166 @@
+{
+  "id": "ch_C0516UPPMT3_2024-11-18_1731980054.742929_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Serena",
+    "Sayan",
+    "andy"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I'm doing some testing for UAT and tried adding a field while building a project here. I like that it was able to extract that \"dob\" --> \"date of birth\" and was able to successfully get the date. I think it took at least 4 or 5 seconds. Is there some SLA on how much time extractions should take?",
+      "time": "17:34",
+      "timestamp": "1731980054.742929",
+      "is_reply": false
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "CC: @Serena",
+      "time": "17:35",
+      "timestamp": "1731980153.598669",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Sayan please share your Build project URL (which contains the project id) so that we can investigate further",
+      "time": "21:38",
+      "timestamp": "1731994689.839069",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i searched the `model-service` logs for `dob` around the time of your Slack message, and i saw that `model-service` received the request at 5:31:02pm and returned a result at 5:31:04pm (screenshots 1 and 2)\n\ni also searched the celery-app-tasks logs, and `celery-app-tasks` received the request at 5:31:05pm and finished the extraction task at 5:31:05pm",
+      "time": "21:54",
+      "timestamp": "1731995648.986449",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "This is the project\n\nhttps://aihub-uat.internal.instabase.com/build/01934209-7684-7c21-8efd-16316aa6c772\n\nThese are the two files I used as sample files. So for `passport-card-sample` (with passport card number ending 6), the upload took some time as well",
+      "time": "21:54",
+      "timestamp": "1731995679.809699",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems that this project is not in a shared workspace - which workspace did you put this project in?",
+      "time": "21:55",
+      "timestamp": "1731995719.481019",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "It seems this is in my own workspace. Let me see if I can share it",
+      "time": "21:56",
+      "timestamp": "1731995781.635039",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "how did you even upload these files? we don’t allow upload of `.webp` files into Build",
+      "time": "21:56",
+      "timestamp": "1731995809.140809",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "what org is `uat-24-26` in? is it in “Instabase UAT Internal” or “Instabase UAT Org”?",
+      "time": "21:59",
+      "timestamp": "1731995980.632809",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Moved the project to `uat-24-46`, the project url seems to be the same: https://aihub-uat.internal.instabase.com/build/01934209-7684-7c21-8efd-16316aa6c772\n\nIt's in Instabase UAT Internal",
+      "time": "22:00",
+      "timestamp": "1731996044.185029",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah, my `<mailto:serena.wang+aihub-uat-internal@instabase.com|serena.wang+aihub-uat-internal@instabase.com>` account in “Instabase UAT Internal” is an org member, not an org admin, and i don’t have access to `uat-24-26`\n\nare you able to add me to the `uat-24-26` workspace?",
+      "time": "22:01",
+      "timestamp": "1731996082.425079",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "oops, in my deleted message, i wrote 26, I meant 46. Let me see if you're an admin in that",
+      "time": "22:02",
+      "timestamp": "1731996131.296399",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "aghhh the site is now not loading :disappointed:",
+      "time": "22:05",
+      "timestamp": "1731996342.380819",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "aihub-uat is in the middle of being deployed, so you might see some slowness / errors on-and-off rn",
+      "time": "22:07",
+      "timestamp": "1731996437.871509",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "to summarize - from the backend logs, the extraction request is completed within 1s, so we’ll need to investigate from the frontend side why you see the result only after ~5s\n\nto answer your original question - text extraction fields should run quite quickly (1-2s), especially for short documents like this passport\n\nwe do expect longer latency (5-10s) for list extraction / table extraction / document reasoning / visual reasoning fields",
+      "time": "22:09",
+      "timestamp": "1731996578.407739",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "@Serena I was able to add you as an admin. I also took a screen recording under the admin account (`<mailto:support-testing+aihub-uat-internal-org-admin@instabase.com|support-testing+aihub-uat-internal-org-admin@instabase.com>`). The original screenshot in this thread didn't seem to be in the middle of a deployment and I can re-test this again tomorrow to see if this is transient",
+      "time": "22:33",
+      "timestamp": "1731997982.452899",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m able to open the project now!\n\nthe problem is that the `POST /api/v2/aihub/build/projects/01934209-7684-7c21-8efd-16316aa6c772/extraction` call took >11s\n\nit takes ~2s after that to get the extracted result",
+      "time": "22:44",
+      "timestamp": "1731998680.187959",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i see a `Re-indexing succeeded for all outdated documents` line in the `api-server` logs (https://aihub-uat.internal.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22y7n%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22api-server%5C%22%7D%20%7C%3D%20%60%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%22now-5m%22,%22to%22:%22now%22%7D%7D%7D&orgId=1) right before the `/extraction` API returns a response\n\n@upendra in what cases do we expect re-indexing to be necessary? since we just uploaded these documents into the Build project, these documents shouldn’t have an outdated index version, right?",
+      "time": "22:54",
+      "timestamp": "1731999244.163949",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-11-18.json",
+    "message_count": 18,
+    "start_time": "1731980054.742929",
+    "end_time": "1731999244.163949",
+    "is_thread": true
+  }
+}

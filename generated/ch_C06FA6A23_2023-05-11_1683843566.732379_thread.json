@@ -1,0 +1,53 @@
+{
+  "id": "ch_C06FA6A23_2023-05-11_1683843566.732379_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Serena",
+    "Kathy Wu"
+  ],
+  "messages": [
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "Hi team, would anyone know why request headers being sent on dogfood could be different from the ones being sent on localhost? I found that the `IB-No-Cache`  header is missing on the text editor `saveFile` request, but it still exists when I save a file on localhost. I've checked that my localhost is on the latest master, so it should have the same code as dogfood.\n\nScreenshots below (both are for saving a python file in text editor):",
+      "time": "15:19",
+      "timestamp": "1683843566.732379",
+      "is_reply": false
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "the header is correctly sent on localhost, uat, and prod, just not dogfood :thinking_face: This is causing a refiner bug on dogfood because the file cache isn't updating for the saved file",
+      "time": "15:20",
+      "timestamp": "1683843636.059479",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@songeun.you it’s because `TextEditorAppNew` calls (https://github.com/instabase/instabase/commit/5591a928691de68e1482106e9211ed3d735ac926) `useSaveFile` , which calls (https://github.com/instabase/instabase/blob/5591a928691de68e1482106e9211ed3d735ac926/webserver/shared/src/js/webpacked/apps/src/text-editor/components/TextEditorApp/TextEditorApp.utils.ts#L107) `writeFilesWithToast`, which doesn’t pass `useCache` to `writeFile`\n\nthe previously used `saveFile` util did pass  (https://github.com/instabase/instabase/blob/5591a928691de68e1482106e9211ed3d735ac926/webserver/shared/src/js/webpacked/apps/src/text-editor/components/TextEditorApp/TextEditorApp.utils.ts#L27)`useCache` to `writeFile`",
+      "time": "16:02",
+      "timestamp": "1683846172.277159",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think the fix is to set `useCache` based on whether the file extension is `.py` or `.txt` here https://github.com/instabase/instabase/blob/5591a928691de68e1482106e9211ed3d735ac9[…]-editor/components/TextEditorApp/TextEditorAppNew.component.tsx (https://github.com/instabase/instabase/blob/5591a928691de68e1482106e9211ed3d735ac926/webserver/shared/src/js/webpacked/apps/src/text-editor/components/TextEditorApp/TextEditorAppNew.component.tsx#L190)\n\nthis will get sent through `writeFilesWithToast` to the `writeFile` API util",
+      "time": "16:05",
+      "timestamp": "1683846337.699429",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-05-11.json",
+    "message_count": 4,
+    "start_time": "1683843566.732379",
+    "end_time": "1683846337.699429",
+    "is_thread": true
+  }
+}

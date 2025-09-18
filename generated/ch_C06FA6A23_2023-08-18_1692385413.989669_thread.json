@@ -1,0 +1,207 @@
+{
+  "id": "ch_C06FA6A23_2023-08-18_1692385413.989669_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerr Yoo",
+    "Xindi Xu",
+    "jean",
+    "Ashwin"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://instabase.com/docs/apis/ (our API doc page) is returning 404. Do we want to add a redirect to this page https://instabase.com/docs/23.07/apis/index.html?",
+      "time": "12:03",
+      "timestamp": "1692385413.989669",
+      "is_reply": false
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "Oh, interesting, @Xindi Xu, thanks for catching this. @Ashwin, @amit.gupta, I know the redirect for instabase.com/docs/ (http://instabase.com/docs/) is working, so I would have expected this to redirect already; can someone from your team take a look?",
+      "time": "12:55",
+      "timestamp": "1692388501.929669",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Cc <!subteam^S02FJA6A7U5>",
+      "time": "12:55",
+      "timestamp": "1692388535.460889",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "how urgent is this? I can apply a patch that will resolve this immediately, or I can check in the patch to github, which may take a few hours",
+      "time": "12:57",
+      "timestamp": "1692388662.411449",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "This will require a base config change since we’re using the templated Nginx config",
+      "time": "12:58",
+      "timestamp": "1692388699.935299",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "(Patching isn’t allowed against templates objects)",
+      "time": "12:58",
+      "timestamp": "1692388712.618249",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "ah, so i guess there’s only one way to fix it then. Will make a pr",
+      "time": "13:02",
+      "timestamp": "1692388954.843039",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "We can also deploy our 23.07 release branch to the /docs/ folder so that it at least won’t 404 if redirects aren’t working. (/docs/latest/ to /docs/23.07/ also isn’t working yet, but maybe that wasn’t merged yet)",
+      "time": "13:03",
+      "timestamp": "1692388998.620059",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "deploying to two places isn’t a good long-term fix, though",
+      "time": "13:04",
+      "timestamp": "1692389045.858799",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "here’s the PR (https://github.com/instabase/instabase/pull/45466/files)",
+      "time": "13:16",
+      "timestamp": "1692389786.839179",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "that’s quite curious that the docs/latest doesn’t work. It looks like the config already reflects that",
+      "time": "13:17",
+      "timestamp": "1692389845.595199",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "@Ashwin maybe restarting nginx will do the trick?",
+      "time": "13:18",
+      "timestamp": "1692389900.935819",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "Thanks, @Kerr Yoo. It looks like the PR will fix the redirect for /docs/apis/ but it won’t really fix the root issue, which is that /docs/whatever/ isn’t redirecting to a versioned docs page.\n\nSo, for example, /docs/extract-classify/ won’t redirect to /docs/23.07/extract-classify/ and /docs/index.html won’t redirect to /docs/23.07/index.html.",
+      "time": "13:20",
+      "timestamp": "1692390048.258039",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "The catch may be that /docs/23.04/ should NOT redirect to /docs/23.07/, for reasons that are probably obvious (users need different versions of docs).",
+      "time": "13:22",
+      "timestamp": "1692390178.826829",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "In previous roles, this was solved with regex redirects, but I don’t know if that’s useful or not here.",
+      "time": "13:23",
+      "timestamp": "1692390207.398939",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "that’s true. it looks like the block directly below is doing this regex redirect. Is there any time we want to redirect to wordpress with docs?",
+      "time": "13:25",
+      "timestamp": "1692390302.780479",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "The redirects we’re talking about are all wordpress, so I’m not exactly sure about your question.",
+      "time": "13:26",
+      "timestamp": "1692390364.189639",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "oh i understand now, sorry this is my first time looking at these doc redirects",
+      "time": "13:26",
+      "timestamp": "1692390418.050529",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "let me think of the best way to resolve this, which is likely through a regex redirect, test it, then get back to you",
+      "time": "13:28",
+      "timestamp": "1692390514.842139",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "No worries, and please feel free to ping me with questions! Thank you for looking into it.",
+      "time": "13:30",
+      "timestamp": "1692390621.860539",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "Docs update: To prevent 404s while infra is working on the docs redirects, we’ve deployed the 23.07 docs to instabase.com/docs/ (http://instabase.com/docs/) as well as instabase.com/docs/23.07/ (http://instabase.com/docs/23.07/).\n\nNote that there’s no version switcher on the /docs/ site, but this is only intended as a temporary fix.",
+      "time": "14:10",
+      "timestamp": "1692393040.521759",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Yes we should try restarting nginx to see if the /docs/latest redirect is picked up @Kerr Yoo",
+      "time": "14:48",
+      "timestamp": "1692395281.407539",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "hmm still doesnt work. will look into it",
+      "time": "14:59",
+      "timestamp": "1692395968.730209",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-08-18.json",
+    "message_count": 23,
+    "start_time": "1692385413.989669",
+    "end_time": "1692395968.730209",
+    "is_thread": true
+  }
+}

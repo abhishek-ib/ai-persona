@@ -1,0 +1,79 @@
+{
+  "id": "ch_C05L87V014J_2025-07-08_1751990070.027599_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "raman.goel",
+    "Sayan",
+    "Vasu"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, there is an issue (3) -- weaviate-titan is crashing even if the image build completes. cc @Gaurav Saini on this. Can you take a look?",
+      "time": "08:54",
+      "timestamp": "1751990070.027599",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```join\",\"remoteNodes\":{\"node1\":\"172.17.0.19:8300\"},\"time\":\"2025-07-08T15:54:50Z\"}\n{\"action\":\"raft\",\"build_git_commit\":\"\",\"build_go_version\":\"go1.24.4\",\"build_image_tag\":\"\",\"build_wv_version\":\"1.29.8\",\"command\":0,\"level\":\"info\",\"msg\":\"updating configuration\",\"server-addr\":\"172.17.0.19:8300\",\"server-id\":\"node1\",\"servers\":\"[[{Suffrage:Voter ID:node1 Address:172.17.0.19:8300}]]\",\"time\":\"2025-07-08T15:54:50Z\"}\n{\"action\":\"restapi_management\",\"build_git_commit\":\"\",\"build_go_version\":\"go1.24.4\",\"build_image_tag\":\"\",\"build_wv_version\":\"1.29.8\",\"level\":\"info\",\"msg\":\"the required flags `--tls-certificate` and `--tls-key` were not specified\",\"time\":\"2025-07-08T15:54:50Z\",\"version\":\"1.29.8\"}\nmake: *** [Makefile:17: run-docker] Error 1```\nNot clear why it is crashing. There is no good error message.",
+      "time": "08:55",
+      "timestamp": "1751990114.735049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You can reproduce by running:\n\n```cs stop weaviate-titan\nmake build-docker run-docker -C third-party/docker/weaviate-titan```",
+      "time": "08:56",
+      "timestamp": "1751990198.873679",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "@raman.goel This is related to this (https://github.com/instabase/instabase/commit/633207e12158b3fd12fc21e1bd996bbc17c10bac) change to build weaviate-titan internally. Can you check? Reverting it, fixes it!",
+      "time": "09:08",
+      "timestamp": "1751990934.654459",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "Taking look now.",
+      "time": "09:32",
+      "timestamp": "1751992325.992449",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "Hey, I have found the root cause for this and fixed it here: https://github.com/instabase/instabase/pull/72103\n\nwould be great if I can get approval here.",
+      "time": "11:54",
+      "timestamp": "1752000879.262439",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I stamped this. @raman.goel do we need to add a backport to 25.28 since the original change was merged before the code cut yesterday?",
+      "time": "14:34",
+      "timestamp": "1752010473.179909",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-08.json",
+    "message_count": 7,
+    "start_time": "1751990070.027599",
+    "end_time": "1752010473.179909",
+    "is_thread": true
+  }
+}

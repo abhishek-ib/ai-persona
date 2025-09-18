@@ -1,0 +1,243 @@
+{
+  "id": "ch_C06FA6A23_2022-05-05_1651736673.137989_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Will",
+    "Arpan",
+    "Xi Cheng",
+    "joshbronko",
+    "Jessica",
+    "Heymian",
+    "Aayush",
+    "Kai"
+  ],
+  "messages": [
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "Oh I see. Currently I have no clue what could be causing this.\nAs far as I remember, @Xi Cheng redeployed the sandbox (probably with an updated image) which fixed it.",
+      "time": "00:44",
+      "timestamp": "1651736673.137989",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "My first thought was that it had to do with the bootstrap upgrade but master is working fine. Is there a sandbox anywhere we can access where we can reproduce this? If you click the Actions button at the top, do you see the menu items you expect?",
+      "time": "01:04",
+      "timestamp": "1651737874.229619",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "@Jessica the actions button at the top has the same two options (“copy to clipboard” and “bookmark”). This is currently in the mtb sandbox but we are in the process of rolling that back right now. Not sure if @Xi Cheng can point you to one that has the same issue.\n\nIf it helps, this is an azure sandbox.",
+      "time": "05:05",
+      "timestamp": "1651752357.276869",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "These are the errors in the console",
+      "time": "05:06",
+      "timestamp": "1651752418.093179",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "@Xi Cheng we have rolled back the sandbox to 22.02 though PRE seems to be having issues rolling back the webapp so the folder right-click issues are still there. Everything else is rolled back though so you should be good to update your file system fixes",
+      "time": "09:05",
+      "timestamp": "1651766758.579879",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Will Got it, I am trying to login the mtb sandbox and hit a gateway timeout. @shaunak Could you help find someone that can help rollback the mtb sandbox? It looks like webapp has some issues according to Will. I know that Aaron T. is OOO today.",
+      "time": "09:09",
+      "timestamp": "1651766978.298459",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "@Arpan has been working on it",
+      "time": "09:11",
+      "timestamp": "1651767112.662529",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Oh got it",
+      "time": "09:12",
+      "timestamp": "1651767151.122029",
+      "is_reply": true
+    },
+    {
+      "sender": "Arpan",
+      "user_id": "U033X89DJ77",
+      "message": "I was trying to rollback the webapp a while back but currently all pods are up and you should not hit the gateway timeout, @Xi Cheng, can you please try to hard refresh the page once",
+      "time": "09:15",
+      "timestamp": "1651767334.470249",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Arpan Hmm, I still hit timeout. I tried to login in a incognito session and hits the same. I am using the default admin login. Even if the login is incorrect, this shouldn't happen. Can you check the logs of webapp? Not sure if this is Redis related. Last time I hit this in a sandbox, Redis has problems",
+      "time": "09:47",
+      "timestamp": "1651769267.430399",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "@Xi Cheng looks like things are good now. Thanks @Arpan!",
+      "time": "11:38",
+      "timestamp": "1651775926.323009",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Arpan I still hit the same error, and this is the webapp logs:\n```Traceback (most recent call last):\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/tenacity/__init__.py\", line 412, in call\n    result = fn(*args, **kwargs)\n  File \"/instabase-server/py/instabase/cache/stats/stats_collector.py\", line 178, in stats_wrapper\n    return func(client, *args, **kwargs)\n  File \"/instabase-server/py/instabase/cache/cache.py\", line 167, in set\n    name=self._get_cache_key(key), value=value, time=timeout)\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/redis/client.py\", line 1540, in setex\n    return self.execute_command('SETEX', name, time, value)\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/redis/client.py\", line 839, in execute_command\n    return self.parse_response(conn, command_name, **options)\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/redis/client.py\", line 853, in parse_response\n    response = connection.read_response()\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/redis/connection.py\", line 700, in read_response\n    response = self._parser.read_response()\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/redis/connection.py\", line 327, in read_response\n    raise error\nredis.exceptions.AuthenticationError: Authentication required.\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/instabase-server/py/instabase/cache/cache.py\", line 480, in set\n    return self._cache.set(key, result, timeout=timeout)\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/tenacity/__init__.py\", line 329, in wrapped_f\n    return self.call(f, *args, **kw)\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/tenacity/__init__.py\", line 409, in call\n    do = self.iter(retry_state=retry_state)\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/tenacity/__init__.py\", line 369, in iter\n    six.raise_from(retry_exc, fut.exception())\n  File \"<string>\", line 3, in raise_from\ntenacity.RetryError: RetryError[<Future at 0x7f9a344da350 state=finished raised AuthenticationError>]```\nErrors came out when webapp tries to call redis-cache and failed with AuthenticationError. Can you ask Kai from the infra team for some help for this? Other users may be affected too.",
+      "time": "11:45",
+      "timestamp": "1651776351.022119",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "good catch @Xi Cheng - I’m seeing this when I try to login with an incognito window. It doesn’t happen in my regular browser as I’m already logged in.\n\nPretty sure @Arpan is done for the evening, should we pass this over to someone else?",
+      "time": "12:18",
+      "timestamp": "1651778320.106539",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Kai can you help look into the redis issues mentioned by XI?",
+      "time": "12:20",
+      "timestamp": "1651778451.281099",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "@Will is redis running in 22.02 and webapp in 22.04?",
+      "time": "12:26",
+      "timestamp": "1651778787.842799",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "@Kai they should all be in on 22.02. There was an issue with 22.04 and the right-click menu in the file system but it has been rolled back now",
+      "time": "12:31",
+      "timestamp": "1651779093.470369",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "@Will Do you know how the webapp got rolled back? The image is in 22.02 but the configurations are from 22.04",
+      "time": "12:47",
+      "timestamp": "1651780063.284119",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "I’m not sure what @Arpan did to roll it back",
+      "time": "12:48",
+      "timestamp": "1651780085.182149",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "he mentioned that he was having issues building it so he did something special to bring it iin",
+      "time": "12:48",
+      "timestamp": "1651780110.557589",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Do we need to have him clear cache",
+      "time": "12:49",
+      "timestamp": "1651780142.391039",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "It’s not related to the actual cache, but the credential used for connecting redis. We’ve removed the credentials for redis in 22.04 so we don’t have the redis password set in the config anymore. However if it’s running in 22.02 then credential is expected. Let me see why we weren’t able to build it in the first place. If that can’t be fixed I can add the credential config back to webapp",
+      "time": "12:53",
+      "timestamp": "1651780438.603469",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "Confirmed that i can’t fix the build because that’s a known issue and the fix PR was not cherry-picked into 22.02. I’ll update the config for webapp to 22.02",
+      "time": "13:03",
+      "timestamp": "1651780980.322399",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "thanks Kai, appreciate you looking into this",
+      "time": "13:03",
+      "timestamp": "1651781035.662699",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "@Will i’ve added the configs back, could you please try again to see if the error still persists?",
+      "time": "13:14",
+      "timestamp": "1651781680.621679",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "@Xi Cheng I can login from my incognito window, can you try now too?",
+      "time": "13:15",
+      "timestamp": "1651781747.386529",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Will @Kai Thanks, yes I confirm that I can login now",
+      "time": "13:43",
+      "timestamp": "1651783433.177229",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "awesome, thanks again for looking at this @Kai",
+      "time": "13:46",
+      "timestamp": "1651783602.599069",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-05-05.json",
+    "message_count": 27,
+    "start_time": "1651736673.137989",
+    "end_time": "1651783602.599069",
+    "is_thread": true
+  }
+}

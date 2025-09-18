@@ -1,0 +1,295 @@
+{
+  "id": "ch_C06FA6A23_2023-03-03_1677869788.628389_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Jeff",
+    "mfichman",
+    "Serena",
+    "Wilson"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw since https://github.com/instabase/instabase/pull/36692 was merged yesterday and involves a db migration, i had to restart `core-platform-service` for logging in to work in my local env\n\nheads up in case you encounter any login errors in your local env! the logs in `core-platform-service` will say `Fail: No registered account found with this email.`",
+      "time": "10:56",
+      "timestamp": "1677869788.628389",
+      "is_reply": false
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "FYI Also got this for my sandbox (doc-insights sandbox):\n\ncc @Jeff  I believe you worked on the PR, right? Could you provide instructions on how to fix sandbox for this issue? I tried logging out and logging back in, but seems like I can’t login with the 1password password for the sandbox anymore",
+      "time": "12:51",
+      "timestamp": "1677876691.541959",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Did you hit the database set up bottom under admin/configuration page?",
+      "time": "13:06",
+      "timestamp": "1677877577.405119",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "Hmm I don't think I can login with the usual password we have for the sandbox, so I don't think I can access that",
+      "time": "13:07",
+      "timestamp": "1677877620.650449",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Why can’t you log in with the usual password?",
+      "time": "13:08",
+      "timestamp": "1677877739.993649",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I think this error is due to a mismatch between the db table columns and the struct in the go code.",
+      "time": "13:09",
+      "timestamp": "1677877763.463109",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "I just can’t anymore, tried the doc-insights sandbox password from one pass, as well as the ChangeM**** password, still doesn’t work",
+      "time": "13:15",
+      "timestamp": "1677878136.947329",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "any request to log in will go to core-platform-service, which will fail bc of the db schema mismatch\n\nthat’s why no one can log into the env @Jeff",
+      "time": "13:16",
+      "timestamp": "1677878179.371359",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "If there’s a way to hit the setup tables endpoint without manual authentication….. oh maybe to unblock ourselves we could hit that via curl if i have an existing token?",
+      "time": "13:17",
+      "timestamp": "1677878251.006569",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "curl to `/account/login` will also call core-platform-service and also trigger the error",
+      "time": "13:17",
+      "timestamp": "1677878276.538389",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "no, as in an authenticated curl request via Bearer auth to the setup tables endpoint.\n\nWait, this’d probably call core-platform-service right? Would it trigger the error?",
+      "time": "13:18",
+      "timestamp": "1677878308.499129",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "`api/v1/site/db/setup_tables` here is the api endpoint that sets up the tables",
+      "time": "13:19",
+      "timestamp": "1677878360.015369",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "but how will you get the auth token to use in curl? no one can log in to get the auth token",
+      "time": "13:22",
+      "timestamp": "1677878531.720659",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "oh i have it saved in my computer :grimacing:\n\nAnyways trying right now….",
+      "time": "13:22",
+      "timestamp": "1677878543.282429",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "nvm… access denied, my token is not an admin token :cry:",
+      "time": "13:26",
+      "timestamp": "1677878810.732899",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Could you please try the `grpcurl`?\n```grpcurl -plaintext -d '{\"context\": {\"username\":\"admin\"}}' localhost:8601 mount_service.MountService.SetupDatabaseTables```",
+      "time": "13:37",
+      "timestamp": "1677879471.885009",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "ahh good idea, hmm this is remote though, let me see if i can kube port fwd to the sandbox….",
+      "time": "13:38",
+      "timestamp": "1677879501.390219",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Yeah, you just need to change the host.",
+      "time": "13:38",
+      "timestamp": "1677879534.211729",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "This should get around the token check in python.",
+      "time": "13:39",
+      "timestamp": "1677879563.124469",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "hmm @Jeff after grpcurl’ing it i get\n```{\n  \"status\": {\n    \"code\": \"NOT_FOUND\",\n    \"msg\": \"User (admin) not found\"\n  }\n}```",
+      "time": "13:46",
+      "timestamp": "1677880007.642769",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Maybe change admin to system?",
+      "time": "13:47",
+      "timestamp": "1677880030.782579",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "```{\n  \"status\": {\n    \"code\": \"NOT_FOUND\",\n    \"msg\": \"User (system) not found\"\n  }\n}```",
+      "time": "13:47",
+      "timestamp": "1677880044.755209",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Or any admin username.",
+      "time": "13:47",
+      "timestamp": "1677880046.375189",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "no luck unfortunately :disappointed:",
+      "time": "13:47",
+      "timestamp": "1677880072.014089",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "hmm, can I  book some time with you to debug this next monday? Would love to get to the bottom of this :slightly_smiling_face:",
+      "time": "13:49",
+      "timestamp": "1677880144.926859",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "Also cc @mfichman FYI",
+      "time": "13:49",
+      "timestamp": "1677880182.537289",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "How complicated is it to redeploy the sandbox? Redeployment would definitely trigger the system to run all the migration files.",
+      "time": "13:50",
+      "timestamp": "1677880257.727099",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "ah, I can try redeploy",
+      "time": "13:51",
+      "timestamp": "1677880291.692019",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "@mfichman Hey Matt, sorry to pull you to the thread at this time. I remember we used to have the dpupdate image to run all the migration files. I am wondering if it’s still available and could resolve the problem in this case.",
+      "time": "13:53",
+      "timestamp": "1677880407.573739",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "@Wilson I assume redeployment would work since I don’t see the problem in dogfood. Feel free to book some time. I am more than happy to help :slightly_smiling_face:",
+      "time": "13:54",
+      "timestamp": "1677880490.821309",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "roger that, let me try redeploy, and if it doesn’t work will book time with you monday :+1:",
+      "time": "13:55",
+      "timestamp": "1677880520.228679",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Wilson Try using experimental controlplane. From there, you can upload the dbmigrate baseconfig which will upgrade the database. If that doesn’t work, let me know!",
+      "time": "15:11",
+      "timestamp": "1677885071.571529",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think the Jenkins pipeline will do the same baseconfig update if you redeploy — as long as your CP version is pretty recent.",
+      "time": "15:12",
+      "timestamp": "1677885147.670559",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "@mfichman sounds good I will do that next monday :+1:, getting a little late in eastern time now",
+      "time": "15:14",
+      "timestamp": "1677885263.350939",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-03-03.json",
+    "message_count": 34,
+    "start_time": "1677869788.628389",
+    "end_time": "1677885263.350939",
+    "is_thread": true
+  }
+}

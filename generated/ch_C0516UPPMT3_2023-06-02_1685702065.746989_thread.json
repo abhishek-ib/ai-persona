@@ -1,0 +1,145 @@
+{
+  "id": "ch_C0516UPPMT3_2023-06-02_1685702065.746989_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Steve Jenner",
+    "danny.lan",
+    "Eric Han",
+    "Varun Jain",
+    "Serena",
+    "Kathy Wu"
+  ],
+  "messages": [
+    {
+      "sender": "Steve Jenner",
+      "user_id": "U03EZRUD4GP",
+      "message": "Exporting results into Excel format (Export results -> Excel file) from an app batch run doesn’t work but the CSV download is successful",
+      "time": "03:34",
+      "timestamp": "1685702065.746989",
+      "is_reply": false
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "Steve - Can you share the files which you ran and the app details?",
+      "time": "03:40",
+      "timestamp": "1685702458.559539",
+      "is_reply": true
+    },
+    {
+      "sender": "Steve Jenner",
+      "user_id": "U03EZRUD4GP",
+      "message": "App is UK Company Incorporation https://aihub.instabase.com/hub/apps/bead5da5-2659-40c2-b611-d8e20de464bf.  Test files are https://drive.google.com/drive/folders/1uKnAwlr-3qHu-96pAZVENMuFyZX5SYMV?usp=sharing.  I just tested on the AI Hub 10K app and the Excel results downloaded",
+      "time": "04:50",
+      "timestamp": "1685706628.983809",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "@Eric Han",
+      "time": "06:26",
+      "timestamp": "1685712393.670709",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "@Steve Jenner when you say doesn't work, did it give an error or the button didn't do anything?",
+      "time": "06:37",
+      "timestamp": "1685713059.281789",
+      "is_reply": true
+    },
+    {
+      "sender": "Steve Jenner",
+      "user_id": "U03EZRUD4GP",
+      "message": "Button didn’t do anything.  Button very briefly changes to “Exporting” and then doesn’t download the Excel.",
+      "time": "07:03",
+      "timestamp": "1685714614.865249",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "has this been resolved yet? if not, i’ll need to get admin credentials to debug since i think this is a private app created by Steve",
+      "time": "09:51",
+      "timestamp": "1685724714.186109",
+      "is_reply": true
+    },
+    {
+      "sender": "Steve Jenner",
+      "user_id": "U03EZRUD4GP",
+      "message": "No, still getting the same behaviour",
+      "time": "09:54",
+      "timestamp": "1685724856.744419",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "sorry i stepped out. looking at this now",
+      "time": "09:55",
+      "timestamp": "1685724914.924029",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "I found the issue. Looks like flow results export end point requires the class name to be shorter than 31 characters:\n```msg: \"An unexpected error occurred. (Error=Excel worksheet name 'Certificate Of Incorporation Of A Private Limited Company' must be <= 31 chars.)\"\nstatus: \"ERROR\"```",
+      "time": "10:20",
+      "timestamp": "1685726459.530159",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "weird, do we not have the same requirement for csv files?\n\nalso, do you know where this error message is coming from? i can’t find it in the codebase\n\ncc @danny.lan",
+      "time": "10:29",
+      "timestamp": "1685726958.000659",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "Seems like its actually a requirement from Excel that worksheet names are shorter than 31 characters https://excelribbon.tips.net/T013175_Using_Very_Long_Worksheet_Tab_Names.html#:~:text=Excel%2C%20however%2C%20seems%20to%20limit,into%20Excel%20at%2031%20characters",
+      "time": "10:46",
+      "timestamp": "1685727990.000629",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "seems like we need to impose a character limit on class names and also have better error handling on export",
+      "time": "11:02",
+      "timestamp": "1685728930.150599",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "I put up a PR for the frontend changes.\n@Kathy Wu is it also possible to set a maximum character limit on class names returned from the model?",
+      "time": "13:53",
+      "timestamp": "1685739197.011659",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "for sure, will do",
+      "time": "13:55",
+      "timestamp": "1685739342.443049",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-06-02.json",
+    "message_count": 15,
+    "start_time": "1685702065.746989",
+    "end_time": "1685739342.443049",
+    "is_thread": true
+  }
+}

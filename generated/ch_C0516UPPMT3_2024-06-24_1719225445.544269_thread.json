@@ -1,0 +1,62 @@
+{
+  "id": "ch_C0516UPPMT3_2024-06-24_1719225445.544269_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "jean",
+    "avi",
+    "Sławek Biel"
+  ],
+  "messages": [
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "For the AI Hub docsbot (https://aihub.instabase.com/hub/apps/shared/Instabase/Explore%20AIHub%20Docs), I'm finding that we are not able to answer `What are the new features in the latest AI Hub release?` accurately. The model is picking info from prior releases too (eg: mobile support) while answering the question. When I specify the version, it does much better - `what are the new features in the latest ai hub release version 24.20`.\n\n@Hari @Sławek Biel any idea if we can improve such scenarios from the model side? cc: @jean fyi",
+      "time": "03:37",
+      "timestamp": "1719225445.544269",
+      "is_reply": false
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "One hacky idea - We can use publisher defined custom instruction to reframe the user prompt in the first multistep stage. This was we can configure the prompt as follows. It currently doesn't work well because we don't rewrite the prompt using a custom instructution.\n\n```Please note the following instruction when answering the below question - Answer in a succinct, helpful tone to answer questions about Instabase AI Hub. If the user asks about latest functionality, please note that version 24.20 is the latest release version.\n\nWhat are the new features in the latest AI Hub release?```",
+      "time": "03:51",
+      "timestamp": "1719226302.245679",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "This happens because there are many chunks/pages talking about the new features and we don’t have a way to distinguish their relevancy at retrieval time. The Search tool examines one page a time and all the features look new without the extra context.\n\nWe could improve it by strengthening the prompt like `What's the latest AI Hub release? List its new features. Make sure to only include features from the latest release.` But I don’t know how to improve it in the general case",
+      "time": "04:19",
+      "timestamp": "1719227950.843209",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Could we get the prompt rewriting tool to do this itself using a custom instruction? It will be hard to expect users to form these prompts well",
+      "time": "05:00",
+      "timestamp": "1719230427.451169",
+      "is_reply": true
+    },
+    {
+      "sender": "jean",
+      "user_id": "U02UWER5KGQ",
+      "message": "We recently added dates to the release notes, because really, a release number isn’t that useful for SaaS users. I would have hoped that would help, but apparently not.\n\nIf it would help to format the dates differently, it’s something we could consider. I’ll keep thinking about whether there’s something docs can do to help this.",
+      "time": "08:47",
+      "timestamp": "1719244047.207429",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-06-24.json",
+    "message_count": 5,
+    "start_time": "1719225445.544269",
+    "end_time": "1719244047.207429",
+    "is_thread": true
+  }
+}

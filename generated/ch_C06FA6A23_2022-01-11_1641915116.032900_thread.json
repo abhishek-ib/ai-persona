@@ -1,0 +1,319 @@
+{
+  "id": "ch_C06FA6A23_2022-01-11_1641915116.032900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ashish",
+    "Kerry",
+    "Naveen",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Hey team, getting some SSL Certificate verify errors locally for all the python services on master branch while building docker images. (golang services are building without any errors).\nDo we have any idea related to these SSL errors? I tried docker system prune, refreshing iptables, removing all docker images but nothing worked. It is not able to communicate with any SSL enabled (https) website. Has anyone else faced these before?\nLogs for api-server:\n```#8 [4/8] RUN pip install --user --upgrade pip setuptools wheel &&     pip install --user -r /tmp/requirements.txt &&     apt-get remove --purge -y build-essential git &&     apt-get autoremove -y &&     rm -rf /var/lib/apt/lists/* &&     rm -rf /home/ibuser/.local/lib/python3.7/site-packages/Cryptodome/SelfTest/PublicKey/test_vectors/* &&     rm -rf /home/ibuser/.local/lib/python3.7/site-packages/gevent/tests/* &&     rm -rf /home/ibuser/.local/lib/python3.7/site-packages/tornado/test/* &&     rm -rf rm -rf /home/ibuser/.local/lib/python3.7/site-packages/Werkzeug-1.0.1.dist-info\n#8 sha256:d71d36aa3073f1d81da12333fe32ace2475326173bcf1ba35ae3300119759053\n#8 0.600 Requirement already satisfied: pip in /home/ibuser/.local/lib/python3.7/site-packages (21.3.1)\n#8 0.626 WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/pip/\n#8 1.147 WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/pip/\n#8 2.172 WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/pip/\n#8 4.194 WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/pip/\n#8 8.197 WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/pip/\n#8 8.217 Could not fetch URL https://pypi.org/simple/pip/: There was a problem confirming the ssl certificate: HTTPSConnectionPool(host='pypi.org (http://pypi.org)', port=443): Max retries exceeded with url: /simple/pip/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))) - skipping\n#8 8.226 Requirement already satisfied: setuptools in /opt/python-3.7.7/lib/python3.7/site-packages (41.2.0)\n#8 8.245 WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/setuptools/\n#8 8.764 WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/setuptools/\n#8 9.785 WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/setuptools/\n#8 11.81 WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/setuptools/\n#8 15.83 WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/setuptools/\n#8 15.85 Could not fetch URL https://pypi.org/simple/setuptools/: There was a problem confirming the ssl certificate: HTTPSConnectionPool(host='pypi.org (http://pypi.org)', port=443): Max retries exceeded with url: /simple/setuptools/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))) - skipping\n#8 15.85 Requirement already satisfied: wheel in /home/ibuser/.local/lib/python3.7/site-packages (0.37.0)\n#8 15.87 WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/wheel/\n#8 16.39 WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/wheel/\n#8 17.41 WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/wheel/\n#8 19.43 WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/wheel/\n#8 23.46 WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))': /simple/wheel/\n#8 23.48 Could not fetch URL https://pypi.org/simple/wheel/: There was a problem confirming the ssl certificate: HTTPSConnectionPool(host='pypi.org (http://pypi.org)', port=443): Max retries exceeded with url: /simple/wheel/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))) - skipping\n#8 23.49 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv\n#8 23.51 Could not fetch URL https://pypi.org/simple/pip/: There was a problem confirming the ssl certificate: HTTPSConnectionPool(host='pypi.org (http://pypi.org)', port=443): Max retries exceeded with url: /simple/pip/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))) - skipping\n#8 23.93 Collecting git+https://github.com/instabase/opencensus-python@ec72cd39b431ec28ebcf72861852bccaef00c961 (from -r /tmp/requirements.txt (line 143))\n#8 23.93   Cloning https://github.com/instabase/opencensus-python (to revision ec72cd39b431ec28ebcf72861852bccaef00c961) to /tmp/pip-req-build-d3i7ehlu\n#8 23.93   Running command git clone --filter=blob:none -q https://github.com/instabase/opencensus-python /tmp/pip-req-build-d3i7ehlu\n#8 24.00   fatal: unable to access 'https://github.com/instabase/opencensus-python/': server certificate verification failed. CAfile: none CRLfile: none\n#8 24.00 WARNING: Discarding git+https://github.com/instabase/opencensus-python@ec72cd39b431ec28ebcf72861852bccaef00c961. Command errored out with exit status 128: git clone --filter=blob:none -q https://github.com/instabase/opencensus-python /tmp/pip-req-build-d3i7ehlu Check the logs for full command output.\n#8 24.00 ERROR: Command errored out with exit status 128: git clone --filter=blob:none -q https://github.com/instabase/opencensus-python /tmp/pip-req-build-d3i7ehlu Check the logs for full command output.\n#8 24.02 Could not fetch URL https://pypi.org/simple/pip/: There was a problem confirming the ssl certificate: HTTPSConnectionPool(host='pypi.org (http://pypi.org)', port=443): Max retries exceeded with url: /simple/pip/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))) - skipping\n#8 ERROR: executor failed running [/bin/sh -c pip install --user --upgrade pip setuptools wheel &&     pip install --user -r /tmp/requirements.txt &&     apt-get remove --purge -y $BUILD_PACKAGES &&     apt-get autoremove -y &&     rm -rf /var/lib/apt/lists/* &&     rm -rf /home/ibuser/.local/lib/python3.7/site-packages/Cryptodome/SelfTest/PublicKey/test_vectors/* &&     rm -rf /home/ibuser/.local/lib/python3.7/site-packages/gevent/tests/* &&     rm -rf /home/ibuser/.local/lib/python3.7/site-packages/tornado/test/* &&     rm -rf rm -rf /home/ibuser/.local/lib/python3.7/site-packages/Werkzeug-1.0.1.dist-info]: exit code: 1```",
+      "time": "07:31",
+      "timestamp": "1641915116.032900",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Google says: https://stackoverflow.com/questions/67547176/python-warning-retrying-retrytotal-4-connect-none-read-none-redirect-none",
+      "time": "07:39",
+      "timestamp": "1641915561.033000",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Unfortunately this didn’t work as well.:confused:",
+      "time": "07:44",
+      "timestamp": "1641915893.033500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "it might good to isolate the problem -- whether it occurs in docker context or local or both\n\n_but don't bork your local setup while you figure it out_ :slightly_smiling_face:",
+      "time": "07:51",
+      "timestamp": "1641916261.033700",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Locally it works fine actually…",
+      "time": "07:52",
+      "timestamp": "1641916357.033900",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "possibly a docker networking issue",
+      "time": "07:53",
+      "timestamp": "1641916414.034100",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "I couldn’t even send a simple curl to https server in docker…\n```RUN curl -sSL https://bootstrap.pypa.io/get-pip.py ```\nLocally this command runs fine!",
+      "time": "07:54",
+      "timestamp": "1641916449.034300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "can you run curl in verbose mode?",
+      "time": "07:54",
+      "timestamp": "1641916492.034500",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "```#11 [7/7] RUN curl -v https://bootstrap.pypa.io/get-pip.py\n#11 sha256:f2f3e6a6f3b2e77c2efcf89d8043835b9a398c427479bfeee62310ef81a4a435\n#11 0.624   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n#11 0.625                                  Dload  Upload   Total   Spent    Left  Speed\n  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 199.232.252.175:443...\n#11 0.647 * Connected to bootstrap.pypa.io (http://bootstrap.pypa.io) (199.232.252.175) port 443 (#0)\n#11 0.649 * ALPN, offering h2\n#11 0.649 * ALPN, offering http/1.1\n#11 0.669 * successfully set certificate verify locations:\n#11 0.669 *  CAfile: /etc/ssl/certs/ca-certificates.crt\n#11 0.669 *  CApath: /etc/ssl/certs\n#11 0.670 } [5 bytes data]\n#11 0.671 * TLSv1.3 (OUT), TLS handshake, Client hello (1):\n#11 0.671 } [512 bytes data]\n  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* TLSv1.3 (IN), TLS handshake, Server hello (2):\n#11 0.678 { [122 bytes data]\n#11 0.680 * TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):\n#11 0.680 { [21 bytes data]\n#11 0.680 * TLSv1.3 (IN), TLS handshake, Certificate (11):\n#11 0.680 { [1660 bytes data]\n#11 0.682 * TLSv1.3 (OUT), TLS alert, unknown CA (560):\n#11 0.682 } [2 bytes data]\n#11 0.682 * SSL certificate problem: self signed certificate in certificate chain\n  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\n#11 0.685 * Closing connection 0\n#11 0.688 curl: (60) SSL certificate problem: self signed certificate in certificate chain\n#11 0.688 More details here: https://curl.se/docs/sslcerts.html\n#11 0.688 \n#11 0.688 curl failed to verify the legitimacy of the server and therefore could not\n#11 0.688 establish a secure connection to it. To learn more about this situation and\n#11 0.688 how to fix it, please visit the web page mentioned above.\n#11 ERROR: executor failed running [/bin/sh -c curl -v https://bootstrap.pypa.io/get-pip.py]: exit code: 60```",
+      "time": "07:57",
+      "timestamp": "1641916655.034700",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "i wonder if your container has old root certificates",
+      "time": "08:02",
+      "timestamp": "1641916963.034900",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "```SSL certificate problem: self signed certificate in certificate chain```",
+      "time": "08:05",
+      "timestamp": "1641917130.035100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "this is the problem",
+      "time": "08:05",
+      "timestamp": "1641917133.035300",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Yeah, don’t know how to resolve this though, tried to purge the system, network, images, so that the base layer is fresh, but that didn’t help…",
+      "time": "08:07",
+      "timestamp": "1641917234.035500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "try running pip command and check whether it's the same problem",
+      "time": "08:08",
+      "timestamp": "1641917310.035700",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Pip command was also throwing the same error\n```#8 23.51 Could not fetch URL https://pypi.org/simple/pip/: There was a problem confirming the ssl certificate: HTTPSConnectionPool(host='pypi.org (http://pypi.org)', port=443): Max retries exceeded with url: /simple/pip/ (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: self signed certificate in certificate chain (_ssl.c:1076)'))) - skipping```",
+      "time": "08:12",
+      "timestamp": "1641917557.035900",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Reinstalling docker for now…:crossed_fingers:",
+      "time": "08:12",
+      "timestamp": "1641917576.036100",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Same error even after reinstalling :confusedparrot:",
+      "time": "08:14",
+      "timestamp": "1641917678.036400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "exec into a vanilla ubuntu image, run curl command and check whether that works",
+      "time": "08:16",
+      "timestamp": "1641917769.036600",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Same error… :thinking_face:",
+      "time": "08:18",
+      "timestamp": "1641917933.036800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "maybe try to find the cert store https://serverfault.com/questions/485597/default-ca-cert-bundle-location",
+      "time": "08:30",
+      "timestamp": "1641918620.037000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "not sure how to fix this",
+      "time": "08:30",
+      "timestamp": "1641918630.037300",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i’m googling, haven’t seen anything that’s useful :thinking_face:",
+      "time": "08:35",
+      "timestamp": "1641918918.037500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "you can remove a certificate chain from the cert store but it will be bizarre to have a self signed cert to begin with in the cert store",
+      "time": "08:37",
+      "timestamp": "1641919064.037700",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Not sure if this helps https://stackoverflow.com/questions/65587772/macos-pyenv-pip-install-not-working-ssl-certificate-verify-failed",
+      "time": "08:44",
+      "timestamp": "1641919464.037900",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "one thing to confirm would be that you are not accidentally using a wrong cert store\n\nthough the fact this occurs in your vanilla ubuntu image makes me wonder whether a bad cert store lives on your host machine and is being picked up by docker",
+      "time": "08:47",
+      "timestamp": "1641919624.038200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "which ubuntu version did you use to test?",
+      "time": "08:47",
+      "timestamp": "1641919634.038400",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "https://instabase.slack.com/archives/C06FA6A23/p1641919464037900?thread_ts=1641915116.032900&cid=C06FA6A23\nYeah thats a workaround, but for that would have to do it for every docker image build. (including adding --insecure flag for other commands maybe)…",
+      "time": "08:48",
+      "timestamp": "1641919690.038600",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "https://instabase.slack.com/archives/C06FA6A23/p1641919634038400?thread_ts=1641915116.032900&cid=C06FA6A23\nI used the getting-started image of docker: *docker run -d -p 80:80 docker/getting-started*",
+      "time": "08:48",
+      "timestamp": "1641919738.038900",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "```(ashish)-(jobs:0)-(~)\n(! 520)-> docker run -it docker/getting-started:latest -- curl -V -sSL  https://bootstrap.pypa.io/get-pip.py \ncurl 7.79.1 (x86_64-alpine-linux-musl) libcurl/7.79.1 OpenSSL/1.1.1l zlib/1.2.11 brotli/1.0.9 nghttp2/1.43.0\nRelease-Date: 2021-09-22\nProtocols: dict file ftp ftps gopher gophers http https imap imaps mqtt pop3 pop3s rtsp smb smbs smtp smtps telnet tftp \nFeatures: alt-svc AsynchDNS brotli HSTS HTTP2 HTTPS-proxy IPv6 Largefile libz NTLM NTLM_WB SSL TLS-SRP UnixSockets```",
+      "time": "08:52",
+      "timestamp": "1641919943.039200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "that image worked fine on my machine",
+      "time": "08:52",
+      "timestamp": "1641919957.039400",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Ok, so mounting `/etc/ssl/cert.pem` to `/etc/ssl/certs/ca-certificates.crt` seems to solve the problem for this image.",
+      "time": "08:54",
+      "timestamp": "1641920042.039800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": ":slightly_smiling_face:",
+      "time": "08:54",
+      "timestamp": "1641920053.040000",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "So, I did `export DOCKER_CERT_PATH=/etc/ssl/cert.pem` in zshrc, which seems to have fixed the problem for all the other images (ubuntu, getting-started image), but this still isn’t fixed for the Instabase images…  Still can’t curl there…",
+      "time": "09:52",
+      "timestamp": "1641923566.040300",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "have you already tried https://docs.google.com/document/d/1c6KaxyYMSpK2-p4vGwiO8OZoKBwJtkQFnhHS9NCMROY/edit#heading=h.v9y6smfeawjw?",
+      "time": "10:11",
+      "timestamp": "1641924671.040500",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Yeah, did that, local IB instance was running fine (with https), but docker images of IB are still not building properly, they are not able to send  request to any https server…",
+      "time": "10:18",
+      "timestamp": "1641925128.041000",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "@Ashish, can you try modifying V to v in the command?\nhttps://instabase.slack.com/archives/C06FA6A23/p1641919943039200?thread_ts=1641915116.032900&cid=C06FA6A23\n`curl -v -sSL  https://bootstrap.pypa.io/get-pip.py`",
+      "time": "11:58",
+      "timestamp": "1641931121.041300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "@Naveen\n```*   Trying 199.232.252.175:443...\n* Connected to bootstrap.pypa.io (http://bootstrap.pypa.io) (199.232.252.175) port 443 (#0)\n* ALPN, offering h2\n* ALPN, offering http/1.1\n* successfully set certificate verify locations:\n*  CAfile: /etc/ssl/certs/ca-certificates.crt\n*  CApath: none\n* TLSv1.3 (OUT), TLS handshake, Client hello (1):\n* TLSv1.3 (IN), TLS handshake, Server hello (2):\n* TLSv1.2 (IN), TLS handshake, Certificate (11):\n* TLSv1.2 (IN), TLS handshake, Server key exchange (12):\n* TLSv1.2 (IN), TLS handshake, Server finished (14):\n* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):\n* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):\n* TLSv1.2 (OUT), TLS handshake, Finished (20):\n* TLSv1.2 (IN), TLS handshake, Finished (20):\n* SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256\n* ALPN, server accepted to use http/1.1\n* Server certificate:\n*  subject: CN=*.pypa.io (http://pypa.io)\n*  start date: Dec 24 21:42:15 2021 GMT\n*  expire date: Jan 25 21:42:14 2023 GMT\n*  subjectAltName: host \"bootstrap.pypa.io (http://bootstrap.pypa.io)\" matched cert's \"*.pypa.io (http://pypa.io)\"\n*  issuer: C=BE; O=GlobalSign nv-sa; CN=GlobalSign Atlas R3 DV TLS CA H2 2021\n*  SSL certificate verify ok.\n> GET /get-pip.py HTTP/1.1\n\n> Host: bootstrap.pypa.io (http://bootstrap.pypa.io)\n\n> User-Agent: curl/7.79.1\n\n> Accept: */*\n\n> \n\n* Mark bundle as not supporting multiuse\n< HTTP/1.1 200 OK\n\n< Connection: keep-alive\n\n< Content-Length: 2159352\n\n< Server: nginx\n\n< Content-Type: text/x-python\n\n< Last-Modified: Fri, 22 Oct 2021 16:30:29 GMT\n\n< ETag: \"6172e725-20f2f8\"\n\n< X-Clacks-Overhead: GNU Terry Pratchett\n\n< Strict-Transport-Security: max-age=315360000; includeSubDomains; preload\n\n< Via: 1.1 varnish, 1.1 varnish\n\n< Accept-Ranges: bytes\n\n< Date: Wed, 12 Jan 2022 03:28:00 GMT\n\n< Age: 4869\n\n< X-Served-By: cache-lga21935-LGA, cache-del21749-DEL\n\n< X-Cache: HIT, HIT\n\n< X-Cache-Hits: 1, 3\n\n< X-Timer: S1641958081.885264,VS0,VE0\n\n< \n\n#!/usr/bin/env python\n#\n# Hi There!\n#\n# You may be wondering what this giant blob of binary data here is, you might\n# even be worried that we're up to something nefarious (good for you for being\n# paranoid!). This is a base85 encoding of a zip file, this zip file contains\n# an entire copy of pip (version 21.3.1).\n#\n# Pip is a thing that installs packages, pip itself is a package that someone\n# might want to install, especially if they're looking to run this get-pip.py\n# script. Pip has a lot of code to deal with the security of installing\n# packages, various edge cases on various platforms, and other such sort of\n# \"tribal knowledge\" that has been encoded in its code base. Because of this\n# we basically include an entire copy of pip inside this blob. We do this\n# because the alternatives are attempt to implement a \"minipip\" that probably\n# doesn't do things correctly and has weird edge cases, or compress pip itself\n# down into a single file.\n#\n# If you're wondering how this is created, it is generated using\n# `scripts/generate.py` in https://github.com/pypa/get-pip.\n\nimport sys\n\nthis_python = sys.version_info[:2]\nmin_version = (3, 6)\nif this_python < min_version:\n    message_parts = [\n        \"This script does not work on Python {}.{}\".format(*this_python),\n        \"The minimum supported Python version is {}.{}.\".format(*min_version),\n        \"Please use https://bootstrap.pypa.io/pip/{}.{}/get-pip.py instead.\".format(*this_python),\n    ]\n    print(\"ERROR: \" + \" \".join(message_parts))\n    sys.exit(1)\n\n\nimport os.path\nimport pkgutil\nimport shutil\nimport tempfile\nfrom base64 import b85decode\n\n\ndef determine_pip_install_arguments():\n    implicit_pip = True\n    implicit_setuptools = True\n    implicit_wheel = True\n\n    # Check if the user has requested us not to install setuptools\n    if \"--no-setuptools\" in sys.argv or os.environ.get(\"PIP_NO_SETUPTOOLS\"):\n        args = [x for x in sys.argv[1:] if x != \"--no-setuptools\"]\n        implicit_setuptools = False\n    else:\n        args = sys.argv[1:]\n\n    # Check if the user has requested us not to install wheel\n    if \"--no-wheel\" in args or os.environ.get(\"PIP_NO_WHEEL\"):\n        args = [x for x in args if x != \"--no-wheel\"]\n        implicit_wheel = False\n\n    # We only want to implicitly install setuptools and wheel if they don't\n    # already exist on the target platform.\n    if implicit_setuptools:\n        try:\n            import setuptools  # noqa\n            implicit_setuptools = False\n        except ImportError:\n            pass\n    if implicit_wheel:\n        try:\n            import wheel  # noqa\n            implicit_wheel = False\n        except ImportError:\n            pass\n\n    # Add any implicit installations to the end of our args\n    if implicit_pip:\n        args += [\"pip\"]\n    if implicit_setuptools:\n        args += [\"setuptools\"]\n    if implicit_wheel:\n        args += [\"wheel\"]\n\n    return [\"install\", \"--upgrade\", \"--force-reinstall\"] + args\n\n\ndef monkeypatch_for_cert(tmpdir):\n    \"\"\"Patches `pip install` to provide default certificate with the lowest priority.\n\n    This ensures that the bundled certificates are used unless the user specifies a\n    custom cert via any of pip's option passing mechanisms (config, env-var, CLI).\n\n    A monkeypatch is the easiest way to achieve this, without messing too much with\n    the rest of pip's internals.\n    \"\"\"\n    from pip._internal.commands.install import InstallCommand\n\n    # We want to be using the internal certificates.\n    cert_path = os.path.join(tmpdir, \"cacert.pem\")\n    with open(cert_path, \"wb\") as cert:\n        cert.write(pkgutil.get_data(\"pip._vendor.certifi\", \"cacert.pem\"))\n\n    install_parse_args = InstallCommand.parse_args\n\n    def cert_parse_args(self, args):\n        if not self.parser.get_default_values().cert:\n            # There are no user provided cert -- force use of bundled cert\n            self.parser.defaults[\"cert\"] = cert_path  # calculated above\n        return install_parse_args(self, args)\n\n    InstallCommand.parse_args = cert_parse_args\n\n\ndef bootstrap(tmpdir):\n    monkeypatch_for_cert(tmpdir)\n\n    # Execute the included pip and use it to install the latest pip and\n    # setuptools from PyPI\n    from pip._internal.cli.main import main as pip_entry_point\n    args = determine_pip_install_arguments()\n    sys.exit(pip_entry_point(args))\n\n\ndef main():\n    tmpdir = None\n    try:\n        # Create a temporary working directory\n        tmpdir = tempfile.mkdtemp()\n\n        # Unpack the zipfile into the temporary directory\n        pip_zip = os.path.join(tmpdir, \"pip.zip\")\n        with open(pip_zip, \"wb\") as fp:\n            fp.write(b85decode(DATA.replace(b\"\\n\", b\"\")))\n\n        # Add the zipfile to sys.path so that we can import it\n        sys.path.insert(0, pip_zip)\n\n        # Run the bootstrap\n        bootstrap(tmpdir=tmpdir)\n    finally:\n        # Clean up our temporary working directory\n        if tmpdir:\n            shutil.rmtree(tmpdir, ignore_errors=True)\n\n\nDATA = b\"\"\"\nP)h>@6aWAK2mt$eR#TliG(h+O003nH000jF003}la4%n9X>MtBUtcb8c|B0UO2j}6z0X&KUUXrdvMRV\n16ubz6s0VM$QfAw<4YV^ulDhQoop$MlK*;0e<?$L01LzdVw?IP-tnf*qTlkJj!Mom=viw7qw3H>hKz6\n^g4|bOsV`^+*aO7_tw^Cd$4zs{Pl#j>6{|X*AaQ6!2wJ?w>%d+2&1X4Rc!^r6h-hMtH_<n)`omXfA!z\nc)+2_nTCfpGRv1uvmTkcug)ShEPeC#tJ!y1a)P)ln~75Jc!yqZE1Gl6K?CR$<8F6kVP)a}pU*@~6k=y\n<MFxvzbFl3|p@5?5Ii7qF0_`NT{r7m1lM_B44a9>d5{IF3D`nKTt~p1QY-O00;p4c~(;+8{@xi0ssK6\n...\n... (output truncated)\n...\n3rYY00000000000HlEmWElW(X>c!Jc4cm4Z*nhpWnyJ+V{c?>ZfA2ZY++($Y;!Jfc~DCM0u%!j00008\n0Q-4XQ&4{~A4CEG02u`U03-ka00000000000HlFWY8e1<X>c!Jc4cm4Z*nhpWnyJ+V{c?>ZfA2ZZEI{\n{Vr6V|E^v8JO928D0~7!N00;p4c~(<rIB=)A1pok}82|tw00000000000001_fz@mo0B~t=FJE?LZe(\nwAFLz~PWo~0{WNB_^b1!sdb98eqaCuNm0Rj{Q6aWAK2mt$eR#V#s{MMxe007ev001fg000000000000\n5+c&2kw4aA|NaUv_0~WN&gWcV%K_Zewp`X>Mn8FL+;db7gX0WMyV)Ze?UHaCuNm1qJ{B005Z*nE_CM0\n06po82|tP\n\"\"\"\n\nif __name__ == \"__main__\":\n    main()\n* Connection #0 to host bootstrap.pypa.io (http://bootstrap.pypa.io) left intact```",
+      "time": "19:29",
+      "timestamp": "1641958166.049300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-01-11.json",
+    "message_count": 37,
+    "start_time": "1641915116.032900",
+    "end_time": "1641958166.049300",
+    "is_thread": true
+  }
+}

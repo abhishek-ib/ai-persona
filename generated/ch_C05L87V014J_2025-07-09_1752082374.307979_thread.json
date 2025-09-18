@@ -1,0 +1,126 @@
+{
+  "id": "ch_C05L87V014J_2025-07-09_1752082374.307979_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "mfichman",
+    "Charles"
+  ],
+  "messages": [
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "my sandbox seems to be crash looping after I rebuilt and tried to pull images again: https://instabase.sandboxes.site/sandboxes/charles-goldens?cw=dev (https://instabase.sandboxes.site/sandboxes/charles-goldens?cw=dev) been like this for a day, anyone able to help? I have local git changes on here I need to push..",
+      "time": "10:32",
+      "timestamp": "1752082374.307979",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Looks like the box is out of storage, let me contact the crafting devs to give you more space",
+      "time": "10:40",
+      "timestamp": "1752082851.878489",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Your sandbox has its storage increased @Charles",
+      "time": "12:15",
+      "timestamp": "1752088557.925889",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "but it seems like it’s nearly filled out actually. Lemme ssh into it and start clearing out docker images before it bricks again",
+      "time": "12:16",
+      "timestamp": "1752088588.683289",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "thanks paul! i saw but didnt know where to go from there",
+      "time": "12:20",
+      "timestamp": "1752088850.249229",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "npnp. I also noticed that you’re getting these errors in your sandbox which is preventing your services from spinning up:\n```ImportError: cannot import name 'intercept_channel_tracing' from 'instabase.tracing.grpc' (/instabase-api-server/py/instabase/tracing/grpc/__init__.py)```\nTry running the following commands to fix it:\n```cs stop # stops all services\n\ncd $IB_HOME/webserver/api-server && make clean\ncd $IB_HOME/distributed-tasks/celery/app-tasks && make clean\ncd $IB_HOME/webserver/data-services/model-services/model-service && make clean\n\ncs start # starts all services again```\nand if you see that error in any other services, just go into the dir and run `make clean` like above.",
+      "time": "12:31",
+      "timestamp": "1752089514.000229",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "yep ill try these, thanks for helping me out!",
+      "time": "12:32",
+      "timestamp": "1752089554.213759",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "^ that should be a one time thing bc of some code changes. But I see this issue as well that’s preventing some containers from spinning up:\n```ERROR: failed to solve: 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17): failed to resolve source metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17): unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/python/manifests/3.9.17: 403 Forbidden```\nYou’ll need to run these manually (for some reason) every week or so:\n```/home/owner/instabase/.sandbox/ibdev-backend/scripts/ecr-login\n/home/owner/instabase/.sandbox/ibdev-backend/scripts/gcr-login```\nthen the containers should work. Oh the joys of hidden knowledge",
+      "time": "12:34",
+      "timestamp": "1752089665.952689",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "anyway, that’s it rofl",
+      "time": "12:34",
+      "timestamp": "1752089680.400369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "They're supposed to run automatically^ but who knows",
+      "time": "13:06",
+      "timestamp": "1752091594.079879",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Would be better to have a permanent ECR API key, but I was told by Cody and security that this is not allowed. Maybe I can push on that harder...?",
+      "time": "13:07",
+      "timestamp": "1752091641.004879",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "@mfichman I looked at the logs and the ecr logins were failing bc the box had no disk space left. So luckily we don’t have to push on a permanent API key just yet",
+      "time": "13:08",
+      "timestamp": "1752091731.386799",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "And the box ran out of disk space because the `docker system prune` command was hanging. I actually have a fix for it, but I’m waiting on another bricked sandbox to test it before putting up a PR.",
+      "time": "13:10",
+      "timestamp": "1752091813.420129",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-09.json",
+    "message_count": 13,
+    "start_time": "1752082374.307979",
+    "end_time": "1752091813.420129",
+    "is_thread": true
+  }
+}

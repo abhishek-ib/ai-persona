@@ -1,0 +1,208 @@
+{
+  "id": "ch_C05L87V014J_2025-03-07_1741380591.581949_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Cheryl Zhou",
+    "Sayan",
+    "Nikolaos Kofinas",
+    "derrick.smith",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I get a rate limiter exception from openai in model service logs when uploading documents in AIHub. Has anyone else seen this?\n\n```openai.RateLimitError: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}```",
+      "time": "12:49",
+      "timestamp": "1741380591.581949",
+      "is_reply": false
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "This is what's in `env-local-overrides` when starting all services. (removing the power user aws keys doesn't change the result):\n\n```{\n    \"audit_logs_export_endpoint\": \"RABBIT_MQ\",\n    \"base\": {\n        \"audit_logs_export_endpoint\": \"RABBIT_MQ\",\n        \"AIHUB_UDF_EXECUTION\": \"LOCAL\",\n        \"ENABLE_LAMBDA\": false,\n        \"IS_ST_AIHUB\": true,\n        \"aws_access_key_id\": \"[REDACTED]\",\n        \"aws_secret_access_key\": \"[REDACTED]\",\n        \"aws_session_token\": \"[REDACTED]\",\n        \"namespace\": \"insan-use2-local-testing-instabase\",\n        \"aws_default_region\": \"us-east-1\"\n    }\n}```",
+      "time": "12:51",
+      "timestamp": "1741380683.346879",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Even after removing the keys, I still get the same issue",
+      "time": "13:16",
+      "timestamp": "1741382213.844099",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "can you confirm that your `env-local-secrets` matches what's in 1password?",
+      "time": "13:17",
+      "timestamp": "1741382232.676639",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "specifically compare the values for openai_api_key",
+      "time": "13:17",
+      "timestamp": "1741382246.478609",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "yeah the openai_api_key matches",
+      "time": "13:18",
+      "timestamp": "1741382312.838749",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "For the job status, i get the response\n\n```{\"status\": \"ERROR\", \"msg\": \"All documents failed processing during WEAVIATE_INDEXING\\n\\n METADATA:\\n\\n\\n{\\\"process_result\\\": {\\\"success\\\": {}, \\\"pending\\\": {}, \\\"failure\\\": {\\\"passport-card-sample.jpeg\\\": \\\"Failed to create index for files\\\"}}, \\\"read_result\\\": {\\\"success\\\": {\\\"954b9025-ee08-404d-ba7f-1c79961b1400__passport-card-sample.jpeg\\\": \\\"testy_test/sayan.bhattacharjee_instabase.com/fs/Instabase Drive/aihub/01956dd1-e029-7fb2-84da-f98f3c92b774/documents/out/954b9025-ee08-404d-ba7f-1c79961b1400__passport-card-sample.jpeg.ibdoc\\\"}, \\\"failure\\\": {}, \\\"pending\\\": {}}, \\\"completed\\\": 1, \\\"total\\\": 1}\", \"state\": \"FAILED\", \"is_waiting_for_resources\": false, \"job_id\": \"0492c4b7-9d4e-498f-adc0-063ed5a52579\", \"results\": [{\"metadata\": \"{\\\"flow_metadata\\\":{\\\"flow_input\\\":{\\\"input_args\\\":{\\\"job_status_metadata\\\":\\\"{}\\\",\\\"binary_full_path\\\":\\\"testy_test/sayan.bhattacharjee_instabase.com/fs/Instabase Drive/aihub/01956dd1-e029-7fb2-84da-f98f3c92b774/documents/out/bin/reader_flow.ibflowbin\\\",\\\"binary_content_hash\\\":\\\"dcbf5adec31a4f724fad37337a1651b7\\\"},\\\"output_args\\\":{\\\"output_root_dirpath\\\":\\\"testy_test/sayan.bhattacharjee_instabase.com/fs/Instabase Drive/aihub/01956dd1-e029-7fb2-84da-f98f3c92b774/documents/out\\\"},\\\"settings\\\":{\\\"log_to_timeline\\\":false,\\\"delete_out_dir\\\":false,\\\"disable_step_timeout\\\":false,\\\"webdriver_queue\\\":\\\"celery-webdriver-tasks\\\",\\\"save_binary_to_output\\\":true,\\\"runtime_config\\\":\\\"eyJwcm9qZWN0X2lkIjogIjAxOTU2ZGQxLWUwMjktN2ZiMi04NGRhLWY5OGYzYzkyYjc3NCJ9\\\",\\\"step_timeout\\\":300,\\\"profiler_info\\\":false,\\\"compare_against_golden_set\\\":false},\\\"post_flow_options\\\":{\\\"fn_name\\\":\\\"none\\\",\\\"sqs_message_body\\\":\\\"{}\\\"},\\\"context\\\":{\\\"username\\\":\\\"sayan.bhattacharjee_instabase.com (http://sayan.bhattacharjee_instabase.com)\\\",\\\"root_id\\\":\\\"0492c4b7-9d4e-498f-adc0-063ed5a52579\\\",\\\"flow_priority\\\":5,\\\"use_flow_batch_mode\\\":true,\\\"flow_map_batch_size\\\":25,\\\"flow_path\\\":\\\"project/reader_profiles/reader.ibflow\\\",\\\"read_from_disk_on_local_cache_miss\\\":true,\\\"enable_ibdoc\\\":true,\\\"resource_reader_config\\\":{\\\"reader_type\\\":\\\"ibfile\\\",\\\"resources_path\\\":\\\"project/reader_profiles/_resources\\\"},\\\"input_records_full_paths\\\":[\\\"testy_test/sayan.bhattacharjee_instabase.com/fs/Instabase Drive/aihub/01956dd1-e029-7fb2-84da-f98f3c92b774/documents/input/954b9025-ee08-404d-ba7f-1c79961b1400__passport-card-sample.jpeg\\\"],\\\"ibmsg_enabled\\\":false,\\\"track_metrics\\\":false,\\\"group\\\":\\\"interactive\\\",\\\"enable_ibdoc_v2\\\":false},\\\"flow_type\\\":\\\"single_flow\\\",\\\"max_flows\\\":1},\\\"review_status\\\":{\\\"state\\\":\\\"NONE\\\"},\\\"num_tasks\\\":0},\\\"trace_id\\\":\\\"\\\",\\\"group\\\":\\\"interactive\\\",\\\"trace_metadata\\\":{\\\"uber-trace-id\\\":\\\"feb2b79cae20c19a:787781ad7b0ec5c2:86233f5ff503e7d5:0\\\",\\\"uberctx-ib-correlation-id\\\":\\\"b5136c82-d63b-4e59-bf19-8a1ed5407b0b\\\"}}\", \"result_metadata\": \"{\\\"process_result\\\": {\\\"success\\\": {}, \\\"pending\\\": {}, \\\"failure\\\": {\\\"passport-card-sample.jpeg\\\": \\\"Failed to create index for files\\\"}}, \\\"read_result\\\": {\\\"success\\\": {\\\"954b9025-ee08-404d-ba7f-1c79961b1400__passport-card-sample.jpeg\\\": \\\"testy_test/sayan.bhattacharjee_instabase.com/fs/Instabase Drive/aihub/01956dd1-e029-7fb2-84da-f98f3c92b774/documents/out/954b9025-ee08-404d-ba7f-1c79961b1400__passport-card-sample.jpeg.ibdoc\\\"}, \\\"failure\\\": {}, \\\"pending\\\": {}}, \\\"completed\\\": 1, \\\"total\\\": 1}\"}], \"cur_status\": \"{\\\"job_id\\\": \\\"0492c4b7-9d4e-498f-adc0-063ed5a52579\\\", \\\"curProgress\\\": 1.0}\", \"completed_count\": null, \"finish_timestamp\": null, \"binary_mode\": null}```",
+      "time": "13:32",
+      "timestamp": "1741383160.003089",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "This feels somewhat intermittent. I was just able to upload a file but the next file I tried to upload failed with the reason above so this definitely feels intermittent. @Cheryl Zhou do you know who may have some context on this?",
+      "time": "13:42",
+      "timestamp": "1741383779.990749",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "i am facing the same issue",
+      "time": "14:07",
+      "timestamp": "1741385231.291989",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Hmmm never had this issue before. Which key are you using from 1pass?",
+      "time": "14:12",
+      "timestamp": "1741385549.146669",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I'm using the key from 1Pass under env-local-secrets.json. but I believe crafting auto updates that file so values in that file cannot be changed",
+      "time": "14:14",
+      "timestamp": "1741385654.422579",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Is it this one? https://start.1password.com/open/i?a=VAAEGM2JPRH27E45XRQMXG5UKA&v=qbm6ysedz5bm7bzfvh3ezf33be&i=shlejjsdbg3zyiblm2e4ybnfju&h=my.1password.com",
+      "time": "14:15",
+      "timestamp": "1741385751.542229",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "hmm i cannot access the link, does this work for you\n\nhttps://start.1password.com/open/i?a=VAAEGM2JPRH27E45XRQMXG5UKA&v=qbm6ysedz5bm7bzfvh3e[…]i=enkk7exodfaswaihphvigbkiee&h=team-instabase.1password.com (https://start.1password.com/open/i?a=VAAEGM2JPRH27E45XRQMXG5UKA&v=qbm6ysedz5bm7bzfvh3ezf33be&i=enkk7exodfaswaihphvigbkiee&h=team-instabase.1password.com)",
+      "time": "14:20",
+      "timestamp": "1741386014.351149",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "it seems it's the right one",
+      "time": "14:20",
+      "timestamp": "1741386021.545429",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "oh interesting i can't access your link",
+      "time": "14:27",
+      "timestamp": "1741386426.500549",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "okay i did reproduce this pretty consistently\n```curl https://api.openai.com/v1/chat/completions \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Authorization: Bearer sk-R6*****************...***\" \\\n  -d '{\n    \"model\": \"gpt-4o-mini\",\n    \"messages\": [\n      {\"role\": \"system\", \"content\": \"You are a helpful assistant.\"},\n      {\"role\": \"user\", \"content\": \"Hello, how are you?\"}\n    ],\n    \"temperature\": 0.7\n  }'\n{\n    \"error\": {\n        \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.\",\n        \"type\": \"insufficient_quota\",\n        \"param\": null,\n        \"code\": \"insufficient_quota\"\n    }\n}```",
+      "time": "15:02",
+      "timestamp": "1741388531.395629",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "hey @derrick.smith @Dave is it possible to check as OpenAI admin if we are hitting limit for this key?",
+      "time": "15:04",
+      "timestamp": "1741388640.780069",
+      "is_reply": true
+    },
+    {
+      "sender": "derrick.smith",
+      "user_id": "U04DVBQVBTQ",
+      "message": "I don't know that you can. It just shows you the usage tier for the whole account. I'm also not seeing what user that key is associated with, because it appears to be a legacy key. FWIW you should be getting rate limit info returned as a header (https://platform.openai.com/docs/guides/rate-limits#rate-limits-in-headers) in the response",
+      "time": "15:13",
+      "timestamp": "1741389182.455549",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "maybe we're running into rate limit issues because more people are using this key with Cursor and are indexing our codebase?\n\n@Cheryl Zhou do you see the response headers that Derrick mentioned in your curl command's output?",
+      "time": "15:40",
+      "timestamp": "1741390824.746329",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "sorry dealing with another issue, ~trying rn~ will look into this when i get out of the debug call",
+      "time": "15:45",
+      "timestamp": "1741391105.860979",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Unfortunately since we're getting an error, openai doesn't return the response headers so I wasn't able to get it",
+      "time": "17:54",
+      "timestamp": "1741398865.342939",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "If it helps to unblock folks for development, I tested that this key in 1pass works: https://start.1password.com/open/i?a=VAAEGM2JPRH27E45XRQMXG5UKA&v=6lsqvkauerkxzd2kek2o[…]i=4ocslebbhyiaghd3bjp3zayasm&h=team-instabase.1password.com (https://start.1password.com/open/i?a=VAAEGM2JPRH27E45XRQMXG5UKA&v=6lsqvkauerkxzd2kek2odz2hny&i=4ocslebbhyiaghd3bjp3zayasm&h=team-instabase.1password.com)",
+      "time": "18:35",
+      "timestamp": "1741401313.159549",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Thanks for looking into this Cheryl and thanks for sharing this, I think we can put this in env-local-overrides so I'll try it out and report back.",
+      "time": "18:40",
+      "timestamp": "1741401630.228999",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-07.json",
+    "message_count": 23,
+    "start_time": "1741380591.581949",
+    "end_time": "1741401630.228999",
+    "is_thread": true
+  }
+}

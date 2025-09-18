@@ -1,0 +1,103 @@
+{
+  "id": "ch_CSY11CK7T_2024-05-30_1717086290.777119_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "CJ",
+    "daniel",
+    "Jessica",
+    "Elan Sharony"
+  ],
+  "messages": [
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "oh wtf, this failure looks weird... why did those docs get uploaded twice?",
+      "time": "09:24",
+      "timestamp": "1717086290.777119",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Someone pointed out that for the retries the same project is used and the old one doesn't get deleted - I wonder if that is it, the retries still don't work correctly",
+      "time": "09:26",
+      "timestamp": "1717086363.719689",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm going to try to fix that today",
+      "time": "09:26",
+      "timestamp": "1717086369.428519",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "the old project not getting deleted would certainly make some retries fail, yeah. i'll spend a few minutes looking into why there was a double upload (on the first run!)",
+      "time": "09:26",
+      "timestamp": "1717086407.225469",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Ohhh first run? Yeah not sure about that one!",
+      "time": "09:31",
+      "timestamp": "1717086706.397889",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "oh, hm, that seems like a legit error when we upload files:\n• the first upload job id, `850f1305-3efc-4fde-b13a-8d74fcbe844f`, ended with an ERROR status, `Reader failed for all input files.`\n• so we do another file upload, because we retried, and it succeeded\n• but then when we get four documents later when we look at all documents\nso maybe it's not being cleaned up properly if the upload fails?",
+      "time": "10:22",
+      "timestamp": "1717089737.431939",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "@Elan Sharony would you know what's happening here?",
+      "time": "10:22",
+      "timestamp": "1717089756.586169",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "cc @daniel on potential file upload issues",
+      "time": "11:00",
+      "timestamp": "1717092050.351979",
+      "is_reply": true
+    },
+    {
+      "sender": "daniel",
+      "user_id": "U039ZHK0MQF",
+      "message": "oh this might be the same issue we observed in https://instabase.slack.com/archives/C0516UPPMT3/p1715172547239619 where the document uploading succeed but the job is marked as failed, thus FE retries and end up uploading the same file multiple times.",
+      "time": "11:23",
+      "timestamp": "1717093439.143629",
+      "is_reply": true
+    },
+    {
+      "sender": "daniel",
+      "user_id": "U039ZHK0MQF",
+      "message": "hmm this is a backend bug. I need to investigate why would the `post_reader_task` (which inserts the doc entry in db) still get executed after the reader_task failed.",
+      "time": "11:31",
+      "timestamp": "1717093869.772189",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-05-30.json",
+    "message_count": 10,
+    "start_time": "1717086290.777119",
+    "end_time": "1717093869.772189",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "id": "ch_CSY11CK7T_2024-06-14_1718382454.284409_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ":cypress-spin: Hey team! To improve Cypress CI test isolation and to fix concurrency issues :cypress-fire:, I started working on creating new users and an org for each PR that runs Cypress CI. With the change, test runs across different PRs won't affect each other without using the random suffix approach :blob-dance:. Hoping that this will help make Cypress CI less flaky.\nThis work depends on 2 API changes waiting to be deployed. I'm targeting to get this ready by the end of next week. https://github.com/instabase/instabase/pull/58683\n\nI'm leaning towards having all tests by default using the newly created users. We'll have the option to use pre-existing users as needed :point_down:.\nIt'd be helpful if everyone could document which tests need to use pre-existing users here (https://docs.google.com/spreadsheets/d/1Wbt7oyUdBJhikMr_hwwwEJVHiRhTr-4DvjixEe8Vms8/edit?usp=sharing). Another approach would be turning it on and adding `usePreExistingUser: true` for whatever tests fail. If you think the latter is better, please comment below as well! :blob-bear-dance:\n```    cy.login({\n      xhr: true,\n      user: CyUser.COMMERCIAL_AIHUB_DEFAULT,\n      usePreExistingUser: true, // set this to true\n    });```",
+      "time": "09:27",
+      "timestamp": "1718382454.284409",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "just curious, what concurrency issues have you seen that aren’t covered by using unique Build/Converse project names and app/chatbot names?",
+      "time": "09:57",
+      "timestamp": "1718384229.784889",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm not aware of any concurrency issues related to build/converse/app/chatbot. My hub test is the only one that I know having concurrency issues until this week.\n\nMy goal is to try to solve this once for all–we won't need to have each test creating projects with random suffixes. With this, we can also test actions like bulk deleting without interfering with other test runs.\n\nI'm also hoping that we can remove the manual clean ups (i.e delete project older than 30 mins) within each Cypress runs. Instead, we'll wipe the database weekly/monthly.\n\nI think the ideal situation would be having each test run or even each test within the test run to start with a completely empty state: each test builds the pre-reqs as needed and assert the result. My last company did something similar and it was less flaky than what we have rn",
+      "time": "10:13",
+      "timestamp": "1718385201.731909",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw do we have the ability to delete users from the db? i thought we didn’t have an api for deleting users from the db, so we’d have to manually delete them via db queries",
+      "time": "10:15",
+      "timestamp": "1718385339.003099",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "yep we do! https://github.com/instabase/instabase/blob/b31971663470fbcf9a356387d9364600e588fa[…]s/src/aihub/__e2e__/Settings/Organizations/members-crud.spec.ts (https://github.com/instabase/instabase/blob/b31971663470fbcf9a356387d9364600e588fa63/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/Settings/Organizations/members-crud.spec.ts#L33-L40)",
+      "time": "10:17",
+      "timestamp": "1718385443.205119",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think these tests all rely on pre-existing users because we assume they have created certain apps https://instabase.slack.com/archives/CSY11CK7T/p1718222845559559?thread_ts=1718052770.503179&cid=CSY11CK7T",
+      "time": "11:10",
+      "timestamp": "1718388600.152629",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-06-14.json",
+    "message_count": 6,
+    "start_time": "1718382454.284409",
+    "end_time": "1718388600.152629",
+    "is_thread": true
+  }
+}

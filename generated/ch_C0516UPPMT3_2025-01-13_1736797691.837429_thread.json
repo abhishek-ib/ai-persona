@@ -1,0 +1,295 @@
+{
+  "id": "ch_C0516UPPMT3_2025-01-13_1736797691.837429_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Xindi Xu",
+    "mfichman",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Hi team,\nThe “name” field in the “Edit your Google Drive configuration” modal of a GDrive mount is not editable.",
+      "time": "11:48",
+      "timestamp": "1736797691.837429",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "We don't allow renaming drives, and this one looks weird because most other drives have some sort of editable configuration, but Google Drive does not, so it's just a single field that can't be changed. @Xindi Xu we probably need some design input on this, but maybe as a stopgap we add some helper text about how drive names can't be modified?",
+      "time": "13:15",
+      "timestamp": "1736802951.457389",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, i think we should also update the modal to \"view configuration\" instead of \"edit configuration\"",
+      "time": "13:18",
+      "timestamp": "1736803102.781359",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@mfichman do you know why we disallowed renaming drives/data sources?",
+      "time": "13:18",
+      "timestamp": "1736803103.514949",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Probably because it would mess up every single path with that drive name right? We use the name, not mount id, for file paths. Same as not allowing workspace renaming",
+      "time": "13:19",
+      "timestamp": "1736803174.584659",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I thought that we'd addressed this with the v2 mount points DB tables?",
+      "time": "13:20",
+      "timestamp": "1736803241.623779",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think going forward we should have a human drive name that is editable, and use UUIDs elsewhere.",
+      "time": "13:26",
+      "timestamp": "1736803619.165489",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "How does that work for when we store file paths? For existing file paths mostly",
+      "time": "13:27",
+      "timestamp": "1736803648.945719",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It may take some effort to get there. We have a lot of legacy cruft in the drive/mount APIs. Part of that is addressed as a subproposal here:\n\n\nhttps://docs.google.com/document/d/1ZLa7GkGGDhUzYpIdziUpRA_XoCbM6OGvU43U8_H3sU4/edit?tab=t.0\n\nSee \"API Endpoints > Mounts\"",
+      "time": "13:27",
+      "timestamp": "1736803674.646339",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Fortunately, none of the drive/mount APIs are in the public API for AI Hub, so we have a lot of flexibility to change things for the better.",
+      "time": "13:28",
+      "timestamp": "1736803700.311789",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "(this topic is also the genesis of my question here  (https://instabase.slack.com/archives/C06FA6A23/p1736789935697519)fwiw)",
+      "time": "13:29",
+      "timestamp": "1736803756.652549",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "My concern is more around things like ibdoc files, not mount endpoints. We use absolute paths to reference other files in many cases. If we want to start using mount ids in the future inside the paths that works, but what about old paths that reference mount names? Also, all of our backend file reads would need to use mount id instead of mount name.",
+      "time": "13:31",
+      "timestamp": "1736803871.151929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh, yes. That's true. For that, the mount_point name should be non-editable. I was thinking about the human name/label.\n\nThis is identical to the discussion around account names (public_ids vs human names). I think we need both:\n\n```mount_points.mount_point -> permanent name, non-editable, can generate from UUID in AI Hub\nmount_points.uuid -> unique identifier\nmount_points.label -> editable name for UI (naming TBD)```",
+      "time": "13:32",
+      "timestamp": "1736803977.381629",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Just a thought^",
+      "time": "13:33",
+      "timestamp": "1736804000.611809",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "That makes sense! So for all existing mounts, we take their name and make it both mount_point and label. For future mounts, we can generate the mount_point and let them name the label",
+      "time": "13:34",
+      "timestamp": "1736804080.239049",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "One con is that it does make debugging a little harder",
+      "time": "13:35",
+      "timestamp": "1736804115.792049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes...I think we can ameliorate that by having a popover that displays the UUID/permanent name and connection details, like we did on the old platform.",
+      "time": "13:35",
+      "timestamp": "1736804143.235799",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "There's also always the debugger tab I suppose too",
+      "time": "13:36",
+      "timestamp": "1736804162.407449",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "As long as the non-editable mount_point is never exposed to the customer, this approach looks great!",
+      "time": "13:40",
+      "timestamp": "1736804419.832399",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "It would need to be exposed for debugging purposes - otherwise for file paths you would see the mount_point but have no way of figuring out what mount it actually maps to",
+      "time": "13:41",
+      "timestamp": "1736804494.869759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The GET API would return all 3 identifiers, so one could figure it out. But would be better to have it in exposed in the UI, I agree.",
+      "time": "13:42",
+      "timestamp": "1736804548.312589",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Customers won't be using the file paths unless they interact with the API, right?",
+      "time": "13:42",
+      "timestamp": "1736804573.687949",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "We have both uuid and mount_point fields that are not editable and not human-readable. Can we use only uuid and remove mount_point? :thinking_face:",
+      "time": "13:45",
+      "timestamp": "1736804724.200029",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "They could also interact with file paths via UDF. Also for internal debugging - say they're getting an error for a certain path. They want to check in the file system where that path is. They need to map the mount point to the label to find it in the UI.",
+      "time": "13:45",
+      "timestamp": "1736804735.789069",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "uuid has to be unique across all mounts, regardless of org and workspace, mount_point does not, right?",
+      "time": "13:45",
+      "timestamp": "1736804757.157219",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Otherwise our backwards compatibility strategy will not work, because mounts can be named the same thing across workspaces/orgs",
+      "time": "13:46",
+      "timestamp": "1736804777.379069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "UUID is unique, yes. `mount_points.mount_point` is only unique within a repo.",
+      "time": "13:49",
+      "timestamp": "1736804941.728979",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "UDF is an interesting one",
+      "time": "13:49",
+      "timestamp": "1736804984.363749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Given UDFs are in the mix, maybe we should just make the names permanent.",
+      "time": "13:50",
+      "timestamp": "1736805014.166949",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I see. So  `mount_point` field only exists for backward compatibility reasons",
+      "time": "13:50",
+      "timestamp": "1736805026.569019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think we need an immutable natural key (not a UUID) for UDFs. `mount_point` serves that purpose. UUID does not, b/c it's not a natural key.",
+      "time": "13:50",
+      "timestamp": "1736805058.335719",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yeah I almost wonder if it's better to just keep mount names for drives uneditable, the same way workspace names are uneditable. And make it clearer that you can't edit it",
+      "time": "13:51",
+      "timestamp": "1736805064.845339",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Jessica the only other option is to have some kind of \"help\" for UDFs to link the human name to the UUID when they are attached to a project. But that seems a bit wild :slightly_smiling_face:",
+      "time": "13:52",
+      "timestamp": "1736805166.084149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Otherwise, I agree w/ Jessica",
+      "time": "13:53",
+      "timestamp": "1736805189.420779",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-01-13.json",
+    "message_count": 34,
+    "start_time": "1736797691.837429",
+    "end_time": "1736805189.420779",
+    "is_thread": true
+  }
+}

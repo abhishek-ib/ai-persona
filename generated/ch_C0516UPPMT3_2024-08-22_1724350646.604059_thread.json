@@ -1,0 +1,87 @@
+{
+  "id": "ch_C0516UPPMT3_2024-08-22_1724350646.604059_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "jack.robbins",
+    "Kerry",
+    "andy",
+    "Tom Murphy"
+  ],
+  "messages": [
+    {
+      "sender": "Tom Murphy",
+      "user_id": "U027REZJDL3",
+      "message": "Hi. Do we have guidance or expectations for whether AI Hub can handle \"real time\" (consumer facing) use cases?\n> These are use cases akin to our experience in Navan of uploading receipts / supporting documentation and waiting for results being returned.",
+      "time": "11:17",
+      "timestamp": "1724350646.604059",
+      "is_reply": false
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "At the moment, I'm not aware of formal guidance, but I've seen at least one use-case like this run into performance :stopwatch: issues. https://spoonfulapp.com/ needed a response back from our API within ~10 seconds for consumers taking photos of nutrition labels while grocery shopping, but we weren't able to provide a response that quickly (we were ~1 minute). It's worth understanding their use-case & flexibility.",
+      "time": "11:25",
+      "timestamp": "1724351115.538249",
+      "is_reply": true
+    },
+    {
+      "sender": "Tom Murphy",
+      "user_id": "U027REZJDL3",
+      "message": "Thanks @jack.robbins, Do you know if we run any internal AI Hub performance benchmarks for such end-to-end attributes (say with our OOTB Apps)?",
+      "time": "12:17",
+      "timestamp": "1724354243.480789",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "not 100% sure, let me check w/ engineering",
+      "time": "12:58",
+      "timestamp": "1724356690.104599",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "theres a synchronous run App API that we’ve advertised as being better for more real time use cases. i think the term “real time” has a wide range of definitions within the industry, so it just depends on what the response time SLA is for this specific use case. For that synchronous run App API, I think you can expect a response time of 10-15s for most automation workflows with 1-5 input files per run",
+      "time": "13:54",
+      "timestamp": "1724360059.960219",
+      "is_reply": true
+    },
+    {
+      "sender": "Tom Murphy",
+      "user_id": "U027REZJDL3",
+      "message": "Thanks @andy. Do we have SLAs, or directional testing, around the synchronous run API in alignment with your expectations? Here I imagine the customer (EBC) will start to trial it to test their app and use case timing considerations, if we direct that as a suitable path.",
+      "time": "15:32",
+      "timestamp": "1724365962.514519",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Anil and I had a chat about this today; @Tom Murphy, my suggestion for now is to use the regular async API and build an app to see if that meets their requirement. The sync API doesn't guarantee any SLA; the time it takes for an app to run highly depends on the use case / the app itself: how big is the input files, how many fields to extract, what types of fields to extract, how many classes to classify, etc.\n\nAll our app runs use an async / queue architecture. The sync API is a bit faster than the async API because it doesn't write things to disks. The downside is you don't get to do manual correction later (human review is not supported)\n\nIn spooful's case, they are just doing a single-page photo that's a grocery label. I doubt it'll take one minute with our platform (again depending on their app), but my guess is it's just too simple of a use case that they can just send one call to GPT and done.",
+      "time": "17:01",
+      "timestamp": "1724371314.743379",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "if this is a big opportunity (automation use cases we have right now are mostly not real-time, more like batch processing use cases), we can work on this in Q4",
+      "time": "17:03",
+      "timestamp": "1724371400.373809",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-08-22.json",
+    "message_count": 8,
+    "start_time": "1724350646.604059",
+    "end_time": "1724371400.373809",
+    "is_thread": true
+  }
+}

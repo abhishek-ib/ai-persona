@@ -1,0 +1,24 @@
+{
+  "id": "dm_D03LK3XUJUA_2025-07-29_1753828036.403199",
+  "type": "dm",
+  "participants": [
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "```from typing import Any\nfrom instabase.provenance.registration import register_fn\n\nimport os\nimport json\nimport logging\nfrom typing import Any, Dict, List, Text\n\nfrom instabase.ocr.client.libs.ibocr import ParsedIBOCRBuilder, RefinedPhrase\nfrom instabase.utils.path.ibpath import join_v2, split_file, join_many, strip_ext\nfrom instabase.udf_utils.clients.udf_helpers import get_output_ibmsg\n\ndef map_udf_refiner(input_record, step_folder, *args, **kwargs):\n  input_filepath = input_record['input_filepath']\n  file_content = input_record['content']\n  output_filename = input_record['output_filename']\n\n  # Loading ibmsg and then we can get records from it.\n  builder, err = ParsedIBOCRBuilder.load_from_str(input_filepath, file_content)\n  if err:\n    raise Exception(err)\n\n  refined_phrase_dicts = [{'label': 'dl_number2', 'word': '1234-56-7890', 'raw_word': '1234-56-7890', 'extracted_tables': [], 'extracted_pos': {'pixels': [[231.0, 94.0, 363.0, 116.0, 0]], 'text_region': [[42, 4, 17, 1, 42, 0]]}, 'extracted_sheet_pos': [], 'information_pos': {'pixels': [[196.0, 97.0, 226.0, 116.0, 0]], 'text_region': [[39, 4, 3, 1]]}, 'char_confidence': 0.9919999837875366, 'has_unsure_ex': False, 'has_unsure_info': False, 'was_frozen': False, 'was_best_effort_tracked': False, 'formula_text': \"scan_right(INPUT_COL, 'DLN')\", 'page': 0, 'registered_return_type': 'string', 'output_type': '', 'error_msg': None, 'log_msgs': [], 'cached_provenance': None, 'target_value': None, 'target_score': None, 'time_taken': None, 'model_confidences': None, 'ocr_confidence': None}, \n  {'label': 'sex2', 'word': 'M', 'raw_word': 'M', 'extracted_tables': [], 'extracted_pos': {'pixels': [[458.0, 247.0, 466.0, 260.0, 0]], 'text_region': [[94, 11, 6, 1, 94, 0]]}, 'extracted_sheet_pos': [], 'information_pos': {'pixels': [[420.0, 247.0, 446.0000009536743, 260.0, 0]], 'text_region': [[91, 11, 3, 1]]}, 'char_confidence': 0.8870000243186951, 'has_unsure_ex': False, 'has_unsure_info': False, 'was_frozen': False, 'was_best_effort_tracked': False, 'formula_text': \"scan_right(INPUT_COL, 'Sex')\", 'page': 0, 'registered_return_type': 'string', 'output_type': '', 'error_msg': None, 'log_msgs': [], 'cached_provenance': None, 'target_value': None, 'target_score': None, 'time_taken': None, 'model_confidences': None, 'ocr_confidence': None}]\n\n  # In future, we will be dealing with IBMsg records only.\n  # for ibocr_record in builder.get_ibocr_records():\n  ibocr_records = builder.get_ibocr_records()\n  for record_index, ibocr_record in enumerate(ibocr_records):\n    logging.info (http://logging.info)(ibocr_record.as_dict())\n    record_builder = ibocr_record.as_builder()\n    new_refined_phrases = []\n    for refined_phrase_dict in refined_phrase_dicts:\n      new_refined_phrase, err = RefinedPhrase.from_dict(refined_phrase_dict)\n      if err:\n        raise Exception(err)\n      new_refined_phrases.append(new_refined_phrase)\n    record_builder.set_refined_phrases(new_refined_phrases)\n\n    new_record, err = record_builder.as_record()\n    if err:\n      logging.error(f'Failed to build record: {err}')\n    # refined_phrases, _ = ibocr_record.get_refined_phrases()\n    # logging.info (http://logging.info)([phrase.as_dict() for phrase in refined_phrases])\n    builder.set_ibocr_record(record_index, new_record)\n\n    # classification payload example in map records\n    # in renumber pages\n    # shared-utils/py-utils/ocr-client-lib/src/py/instabase/ocr/client/libs/ibocr.py\n  \n\n  ibocr_content = new_ibocr_builder.as_serialized_proto()\n  new_filepath = join_v2(step_folder, output_filename)\n  out_content = ibdoc_to_ibmsg(ibocr_content, new_filepath)\n\n  # Copy output ibmsg from input\n  # output_ibmsg, err = get_output_ibmsg(input_filepath, step_folder,\n  #                                      file_content)\n\n  return {\n    \"out_files\": [\n      {\n        \"filename\": f\"map-udf-{output_filename}\",\n        \"content\": output_ibmsg\n      }\n    ]\n  }```",
+      "time": "15:27",
+      "timestamp": "1753828036.403199",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "dm_id": "D03LK3XUJUA",
+    "date_file": "2025-07-29.json",
+    "message_count": 1,
+    "start_time": "1753828036.403199",
+    "end_time": "1753828036.403199"
+  }
+}

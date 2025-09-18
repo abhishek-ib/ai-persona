@@ -1,0 +1,335 @@
+{
+  "id": "ch_C05L87V014J_2025-07-22_1753230447.165719_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "mfichman",
+    "Jet",
+    "Gauti"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It seems that whenever I create a new sandbox (I tried 3 today), we almost always run into this error. I think this is because we try to run `dbdevinit` too soon, before MySQL is ready. :thinking_face: . Then workspace:dev seems to be stuck at `[Step 14] Build:instabase` forever\n```INFO: Running command line: bazel-bin/shared-utils/go-utils/src/instabase/utils/db/tools/dbdevinit/dbdevinit_/dbdevinit\n2025/07/23 00:19:40 INFO utils/db/tools/dbdevinit/main.go:104 -- Creating database: root:@tcp(mysql:3306)/ibdb?allowNativePasswords=true&parseTime=true&sql_mode=%22NO_BACKSLASH_ESCAPES%2CONLY_FULL_GROUP_BY%2CSTRICT_TRANS_TABLES%2CERROR_FOR_DIVISION_BY_ZERO%2CNO_ENGINE_SUBSTITUTION%22\n\nERROR 2003 (HY000): Can't connect to MySQL server on 'mysql:3306' (110)               <----------------------------\n\n2025/07/23 00:21:51 FATAL utils/db/tools/dbdevinit/main.go:138 -- exit status 1\nmake: *** [Makefile:46: dev-dbinit] Error 1\nmake: Leaving directory '/home/owner/instabase/shared-utils/go-utils/src/instabase/utils/db'\nmake: Entering directory '/home/owner/instabase/tools/connectors'\nmkdir -p /home/owner/instabase/tools/connectors/tmp\n\nWORKLOAD FEATURE TARGET STATUS\nWORKLOAD   FEATURE         TARGET         STATUS   \nopensearch Cluster Network crafting-aihub » Pending\ndev        Cluster Network crafting-aihub » Pending\nmysql      Cluster Network crafting-aihub » Pending\n\n...\n\ndev        Cluster Network crafting-aihub » Pending                                                                                                                \n                                            E connection error: desc = \"transport: Error while dialing: rpc error: code = Unknown desc = context deadline exceeded\"\n                                            E rpc error: code = Unknown desc = context deadline exceeded        ```",
+      "time": "17:27",
+      "timestamp": "1753230447.165719",
+      "is_reply": false
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "same here",
+      "time": "17:32",
+      "timestamp": "1753230751.710639",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "Try:\n1. git pull\n2. suspend the sandbox\n3. resume the sandbox",
+      "time": "17:42",
+      "timestamp": "1753231344.107289",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thanks! I did that and ran `cs build` to get thru the DB set up phase, but still stuck with the connection errors afterwards.",
+      "time": "17:51",
+      "timestamp": "1753231873.738609",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "can you try kubectl get pod, did it go through?",
+      "time": "17:52",
+      "timestamp": "1753231959.508849",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": ":melting_face: i'm running into this again.",
+      "time": "18:02",
+      "timestamp": "1753232556.092899",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "@mfichman I think the crafting-aihub in ICC is also failing with an image pull error.\n\nNormal BackOff 2m38s (x7647 over 28h) kubelet Back-off pulling image \"549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/celery-app-tasks:sean.donohoe-crafting-aihub-25.05.05-036b02dc1d60e8c203627fef0080efd9600acb88 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/celery-app-tasks:sean.donohoe-crafting-aihub-25.05.05-036b02dc1d60e8c203627fef0080efd9600acb88)\"",
+      "time": "18:07",
+      "timestamp": "1753232845.723619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You mean the crafting cluster?",
+      "time": "19:16",
+      "timestamp": "1753237015.812859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, we'll have to look at that...",
+      "time": "19:17",
+      "timestamp": "1753237032.311139",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Re: the dbinit problem...this is new. Wondering if there is a problem with crafting itself. That command isn't supposed to run until the dependencies (incl mysql) are booted and healthy.",
+      "time": "19:18",
+      "timestamp": "1753237111.341699",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "yeah,I’m digging, it basically has no pod to bind the port with.",
+      "time": "19:18",
+      "timestamp": "1753237127.597309",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Yeah, it's happening for every newly created sandbox.",
+      "time": "19:28",
+      "timestamp": "1753237721.129609",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": ":thinking_face:could be the same issue?\n\ni'm still getting this\n\n#2 ERROR: unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/go-db/manifests/19: 401 Unauthorized",
+      "time": "19:38",
+      "timestamp": "1753238306.502759",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": ":thinking_face: i did something  and  it started to work. Let me wait a couple more minutes.",
+      "time": "19:54",
+      "timestamp": "1753239243.281979",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "i did this and only opensearch worked.",
+      "time": "20:00",
+      "timestamp": "1753239605.264579",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Maybe my claim isn't true. I created another sandbox and this time, dbdevinit succeeded on the first run",
+      "time": "20:09",
+      "timestamp": "1753240178.986869",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "how to tell if dbdevinit succeeded?",
+      "time": "20:10",
+      "timestamp": "1753240220.645409",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "```INFO: Running command line: bazel-bin/shared-utils/go-utils/src/instabase/utils/db/tools/dbdevinit/dbdevinit_/dbdevinit\n2025/07/23 02:13:57 INFO utils/db/tools/dbdevinit/main.go:104 -- Creating database: root:@tcp(mysql:3306)/ibdb?allowNativePasswords=true&parseTime=true&sql_mode=%22NO_BACKSLASH_ESCAPES%2CONLY_FULL_GROUP_BY%2CSTRICT_TRANS_TABLES%2CERROR_FOR_DIVISION_BY_ZERO%2CNO_ENGINE_SUBSTITUTION%22\n2025/07/23 02:13:58 INFO utils/db/session/dbsession.go:248 -- DB Connection Pool: MaxIdle=1, MaxO2025/07/23 02:13:58 INFO utils/db/session/dbsession.go:248 -- DB Connection Pool: MaxIdle=1, MaxOpen=10, ConnMaxLifetime=7h0m0s, ConnMaxIdleTime=7h0m0s, VerboseLog=false```",
+      "time": "20:10",
+      "timestamp": "1753240259.718769",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'll output these logs\n```2025/07/23 03:09:24 INFO utils/db/tools/migrate.go:88 -- Applying migration: 00000353_0000_make_deployed_solutions_description_nullable[0000]\n2025/07/23 03:09:24 INFO utils/db/tools/migrate.go:88 -- Applying migration: 00000354_0000_add_enum_data_type_project_fields[0000]\n2025/07/23 03:09:24 INFO utils/db/session/params.go:383 -- Starting dbSession with dialect mysql\n2025/07/23 03:09:24 INFO utils/db/session/dbsession.go:248 -- DB Connection Pool: MaxIdle=1, MaxOpen=10, ConnMaxLifetime=7h0m0s, ConnMaxIdleTime=7h0m0s, VerboseLog=false\n2025/07/23 03:09:24 INFO utils/db/utils/utils.go:168 -- Creating account (username:admin, email:noreply+admin@instabase.com)\n2025/07/23 03:09:24 INFO utils/db/utils/utils.go:159 -- Created account (username:admin)```",
+      "time": "20:11",
+      "timestamp": "1753240290.524399",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "that said, i'm still getting connection errors after that\n```rabbitmq   Cluster Network crafting-aihub » Pending                                                                                                                \n\nconnection error: desc = \"transport: Error while dialing: rpc error: code = Unknown desc = context deadline exceeded\"```",
+      "time": "20:13",
+      "timestamp": "1753240385.129899",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "did you get something like this?\nERROR: failed to build: failed to solve: 54923043015",
+      "time": "20:13",
+      "timestamp": "1753240392.449349",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Yes, I am also suspecting that AWS integration is not going through. Let me try manual AWS login workaround and see if it resolved the issue",
+      "time": "20:15",
+      "timestamp": "1753240525.344729",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "After trying logging into aws (using the old ecr-login script and Gautam's hack above (https://instabase.slack.com/archives/C05L87V014J/p1753073546111569)), i got a new error:\n`E rpc error: code = Unavailable desc = use of closed network connection` , which is reported above (https://instabase.slack.com/archives/C05L87V014J/p1753226913535659) too",
+      "time": "20:24",
+      "timestamp": "1753241082.541329",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "But as per @mfichman comment, this shouldn't have any performance impact",
+      "time": "20:26",
+      "timestamp": "1753241178.917509",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, but `cs build` won't continue until interception is ready. I'm digging around to see if we can make it skip",
+      "time": "20:27",
+      "timestamp": "1753241231.051349",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ah, found it. After commenting out this file `instabase/tools/connectors/dev-setup.sh`\n`cs build` can go pass the step!",
+      "time": "20:28",
+      "timestamp": "1753241319.458219",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Running into the same 401 errors even with the ecr-login script hack",
+      "time": "20:58",
+      "timestamp": "1753243109.922479",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Some logs produced by the ecr-login script:\n```time=\"2025-07-23T03:48:43Z\" level=debug msg=\"Could not fetch credentials for cache prefix, disabling cache\" error=\"failed to refresh cached credentials, no EC2 IMDS role found, operation error ec2imds: GetMetadata, canceled, context deadline exceeded\"\ntime=\"2025-07-23T03:48:43Z\" level=debug msg=\"Retrieving credentials\" region=us-east-2 registry=549230430157 serverURL=549230430157.dkr.ecr.us-east-2.amazonaws.com (http://549230430157.dkr.ecr.us-east-2.amazonaws.com) service=ecr\ntime=\"2025-07-23T03:48:43Z\" level=debug msg=\"Calling ECR.GetAuthorizationToken\" registry=549230430157\ntime=\"2025-07-23T03:48:48Z\" level=error msg=\"Error retrieving credentials\" error=\"ecr: Failed to get authorization token: operation error ECR: GetAuthorizationToken, get identity: get credentials: failed to refresh cached credentials, no EC2 IMDS role found, operation error ec2imds: GetMetadata, request canceled, context deadline exceeded\"```",
+      "time": "20:59",
+      "timestamp": "1753243188.353589",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Yupp, same issue. Now it's completely broken.",
+      "time": "21:02",
+      "timestamp": "1753243324.612119",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "@Ashish @Abhinav, Have we revoked any permission for Instabase-dev role? From the above error logs, it looks like now we don't have enough permission to perform AWS login with creds.",
+      "time": "21:08",
+      "timestamp": "1753243709.759119",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "i'm getting this.",
+      "time": "21:18",
+      "timestamp": "1753244329.476029",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "I think @Serena fixed this yesterday. Have you rebased to the latest master? How did you reach here? :stuck_out_tongue:\nAre all your services up?",
+      "time": "21:20",
+      "timestamp": "1753244414.995459",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "",
+      "time": "21:21",
+      "timestamp": "1753244480.888739",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "i did the same thing as your guys, ecr-login ,manually not the script.",
+      "time": "21:24",
+      "timestamp": "1753244676.469989",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "my branch is  up to date with 'origin/master'",
+      "time": "21:26",
+      "timestamp": "1753244779.574569",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "So we now have one more issue. Nobody is getting 100% working :stuck_out_tongue:",
+      "time": "21:27",
+      "timestamp": "1753244826.102479",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "",
+      "time": "21:54",
+      "timestamp": "1753246455.756159",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "",
+      "time": "21:54",
+      "timestamp": "1753246461.181559",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "so i manually run this\n\n1. export the key\n\n2.\n`aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 549230430157.dkr.ecr.us-east-2.amazonaws.com (http://549230430157.dkr.ecr.us-east-2.amazonaws.com)`\n\n3.\nthen suspend and resume my sandbox.\n....\nafter waited a while, it started working with a blank UI white page\n\n4.\ngit pull\n5.\nresync\n\nMy method probably won’t work for everyone.\n\ni think the issue is still the ecr image cred",
+      "time": "21:57",
+      "timestamp": "1753246643.428839",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-22.json",
+    "message_count": 39,
+    "start_time": "1753230447.165719",
+    "end_time": "1753246643.428839",
+    "is_thread": true
+  }
+}

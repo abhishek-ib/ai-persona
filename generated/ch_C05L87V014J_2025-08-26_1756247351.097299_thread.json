@@ -1,0 +1,119 @@
+{
+  "id": "ch_C05L87V014J_2025-08-26_1756247351.097299_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Jason",
+    "mfichman",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "Hi folks, does anyone know if this is actively being worked on? I know @astpierre has poked around with @mfichman and there may be some support activity with Crafting, but our EBS storage from crafting is starting to run away from us. Need some help making an action plan to resolve.",
+      "time": "15:29",
+      "timestamp": "1756247351.097299",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Potentially related to the new Cypress pre-merge Crafting sandboxes (merged Aug 11 (https://github.com/instabase/instabase/issues/72681))?\n\nPreviously, we only created sandboxes if frontend changes were made. And the sandboxes would have 100GB provisioned (ss1)\n\nNow, we create sandboxes on every PR, with 300GB provisioned (ss2)\n\nOur sandboxes are configured to automatically delete (https://instabase.slack.com/archives/C03B865Q74K/p1753825006405769?thread_ts=1752510519.973879&cid=C03B865Q74K) after 30 days suspended, but perhaps we can ask the Crafting devs is there's any config options to aggressively clean up PR sandboxes? @Xindi Xu",
+      "time": "15:43",
+      "timestamp": "1756248213.748759",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yes, we should definitely shorten the auto deletion (to 7 days maybe?)",
+      "time": "16:00",
+      "timestamp": "1756249247.463909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We don’t need 300GB for the cypress sandboxes- we should see if we can change the default size for those too.",
+      "time": "16:00",
+      "timestamp": "1756249252.071599",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I would say: delete after 24h of no use",
+      "time": "16:01",
+      "timestamp": "1756249265.786759",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "we can also write a github action to delete after PR is merged",
+      "time": "16:01",
+      "timestamp": "1756249276.483959",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "(Even more aggressive - can recreate if needed)",
+      "time": "16:01",
+      "timestamp": "1756249280.735639",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea sure! We can start with 24hr and if that's annoying, we can keeping it longer + implement the github action",
+      "time": "16:02",
+      "timestamp": "1756249339.439419",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "Cool, I’ll watch the costs side and report. Are y’all implementing or do we need to plan this?",
+      "time": "16:06",
+      "timestamp": "1756249578.871729",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Xindi is best to make the changes - I can help too if you need @Xindi Xu",
+      "time": "16:07",
+      "timestamp": "1756249626.391549",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://instabase.slack.com/archives/C03B865Q74K/p1756249772949589\nOk seems like we need to write a cron job for cleaning up. I can look into it this week",
+      "time": "16:12",
+      "timestamp": "1756249923.821589",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Bummer",
+      "time": "16:24",
+      "timestamp": "1756250653.236169",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-08-26.json",
+    "message_count": 12,
+    "start_time": "1756247351.097299",
+    "end_time": "1756250653.236169",
+    "is_thread": true
+  }
+}

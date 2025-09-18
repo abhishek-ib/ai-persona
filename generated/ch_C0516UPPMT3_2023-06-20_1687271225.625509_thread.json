@@ -1,0 +1,122 @@
+{
+  "id": "ch_C0516UPPMT3_2023-06-20_1687271225.625509_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "hannah",
+    "vineeth",
+    "joshbronko",
+    "Eric Han",
+    "Heymian",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Are there plans to standardize the the run_sync calls? between converse and build. We use different params and they arent standardized",
+      "time": "07:27",
+      "timestamp": "1687271225.625509",
+      "is_reply": false
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "we invoke different tasks, are you saying the param shapes themselves are different too?",
+      "time": "08:41",
+      "timestamp": "1687275694.230729",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "yes, we use ibdocs for converse and input_path for build\n```def run_sync_llm(self, prompt: str, ibdoc: str, model_name = \"gpt-3.5-turbo\" ):\n        \"\"\"\n        Execute LLM Model\n        \"\"\"\n\n        metadata = {\n            'tags' : ['ModelService'],\n            'operation' : 'call_model_llm'\n        }\n        resource = f'/v2/zero-shot-idp/projects/inference_lite/run_sync'\n        json = {\n            \"model_name\": \"ibllm\",\n            \"model_version\": \"1.1.15\",\n            \"model_payload\": {\n            \"custom_request\": {\n                \"task\": \"multi_doc\",\n                \"user_prompt\": prompt,\n                \"ibdocs\": [\n                ibdoc\n                ],\n                \"cached_index\": self.cached_index,\n                \"model_name\": model_name\n            }\n            }\n        }\n\n        return self._session.post (http://self._session.post)(metadata, resource, json = json)\n    \n    def run_sync_llm_key_value(self, prompt: str, ibdoc: str, model_name = \"gpt-3.5-turbo\" ):\n        \"\"\"\n        Execute LLM Model\n        \"\"\"\n\n        metadata = {\n            'tags' : ['ModelService'],\n            'operation' : 'call_model_llm'\n        }\n        resource = f'/v2/zero-shot-idp/projects/inference_lite/run_sync'\n        json = {\n                \"model_name\": \"ibllm\",\n                \"model_version\": \"1.1.13\",\n                \"model_payload\": {\n                    \"custom_request\": {\n                        \"task\": \"extraction\",\n                        \"fields\": [\n                            {\n                                \"name\": \"d\",\n                                \"prompt\": prompt,\n                                \"type\": \"basic\"\n                            }\n                        ],\n                        \"cached_index\": self.cached_index,\n                        \"skip_indexing\": True\n                    }\n                },\n                \"input_path\": ibdoc\n            }\n\n        return self._session.post (http://self._session.post)(metadata, resource, json = json)```",
+      "time": "08:43",
+      "timestamp": "1687275795.837079",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Converse is within the custom_request while build is outside the custom_request",
+      "time": "08:43",
+      "timestamp": "1687275827.384999",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "cc @Yash Botadra who’s looking into reworking the run_sync call and wrapping it in a separate API so all the parameters make sense as a public facing API.",
+      "time": "09:52",
+      "timestamp": "1687279922.867469",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "This should be cleaned up at the model level. I don’t see a reason why we’d need to do this. cc @vineeth in case I am missing something.\n\nAlso, just to confirm, for 23.07 we don’t need the build APIs to be available, do we? Only the converse (i.e. a single ibdoc)?",
+      "time": "10:15",
+      "timestamp": "1687281354.991229",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "ya we’re planning to rewrite some of the build apis anyways as part of enterprise build. cc: @lydia",
+      "time": "10:17",
+      "timestamp": "1687281422.585859",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw the licensing logic has lots of if-branches to handle these inconsistent cases in the `run_sync` API request bodies, so we’ll need to update the licensing logic as well if the model interface is changing (example of my previous confusion (https://instabase.slack.com/archives/C05BFDFKBJ9/p1686689842027399?thread_ts=1686516807.927099&cid=C05BFDFKBJ9))",
+      "time": "10:20",
+      "timestamp": "1687281602.825059",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "the main reason to keep it in custom request was because we needed the request schema to be flexible (a json), all other fields in the model request had to be first compiled through proto definitions. For speed of development we chose to use the generic custom request parameter in the proto definition (which is basically a struct)",
+      "time": "10:23",
+      "timestamp": "1687281837.454409",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "cc: @Hari",
+      "time": "10:24",
+      "timestamp": "1687281851.062629",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Yash Botadra Afaik the ask is still only for a new converse API to be public facing. cc @hannah\n\n`run_sync` call will not be the public facing API that customers will use, it’s much too flexible and contains too many internal details that we should not expose as a backwards compatible API that we commit to supporting.",
+      "time": "11:24",
+      "timestamp": "1687285464.017189",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Yes, the current scope for 23.07 that will be accessible by internal users in our customer SaaS environments is only the converse API (reworking of run_sync).",
+      "time": "11:43",
+      "timestamp": "1687286605.718839",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-06-20.json",
+    "message_count": 12,
+    "start_time": "1687271225.625509",
+    "end_time": "1687286605.718839",
+    "is_thread": true
+  }
+}

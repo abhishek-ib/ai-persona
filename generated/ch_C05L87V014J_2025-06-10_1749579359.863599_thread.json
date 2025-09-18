@@ -1,0 +1,159 @@
+{
+  "id": "ch_C05L87V014J_2025-06-10_1749579359.863599_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "mfichman",
+    "Goto Tools Go Links",
+    "Sayan"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Hi team, having an issue with crafting. Right now several services are failing with errors such as this:\n```preloading transitive closure failed: no such package '@org_golang_google_genproto//googleapis/rpc/code': BUILD file not found in directory 'googleapis/rpc/code' of external repository @org_golang_google_genproto. Add a BUILD file to a directory to mark it as a package.```\nDo we know how to fix this? Restarting the workspace doesn't help in this case - I get the same error",
+      "time": "11:15",
+      "timestamp": "1749579359.863599",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "which services are you trying to spin up?",
+      "time": "11:28",
+      "timestamp": "1749580083.709639",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Also, try running this:\n```/home/owner/instabase/.sandbox/ibdev-backend/scripts/gcr-login```",
+      "time": "11:28",
+      "timestamp": "1749580115.466349",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "So this seems to be affecting most services here: https://instabase.sandboxes.site/sandboxes/sayanbhattacharjee?cw=dev",
+      "time": "11:30",
+      "timestamp": "1749580248.585009",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Try running these commands (https://instabase.slack.com/archives/C05L87V014J/p1747404563451399), your node version is out of date:\n```owner@dev:~$ node --version\nv18.16.1```",
+      "time": "11:32",
+      "timestamp": "1749580368.065089",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "You should also resync your box, which has the updated node version installed.",
+      "time": "11:33",
+      "timestamp": "1749580400.818549",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "It seems that after running the following commands and resyncing sandbox I am still unable to build most services with the same error: `BUILD file not found in directory 'googleapis/rpc/code' of external repository @org_golang_google_genproto. Add a BUILD file to a directory to mark it as a package.`. Also it seems gcr/ecr login didn't change this result in this case",
+      "time": "12:15",
+      "timestamp": "1749582907.605259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Huh. Do you have any diff with `origin/master`? Have you rebased recently?",
+      "time": "12:15",
+      "timestamp": "1749582953.216619",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "There shouldn't be a difference. I'm on a commit which was merged into master about 1 hr ago",
+      "time": "12:17",
+      "timestamp": "1749583023.536209",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "let me try restarting workspace",
+      "time": "12:17",
+      "timestamp": "1749583064.573529",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "same issue",
+      "time": "12:21",
+      "timestamp": "1749583280.559979",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmmm can you narrow it down to a single `bazel` command that fails? Then I can try it on my sandbox.",
+      "time": "12:28",
+      "timestamp": "1749583716.721429",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "~seems it's this: `bazel-bin/external/io_bazel_rules_go/go/tools/go_bin_runner/bin/go version` but let me see~\n\nI think this is the command that's running:\n```'['bazel', 'query', 'kind(go_library, deps(//core-services/file-service/src/go/src/instabase/fileservice:file-service))', '--noshow_loading_progress', '--noimplicit_deps', '--notool_deps', '--experimental_graphless_query', '--loading_phase_threads=1']'```",
+      "time": "12:29",
+      "timestamp": "1749583774.736199",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go/tools/go_bin_runner/bin/go",
+      "time": "12:29",
+      "timestamp": "1749583776.196769",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "fixed command above",
+      "time": "12:34",
+      "timestamp": "1749584088.399879",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Seems that it worked on an older sandbox (https://instabase.sandboxes.site/sandboxes/sayanbhattacharjee2?cw=dev) I created after running resync. Not sure what the issue was but I'll port my work over to the sandbox that's working",
+      "time": "12:53",
+      "timestamp": "1749585214.801799",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "JW, does `bazel clean` fix it?",
+      "time": "16:59",
+      "timestamp": "1749599960.361999",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-06-10.json",
+    "message_count": 17,
+    "start_time": "1749579359.863599",
+    "end_time": "1749599960.361999",
+    "is_thread": true
+  }
+}

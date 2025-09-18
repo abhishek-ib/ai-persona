@@ -1,0 +1,102 @@
+{
+  "id": "ch_C06FA6A23_2022-03-25_1648239806.813119_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Charlie Cohen",
+    "Julia Marcondes",
+    "andy"
+  ],
+  "messages": [
+    {
+      "sender": "Charlie Cohen",
+      "user_id": "U02Q057MWLX",
+      "message": "Do UDFs always need to return a string? Complex types like dicts, lists, classes etc, even none are always throwing errors at a customer.",
+      "time": "13:23",
+      "timestamp": "1648239806.813119",
+      "is_reply": false
+    },
+    {
+      "sender": "Charlie Cohen",
+      "user_id": "U02Q057MWLX",
+      "message": "cc @Julia Marcondes",
+      "time": "13:23",
+      "timestamp": "1648239811.408349",
+      "is_reply": true
+    },
+    {
+      "sender": "Julia Marcondes",
+      "user_id": "U01UGTBFQ0K",
+      "message": "Specifically Post Flow UDFs (flow v2)",
+      "time": "13:24",
+      "timestamp": "1648239890.359859",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "a post flow udf should be able to return any type. not sure what you would need the return value for though since it shouldn't be getting used anywhere.\n\nwhat's the error that the customer is seeing?",
+      "time": "13:46",
+      "timestamp": "1648241180.303369",
+      "is_reply": true
+    },
+    {
+      "sender": "Charlie Cohen",
+      "user_id": "U02Q057MWLX",
+      "message": "i believe it's: _All records had a runtime exception. Last error observed was: Error executing Apply UDF (Step 5): Could not find custom_function in column names_",
+      "time": "13:47",
+      "timestamp": "1648241264.309879",
+      "is_reply": true
+    },
+    {
+      "sender": "Julia Marcondes",
+      "user_id": "U01UGTBFQ0K",
+      "message": "@Charlie Cohen might be a good idea to ask vlad for his most recent errors/logs\nThe one I remember from our call was “NoneType has no attribute ‘encode’” or something along those lines",
+      "time": "13:49",
+      "timestamp": "1648241340.387359",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "Sounds like the error is being raised within the function itself. A common post flow UDF issue is when we extract nothing for a field and then the None value causes an error within the post flow UDF. It doesn't help that the error messages from  post flow UDFs specifically can be kind of unclear sometimes.",
+      "time": "13:52",
+      "timestamp": "1648241547.190449",
+      "is_reply": true
+    },
+    {
+      "sender": "Charlie Cohen",
+      "user_id": "U02Q057MWLX",
+      "message": "we're punting this to support, but the latest on the client side: \"In celery here\n\n/instabase/workers/celery-app-tasks/py/instabase/utils/strutils.p\n\nYou are calling text.encode('utf-8') assuming that “text” is a string. I don’t honestly remember what other classes have encode method, but certainly not dicts or lists\"",
+      "time": "14:02",
+      "timestamp": "1648242147.779499",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "one quick way to debug this if they have easy access to some sort of test data is to just use ibfile to write “text” to a file and see what content is inside of it",
+      "time": "14:22",
+      "timestamp": "1648243372.854759",
+      "is_reply": true
+    },
+    {
+      "sender": "Charlie Cohen",
+      "user_id": "U02Q057MWLX",
+      "message": "thank you! cc @Cyril for visibility. I've directed Vlad at Citi to move all comms on this to Zendesk moving forward",
+      "time": "14:23",
+      "timestamp": "1648243435.249619",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-03-25.json",
+    "message_count": 10,
+    "start_time": "1648239806.813119",
+    "end_time": "1648243435.249619",
+    "is_thread": true
+  }
+}

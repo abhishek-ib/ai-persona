@@ -1,0 +1,160 @@
+{
+  "id": "ch_C05L87V014J_2024-12-13_1734085884.662099_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "ligao.zhang",
+    "jordy.vlan",
+    "Victor Zeng",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Since pulling into master, I cannot run any model-service request in Build.\nI am observing a variety of issues, some in `api-server`  and `job-service`\nFrom what I can observe, seems related to `license_utils`\n\nlogs attached:",
+      "time": "02:31",
+      "timestamp": "1734085884.662099",
+      "is_reply": false
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "created a fully new account and community to ensure it was not a db misconfiguration; though any model-service request still fails: screenshot shows even suggested fields fails.\nOCR runs successfully though.\n\nTested both for personal account and community",
+      "time": "02:40",
+      "timestamp": "1734086454.975709",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "seems to error on this fx: `validate_license_for_external_model_request`",
+      "time": "02:44",
+      "timestamp": "1734086697.806719",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "cc @lydia this is blocking my testing of https://instabase.atlassian.net/browse/DR-4693?atlOrigin=eyJpIjoiZjUyNmY4MDJhMmY0NDRkMTkwY2Y4NGQ2OTczZjg4OTgiLCJwIjoiaiJ9",
+      "time": "02:51",
+      "timestamp": "1734087061.848969",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "likely seems the same issue as https://instabase.slack.com/archives/C05L87V014J/p1733778752131259 ?",
+      "time": "02:57",
+      "timestamp": "1734087445.947639",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "The license issue seems related to https://github.com/instabase/instabase/pull/65726/files (https://github.com/instabase/instabase/pull/65726/files), in my test, I removed these code change, and recompile service. I can start test after that",
+      "time": "05:54",
+      "timestamp": "1734098063.665079",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "And an admin user is required if you want to create app, steps to add it to you env: https://instabase.slack.com/archives/D0829JZJF6Z/p1734022362234349 (https://instabase.slack.com/archives/D0829JZJF6Z/p1734022362234349)",
+      "time": "05:56",
+      "timestamp": "1734098197.320929",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "Matt also provided another way to install license, I  haven’t test this way yet: https://instabase.slack.com/archives/D083YGFRT7A/p1733858773974909 (https://instabase.slack.com/archives/D083YGFRT7A/p1733858773974909),",
+      "time": "05:59",
+      "timestamp": "1734098359.678129",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "So this last week’s PR broke the crafting env: https://github.com/instabase/instabase/pull/65726/files\nHow can we ensure that going forward this does not happen every <insert_time_period>?",
+      "time": "07:07",
+      "timestamp": "1734102479.340809",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "https://github.com/instabase/instabase/pull/66136\n@jordy.vlan Matt has a PR on this",
+      "time": "07:49",
+      "timestamp": "1734104961.969699",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "The linked PR just adds tracing. Not sure why that would cause license issues? cc @mfichman @Victor Zeng Is this some missing dev env setup that Jordy/Ligao need to do?",
+      "time": "08:55",
+      "timestamp": "1734108958.048719",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "cc @Victor Zeng the license error message was:\n\n`level=ERROR time=2024-12-13 17:39:47,847 msg=\"Uncaught exception in webserver while handling request: Error='NoneType' object has no attribute 'set_tag'. Traceback=Traceback (most recent call last):;File \"/instabase-api-server/py/instabase/utils/web/handler_util_v2.py\", line 410, in inner_func;return f(*args, **kwargs);File \"/instabase-api-server/py/instabase/utils/oauth2/oauth2.py\", line 244, in wrapped_f;return f(*args, **kwargs);File \"/instabase-api-server/py/instabase/api_server_apps/handler/api/v2/aihub_build.py\", line 2051, in post;username_for_license_validation, error_resp = validate_license_for_external_model_request(;File \"/instabase-api-server/py/instabase/shared/license_aihub_utils.py\", line 22, in validate_license_for_external_model_request;license_ctx, err = validate_license(;File \"/instabase-api-server/py/instabase/utils/license/license.py\", line 26, in validate_license;license_ctx, err = license.get_license(username, orgname, product_name,;File \"/instabase-api-server/py/instabase/tracing/utils.py\", line 323, in wrapped;raise error;File \"/instabase-api-server/py/instabase/tracing/utils.py\", line 318, in wrapped;r = func(*args, **kwargs);File \"/instabase-api-server/py/instabase/license_utils/license.py\", line 278, in get_license;span.set_tag(tags.USERNAME, username);AttributeError: 'NoneType' object has no attribute 'set_tag';\"  path=\"/instabase-api-server/py/instabase/utils/web/handler_util_v2.py:414\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_1\" trace_id=\"\"`\n\nspan = tracing_utils.get_active_span()\nspan.set_tag(tags.USERNAME, username)\n\nspan is None",
+      "time": "09:54",
+      "timestamp": "1734112490.614869",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Interesting.",
+      "time": "11:39",
+      "timestamp": "1734118778.251369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Re: the post-install license (and model upload) actions: I'm merging that PR now!",
+      "time": "11:52",
+      "timestamp": "1734119571.048789",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Looks like the type hints for tracing utils don't correctly show that it can return `None` .",
+      "time": "14:53",
+      "timestamp": "1734130401.912989",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Quick PR to fix the bug: https://github.com/instabase/instabase/pull/66339",
+      "time": "15:41",
+      "timestamp": "1734133272.127819",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "PR to fix type hints: https://github.com/instabase/instabase/pull/66341",
+      "time": "15:43",
+      "timestamp": "1734133423.851849",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-13.json",
+    "message_count": 17,
+    "start_time": "1734085884.662099",
+    "end_time": "1734133423.851849",
+    "is_thread": true
+  }
+}

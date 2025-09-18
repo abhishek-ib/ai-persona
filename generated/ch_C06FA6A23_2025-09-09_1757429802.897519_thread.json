@@ -1,0 +1,527 @@
+{
+  "id": "ch_C06FA6A23_2025-09-09_1757429802.897519_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Serena",
+    "Anil",
+    "Charles"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes intentional. PDF service no longer exists. If you see type errors, you can delete the related code. I didn’t get any type errors when I merged my PR; probably because the old build system is broken (as we know). Hopefully such problems will not creep into master anymore when Victor and I are done.",
+      "time": "07:56",
+      "timestamp": "1757429802.897519",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/74462",
+      "time": "09:18",
+      "timestamp": "1757434705.844979",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it's pretty easy to trigger a case (https://github.com/instabase/instabase/pull/74462/files#r2334234012) where `pdf_client` is still used though?\n\ni tried to upload a file into a Build project, which eventually triggers `ocr_util.parse_pdf`\n\nshould we revert the removal of pdf-service?",
+      "time": "09:59",
+      "timestamp": "1757437166.640279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I mean, pdf-service has been gone for quite some time, so I'm not sure how this works :laughing:",
+      "time": "10:01",
+      "timestamp": "1757437309.448809",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Probably differering confiurations between local dev & prod",
+      "time": "10:02",
+      "timestamp": "1757437327.701059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Anil maybe you know",
+      "time": "10:02",
+      "timestamp": "1757437360.509799",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Gaurav Saini can you help look into this?\n\ndigitization of files on all crafting environments on master is broken by this",
+      "time": "10:02",
+      "timestamp": "1757437375.416779",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "clearly this used to work before the thrift removal PRs, though?\n\ni think pdf-service still existed within another service, because otherwise this wouldn't have worked",
+      "time": "10:05",
+      "timestamp": "1757437537.773279",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "unfortunately, we can't tell whether this breaks digitization on aihub-sandbox since there has been no successful deployment since Matt's PR was merged :upside_down_face:",
+      "time": "10:12",
+      "timestamp": "1757437948.170739",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "to unblock myself, i had to revert both of the thrift removal PRs (1 (https://github.com/instabase/instabase/pull/74360), 2 (https://github.com/instabase/instabase/pull/74427))",
+      "time": "10:21",
+      "timestamp": "1757438517.677379",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "If I remember correctly, while PDF service is removed, we were still using the pdf_client\nYou make calls using the thrift interface. Then based on a config flag which is true always, it would do the operation locally.",
+      "time": "10:24",
+      "timestamp": "1757438655.147479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm. I'm not sure that's true, or at least I can't find the impl for pdf_client (other than the thrift-generated one, which seems unused)\n\nI also did build/converse/app runs and didn't run into any problems, despite the mypy errors here and there (which coincidentally, did _not_ crop up when I merged my original PR).",
+      "time": "10:27",
+      "timestamp": "1757438823.991979",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@Gaurav Saini is the best person to ask about pdf service",
+      "time": "10:31",
+      "timestamp": "1757439086.760729",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> I also did build/converse/app runs and didn't run into any problems\n@mfichman i'm really surprised by this bc i've talked to multiple people in the sf office (Abhishek, Paul, Jaden, etc)\n\nand everyone needs to revert the \"Remove thrift\" PRs to be able to digitize documents (ex: upload doc into Build project, or run an app)",
+      "time": "13:56",
+      "timestamp": "1757451403.348619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In what environment? There are major differences in feature flags between prod and local environments. However, I would like to note that even in local environments PDF Service no longer runs. So I don’t see how removing PDF client could have any effect… unless our code is doing very silly/unusual things.",
+      "time": "14:43",
+      "timestamp": "1757454209.736949",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "It just deployed `e17a44d502052e4eb35fe14c7c619bb2b86dc980`\n\nThe cluster was in stuck state. One of the errors I see\n```2025-09-09 14:54:37.520\t\n2025-09-09T21:54:36.589396851Z stdout F [2025-09-09 21:54:36,587: ERROR/ForkPoolWorker-64] Signal handler <function setup_celery_task at 0x7f9a84291c10> raised: TypeError(\"__init__() got an unexpected keyword argument 'pdf_client'\")```\nAlso seeing lot of job_client unavailable errors",
+      "time": "15:00",
+      "timestamp": "1757455208.975469",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "on aihub-sandbox",
+      "time": "15:00",
+      "timestamp": "1757455217.143809",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "looking into it - but if someone know what the issue might be - let me know",
+      "time": "15:00",
+      "timestamp": "1757455226.543829",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> In what environment?\nin all crafting environments, people need to revert the \"Remove thrift\" PRs for digitization of pdfs to work",
+      "time": "15:00",
+      "timestamp": "1757455256.218989",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "based on this PR (https://github.com/instabase/instabase/pull/53682), everything that used to run in pdf-tservice now runs in celery-app-tasks",
+      "time": "15:10",
+      "timestamp": "1757455818.926219",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "I'm still failing CI test related to this, when trying to test my changes on my sandbox. ~What can I do to unblock?~ reverted PRs locally for now",
+      "time": "15:34",
+      "timestamp": "1757457278.457689",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "still can't pass tests locally with this:\n```TYPECHECKING FAILURE: mypy exited with code 1\ninstabase/refiner_utils/types/refiner_program_utils.py:581: error: Argument \"output_type\" to \"FunctionCall\" has incompatible type \"int\"; expected \"Union[OutputType, str, None]\"  [arg-type]\nFound 1 error in 1 file (checked 1842 source files)```",
+      "time": "15:42",
+      "timestamp": "1757457761.517899",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "re-reading the thread - need to merge https://github.com/instabase/instabase/pull/74462",
+      "time": "16:05",
+      "timestamp": "1757459134.015249",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "job_client is failing due to an init code failing at an earlier client init failing",
+      "time": "16:06",
+      "timestamp": "1757459166.769689",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Noted to fail app-tasks if client init fails",
+      "time": "16:06",
+      "timestamp": "1757459182.647439",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "```  pdf_with_retry = PDFClientWithRetry(pdf_client, max_retry_secs=30)\n  pdf_client_retry = cast(PDFService.Iface, pdf_with_retry)\n\n  # Create client objects for each stage\n  process_file_clients = clients_factory.ProcessFileClients(\n      pdf_client=pdf_client_retry,\n      ocr_client=ocr_client,\n      account_client=clients_factory.account_client,\n  )```\nthis pdf_client entry needs to removed - already done in @mfichman’s PR",
+      "time": "16:06",
+      "timestamp": "1757459209.807579",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Looking into why CI is failing in it",
+      "time": "16:06",
+      "timestamp": "1757459217.000739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/74462 just merged, and it passed all unit tests",
+      "time": "16:37",
+      "timestamp": "1757461048.418459",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I do think pdf_client is unused, and in my testing on Crafting PDFs work just fine without it.",
+      "time": "16:38",
+      "timestamp": "1757461081.764819",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "could we quickly sync?",
+      "time": "16:38",
+      "timestamp": "1757461100.674509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Maybe may feature flags are different from most folks though... I use the vanilla master flags",
+      "time": "16:38",
+      "timestamp": "1757461101.136449",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "everyone working on Automate features is running into this issue",
+      "time": "16:38",
+      "timestamp": "1757461120.436329",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let's see if my PR fixed it first, if not we can sync 1st thing tomorrow.",
+      "time": "16:39",
+      "timestamp": "1757461185.076489",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "^ testing it out now",
+      "time": "16:39",
+      "timestamp": "1757461194.008839",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i already checked out your branch though, and it still failed (https://github.com/instabase/instabase/pull/74462/files#r2335064393) on my crafting sandbox\n\ni created a new build project as well",
+      "time": "16:40",
+      "timestamp": "1757461236.037799",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Our unit tests are quite deficient then",
+      "time": "16:43",
+      "timestamp": "1757461402.479979",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If it doesn't work, roll back both my PRs. Someone else can take a stab at cleaning it up next time. Hopefully after we add unit tests.",
+      "time": "16:43",
+      "timestamp": "1757461430.634689",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ideally we can have @Gaurav Saini and/or @Abhishek look at this to clean this up",
+      "time": "16:44",
+      "timestamp": "1757461482.633499",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "We passed the initial error. Now it is hitting a different error.",
+      "time": "16:45",
+      "timestamp": "1757461506.939079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I would also like to see what your env vars look like @Serena",
+      "time": "16:45",
+      "timestamp": "1757461507.735419",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Lets not revert",
+      "time": "16:45",
+      "timestamp": "1757461511.745879",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "my env vars don't have anything special for digitization",
+      "time": "16:45",
+      "timestamp": "1757461544.829299",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Maybe it’s mine then?",
+      "time": "16:47",
+      "timestamp": "1757461647.591229",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Here are mine (env-local-overrides):\n```{\n    \"base\": {\n        \"aihub_search_orgs\": \"matt-local-dev-org\",\n        \"auth_account_lock_timeout_in_secs\": 0,\n        \"connector_fetch_parallelism\": 1,\n        \"db_enable_verbose_log\": \"true\",\n        \"db_enable_verbose_log_args\": \"true\",\n        \"enable_dynamic_workload_service_mesh\": false,\n        \"enable_index_handler\": true,\n        \"enable_licensing\": true,\n        \"ingestion_processing_queue_size_max\": 5,\n        \"ingestion_consumer_threads\": 1,\n        \"_ingestion_item_limit\": 10,\n        \"connector_fetch_parallelism\": 1,\n        \"log_level\": \"info\",\n        \"mount_point_indexer_schedule\": \"0 * * * * *\",\n        \"temp_files_cleanup_job_schedule\": \"0 * * * * *\",\n        \"enable_temp_files_cleanup_job\": false,\n        \"_disable_digitizer_and_indexer\": true,\n        \"_instabase_backend_db_params\": \"--dialect=postgres --hostname=cs-5647-debug.cyt8gw1zk6xv.us-east-1.rds.amazonaws.com --password=_ --username=postgres --database=ibdb --sslmode=require\"\n    }\n}```",
+      "time": "16:48",
+      "timestamp": "1757461682.960059",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "When I use build, I get an error\n```Exception occured while running step process_files process_files: 'NoneType' object has no attribute 'parse_pdf_with_flag'```\n```  File \"/instabase/workers/celery-app-tasks/py/instabase/flow/runnables/process_file_fns.py\", line 778, in _parse_pdf_as_text\n    resp = ocr_util.parse_pdf(None, req, ocr_util_config)\n  File \"/instabase/workers/celery-app-tasks/py/instabase/flow/ocr_utils/ocr_util.py\", line 220, in parse_pdf\n    resp = pdf_client.parse_pdf_with_flag(req, legacy_text_foramtting)\nAttributeError: 'NoneType' object has no attribute 'parse_pdf_with_flag'```\nThere still quite a few pdf_client usages",
+      "time": "16:49",
+      "timestamp": "1757461787.990119",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yep exactly",
+      "time": "16:49",
+      "timestamp": "1757461798.435389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I am very confused. How can we be using PDF client if PDF Service is no longer deployed?",
+      "time": "16:55",
+      "timestamp": "1757462120.897599",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Ok now I understand how we are using it\nIn worker_util, we initialize the pdf_client as\n\n```  pdf_with_retry = PDFClientWithRetry(pdf_client, max_retry_secs=30)\n  pdf_client_retry = cast(PDFService.Iface, pdf_with_retry)\n\n  # Create client objects for each stage\n  process_file_clients = clients_factory.ProcessFileClients(\n      pdf_client=pdf_client_retry,\n      ocr_client=ocr_client,\n      account_client=clients_factory.account_client,\n  )```\nThe PDFClientWithRetry is not thrift client. It is a class from shared-utils/py-utils/utils/src/instabase/pdf/server/pdf_service_util.py\nThis class implements all the methods. It takes in these calls and runs them.\n\nI can fix this - putting a PR up",
+      "time": "16:55",
+      "timestamp": "1757462123.452539",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "furthermore, how can our unit tests (and cypress tests!) pass in this state?",
+      "time": "16:55",
+      "timestamp": "1757462143.949609",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i mentioned above (https://instabase.slack.com/archives/C06FA6A23/p1757455818926219?thread_ts=1757387419.073409&cid=C06FA6A23) that everything from pdf-tservice now runs in celery-app-tasks\n\n+1 to Anil's proposed fix! :goodidea:",
+      "time": "16:56",
+      "timestamp": "1757462198.201539",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "PDFClientWithRetry just broke the WTFs per second rule :laughing:",
+      "time": "16:57",
+      "timestamp": "1757462228.367259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "PDFClientWithLocalInterceptAndRetry",
+      "time": "16:57",
+      "timestamp": "1757462270.826959",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Anyway, jokes aside, feel free to revert my PRs",
+      "time": "16:58",
+      "timestamp": "1757462304.701879",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "reverted the last PR https://github.com/instabase/instabase/pull/74488\ncreated https://github.com/instabase/instabase/pull/74489\n\nthis should get build to working state again",
+      "time": "17:17",
+      "timestamp": "1757463436.005429",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think we also need to revert my other PR as well (?)",
+      "time": "17:20",
+      "timestamp": "1757463610.257879",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Unless 74489 corrected for it",
+      "time": "17:20",
+      "timestamp": "1757463629.794929",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Given that we have fully migrated now off of pdf client thrift\nNeed to simply import pdf_service_util.py instead of using pdf_client\n\n#74489 reverts some of the changes made in #74427 (https://github.com/instabase/instabase/pull/74427)",
+      "time": "17:20",
+      "timestamp": "1757463657.103869",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "merged my PR in\nkicked off a new aihub-sandbox build - hopefully it works now",
+      "time": "17:27",
+      "timestamp": "1757464066.112199",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> Need to simply import pdf_service_util.py instead of using pdf_client\nthis isn't in your PR, right? you're saying we need to make this change in another PR?",
+      "time": "17:30",
+      "timestamp": "1757464237.772009",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "yup",
+      "time": "17:41",
+      "timestamp": "1757464868.138879",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "this is not needed now - but will good to do to remove thrift related code",
+      "time": "17:41",
+      "timestamp": "1757464889.783079",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "pulled latest master and still failing `make build test` in /webserver/api-server with this:\n```TYPECHECKING FAILURE: mypy exited with code 1\ninstabase/refiner_utils/types/refiner_program_utils.py:581: error: Argument \"output_type\" to \"FunctionCall\" has incompatible type \"int\"; expected \"Union[OutputType, str, None]\"  [arg-type]\nFound 1 error in 1 file (checked 1842 source files)```\nis this related?",
+      "time": "18:04",
+      "timestamp": "1757466249.790419",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Charles seems unrelated, can you start a new thread?",
+      "time": "18:05",
+      "timestamp": "1757466309.737119",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-09-09.json",
+    "message_count": 63,
+    "start_time": "1757429802.897519",
+    "end_time": "1757466309.737119",
+    "is_thread": true
+  }
+}

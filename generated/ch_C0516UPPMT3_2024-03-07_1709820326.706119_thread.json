@@ -1,0 +1,136 @@
+{
+  "id": "ch_C0516UPPMT3_2024-03-07_1709820326.706119_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "CJ",
+    "hannah",
+    "pauline.comising",
+    "Lee",
+    "Eric Han"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Also @Eric Han @Elan Sharony I had a few questions about custom function validations.\n• When you rename a field where the custom function had that field as a parameter it breaks the function, we show a warning, but only when you open the function. Could we do one of the following? \n    ◦ Show the warning as you edit your function name\n    ◦ Automatically update the function with the new name\n• How can you test getting the `runtime_config` from `context` when you’re in build? There isn’t a way to pass in any runtime_config to be able to build your function against this info. I think we need to add a way under settings to be able to configure this in build. \n• The above `runtime_config` was meant to be added to the docs, but it doesn’t look like its been added. Has this just not made it out yet?\n• I can also see the need to be able to validate against structured data stored on a mounted drive, is it possible to access the filesystem from the new lambda architecture?\n@hannah @Bastiane @Hamish",
+      "time": "06:05",
+      "timestamp": "1709820326.706119",
+      "is_reply": false
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "@Elan Sharony i want to show a warning when you edit the function name, and i think the best way to do this might be to change how the existing apis return their data? although i'll defer",
+      "time": "09:12",
+      "timestamp": "1709831570.228599",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "iirc @pauline.comising might also have opinions",
+      "time": "09:12",
+      "timestamp": "1709831574.896579",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "@CJ when you say function name, do you mean the field name?",
+      "time": "09:13",
+      "timestamp": "1709831626.124929",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "er, yes, i meant field name",
+      "time": "09:14",
+      "timestamp": "1709831653.823549",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "docs for runtime_configs are here: https://aihub-uat.internal.instabase.com/docs/aihub-preview/build/index.html#custom-validation-function",
+      "time": "11:08",
+      "timestamp": "1709838493.488289",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "@Lee to understand more, how is runtime config being used in this case?",
+      "time": "12:22",
+      "timestamp": "1709842965.247779",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Runtime config is used to pass in structured data to the job run API call. You can then pick this up to validate against later. Customers use this when they have been told a document contains a value and they need to find a validate that the document has that data in. Common for onboarding use cases.",
+      "time": "12:27",
+      "timestamp": "1709843263.296329",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "The issue here is that you’re not sending in runtime config when you’re in build as you’re not running it from the API, the only way to create and test your validation script is to run the app once built via the API.",
+      "time": "12:28",
+      "timestamp": "1709843302.253539",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "heyo @CJ, what changes did you have in mind? and did u wanna show a warning even if no other fields refer to the one you're renaming, or would u want api's to return info like that :0",
+      "time": "12:49",
+      "timestamp": "1709844588.481249",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "actually nvm... i was thinking about how we represent args in the backend again, and it's different from how we represent args in the frontend",
+      "time": "12:51",
+      "timestamp": "1709844681.298249",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "okii, so no warning?",
+      "time": "12:52",
+      "timestamp": "1709844767.901059",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "and then, I'm not sure we could easily, automatically update a function with a new field name param. we fetch the udf code and its parameters just from the script file, so even though we can check if a field parameter's name is no longer in schema (to raise that deletion warning), I'm not sure if we can map an old field name to a new one. I don't think we store/fetch anything like field_id (which stays the same after name changing) for the udf's param.",
+      "time": "12:58",
+      "timestamp": "1709845080.108859",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "yeah exactly; the frontend has to map the field ids to the udf params when it fetches in order to do this... this is kinda why i wanted the field ids to be part of the udf params, but it also doesn't make sense when used to generate flow...",
+      "time": "12:58",
+      "timestamp": "1709845115.504199",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-03-07.json",
+    "message_count": 14,
+    "start_time": "1709820326.706119",
+    "end_time": "1709845115.504199",
+    "is_thread": true
+  }
+}

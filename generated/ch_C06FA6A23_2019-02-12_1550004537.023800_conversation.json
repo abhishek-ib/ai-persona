@@ -1,0 +1,77 @@
+{
+  "id": "ch_C06FA6A23_2019-02-12_1550004537.023800_conversation",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "conversation",
+  "participants": [
+    "Ashish",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Let's discuss each operation separately:\n\n[1] listdir\nNFS -- does NOT support paging. We will have to list all the files in one go.\nS3 -- supports paging. Recommended to use a page size.\n.\n.\n[2] copy/move\nNFS -- we will have to copy or move the entire folder as there is no paging support\nS3 -- we don't have to worry much here since S3 internally manages copy/move operation\n.\n.\nThere is one way to implement List All files operation: when a user clicks  list all files, Instabase internally breaks it down into several listdir calls and loads the results into the UI incrementally.",
+      "time": "12:48",
+      "timestamp": "1550004537.023800",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "My implementation of copy and move in the front end currently also has to use listdir, because it has to determine if there are files/folders with the same names - move makes you rename if there is already, and copy will add a (1) to the file name. The lazy loading wouldn't be as helpful in that case so we'd still have to think of solutions for that, but it would be helpful for displaying the files in the UI",
+      "time": "12:51",
+      "timestamp": "1550004705.025700",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "For copy/move on S3, we can get the total list of files by making multiple list dir calls instead of one large call.",
+      "time": "12:55",
+      "timestamp": "1550004907.026700",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Okay that's what I'm doing right now - getting them recursively",
+      "time": "12:55",
+      "timestamp": "1550004928.027300",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Great! That's perfect.",
+      "time": "12:55",
+      "timestamp": "1550004948.027800",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "And actually I'm getting the tree of nodes recursively as well",
+      "time": "12:57",
+      "timestamp": "1550005020.028200",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "So it could still take a really long time to load everything if there are a million files, but it won't break things - is that right, and is that okay?",
+      "time": "12:57",
+      "timestamp": "1550005061.028800",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-02-12.json",
+    "message_count": 7,
+    "start_time": "1550004537.023800",
+    "end_time": "1550005061.028800",
+    "is_thread": false
+  }
+}

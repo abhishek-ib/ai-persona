@@ -1,0 +1,112 @@
+{
+  "id": "ch_C06FA6A23_2022-09-20_1663708674.833509_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cheryl Zhou",
+    "Yiqing",
+    "Heymian",
+    "Sabyasachi Roy",
+    "Junwon Jang"
+  ],
+  "messages": [
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "Hey Sabya! When I ran unit tests last week in apps-server with `make build mypy` and `make test`, everything worked. But I think something changed in webserver (specifically this pr (https://github.com/instabase/instabase/pull/29650)) that made the tests and its build break, and now i'm having trouble rebuilding due to the below error if i run `make test`\n``` error: Incompatible types in assignment (expression has type \"instabase.apps_server.server.config.BaseConfig\", variable has type \"instabase.server.config.BaseConfig\")```\nand this error when i run `make build mypy`\n```instabase/table_utils/tableclient_grpc.py:372: error: \"TableServiceStub\" has no attribute \"InsertBulk\"```\nDo you know what might be up here?",
+      "time": "14:17",
+      "timestamp": "1663708674.833509",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Can you try to do a `make clean`?",
+      "time": "15:29",
+      "timestamp": "1663712983.076049",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "The second one is separate from the first, that’s from my team’s thrift to grpc migration. Yan, @Victor Zeng @Cheryl Zhou can you help take a look at InsertBulk. That was renamed to InsertBatch, so either Junwon’s build folders didn’t get cleaned, or we forgot to update a stub somewhere.",
+      "time": "15:30",
+      "timestamp": "1663713047.463069",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "it's weird that i am having some trouble finding `table_utils/tableclient_grpc.py` but i do see that we have a stub called InsertBatch in TableServiceStub (https://github.com/instabase/instabase/blob/master/shared-utils/py-utils/typing-utils/src/py/stubs/instabase/protos/table_service/table_service_pb2_grpc.pyi#L51). Did `make clean` work for you? @Junwon Jang",
+      "time": "15:42",
+      "timestamp": "1663713734.410569",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "Just tried `make clean` and the second issue no longer exists from my side as well.",
+      "time": "16:15",
+      "timestamp": "1663715705.717599",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "I will need to take a look. This was something I had to change and the change to from instabase.server import config, even if it works is not thr right fix. Will take a look at this IST daytime.\n\nIs there a Jenkins pipeline I can use to execute this test?",
+      "time": "16:24",
+      "timestamp": "1663716246.511559",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "Actually, I can pass the first case after make clean.",
+      "time": "16:27",
+      "timestamp": "1663716424.116709",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "Oh that's good then. Thanks!",
+      "time": "16:27",
+      "timestamp": "1663716455.571139",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "So just so I understand, after make clean you don't need to make that import change either?",
+      "time": "16:28",
+      "timestamp": "1663716492.041879",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "Yes Sabya! Let’s wait @Junwon Jang  to validate from his side",
+      "time": "16:29",
+      "timestamp": "1663716573.393409",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "ah nice that fixed it for me as well thanks everyone!",
+      "time": "17:32",
+      "timestamp": "1663720325.550299",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-09-20.json",
+    "message_count": 11,
+    "start_time": "1663708674.833509",
+    "end_time": "1663720325.550299",
+    "is_thread": true
+  }
+}

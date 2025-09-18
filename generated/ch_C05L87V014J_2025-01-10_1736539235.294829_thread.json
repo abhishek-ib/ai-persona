@@ -1,0 +1,157 @@
+{
+  "id": "ch_C05L87V014J_2025-01-10_1736539235.294829_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "ligao.zhang",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "Hey team, I am following this doc (https://docs.google.com/document/d/13vAU6q9tasOq-yGwTTIK3Bnso9cYs5nNPqP9zrgunxA/edit?tab=t.0) to setup IB monitoring stack for my dev crafting sandbox (https://instabase.sandboxes.site/sandboxes/ligaozhang1?cw=dev), I can't *Create policies, and roles:*\n`gcloud container clusters get-credentials \\`\n        `instabase-dev-001 \\`\n        `--zone=us-central1-b --project=insta`\n`ERROR: (gcloud.container.clusters.get-credentials) ResponseError: code=403, message=Required \"container.clusters.get\" permission(s) for \"projects/instabase-dev/zones/us-central1-b/clusters/instabase-dev-001\".`\nanyone can help?\n\n*Context:*\nI am working on creating Grafana dashboard to track job duration/traffic, I made some code change in my end and want to set up a Grafana to my sandbox.",
+      "time": "12:00",
+      "timestamp": "1736539235.294829",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey there! This is the first time I've heard of someone setting this up through the crafting stack, so we may need to experiment together to find the correct setup :slightly_smiling_face: Some clarifying questions from myself:\n• Does this need to be deployed to a kubernetes cluster to test? Or would running grafana as a container in your workspace suffice?\n• Are you looking to view metrics for local services (i.e. services running in your workspace), or do you have a custom instabase installation in your per-user kubernetes namespace, or are you looking to view metrics for `crafting-aihub`?\n• Is this document what the observability team recommended to follow for setting up? If so, are you looking to setup both the instabase and cluster stacks or just the cluster stack?",
+      "time": "12:23",
+      "timestamp": "1736540625.831729",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "1: from the doc (https://docs.google.com/document/d/13vAU6q9tasOq-yGwTTIK3Bnso9cYs5nNPqP9zrgunxA/edit?tab=t.0), Instabase monitoring setup is divided into 2 different stack, so I think we only need to setup ib monitoring stack, we dont need cluster stack\n2: view metrics for local services, I added some metrics code in my local celery service, I want to see these in my local grafana dashboard\n3: I am not 100% sure this is the correct one, but it looks to be, I am looking to setup only ib stack\n\nI find the note: `*Note:* if your sandbox is present in different cluster than instabase-dev-001, use the args _name_cluster_dev_ & _index_cluster_dev_ to provide the name of your cluster in make commands` , whats the cluster of our  dev sandbox?",
+      "time": "12:44",
+      "timestamp": "1736541846.928059",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "`NAMESPACE=ligaozhang1 make create-policy-and-roles-sandbox-gc name_cluster_dev=ligaozhang_cluster_dev index_cluster_dev=001`\n\nsame error:\n`ERROR: (gcloud.container.clusters.get-credentials) ResponseError: code=403, message=Required \"container.clusters.get\" permission(s) for \"projects/instabase-dev/zones/us-central1-b/clusters/ligaozhang_cluster_dev-001\".`",
+      "time": "12:50",
+      "timestamp": "1736542252.160079",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Alright yeah, your workspace does not run services in a kubernetes cluster, so this doc will not work for your use case — workspaces are attached to crafting-aihub and provision a custom namespace for you, but services are not deployed there",
+      "time": "12:58",
+      "timestamp": "1736542698.162389",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "One option we could look into is setting this up so it tracks the crafting-aihub deployment — aside from that I don’t think we have a way to easily run this as a “local” setup",
+      "time": "13:00",
+      "timestamp": "1736542837.028839",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "do you mean setting this up in sandbox template?",
+      "time": "13:03",
+      "timestamp": "1736542994.058119",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "No, I mean that you can use the custom namespace in crafting-aihub created by your sandbox to deploy the monitoring stack and track the aihub deployment running on crafting-aihub — the services running in your workspace are not being run on a kubernetes cluster, so they cannot be tracked like a normal cluster deployment",
+      "time": "13:05",
+      "timestamp": "1736543115.900189",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "What you are describing, as I understand it, is essentially the same as looking to set up a monitoring stack for services run by ppy on your laptop",
+      "time": "13:06",
+      "timestamp": "1736543199.117139",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "I don't know the laptop stack, I never use it, my requirement is setup a Grafana service(like this (https://grafana.observability.instabase.com/?orgId=1)) for my crafting sandbox, so I can check my local-service matrix.",
+      "time": "13:10",
+      "timestamp": "1736543413.584099",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "and I only need to vew metrics for local services.",
+      "time": "13:11",
+      "timestamp": "1736543494.109789",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Yep, not saying you need to know the laptop stack — your services, in your crafting sandbox right now (like celery app tasks, core platform service, etc), are run as processes in a virtual machine (your crafting workspace). The document you linked describes how to deploy the monitoring stack to a *cluster*, and to then collect/publish/view metrics for the *cluster*. Because there is no *cluster* in crafting sandboxes you will not be able to set things up by just following that document",
+      "time": "13:13",
+      "timestamp": "1736543598.381669",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "What I’m proposing, however, is for you to deploy the monitoring stack to the separate, attached crafting-aihub cluster, under a separate namespace. crafting-aihub is a normal aihub cluster running the usual instabase services, and has nothing to do with what’s running on your crafting sandbox. This would allow you to deploy your custom monitoring changes by following that document, just with the caveat that the metrics you will see are for crafting-aihub, and not your personal sandbox",
+      "time": "13:15",
+      "timestamp": "1736543730.818619",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "NAMESPACE=ligaozhang1 make create-policy-and-roles-sandbox-gc name_cluster_dev=crafting-aihub\nNAMESPACE=ligaozhang1 make create-policy-and-roles-sandbox-gc name_cluster_dev=crafting-aihub_dev\n\n`ERROR: (gcloud.container.clusters.get-credentials) ResponseError: code=403, message=Required \"container.clusters.get\" permission(s) for \"projects/instabase-dev/zones/us-central1-b/clusters/crafting-aihub_dev-001\".`\n\n`ERROR: (gcloud.container.clusters.get-credentials) ResponseError: code=403, message=Required \"container.clusters.get\" permission(s) for \"projects/instabase-dev/zones/us-central1-b/clusters/crafting-aihub-001\".`",
+      "time": "13:21",
+      "timestamp": "1736544078.228239",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "so\n1. There is no `ligaozhang1` kubernetes namespace fwict -- you should be using `sandbox-ligaozhang1` (see attached screenshot)\n2. `crafting-aihub` is deployed to EKS, not GKE, don't know how to help there, we haven't deployed to GKE for a long time\n3. Your sandbox, by default, already has credentials to `crafting-aihub` (e.g. you can run `kubectl get pods` from your command line without needing to run anything else first). I would suggest looking at the makefile targets to figure out what steps need to be run after credentials are obtained, as that would be your starting point",
+      "time": "13:24",
+      "timestamp": "1736544284.438949",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "",
+      "time": "13:25",
+      "timestamp": "1736544308.616839",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "looks like we may be able to manually run the steps after credential acquisition found here (https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/manage-clusters.mk#L259)",
+      "time": "13:28",
+      "timestamp": "1736544503.578029",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-01-10.json",
+    "message_count": 17,
+    "start_time": "1736539235.294829",
+    "end_time": "1736544503.578029",
+    "is_thread": true
+  }
+}

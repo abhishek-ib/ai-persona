@@ -1,0 +1,85 @@
+{
+  "id": "ch_CSY11CK7T_2025-06-09_1749491381.499499_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i tried to load aihub-sandbox.internal.instabase.com (http://aihub-sandbox.internal.instabase.com) (ie the home page), and i saw a spinner for 14s bc of this `/api/v2/mounts/list?repo_owner=instabase-sandbox-org` call (ss1)\n\nis this expected? @Xindi Xu\n\nif i reload, the load time goes down to ~7s (i assume bc of some db caching, see ss2), but this is still a long time to see no content (ss3)",
+      "time": "10:49",
+      "timestamp": "1749491381.499499",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, it took 12 secs for me. And jaegar returns 404 for the query :sigh:\nI'm not sure why this takes a while without looking deeper into jaegar. cc @Jeff",
+      "time": "10:54",
+      "timestamp": "1749491697.228589",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'll look into why this is render blocking tho.",
+      "time": "10:55",
+      "timestamp": "1749491731.880779",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Call chain `useShowSearch -> useSearchableDataSources -> useOrganizationDataSources`\n\nAnd `useShowSearch` is used in `HomePageRefreshLanding` and it is render blocking\n\nhttps://github.com/instabase/instabase/blob/303c59fd70c6a6b914793886b79d0c9c3ef5e3[…]d/apps/src/aihub/pages/Landing/HomePageRefreshLanding/index.tsx (https://github.com/instabase/instabase/blob/303c59fd70c6a6b914793886b79d0c9c3ef5e328/webserver/shared/src/js/webpacked/apps/src/aihub/pages/Landing/HomePageRefreshLanding/index.tsx#L122-L124)",
+      "time": "10:59",
+      "timestamp": "1749491958.261869",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think we need to make it not blocking. This endpoint is expected to take a while.",
+      "time": "10:59",
+      "timestamp": "1749491979.618669",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "should we just move that check into `renderForSearchAppEnabled` / `renderForSearchAppDisabled` ? for example, something like this:\n\n```isShowSearchLoading\n  ? <DivCenteredSpinner size={40} />\n  : (\n      showSearch\n      ? welcomeMessage :\n      : <SearchBarBanner />\n    )```",
+      "time": "11:55",
+      "timestamp": "1749495335.144259",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "yep, makes sense!",
+      "time": "11:57",
+      "timestamp": "1749495424.894639",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I tried again now and the response time is around 4s. Maybe the slowness comes from deployment? (9am PST deployment is still in-progress now)",
+      "time": "13:36",
+      "timestamp": "1749501385.879909",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-06-09.json",
+    "message_count": 8,
+    "start_time": "1749491381.499499",
+    "end_time": "1749501385.879909",
+    "is_thread": true
+  }
+}

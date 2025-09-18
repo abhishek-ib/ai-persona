@@ -1,0 +1,118 @@
+{
+  "id": "ch_C05L87V014J_2025-07-30_1753892301.965449_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Jet",
+    "Sherif"
+  ],
+  "messages": [
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Hi team, I am currently experiencing issues with my sandbox (https://instabase.sandboxes.site/sandboxes/sherifelmetwally?cw=dev). Multiple services are failing with `401 Unauthorized` or `403 forbidden`\n\nI have pulled from master and rebased, resynced my sandbox and updated the base image, suspended and waited for one minute before resuming.\n\nWhen I run\n```owner@dev:~$ cat ~/.docker/config.json\n{\n  \"credHelpers\": {\n     \"gcr.io (http://gcr.io)\": \"gcloud\",\n     \"549230430157.dkr.ecr.us-east-2.amazonaws.com (http://549230430157.dkr.ecr.us-east-2.amazonaws.com)\": \"ecr-login\",\n     \"601729033846.dkr.ecr.us-east-2.amazonaws.com (http://601729033846.dkr.ecr.us-east-2.amazonaws.com)\": \"ecr-login\"\n  }\n}```\nAnd when I run\n```owner@dev:~$ cat ~/.aws/config\n[profile default]\nregion = us-east-2\ncredential_process = idfed aws 519787998606 crafting-sandbox-role```\nI didn't see any issues with `docker pull` so I didn't restart the Docker Daemon.",
+      "time": "09:18",
+      "timestamp": "1753892301.965449",
+      "is_reply": false
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "have you try this?\nhttps://instabase.slack.com/archives/C05L87V014J/p1753742455573069?thread_ts=1753388110.844289&cid=C05L87V014J",
+      "time": "10:04",
+      "timestamp": "1753895050.472319",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Something is definitely also amiss. One of my sandboxes, which I know has the correct configuration, just threw an auth error like this. However, it was temporary --- it started working again 5 min later (?)\n\n\nI'll ask the crafting folks, since this `idfed` approach is one they recommend.",
+      "time": "10:12",
+      "timestamp": "1753895538.500219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "tl;dr there *are* still self-inflicted configuration issues in many sandboxes (check that first). If still not working after checking, it may be due to Crafting itself.\n\nI think this is part of the reason for the confusion: the behavior of our current auth scheme is not consistent...",
+      "time": "10:12",
+      "timestamp": "1753895565.108399",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "However...in Sherif's case here, the problem was actually `.aws/credentials` causing problems.\n\n```owner@dev:~/instabase/core-services/core-platform-service$ docker pull 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/nodejs:22\nError response from daemon: failed to resolve reference \"549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/nodejs:22\": pull access denied, repository does not exist or may require authorization: authorization failed: no basic auth credentials\nowner@dev:~/instabase/core-services/core-platform-service$ ls ~/.aws\nconfig  credentials\n\nowner@dev:~/instabase/core-services/core-platform-service$ cat ~/.aws/credentials \n[default]\naws_access_key_id = ASIAX7YFPI7G3KRHXEXH\naws_secret_access_key = Gs9vXInSSyc3FUtM3p58EvjLAfzu/LDyOMqCJZHc\n\nowner@dev:~/instabase/core-services/core-platform-service$ rm ~/.aws/credentials \n\nowner@dev:~/instabase/core-services/core-platform-service$ docker pull 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/nodejs:22\n22: Pulling from instabase-build/nodejs\n7cad4a534823: Already exists \nDigest: sha256:6d1c1198e2212f6a2f873c69600ad3812920b3a6a58f1eb0fbf795895fab6f58\nStatus: Downloaded newer image for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/nodejs:22\n549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/nodejs:22```",
+      "time": "10:16",
+      "timestamp": "1753895790.889299",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "so whenever docker pull, the `idfed` will become  `aws_access_key_id` & `aws_secret_access_key` ?",
+      "time": "10:19",
+      "timestamp": "1753895967.483209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It automatically gets the credentials. If you also have those values configured statically, it interferes -- the AWS SDK prefers to use static creds if there are any",
+      "time": "10:48",
+      "timestamp": "1753897729.633849",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Thank you! Looks like all services are up and running except `file-service` which seems to be stuck. Seems like that may be unrelated though",
+      "time": "11:36",
+      "timestamp": "1753900583.777569",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "file-service look healthy what kind of error do you get?",
+      "time": "11:37",
+      "timestamp": "1753900659.306489",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "I'm seeing it listed as `fails` (but since there are no errors I assumed it was still spinning up).\n\nAnd bits of the UI are unresponsive after minutes.",
+      "time": "11:41",
+      "timestamp": "1753900889.556019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If it's stuck you may have to restart dockerd :cry:",
+      "time": "11:48",
+      "timestamp": "1753901315.287759",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "That fixed it! Thank you both for your help :slightly_smiling_face:",
+      "time": "12:03",
+      "timestamp": "1753902234.301619",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-30.json",
+    "message_count": 12,
+    "start_time": "1753892301.965449",
+    "end_time": "1753902234.301619",
+    "is_thread": true
+  }
+}

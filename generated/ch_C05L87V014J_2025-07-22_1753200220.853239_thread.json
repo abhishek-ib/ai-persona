@@ -1,0 +1,241 @@
+{
+  "id": "ch_C05L87V014J_2025-07-22_1753200220.853239_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "mfichman",
+    "Ashish",
+    "Jeff",
+    "Gauti",
+    "Abhinav"
+  ],
+  "messages": [
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Hi Team,\nOur development time is being significantly hampered by persistent crafting issues, with an alarming 50% of our team's time currently dedicated to debugging and finding workarounds. This demands our immediate and dedicated attention.\nHere's a breakdown of the critical issues:\n1. *Crafting Sandbox Bootup Failure (ecr-login):* While a workaround exists, it's a short-term solution requiring manual intervention every 6 hours or after each sandbox restart.\n2. *Data Sources Not Indexing in Crafting:* Data sources mounted to crafting are failing to index. Entries are added to ``ingestion_items``, but the calls are not reaching ``job-service`` or ``celery-app-tasks``. This is a major blocker for the chatbot team's development.\n3. *Non-Persistent Indexes in Crafting:* Every sandbox restart results in the loss of all indexes in ``wevaiate-titan``. This is extremely frustrating as it invalidates all chatbots and leads to the complete loss of any previously indexed data sources.\nThe inability to test data sources in crafting is completely blocked due to these issues.\nLMK, If I can be of help in any way, let's try to close on these.\ncc: @Balaram @mfichman @Gaurav Saini",
+      "time": "09:03",
+      "timestamp": "1753200220.853239",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "1 => I don't think I have permission to create the required keys (cc @Abhinav) but I'll give it a try today anyway.\n\n2 => OK. Have you done any debugging yet? logs, etc.",
+      "time": "09:26",
+      "timestamp": "1753201579.216529",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Jeff -- can you help @Gauti look into #2? Ty!",
+      "time": "09:27",
+      "timestamp": "1753201662.125219",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Sure",
+      "time": "09:28",
+      "timestamp": "1753201703.796049",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "For 3, have you tried pinning the sandbox? This prevents the sandbox from being hibernated",
+      "time": "09:31",
+      "timestamp": "1753201890.079899",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "(3) is easily solved by adding a volume mount path on the `make run-docker` command for weaviate titan. I just need to know where weaviate puts its state on the FS within the container, and I can easily fix this.",
+      "time": "09:33",
+      "timestamp": "1753202036.364559",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, another way to fix (1) is to use IAM for Crafting sandboxes. We've discussed this, and it is possible.",
+      "time": "09:34",
+      "timestamp": "1753202087.014379",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Thanks @mfichman. I have done some initial debugging, but I didn't find any error logs in `job-service` ,`celery-app-tasks`, or `search-service`. I think cronjobs are not able to put the items into the queue, which can trigger the digitization tasks. But it's a generic issue and happening for every sandbox.",
+      "time": "09:34",
+      "timestamp": "1753202087.828279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It would be more secure than long-lived API keys.",
+      "time": "09:34",
+      "timestamp": "1753202092.930219",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "1. We are planning to get rid of all static/shared credentials for instabase-dev account. Please use your own credentials to login to instabase-dev. Session timeout is set at 10 hours. \nIf you have a IAM role for your cluster, we can assign permissions to your cluster directly. I will need the required permissions\n@Ashish",
+      "time": "09:36",
+      "timestamp": "1753202162.857889",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, let's create a role and assign it to the crafting cluster (to disambiguate: the cluster that crafting uses to run sandboxes, not crafting-cyp or crafting-aihub)",
+      "time": "09:37",
+      "timestamp": "1753202273.316519",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "That way people don't have to do `aws sso login` constantly in the sandbox console to spin up a sandbox...",
+      "time": "09:38",
+      "timestamp": "1753202309.942069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let me link you the cluster @Abhinav",
+      "time": "09:38",
+      "timestamp": "1753202331.677719",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Abhinav this is the cluster that runs the crafting sandboxes: https://us-east-2.console.aws.amazon.com/eks/clusters/sandbox-instabase?region=us-east-2\n\nIt's in the `instabase-test` account (who knows why; should probably be in instabase-dev?)",
+      "time": "09:41",
+      "timestamp": "1753202488.741359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If we can grant that cluster access to 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build) via an IAM role that would be :100:",
+      "time": "09:42",
+      "timestamp": "1753202543.843969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "ChatGPT says this is the full policy we need to attach\n\n\n```\n{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"ecr:GetDownloadUrlForLayer\",\n        \"ecr:BatchGetImage\",\n        \"ecr:BatchCheckLayerAvailability\",\n        \"ecr:GetAuthorizationToken\",\n        \"ecr:PutImage\",\n        \"ecr:InitiateLayerUpload\",\n        \"ecr:UploadLayerPart\",\n        \"ecr:CompleteLayerUpload\"\n      ],\n      \"Resource\": \"*\"\n    }\n  ]\n}```",
+      "time": "09:53",
+      "timestamp": "1753203235.684849",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Actually, since it's cross-account (instabase-test => instabase-dev), we need:\n\n```{\n  \"Version\": \"2008-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"AllowCrossAccountPullPush\",\n      \"Effect\": \"Allow\",\n      \"Principal\": {\n        \"AWS\": \"arn:aws:iam::<AccountA-ID>:role/eks-node-role\"\n      },\n      \"Action\": [\n        \"ecr:BatchCheckLayerAvailability\",\n        \"ecr:GetDownloadUrlForLayer\",\n        \"ecr:BatchGetImage\",\n        \"ecr:GetAuthorizationToken\",\n        \"ecr:PutImage\",\n        \"ecr:InitiateLayerUpload\",\n        \"ecr:UploadLayerPart\",\n        \"ecr:CompleteLayerUpload\"\n      ]\n    }\n  ]\n}```",
+      "time": "09:54",
+      "timestamp": "1753203288.177579",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'll attempt to attach it but I may not have authorization do to so",
+      "time": "09:55",
+      "timestamp": "1753203314.588189",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "cc @astpierre for visibility",
+      "time": "09:55",
+      "timestamp": "1753203351.637929",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "Can you try now ?",
+      "time": "10:23",
+      "timestamp": "1753204999.007539",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```#43 ERROR: error writing layer blob: unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/core-platform-service/blobs/sha256:04cfd4d9bdef03b05e946f7ff0ef3971156731ce20d0e817808041b00a4e37ef: 403 Forbidden\n------\n > importing cache manifest from 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/core-platform-service:cache (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/core-platform-service:cache):\n------\n------\n > exporting cache to registry:\n------\nERROR: failed to build: failed to solve: error writing layer blob: unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/core-platform-service/blobs/sha256:04cfd4d9bdef03b05e946f7ff0ef3971156731ce20d0e817808041b00a4e37ef: 403 Forbidden\nmake: *** [/home/owner/instabase/shared-utils/build-utils/shared/build-service.mk:23: build-docker] Error 1```",
+      "time": "10:24",
+      "timestamp": "1753205048.148499",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mfichman❯ ../../.sandbox/ibdev-backend/scripts/ecr-login\n\nAn error occurred (UnrecognizedClientException) when calling the GetAuthorizationToken operation: The security token included in the request is invalid.\nError: Cannot perform an interactive login from a non TTY device```\nStill no dice",
+      "time": "10:24",
+      "timestamp": "1753205080.613179",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "No need to run login script. if you are running it on crafting node. it should work",
+      "time": "10:25",
+      "timestamp": "1753205155.684689",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "you can also run `aws sts get-caller-identity`  to see what identity you are using",
+      "time": "10:26",
+      "timestamp": "1753205197.019309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For the record:\n\n```\ncs/mfichman❯ aws sts get-caller-identity\n\nUnable to locate credentials. You can configure credentials by running \"aws configure\".```",
+      "time": "10:48",
+      "timestamp": "1753206491.230229",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "fix for #3:\n\nThis uses a named volume rather than /tmp, which does not stick around across reboots due to tmpfs\n\n```diff --git a/third-party/docker/weaviate-titan/Makefile b/third-party/docker/weaviate-titan/Makefile\nindex 4a29aa0b00c..a2c50fb5f04 100644\n--- a/third-party/docker/weaviate-titan/Makefile\n+++ b/third-party/docker/weaviate-titan/Makefile\n@@ -17,8 +17,8 @@ run-docker: build-env-docker\n        mkdir -p /tmp/weaviate-titan && $(DOCKER_RUN_CMD) \\\n         --name instabase-$(IMAGE_NAME) \\\n         --env-file $(current_dir)/tmp/docker_env_local.list \\\n-        -p $(PORT):8888 --user=root \\\n-        -v /tmp/weaviate-titan:/var/lib/weaviate \\\n+        --publish $(PORT):8888 --user=root \\\n+        --volume weaviate-titan:/var/lib/weaviate \\\n         --rm -i $(IMAGE_FQN)```\nI will merge this ASAP",
+      "time": "14:00",
+      "timestamp": "1753218044.083639",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/72693",
+      "time": "14:01",
+      "timestamp": "1753218110.212599",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-22.json",
+    "message_count": 27,
+    "start_time": "1753200220.853239",
+    "end_time": "1753218110.212599",
+    "is_thread": true
+  }
+}

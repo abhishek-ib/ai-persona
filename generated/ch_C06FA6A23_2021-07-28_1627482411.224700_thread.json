@@ -1,0 +1,120 @@
+{
+  "id": "ch_C06FA6A23_2021-07-28_1627482411.224700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "sudeep",
+    "Xi Cheng",
+    "shaunak",
+    "arun",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Hi @sudeep, yes classifier training jobs can take a long time, though hopefully not 12-15 hrs :stuck_out_tongue:. But just file loading can take 3+ hrs because it trains on 10-15K docs.",
+      "time": "07:26",
+      "timestamp": "1627482411.224700",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I was out yesterday so haven’t taken a closer look at this yet. Is it just the PR I should look at or is there a different doc?",
+      "time": "07:30",
+      "timestamp": "1627482626.224900",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "hey @lydia - yeah mainly need to know the default duration needed for consumer acknowledgments for messages delivered from RabbitMQ.\n\nThis timeout will depend on how long the tasks processed by your services from rabbitmq are expected to take. Xi's doc here (https://docs.google.com/document/d/1RrVXW644PC6AFPX7tvtKK9yMwag6Oc6v5ZBQSAKTttM/edit#) highlights the issues that happen if `timeout < time_to_execute_a_task` .\n\nThis timeout used to be really long/undefined until earlier, until we bumped up rabbitmq version in 21.7 which defaults consumer delivery ack timeout to 30 mins, causing long running tasks to get stuck indefinitely.\n\nThe PR here addresses this by setting the timeout to 6 hours default, and I am making sure that works for everyone who is consuming tasks from rabbitmq today.\nhttps://github.com/instabase/instabase/pull/20849",
+      "time": "08:09",
+      "timestamp": "1627484953.225100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "This is also a great fallback to one of the issues that we ran into with BofA.",
+      "time": "08:21",
+      "timestamp": "1627485717.225900",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "hey, just wondering what implications this has for tasks that run longer than 6 hours? Could potentially see (healthy) model training tasks running >6h. Also, does this relate to our setting of `acks_late=True` on celery tasks?",
+      "time": "09:44",
+      "timestamp": "1627490691.226800",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Hey this will cause the tasks to be re-queued at 6 h mark, and consumer to be disconnected. The task will be available for a consumer to retry (potentially causing it to be stuck in the loop). I will recommend checking following doc for details on this behaviour. \n\nTo avoid this we are increasing the timeout, and asking folks to confirm what they think appropriate timeout to be. \n\nhttps://docs.google.com/document/d/1RrVXW644PC6AFPX7tvtKK9yMwag6Oc6v5ZBQSAKTttM/edit# (https://docs.google.com/document/d/1RrVXW644PC6AFPX7tvtKK9yMwag6Oc6v5ZBQSAKTttM/edit#)\n\n`acks_late=true` setting makes sure that tasks in broker are ack’d (and thus deleted) when task is successfully completed. If you set it to `false` (default val), it would ack the msg on receiving it - thus no longer be affected by ack timeout duration.\n\nHope that helps. Lmk if you will need the default timeout to be longer.",
+      "time": "10:58",
+      "timestamp": "1627495084.236400",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "sounds like setting `acks_late=False` would solve the issue for long running tasks, is there a reason not to do that?",
+      "time": "11:00",
+      "timestamp": "1627495219.236900",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@arun I think the problem with setting `acks_late` to False is that if the task fails then you don't get the retry because the message has been acked already",
+      "time": "11:01",
+      "timestamp": "1627495276.238100",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "And we need to be careful about flipping this flag because this means all customers will be running with a very different semantics when it comes to Celery tasks.",
+      "time": "11:03",
+      "timestamp": "1627495384.240100",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "@arun Yep to make sure the task always gets executed. Consumer/worker crashes with `acks_late=false` will lead to the task being skipped. \n\nIf the system has resiliency to detect/re-queue in such cases, then false is a fair setting.",
+      "time": "11:03",
+      "timestamp": "1627495385.240300",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "gotcha, makes sense -- for the model-training-tasks service then, if lack of retries is desired semantics and we communicated this to users, we could avoid hitting the timeout issue in that case? lmk if you want to take this to a different thread btw",
+      "time": "11:07",
+      "timestamp": "1627495620.240700",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "@arun that’s correct; and doing that depends on what the expectation for model-training-tasks is for the users. Lmk",
+      "time": "11:13",
+      "timestamp": "1627496008.242700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-07-28.json",
+    "message_count": 12,
+    "start_time": "1627482411.224700",
+    "end_time": "1627496008.242700",
+    "is_thread": true
+  }
+}

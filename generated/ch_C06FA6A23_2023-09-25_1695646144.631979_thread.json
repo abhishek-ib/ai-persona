@@ -1,0 +1,119 @@
+{
+  "id": "ch_C06FA6A23_2023-09-25_1695646144.631979_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "fernando",
+    "youngmok.cho",
+    "Heymian",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "Late to the party, but my 2c are that all of the above aligns with everything I'm aware of :laughing:\nTests for shared modules are still run on python 3.7. The move to have these in 3.9 is being done as part of the bazel work (cc Young already tagged above) due to the shared nature of dependencies. Finally, :plus_one: on thousands of mypy errors when moving to 3.9 :upside_down_face:",
+      "time": "05:49",
+      "timestamp": "1695646144.631979",
+      "is_reply": false
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "Quick summary of how third-party python packages are handled in Bazel:\n• The python version used in Bazel is 3.9.15\n• Currently, our Bazel relies on pip to manage third-party packages\n• There’s a _single_ requirements.txt under `third-party/bazel/py` we use for bazel. Most of the unit tests pass except for a few that fail due to version conflicts. These require a legitimate code change (listed here (https://instabase.atlassian.net/jira/software/c/projects/RELENG/boards/263?modal=detail&selectedIssue=RELENG-367)).\n• Currently, mypy isn’t implemented in Bazel.\nSome things I want to clarify\n• Bazel is _not_ a tool to resolve all these complicated package version conflicts. That’s a job for package management tools such as `pip` or `poetry` that Bazel relies on. (However, if we bring all third-party packages into our monorepo, then Bazel can manage these packages without pip or poetry. But we’d have to build these packages with Bazel).\n• As for having _multi versions_ for external py packages, it’s possible to do something similar to golang in Bazel as @Heymian mentioned above. However, the challenge is “what is the right version to use” at any given point?“. Bazel has no dependency resolution engine - it expects that you’ve already resolved and locked your dependencies, so one huge challenge from that is what happens if the dependency graphs cross? For example, if you have module A,B and C where A has `request==1.0.0` , B has `request==1.0.1` and C depends on both A and B, which version of `request` does C use? - It’s whatever version that was found first in the available paths.\n    ◦ So what’s our plan? Does this mean we will have only a single version for all py modules? The answer is yes for both shared modules and service modules with some flexibility only in the service modules. If anyone’s interested, I’d love to discuss this further.\nI can prepare a spreadsheet that lists out what’s failing and what needs to change for py3.9 shared utils. I modified our code for some obvious unit test failures, but the rest seems to be a bit sensitive for me to change, so would prefer to have code owners handle them.",
+      "time": "09:12",
+      "timestamp": "1695658373.090629",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@youngmok.cho can you clarify the justification to go back to a single version for all python modules? I think that’s a huge regression from what we have today right since we’ve always been able to declare dependences on a service level, even with our primitive Makefiles? I think a huge win with Bazel was would it enable us to have proper dependency management for not just our imports but third party on a per module boundary? Why would not try to do that if we can start fresh with Bazel?",
+      "time": "13:54",
+      "timestamp": "1695675279.921299",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Then my follow-up question is what does Bazel buy us for python?",
+      "time": "13:55",
+      "timestamp": "1695675350.529739",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@youngmok.cho I remember during the recent incident review, we said we use poetry venvs for some of the unit tests. How does that work? In the jenkins Dockerfile, I see a section about \"Build all the venvs\". What are these venvs? And how do tests register as using one of them?",
+      "time": "15:38",
+      "timestamp": "1695681503.444859",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "@Heymian There’s a article written by a Bazel author that talks about this topic :slightly_smiling_face:: https://blog.aspect.dev/multiple-deps\n\nThe justification behind a single-version policy for all py modules (with exceptions) is that there are huge internal dependencies among the shared modules, which makes the “external package version resolution” nearly impossible and error-prone especially with Python interpreter not being able to pick up a specific version of a package when multiple versions exist in a build graph.\n\nI’m not saying it’s impossible to define a requirements.txt per service in Bazel; even with our current poetry set-ups, we see issues around the shared py modules having to support multiple versions. This is going to get worse with Bazel, since the packages are specified per target (i.e. per module). How are we going to make sure which package version is used when there’s a deep build graph that contains multiple versions right? Monorepo’s benefit is code-reuse, and the fact that multiple package versions exist in shared code means we may not be able to reuse the code every time.\n\nThus, the plan is that:\n• bring all services/apps to the same common version denominator\n• deal with exceptions, treat them separately - have separate requirements.txt, but work asap on bringing them to the common denominator\n• group what you were not able to bring to the common denominator to an “another” common denominator, reducing a number of requirements.txt\n• with time, continue reducing number of versions, unless it’s ABSOLUTELY unsolvable.\nSo, in the end, the releng team provides support for the common denominator, and if you have your own requirements you’re on your own.\n\n```a huge regression from what we have today```\nI don’t necessarily think it’s a regression. I think this is going to help with the issues around shared modules that need to stay compatible with multiple requirements.txt files. Also, vulnerability patches will be a simple change to a single requirements.txt file.\n\nWe know that there are downsides of this approach, but given our py util build graph, I honestly think this is the best option we have.",
+      "time": "16:01",
+      "timestamp": "1695682904.121579",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "@lydia I did not work on the poetry venv part in the Jekins Dockerfile, so may not be the right person to answer, but afaik, only the tests for the service code are executed. You can check this for yourself by running `make test` under one of the py services. Please correct me if I’m wrong.",
+      "time": "16:06",
+      "timestamp": "1695683193.926169",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@youngmok.cho do you know who did?",
+      "time": "16:07",
+      "timestamp": "1695683268.700239",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "It’s probably Lenny?",
+      "time": "16:08",
+      "timestamp": "1695683282.573479",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "A few more questions that I think we need to flesh out, I don’t think we can or should bring to a common deminator:\n• We always try to minimize the # of dependencies in each service to only those that are required and not include everything in everthing. (I think this is what you’re proposing, please correct me if I’m misunderstanding). There are multiple reasons for this, like vulnerability management, and also our images would become massive. Imagine having every image be like model-service, or ray.\n• How would we do vulnerability resolutions if different versions are needed in different services? E.g. for many months, opencv version was pinned in app-tasks to an older version because there were customer flow dependencies on it, but we could update the rest of the stack. This allows us to grant exceptions on a per service basis.\n• How do we do python version upgrades in the future? or other invasive upgrades like mypy if we can’t do them piecemeal? The huge benefit of what Lenny did with poetry, was we could slowly move each service one at a time over to python 3.9 without needing a 10k line change in one shot. This is how we’d have to tackle mypy as well.",
+      "time": "16:12",
+      "timestamp": "1695683574.379679",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "My take is we need to tackle python the same way we tackled Go: one module at a time and we actually flesh out the exact set of dependencies + library versions we need. We can continue to let pip or poetry do version resolution as the graph is built out (if Bazel can integrate with that). I’m also not saying this will be easy, but given we are attempting to bring in a fresh new build system, I don’t think we want to take shortcuts and inherit all the baggage we already know about from the get-go.",
+      "time": "16:16",
+      "timestamp": "1695683804.347049",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "We can chat more about this separately though, don’t think Bazel will help Lydia out in the short-term anyways. :stuck_out_tongue:",
+      "time": "16:18",
+      "timestamp": "1695683927.201919",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-09-25.json",
+    "message_count": 12,
+    "start_time": "1695646144.631979",
+    "end_time": "1695683927.201919",
+    "is_thread": true
+  }
+}

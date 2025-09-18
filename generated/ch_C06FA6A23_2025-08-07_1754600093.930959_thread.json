@@ -1,0 +1,119 @@
+{
+  "id": "ch_C06FA6A23_2025-08-07_1754600093.930959_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cheryl Zhou",
+    "Jason",
+    "Abhinav",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Does anyone have experience connecting to Google Cloud (say cloud storage or vertex AI) from AWS?\nVertex AI (the enterprise version of Gemini) seems to not support simple API_KEY based auth.\nhttps://chatgpt.com/share/6895120d-4cac-800c-b53f-b20466d96e5a",
+      "time": "13:54",
+      "timestamp": "1754600093.930959",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "cc @Abhinav @Cheryl Zhou @astpierre",
+      "time": "13:55",
+      "timestamp": "1754600129.170539",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "```Not on GKE but want keyless: Workload Identity Federation (no static JSON keys)```\n^ this is what all AIs seem to recommend - this looks non-trivial",
+      "time": "14:00",
+      "timestamp": "1754600413.971549",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Is the Google AI API Key (AI Studio) option (second from the list) what you're looking for?",
+      "time": "14:03",
+      "timestamp": "1754600627.418159",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "No that we is what we are using today. That works fine.\n\nVertexAI is a different offering - it is a different way to access Gemini API",
+      "time": "14:06",
+      "timestamp": "1754600781.316539",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "In connecting to Google Cloud Storage from AWS, we use service account credentials which is a json that contains private key, client email, etc (doc (https://platform.instabase.com/docs/apis/mount/index.html#google-cloud-storage-mount-details)), not sure if that's available for Vertex AI",
+      "time": "14:07",
+      "timestamp": "1754600824.097449",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "thanks - that might be the way to go",
+      "time": "14:15",
+      "timestamp": "1754601309.770719",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "```## Alternative (Less Secure): Service Account Keys 🔑\nIf you need a quicker setup or can't use Workload Identity Federation, you can use a traditional service account key file. This is not recommended for production environments because it involves a long-lived secret that can be leaked.\n\nIn GCP:\n\nCreate a Service Account.\n\nGrant it the Vertex AI User role.\n\nGenerate a JSON key for this service account and download it.\n\nIn AWS:\n\nStore this JSON key file securely using a service like AWS Secrets Manager. Do not bake it into your container image.\n\nIn Your Application:\n\nAt runtime, have your container fetch the key from AWS Secrets Manager and save it to a file inside the container.\n\nSet the GOOGLE_APPLICATION_CREDENTIALS environment variable to point to the path of this downloaded JSON key file.```",
+      "time": "14:15",
+      "timestamp": "1754601311.486569",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "Yeah, we should just be using a service principal. Same as we provide for gcr.io (http://gcr.io) customer access today.",
+      "time": "14:39",
+      "timestamp": "1754602761.523999",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@Jason can you help with this - I am not familiar with this.\nI want to be able to access vertex AI\n```client = genai.Client(vertexai=True, ??)```\nIf you figure out the right way, can you try it out and let me know what it is",
+      "time": "15:01",
+      "timestamp": "1754604076.892739",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "Yup, will do",
+      "time": "15:13",
+      "timestamp": "1754604833.359499",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "@Anil this should help\nhttps://cloud.google.com/iam/docs/workload-identity-federation-with-kubernetes#eks_1",
+      "time": "16:08",
+      "timestamp": "1754608084.034389",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-08-07.json",
+    "message_count": 12,
+    "start_time": "1754600093.930959",
+    "end_time": "1754608084.034389",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,360 @@
+{
+  "id": "ch_C06FA6A23_2020-07-01_1593634763.317500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Chetan",
+    "Aaron Vontell",
+    "will",
+    "Felicia",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "<!subteam^SQ3KR3V17> it looks like api-server is pulling in new deps that didn’t get added via `from instabase.provenance.tracking import ProvenanceTracker`\nhttps://instabase.slack.com/archives/CCY413CSU/p1593631494018900",
+      "time": "13:19",
+      "timestamp": "1593634763.317500",
+      "is_reply": false
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Normally I would try to ping individuals, but that is a pretty big change list :smile:",
+      "time": "13:19",
+      "timestamp": "1593634784.317700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Aaron Vontell @Felicia ^",
+      "time": "13:20",
+      "timestamp": "1593634804.317900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "https://console.cloud.google.com/logs/query;query=resource.type%3D%22container%22%0Aresource.labels.cluster_name%3D%22instabase-main-dogfood-001%22%0Aresource.labels.namespace_id%3D%22instabase-dogfood%22%0Aresource.labels.project_id%3D%22instabase-dogfood%22%0Aresource.labels.zone:%22us-east1-%22%0Aresource.labels.container_name%3D%22api-server%22%0Aresource.labels.pod_id:%22deployment-api-server-579558cd46-%22?project=instabase-dogfood for the full dump",
+      "time": "13:20",
+      "timestamp": "1593634813.318100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@will i can't really tell from the jenkins console what the issue is",
+      "time": "13:20",
+      "timestamp": "1593634843.318400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i see java errors?",
+      "time": "13:21",
+      "timestamp": "1593634860.318600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh @Aaron Vontell looks like it's because we added regex? oo probably we added it to Value object",
+      "time": "13:22",
+      "timestamp": "1593634926.318800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "we have to look for the job that it says is failing",
+      "time": "13:22",
+      "timestamp": "1593634932.319000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "https://jenkins.instabase.com/view/dogfood/job/api-server-dogfood/1746/console in this case",
+      "time": "13:22",
+      "timestamp": "1593634941.319200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "To get\n```gcloud container clusters get-credentials \\\n\tinstabase-main-dogfood-001 \\\n\t--zone=us-east1-c --project=instabase-dogfood\nFetching cluster endpoint and auth data.\nkubeconfig entry generated for instabase-main-dogfood-001.\nkubectl rollout status deployment deployment-api-server -n instabase-dogfood\nWaiting for deployment \"deployment-api-server\" rollout to finish: 2 out of 3 new replicas have been updated...\nWaiting for deployment spec update to be observed...\nWaiting for deployment spec update to be observed...\nWaiting for deployment \"deployment-api-server\" rollout to finish: 0 out of 3 new replicas have been updated...\nWaiting for deployment \"deployment-api-server\" rollout to finish: 0 out of 3 new replicas have been updated...\nWaiting for deployment \"deployment-api-server\" rollout to finish: 0 out of 3 new replicas have been updated...\nWaiting for deployment \"deployment-api-server\" rollout to finish: 2 out of 3 new replicas have been updated...\nerror: deployment \"deployment-api-server\" exceeded its progress deadline\n/home/ib-build/workspace/api-server-dogfood/webserver/api-server/../../shared-utils/build-utils/shared/deploy.mk:441: recipe for target 'status-dep-dogfood-gc' failed\nmake: *** [status-dep-dogfood-gc] Error 1```",
+      "time": "13:22",
+      "timestamp": "1593634952.319400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Which leads to the gcloud dashboard or `kubectl logs` :slightly_smiling_face:",
+      "time": "13:22",
+      "timestamp": "1593634968.319600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "how do you get to the gcloud dashboard from the jenkins console?",
+      "time": "13:23",
+      "timestamp": "1593635002.319800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "If it is failing to deploy then the next step to look at the state of the cluster",
+      "time": "13:23",
+      "timestamp": "1593635035.320000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "It should be possible to make the `status-dep-%-gc` jobs dump out a link to the appropriate cluster on failure, but I don’t think I will be able to get to that.",
+      "time": "13:25",
+      "timestamp": "1593635126.320200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "thanks!",
+      "time": "13:29",
+      "timestamp": "1593635364.320400",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "trying to follow what’s happening here. l’m able to see that api-server-dogfood/1746 is failing and the change listed is `Regex split on value`  but not sure how I can figure out it’s because regex is missing?",
+      "time": "13:49",
+      "timestamp": "1593636574.320700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "In the logs for the container that is failing to deploy, it says regex is missing in the stack trace",
+      "time": "13:53",
+      "timestamp": "1593636830.320900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "https://console.cloud.google.com/logs/query;query=resource.type%3D%22container%22%0Aresource.labels.cluster_name%3D%22instabase-main-dogfood-001%22%0Aresource.labels.namespace_id%3D%22instabase-dogfood%22%0Aresource.labels.project_id%3D%22instabase-dogfood%22%0Aresource.labels.zone:%22us-east1-%22%0Aresource.labels.container_name%3D%22api-server%22%0Aresource.labels.pod_id:%22deployment-api-server-579558cd46-%22?project=instabase-dogfood",
+      "time": "13:54",
+      "timestamp": "1593636841.321100",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "ah alright! thanks @will!",
+      "time": "13:56",
+      "timestamp": "1593637010.321300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Sorry was in a meeting, the downsides of testing locally with an in-docker testing setup :sob: is this resolved?",
+      "time": "14:12",
+      "timestamp": "1593637942.321500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "A better question is why is api-server importing provenance tracking… but yeah in the meantime we can add `regex` to api-server",
+      "time": "14:12",
+      "timestamp": "1593637970.321700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@Felicia @lydia?",
+      "time": "14:13",
+      "timestamp": "1593637986.321900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "via jobs_utils",
+      "time": "14:13",
+      "timestamp": "1593638010.322100",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "not resolved",
+      "time": "14:13",
+      "timestamp": "1593638012.322300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "which imports the world",
+      "time": "14:13",
+      "timestamp": "1593638017.322500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "that’s terrible! Alright im gonna add regex to api-server, since it is pretty lightweight, that ok for now?",
+      "time": "14:14",
+      "timestamp": "1593638056.322700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "ideally provenance tracking really should not be imported or included anywhere except for app-tasks",
+      "time": "14:14",
+      "timestamp": "1593638074.322900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "https://github.com/instabase/instabase/pull/14616",
+      "time": "14:21",
+      "timestamp": "1593638486.323100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Merged!",
+      "time": "14:41",
+      "timestamp": "1593639700.323400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I’ll be kicking off another manual push in a few, I will keep you posted :slightly_smiling_face:",
+      "time": "14:47",
+      "timestamp": "1593640067.323600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "we’re really trying to keep Will busy until the end I see :slightly_smiling_face:",
+      "time": "14:51",
+      "timestamp": "1593640284.323900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Looks like the same issue in webapp :disappointed:",
+      "time": "16:13",
+      "timestamp": "1593645222.324200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "```from instabase.provenance.tracking import ProvenanceTracker\n  File \"/instabase-server/py/instabase/provenance/tracking.py\", line 10, in <module>\n    import regex\nModuleNotFoundError: No module named 'regex'```",
+      "time": "16:14",
+      "timestamp": "1593645272.324400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "ahhhhhh is there a way to check all of the ones effected right now?",
+      "time": "16:15",
+      "timestamp": "1593645310.324600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Going through the builds that failed and seeing why :smile:",
+      "time": "16:15",
+      "timestamp": "1593645348.324800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Who is the owner of job-utils?",
+      "time": "16:16",
+      "timestamp": "1593645375.325000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "For now at least it looks like that is the last regex issue",
+      "time": "16:17",
+      "timestamp": "1593645453.325200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Alright ill make another OR",
+      "time": "16:18",
+      "timestamp": "1593645518.325400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "*PR",
+      "time": "16:18",
+      "timestamp": "1593645521.325600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I’ll kick off another build after it is merged :slightly_smiling_face:",
+      "time": "16:19",
+      "timestamp": "1593645574.325800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "https://github.com/instabase/instabase/pull/14621",
+      "time": "16:30",
+      "timestamp": "1593646244.326000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@will merged! Sorry for the delay",
+      "time": "17:38",
+      "timestamp": "1593650318.328600",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-07-01.json",
+    "message_count": 42,
+    "start_time": "1593634763.317500",
+    "end_time": "1593650318.328600",
+    "is_thread": true
+  }
+}

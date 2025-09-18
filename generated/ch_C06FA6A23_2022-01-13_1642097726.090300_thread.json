@@ -1,0 +1,63 @@
+{
+  "id": "ch_C06FA6A23_2022-01-13_1642097726.090300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "shaunak",
+    "Aaron Tami",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Aaron Tami @shaunak We may want to prioritize on testing the effect of Redis split, for both stability and performance purposes. I'd start with use case load testing and evaluate whether this affects our overall throughput. @Rakesh and @Anil has worked on a flow load testing tool and I know that @Rakesh has already been doing this benchmark. It'd be good if we can do this again with the Redis split so we have some concrete data point and learn more about how our system behaves.",
+      "time": "10:15",
+      "timestamp": "1642097726.090300",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Xi Cheng this change is not geared towards performance, or throughput.  This change is on the reliability front where we want to use Redis as a persistent database *only* for operations that don’t have a backup store [celery-results and msft ocr].  This reduces the amount of data we write into the persistent volume which now allows us to fine tune the configurations properly.",
+      "time": "11:06",
+      "timestamp": "1642100798.091700",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@Xi Cheng this shouldn't impact perf much. ^ 100% agree.\nNone the less, I am running load tests so will give you a number by mid next week :slightly_smiling_face: (assuming I am able to update my sandbox to have the  split redis config)",
+      "time": "11:27",
+      "timestamp": "1642102061.094300",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@shaunak @Anil Got it, thanks for clarifying. I think it'll be important for us to benchmark frequently. This is not just for performance, but also for stability. There are lots of changed made into master recently, and dogfood is not stable at the moment. I think having use-case load testing would give us confidence as to how well our system performs given we evolve fast.",
+      "time": "13:39",
+      "timestamp": "1642109980.094600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "I think we will want to do more testing on how resilient this persistent is, and since we are reducing the amount of data getting persisted, if we can crank up the settings to make AOF writes happen faster and prevent more data loss",
+      "time": "14:56",
+      "timestamp": "1642114584.096800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-01-13.json",
+    "message_count": 5,
+    "start_time": "1642097726.090300",
+    "end_time": "1642114584.096800",
+    "is_thread": true
+  }
+}

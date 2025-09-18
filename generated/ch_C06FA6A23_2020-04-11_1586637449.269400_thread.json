@@ -1,0 +1,496 @@
+{
+  "id": "ch_C06FA6A23_2020-04-11_1586637449.269400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Handsome Dave",
+    "achao",
+    "shaunak",
+    "will",
+    "Felicia"
+  ],
+  "messages": [
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Allow beam.smp?",
+      "time": "13:37",
+      "timestamp": "1586637449.269400",
+      "is_reply": false
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "i’m not getting any of those popus, and my firewall is off too so it should allow all incoming connections?",
+      "time": "13:41",
+      "timestamp": "1586637664.269500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Try “lsof -i :5672” and see if anything is listening",
+      "time": "13:43",
+      "timestamp": "1586637804.270300",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "",
+      "time": "13:44",
+      "timestamp": "1586637879.270500",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "there’s a bunch of beam, python and docker",
+      "time": "13:44",
+      "timestamp": "1586637898.270900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Try killing rabbitmq and starting it in a docker container?",
+      "time": "13:46",
+      "timestamp": "1586637965.271600",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "how can I kill rabbitmq and start it with docker? :cold_sweat: is there one straightforward command for killing rabbitmq? I tried a few things from stackoverflow but it wasn’t clear to me if it actually did anything",
+      "time": "13:54",
+      "timestamp": "1586638489.271800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "“ps aux | grep -i rabbit”",
+      "time": "13:57",
+      "timestamp": "1586638630.272600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "We can use that to get the pid for a kill command",
+      "time": "13:57",
+      "timestamp": "1586638674.273100",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "`pkill rabbit`  would also work, right?",
+      "time": "14:00",
+      "timestamp": "1586638856.273300",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "```felicia          46372   3.1  0.3  5524480  42612 s010  S+    1:51PM   0:12.78 /usr/local/Cellar/erlang/22.0.7/lib/erlang/erts-10.4.4/bin/beam.smp -W w -A 128 -MBas ageffcbf -MHas ageffcbf -MBlmbcs 512 -MHlmbcs 512 -MMmcs 30 -P 1048576 -t 5000000 -stbt db -zdbbl 128000 -K true -B i -- -root /usr/local/Cellar/erlang/22.0.7/lib/erlang -progname erl -- -home /Users/felicia -- -pa /usr/local/Cellar/rabbitmq/3.7.16/ebin  -noshell -noinput -s rabbit boot -sname rabbit@localhost -boot /usr/local/opt/erlang/lib/erlang/bin/start_clean -kernel inet_default_connect_options [{nodelay,true}] -rabbit tcp_listeners [{\"127.0.0.1\",5672}] -sasl errlog_type error -sasl sasl_error_logger false -rabbit lager_log_root \"/usr/local/var/log/rabbitmq\" -rabbit lager_default_file \"/usr/local/var/log/rabbitmq/rabbit@localhost.log\" -rabbit lager_upgrade_file \"/usr/local/var/log/rabbitmq/rabbit@localhost_upgrade.log\" -rabbit enabled_plugins_file \"/usr/local/etc/rabbitmq/enabled_plugins\" -rabbit plugins_dir \"/usr/local/Cellar/rabbitmq/3.7.16/plugins\" -rabbit plugins_expand_dir \"/usr/local/var/lib/rabbitmq/mnesia/rabbit@localhost-plugins-expand\" -os_mon start_cpu_sup false -os_mon start_disksup false -os_mon start_memsup false -mnesia dir \"/usr/local/var/lib/rabbitmq/mnesia/rabbit@localhost\" -kernel inet_dist_listen_min 25672 -kernel inet_dist_listen_max 25672 stop\nfelicia          48237   0.0  0.0  4267948    380 s029  R+    1:57PM   0:00.00 grep --color=auto --exclude-dir=.bzr --exclude-dir=CVS --exclude-dir=.git --exclude-dir=.hg --exclude-dir=.svn -i rabbit\nfelicia          46248   0.0  0.0  4316764   1036 s010  S+    1:51PM   0:00.03 /bin/sh /usr/local/sbin/rabbitmq-server stop```\nso `kill 46372` ?",
+      "time": "14:00",
+      "timestamp": "1586638856.273500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "kill -9",
+      "time": "14:01",
+      "timestamp": "1586638908.273800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "It’s already not responding to the stop command you issued",
+      "time": "14:02",
+      "timestamp": "1586638925.274500",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "`pkill rabbit` didn’t change anything, let me try kill -9",
+      "time": "14:02",
+      "timestamp": "1586638940.274700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "> `pkill rabbit`  would also work, right?\nYeah if you remember the name of the process, but i never do. :D",
+      "time": "14:02",
+      "timestamp": "1586638975.275600",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "alright, `ps aux | grep -i rabbit` now just shows one line (the middle one)! :slightly_smiling_face:",
+      "time": "14:03",
+      "timestamp": "1586638991.275800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Nice",
+      "time": "14:03",
+      "timestamp": "1586639032.276200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "You might be able to just start it now",
+      "time": "14:04",
+      "timestamp": "1586639050.276900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "It looks like it was crashed",
+      "time": "14:04",
+      "timestamp": "1586639058.277400",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "ah this was one of the symptoms of my hosed local env a few days ago, which went away after I reinstalled rabbitmq, (maybe it accidentally got updated? unsure the root cause)",
+      "time": "14:05",
+      "timestamp": "1586639112.277600",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "with `/usr/local/sbin/rabbitmq-server` or with docker?",
+      "time": "14:05",
+      "timestamp": "1586639128.277800",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "yup, local",
+      "time": "14:05",
+      "timestamp": "1586639138.278200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Either or",
+      "time": "14:05",
+      "timestamp": "1586639139.278400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Docker might be more reliable",
+      "time": "14:05",
+      "timestamp": "1586639155.278900",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "@achao oh shit, i need to run bunch of flows that are going to take a long time by sunday evening",
+      "time": "14:06",
+      "timestamp": "1586639161.279200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Local might be more fun",
+      "time": "14:06",
+      "timestamp": "1586639168.279600",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": ":party_parrot::thinking_face:",
+      "time": "14:06",
+      "timestamp": "1586639180.279800",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "is this normal?\n```PLAIN login refused: user 'guest' - invalid credentials\n2020-04-11 21:13:51.272 [info] <0.9685.0> closing AMQP connection <0.9685.0> (172.17.0.1:60932 -> 172.17.0.12:5672)\n2020-04-11 21:13:51.326 [info] <0.9688.0> accepting AMQP connection <0.9688.0> (172.17.0.1:60936 -> 172.17.0.12:5672)\n2020-04-11 21:13:51.363 [error] <0.9688.0> Error on AMQP connection <0.9688.0> (172.17.0.1:60936 -> 172.17.0.12:5672, state: starting):\nPLAIN login refused: user 'guest' - invalid credentials```",
+      "time": "14:14",
+      "timestamp": "1586639648.280100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Probably a container connecting as guest?",
+      "time": "14:15",
+      "timestamp": "1586639710.281000",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "(keeps showing more and more of this and AMQPLAIN)",
+      "time": "14:15",
+      "timestamp": "1586639715.281400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "It doesn’t look abnormal.",
+      "time": "14:15",
+      "timestamp": "1586639723.281700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Is it still not working!",
+      "time": "14:15",
+      "timestamp": "1586639732.282100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "*?",
+      "time": "14:15",
+      "timestamp": "1586639739.282500",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "nope, it’s showing this\n```[2020-04-11 14:15:44,060: ERROR/ForkPoolWorker-2] Connection closed while authenticating indicating a probable authentication error\n[2020-04-11 14:15:44,066: ERROR/ForkPoolWorker-2] Connection setup failed due to Client was disconnected at a connection stage indicating a probable authentication error: (403, 'ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.')\n[2020-04-11 14:15:44,067: ERROR/ForkPoolWorker-2] Connection open failed - Client was disconnected at a connection stage indicating a probable authentication error: (403, 'ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.')\n[2020-04-11 14:15:44,084: ERROR/ForkPoolWorker-2] Failed to connect to RabbitMQ: (403, 'ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.')```\nin app tasks. this is the first time im starting rabbitmq in docker",
+      "time": "14:16",
+      "timestamp": "1586639777.282700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Well that is consistent with what your rabbit container is showing",
+      "time": "14:16",
+      "timestamp": "1586639813.283400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Maybe Double check the credentials in app tasks",
+      "time": "14:17",
+      "timestamp": "1586639831.284000",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "where can i check that?",
+      "time": "14:19",
+      "timestamp": "1586639965.284200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I don’t know off the top of my head, but I would look for env files in the app tasks folders",
+      "time": "14:20",
+      "timestamp": "1586640002.285200",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "i stopped the rabbit container and started it locally (back to failing to connect)",
+      "time": "14:20",
+      "timestamp": "1586640028.285400",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "hm I checked `rabbitmq/deployment/env/deployment-config.json` and `env-template.jinja.yml` as well as `rabbitmq/deployment/local/docker-env.json` but don’t really see anything related to credentials",
+      "time": "14:39",
+      "timestamp": "1586641154.285600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I would look in apptasks instead",
+      "time": "14:39",
+      "timestamp": "1586641191.286300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Thats where the consumer would need to be configured",
+      "time": "14:40",
+      "timestamp": "1586641207.286800",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "is this what i should be looking at?\n``` # For Rabbit MQ\n    - name: RABBIT_MQ_USERNAME\n      value: \"{{rabbitmq_default_user}}\"\n    - name: RABBIT_MQ_PASSWORD\n      value: \"{{rabbitmq_default_pass}}\"\n    - name: RABBIT_MQ_URL\n      value: \"service-rabbitmq.{{namespace}}.svc.cluster.local\"```\n   i checked the same files in app tasks with what’s on github and there doesn’t seem to be a difference",
+      "time": "14:51",
+      "timestamp": "1586641918.287000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "That rabbitmq_default_user needs to be set somewhere",
+      "time": "14:52",
+      "timestamp": "1586641974.287900",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "in `rabbitmq/deployment/local/docker-env.json` there’s: (which is up to date with master)\n```{\n  \"docker-local\": {\n    \"rabbitmq_default_user\": \"serv1ce\",\n    \"rabbitmq_default_pass\": \"serv1ce\",\n    \"rabbitmq_console_user\": \"c0nsole\",\n    \"rabbitmq_console_pass\": \"c0nsole\",\n    \"config_type\": \"docker-local\"\n  }\n}```\nand in `shared-utils/build-utils/shared/env.json` , same as on master\n```    \"rabbitmq_default_user\": \"1nstabase\",\n    \"rabbitmq_default_pass\": \"cve2rsVGmHaY\",\n    \"rabbitmq_console_user\": \"c0nsole\",\n    \"rabbitmq_console_pass\": \"2GEBuaLknhjL\",```",
+      "time": "15:00",
+      "timestamp": "1586642451.288100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "How are you running app tasks?",
+      "time": "15:02",
+      "timestamp": "1586642522.288600",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "with `make build runlocal-profile`",
+      "time": "15:02",
+      "timestamp": "1586642534.288800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Are you developing app tasks?",
+      "time": "15:02",
+      "timestamp": "1586642570.289300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Or maybe a better question, which services do you need your changes in?",
+      "time": "15:03",
+      "timestamp": "1586642597.290100",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "what do you mean? I need to check how much memory is used running several different flows. I’m on master and didn’t change code except for the timeout values of a few celery tasks :slightly_smiling_face:",
+      "time": "15:04",
+      "timestamp": "1586642671.290300",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "i’m updating rabbitmq now to 3.8.3",
+      "time": "15:05",
+      "timestamp": "1586642721.290500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "It might be less troubleshooting to run it as a docker container rather than locally",
+      "time": "15:07",
+      "timestamp": "1586642840.291200",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "do you mean regarding app tasks?",
+      "time": "15:08",
+      "timestamp": "1586642884.291400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Ueah",
+      "time": "15:08",
+      "timestamp": "1586642901.291900",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "okay, but i need to run it with `runlocal-profile` to get a plot of memory usage. is this possible with docker as well?",
+      "time": "15:09",
+      "timestamp": "1586642956.292100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Ah, probably not",
+      "time": "15:09",
+      "timestamp": "1586642975.292500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "It sounds like the credentials are not getting passed locally for some reason",
+      "time": "15:09",
+      "timestamp": "1586642996.293300",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "@shaunak is this a known issue with solution for `runlocal-profile`?",
+      "time": "15:21",
+      "timestamp": "1586643701.293500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "don’t know what the issue is here",
+      "time": "15:22",
+      "timestamp": "1586643746.293700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-04-11.json",
+    "message_count": 59,
+    "start_time": "1586637449.269400",
+    "end_time": "1586643746.293700",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "id": "ch_C06FA6A23_2024-05-13_1715623498.340299_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Xindi Xu",
+    "Kerry",
+    "Sunny Khatri"
+  ],
+  "messages": [
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Hey Guys, Can someone please have a look at this. Thanks !",
+      "time": "11:04",
+      "timestamp": "1715623498.340299",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Do you have any examples of a log level change (something used to be logged as Info, now becomes warning)? That log_helper file has not been edited for a long time; if you have an example that will help narrow down places to look at",
+      "time": "15:17",
+      "timestamp": "1715638623.707289",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Just to clarify, INFO hasn't become warning but seems like we've bumped up our log level to so that we only see WARNING in our logs. This was raised today as well in model-dev private by @Vishnu for model service where we have stopped emitting INFO messages (atleast locally).",
+      "time": "15:20",
+      "timestamp": "1715638826.634199",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Yash Botadra can you check this for model service? maybe someone change some settings locally?",
+      "time": "15:22",
+      "timestamp": "1715638979.235199",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Sunny Khatri this is recent right -- in the past 2 weeks?",
+      "time": "15:23",
+      "timestamp": "1715639017.294639",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Yeah @Nikolaos Kofinas did try to rebase on an earlier commit and that was working.",
+      "time": "15:24",
+      "timestamp": "1715639068.480599",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "This is the PR the parent of which Nikoloas had tried - https://github.com/instabase/instabase/commit/8c2144eedd505312c3b185e27411763224ca3981.",
+      "time": "15:31",
+      "timestamp": "1715639519.983279",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Taking a look",
+      "time": "16:09",
+      "timestamp": "1715641759.139199",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Spent the last several hours dissecting which PR has caused this and found it to be this one (https://github.com/instabase/instabase/pull/56932).\nI’ve pinged @Xindi Xu to take a look tomorrow coz I can’t tell what in that PR could cause this issue, unfortunately :disappointed:",
+      "time": "19:59",
+      "timestamp": "1715655566.937459",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "could y'all share the steps to run the benchmarking files?",
+      "time": "20:19",
+      "timestamp": "1715656777.822099",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "@Xindi Xu - Just uncomment these `root_dir` and `reader_config` here (https://github.com/instabase/instabase/blob/8d5f21545ee3f955d1641a562de21fedc48e0622/shared-utils/py-utils/ibllm/examples/benchmarking/res/benchmark_classification_cfg.yml#L5-L25) and run\n```/Users/sunnykhatri/miniconda3/envs/py39_17/bin/python $IB_HOME/shared-utils/py-utils/ibllm/examples/benchmarking/benchmark.py test_classify classification```\nThis will kickoff a simple benchmark run making use of ibllm and model service code. It doesn't hit any running service, just executes the code. I think what's happening is something is causing logging `basicConfig` to be called with a `WARNING` somewhere and hence any subsequent level set `INFO` is failing unless we set these level explicitly on the logger.",
+      "time": "20:56",
+      "timestamp": "1715659000.520989",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "No hurries right now. Feel free to check tomorrow.",
+      "time": "20:58",
+      "timestamp": "1715659129.163839",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ":thinking_face: I'm getting this error:. I've commented out the yml file as instructed\n```$ python3 examples/benchmarking/benchmark.py test_classify classification\nTraceback (most recent call last):\n  File \"/home/owner/instabase/shared-utils/py-utils/ibllm/examples/benchmarking/benchmark.py\", line 3, in <module>\n    from examples.benchmarking.benchmark_search import BenchmarkSearch\nModuleNotFoundError: No module named 'examples'```",
+      "time": "21:34",
+      "timestamp": "1715661254.933059",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "You’ll need to setup pythonpath. Let’s chat tomorrow.",
+      "time": "21:46",
+      "timestamp": "1715662010.933749",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-05-13.json",
+    "message_count": 14,
+    "start_time": "1715623498.340299",
+    "end_time": "1715662010.933749",
+    "is_thread": true
+  }
+}

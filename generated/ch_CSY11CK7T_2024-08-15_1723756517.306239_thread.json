@@ -1,0 +1,169 @@
+{
+  "id": "ch_CSY11CK7T_2024-08-15_1723756517.306239_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Xindi Xu",
+    "Weiming Wu",
+    "Jessica",
+    "Victor Zeng",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Any word on when we might be able to turn these back on?",
+      "time": "14:15",
+      "timestamp": "1723756517.306239",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "According to this thread (https://instabase.slack.com/archives/C01N7DV1137/p1723754088054259?thread_ts=1723658240.438109&cid=C01N7DV1137), we’re close to restoring the crafting-cyp cluster. I’ll do some testing before re-enabling. Hopefully we can enable by EOD today",
+      "time": "14:20",
+      "timestamp": "1723756820.285679",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah i was just going to start running some tests - are you already in the middle of doing so? do you need any help? @Paul H",
+      "time": "14:44",
+      "timestamp": "1723758251.031049",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I haven’t done much on my end. I simply made a PR (https://github.com/instabase/instabase/actions/runs/10410944054/job/28834102513?pr=61481) that reverted the change to see how the tests are going. Seems like there’s errors :cry: will investigate when the tests finish.",
+      "time": "15:10",
+      "timestamp": "1723759849.115319",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> • `apps/src/aihub/__e2e__/BuildApp/aihub-quick-clean-refinement.spec.ts`\n> • `apps/src/aihub/__e2e__/BuildApp/aihub-classification.spec.ts`\n> • `apps/src/aihub/__e2e__/BuildApp/aihub-redigitization.spec.ts`\n> • `apps/src/aihub/__e2e__/ViewApp/run-public-app.spec.ts`\nall the failed tests ^ are failing for the same reason\n`Account cypress-user-61481_instabase.com (http://cypress-user-61481_instabase.com) is not integrated with metronome`\n\nbut most tests are passing!",
+      "time": "15:39",
+      "timestamp": "1723761590.795899",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Yeah, I’m seeing the same error. I wonder if this is a case where the account creation failed somewhere or if our setup is wrong somewhere. @Xindi Xu do you know off the top of your head? It’s from this endpoint `GET /api/v2/licenses/billing-plans/history?limit=5`",
+      "time": "15:41",
+      "timestamp": "1723761678.971849",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Victor Zeng - do you know why newly created community users have license checks failed with `Account cypress-user-61481_instabase.com (http://cypress-user-61481_instabase.com) is not integrated with metronome`? The script calls `POST /api/v2/licenses/trial-license/ai-hub` to create the license. `ENABLE_COMMUNITY_METRONOME` is at ib opt in stage now",
+      "time": "15:43",
+      "timestamp": "1723761804.562529",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ooh new community metronome stuff! :pixar-alien-wow:",
+      "time": "16:04",
+      "timestamp": "1723763082.708179",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "tracing back in git. Maybe it's related to this change? https://github.com/instabase/instabase/pull/60869",
+      "time": "16:13",
+      "timestamp": "1723763634.900459",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Hmmm. This is interesting.",
+      "time": "16:15",
+      "timestamp": "1723763712.350259",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "We do have the check for `if metronome_customer_id != None:` before doing the metronome stuff in the `trial-license` endpoint.",
+      "time": "16:17",
+      "timestamp": "1723763869.696599",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "`GET /api/v2/licenses/billing-plans/history?limit=5` should only be called when the feature flag is set since it's a metronome endpoint.",
+      "time": "16:19",
+      "timestamp": "1723763982.587779",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "@Weiming Wu Are we missing a feature flag check somewhere in the frontend?",
+      "time": "16:21",
+      "timestamp": "1723764071.700329",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Ah, yep, there should be a feature flag check in `PlanExpiredModal/index.tsx`\nI'll bring it up for review",
+      "time": "16:27",
+      "timestamp": "1723764471.081789",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Whoa, does this mean a bug snuck in in the short time Cypress was disabled?!",
+      "time": "16:32",
+      "timestamp": "1723764720.822739",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "I'm not sure that this would have caused a Cypress test failure, but potentially, yes :sweat_smile:",
+      "time": "16:32",
+      "timestamp": "1723764778.614219",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "https://github.com/instabase/instabase/pull/61500\nIt's up (a simple one-liner)! I'm clocking out for today so if it's super crucial, any of you can merge it in for me",
+      "time": "16:37",
+      "timestamp": "1723765043.382419",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Merged.",
+      "time": "16:41",
+      "timestamp": "1723765260.989629",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-08-15.json",
+    "message_count": 18,
+    "start_time": "1723756517.306239",
+    "end_time": "1723765260.989629",
+    "is_thread": true
+  }
+}

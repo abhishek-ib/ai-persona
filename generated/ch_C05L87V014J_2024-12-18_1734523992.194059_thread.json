@@ -1,0 +1,109 @@
+{
+  "id": "ch_C05L87V014J_2024-12-18_1734523992.194059_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "more example (https://instabase.slack.com/archives/C05L87V014J/p1734481620095859) threads (https://instabase.slack.com/archives/C05BJCNKZAM/p1734473779502999) of engineers being confused since it’s a lot of work to set up fresh accounts/orgs in a fresh AI Hub environment",
+      "time": "04:13",
+      "timestamp": "1734523992.194059",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Addressing concerns one by one:\n\n>  setting up AI Hub for a fresh db is difficult\nThe ibdev-backend template does this automatically. If you need to do it manually (for whatever reason), all you need is to run `dbmigrate` per the DB developer guide.\n\n> reproducing bugs will take a while if we have to reproduce every bug from scratch on our dev environment\nWhy is it harder to reproduce a bug in a dev environment? If a bug arises in prod, I don't see it being harder to reproduce in dev vs. in dogfood. If it _is_ that much harder, then the problem is that we have bad dev-prod parity; and we should fix that.\n\n> the problem is even worse for indexes for AI Hub Search\nIndexing is a problem; it does take a while to index. This is on my radar to solve.\n\n> we can already use dogfood.instabase.com (http://dogfood.instabase.com)’s db, which is nice since it already has the necessary users / models / etc for running AI Hub\nAs of last week, the ibdev-backend template also installs all required models. Configuring users + orgs is quite easy.\n\n>  however, it’d even more ideal if we could use the db from an actual AI Hub environmen\nOne option we could consider is to build sandboxes using a \"snapshot\" of data from the aihub-sandbox DB (as Heymian suggested). This is also on my radar to solve.\n\nOverall, I think there are some valid objections, but I think the benefits outweigh the downsides for all but a few edge cases.",
+      "time": "09:12",
+      "timestamp": "1734541966.073509",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> setting up AI Hub for a fresh db is difficult\ni was referring to the problems solved by the ai hub post-install actions, so i think this is no longer a concern",
+      "time": "09:14",
+      "timestamp": "1734542083.198359",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> Why is it harder to reproduce a bug in a dev environment? If a bug arises in prod, I don’t see it being harder to reproduce in dev vs. in dogfood. If it _is_ that much harder, then the problem is that we have bad dev-prod parity; and we should fix that.\nby “harder”, i mean that it takes “longer” since we need to re-create a lot of state in the product -> and along the way, your sandbox may not work on a particular step\n\nin Build/Converse, we need to re-create the project, which is doable but takes more time locally\n• ex: you need to create a lot of classes/fields to reproduce the issue\n• ex: you need to upload very long documents, which may take tens of minutes to digitize\nin human review / solution accuracy / deployments, the list of steps to reproduce becomes longer\n• first you need to create a Build project that matches the app used in the bug report\n• then you need to create the app\n    ◦ maybe you also need to create a ground truth set\n    ◦ maybe you also need to create a deployment\n• then you need to run the app, run an accuracy test, or run the deployment",
+      "time": "09:31",
+      "timestamp": "1734543087.657639",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Don’t we have to do this for bugs reported in prod anyway though?",
+      "time": "12:01",
+      "timestamp": "1734552111.351349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ie what’s the difference between reproducing in dogfood vs local?",
+      "time": "12:02",
+      "timestamp": "1734552129.759329",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we often try to reproduce on a environment deployed from master (ex: crafting-aihub / aihub-sandbox / etc) before trying to reproduce locally\n\nthe difference is the repetition of work / speed of testing a fix, not the strict feasibility of reproducing on a dev environment",
+      "time": "12:04",
+      "timestamp": "1734552299.554029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think this is surmountable. Reproducing in a controlled/isolated dev requirement is a must, from my perspective. \n\nAs I said earlier, there are ways we can restore database snapshots (https://docs.sandboxes.cloud/docs/data-snapshots) from aihub-sandbox into the developer sandboxes to make setup easier. I’ll do some thinking about how to do this. \n\nBut in any case: imagine a world in which our dev environments were not so wildly different from production. \n\nIn this world, you would skip trying to reproduce in a sandbox and go straight to reproducing in your dev environment, where all state is isolated from other developers/users and every service is directly editable and redeployable in seconds. Isn’t that a better end state than the current status quo?",
+      "time": "12:08",
+      "timestamp": "1734552532.572309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I also question how we deal with reproducing bugs in cases where the production commit differs from the current sandbox or dogfood commit (which is almost always). Is it really valuable to reproduce bugs in dogfood when the actual code running is totally different from prod?\n\nWith a dev environment, you can easily check out the exact commit and reproduce the bug using that.",
+      "time": "12:10",
+      "timestamp": "1734552656.930509",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "I agree that usually the code on production vs dogfood is usually quite different, but we almost never check out the prod branch to debug issues reported on prod\n\nchecking out a completely different branch in your dev environment often takes a long time since you probably need to rebuild and restart many services (ex: imagine rebuilding `model-service` every time you switch to the prod branch to debug something!)",
+      "time": "22:39",
+      "timestamp": "1734590384.396879",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "I disagree that a completely isolated dev environment is a hard requirement, but I agree that restoring db snapshots will solve most of the developer experience friction I described",
+      "time": "22:45",
+      "timestamp": "1734590734.335909",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-18.json",
+    "message_count": 11,
+    "start_time": "1734523992.194059",
+    "end_time": "1734590734.335909",
+    "is_thread": true
+  }
+}

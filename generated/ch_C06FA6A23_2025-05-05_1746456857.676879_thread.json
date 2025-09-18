@@ -1,0 +1,62 @@
+{
+  "id": "ch_C06FA6A23_2025-05-05_1746456857.676879_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "jayapandian.ponraj",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Just to echo some notes, I do recall something about Bazel effectively demanding 'singleton' status for every build, such that each \"host\" is only ever running ONE bazel build at a time for a given project - but since the `ci-tests` pipeline is running them in a container, it _should_ be fine to run multiples (though also defeats the purpose of Bazel, but I digress).\n\nSadly though, Bazel determines its parallelism by inspecting the *host's* resources, not any sort of limits on the container (if we had any :facepalm:) and so each tries to consume the entire node again.\n\nAdditionally, running more than one per node was, at some point in time, causing weird network timeouts for downloading dependencies (both Go and Python), and I think the final solution from Sean at the time was \"we've done what we can think of, so run just a single executor per node\"\n\nHow much of this is _still_ accurate, I'm not at all certain. :upside_down_face:\n\nIt needs deep dives like this for sure - very much appreciated @jayapandian.ponraj!",
+      "time": "07:54",
+      "timestamp": "1746456857.676879",
+      "is_reply": false
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "I see that mypy parallelism was increased sometime in the past -  https://github.com/instabase/instabase/pull/32942/files",
+      "time": "08:33",
+      "timestamp": "1746459184.507429",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "I also see that \"run-go-tests\" is setup with parallelism of 4, atleast for the last yr and a half. PR (https://github.com/instabase/instabase/pull/51106/files)",
+      "time": "08:38",
+      "timestamp": "1746459517.171529",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea I don't know enough about the interactions there to speak to that sadly :blob_sad:",
+      "time": "08:39",
+      "timestamp": "1746459543.983179",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I thought I changed run go tests to have a parallelism of 1 a couple days ago and started leveraging Bazel build for high level folders",
+      "time": "08:55",
+      "timestamp": "1746460539.189799",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-05-05.json",
+    "message_count": 5,
+    "start_time": "1746456857.676879",
+    "end_time": "1746460539.189799",
+    "is_thread": true
+  }
+}

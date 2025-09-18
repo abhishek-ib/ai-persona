@@ -1,0 +1,103 @@
+{
+  "id": "ch_C06FA6A23_2022-08-10_1660151605.751539_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Martin Xu",
+    "Naveen",
+    "Ashish",
+    "Nithin"
+  ],
+  "messages": [
+    {
+      "sender": "Martin Xu",
+      "user_id": "U031FQFSCG0",
+      "message": "Do we still maintain these Invoice/Receipts on marketplace (appear to be same ones shown in the SaaS demo) on dogfood? Just tried and there's a runtime exception, apparently some function signatures changed  in the udfs ...",
+      "time": "10:13",
+      "timestamp": "1660151605.751539",
+      "is_reply": false
+    },
+    {
+      "sender": "Nithin",
+      "user_id": "UNXFBRZ6D",
+      "message": "@Martin Xu,\nCan you point to the app which you tried?",
+      "time": "10:19",
+      "timestamp": "1660151976.528209",
+      "is_reply": true
+    },
+    {
+      "sender": "Martin Xu",
+      "user_id": "U031FQFSCG0",
+      "message": "I tried this one: https://dogfood.instabase.com/apps/marketplace/business-solutions/Invoice/0.0.3, this is the jaeger trace: https://dogfood.instabase.com/jaeger/trace/1e17c52f12c4870b\n```Error executing Map UDF. Reason: Exception calling function - custom_function: __init__() missing 1 required positional argument: 'original_page_number'. Defined in form_recogizer_scripts.udf/scripts/scripts.py (line 379)\n\nTraceback:\n  File \"form_recogizer_scripts.udf/scripts/scripts.py\", line 379, in custom_function\n, details: Traceback (most recent call last):\n  File \"/instabase/workers/celery-app-tasks/py/instabase/_sheet/parser_lib/parser.py\", line 345, in __call__\n    result = fn_callable(*args, **kwargs)\n  File \"form_recogizer_scripts.udf/scripts/scripts.py\", line 379, in custom_function\nTypeError: __init__() missing 1 required positional argument: 'original_page_number'```",
+      "time": "10:23",
+      "timestamp": "1660152180.511469",
+      "is_reply": true
+    },
+    {
+      "sender": "Martin Xu",
+      "user_id": "U031FQFSCG0",
+      "message": "https://dogfood.instabase.com/apps/marketplace/business-solutions/Receipt/0.0.1 is broken too, looks like the same error? https://dogfood.instabase.com/jaeger/trace/bc3b1189cf34561a",
+      "time": "10:24",
+      "timestamp": "1660152249.643199",
+      "is_reply": true
+    },
+    {
+      "sender": "Nithin",
+      "user_id": "UNXFBRZ6D",
+      "message": "We maintain all the apps on Ib.com (http://Ib.com)\n\nBelow is the latest invoice app which is currently in Alpha version (you may see lesser accuracy). This is working fine on these input (https://instabase.com/ib_solutions/solutions/fs/Instabase%20Drive/pre-built/Commercial%20Invoices-%20DL%20model%20based/input_test/)\nhttps://instabase.com/apps/flow/run?name=Commercial%20Invoices&version=1.0.0",
+      "time": "10:32",
+      "timestamp": "1660152732.322569",
+      "is_reply": true
+    },
+    {
+      "sender": "Martin Xu",
+      "user_id": "U031FQFSCG0",
+      "message": "oh ok, gotcha thanks @Nithin",
+      "time": "10:33",
+      "timestamp": "1660152839.553599",
+      "is_reply": true
+    },
+    {
+      "sender": "Martin Xu",
+      "user_id": "U031FQFSCG0",
+      "message": "Must the be `try` button then. If I try that `Commercial Invoices` app by uploading a invoice myself, it throws error, I can get the app and run it as a flow with no problem",
+      "time": "10:40",
+      "timestamp": "1660153258.289309",
+      "is_reply": true
+    },
+    {
+      "sender": "Nithin",
+      "user_id": "UNXFBRZ6D",
+      "message": "Looks like Try It option is broken and its not working for any apps.",
+      "time": "10:41",
+      "timestamp": "1660153310.519179",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "cc @Naveen @Mohit\n\nI thought we had fixed Try It.",
+      "time": "11:02",
+      "timestamp": "1660154561.071489",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "@Ashish @Nithin @Martin Xu, the `Try It` functionality is fixed on prod/dogfood, from 22.06, however you will not be able to use `Try It` feature for models trained prior to that. IF you want to enable `Try it` for a marketplace app consuming model service, you would need to retrain it on latest release to work!\nPlease note that if you’re using any UDF with ibfile APIs in solution, we recommend using `read_file` function instead of `ibopen` since `ibopen` doesn’t support in memory processing for `Try It`.",
+      "time": "11:25",
+      "timestamp": "1660155953.126439",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-08-10.json",
+    "message_count": 10,
+    "start_time": "1660151605.751539",
+    "end_time": "1660155953.126439",
+    "is_thread": true
+  }
+}

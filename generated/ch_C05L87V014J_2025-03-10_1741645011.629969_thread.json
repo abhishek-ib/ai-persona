@@ -1,0 +1,53 @@
+{
+  "id": "ch_C05L87V014J_2025-03-10_1741645011.629969_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Heads up, if you’re seeing a white screen when you load your local dev, you’ll need to rebuild `webapp`. It’s because we merged in this PR (https://github.com/instabase/instabase/pull/68665) which changes how JS bundles are being served to the browser.\n• If you’re using `ibdev` or `frontend` template, you can either:\n    ◦ Wait 12 hours for the cluster to redeploy\n    ◦ Or revert that PR locally until the cluster redeploys.\n    ◦ Or build and intercept webapp.\n• If you’re using `ibdev-backend`, you’ll need to rebuild `webapp` using <some commands I don’t know>, then `cs restart webapp`\nThis should be a temporary issue. If you’re still getting a white screen, please let me know in this thread.",
+      "time": "15:16",
+      "timestamp": "1741645011.629969",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> • If you’re using `ibdev` or `frontend` template, you can either:\n>     ◦ Wait 12 hours for the cluster to redeploy\n>     ◦ Or revert that PR locally until the cluster redeploys.\n>     ◦ Or build and intercept webapp.\ni thought the `frontend` template already runs webapp in the sandbox?",
+      "time": "15:21",
+      "timestamp": "1741645303.864179",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> • If you’re using `ibdev-backend`, you’ll need to rebuild `webapp` using <some commands I don’t know>, then `cs restart webapp`\n`cs restart webapp` both rebuilds and restarts webapp, so that's all you need!",
+      "time": "15:21",
+      "timestamp": "1741645319.268629",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": ">  i thought the `frontend` template already runs webapp in the sandbox?\nBy default, it uses the prebuilt docker image to run `webapp` locally, so it’ll still be outdated. I don’t know when or where that image gets rebuilt, maybe @sean.donohoe knows.\n\nI suppose what I really mean is to not use the “lite” containers and build/run it yourself like so:\n```cs sandbox update -D 'dev/env[WEBAPP_LITE_ENABLED]=0' -D 'dev/env[WEBAPP_ENABLED]=1'\nworkspace setup\ncd ~instabase/webserver/webapp && make build-docker\ncs restart webapp```\n(again, ^ only for `frontend` and `ibdev` users who encounter the white screen)",
+      "time": "15:42",
+      "timestamp": "1741646523.843599",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-10.json",
+    "message_count": 4,
+    "start_time": "1741645011.629969",
+    "end_time": "1741646523.843599",
+    "is_thread": true
+  }
+}

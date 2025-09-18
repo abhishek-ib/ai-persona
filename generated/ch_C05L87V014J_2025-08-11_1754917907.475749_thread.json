@@ -1,0 +1,213 @@
+{
+  "id": "ch_C05L87V014J_2025-08-11_1754917907.475749_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "anik.b",
+    "mfichman"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Link to sandbox, please!",
+      "time": "06:11",
+      "timestamp": "1754917907.475749",
+      "is_reply": false
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "https://instabase.sandboxes.site/sandboxes/anikb1nbox",
+      "time": "07:06",
+      "timestamp": "1754921214.249669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Works for me?",
+      "time": "08:08",
+      "timestamp": "1754924889.150319",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "If you sign up and register, backend services are not working, seems to be a 401.",
+      "time": "08:10",
+      "timestamp": "1754925003.134019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, it failed when I treid to create an org. This is a platform bug, not a crafting problem. cc @Xindi Xu -- unable to create orgs (maybe also @Victor Zeng)",
+      "time": "08:10",
+      "timestamp": "1754925011.534549",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Logs:\n```owner@dev:~$ cs logs -f core-platform\n✔ select the only one - DAEMON:core-platform@instabase\n2025/08/11 15:09:33 ERROR /src/coreplatformservice/account/handler/handler.go:208 -- [INTERNAL]: Failed to set roles: code = NOT_FOUND, msg = Missing valid roles for all role uuids\n2025/08/11 15:09:35 ERROR /src/coreplatformservice/account/handler/account.go:1030 -- Fail: Account with username (matt-org2) not found\n2025/08/11 15:09:36 ERROR /src/coreplatformservice/account/handler/org.go:325 -- Fail: Failed to set roles: code = NOT_FOUND, msg = Missing valid roles for all role uuids\n2025/08/11 15:09:36 ERROR /src/coreplatformservice/account/handler/handler.go:208 -- [INTERNAL]: Failed to set roles: code = NOT_FOUND, msg = Missing valid roles for all role uuids\n2025/08/11 15:09:36 ERROR /src/coreplatformservice/account/handler/handler.go:208 -- [INTERNAL]: Failed to set roles: code = NOT_FOUND, msg = Missing valid roles for all role uuids```",
+      "time": "08:12",
+      "timestamp": "1754925169.531759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Setup may not have run correctly (?)",
+      "time": "08:12",
+      "timestamp": "1754925174.786379",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "That is strange, I spun up 2 env's both had the same issue",
+      "time": "08:14",
+      "timestamp": "1754925240.559049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```mysql> select * from roles;\nEmpty set (0.00 sec)```",
+      "time": "08:14",
+      "timestamp": "1754925283.792149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh 1 sec",
+      "time": "08:14",
+      "timestamp": "1754925290.144119",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```$IB_HOME/.sandbox/ibdev-backend/scripts/run-post-install-actions```\nLooks like perhaps the post-install actions may not have run (?)",
+      "time": "08:16",
+      "timestamp": "1754925371.871859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Which is odd, b/c according to the setup logs (https://instabase.sandboxes.site/logview/instabase/anikb1nbox/dev/task/setup%3ABuild%3Ainstabase) they did run",
+      "time": "08:16",
+      "timestamp": "1754925401.036529",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Wonder if there is a bug in the post-install-action-aihub action",
+      "time": "08:17",
+      "timestamp": "1754925427.681719",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "Maybe? I also figure something might not be running as I have the latest code pulled up in another branch where the backend services seems to be fine.",
+      "time": "08:18",
+      "timestamp": "1754925508.279919",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yep, that fixed it",
+      "time": "08:18",
+      "timestamp": "1754925520.591489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It looks like the actions ran per the logs, but the state was wiped from the DB. When I ran them again, I was able to create an org.",
+      "time": "08:18",
+      "timestamp": "1754925538.718359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "JW, did you do a mysql snapshot/restore at any point?",
+      "time": "08:19",
+      "timestamp": "1754925554.791119",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "Nope, These are fresh installs",
+      "time": "08:19",
+      "timestamp": "1754925565.036339",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Victor Zeng / @Xindi Xu --- disregard",
+      "time": "08:19",
+      "timestamp": "1754925568.703609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK....I'll try one myself to see what happens",
+      "time": "08:19",
+      "timestamp": "1754925576.342129",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Aha, found this in the logs:\n\n``` > [js-builder 3/8] RUN mkdir -p /instabase/dist:\n0.457 runc run failed: unable to start container process: error during container init: error mounting \"sysfs\" to rootfs at \"/sys\": mount src=sysfs, dst=/sys, dstFd=/proc/thread-self/fd/8, flags=0xf: invalid argument\n------\nservice.Dockerfile:50\n--------------------\n  48 |     \n  49 |     # Create output dir\n  50 | >>> RUN mkdir -p /instabase/dist\n  51 |     \n  52 |     # Copy source from the 'js-src' build context\n--------------------\nERROR: failed to build: failed to solve: process \"/bin/sh -c mkdir -p /instabase/dist\" did not complete successfully: exit code: 1\nmake: Leaving directory '/home/owner/instabase/tools/onprem/post-install-action-aihub-license'\n Error 1```\nLooks like the action failed -- some kind of docker problem :cry:",
+      "time": "08:21",
+      "timestamp": "1754925706.722449",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "There should be a `set -e` at the top of the `run-post-install-actions` script as well",
+      "time": "08:22",
+      "timestamp": "1754925730.970119",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Anyway, that's what caused it. I'm not sure what the deal is, but if you run into this again, just run the actions manually as above",
+      "time": "08:22",
+      "timestamp": "1754925762.772299",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "Thanks! Will do",
+      "time": "08:22",
+      "timestamp": "1754925773.661069",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-08-11.json",
+    "message_count": 24,
+    "start_time": "1754917907.475749",
+    "end_time": "1754925773.661069",
+    "is_thread": true
+  }
+}

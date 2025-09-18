@@ -1,0 +1,510 @@
+{
+  "id": "ch_C05L87V014J_2025-07-25_1753428509.536179_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "anik.b",
+    "mfichman",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "did you already follow Matt's instructions above (https://instabase.slack.com/archives/C05L87V014J/p1753403161253539)?",
+      "time": "00:28",
+      "timestamp": "1753428509.536179",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@anik.b if you're currently not working on your sandbox, can we try this step?\n> Suspend, wait 1 min, resume",
+      "time": "01:06",
+      "timestamp": "1753430769.964569",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw my sandbox (https://instabase.sandboxes.site/sandboxes/serena-w?cw=dev) is also facing the same issue\n\nbased on previous threads (https://instabase.slack.com/archives/C05L87V014J/p1733229673638799?thread_ts=1732813869.642209&cid=C05L87V014J), it seems something is wrong with rabbitmq\n-> i already tried restarting it, but that didn't help\n\nnow trying \"Resync your sandbox & rebuild the base image\"",
+      "time": "01:19",
+      "timestamp": "1753431580.626499",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ok i've already tried the following on my sandbox (https://instabase.sandboxes.site/sandboxes/serena-w?cw=dev)\n• rebuilding and restarting rabbitmq\n• rebuilding and restarting redis\n• resyncing the sandbox with \"force update base image\"\n• suspending the sandbox, waiting for a few minutes, then resuming\nnone of this has worked, and `api-server` still has the `for host, queues in active_queues.items();AttributeError: 'NoneType' object has no attribute 'items';` error\n\ni've scheduled a meeting with @mfichman to debug further later today at 9:30am ET",
+      "time": "01:27",
+      "timestamp": "1753432060.070129",
+      "is_reply": true
+    },
+    {
+      "sender": "anik.b",
+      "user_id": "U05EK2Q7WNB",
+      "message": "Same issue, Although for me job-service is also failing.",
+      "time": "03:08",
+      "timestamp": "1753438081.853969",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@anik.b if we fix the `NoneType' object has no attribute 'items';` error in `api-server` , then `job-service` will work\n\nthe errors in `api-server` are the root cause for the errors in `job-service`",
+      "time": "03:41",
+      "timestamp": "1753440078.354239",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```for host, queues in active_queues.items();AttributeError: 'NoneType' object has no attribute 'items'```\nThis seems like an actual real problem w/ api-server, and not crafting? But I'll take a look.",
+      "time": "04:08",
+      "timestamp": "1753441682.510739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Serena went into your sandbox and `cs stop` all services. Then did:\n```cd /home/owner/instabase/webserver/api-server\nmake build-docker\nmake run-docker```\nAnd it booted (health check OK -- no errors)",
+      "time": "04:10",
+      "timestamp": "1753441809.192789",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i was thinking this could be related to the kubernetes network issues we've been seeing?\n\nsince i'm seeing this error in only serena-w (https://instabase.sandboxes.site/sandboxes/serena-w) and not serena-w2 (https://instabase.sandboxes.site/sandboxes/serena-w2)\n• both anikb (https://instabase.sandboxes.site/sandboxes/anikb?cw=dev) and serena-w were created several months ago\n• serena-w2 was created this week",
+      "time": "04:10",
+      "timestamp": "1753441816.805219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'll try rebooting the other services now, but I didn't see the NoneType problem arise",
+      "time": "04:10",
+      "timestamp": "1753441826.434969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It could be age-related, but my sandbox is even older, and it's OK",
+      "time": "04:11",
+      "timestamp": "1753441861.168219",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the NoneType problem only occurs after `api-server` actually starts running and `job-service` starts sending requests to `api-server` (these requests always fail)\n\napi-server is still building on serena-w rn",
+      "time": "04:11",
+      "timestamp": "1753441863.010839",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I just killed it, but it was running as of 10 seconds ago",
+      "time": "04:11",
+      "timestamp": "1753441893.603549",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh, it doesn't crash at boot time?",
+      "time": "04:11",
+      "timestamp": "1753441902.661719",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I see. Let me restart the other services and try it out.",
+      "time": "04:11",
+      "timestamp": "1753441912.055939",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "no it doesn't crash at boot time\n\nsee that after api-server is running and receiving requests, the error appears again",
+      "time": "04:12",
+      "timestamp": "1753441928.437679",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "So",
+      "time": "04:12",
+      "timestamp": "1753441931.811489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```level=ERROR time=2025-07-25 11:12:00,059 msg=\"Uncaught exception in webserver while handling request: Error='NoneType' object has no attribute 'items'. Traceback=Traceback (most recent call last):;File \"/instabase-api-server/py/instabase/utils/web/handler_util_v2.py\", line 414, in inner_func;return f(*args, **kwargs);File \"/instabase-api-server/py/instabase/api_server_apps/handler/api/v1/celery_handler.py\", line 112, in get;for host, queues in active_queues.items();AttributeError: 'NoneType' object has no attribute 'items';\"  path=\"/instabase-api-server/py/instabase/utils/web/handler_util_v2.py:421\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_0\" trace_id=\"\"```\nThis is an error in v1/celery_handler.py",
+      "time": "04:12",
+      "timestamp": "1753441943.048959",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think this is an actual bug in that handler.",
+      "time": "04:12",
+      "timestamp": "1753441952.138009",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The active_queues thing has to do with rabbitmq, but regardless, we should not crash on what is affectively a null pointer",
+      "time": "04:12",
+      "timestamp": "1753441979.114399",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let me see if I can patch that to figure out what's going on here",
+      "time": "04:13",
+      "timestamp": "1753441999.788159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let me also check if rabbitmq is reachable",
+      "time": "04:13",
+      "timestamp": "1753442006.963199",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Rabbitmq is at least reachable over TCP:\n\n```\nO_O 11:15:25|owner:~/instabase/webserver/api-server (master)$ export | grep RABBIT\ndeclare -x RABBITMQ_SERVICE_HOST=\"rabbitmq\"\ndeclare -x RABBITMQ_SERVICE_PORT=\"4369\"\ndeclare -x RABBITMQ_SERVICE_PORT_AMQP=\"5672\"\ndeclare -x RABBITMQ_SERVICE_PORT_EPMD=\"4369\"\ndeclare -x RABBITMQ_SERVICE_PORT_HTTP=\"15672\"\ndeclare -x RABBITMQ_SERVICE_PORT_MQTT=\"1883\"\ndeclare -x RABBITMQ_SERVICE_PORT_MQTT_WS=\"15675\"\ndeclare -x RABBITMQ_SERVICE_PORT_NODE=\"25672\"\ndeclare -x RABBITMQ_SERVICE_PORT_STOMP=\"61613\"\ndeclare -x RABBITMQ_SERVICE_PORT_STOMP_WS=\"15674\"\ndeclare -x RABBITMQ_SERVICE_PORT_STREAM=\"5552\"\n^_^ 11:15:27|owner:~/instabase/webserver/api-server (master)$ telnet rabbitmq 5672\nTrying 169.254.16.2...\nConnected to rabbitmq.\nEscape character is '^]'.\nlaskdjaldfkj\nAMQP    Connection closed by foreign host.```",
+      "time": "04:15",
+      "timestamp": "1753442145.295219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Added some debug code to api-server to figure out what's up",
+      "time": "04:17",
+      "timestamp": "1753442277.906089",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Did we upgrade rabbitmq/amqp-related things recently?",
+      "time": "04:18",
+      "timestamp": "1753442302.382609",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i've seen this (https://instabase.slack.com/archives/C06FA6A23/p1753288163478399) recently? i assumed this didn't affect dev environments though",
+      "time": "04:18",
+      "timestamp": "1753442334.622379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm",
+      "time": "04:19",
+      "timestamp": "1753442349.590559",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Would like to see the PR(s) involved",
+      "time": "04:19",
+      "timestamp": "1753442358.477269",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "also this has appeared periodically for other sandboxes\n• https://instabase.slack.com/archives/C05L87V014J/p1738019075172049?thread_ts=1738016918.499039&cid=C05L87V014J\n• https://instabase.slack.com/archives/C05L87V014J/p1733168646033669\nbut in those cases, the error went away somehow??",
+      "time": "04:20",
+      "timestamp": "1753442412.576159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/celery/celery/issues/7647",
+      "time": "04:20",
+      "timestamp": "1753442437.529709",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let me try resetting rabbitmq on this sandbox completely to see if it helps",
+      "time": "04:21",
+      "timestamp": "1753442478.721909",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think i have a hunch why this is happening...\n\ntrying to confirm on anikb, since that also has the issue",
+      "time": "04:22",
+      "timestamp": "1753442528.488479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "celery-app-tasks also failing with this:\n\n```ring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.9/site-packages/celery/bin/celery.py\", line 58, in convert\n    return find_app(value)\n  File \"/usr/local/lib/python3.9/site-packages/celery/app/utils.py\", line 386, in find_app\n    sym = imp(app)\n  File \"/usr/local/lib/python3.9/site-packages/celery/utils/imports.py\", line 109, in import_from_cwd\n    return imp(module, package=package)\n  File \"/usr/local/lib/python3.9/importlib/__init__.py\", line 127, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n  File \"<frozen importlib._bootstrap>\", line 1030, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1007, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 986, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 680, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 850, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"/instabase/workers/celery-app-tasks/py/instabase/registry/tasks.py\", line 35, in <module>\n    from instabase.clients_factory_utils import clients_factory\n  File \"/instabase/workers/celery-app-tasks/py/instabase/clients_factory_utils/clients_factory.py\", line 7, in <module>\n    from instabase.flow_datastore.datastore import DataStore\n  File \"/instabase/workers/celery-app-tasks/py/instabase/flow_datastore/datastore.py\", line 11, in <module>\n    from instabase.content.filehandle import ibfile\n  File \"/instabase/workers/celery-app-tasks/py/instabase/content/filehandle/ibfile.py\", line 21, in <module>\n    from instabase.utils.rpc.file_client import (\n  File \"/instabase/workers/celery-app-tasks/py/instabase/utils/rpc/file_client.py\", line 23, in <module>\n    from instabase.utils.grpc.client import execute, execute_without_retries, _is_retriable_error\n  File \"/instabase/workers/celery-app-tasks/py/instabase/utils/grpc/client.py\", line 17, in <module>\n    from instabase.tracing.grpc import intercept_channel_tracing\nImportError: cannot import name 'intercept_channel_tracing' from 'instabase.tracing.grpc' (/instabase/workers/celery-app-tasks/py/instabase/tracing/grpc/__init__.py)```",
+      "time": "04:22",
+      "timestamp": "1753442537.395799",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Same old thing again",
+      "time": "04:22",
+      "timestamp": "1753442542.728689",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yes exactly that's what i realized too",
+      "time": "04:22",
+      "timestamp": "1753442547.091739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "let me apply the fix for that (make clean)",
+      "time": "04:22",
+      "timestamp": "1753442547.958269",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think after we fix that, `active_queues` won't be None!",
+      "time": "04:22",
+      "timestamp": "1753442564.565549",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> let me apply the fix for that (make clean)\ni'll do the same for anikb",
+      "time": "04:23",
+      "timestamp": "1753442580.285149",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "woohoo! anikb is working now! the sandbox is now digitizing files successfully",
+      "time": "04:25",
+      "timestamp": "1753442719.419309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh, what was the fix?",
+      "time": "04:25",
+      "timestamp": "1753442745.614369",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "1. `cd distributed-tasks/celery/app-tasks && make clean` \n2. `cs restart celery-app-tasks` (not necessary if celery-app-tasks is already crashlooping)\n3. then `active_queues` is no longer None in `api-server` -> so `job-service` is able to run jobs on `celery-app-tasks`",
+      "time": "04:26",
+      "timestamp": "1753442814.968999",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah OK",
+      "time": "04:27",
+      "timestamp": "1753442829.940749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Interesting :laughing:",
+      "time": "04:27",
+      "timestamp": "1753442851.124659",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I guess the celery-app-tasks is what posts the active_queues stats?",
+      "time": "04:27",
+      "timestamp": "1753442867.271229",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "And so if it's not working, then the stats are nil",
+      "time": "04:27",
+      "timestamp": "1753442875.004969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```docker: Error response from daemon: Conflict. The container name \"/instabase-webapp\" is already in use by container \"e000dad1c1565d8f9be1d866d9a06e6b6f14a25912c9106a7c22ab59101b71e6\". You have to remove (or rename) that container to be able to reuse that name.```\nWebapp wasn't coming up in your sandbox due to this",
+      "time": "04:28",
+      "timestamp": "1753442910.213849",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think we need to add `docker rm -f $(SERVICE_NAME)` before `docker run` in every makefile",
+      "time": "04:28",
+      "timestamp": "1753442920.926989",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Even though we use docker run --rm, sometimes that doesn't work...grumble",
+      "time": "04:28",
+      "timestamp": "1753442933.492119",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Huh, interestingly\n```docker rm -f instabase-webapp```\nIs hanging",
+      "time": "04:29",
+      "timestamp": "1753442972.821679",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> I guess the celery-app-tasks is what posts the active_queues stats?\n> \n> And so if it's not working, then the stats are nil\nyes that's my assumption :sweat_smile:",
+      "time": "04:29",
+      "timestamp": "1753442983.561839",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmmmmm I can't remove instabase-webapp. Might need to reboot the docker daemon.\n\nFWIW the docker daemon on crafting has been super flaky lately:\n1. Hangs during builds\n2. Hangs during `docker rm`\n3. Hangs during docker prune\nMight need to file a combined ticket w/ the Crafting folks",
+      "time": "04:31",
+      "timestamp": "1753443064.906069",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yeah i know we've seen this a bunch recently :disappointed:",
+      "time": "04:31",
+      "timestamp": "1753443077.860219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, the only fix I've found is to kill it and restart it",
+      "time": "04:31",
+      "timestamp": "1753443103.988349",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "you're referring to https://instabase.slack.com/archives/C05L87V014J/p1753279057980789, right?",
+      "time": "04:32",
+      "timestamp": "1753443139.079709",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "That's the fix for issue (1)",
+      "time": "04:33",
+      "timestamp": "1753443183.007329",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For (2) you have to do `pkill dockerd` or restart your sandbox",
+      "time": "04:33",
+      "timestamp": "1753443195.468639",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ditto (3)",
+      "time": "04:33",
+      "timestamp": "1753443202.815719",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ok i'll just restart serena-w then!\n\n[EDIT] in progress :loading:",
+      "time": "04:33",
+      "timestamp": "1753443218.446179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK :slightly_smiling_face:",
+      "time": "04:34",
+      "timestamp": "1753443251.141419",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Is anik unblocked now? I have 2 other sandboxes to look at. I figure it's the same problem",
+      "time": "04:34",
+      "timestamp": "1753443264.681079",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "thank you for helping debug this!! yes anik should be unblocked now",
+      "time": "04:34",
+      "timestamp": "1753443273.338749",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-25.json",
+    "message_count": 61,
+    "start_time": "1753428509.536179",
+    "end_time": "1753443273.338749",
+    "is_thread": true
+  }
+}

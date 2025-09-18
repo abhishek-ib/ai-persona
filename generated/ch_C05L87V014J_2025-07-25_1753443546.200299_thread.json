@@ -1,0 +1,214 @@
+{
+  "id": "ch_C05L87V014J_2025-07-25_1753443546.200299_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "himayan",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "himayan",
+      "user_id": "U092XC0FN4D",
+      "message": "Hi\nI had created a new sandbox - https://instabase.sandboxes.site/sandboxes/data-sources where I had faced this issue (https://instabase.slack.com/archives/C05L87V014J/p1753230447165719) initially. I tried with adding the `ecr-login` script and commenting out dev setup file as suggested in the thread. However, it turned out that the db was not initialised and I was seeing this error while trying to sign up - `Failed to begin transaction. Error: Error 1049 (42000): Unknown database 'ibdb'`. After looking through a few threads- I found a workaround for this one (https://instabase.slack.com/archives/C05L87V014J/p1749767684716479). Running the migrate command allowed me to sign up to the sandbox but because the roles were not set I could not create any organisation.\nCould I get some help in getting this up and running?",
+      "time": "04:39",
+      "timestamp": "1753443546.200299",
+      "is_reply": false
+    },
+    {
+      "sender": "himayan",
+      "user_id": "U092XC0FN4D",
+      "message": "Since I was stuck at this one for a while, I tried spinning up another sandbox - https://https--data-sources-2-instabase.instabase.site.sandboxes.run/\nAnd I am facing the same issues here as well.",
+      "time": "04:41",
+      "timestamp": "1753443664.525959",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This one is my fault; I broke that Makefile target. Here is a patch (applied to your sandbox)\n```diff --git a/shared-utils/go-utils/src/instabase/utils/db/Makefile b/shared-utils/go-utils/src/instabase/utils/db/Makefile\nindex 24e917a3f0a..e8c08c195af 100644\n--- a/shared-utils/go-utils/src/instabase/utils/db/Makefile\n+++ b/shared-utils/go-utils/src/instabase/utils/db/Makefile\n@@ -33,21 +33,21 @@ show-releases:\n update-schema:\n        @git reset -q ./migrations/data/*/schema.json ../models/*/models_generated.go \n        @git checkout -q $$(git ls-files ./migrations/data/*/schema.json ../models/*/models_generated.go)\n-       @go run instabase/tools/dbschema reset --schema-name=tools \n-       @go run instabase/tools/dbschema reset --schema-name=platform \n-       @go run instabase/tools/dbschema reset --schema-name=knowledgegraph\n+       @go run instabase/utils/db/tools/dbschema reset --schema-name=tools \n+       @go run instabase/utils/db/tools/dbschema reset --schema-name=platform \n+       @go run instabase/utils/db/tools/dbschema reset --schema-name=knowledgegraph\n \n dev-dbinit: build-env-local\n-       @. ./tmp/env_local && go run instabase/tools/dbdevinit\n+       @. ./tmp/env_local && go run instabase/utils/db/tools/dbdevinit\n \n dev-dbmigrate: build-env-local\n-       @. ./tmp/env_local && go run instabase/tools/dbmigrate -reset-staging-table\n+       @. ./tmp/env_local && go run instabase/utils/db/tools/dbmigrate -reset-staging-table\n \n dev-dbrollback: build-env-local\n-       @. ./tmp/env_local && go run instabase/tools/dbrollback\n+       @. ./tmp/env_local && go run instabase/utils/db/tools/dbrollback\n \n dev-dbcleanup: build-env-local\n-       @. ./tmp/env_local && go run instabase/tools/dbcleanup\n+       @. ./tmp/env_local && go run instabase/utils/db/tools/dbcleanup\n \n bazel-build: build\n bazel-build: test```",
+      "time": "04:45",
+      "timestamp": "1753443955.684479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'll merge this to master ASAP as well!",
+      "time": "04:45",
+      "timestamp": "1753443959.863169",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Your sandbox should be unblocked now!",
+      "time": "04:46",
+      "timestamp": "1753443994.370669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I applied it to the -2 sandbox, btw, not the original data-sources one",
+      "time": "04:46",
+      "timestamp": "1753444019.550979",
+      "is_reply": true
+    },
+    {
+      "sender": "himayan",
+      "user_id": "U092XC0FN4D",
+      "message": "I am still not able to create organisation though.",
+      "time": "04:49",
+      "timestamp": "1753444186.286789",
+      "is_reply": true
+    },
+    {
+      "sender": "himayan",
+      "user_id": "U092XC0FN4D",
+      "message": "`Error occurred executing GRPC method: Request /account_service.AccountService/CreateOrg failed. Error code=INTERNAL, Error=(13, 'internal'), Message: Failed to set roles: code = NOT_FOUND, msg = Missing valid roles for all role uuids. Non-retriable error`",
+      "time": "04:50",
+      "timestamp": "1753444232.203939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/72895",
+      "time": "04:51",
+      "timestamp": "1753444265.050969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Fix for this",
+      "time": "04:51",
+      "timestamp": "1753444267.059789",
+      "is_reply": true
+    },
+    {
+      "sender": "himayan",
+      "user_id": "U092XC0FN4D",
+      "message": "I was able to do a sign-up after your fix, but I think the roles did not get assigned yet.",
+      "time": "04:51",
+      "timestamp": "1753444268.722519",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You need to wait for the build to finish now",
+      "time": "04:51",
+      "timestamp": "1753444274.353649",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "04:51",
+      "timestamp": "1753444302.644009",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm, looks like you might also be affected by the docker daemon hang issue, since your build is stuck. I'm going to run:\n\n```sudo pkill -9 dockerd```\nIn your sandbox as well.",
+      "time": "04:56",
+      "timestamp": "1753444572.194179",
+      "is_reply": true
+    },
+    {
+      "sender": "himayan",
+      "user_id": "U092XC0FN4D",
+      "message": "Sure",
+      "time": "04:57",
+      "timestamp": "1753444637.251759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Your docker config is also broken:\n\n```owner@dev:~/instabase/core-services/control-plane$ cat ~/.docker/config.json\n{\n        \"auths\": {\n                \"549230430157.dkr.ecr.us-east-2.amazonaws.com (http://549230430157.dkr.ecr.us-east-2.amazonaws.com)\": {}\n        },\n        \"credHelpers\": {\n                \"549230430157.dkr.ecr.us-east-2.amazonaws.com (http://549230430157.dkr.ecr.us-east-2.amazonaws.com)\": \"ecr-login\",\n                \"gcr.io (http://gcr.io)\": \"gcloud\"\n        }```",
+      "time": "05:00",
+      "timestamp": "1753444800.894509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I did `mv ~/.docker/config.json{,.bak}` to fix it and let crafting restore the right version",
+      "time": "05:00",
+      "timestamp": "1753444822.394389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Your sandbox is also out of sync :laughing:",
+      "time": "05:00",
+      "timestamp": "1753444845.230559",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "05:01",
+      "timestamp": "1753444907.645489",
+      "is_reply": true
+    },
+    {
+      "sender": "himayan",
+      "user_id": "U092XC0FN4D",
+      "message": "I had done this for the previous one - but missed it for this one.",
+      "time": "05:03",
+      "timestamp": "1753444984.528969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, finally finished! check?",
+      "time": "05:06",
+      "timestamp": "1753445185.691899",
+      "is_reply": true
+    },
+    {
+      "sender": "himayan",
+      "user_id": "U092XC0FN4D",
+      "message": "504 gateway timeout after loading for a while",
+      "time": "05:10",
+      "timestamp": "1753445411.326319",
+      "is_reply": true
+    },
+    {
+      "sender": "himayan",
+      "user_id": "U092XC0FN4D",
+      "message": "UI is not still not booting up and erroring out with 504 - https://https--data-sources-2-instabase.instabase.site.sandboxes.run/",
+      "time": "05:31",
+      "timestamp": "1753446672.751349",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The roles issue - need to run the aihub license PIA again after db is initialized. The first run probably failed because the makefile script was broken",
+      "time": "08:38",
+      "timestamp": "1753457893.241829",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-25.json",
+    "message_count": 24,
+    "start_time": "1753443546.200299",
+    "end_time": "1753457893.241829",
+    "is_thread": true
+  }
+}

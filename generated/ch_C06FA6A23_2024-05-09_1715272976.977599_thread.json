@@ -1,0 +1,426 @@
+{
+  "id": "ch_C06FA6A23_2024-05-09_1715272976.977599_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Wilson",
+    "andy",
+    "Jessica",
+    "Travis",
+    "Elan Sharony",
+    "Adam"
+  ],
+  "messages": [
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "Hey team, could someone help us with a permissioning issue in AIHub? On `aihub-uat`, we get the following error when the `aihub_marketplace_admin` user is trying to start a flow for the add sample files to app feature:\n```\"Could not start flow: User aihub_marketplace_admin does not have a valid license for GENERIC_CUSTOM_MKTPLACE_SOLN\"```\nFor some reason, this works in `aihub-sandbox`  but in `aihub-uat` , we see the licensing error above. Anyone have any further context on licensing here?\ncc @Travis @Adam",
+      "time": "09:42",
+      "timestamp": "1715272976.977599",
+      "is_reply": false
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "I think this may be a similar issue to what @Jessica and I observed on crafting. For some reason, the aihub_marketplace_admin account wasn't a site admin. Looks like that's the case on AIHub UAT as well:\nhttps://aihub-uat.internal.instabase.com/apps/admin/users",
+      "time": "09:46",
+      "timestamp": "1715273191.126929",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "@Xindi Xu would you know further about this? Any thoughts on what we can do to resolve this issue?",
+      "time": "09:48",
+      "timestamp": "1715273323.818569",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "hmm actually I'm not sure if that's correct. Looking at prod it doesn't seem like aihub_marketplace_admin is a site admin either:\nhttps://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22fnX%22:%7B%22d[…]%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1 (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22fnX%22:%7B%22datasource%22:%22mysql%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22mysql%22,%22uid%22:%22mysql%22%7D,%22format%22:%22table%22,%22rawSql%22:%22select%20%2A%20from%20users%20where%20account_id%20%3D%20%5C%2296d620fc-d256-4489-b0c0-2eebff099f4e%5C%22%5Cn%22,%22editorMode%22:%22code%22,%22sql%22:%7B%22columns%22:%5B%7B%22type%22:%22function%22,%22parameters%22:%5B%5D%7D%5D,%22groupBy%22:%5B%7B%22type%22:%22groupBy%22,%22property%22:%7B%22type%22:%22string%22%7D%7D%5D,%22limit%22:50%7D,%22dataset%22:%22instabase%22,%22rawQuery%22:true%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)",
+      "time": "09:49",
+      "timestamp": "1715273369.149779",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hmm.. `aihub_marketplace_admin` is created as part of the post install action. @Adam /@andy should have more context",
+      "time": "09:49",
+      "timestamp": "1715273375.731039",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Did something change so that when it gets instantiated it's not an admin?",
+      "time": "09:49",
+      "timestamp": "1715273398.563789",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Hmm I thought the account was actually not intended to be a site admin, just a marketplace admin. Does that mean that it doesn’t have the ability to run apps?",
+      "time": "09:51",
+      "timestamp": "1715273463.943289",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "On the enterprise platform, that account can publish/unpublish apps, but not necessarily run any app. We also ran into problems where it couldn't create the org admin account it needed to.",
+      "time": "09:52",
+      "timestamp": "1715273557.684419",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "We'd need the \"Manage Organization Spaces\" permission for the latter",
+      "time": "09:53",
+      "timestamp": "1715273606.844199",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Hmm ok it sounds like we may have made some incorrect assumptions in the technical implementation then. The motivation for using this account to run the flow to generate sample results is that regular non-admin users do not have permission to write files to system/global; only marketplace admins can do that. This means that we need to have a marketplace admin account run the flow to successfully write the output",
+      "time": "09:54",
+      "timestamp": "1715273688.990679",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm trying to remember if manage_orgs also gives you permission to access data (and thus run flows) in every org...",
+      "time": "09:55",
+      "timestamp": "1715273707.646329",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "From what we’ve said here it sounds like we actually might not have an account that always has permission to do both of these:\n1. run every app\n2. write to system/global",
+      "time": "09:55",
+      "timestamp": "1715273752.370399",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "A last-effort hack might be to have the user account run the app to generate the results and then have the marketplace admin account copy them into system/global, but that gets very sticky because flow results files contain absolute paths so we need to edit text files when we move them to another location",
+      "time": "09:57",
+      "timestamp": "1715273862.366059",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "Yeah I don't think that's a good solution here - are we sure that there isn't an account that can run apps and write to system/global?",
+      "time": "10:02",
+      "timestamp": "1715274128.176739",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Do we understand why this works in sandbox and not uat? Maybe we can lazy-update the marketplace_admin account with the right permissions",
+      "time": "10:03",
+      "timestamp": "1715274187.738839",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "In order to run flows, the user would also have to be an org admin of all orgs that are created.",
+      "time": "10:06",
+      "timestamp": "1715274373.674649",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "@Jessica is that a licensing requirement? I didn’t know that",
+      "time": "10:06",
+      "timestamp": "1715274400.239129",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "In answer to the question about why it works on sandbox - aihub_marketplace_admin is an admin",
+      "time": "10:07",
+      "timestamp": "1715274454.704729",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "Do orgs have any type of admin that can be referenced depending on what org is trying to update sample docs?",
+      "time": "10:08",
+      "timestamp": "1715274524.531749",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "If we wanted this user to be able to publish apps and run any flow and not be a site admin, it would need to have the manage marketplace site permission + be an admin of every organization so that it could write/read to/from every organization. But that doesn't account for personal workspaces for community users actually...",
+      "time": "10:08",
+      "timestamp": "1715274528.634209",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Are we opposed to the user being a site admin?",
+      "time": "10:09",
+      "timestamp": "1715274554.215699",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Org admins cannot write to system/global. Accounts need a site-specific permission to do that",
+      "time": "10:09",
+      "timestamp": "1715274560.927309",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yes, the manage marketplace site permission",
+      "time": "10:09",
+      "timestamp": "1715274582.727199",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Site admin definitely creates opportunities for vulnerabilities. Given that apps can have UDF code we don’t want privileged execution",
+      "time": "10:09",
+      "timestamp": "1715274594.748809",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "(This was actually the motivation for not having a single runner account for all upstream integrations - specifically to avoid admin execution of user apps)",
+      "time": "10:10",
+      "timestamp": "1715274626.420619",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I can't think of a way to allow non-site admins to write/read from community users' workspaces. We'll need to take this to the core services team",
+      "time": "10:12",
+      "timestamp": "1715274747.727609",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "@Wilson is this actually a file read issue? It seems like we’re getting an invalid license error. Or is that just making the real issue of no access to the input files?",
+      "time": "10:13",
+      "timestamp": "1715274787.498329",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "No it's the invalid license error for running the flow to generate sample results",
+      "time": "10:13",
+      "timestamp": "1715274820.133959",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "it’s when running the sample docs flow",
+      "time": "10:14",
+      "timestamp": "1715274869.946719",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "but there is also a read error",
+      "time": "10:14",
+      "timestamp": "1715274884.864439",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "If this is purely an input file issue the resolution could be:\n1. have the user upload the input docs to their personal workspace\n2. have the marketplace admin copy those docs to the system repo before starting app run\n3. start the app run using the docs in the system directory as input\nIf that’s a valid workflow we could make the change entirely on the backend without changing the API structure",
+      "time": "10:15",
+      "timestamp": "1715274906.912639",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "When an app is being updated it pulls in the sample docs from the previous version - this read is an error.",
+      "time": "10:15",
+      "timestamp": "1715274912.874949",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "But I’m not sure about the invalid license error",
+      "time": "10:15",
+      "timestamp": "1715274913.450029",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Let’s try to solve one issue at a time here. The first thing I don’t understand is what permissions don’t exist which are causing the invalid license issue that @Wilson pasted in his original message.\n1. Is that error completely separated from permission to read files, or is it related to having read access to a workspace?\n2. Is there a way to give the marketplace admin user a license to run apps without making it a site admin?\nI don’t think I’ve ever seen a license error caused by not having access to an app",
+      "time": "10:17",
+      "timestamp": "1715275053.555189",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "The read access occurs on all Environments, just made a matrix of UAT/Sandbox/Crafting",
+      "time": "10:23",
+      "timestamp": "1715275390.793959",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Yes that makes sense about file reads and we can resolve with some clever read/write copying like we do for icon. Right now I think we should work on resolving the license issue",
+      "time": "10:24",
+      "timestamp": "1715275440.047609",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "sounds good",
+      "time": "10:24",
+      "timestamp": "1715275456.258749",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "yeah agreed",
+      "time": "10:24",
+      "timestamp": "1715275494.962069",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Ah there it is",
+      "time": "10:28",
+      "timestamp": "1715275700.713539",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "seriously? just out of credits?",
+      "time": "10:30",
+      "timestamp": "1715275823.239399",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "No it never had a valid license `0 / 0 credits`",
+      "time": "10:30",
+      "timestamp": "1715275852.788999",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "oh",
+      "time": "10:31",
+      "timestamp": "1715275869.093529",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Ok so we need to essentially be able to ensure that that account always has unlimited credits. I think we need to figure out a way to do this lazily on the backend rather than sending new requests to add credits when it gets low",
+      "time": "10:33",
+      "timestamp": "1715276009.223829",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "but as a workaround for now, we should add sufficient credits?",
+      "time": "10:41",
+      "timestamp": "1715276471.999649",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "On uat yes but we need this to work on all env including single-tenant customer envs",
+      "time": "10:41",
+      "timestamp": "1715276503.923049",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "can we loop in Victor to take a look at this license instantiation problem then",
+      "time": "12:08",
+      "timestamp": "1715281738.214889",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Alright we have identified both issues going on here and their fixes -\n\nLicence issue root cause:\n• mktplace admin account doesn’t always have a valid license, and even when it does it could potentially run out of credits\n• Resolution:\n    ◦ lazily add license and credits to marketplace admin when we run the flow\nFile read root cause:\n• We changed system repo access 4 months ago and blocked users from reading files directly\n• We have an allowlist of specific app files that we use a separate app API to read rather than the files api\n• Resolution:\n    ◦ Add sample_inputs to the allowlist (probably needs a whole new API because this is a directory rather than individual file)\n@andy Wilson is going to set up some time with us and Travis to go over how we roll out a fix",
+      "time": "12:27",
+      "timestamp": "1715282840.348709",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "just to align timeline and expectations, EOD is the go/no-go decision for app version management GA. so let’s also make sure we have the infrastructure ready to move the feature back to internal opt-in if necessary",
+      "time": "12:30",
+      "timestamp": "1715283026.591359",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "yes, I’ll make that branch now",
+      "time": "12:30",
+      "timestamp": "1715283045.552729",
+      "is_reply": true
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "scheduled our sync for 1pm :+1:  (in 30 mins)",
+      "time": "12:32",
+      "timestamp": "1715283165.452489",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-05-09.json",
+    "message_count": 50,
+    "start_time": "1715272976.977599",
+    "end_time": "1715283165.452489",
+    "is_thread": true
+  }
+}

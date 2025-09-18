@@ -1,0 +1,214 @@
+{
+  "id": "ch_C06FA6A23_2024-05-15_1715793162.207559_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Sunny Khatri",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Can confirm. This addressed benchmark scripts as well. Thanks @Yash Botadra and @Xindi Xu !",
+      "time": "10:12",
+      "timestamp": "1715793162.207559",
+      "is_reply": false
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "If we have some suggestions and best practices for Eng from this, would be nice to lay that out. I could imagine this could easily get unintentionally broken again.",
+      "time": "10:16",
+      "timestamp": "1715793394.456309",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "One design I had in mind was having a logger abstraction that gets initialized at root, having explicit loggers with level set. i..e do not rely on basicConfig.\n```class IBLogger:\n  def __init__(self, level):\n    self._info = logging.getLogger()\n    self._info.setLevel(Logging.INFO)\n\n    self._warning = logging.getLogger()\n    self._warning.setLevel(Logging.WARNING)\n\n    self._debug = logging.getLogger()\n    self._debug.setLevel(Logging.DEBUG)\n\n    self._level = level\n  \n  def log(self, msg):\n    if self._level != logging.INFO:\n      continue\n    self._info.info(msg)\n   \n  ... ```",
+      "time": "10:21",
+      "timestamp": "1715793715.816609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "What is the standard practice for Python? Do we really need to invent our own thing?",
+      "time": "11:48",
+      "timestamp": "1715798899.196849",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Or is Python logging just \"broken?\"",
+      "time": "11:48",
+      "timestamp": "1715798913.148119",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Well, things would have been easier if we were following standard practices from the start :slightly_smiling_face: . But given the current state, things are quite brittle. There seem to be two suggested approaches - 1. Using \"force=True\" whenever using basicConfig in each module, or 2. use `logger` level setLevel.",
+      "time": "11:56",
+      "timestamp": "1715799368.569259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "What is the standard practice we are not following?",
+      "time": "11:56",
+      "timestamp": "1715799396.053919",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "We don't use `force=True` AFAICT.",
+      "time": "11:56",
+      "timestamp": "1715799410.130759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Is force=True standard practice?",
+      "time": "11:56",
+      "timestamp": "1715799419.083249",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "`force=True` was added in py 3.8 so not surprised that this is not used",
+      "time": "11:57",
+      "timestamp": "1715799468.074139",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "\"The core problem is that your imports have side effects: they set up a logging handler. So you already violated some good coding practices, and to work around the problems that causes you have to put your imports after the basicConfig or use the `force` argument.\"\n\nThis is a good comment from here - https://stackoverflow.com/questions/73882299/python-logging-messages-not-showing-up-due-to-imports",
+      "time": "11:58",
+      "timestamp": "1715799488.563539",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK. https://chat.openai.com/share/285ac14d-fe1a-438e-9eb5-782cefb5eedc\n\nI see 3 options here:\n\n1. Ban all side effects that run at import time. In Python, this seems nearly impossible. Python tends to do a lot of setup/init at import time.\n2. Import logging and configure it at the top of every entry point.\n3. Do some other kind of in-house magic that we have to maintain\nMy vote is for (2)",
+      "time": "12:00",
+      "timestamp": "1715799609.263949",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Issue seems to be coming from our usage of `logging.warning()` or similar calls getting invoked first from imported modules/classes. If 2. helps that works, we want to prevent basicConfig from being overridden by the order of calls.",
+      "time": "12:01",
+      "timestamp": "1715799712.898069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "My vote is still for (2)",
+      "time": "12:02",
+      "timestamp": "1715799731.979309",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "For the 2nd option, i think we need to find the file that gets executed first and add these to the top\n```import logging\nlogging.basicConfig('info')```\nThe later code should be able to still update the log level by reading the env var",
+      "time": "12:06",
+      "timestamp": "1715800015.548949",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Only thing we need these is to ensure people are following it (Which could be hard). Otherwise it breaks again.\n\n@Xindi Xu - Not sure about that pattern. Imports should go at top, we shouldn't have such code in between.  Also extremely difficult to \"find that file\" :smile:",
+      "time": "12:08",
+      "timestamp": "1715800126.460849",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "We only need to find the entry point of each module and add that. For example, webapp is already breaking the import \"goes on top\" pattern. (webserver/webapp/src/py/manage_webapp.py)\nNot sure about the scripts you linked tho",
+      "time": "12:09",
+      "timestamp": "1715800193.651919",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Each service has 1 entrypoint. There aren't that many services.",
+      "time": "12:10",
+      "timestamp": "1715800217.937719",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "If we are able to make `basicConfig` calls setting to right level (perhaps from env_var ?) right at the start, that should work. The only concern there would be it's easy for people to miss these patterns, and people may not have knowledge or miss pointing these out during code reviews. If we feel this isn't a major issue, we can take this approach. Abstractions just makes it a bit more robust. Feel free to make a call.",
+      "time": "12:22",
+      "timestamp": "1715800961.104889",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think we should do the simplest correct thing. `force=True`  (call that Option #4) strikes me as incorrect, since any logging up until the force=True call will be inconsistent with the config.\n\nOption #1 is infeasible b/c it is so error-prone.\n\nOption #2 is also error-prone, but only when new services are added vs. whenever a new log message is added, as with Option (1).\n\nOption #4 looks like rewriting the Python logging module? If we're going to do this, there's probably an alternative logging framework/python package we can use...\n\nOption #5 \"use a better language\" is probably not reasonable and a matter of opinion :)",
+      "time": "12:25",
+      "timestamp": "1715801145.333209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Of all of those, (2) seems best. Let's do that.",
+      "time": "12:25",
+      "timestamp": "1715801153.679289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Disclaimer: I am not a Python expert. Python experts feel free to weigh in.",
+      "time": "12:26",
+      "timestamp": "1715801174.033809",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "We need an #ask-python channel :smile:",
+      "time": "12:29",
+      "timestamp": "1715801355.320269",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Victor Zeng any opinions on this?",
+      "time": "12:34",
+      "timestamp": "1715801647.628959",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-05-15.json",
+    "message_count": 24,
+    "start_time": "1715793162.207559",
+    "end_time": "1715801647.628959",
+    "is_thread": true
+  }
+}

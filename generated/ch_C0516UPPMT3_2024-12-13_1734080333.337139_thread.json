@@ -1,0 +1,28 @@
+{
+  "id": "ch_C0516UPPMT3_2024-12-13_1734080333.337139_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Nathaniel"
+  ],
+  "messages": [
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "We had to scope out a similar kind of request for BMO (though haven't yet gotten their buy-in to implement any solutions for it).  A problem that this feature faces is all the different ways something can be considered a \"duplicate\" and also a significant additional load if comparing against a large amount of previously run files.\n\n1. As Jasper points out above, duplicates can be detected on several different kinds of levels.\n    a. A Check Sum comparison can detect if the same exact digital file has been uploaded multiple times, but what if the user scans a document 2 different times?\n    b. We can compare extracted fields, and set up rules for duplicate flagging if certain classes and fields match, but those classes+fields are likely going to vary between customer use cases.  \n        i. And even if the in-scope fields match, the customers rules for comparing them between docs might differ (ie which ones need to AND match vs which should OR match).\n        ii. Conversely, if the rules are too strict, you risk letting a duplicate through if the model's predictions differ between duplicates.  For example, a lower resolution photo might induce an OCR error on 1 that makes it look like a unique doc vs another.\n2. Once those are resolved, then you have to think about the scope to compare docs.\n    a. If you only care about duplicates in the same batch, you can implement some sort of cross-document validation.\n    b. But if you want to compare all newly processed files vs existing files, you'll need to actively limit the scope or progressively slow down the duplicate comparison process as more files are added to the output dataset.\n        i. At BMO, we are saving the output as JSON files in an S3 bucket with no plans to delete anything.  So for the extraction comparison method, we'd have to be comparing every new doc against everything that we've ever processed, which would bog down quickly.\n        ii. A database would be much more efficient at this, but there are still performance considerations to keep in mind that would likely vary between use cases.\nSo I'd love for the product to handle this elegantly, just keep in mind that this is a surprisingly complex problem that varies depending on customer priorities and resources.",
+      "time": "00:58",
+      "timestamp": "1734080333.337139",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-12-13.json",
+    "message_count": 1,
+    "start_time": "1734080333.337139",
+    "end_time": "1734080333.337139",
+    "is_thread": true
+  }
+}

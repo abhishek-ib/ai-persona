@@ -1,0 +1,37 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-08-15_1723734695.597299_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "sean.donohoe",
+    "donagh"
+  ],
+  "messages": [
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Hey Shiqi, it is true that before this PR the tests were not flaky in CI. This is because the tests were not running in parallel. The PR in question did not make any changes to related application or test code but it did add a test target that is a clone of the existing target. Bazel runs both of these test targets in parallel and that can cause failures because of how the tests are written (it seems they share resources). As mentioned, two solutions are: 1. refactor the tests to not share resources 2. configure bazel to run these targets in series.\n\n@sean.donohoe is option 2 possible in the short term to unblock? I can look into why these fail in parallel.",
+      "time": "08:11",
+      "timestamp": "1723734695.597299",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@donagh it's unfortunately nontrivial to run them in series because the parallelism is controlled by the pre-merge script, not by bazel :confused: would it be ok for us to temporarily drop the connectors tests from the stats-utils makefile by updating this (https://github.com/instabase/instabase/blob/master/shared-utils/py-utils/stats-utils/Makefile#L22) to the following while the connectors stuff gets sorted?\n\n```bazel-test:\n\t@bazel test $(EXTRA_BAZEL_ARGS) //shared-utils/py-utils/stats-utils/test/unit/py/instabase/stats:stats_test```",
+      "time": "10:36",
+      "timestamp": "1723743394.258839",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-08-15.json",
+    "message_count": 2,
+    "start_time": "1723734695.597299",
+    "end_time": "1723743394.258839",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,240 @@
+{
+  "id": "ch_C06FA6A23_2021-06-21_1624270719.328100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Seb",
+    "Nidhi",
+    "Heymian",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "Hi, I’m facing few regression issues with File IO operations with two flows that was working last week on Friday on instabase.com (http://instabase.com), is there anything changed regarding the file services at Instabase.com (http://Instabase.com)? From the logs I can see a lot of ‘NOT_FOUND’ exceptions raised by ‘/file_service.FileService/Stat’. Can anybody confirm if this is an actual regression issue?\nSee Attached images to show what I see when running one of the flows. The first log line is confirming the delete action of the out folder requested from the UI when running the flow. The second line shows the error, at this point my pre-flow UDF is not executed which makes me think that there something changed at the file service level.\nNote: The log shows the directory paths without a trailing ‘/’, Could this be a problem?",
+      "time": "03:18",
+      "timestamp": "1624270719.328100",
+      "is_reply": false
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "This can easily be replicated: I can see the same exceptions when running other flows (i.e. without pre/post udfs) and requesting the out directory folder to be deleted prior to the execution of the flow. Can somebody try to replicate this and confirm the same NOT_FOUND exception as raised in the log file?",
+      "time": "04:17",
+      "timestamp": "1624274268.329900",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "@Seb just moving our conversation here — I don’t have an answer to why this is happening, and the two non-conclusive suspects I have at the moment are:\n• @achao’s pr here (https://github.com/instabase/instabase/pull/19573/files)\n• The fact it’s complaining about trying to read a file without the `space/subspace/fs/Instabase Drive` prefix (this might just be the log message though)",
+      "time": "07:12",
+      "timestamp": "1624284755.331400",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "@Seb just keeping it in this thread\n> Thanks for confirming, can somebody check what I am seing is an actual product issue with v21.6?\nCould you share the repo with me? I can take a quick look to see if you’re doing anything strange while writing that log file that could be causing this. Otherwise, I’ll wait for the core-services experts to give their take on why this could have been working before the 21.6 upgrade.",
+      "time": "07:51",
+      "timestamp": "1624287108.331600",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "I’ve asked Venkat to rule me out of the equation, you can do the same by using your own flow and you’ll see the issue. The downstream impact are seen because I do pre and post flow file ops. It worked last week and still work at NatWest on IB v21.4",
+      "time": "07:53",
+      "timestamp": "1624287229.331800",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "Here are my flows :\nSebastien.Durand/1-my-repo/fs/Instabase Drive/EncryptDecryptFlows/EncryptFlow/encrypt_files_flow.ibflow\nSebastien.Durand/1-my-repo/fs/Instabase Drive/EncryptDecryptFlows/DecryptFlow/decrypt_files_flow.ibflow\n\nBut please, test your own flow first (to rule them out) and you should see the same errors as me. For my script, I believe it is related to whether it adds a ‘/’ at the end of the folder path or before doing a stat or file operation: e.g. clients.ibfile.exists(log_dir), works with log_dir ending with ‘/’ but not without, and my issue is that my UDFs were written with folder paths not ending with ‘/’ and clients.ibfile handled it without any issue prior to v21.6.\n\nBut whether I wrote the UDFs incorrectly or not is not the issue, fundamentally, the ‘Delete Previous Output’ option is broken at some level before running a flow and one should not see log exceptions such as those shown in the blue box below (actions resulting from the UI ‘Delete Previous Output’):",
+      "time": "08:07",
+      "timestamp": "1624288029.332000",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "",
+      "time": "08:16",
+      "timestamp": "1624288584.332400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "We did deploy file service v2 to prod sometime on friday. @achao @Nidhi",
+      "time": "08:55",
+      "timestamp": "1624290913.334700",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "Hey Heymian, is file service v2 different with regards to folder path handling (see my posted DMs above)?",
+      "time": "08:57",
+      "timestamp": "1624291026.334900",
+      "is_reply": true
+    },
+    {
+      "sender": "Nidhi",
+      "user_id": "U0179LPQK29",
+      "message": "Hey @Seb. Thanks for bringing this up. I’m looking into this now. Do you know if this flow is works on dog food?",
+      "time": "09:04",
+      "timestamp": "1624291447.336100",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "I tried a new General Extraction Project flow on dog food too and get the same issue when using the UI option ‘Delete Previous Output’, doing this should be your starting point to observe the changes caused by file service v2. I haven’t deployed my flows + UDFS on dog food but I think it would be impacted by whatever has changed in the file service folder path handling (please correct me if I am wrong, I’m only speculating at this point based on my evidence). This is what I can see in the log file on dog food:",
+      "time": "09:10",
+      "timestamp": "1624291857.336400",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "",
+      "time": "09:37",
+      "timestamp": "1624293444.337300",
+      "is_reply": true
+    },
+    {
+      "sender": "Nidhi",
+      "user_id": "U0179LPQK29",
+      "message": "Hi @Seb. The “Not Found” exceptions in the logs with the “Delete Previous Output” option are expected. The exceptions are occurring precisely because the output dir has been deleted. So when we then check if the directory exists, we see a Not Found. While the Not Found failure is expected, the way we log it seems to cause confusion. We will work on improving how this shows up in the logs.\nIf I understand correctly, the other issue you were seeing was with clients.ibfile.exists(log_dir) failing is there is no “/” at the end of the path. This seems like a bug - I’m digging into it to figure out why this is not working after file service v2.",
+      "time": "10:17",
+      "timestamp": "1624295821.339200",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "Ok, thanks for the info, in v21.4 the exceptions were not shown.  My further issues for my custom flows which  are using pre-flow and post-flow UDFs, the pre-flow udf create the required folders in the output folder, please use the flow defined in *Sebastien.Durand/1-my-repo/fs/Instabase Drive/EncryptDecryptFlows/EncryptFlow*. The encrypt_udf.py script has not changed since last week and was working for v21.4",
+      "time": "10:30",
+      "timestamp": "1624296642.339600",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "Further issues are seen for both the EncryptFlow and DecryptFlow flows when using an append command:\nwith ibfile.open(fname, “a”) as f:\n    f.write(message+‘\\n’)",
+      "time": "10:54",
+      "timestamp": "1624298057.340700",
+      "is_reply": true
+    },
+    {
+      "sender": "Nidhi",
+      "user_id": "U0179LPQK29",
+      "message": "Thanks Seb. I think I just found an bug where the append command is not working correctly if writing to a file that does not yet exist. I’m working on fixing it. Can you confirm that you are seeing the problem with the above code if fname does not exist?",
+      "time": "10:59",
+      "timestamp": "1624298362.341000",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "Yes, I see the issue for the append to file in my two udfs scripts (encrypt_udf.py and decrypt_udf.py did not create an initial file before appending new messages), I guess the NOT_FOUND exceptions were misleading but they should be removed from the log if they are not fatal exceptions (cleaner log files), below is screenshot of the log produced by the DecryptFlow to confirm the append to file exception.",
+      "time": "11:01",
+      "timestamp": "1624298477.341200",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "",
+      "time": "11:02",
+      "timestamp": "1624298555.341500",
+      "is_reply": true
+    },
+    {
+      "sender": "Nidhi",
+      "user_id": "U0179LPQK29",
+      "message": "Thanks! I think I know what the bug is. Will work on fixing it today. Agree about the log lines - they should not be showing up as exceptions.\nBtw, can you point me to the code where you are appending to the file? I don’t see that code in encrypt_udf.py.",
+      "time": "11:06",
+      "timestamp": "1624298812.342100",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "",
+      "time": "11:08",
+      "timestamp": "1624298898.343000",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "Line 157 in encrypt_udf.py, the __append__to_output_log_file function is used primarily in pre and post flow udfs and wherever I need debugging.",
+      "time": "11:10",
+      "timestamp": "1624299007.343400",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "Line 159 in the decrypt_udf.py.",
+      "time": "11:10",
+      "timestamp": "1624299032.343600",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "Many thanks for working on this.",
+      "time": "11:10",
+      "timestamp": "1624299047.343800",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Hello! I’m following up on this thread late. Want to see if there’s anything broken in Flow. My understanding is:\n1. When `delete previous output` is turned on but the output folder already doesn’t exist, we see an error log entry (the `NOT FOUND` log from the FileService/stat api). *This log entry does not affect flow execution though* as in flow still runs correctly, but the log entry is confusing. \n2. `clients.ibfile.exists(log_dir)` failing when there’s no ending `/` at the end of the dir path. This is a behavior change and is what causing the failure.\n@Nidhi, @Seb, could you confirm if my understanding is correct? o\nOn 2 - I think Nidhi is already looking at this.\nOn 1 - Nidhi, if we should call the delete API in FS V2 a different way than V1 let me know (for example, if we should always do a `exists` before calling `delete`. I think previously the error wasn’t logged and our code probably just do a delete and ignore the not found failure. cc @Erick",
+      "time": "14:01",
+      "timestamp": "1624309273.363100",
+      "is_reply": true
+    },
+    {
+      "sender": "Seb",
+      "user_id": "U01T2LEKKB7",
+      "message": "Hi Kerry, Nidhi can confirm later but here is what I understood today:\n1. the NOT_FOUND exceptions were added in v21.6 but not critical after all (so for the ‘Delete Previous Output’, the output file is still deleted but an exception is raised just after as the output folder no longer exists), the exceptions are just  misleading and should be removed. It caused ambiguities when troubleshooting the real issues I faced with my flow UDFs (see below)\n2. there is a regression bug spotted and confirmed by Nidhi when my UDFs called the client.ibfile.open(fname. ‘a’) for appending messages to a file. But this will not have an incidence on Flow I believe.\nI think Nidhi is working one both points: to remove the unnecessary exceptions from the log file and to fix the append action issue with the File Service v2.",
+      "time": "14:15",
+      "timestamp": "1624310117.363500",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": ":thumbsup: thanks @Seb!",
+      "time": "14:27",
+      "timestamp": "1624310846.363800",
+      "is_reply": true
+    },
+    {
+      "sender": "Nidhi",
+      "user_id": "U0179LPQK29",
+      "message": "Thanks Seb! @Kerry, I’m working on a fix right now and will send out a PR soon. I think this only affects the case where we try to append to a non-existent file.",
+      "time": "14:32",
+      "timestamp": "1624311144.364100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-06-21.json",
+    "message_count": 27,
+    "start_time": "1624270719.328100",
+    "end_time": "1624311144.364100",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "id": "ch_CSY11CK7T_2024-07-03_1720022548.540839_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Aayush",
+    "Jessica",
+    "Subash"
+  ],
+  "messages": [
+    {
+      "sender": "Subash",
+      "user_id": "U01CPRMS8LV",
+      "message": "CORS policy should change to fixed set of domains, not sure why we have it open for all",
+      "time": "09:02",
+      "timestamp": "1720022548.540839",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Looks like it was set 3 years ago, and it's only set that way for api-server and only if enable_cors is set to true",
+      "time": "09:24",
+      "timestamp": "1720023891.617569",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Ok let's fix that; @Subash (or assign someone for me Subash if it shouldn't be you) can you send a PR for CORS and backport it to 24.26? Thanks",
+      "time": "09:56",
+      "timestamp": "1720025784.443299",
+      "is_reply": true
+    },
+    {
+      "sender": "Subash",
+      "user_id": "U01CPRMS8LV",
+      "message": "I conducted a short investigation into Aayush's note on CORS. The CORS policy in the API server that Aayush mentioned is used to expose the api-server and api-server-apps to external requests (PR (https://github.com/instabase/instabase/pull/22422/files)). This policy is enabled by default in all environments. _This config could be the one that allows us to make API requests from external services and tools_. We need to determine the impact of disabling the `ENABLE_CORS` flag. I don't think there is an immediate action here for 24.26.\n\nIn general, CORS policy is defined by the following headers:\n• `Access-Control-Allow-Origin`: Specifies which origins are allowed.\n• `Access-Control-Allow-Methods`: Specifies which HTTP methods are allowed.\n• `Access-Control-Allow-Headers`: Specifies which HTTP headers are allowed in the request. (contains Authorisation headers too)\nCurrently, I have VB demo things on my plate. I can work with @Aayush to investigate more about this and sum up our current CORS policy.\n\n@Kerry Is the intention here to understand the current CORS policy or to define a CORS policy for our FEDRAMP customers?\n\ncc: @Rakesh",
+      "time": "11:17",
+      "timestamp": "1720030634.113919",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "The intention is both -- understand our current CORS policy, and revise it to meet Fedstart (for the fedstart env, not necessary for all AI Hub).\n\nSo just so I understand the current state and implementation. Right now, CORS policy for MT AI Hub is set to True by default == `*`? If `ENABLE_CORS` is turned to False, does that mean CORS policy is turned off / do not support CORS at all?\n\n@Jessica can you help here if Subash is swamped with the upcoming search demo",
+      "time": "12:33",
+      "timestamp": "1720035209.007639",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "I need a clear understanding of the current state / impact of this flag ideally by EOD Moday next week (7/9)",
+      "time": "12:33",
+      "timestamp": "1720035237.485819",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "if we suspect this is to support external API call, can we do a quick test in AI Hub sandbox",
+      "time": "12:35",
+      "timestamp": "1720035327.717489",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": ">  Right now, CORS policy for MT AI Hub is set to True by default == `*`?\nYes, it's enabled by default `ENABLE_CORS=True` and set to `*` - this means the api-server endpoints are accessible from any website in the user's browser.\n\n> If `ENABLE_CORS` is turned to False, does that mean CORS policy is turned off / do not support CORS at all?\nYes, if this is set to false, all CORS requests to api-server are denied and it no longer supports CORS. This may be desirable for the fedstart deployment if we don't have any usecase that needs to access the deployment's APIs from a different origin.\nI also think this was enabled to support external API calls, and disabling this will not allow any custom websites from accessing the APIs. Will need to confirm if the base AIHub functionality is affected if we do this (I think it shouldn't).",
+      "time": "15:26",
+      "timestamp": "1720045594.971079",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Very clear, thank you. I have my answers.",
+      "time": "17:18",
+      "timestamp": "1720052285.015949",
+      "is_reply": true
+    },
+    {
+      "sender": "Subash",
+      "user_id": "U01CPRMS8LV",
+      "message": "Thanks @Aayush, for jumping in and providing clarity on this so late at night (or early morning :slightly_smiling_face:).",
+      "time": "21:37",
+      "timestamp": "1720067849.601089",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-07-03.json",
+    "message_count": 10,
+    "start_time": "1720022548.540839",
+    "end_time": "1720067849.601089",
+    "is_thread": true
+  }
+}

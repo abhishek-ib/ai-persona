@@ -1,0 +1,112 @@
+{
+  "id": "ch_C06FA6A23_2024-08-13_1723575361.768899_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "Xindi Xu",
+    "Ashwin",
+    "Rakesh",
+    "jtau"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Has there been a change to our odd ways of building `ibdoc_to_json`?\nSeeing lots of failures building `apps-server`, `server-nginx`, `webapp`\n```12:33:26  Building wheels for collected packages: ibdoc_to_json\n12:33:26    Building wheel for ibdoc_to_json (pyproject.toml): started\n12:33:26    Building wheel for ibdoc_to_json (pyproject.toml): finished with status 'error'\n12:33:26    error: subprocess-exited-with-error\n12:33:26    \n12:33:26    × Building wheel for ibdoc_to_json (pyproject.toml) did not run successfully.\n12:33:26    │ exit code: 1\n12:33:26    ╰─> [6 lines of output]\n12:33:26        In file included from ibdoc_to_json_module.cpp:8:\n12:33:26        instabase/protos/doc_types/doc_types.pb.h:33:10: fatal error: instabase/protos/doc_types/core_types.pb.h: No such file or directory\n12:33:26           33 | #include \"instabase/protos/doc_types/core_types.pb.h\"\n12:33:26              |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n12:33:26        compilation terminated.\n12:33:26        error: command '/usr/bin/g++' failed with exit code 1\n12:33:26        [end of output]\n12:33:26    \n12:33:26    note: This error originates from a subprocess, and is likely not a problem with pip.\n12:33:26    ERROR: Failed building wheel for ibdoc_to_json\n12:33:26  Failed to build ibdoc_to_json\n12:33:26  ERROR: ERROR: Failed to build installable wheels for some pyproject.toml based projects (ibdoc_to_json)\n12:33:26  cp: cannot stat 'temp.linux-x86_64-cpython-39/*': No such file or directory\n12:33:26  E\n12:33:26  ======================================================================\n12:33:26  ERROR: test_ibdoc_to_json (unittest.loader._FailedTest)\n12:33:26  ----------------------------------------------------------------------\n12:33:26  ImportError: Failed to import test module: test_ibdoc_to_json\n12:33:26  Traceback (most recent call last):\n12:33:26    File \"/pyenv/versions/3.9.17/lib/python3.9/unittest/loader.py\", line 436, in _find_test_path\n12:33:26      module = self._get_module_from_name(name)\n12:33:26    File \"/pyenv/versions/3.9.17/lib/python3.9/unittest/loader.py\", line 377, in _get_module_from_name\n12:33:26      __import__(name)\n12:33:26    File \"/cpp/src/instabase/shared-utils/py-utils/ibdoc-to-json/build/test/ibdoc_to_json/test_ibdoc_to_json.py\", line 7, in <module>\n12:33:26      import ibdoc_to_json\n12:33:26  ModuleNotFoundError: No module named 'ibdoc_to_json'\n12:33:26  \n12:33:26  \n12:33:26  ----------------------------------------------------------------------\n12:33:26  Ran 1 test in 0.000s\n12:33:26  \n12:33:26  FAILED (errors=1)\n12:33:27  make[1]: Leaving directory '/instabase/shared-utils/py-utils/ibdoc-to-json'\n12:33:27  make[1]: *** [Makefile:24: compile-cpp-ibdoc-conversion] Error 1\n12:33:27  make: *** [/instabase/webserver/apps-server/../../shared-utils/build-utils/shared/build-python.mk:188: build-ibdoc-to-json] Error 2```",
+      "time": "11:56",
+      "timestamp": "1723575361.768899",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Not entirely consistent, as retries sometimes work fine",
+      "time": "11:56",
+      "timestamp": "1723575376.366599",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "```12:21:12    error: subprocess-exited-with-error\n12:21:12    \n12:21:12    × Building wheel for ibdoc_to_json (pyproject.toml) did not run successfully.\n12:21:12    │ exit code: 1\n12:21:12    ╰─> [6 lines of output]\n12:21:12        In file included from ibdoc_to_json_module.cpp:8:\n12:21:12        instabase/protos/doc_types/doc_types.pb.h:33:10: fatal error: instabase/protos/doc_types/core_types.pb.h: No such file or directory\n12:21:12           33 | #include \"instabase/protos/doc_types/core_types.pb.h\"\n12:21:12              |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n12:21:12        compilation terminated.\n12:21:12        error: command '/usr/bin/g++' failed with exit code 1\n12:21:12        [end of output]\n12:21:12    \n12:21:12    note: This error originates from a subprocess, and is likely not a problem with pip.\n12:21:12    ERROR: Failed building wheel for ibdoc_to_json\n12:21:12  Failed to build ibdoc_to_json\n12:21:12  ERROR: ERROR: Failed to build installable wheels for some pyproject.toml based projects (ibdoc_to_json)```\nit looks like this is what's causing the failure:\n`error: command '/usr/bin/g++' failed with exit code 1`",
+      "time": "14:31",
+      "timestamp": "1723584665.737139",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "From ChatGPT, it looks like theres a protobuf error\n\n```Summary and Steps to Resolve\nMissing Header File (.pb.h):\n\nEnsure that all Protocol Buffers files (.proto) are properly compiled, and the generated files (.pb.h and .pb.cc (http://pb.cc)) are available in the expected locations.\nCheck your build scripts or make sure that the necessary build steps for generating these files are included.\nEnsure Dependencies Are Available:\n\nVerify that all dependencies required for building the module are installed and accessible.\nCheck if any paths are incorrectly set or if any required tools (like protoc) are missing.\nReview the pyproject.toml and Build Configuration:\n\nMake sure the pyproject.toml file is correctly set up to handle the build process, including any C++ extensions or compiled components.\nIf you have custom build steps, ensure they are correctly defined.\nFix the Test Import Issue:\n\nThe test module failed to import because the build failed. Focus on resolving the build issues first, and the test should work once the module is correctly built.```",
+      "time": "14:42",
+      "timestamp": "1723585378.005699",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "@Rakesh not sure if your team owns this, but do you have any idea here why its complaining about a missing proto file?",
+      "time": "14:43",
+      "timestamp": "1723585412.212749",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "So the last successful commit build off master was t his one i think `aa2d534590845f389373ed376183b8de1af850c9`",
+      "time": "14:44",
+      "timestamp": "1723585477.021579",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "So here are all the changes between that commit and master https://github.com/instabase/instabase/compare/aa2d534590845f389373ed376183b8de1af850c9...master",
+      "time": "15:23",
+      "timestamp": "1723587807.503829",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I compile `conversion-service` locally and it updates 2 .proto files. I pushed up the changes here: https://github.com/instabase/instabase/compare/fix-conversion-service-proto?expand=1\n```\tmodified:   data-services/doc-services/conversion-service/src/main/proto/instabase/protos/context/context.proto\n\tmodified:   data-services/doc-services/conversion-service/src/main/proto/instabase/protos/doc_types/core_types.proto```",
+      "time": "15:32",
+      "timestamp": "1723588379.690719",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "I think the link is incorrect",
+      "time": "15:33",
+      "timestamp": "1723588414.419919",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ah, yea. `build-java-protos` wants to copy the .proto from shared-utils to conversion-service",
+      "time": "15:35",
+      "timestamp": "1723588519.591759",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "cc: @Abhishek - another relevant thread for `ibdoc_to_json` build.",
+      "time": "20:14",
+      "timestamp": "1723605247.723459",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-08-13.json",
+    "message_count": 11,
+    "start_time": "1723575361.768899",
+    "end_time": "1723605247.723459",
+    "is_thread": true
+  }
+}

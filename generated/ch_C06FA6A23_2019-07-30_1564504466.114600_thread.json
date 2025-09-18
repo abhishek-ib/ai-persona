@@ -1,0 +1,194 @@
+{
+  "id": "ch_C06FA6A23_2019-07-30_1564504466.114600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ted",
+    "Loc",
+    "Aaron Vontell",
+    "Heymian",
+    "will",
+    "Handsome Dave",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "I have gone through the python modules as listed in `tools/devtools/code-dependencies/python/requirements.txt`, looking for modules that aren’t actually used in our codebase, or are otherwise possibly in need of attention. If you see a module listed that you want to keep around, just let me know.\n```\nFlask-Login\nbcrypt\ndateparser\ngitpython # Docs warn against using in daemons/long running processes - https://github.com/gitpython-developers/GitPython#leakage-of-system-resources\nh5py # Only under experimental, last touched Dec 2018 - Ted\nkombu\nmkdocs # Stand-alone tool that doesn't appear to be used, could be wrong?\npyOpenSSL # Only used in experimental, hasn't been touched in over a year - Jesika\npyasn1-modules\nray # Only used in experimental, hasn't been touched since Dec. 2017 - Jesika, Anant\ntensorflow # Only used in experimental, hasn't been touched since May 2018 - Ted\n```\nTagging people specifically when a module is used only in their experimental section, and hasn’t been touched in a long time. @Ted @Jesika Haria @Anant",
+      "time": "09:34",
+      "timestamp": "1564504466.114600",
+      "is_reply": false
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "One thing I noticed was that one of our customers used tensorflow in a notebook. So that may be more involved than it looks initially.",
+      "time": "09:35",
+      "timestamp": "1564504515.115200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Though one thing I do not understand fully… is the devtools requirements only used for local development/building?",
+      "time": "09:35",
+      "timestamp": "1564504557.115500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i thought tensorflow was in image-tasks",
+      "time": "09:38",
+      "timestamp": "1564504722.116000",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "The only mention of tensorflow or tf that I can find in image-tasks is this: ```build/py/instabase/model_utils/classifier_neural1.py\n113:    # TODO: TensorFlow can't run inside Celery as we run it presently because TF isn't fork-safe.```",
+      "time": "09:44",
+      "timestamp": "1564505079.116300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Line 52 in the dockerfile:\n`RUN pip install --user tensorflow==1.5.0-rc1 && `",
+      "time": "10:00",
+      "timestamp": "1564506020.116700",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Right, sorry. I meant to say “in code”.",
+      "time": "10:00",
+      "timestamp": "1564506043.116900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "ohhhh got it",
+      "time": "10:01",
+      "timestamp": "1564506062.117100",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "I’m 100% positive that we’re currently installing modules in the requirements.txt and Dockerfiles that aren’t actually being used anywhere.",
+      "time": "10:01",
+      "timestamp": "1564506065.117300",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "I’m trying to clean that up :slightly_smiling_face:",
+      "time": "10:01",
+      "timestamp": "1564506077.117600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yes, please do!! :slightly_smiling_face:",
+      "time": "10:02",
+      "timestamp": "1564506130.117800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I think xlsxwriter may be in use in some customer notebooks or udfs",
+      "time": "10:02",
+      "timestamp": "1564506158.118000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I have no evidence of this but I think I used it like a year ago",
+      "time": "10:03",
+      "timestamp": "1564506182.118200",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "I’ll take `xlsxwriter` off the list. :thumbsup:",
+      "time": "10:04",
+      "timestamp": "1564506253.118400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "We do need zbarlight, it's used for qr code reading. the folder is called old_implementation because we optimistically think there will be a new implementation, but probably should just rename it because it's the current implementation",
+      "time": "10:35",
+      "timestamp": "1564508107.118800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "cc @Chetan @Loc why names are important :stuck_out_tongue:",
+      "time": "10:35",
+      "timestamp": "1564508153.119000",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "lol `old_but_still_in_use_implementation`",
+      "time": "10:37",
+      "timestamp": "1564508230.119200",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "@lydia",
+      "time": "10:37",
+      "timestamp": "1564508236.119400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "aka “legacy” :stuck_out_tongue:",
+      "time": "10:37",
+      "timestamp": "1564508259.119600",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "No worries, zbarlight is out of the list as well. :slightly_smiling_face:",
+      "time": "10:40",
+      "timestamp": "1564508436.119900",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Everything is legacy with respect to tomorrow?",
+      "time": "10:54",
+      "timestamp": "1564509268.123100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-07-30.json",
+    "message_count": 21,
+    "start_time": "1564504466.114600",
+    "end_time": "1564509268.123100",
+    "is_thread": true
+  }
+}

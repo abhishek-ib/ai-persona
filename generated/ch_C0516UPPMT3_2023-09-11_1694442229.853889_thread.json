@@ -1,0 +1,217 @@
+{
+  "id": "ch_C0516UPPMT3_2023-09-11_1694442229.853889_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "mfichman",
+    "hannah",
+    "shaunak",
+    "Rakesh",
+    "Dan H"
+  ],
+  "messages": [
+    {
+      "sender": "Dan H",
+      "user_id": "U020E9AS9P0",
+      "message": "Heaps of `Invalid Usage=OPENAI_TEXT_EMBEDDING_ADA_002_COMPLETION_TOKENS for Resource=0` coming out of the ibllm refiner tooling when running in flow on 23.07.8.  Is there any fix for this?  This is making the tool completely unusable.",
+      "time": "07:23",
+      "timestamp": "1694442229.853889",
+      "is_reply": false
+    },
+    {
+      "sender": "Dan H",
+      "user_id": "U020E9AS9P0",
+      "message": "",
+      "time": "07:30",
+      "timestamp": "1694442624.663869",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "cc @Yash Botadra @Rakesh to look at this.",
+      "time": "08:22",
+      "timestamp": "1694445771.612649",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Think this is a licensing triggered error based on past slack threads. What env are you running against @Dan H?\ncc: @mfichman",
+      "time": "08:38",
+      "timestamp": "1694446732.573469",
+      "is_reply": true
+    },
+    {
+      "sender": "Dan H",
+      "user_id": "U020E9AS9P0",
+      "message": "This is in a sandbox: https://sandbox.console.instabase.com/customer/Customer%20Success/tenant/intact-workshop/info",
+      "time": "08:39",
+      "timestamp": "1694446795.382609",
+      "is_reply": true
+    },
+    {
+      "sender": "Dan H",
+      "user_id": "U020E9AS9P0",
+      "message": "@Rakesh @mfichman @Yash Botadra - Any recommendations on how to proceed?",
+      "time": "11:06",
+      "timestamp": "1694455596.766919",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Dan H -  disabling that log message requires a code change, unfortunately.",
+      "time": "11:43",
+      "timestamp": "1694457790.191819",
+      "is_reply": true
+    },
+    {
+      "sender": "Dan H",
+      "user_id": "U020E9AS9P0",
+      "message": "I am not so concerned about the message.  I guess I was assuming that is related.  The bigger issue is that we are encountering 90%+ fields failing when running in flow",
+      "time": "11:45",
+      "timestamp": "1694457900.390859",
+      "is_reply": true
+    },
+    {
+      "sender": "Dan H",
+      "user_id": "U020E9AS9P0",
+      "message": "Seems to happen if i have \"too many\" fields per doc... i.e. more than around 10 or so fields",
+      "time": "11:45",
+      "timestamp": "1694457918.356039",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmm... I can't speak to that! When you filter out the spurious \"Invalid Usage\" errors, what errors do you see?",
+      "time": "11:46",
+      "timestamp": "1694457966.514059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Probably need to cc someone from Flow to resolve this.",
+      "time": "11:46",
+      "timestamp": "1694457992.670579",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Dan H You're using something AI Hub/ibllm-related, right? (this error only surfaces if ibllm is involved)\n\nIf true, I wonder if the field errors are related to an issue w/ missing Weaviate config that @Yash Botadra mentioned in our standup today.",
+      "time": "11:56",
+      "timestamp": "1694458563.965649",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Taking a look",
+      "time": "12:24",
+      "timestamp": "1694460246.772329",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "I don’t see any errors in model-service while running ibllm except a bunch of lines that say “Error getting llm_element on_llm_end. Skipping observability observations.” I don’t think this is directly related to the error that Dan is seeing because only stats exporting is affected due to that error afaict.\nDan’s error is raised while updating the license with usage token/page usage metrics. Specifically, if the usage is <=0, then this error is printed. @mfichman any idea what could be going on here?",
+      "time": "12:47",
+      "timestamp": "1694461660.075479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, that error doesn't actually break anything. It's just a bad log message -- we should remove it, but it won't prevent further processing. Link:",
+      "time": "13:02",
+      "timestamp": "1694462546.313569",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/blob/f45c34d939ec338b9c174b437d07a855e1524f[…]y-utils/license-utils/src/py/instabase/license_utils/license.py (https://github.com/instabase/instabase/blob/f45c34d939ec338b9c174b437d07a855e1524f8d/shared-utils/py-utils/license-utils/src/py/instabase/license_utils/license.py#L85)",
+      "time": "13:02",
+      "timestamp": "1694462573.622099",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also, the log message itself is backwards :laugh-cry:",
+      "time": "13:03",
+      "timestamp": "1694462614.104739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'll make a ticket to remove this line or make it a warning, but I don't think it will solve Dan's problem",
+      "time": "13:03",
+      "timestamp": "1694462614.549339",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Wait! @Dan H we pushed a number of fixes in 23.07.11 - can you please try upgrading?",
+      "time": "13:50",
+      "timestamp": "1694465410.641819",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "https://instabase.slack.com/archives/CTZCW6N5U/p1694205614957439 (https://instabase.slack.com/archives/CTZCW6N5U/p1694205614957439)",
+      "time": "13:51",
+      "timestamp": "1694465514.813879",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Please also make sure you’ve followed all infra set up steps in confluence https://instabase.atlassian.net/wiki/spaces/PROD/pages/2080178179/Enabling+LLMs+in+Refiner+in+23.07?atlOrigin=eyJpIjoiN2QzMjJlOGUwZjE2NGI1N2EyNjhmYzU0YzQ4MTEwZDciLCJwIjoiY29uZmx1ZW5jZS1jaGF0cy1pbnQifQ (https://instabase.atlassian.net/wiki/spaces/PROD/pages/2080178179/Enabling+LLMs+in+Refiner+in+23.07?atlOrigin=eyJpIjoiN2QzMjJlOGUwZjE2NGI1N2EyNjhmYzU0YzQ4MTEwZDciLCJwIjoiY29uZmx1ZW5jZS1jaGF0cy1pbnQifQ)",
+      "time": "13:52",
+      "timestamp": "1694465545.899009",
+      "is_reply": true
+    },
+    {
+      "sender": "Dan H",
+      "user_id": "U020E9AS9P0",
+      "message": "Sure thing!  Upgrading now!",
+      "time": "14:00",
+      "timestamp": "1694466056.198179",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Thank you!",
+      "time": "14:13",
+      "timestamp": "1694466826.804059",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Let us know if you still run into this issue",
+      "time": "14:13",
+      "timestamp": "1694466831.607319",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-09-11.json",
+    "message_count": 24,
+    "start_time": "1694442229.853889",
+    "end_time": "1694466831.607319",
+    "is_thread": true
+  }
+}

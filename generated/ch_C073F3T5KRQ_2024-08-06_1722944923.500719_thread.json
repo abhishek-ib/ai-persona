@@ -1,0 +1,36 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-08-06_1722944923.500719_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "donagh"
+  ],
+  "messages": [
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "We did confirm that unit tests were passing, as far as I am aware, I wouldn't have been able to merge the PRs if unit tests were consistently failing. However, these errors look very similar to some we encountered with stats-utils in this thread (https://instabase.slack.com/archives/C070H1089H8/p1722359843579979). If these passed CI on the PRs, but are failing now then I think there is some flakiness going on. One thing we noticed is that the stats-utils tests can fail if they are run in parallel. The first PR linked above adds a new test target that runs our existing stats-utils tests but with some different package versions. The new package versions are not to blame because this target consistently succeeds when run without interference. If the stats-utils targets are running in parallel, it is possible the race conditions are being hit and causing failures. The options would be to either refactor the existing stats-utils tests so they can run simultaneously or pass the appropriate flags to bazel to run these tests in series (probably the less desirable solution).",
+      "time": "04:48",
+      "timestamp": "1722944923.500719",
+      "is_reply": false
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Just ran these in series, 20 times each, locally and saw no failures:\n```~/instabase (master ✔) make -C ~/instabase/shared-utils/py-utils/stats-utils clean bazel-test EXTRA_BAZEL_ARGS=\"--cache_test_results=no --runs_per_test=20 --local_test_jobs=1\"```\nWhereas running 20 times in parallel (without the `local_tests_jobs=1`) flag I get some successes and some failures\n```~/instabase (master ✔) make -C ~/instabase/shared-utils/py-utils/stats-utils clean bazel-test EXTRA_BAZEL_ARGS=\"--cache_test_results=no --runs_per_test=20\"```",
+      "time": "05:09",
+      "timestamp": "1722946169.464029",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-08-06.json",
+    "message_count": 2,
+    "start_time": "1722944923.500719",
+    "end_time": "1722946169.464029",
+    "is_thread": true
+  }
+}

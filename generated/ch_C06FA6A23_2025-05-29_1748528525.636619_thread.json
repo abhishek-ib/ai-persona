@@ -1,0 +1,125 @@
+{
+  "id": "ch_C06FA6A23_2025-05-29_1748528525.636619_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Chuba",
+    "abhitaker"
+  ],
+  "messages": [
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "Hi Team*,*\nWe're seeing a high API error aler (https://instabase.slack.com/archives/C06JPSJEPLK/p1748527080019849)t firing for the `nationwide-aihub` stack. I'm trying to assess the impact and would appreciate any help in identifying the root cause.\nSo far, logs only show 500 status code error with no detail, and couldn't find anything actionable in traces so far. Let me know if there's a better place to dig.",
+      "time": "07:22",
+      "timestamp": "1748528525.636619",
+      "is_reply": false
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "Do we currently log any details when API endpoints return 5xx status codes, or is that missing ?",
+      "time": "07:52",
+      "timestamp": "1748530351.148149",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "We might log details in nginx of what exactly is returning the 500?",
+      "time": "08:00",
+      "timestamp": "1748530826.120869",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "From the nginx perspective, the upstream webserver (`API server` in this case)  is responding with 500 status codes.",
+      "time": "08:03",
+      "timestamp": "1748530992.641279",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "Do we have any logs of the specific endpoint that’s returning the 500? Or we just know it’s API server?",
+      "time": "08:04",
+      "timestamp": "1748531064.251339",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "The details are in the alert message itself.",
+      "time": "08:04",
+      "timestamp": "1748531090.202929",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "Ah gotcha, I missed that part :sweat_smile: let me check something real quick",
+      "time": "08:05",
+      "timestamp": "1748531138.379359",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "I think that routes from api-server to core-platform/job-service and then pulls info from redis/db, I’m not seeing any issues with any part of that path though :thinking_face:",
+      "time": "08:10",
+      "timestamp": "1748531433.589109",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "Yes. do you know who would be the correct PoC for looking into this behaviour further?",
+      "time": "08:12",
+      "timestamp": "1748531564.540769",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "I’m investigating a bit with the soleng team working on this now, could be one off due to issues with udf code.",
+      "time": "08:20",
+      "timestamp": "1748532047.002409",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "IIUC udf code written by our team is throwing error which is causing system to return 500 status code?",
+      "time": "08:38",
+      "timestamp": "1748533106.948399",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "Yes, think the issue is that we enabled ip whitelisting for this environment, and then began making api calls from UDFs with the URL instead of service address, causing a ton of non 200 responses to appear",
+      "time": "08:40",
+      "timestamp": "1748533206.381019",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "I see. Thanks for looking into this.",
+      "time": "08:50",
+      "timestamp": "1748533806.750249",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-05-29.json",
+    "message_count": 13,
+    "start_time": "1748528525.636619",
+    "end_time": "1748533806.750249",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "id": "ch_C06FA6A23_2019-02-27_1551286429.119800_conversation",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "conversation",
+  "participants": [
+    "Aaron Vontell",
+    "dlluncor"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "```\nArgument 1 to \"match\" of \"Pattern\" has incompatible type \"unicode\"; expected \"str\"\n```\nWhen mypy complains about functions taking in strings and not unicode (in this case for re.match for a regex pattern), should we cast the unicode to a string, or should we just put in a `# type: ignore`? The second seems safer since I’m pretty sure match does permit strings…",
+      "time": "08:53",
+      "timestamp": "1551286429.119800",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "We should use the get_str function in strutils.py",
+      "time": "08:55",
+      "timestamp": "1551286528.120800",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "There are 3 cases we need to handle:\n   1. We need a unicode string. Use decode\n   2. We need bytes / Python 2 str. Use get_bytes\n   3. We need str in Python 3 (which supports unicode) and we need unicode in Python 2 (note: str in Python only supports bytes / ascii chars). Use get_str\n\n These 3 helper functions are available in strutils.py",
+      "time": "08:58",
+      "timestamp": "1551286685.124500",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Oh awesome, thanks!",
+      "time": "08:58",
+      "timestamp": "1551286709.124700",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "I believe python 3s re lib supports unicode while python 2's does not",
+      "time": "08:59",
+      "timestamp": "1551286774.125400",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-02-27.json",
+    "message_count": 5,
+    "start_time": "1551286429.119800",
+    "end_time": "1551286774.125400",
+    "is_thread": false
+  }
+}

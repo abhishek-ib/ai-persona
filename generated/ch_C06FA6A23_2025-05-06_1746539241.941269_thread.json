@@ -1,0 +1,70 @@
+{
+  "id": "ch_C06FA6A23_2025-05-06_1746539241.941269_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Evan",
+    "Cody Boggs",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "To clarify, the PR itself still left us in the \"Before\" state from the stats :slightly_smiling_face:\nThe \"After\" state is from running a very invasive 'rewrite ALL the history in the repo' task, which is ... scary. :smile: But it would be very worthwhile to do, an there is likely a _ton_ of other deleted data that we can write out of the history too. I'll put together a more organized doc to propose such :slightly_smiling_face:",
+      "time": "06:47",
+      "timestamp": "1746539241.941269",
+      "is_reply": false
+    },
+    {
+      "sender": "Evan",
+      "user_id": "U07TLK6S7PS",
+      "message": ":partywizard:",
+      "time": "11:06",
+      "timestamp": "1746554810.094289",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "@Cody Boggs ah i see, thanks for clarifying! what is the risks to doing what you proposed, considering it only relates to commits touching `experimental`?",
+      "time": "11:33",
+      "timestamp": "1746556418.487199",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "That's the dirty secret of it - it doesn't just touch `experimental`. :sweat_smile:\n\nThe super quick-n-lazy demonstration of why this is a destructive change, using our most recent `25.16.0-aihub` release tag:\n```╰─> git clone git@github.com:instabase/instabase shrink\n\n╰─> cd shrink\n\n╰─> git log --oneline 25.16.4-aihub | head -n3\neae2a621a3d [AUTO-3] bp prompt suggestion  (#70243)\n07836f31122 Release version updated from 25.16.3-aihub to 25.16.4-aihub\n47a584439fc Handle ibstreamcb (#70226)\n\n╰─> git <magic stuff to do what I did above>\n\n╰─> git log --oneline 25.16.4-aihub | head -n3\n76a857bbab7 [AUTO-3] bp prompt suggestion  (#70243)\n39471a4fc44 Release version updated from 25.16.3-aihub to 25.16.4-aihub\ne4e231d70c4 Handle ibstreamcb (#70226)```\nThis is an actual test I just did locally to demonstrate - note that the commit messages are all unchanged, but the *commit SHAs* are all different now. This is because once anything changes \"in the past\" in a git repo, all subsequent change sets are invalidated and the deltas are recalculated to generate a new history.\n\nSince we have short-SHA strings baked into almost everything we do, it will effectively invalidate everything that uses them - at least, it'll make it impossible to 'go back' to a previous SHA (like what is shown on a certified image tag, for instance)",
+      "time": "11:59",
+      "timestamp": "1746557946.121069",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "this makes sense. the following gives me :cold_sweat:\n> Since we have short-SHA strings baked into almost everything we do, it will effectively invalidate everything that uses them - at least, it'll make it impossible to 'go back' to a previous SHA (like what is shown on a certified image tag, for instance)",
+      "time": "12:17",
+      "timestamp": "1746559057.658429",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea hence my many caveats and disclaimers :joy:\n\nTo be fair, we'd be able to rewind to _tags_ just fine - they are rewritten as well and so we'd be covered there. But rebuilding the same _tag_ would yield a different sha to be plugged into <everything> which... _shouldn't_ matter, but at Instabase it does. lol",
+      "time": "12:27",
+      "timestamp": "1746559670.383079",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-05-06.json",
+    "message_count": 6,
+    "start_time": "1746539241.941269",
+    "end_time": "1746559670.383079",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "id": "ch_C06FA6A23_2020-04-20_1587432363.411000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "Mohit",
+    "John St",
+    "Jonathan Shih"
+  ],
+  "messages": [
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "seeing this in webapp local minikube env, i took the latest pull from master. cc: @Jessica @Eric Han",
+      "time": "18:26",
+      "timestamp": "1587432363.411000",
+      "is_reply": false
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "cc: @John St",
+      "time": "18:46",
+      "timestamp": "1587433570.411300",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": ":thinking_face: looks like maybe the build wasn’t run",
+      "time": "18:47",
+      "timestamp": "1587433624.411500",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "disclaimer: i am building webapp without the docs, i commented out all the docs related stuff in dockerfile",
+      "time": "18:47",
+      "timestamp": "1587433666.411700",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "how are you running the build? are you running it from within `js/webpacked` ?",
+      "time": "18:50",
+      "timestamp": "1587433825.411900",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "i use this: https://github.com/instabase/instabase/blob/b92f183879f73f3ef601071278caccccf2d9cc68/webserver/webapp/Makefile#L114",
+      "time": "18:51",
+      "timestamp": "1587433896.412200",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "I’m not familiar with that command",
+      "time": "18:54",
+      "timestamp": "1587434092.412400",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "looks like it cannot find static files, can it be your change @Eric Han?",
+      "time": "19:02",
+      "timestamp": "1587434537.412600",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "I’m seeing this on local as well. I can’t actually run instabase locally right now",
+      "time": "19:03",
+      "timestamp": "1587434606.413000",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "Is nginx up? The building of static files happens in nginx build now",
+      "time": "19:03",
+      "timestamp": "1587434620.413200",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "Btw I get nginx: [emerg] invalid number of arguments in “ssl_protocols” directive in /etc/nginx/nginx.conf:58 in nginx",
+      "time": "19:04",
+      "timestamp": "1587434652.413400",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@Jonathan Shih i think @Ashish can help you with this error.",
+      "time": "19:04",
+      "timestamp": "1587434690.413600",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@Eric Han, in my cases, nginx is up, still this is not working. I hope this is okay: https://instabase.slack.com/archives/C06FA6A23/p1587433666411700?thread_ts=1587432363.411000&cid=C06FA6A23",
+      "time": "19:05",
+      "timestamp": "1587434733.413800",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "When you build nginx are you running fetch static step from the makefile",
+      "time": "19:06",
+      "timestamp": "1587434810.414100",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "looks like fetch-static is run  (https://github.com/instabase/instabase/blob/master/webserver/server-nginx/Makefile#L70)while building for minikube",
+      "time": "19:08",
+      "timestamp": "1587434902.414300",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "Can you look in that destination folder and see those static files are there in the right structure? I think it's like webroot/static",
+      "time": "19:10",
+      "timestamp": "1587435005.414500",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Inside server-nginx pod:\n```ibuser@deployment-server-nginx-7fb79f596-zjtp2:/$ ls webroot/static/\nalive.txt  assets  css-out  fonts  js-out  webpacked```\n```\nibuser@deployment-server-nginx-7fb79f596-zjtp2:/$ ls webroot/static/js-out/\nbootstrap.js  multiselect-compiled.js  react-deps.js  toastr.js.map  webapp-deps.js```",
+      "time": "19:10",
+      "timestamp": "1587435015.414700",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "*update*: the issue has been identified. @Eric Han will ship the change. Thanks eric. :slightly_smiling_face:",
+      "time": "19:34",
+      "timestamp": "1587436466.415000",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-04-20.json",
+    "message_count": 18,
+    "start_time": "1587432363.411000",
+    "end_time": "1587436466.415000",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "id": "ch_CSY11CK7T_2025-06-27_1751071474.370749_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ":cypress-spin: *Cypress On-Call Summary: Week of Jun 23–27*\n\nCypress CI was a bit rocky this week. Starting Monday, CPS began crash-looping frequently due to an OOM-killed issue. Our Grafana (https://crafting-cyp.test.instabase.com/grafana/?orgId=1&from=2025-06-22T07:00:00.000Z&to=2025-06-29T06:59:59.000Z&timezone=browser&var-datasource=default&var-service=core-platform-service&var-container=core-platform-service&viewPanel=panel-6) dashboard tracking restart counts (note: not 100% accurate), it had a peak at ~50 restarts; we’re currently down to ~4 (https://crafting-cyp.test.instabase.com/deployment-manager/dashboard/deployments/apps/v1/core-platform-service/deployment-core-platform-service-5545f8dbcb-jsgpn).\n\n:female-detective: *Investigation Highlights:*\n• *Thread 1 (https://instabase.slack.com/archives/CSY11CK7T/p1750966389584939?thread_ts=1750818438.901769&cid=CSY11CK7T):* We discovered an N+1 query issue in the `GetMountPoints` gRPC endpoint, and the DB query returns mount points from other orgs, so we end up sending ~450 DB calls. Fixes were merged Wednesday morning.\n• *Thread 2 (https://instabase.slack.com/archives/C073F3T5KRQ/p1750973953007329):* Post-fix, restart count dropped, but didn’t fully go away. My current theory (https://instabase.slack.com/archives/C073F3T5KRQ/p1751055957625679?thread_ts=1750973953.007329&cid=C073F3T5KRQ) is a memory issue in the `GetSession` gRPC endpoint, which is called heavily. Matt has a fix PR (https://github.com/instabase/instabase/pull/71765) out.\nTo mitigate this issue, we temporarily increased the CPS memory limit. While memory spikes still happen, CPS restarts less frequently, which should make Cypress CI more stable.\n\nHuge thanks to @Abhinav, @astpierre, @Jeff, @Jet, @mfichman, @Pridhvi Vegesna, @sitaram for jumping in to investigate and mitigate! :raised_hands: :highfive2:\n\n:warning: *Side Effects:*\nThis issue caused many slow network requests and timeouts (see thread (https://instabase.slack.com/archives/C03B865Q74K/p1750963511808409?thread_ts=1750288740.565039&cid=C03B865Q74K)). Crafting sandbox wasn't able to intercept and forward requests to our ICC sandbox stably, due to CPS restarting.\nThanks, @Serena and @astpierre, for coordinating with the Crafting support team!",
+      "time": "17:44",
+      "timestamp": "1751071474.370749",
+      "is_reply": false
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Nice work team!",
+      "time": "19:45",
+      "timestamp": "1751078739.873769",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-06-27.json",
+    "message_count": 2,
+    "start_time": "1751071474.370749",
+    "end_time": "1751078739.873769",
+    "is_thread": true
+  }
+}

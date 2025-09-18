@@ -1,0 +1,248 @@
+{
+  "id": "ch_C06FA6A23_2020-06-11_1591900974.139600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "shaunak",
+    "Felicia",
+    "Karthik S",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "This should all be fixed now.  Do we need to do a container rebuild?",
+      "time": "11:42",
+      "timestamp": "1591900974.139600",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Felicia - this is the same error you are seeing, try matching master and rebuild",
+      "time": "11:55",
+      "timestamp": "1591901748.139800",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "thanks @Kerry!",
+      "time": "11:57",
+      "timestamp": "1591901842.140500",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "ah I see, I asked about this two days ago and had to increase workers for pdf-tservice, but the commit I went back to last night didn’t have that fix of course :thinking_face:",
+      "time": "12:14",
+      "timestamp": "1591902888.144800",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "@shaunak @Karthik S (cc @Kerry) I tried twice to rebase on master, compile `lite` and run everything and this flow still doesn’t run, doesn’t produce any s1/s2/.. folders: https://dogfood.instabase.com/apps/flow/edit/ib_eng/tests/fs/Test%20Drive/tests/golden-dataset-tests/ScanBoxTests/w2/golden.ibflow\n\nthis is a different flow from the one Karthik and I tested yesterday which only contained a refiner program with `echo` that flow runs fine. This flow uses scan box and has find_lines flag set to true.",
+      "time": "14:41",
+      "timestamp": "1591911710.153300",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "What errors are you seeing in api-server-apps. and celery-app-tasks",
+      "time": "14:43",
+      "timestamp": "1591911787.153500",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "?",
+      "time": "14:43",
+      "timestamp": "1591911792.153700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Felicia have you tried pulling the pre-built docker container?",
+      "time": "14:43",
+      "timestamp": "1591911807.153900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "pdf tservice is working for me with the pre-built docker",
+      "time": "14:43",
+      "timestamp": "1591911816.154100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "or are you talking about the grpc flow errors?",
+      "time": "14:43",
+      "timestamp": "1591911823.154300",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "app-tasks: worker exited prematurely, key not found in cache\n\napi-server-apps: error read empty data, calling disconnect (and the usual disconnected from rabbitmq, could not export entity to endpoint)",
+      "time": "14:48",
+      "timestamp": "1591912113.154500",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "I’m not encountering GRPC flow errors",
+      "time": "14:48",
+      "timestamp": "1591912130.154700",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "let me try pulling prebuilt docker container, but i’m not sure if that contains the fix for the number of workers already?",
+      "time": "14:49",
+      "timestamp": "1591912187.154900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "an you print the stack trace?",
+      "time": "14:49",
+      "timestamp": "1591912195.155100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Or the line number that you are hitting the error at?",
+      "time": "14:50",
+      "timestamp": "1591912205.155400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Felicia it does. the new docker fixed the pdf tservice issue for me",
+      "time": "14:50",
+      "timestamp": "1591912258.155600",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "@shaunak from app-tasks:\n```\n[2020-06-11 14:45:30,276: INFO/ForkPoolWorker-18] Disconnected from RabbitMQ at 127.0.0.1:5672 (-1): EOF\n\n[2020-06-11 14:45:30,278: ERROR/ForkPoolWorker-18] Connection close detected; result=BlockingConnection__OnClosedArgs(connection=<SelectConnection CLOSED socket=None params=<ConnectionParameters host=127.0.0.1 port=5672 virtual_host=/ ssl=False>>, reason_code=-1, reason_text='EOF')\n\n(...)\n\nTraceback (most recent call last):\n\n  File \"/Users/felicia/instabase/venv3/lib/python3.7/site-packages/billiard/pool.py\", line 1267, in mark_as_worker_lost\n\n    human_status(exitcode)),\n\nbilliard.exceptions.WorkerLostError: Worker exited prematurely: signal 11 (SIGSEGV).\n\n(...)\n\n[2020-06-11 14:45:56,452: ERROR/ForkPoolWorker-24] Could not find key in cache: FLOW-RESULT-86873f02-4461-4302-b958-305968d6c4f2-FLOW-0-0```",
+      "time": "14:53",
+      "timestamp": "1591912426.155800",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Worker exited prematurely is a segmentation fault error",
+      "time": "15:01",
+      "timestamp": "1591912882.156000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "what are you trying to do?",
+      "time": "15:01",
+      "timestamp": "1591912900.156200",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "aha :thinking_face: okay this flow has `find_lines` that uses some opencv to do line detection compared to the other flow.\n\nboth flows run fine on dogfood",
+      "time": "15:05",
+      "timestamp": "1591913153.156400",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "is that what you mean or do you mean something else? @shaunak",
+      "time": "16:56",
+      "timestamp": "1591919812.156900",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "Can you run a regular flow and check if it completes successfully in your setup?",
+      "time": "16:58",
+      "timestamp": "1591919882.157100",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "@Karthik S regular flow (the one we ran yesterday) is working fine (dogfood.instabase.com/apps/flow/edit/felicia/my-repo/fs/Instabase%20Drive/test%20flow%20project/workflow.ibflow# (http://dogfood.instabase.com/apps/flow/edit/felicia/my-repo/fs/Instabase%20Drive/test%20flow%20project/workflow.ibflow#))",
+      "time": "17:50",
+      "timestamp": "1591923027.158800",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "Then it's possibly OpenCV / Celery in Mac",
+      "time": "17:54",
+      "timestamp": "1591923263.159000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Yup, looks like an OpenCV issue",
+      "time": "18:53",
+      "timestamp": "1591926785.159400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "do you know which line the segmentation fault appears at?",
+      "time": "18:53",
+      "timestamp": "1591926798.159600",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "let me see if running app tasks in docker will fix it, i remember this being a fix before",
+      "time": "18:54",
+      "timestamp": "1591926842.159800",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "alright, it’s working :smile: thanks for helping!",
+      "time": "19:10",
+      "timestamp": "1591927822.160000",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-06-11.json",
+    "message_count": 28,
+    "start_time": "1591900974.139600",
+    "end_time": "1591927822.160000",
+    "is_thread": true
+  }
+}

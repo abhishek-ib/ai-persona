@@ -1,0 +1,70 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-07-24_1753365919.921749_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "mfichman",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "so to preface first with two things: i'm not sure what we use `post_extraction_schema.json` for; that could potentially be unnecessary given `project_snapshot.json` . and i'm not sure why deleting a prompt validation wouldn't delete the entry in udf_prompts so that might just be a bug.\n\ni think there's two major things i wanna say. one is that i agree with matt's follow up comments that storing build project configurations seems to be too clunky and not scalable-- we change a project schema an insane number of times (especially w/ autosave) and we could have a hundred fields with any number of cleans lines. to read and replace a schema file doesn't seem very efficient.\n\nwhich brings me to the second point of what those files are used for rn. those files are only created on app creation and stored with their specific deployed solution. they are all essentially read-only files that are used for relatively infrequent actions compared to how build projects are iterated. (except for maybe schema.json which is read by the frontend to display app schema). for example:\n• `project_snapshot.json` is only used when customizing apps\n• `schema.json` is used on gt set creation \napps are almost completely isolated from the db, in large part also because a flow is stored as an ibflowbin rather than anywhere in the db. i think as standalone versions this is fine, and if we did try to store these things in the db, imagine like _x_ number of projects w/ _y_ number of app versions, you'd increase the size of the db by a factor of y essentially without much benefit because those app versions are read only. so i think for apps it does make sense to use the fs but for the build project itself that is constantly evolving, the db makes sense\n\nand besides the scalable part, i think the db gives the schema a partial structure (tho we still validate at the python layer) that a json blob wouldn't give u in terms of foreign keys and unique constraints, and also makes deletion easier.\n\nso i'm pro db and like matt said maybe there's historical context that also motivates that",
+      "time": "07:05",
+      "timestamp": "1753365919.921749",
+      "is_reply": false
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Makes sense, thank you for clarifying!\n\nI do have a few follow up questions:\n1. When is the `schema.json` and `project_snapshot.json` in the project directory actually updated then? I was playing around with it and it seems to only update when creating / updating apps.\n2. Why store these files at all in the project directory at all if the source of truth is the database? Is it just to keep track of when it’s changed from the last app version?\n3. Why do we need duplicated information in between `post_extraction_schema` (validations + udfs) / `schema.json` (classes and clean lines) and `project_snapshot.json`?",
+      "time": "12:30",
+      "timestamp": "1753385440.232309",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Given the amount of granular updates that we make to the schema it makes more sense to keep it in the db, it’s just when it appears as if both fs and db is used as a source of truth for different features of the project, it definitely confused me as to why we have two different places of storing what appeared to be the same data.\n\nIn the database right now also, there’s some tables that appear to be used solely for projects (like `validation_rules`) but aren’t prefixed as such. And there’s tables that are used for both projects and apps + deployments and chatbots (like `docs`), but there’s also `input_file` that used only for projects and chatbots but not for apps / deployments. The usage of many of the tables doesn’t always match the naming and as someone that’s still familiarizing myself with Build and some of the core data model it can be really confusing :sweat_smile:",
+      "time": "12:30",
+      "timestamp": "1753385450.696159",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Is any of this documented? Like an ERD with a short description of the intended purpose of each table? Or a design doc which answers some of the follow-up questions I had?",
+      "time": "12:30",
+      "timestamp": "1753385451.793069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes^",
+      "time": "13:16",
+      "timestamp": "1753388169.302749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "At least for the DB tables, the tech spec(s) are here:\n\nhttps://docs.google.com/document/d/12V346LHpa1sSQby0FEr_ooCCeoN2xXbf8wjvA2KdNc0/edit?tab=t.0#heading=h.cox5sfexp32k",
+      "time": "13:16",
+      "timestamp": "1753388198.477699",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-07-24.json",
+    "message_count": 6,
+    "start_time": "1753365919.921749",
+    "end_time": "1753388198.477699",
+    "is_thread": true
+  }
+}

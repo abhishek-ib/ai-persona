@@ -1,0 +1,78 @@
+{
+  "id": "ch_C06FA6A23_2019-10-02_1570055871.211500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Handsome Dave",
+    "Heymian",
+    "Eric Han"
+  ],
+  "messages": [
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "I just got a build failure in the release branch on the old build server. Does this look familiar to anyone?\n```\ncd /home/dbishop/instabase/webserver/webapp/../../webserver/shared/node && make combine-static-files;\nmake[4]: Entering directory '/home/dbishop/instabase/webserver/shared/node'\n./compressor.js\nmodule.js:549\n    throw err;\n    ^\n\nError: Cannot find module '@node-minify/core'\n    at Function.Module._resolveFilename (module.js:547:15)\n    at Function.Module._load (module.js:474:25)\n    at Module.require (module.js:596:17)\n    at require (internal/module.js:11:18)\n    at Object.<anonymous> (/home/dbishop/instabase/webserver/shared/node/compressor.js:2:16)\n    at Module._compile (module.js:652:30)\n    at Object.Module._extensions..js (module.js:663:10)\n    at Module.load (module.js:565:32)\n    at tryModuleLoad (module.js:505:12)\n    at Function.Module._load (module.js:497:3)\nMakefile:25: recipe for target 'combine-static-files' failed\nmake[4]: *** [combine-static-files] Error 1\nmake[4]: Leaving directory '/home/dbishop/instabase/webserver/shared/node'\nMakefile:59: recipe for target 'combine-static-files' failed\nmake[3]: *** [combine-static-files] Error 2\nmake[3]: Leaving directory '/home/dbishop/instabase/webserver/webapp'\nMakefile:67: recipe for target 'compile-static-files' failed\nmake[2]: *** [compile-static-files] Error 2\nmake[2]: Leaving directory '/home/dbishop/instabase/webserver/webapp'\nMakefile:28: recipe for target 'fetch-static' failed\nmake[1]: *** [fetch-static] Error 2\nmake[1]: Leaving directory '/home/dbishop/instabase/webserver/server-nginx'\n/home/dbishop/instabase/webserver/webapp/../../shared-utils/build-utils/shared/build-stack.mk:229: recipe for target 'push-stack-blendwithbase-public-gc' failed\nmake: *** [push-stack-blendwithbase-public-gc] Error 1\nERROR: an error occurred while pushing images to gcloud\n```",
+      "time": "15:37",
+      "timestamp": "1570055871.211500",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "`cd webserver/shared/node; make setup`\nThen build again",
+      "time": "15:38",
+      "timestamp": "1570055913.211700",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Hrrm. I had this problem last time (so I should have remembered). But I’ll be adding “make that not a necessary one-off step” to my todo list. Thanks!",
+      "time": "15:47",
+      "timestamp": "1570056479.212100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah for some reason I thought we merged `make setup` into the build flow already, I vaguely remember seeing a PR about it. But maybe @Eric Han can confirm?",
+      "time": "15:48",
+      "timestamp": "1570056511.212400",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "it shouldnt be a one-off, I tried to add `make setup` to `make build` step in webapp, but it broke during the release process. something about `npm install` failing when performed from a build machine. I never got the exact error, I just reverted it for this release. If someone can show me how to see the exact error on a build machine, I can try to make this change again",
+      "time": "15:50",
+      "timestamp": "1570056636.212700",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "original PR was here:\nhttps://github.com/instabase/instabase/pull/11146",
+      "time": "15:55",
+      "timestamp": "1570056940.213000",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "I’ll look into it, thanks!",
+      "time": "16:02",
+      "timestamp": "1570057357.213200",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-10-02.json",
+    "message_count": 7,
+    "start_time": "1570055871.211500",
+    "end_time": "1570057357.213200",
+    "is_thread": true
+  }
+}

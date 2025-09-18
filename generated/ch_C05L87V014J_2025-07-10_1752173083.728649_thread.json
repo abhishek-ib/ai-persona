@@ -1,0 +1,141 @@
+{
+  "id": "ch_C05L87V014J_2025-07-10_1752173083.728649_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "William Helmrath"
+  ],
+  "messages": [
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Hey - running into this same issue on my sandbox. After manually pruning images + running the login scripts I was able to fetch the node image but webapp is still failing to fetch `549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17)` with a 403 Forbidden error",
+      "time": "11:44",
+      "timestamp": "1752173083.728649",
+      "is_reply": false
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Actually jk, forgot to `make clean` which seems to have solved the image pull issue. I am running into a new one that api-server isn’t running even though crafting thinks it’s in the `Started` state",
+      "time": "11:51",
+      "timestamp": "1752173472.534449",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Dang, yeah I think api-server has some runaway image size loop related to the `./build`  dir...",
+      "time": "12:10",
+      "timestamp": "1752174648.001969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'm going to be looking at all the Python docker images in a week or two, as part of the migration off Bazel. I can take a look then.",
+      "time": "12:11",
+      "timestamp": "1752174674.214989",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "No worries, suspending the sandbox via the UI and then reviving it seems to have done the job",
+      "time": "12:25",
+      "timestamp": "1752175517.215769",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, I got a new issue:\n\n```15:38:53  Cluster sync check succeeded on attempt 0\n15:38:53  time=\"2025-07-10T19:38:53Z\" level=warning msg=\"Failed to invoke grpc call. Use flag --grpc-web in grpc calls. To avoid this warning message, use flag --grpc-web.\"\n15:38:53  name: insan-use2-core-svcs-host-eks-cluster\n15:38:53  namespace: insan-use2-pipeline-test-instabase\n15:38:53  Project sync check succeeded on attempt 0\n15:38:53  time=\"2025-07-10T19:38:53Z\" level=warning msg=\"Failed to invoke grpc call. Use flag --grpc-web in grpc calls. To avoid this warning message, use flag --grpc-web.\"```",
+      "time": "12:48",
+      "timestamp": "1752176889.649589",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://jenkins.instabase.com/job/SAAS-AWS/job/saas-pipelines/job/start-argocd-deployment/2723/console",
+      "time": "12:48",
+      "timestamp": "1752176910.574079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Same stage failed -- argocd",
+      "time": "12:48",
+      "timestamp": "1752176915.240869",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "I’ll need to look into the pipeline to remember what’s happening here, but it looks like there are three steps:\n1. cluster sync :white_check_mark: \n2. project sync :white_check_mark: \n3. ??? :x:",
+      "time": "12:50",
+      "timestamp": "1752177045.266119",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Ah it’s trying to refresh the argo app which is failing. These are transient so I’ve kicked off another run to see if that succeeds. If not, we can manually do this through the Argo UI",
+      "time": "12:51",
+      "timestamp": "1752177116.290159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah OK. ty!",
+      "time": "12:52",
+      "timestamp": "1752177122.362629",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Appreciate the quick turnaround!",
+      "time": "12:52",
+      "timestamp": "1752177130.332659",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Here’s (https://github.com/instabase/instabase/blob/master/tools/releasetools/jenkins/pipelines/saas/start-argocd-deployment.groovy#L275) the stage btw - we retry each step 20 times :sob:",
+      "time": "12:52",
+      "timestamp": "1752177157.121289",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Retry succeeded, argo (https://argocd.sandbox.console.instabase.com/applications/pipeline-test-instabase?resource=&orphaned=false&conditions=false) is syncing now",
+      "time": "12:55",
+      "timestamp": "1752177339.448739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":cry: that's sad",
+      "time": "12:55",
+      "timestamp": "1752177341.639299",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-10.json",
+    "message_count": 15,
+    "start_time": "1752173083.728649",
+    "end_time": "1752177341.639299",
+    "is_thread": true
+  }
+}

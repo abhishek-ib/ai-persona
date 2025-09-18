@@ -1,0 +1,517 @@
+{
+  "id": "ch_C06FA6A23_2024-02-07_1707324630.643129_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "All righty, now having a separate problem with nginx:\n\n```CS❯ make run-docker\nMakefile:237: warning: overriding recipe for target 'publish-svc-prod-gc'\n/home/owner/instabase/webserver/server-nginx/../../shared-utils/build-utils/shared/deploy.mk:929: warning: ignoring old recipe for target 'publish-svc-prod-gc'\n# Works if you remove locations in nginx-config-template.jinja.yml after\ndocker run  --name instabase-server-nginx  \\\n-v /home/owner/instabase/webserver/server-nginx/build/certificates:/etc/nginx/certificates \\\n-p 443:8081 -p 80:8080 --rm -t -i instabase/server-nginx\n2024/02/07 16:50:03 [error] 14#14: Failed to construct tracer: Error resolving address: Name or service not known\nnginx: [error] Failed to construct tracer: Error resolving address: Name or service not known\nmake: *** [Makefile:217: run-docker] Error 1```",
+      "time": "08:50",
+      "timestamp": "1707324630.643129",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@sean.donohoe maybe you have an idea, since this only happens in Crafting sandboxes",
+      "time": "09:49",
+      "timestamp": "1707328146.807179",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": ":eyes: that's odd, any idea what address it's failing to resolve?",
+      "time": "09:50",
+      "timestamp": "1707328234.054619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "No idea. Since it says \"tracer\", perhaps Jaeger?",
+      "time": "09:50",
+      "timestamp": "1707328251.789029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Might have something to do with ` host.docker.internal` and the docker version being different in crafting",
+      "time": "09:52",
+      "timestamp": "1707328355.729149",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ah oof, that would make sense -- can we run with `--network=host` and drop the port maps?",
+      "time": "09:53",
+      "timestamp": "1707328404.764109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```root@6b43eb75a643:/# ping host.docker.internal\nping: host.docker.internal: Name or service not known```",
+      "time": "09:54",
+      "timestamp": "1707328462.291089",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "^ sandbox",
+      "time": "09:54",
+      "timestamp": "1707328464.465889",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "do you know why we're using that hostname? afaik that's only something configured by docker desktop, which we don't use on crafting",
+      "time": "09:55",
+      "timestamp": "1707328528.950279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "laptop:\n```root@f88cb03b75cb:/# ping host.docker.internal\nPING host.docker.internal (192.168.65.254) 56(84) bytes of data.\n64 bytes from 192.168.65.254 (192.168.65.254): icmp_seq=1 ttl=63 time=1.25 ms\n64 bytes from 192.168.65.254 (192.168.65.254): icmp_seq=2 ttl=63 time=0.598 ms```",
+      "time": "09:55",
+      "timestamp": "1707328533.710389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We use it heavily in the local configuration (env-local.json and a few other places). This is how services connect to each other on the laptop.",
+      "time": "09:56",
+      "timestamp": "1707328563.717409",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "that's very unfortunate :disappointed:",
+      "time": "09:56",
+      "timestamp": "1707328579.581879",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also: docker.for.mac.localhost",
+      "time": "09:56",
+      "timestamp": "1707328600.922839",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "haven't tried it yet, but I think we could try working around this by adding an entry to /etc/hosts with `172.17.0.1 host.docker.internal`",
+      "time": "09:56",
+      "timestamp": "1707328602.828929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'll give it a shot I suppose",
+      "time": "09:57",
+      "timestamp": "1707328657.734109",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "_sigh_ well that's going to be an annoying bit of tech debt to unwind",
+      "time": "09:57",
+      "timestamp": "1707328663.112079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, that fixed this problem. On to the next one!\n\n```CS❯ make run-docker-proxy\nMakefile:237: warning: overriding recipe for target 'publish-svc-prod-gc'\n/home/owner/instabase/webserver/server-nginx/../../shared-utils/build-utils/shared/deploy.mk:929: warning: ignoring old recipe for target 'publish-svc-prod-gc'\n# At the very least, you should make sure webapp is running and listening on port 5000.\n# Run `make run-docker` will suffice in webserver/webapp/\n# If you are a chrome user you will need to enable \"insecure\" localhost:\n# <chrome://flags/#allow-insecure-localhost>\n# On linux use this command instead:\n# docker run --add-host=host.docker.internal: \\\n#  --name instabase-server-nginx --env-file localsettings.env \\\n#  -p 443:8081 -p 80:8080 --rm -t -i instabase/server-nginx\ndocker run  --name instabase-server-nginx  \\\n-v /home/owner/instabase/webserver/server-nginx/build/certificates:/etc/nginx/certificates \\\n--env-file localsettings.env \\\n-p 443:8081 -p 80:8080 --rm -t -i instabase/server-nginx\n2024/02/07 18:00:10 [emerg] 14#14: cannot load certificate key \"/etc/nginx/certificates/default.key\": BIO_new_file() failed (SSL: error:8000000D:system library::Permission denied:calling fopen(/etc/nginx/certificates/default.key, r) error:10080002:BIO routines::system lib)\nnginx: [emerg] cannot load certificate key \"/etc/nginx/certificates/default.key\": BIO_new_file() failed (SSL: error:8000000D:system library::Permission denied:calling fopen(/etc/nginx/certificates/default.key, r) error:10080002:BIO routines::system lib)```",
+      "time": "10:00",
+      "timestamp": "1707328828.481859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Looks like permissions are different in crafting",
+      "time": "10:00",
+      "timestamp": "1707328835.623669",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "can you try to chmod that cert to `444` prior to docker run?",
+      "time": "10:01",
+      "timestamp": "1707328902.800649",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I bet that's because nginx is running as uid 9999, and the `owner` user on crafting (uid 1000) is the only one with read access by default",
+      "time": "10:02",
+      "timestamp": "1707328935.654129",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It's actually b/c the root user is used to create the certificates under `build/certificates` during the build process",
+      "time": "10:03",
+      "timestamp": "1707328992.240469",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Which is :upside_down_face:",
+      "time": "10:03",
+      "timestamp": "1707329004.712229",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I mean even that should _technically_ be fine with the right perms (though I agree it's not ideal) -- I'm more thinking the `default.key` here needs `0644`",
+      "time": "10:04",
+      "timestamp": "1707329064.319349",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "when I changed that it seems to work",
+      "time": "10:04",
+      "timestamp": "1707329098.997409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yep, fixed now",
+      "time": "10:05",
+      "timestamp": "1707329113.168179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, finally\n\n```INFO - Service=conversion-service IMAGE=instabase/conversion-service  status=Up 2 hours Run_mode=Docker\nINFO - Service=ocr-service IMAGE=instabase/ocr-service  status=Up 2 hours Run_mode=Docker\nINFO - Service=opensearch IMAGE=instabase/opensearch  status=Up 2 hours Run_mode=Docker\nINFO - Service=rabbitmq IMAGE=instabase/rabbitmq  status=Up 2 hours Run_mode=Docker\nINFO - Service=redis IMAGE=instabase/redis  status=Up 2 hours Run_mode=Docker\nINFO - Service=server-nginx IMAGE=instabase/server-nginx  status=Up 3 seconds Run_mode=Docker\nINFO - Service=model-service IMAGE=instabase/model-service  status=Up About an hour Run_mode=Docker\nINFO - Service=weaviate IMAGE=instabase/weaviate  status=Up 2 hours Run_mode=Docker\nINFO - Service=api-server                      status=Up     Run_mode=local\nINFO - Service=apps-server                     status=Up     Run_mode=local\nINFO - Service=celery-app-tasks                status=Up     Run_mode=local\nINFO - Service=celery-core-tasks               status=Up     Run_mode=local\nINFO - Service=core-platform-service           status=Up     Run_mode=local\nINFO - Service=file-service                    status=Up     Run_mode=local\nINFO - Service=job-service                     status=Up     Run_mode=local\nINFO - Service=license-service                 status=Up     Run_mode=local\nINFO - Service=search-tservice                 status=Up     Run_mode=local\nINFO - Service=stripe-listener                 status=Down. Please see webserver/api-server/stripe-listener.log for details\nINFO - Service=webapp                          status=Up     Run_mode=local\nINFO - Service=webpack                         status=Up     Run_mode=local```",
+      "time": "10:05",
+      "timestamp": "1707329135.621249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Now we find out if it'll blend",
+      "time": "10:05",
+      "timestamp": "1707329145.222039",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I need to open the nginx port up",
+      "time": "10:06",
+      "timestamp": "1707329165.214169",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "weird -- thanks for debugging :slightly_smiling_face: I think accessing server-nginx through the endpoint is going to be interesting, since it's not being contacted over localhost (and we're setting that as our cert name)",
+      "time": "10:06",
+      "timestamp": "1707329191.632859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, certs are a problem :confused:",
+      "time": "10:07",
+      "timestamp": "1707329227.339089",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Anyway, I don't quite think Crafting sandboxes are ready for backend dev",
+      "time": "10:07",
+      "timestamp": "1707329244.853589",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I can test & run services in isolation, but I can do that on my laptop",
+      "time": "10:07",
+      "timestamp": "1707329267.429749",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "well, more that ppy is too rigid to be run on linux :slightly_smiling_face:",
+      "time": "10:07",
+      "timestamp": "1707329270.603609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "What I really need is to be able to integration test the entire thing _with_ backend changes from my branch",
+      "time": "10:08",
+      "timestamp": "1707329294.324899",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yep, and we can do that for _any_ service which receives http/grpc requests that originate from ingress -- we can't do dynamic injection for testing things like asynchronous work, though, because we need to propagate crafting headers through our async payloads (similar to what I've been told we do with propagating tracing headers through rmq, etc)",
+      "time": "10:09",
+      "timestamp": "1707329380.876299",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "fwiw, too, I think we can still set the host to the correct domain beforehand, _and_ we can get port-forwarding to still request localhost if that doesn't work",
+      "time": "10:10",
+      "timestamp": "1707329439.521029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I mean, I can always port-forward to my laptop over SSH (assuming `cs ssh` allows this)",
+      "time": "10:12",
+      "timestamp": "1707329550.753599",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yep that's what I mean -- we'd need to add a port forwarding rule to the sandbox config, but once that's in you'd run `cs port-forward` on your laptop and hit localhost from your browser like normal",
+      "time": "10:13",
+      "timestamp": "1707329599.090019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```Listen on \"localhost:443\": listen tcp 127.0.0.1:443: bind: permission denied```",
+      "time": "10:16",
+      "timestamp": "1707329790.804719",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Might have to sudo",
+      "time": "10:16",
+      "timestamp": "1707329801.453739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, that worked. Well, except for postgres was broken now :slightly_smiling_face: but I can fix that",
+      "time": "10:18",
+      "timestamp": "1707329892.754729",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "awesome! just about have my env working too with the ppy endpoint",
+      "time": "10:18",
+      "timestamp": "1707329937.228259",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "https://ppy--seandojo-ppy-instabase.instabase.site.sandboxes.run/\n\nso close :sob:",
+      "time": "10:21",
+      "timestamp": "1707330083.576499",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "How do people normally handle certs with crafting?",
+      "time": "10:22",
+      "timestamp": "1707330142.406049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Do they let Crafting do SSL termination? Maybe we can do the same?",
+      "time": "10:22",
+      "timestamp": "1707330158.233939",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "they don't -- in our clusters we terminate ssl at the ALB, so the nginx pod is technically running insecure. the interception ingress that crafting adds terminates using crafting auth, then forwards directly to the server-nginx service",
+      "time": "10:23",
+      "timestamp": "1707330225.760059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Right, crafting does SSL termination",
+      "time": "10:24",
+      "timestamp": "1707330274.604459",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yee, but the locally running nginx instance is configured to accept https connections, which introduces more of a hurdle",
+      "time": "10:25",
+      "timestamp": "1707330313.961249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Right, we can probably fix that pretty easily",
+      "time": "10:25",
+      "timestamp": "1707330327.207939",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "longer term I don't want ppy to be something people ever use on crafting boxes and instead have everything use traffic interception",
+      "time": "10:25",
+      "timestamp": "1707330343.854079",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "but yes, if we can trivially update the local config logic to work with crafting then that would be fantastic short term :slightly_smiling_face:",
+      "time": "10:26",
+      "timestamp": "1707330368.831709",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "it's working",
+      "time": "10:32",
+      "timestamp": "1707330729.746369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "No rabbitmq problems!",
+      "time": "10:32",
+      "timestamp": "1707330741.128639",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "heck yes!!",
+      "time": "10:32",
+      "timestamp": "1707330759.198029",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "also, if any of the local services need read-only access to services like model-service, you get kubedns for free with the crafting env (i.e. you can do stuff like `curl http://server-nginx:443/` )",
+      "time": "10:33",
+      "timestamp": "1707330804.438899",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You mean: if I want to run using the k8s model-service from the crafting cluster, rather than local model-service?",
+      "time": "10:34",
+      "timestamp": "1707330872.292919",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yep exactly!",
+      "time": "10:34",
+      "timestamp": "1707330882.712379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "(Often times I need to run local model-service b/c I made changes to it)",
+      "time": "10:34",
+      "timestamp": "1707330888.990399",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "not quite as good as traffic interception, but still there",
+      "time": "10:34",
+      "timestamp": "1707330890.827649",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "primary hiccup with that is if you e.g. need some local service to call model service, and have model service call your local service -- without interception, you would go local service -> model service -> pod in the cluster that runs whatever service you're running locally",
+      "time": "10:35",
+      "timestamp": "1707330958.114909",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "but absolutely no problem for things like data store :smile:",
+      "time": "10:36",
+      "timestamp": "1707330991.564519",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Right. Mix & match will only work for leaf services.",
+      "time": "10:37",
+      "timestamp": "1707331069.161379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-02-07.json",
+    "message_count": 62,
+    "start_time": "1707324630.643129",
+    "end_time": "1707331069.161379",
+    "is_thread": true
+  }
+}

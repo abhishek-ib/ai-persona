@@ -1,0 +1,208 @@
+{
+  "id": "ch_CSY11CK7T_2024-08-28_1724865041.618239_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Arjun",
+    "Jessica",
+    "Travis",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "i’m seeing these failures again on this PR (https://github.com/instabase/instabase/pull/61902). Did anything change here in the last day? My PR was passing cypress yesterday but now it’s failing, it’s on current master too",
+      "time": "10:10",
+      "timestamp": "1724865041.618239",
+      "is_reply": false
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "it also says blocking and non-blocking :confused_dog:",
+      "time": "10:12",
+      "timestamp": "1724865135.550769",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "@Travis",
+      "time": "10:12",
+      "timestamp": "1724865141.031779",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "Jessica pointed this out to me and my PR also just failed. Let’s get this ironed out",
+      "time": "10:12",
+      "timestamp": "1724865170.859789",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "the problem is the default state is wrong, so it doesn’t work correctly. I think I can get this fixed without a code change",
+      "time": "10:14",
+      "timestamp": "1724865268.052619",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @Xindi Xu on the unexpected case where a test was run in both blocking and non-blocking",
+      "time": "10:21",
+      "timestamp": "1724865704.751509",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "interesting. It only ran once in the blocking group but the status is reported twice. i'll check my script",
+      "time": "10:24",
+      "timestamp": "1724865864.884719",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I see it reporting twice on all failures:",
+      "time": "10:26",
+      "timestamp": "1724865961.157539",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "I reset the state of the `cypress-run-app` to be correct and I’ve deleted my PR craft box. I’ll see if this fixes it",
+      "time": "10:26",
+      "timestamp": "1724865996.304619",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hm, it seems like Cypress has some issues with reporting the status and the failure tests. In my PR, only non-blocking test failed but the `STATUS_BLOCKING_xxx` is reporting `failure` as well. Will take a closer look\n\nhttps://cloud.cypress.io/projects/cfhedy/runs/13449/specs\nhttps://github.com/instabase/instabase/actions/runs/10601119289/job/29381722948?pr=61955",
+      "time": "10:40",
+      "timestamp": "1724866800.377769",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm guessing that the latest cypress github action (released 3 hrs ago) changed some behavior that caused this\nhttps://github.com/cypress-io/github-action/releases/tag/v6.7.4",
+      "time": "10:46",
+      "timestamp": "1724867160.747279",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "seeing it fail still, but at least now its only showing up once",
+      "time": "11:08",
+      "timestamp": "1724868491.293939",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I have no idea if this will fix the issue, but at least it makes the tests that don't match the grep tag to run faster:\nhttps://github.com/instabase/instabase/pull/61995",
+      "time": "11:10",
+      "timestamp": "1724868634.231509",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm also having some tests infinitely running :grimacing: I think the non-blocking ones that are running when the results get reported?\nhttps://cloud.cypress.io/projects/cfhedy/runs/13445/specs\nhttps://cloud.cypress.io/projects/cfhedy/runs/13452/specs",
+      "time": "11:11",
+      "timestamp": "1724868676.655259",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think these 2 are timeouts. I saw a lot of tests that just keep on running after timeouts",
+      "time": "11:12",
+      "timestamp": "1724868762.954729",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "In 13445, the first one linked, the one running forever is documents-grid within the non-blocking section. That one isn't non-blocking, it should have been skipped. So I guess whatever test it's going over will just keeping \"running\" after the timeout",
+      "time": "11:16",
+      "timestamp": "1724868968.971719",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "should we skip version-history @Travis?",
+      "time": "13:17",
+      "timestamp": "1724876258.414279",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "yes we should",
+      "time": "13:27",
+      "timestamp": "1724876855.635989",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "sorry, I haven’t been able to get the state of it to work",
+      "time": "13:27",
+      "timestamp": "1724876864.350719",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Aayush is on call this week so could you put up the PR to skip it Travis? And in the future I actually think we need our on call people to be in the PT-ET timezones",
+      "time": "13:28",
+      "timestamp": "1724876933.113559",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "I have a PR I’ll tack it onto",
+      "time": "13:29",
+      "timestamp": "1724876965.877029",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "https://github.com/instabase/instabase/pull/62016",
+      "time": "13:32",
+      "timestamp": "1724877152.894429",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "this is merged so feel free to update your branches and we should be good to go",
+      "time": "13:47",
+      "timestamp": "1724878056.892689",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-08-28.json",
+    "message_count": 23,
+    "start_time": "1724865041.618239",
+    "end_time": "1724878056.892689",
+    "is_thread": true
+  }
+}

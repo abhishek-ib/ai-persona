@@ -1,0 +1,53 @@
+{
+  "id": "ch_C06FA6A23_2024-09-18_1726663884.578519_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Jet"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hey there folks, does anyone know how to run `server-nginx` _without_ TLS in a local dev environment (laptop)? Right now, port 80 is open, but all requests redirect to port 443. I can mess with the nginx config, of course -- just wanted to make sure there wasn't already a way to do it with an env var or something similar.",
+      "time": "05:51",
+      "timestamp": "1726663884.578519",
+      "is_reply": false
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "Maybe it's the `SSL_PROTOCOLS` variable. If we set it to an empty string, I'm not sure if it'll disable TLS or not.",
+      "time": "10:04",
+      "timestamp": "1726679040.041599",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This is what I arrived at:\n\n```diff --git a/webserver/server-nginx/Makefile b/webserver/server-nginx/Makefile\nindex b6b54640d4a..df06e6f2939 100644\n--- a/webserver/server-nginx/Makefile\n+++ b/webserver/server-nginx/Makefile\n@@ -91,9 +91,10 @@ ifeq ($(RELOAD), true)\n build-docker: build create-self-signed-cert copy-jaeger-config-local\n        python config/gen_nginx_config.py \\\n                --spec $(SPEC) \\\n-               --reload true \\\n+               --reload=true \\\n+               --http-only=$(HTTP_ONLY) \\\n                --restrict-allowed-hosts=$(RESTRICT_ALLOWED_HOSTS) \\\n-               --enable-ssl=true > $(current_dir)/build/config/nginx.conf.template\n+               --enable-ssl=false > $(current_dir)/build/config/nginx.conf.template\n        $(DOCKER_BUILD_CMD) \\\n        --build-arg BASE_CONTAINER_IMAGE_TAG=$(BASE_CONTAINER_IMAGE_TAG) \\\n        --build-arg BUILD_IMAGE_NAME=$(BUILD_IMAGE_NAME) \\```",
+      "time": "13:12",
+      "timestamp": "1726690356.304819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I also had to patch gen_nginx_config.py, so that it actually respected the http-only flag",
+      "time": "13:12",
+      "timestamp": "1726690379.998069",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-09-18.json",
+    "message_count": 4,
+    "start_time": "1726663884.578519",
+    "end_time": "1726690379.998069",
+    "is_thread": true
+  }
+}

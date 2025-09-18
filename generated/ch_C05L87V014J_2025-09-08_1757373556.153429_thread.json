@@ -1,0 +1,37 @@
+{
+  "id": "ch_C05L87V014J_2025-09-08_1757373556.153429_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Sayan"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "For those seeing this issue on the latest master in celery-app-task when running any async task:\n```[2025-09-08 23:00:00,879: ERROR/ForkPoolWorker-74] Signal handler <function setup_celery_task at 0x7ff6b624adc0> raised: TypeError(\"__init__() got an unexpected keyword argument 'pdf_client'\")\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.9/site-packages/celery/utils/dispatch/signal.py\", line 276, in send\n    response = receiver(signal=self, sender=sender, **named)\n  File \"/instabase/workers/celery-app-tasks/py/instabase/registry/tasks.py\", line 88, in setup_celery_task\n    worker_util.setup_celery_task()\n  File \"/instabase/workers/celery-app-tasks/py/instabase/registry/worker_util.py\", line 647, in setup_celery_task\n    _setup_runnables()\n  File \"/instabase/workers/celery-app-tasks/py/instabase/registry/worker_util.py\", line 222, in _setup_runnables\n    process_file_clients = clients_factory.ProcessFileClients(\nTypeError: __init__() got an unexpected keyword argument 'pdf_client'```\nYou can fix it locally by `git apply` the below diff:\n```diff --git a/distributed-tasks/celery/app-tasks/src/py/instabase/registry/worker_util.py b/distributed-tasks/celery/app-tasks/src/py/instabase/registry/worker_util.py\nindex 172412e3c12..c1622feb5dd 100644\n--- a/distributed-tasks/celery/app-tasks/src/py/instabase/registry/worker_util.py\n+++ b/distributed-tasks/celery/app-tasks/src/py/instabase/registry/worker_util.py\n@@ -220,7 +220,6 @@ def _setup_runnables() -> None:\n\n   # Create client objects for each stage\n   process_file_clients = clients_factory.ProcessFileClients(\n-      pdf_client=pdf_client_retry,\n       ocr_client=ocr_client,\n       account_client=clients_factory.account_client,\n   )\n@@ -295,7 +294,6 @@ def _setup_runnables() -> None:\n     )\n\n   # Set clients to global object\n-  clients_factory.set_pdf_client(pdf_client_retry)\n   clients_factory.set_process_file_clients(process_file_clients)\n   clients_factory.set_file_client(file_client)\n   clients_factory.set_email_client(email_client)\ndiff --git a/distributed-tasks/celery/webdriver-tasks/src/py/instabase/registry/tasks.py b/distributed-tasks/celery/webdriver-tasks/src/py/instabase/registry/tasks.py\nindex f00b98e2527..5336a27706d 100644\n--- a/distributed-tasks/celery/webdriver-tasks/src/py/instabase/registry/tasks.py\n+++ b/distributed-tasks/celery/webdriver-tasks/src/py/instabase/registry/tasks.py\n@@ -181,7 +181,6 @@ def _setup_runnables() -> None:\n   aihub_client = ai_hub_service_pb2_grpc.AIHubServiceStub(aihub_channel)\n\n   # Set clients to global object\n-  clients_factory.set_pdf_client(pdf_client_retry)\n   clients_factory.set_file_client(file_client)\n   clients_factory.set_grpc_file_client(grpc_file_client)\n   clients_factory.set_email_client(email_client)```\nI think it originated from this PR (https://github.com/instabase/instabase/pull/74427/files). FYI @mfichman",
+      "time": "16:19",
+      "timestamp": "1757373556.153429",
+      "is_reply": false
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "hmm I'm also seeing this error in CAT\n\n`[2025-09-09 00:23:24,027: WARNING/ForkPoolWorker-6] Retrying instabase.jobs.job_service_util.update_task in 180.9147727283747 seconds as it returned (None, 'Job_client is not available!').`\n\nIs this related? my crafting sandbox (https://instabase.sandboxes.site/sandboxes/sayanbhattacharjee6?cw=dev) is new and includes @mfichman’s changes",
+      "time": "17:28",
+      "timestamp": "1757377700.531739",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-09-08.json",
+    "message_count": 2,
+    "start_time": "1757373556.153429",
+    "end_time": "1757377700.531739",
+    "is_thread": true
+  }
+}

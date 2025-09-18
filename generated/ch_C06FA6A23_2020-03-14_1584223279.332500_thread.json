@@ -1,0 +1,70 @@
+{
+  "id": "ch_C06FA6A23_2020-03-14_1584223279.332500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "dlluncor",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "hey @shaunak @Heymian (cc: @achao @Erick @Ashish). I noticed that we use clients_factory in some Flow code and Platform API (api-server) code.\n\nThe challenge with clients_factory is that it includes all the deps needed for workers to run. That is, if api-server-apps and api-server, etc need to depend on clients_factory, they will have to pull in a lot of dependencies like extraction-service Thrift, pdf-service Thrift, and many other deps they shouldn’t be pulling in.\n\nThe alternative is to pass these clients starting from current_app in the Flask handler, and then passing them down to the particular library that needs them. Can we move forward with that alternative? Pros / cons versus keeping the current clients_factory approach?\n\nLooking to address this before the code-cut because we might end up having to make the Docker containers bigger with more deps because of api-server and api-server-apps dependency on clients_factory",
+      "time": "15:01",
+      "timestamp": "1584223279.332500",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I think the idea of the client-factory is to provide clients in the global scope.  We can keep those clients empty that are not required.  We use this technique in webdrive-tasks where only a subset of clients are implemented.\n\nNote that our flask_app.clients already include a lot of these clients anyway, so moving to clients-factory is not a big change.\n\nI would say that we move all the models to clients-factory since it allows us to normalize the usage of these *global* clients.",
+      "time": "15:05",
+      "timestamp": "1584223515.332800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i see. that will mean that all of our services will have to end up including all service protos / thrift deps, no? The main downside I saw from that was bloating the Dockerfiles and also making the proto / thrift deps very wide. Also, it technically means that you don’t know which clients are needed per service, but only know it at runtime, not at compile time.\n\nI see the benefits of standardization, but I see the aforementioned cons as potentially having great consequence to the Docker container size, dep management, and ease of understanding which thrift / proto services each Docker container depends on.\n\nHow do you weigh those pros and cons? [just curious to get your full perspective on it before we come to the conclusion]",
+      "time": "15:10",
+      "timestamp": "1584223848.333100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I see .. I think all the thrift deps and proto deps are already there since we already talk to file, repo, account services from webserver/*\n\nThe inclusion of generated proto / thrift files is not that large to fear about bloating up Dockerfile.\n\nAlso, this model is actually very similar to the one we have in Flask, where we have defined a common Flask.App (http://Flask.App) defined in *shared_apps* section.  Just that instead of Flask.App (http://Flask.App), we are using clients_factory.\n\nWe can make th clients_factory more robust if we wanted to by splitting it up into thrift-deps, rpc-deps and other auxiliary clients, but I do think that we need to think about a more standardized protocol for accessing these clients.",
+      "time": "16:02",
+      "timestamp": "1584226973.333300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Gotcha. We can go with that approach. I think the most immediate action item then is that boto3 is getting pulled into api-server and api-server-apps @Erick @shaunak could you coordinate on how we should handle that for this release?",
+      "time": "16:33",
+      "timestamp": "1584228793.333600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I’m not super familiar with the details of how we propagate clients-factory around our codebase, but just from reading this convo, I have a slight preference towards making it more clear what deps are needed/used in each service, rather than having a global struct with things that may or may not be populated or needed. I have similar thoughts about configs - only propagate relevant configs to services/modules that matter to them. But I don’t feel strongly either way, just my 2c, might not apply to this particular case.",
+      "time": "18:14",
+      "timestamp": "1584234878.339900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-03-14.json",
+    "message_count": 6,
+    "start_time": "1584223279.332500",
+    "end_time": "1584234878.339900",
+    "is_thread": true
+  }
+}

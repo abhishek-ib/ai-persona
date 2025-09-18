@@ -1,0 +1,310 @@
+{
+  "id": "ch_C05L87V014J_2025-01-13_1736802879.474139_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "tony.shi",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "For front end testing, is there an updated version of our testing doc (https://github.com/instabase/frontend-docs/blob/master/testing.md) for testing on crafting environments?\n\nIt seem like my box (https://https--tonyshi-instabase.instabase.site.sandboxes.run/) is still trying to connect to localhost\n```owner@dev:~/instabase/webserver/shared/src/js/webpacked$ yarn e2e:run -- --spec  /home/owner/instabase/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts\nyarn run v1.22.22\nwarning From Yarn 1.0 onwards, scripts don't require \"--\" for options to be forwarded. In a future version, any explicit \"--\" will be forwarded as-is to the scripts.\n$ cypress run --spec /home/owner/instabase/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts\nIt looks like this is your first time using Cypress: 13.15.0\n\n✔  Verified Cypress! /home/owner/.cache/Cypress/13.15.0/Cypress\n\nOpening Cypress...\n[82680:0113/210825.684342:ERROR:zygote_host_impl_linux.cc(273)] Failed to adjust OOM score of renderer with pid 82836: Permission denied (13)\n\nDevTools listening on <ws://127.0.0.1:46089/devtools/browser/e094c04d-6cf3-4a33-8494-6523d992312d>\nCypress loaded config local.js\n@cypress/grep: will omit filtered tests\nCypress could not verify that this server is running:\n\n  > https://localhost\n\nWe are verifying this server because it has been configured as your baseUrl.\n\nCypress automatically waits until your server is accessible before running tests.\n\nWe will try connecting to it 3 more times...\nWe will try connecting to it 2 more times...\nWe will try connecting to it 1 more time...\n\nCypress failed to verify that your server is running.\n\nPlease start this server and then run Cypress again.\nerror Command failed with exit code 1.\ninfo Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.```",
+      "time": "13:14",
+      "timestamp": "1736802879.474139",
+      "is_reply": false
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "I've also tried following this doc (https://instabase.atlassian.net/wiki/spaces/ENG/pages/2150465551/Cypress+Testing+in+AI+Hub) but run into issues adjusting OOM scores\n\n```owner@dev:~/instabase/webserver/shared/src/js/webpacked$ ENVIRONMENT=local-crafting-aihub yarn e2e:open\nyarn run v1.22.22\n$ cypress open --browser chrome --e2e\n[84563:0113/212753.374368:ERROR:zygote_host_impl_linux.cc (http://zygote_host_impl_linux.cc)(273)] Failed to adjust OOM score of renderer with pid 84718: Permission denied (13)\n\nDevTools listening on <ws://127.0.0.1:37823/devtools/browser/5c96ca28-f117-430a-9cd2-106eeb4dea37>\n[84563:0113/212753.818225:ERROR:zygote_host_impl_linux.cc (http://zygote_host_impl_linux.cc)(273)] Failed to adjust OOM score of renderer with pid 84785: Permission denied (13)\nCypress loaded config local-crafting-aihub.js\n@cypress/grep: will omit filtered tests```",
+      "time": "13:30",
+      "timestamp": "1736803847.835769",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@tony.shi are you using Matt’s `ibdev-backend` crafting template?",
+      "time": "13:46",
+      "timestamp": "1736804791.148719",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "I am! Should I be using the frontend one instead?",
+      "time": "13:46",
+      "timestamp": "1736804810.237849",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "do you have just frontend changes in your branch? or also some backend changes?",
+      "time": "13:47",
+      "timestamp": "1736804868.903409",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "This branch only has front end changes",
+      "time": "13:48",
+      "timestamp": "1736804888.265039",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "which cypress test do you need to run?\n\nif you’re using `ibdev-backend`, which uses a fresh db by default, some cypress tests that rely on state in the environment won’t work",
+      "time": "13:49",
+      "timestamp": "1736804952.220639",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "I'm trying to run `webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts`",
+      "time": "13:49",
+      "timestamp": "1736804980.540839",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "actually hm the test users will never exist in the fresh db if you’re using the `ibdev-backend` template",
+      "time": "13:49",
+      "timestamp": "1736804983.135029",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "so i think you should create a frontend crafting sandbox and checkout your branch\n\nand run Cypress tests from your laptop against that new sandbox",
+      "time": "13:50",
+      "timestamp": "1736805026.117999",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "That would be this crafting template (https://instabase.sandboxes.site/templates/frontend) right?",
+      "time": "13:51",
+      "timestamp": "1736805064.695229",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Thanks! Will give that a go",
+      "time": "13:51",
+      "timestamp": "1736805114.450479",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "after creating your new frontend sandbox, you can run Cypress tests from your laptop against that new sandbox\n1. replace `baseUrl` in `webserver/shared/src/js/webpacked/cypress/configs/crafting-aihub.js` with your sandbox’s url\n2. run `ENVIRONMENT=crafting-aihub yarn run e2e:open` to open the Cypress UI for running tests\n    a. if you want to run just `edit-deployment`,  `ENVIRONMENT=crafting-aihub yarn run e2e:run -- --spec  /home/owner/instabase/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts`",
+      "time": "13:53",
+      "timestamp": "1736805233.022949",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Does that mean we don't need to follow the steps in this guide (https://instabase.atlassian.net/wiki/spaces/ENG/pages/2150465551/Cypress+Testing+in+AI+Hub) then?",
+      "time": "13:54",
+      "timestamp": "1736805294.366759",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Since we're running the crafting tests locally?",
+      "time": "13:55",
+      "timestamp": "1736805309.283449",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah i forgot about that section, that would also work!\n\nso you can use either the approach documented in that guide, or what i mentioned",
+      "time": "14:01",
+      "timestamp": "1736805675.492499",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Running into nodenv issues now;\n\n```➜  webpacked git:(front-end-deployment-retention) ✗ ENVIRONMENT=crafting-aihub yarn run e2e:run -- --spec  /Users/tonyshi/instabase/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts\n/Users/tonyshi/.nodenv/shims/node: line 21: /usr/local/Cellar/nodenv/1.4.1/libexec/nodenv: No such file or directory```\n\nIs this still the correct way to do things locally?",
+      "time": "14:13",
+      "timestamp": "1736806410.457059",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Update: I got rid of the entire nodenv dir and uninstalled the package before reinstalling everything. Nodenv no longer causes issues but my local env can't seem to connect with the crafting box now\n\n```➜  webpacked git:(front-end-deployment-retention) ✗ ENVIRONMENT=crafting-aihub yarn run e2e:run -- --spec  /Users/tonyshi/instabase/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts\nyarn run v1.22.22\nwarning From Yarn 1.0 onwards, scripts don't require \"--\" for options to be forwarded. In a future version, any explicit \"--\" will be forwarded as-is to the scripts.\n$ cypress run --spec /Users/tonyshi/instabase/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts\n\nDevTools listening on <ws://127.0.0.1:58029/devtools/browser/cefc975e-4ce8-40ea-b42b-d8a1f67150c1>\nCypress loaded config crafting-aihub.js\n@cypress/grep: will omit filtered tests\n\n====================================================================================================\n\n  (Run Starting)\n\n  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐\n  │ Cypress:        13.15.0                                                                        │\n  │ Browser:        Electron 118 (headless)                                                        │\n  │ Node Version:   v18.16.1 (/Users/tonyshi/.nodenv/versions/18.16.1/bin/node)                    │\n  │ Specs:          1 found (edit-deployment.spec.ts)                                              │\n  │ Searched:       apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts                     │\n  │ Experiments:    experimentalMemoryManagement=true,experimentalStudio=true                      │\n  └────────────────────────────────────────────────────────────────────────────────────────────────┘\n\n\n────────────────────────────────────────────────────────────────────────────────────────────────────\n                                                                                                    \n  Running:  edit-deployment.spec.ts                                                         (1 of 1)\n[85376:0113/141738.938301:ERROR:ssl_client_socket_impl.cc (http://ssl_client_socket_impl.cc)(975)] handshake failed; returned -1, SSL error code 1, net_error -100\n[85376:0113/141739.484815:ERROR:ssl_client_socket_impl.cc (http://ssl_client_socket_impl.cc)(975)] handshake failed; returned -1, SSL error code 1, net_error -100\nERR_CONNECTION_CLOSED (-100) loading 'https://crafting-aihub--tonyshi1-instabase.instabase.site.sandboxes.run/__/#/specs/runner?file=apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts'\nError: ERR_CONNECTION_CLOSED (-100) loading 'https://crafting-aihub--tonyshi1-instabase.instabase.site.sandboxes.run/__/#/specs/runner?file=apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts'\n    at rejectAndCleanup (node:electron/js2c/browser_init:2:75584)\n    at WebContents.failListener (node:electron/js2c/browser_init:2:75797)\n    at WebContents.emit (node:events:514:28)\nerror Command failed with exit code 1.\ninfo Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.\n➜  webpacked git:(front-end-deployment-retention) ✗ ```",
+      "time": "14:19",
+      "timestamp": "1736806758.615789",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "when i go to https://crafting-aihub--tonyshi1-instabase.instabase.site.sandboxes.run/, i get “Bad Gateway”\n\nare you sure your sandbox is working?",
+      "time": "14:20",
+      "timestamp": "1736806832.520929",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Seems to be; Checking logs",
+      "time": "14:20",
+      "timestamp": "1736806854.134119",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ok it’s working for me now too\n\ntry running the cypress command again?",
+      "time": "14:22",
+      "timestamp": "1736806978.338599",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Still having connection issues\n\n```➜  webpacked git:(front-end-deployment-retention) ✗   ENVIRONMENT=local-crafting-aihub yarn run e2e:run -- --spec /Users/tonyshi/instabase/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts\nyarn run v1.22.22\nwarning From Yarn 1.0 onwards, scripts don't require \"--\" for options to be forwarded. In a future version, any explicit \"--\" will be forwarded as-is to the scripts.\n$ cypress run --spec /Users/tonyshi/instabase/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts\n\nDevTools listening on <ws://127.0.0.1:60313/devtools/browser/d7af26d1-b638-4331-8aef-99d9933ed847>\nCypress loaded config local-crafting-aihub.js\n@cypress/grep: will omit filtered tests\n\n====================================================================================================\n\n  (Run Starting)\n\n  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐\n  │ Cypress:        13.15.0                                                                        │\n  │ Browser:        Electron 118 (headless)                                                        │\n  │ Node Version:   v18.16.1 (/Users/tonyshi/.nodenv/versions/18.16.1/bin/node)                    │\n  │ Specs:          1 found (edit-deployment.spec.ts)                                              │\n  │ Searched:       apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts                     │\n  │ Experiments:    experimentalMemoryManagement=true,experimentalStudio=true                      │\n  └────────────────────────────────────────────────────────────────────────────────────────────────┘\n\n\n────────────────────────────────────────────────────────────────────────────────────────────────────\n                                                                                                    \n  Running:  edit-deployment.spec.ts                                                         (1 of 1)\n[6247:0113/142616.085577:ERROR:ssl_client_socket_impl.cc (http://ssl_client_socket_impl.cc)(975)] handshake failed; returned -1, SSL error code 1, net_error -100\n[6247:0113/142616.628628:ERROR:ssl_client_socket_impl.cc (http://ssl_client_socket_impl.cc)(975)] handshake failed; returned -1, SSL error code 1, net_error -100\nERR_CONNECTION_CLOSED (-100) loading 'https://crafting-aihub--tonyshi1-instabase.instabase.site.sandboxes.run/__/#/specs/runner?file=apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts'\nError: ERR_CONNECTION_CLOSED (-100) loading 'https://crafting-aihub--tonyshi1-instabase.instabase.site.sandboxes.run/__/#/specs/runner?file=apps/src/aihub/__e2e__/Deployments/edit-deployment.spec.ts'\n    at rejectAndCleanup (node:electron/js2c/browser_init:2:75584)\n    at WebContents.failListener (node:electron/js2c/browser_init:2:75797)\n    at WebContents.emit (node:events:514:28)\nerror Command failed with exit code 1.\ninfo Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.\n➜  webpacked git:(front-end-deployment-retention) ✗ ```",
+      "time": "14:26",
+      "timestamp": "1736807192.285189",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@tony.shi I think the issue is that nginx on `localhost` in the crafting sandbox does _not_ use SSL.",
+      "time": "14:30",
+      "timestamp": "1736807414.300779",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If you change the local-crafting-aihub cypress environment config to use HTTP rather than HTTPS, it might work.",
+      "time": "14:30",
+      "timestamp": "1736807437.574059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Alternatively, you can connect to the external sandbox URL. So, 2 options for connecting:\n\n```http://localhost\n\nhttps://https$SANDBOX_ENDPOINT_DNS_SUFFIX```",
+      "time": "14:31",
+      "timestamp": "1736807509.809249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "SANDBOX_ENDPOINT_DNS_SUFFIX is an env var set by Crafting:",
+      "time": "14:32",
+      "timestamp": "1736807543.803099",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mfichman-24-07❯ export | grep SAND\ndeclare -x SANDBOX_APP=\"ibdev-backend\"\ndeclare -x SANDBOX_APP_DOMAIN=\"mfichman-24-07-instabase.instabase.site.sandboxes.run\"\ndeclare -x SANDBOX_APP_FULL_NAME=\"ibdev-backend\"\ndeclare -x SANDBOX_ENDPOINT_DNS_SUFFIX=\"--mfichman-24-07-instabase.instabase.site.sandboxes.run\"\ndeclare -x SANDBOX_FULL_NAME=\"mfichman-24-07\"\ndeclare -x SANDBOX_ID=\"cu2ig0c3p09ul0tg9u6g\"\ndeclare -x SANDBOX_NAME=\"mfichman-24-07\"\ndeclare -x SANDBOX_ORG=\"instabase\"\ndeclare -x SANDBOX_ORG_ID=\"cldkwn7i9053101d4u0yygdwr\"\ndeclare -x SANDBOX_OWNER=\"<mailto:matt.fichman@instabase.com|matt.fichman@instabase.com>\"\ndeclare -x SANDBOX_OWNER_EMAIL=\"<mailto:matt.fichman@instabase.com|matt.fichman@instabase.com>\"\ndeclare -x SANDBOX_OWNER_ID=\"clsatlu1u000aax01twps4ygq\"\ndeclare -x SANDBOX_SYSTEM_DNS_SUFFIX=\".instabase.sandboxes.site (http://instabase.sandboxes.site)\"\ndeclare -x SANDBOX_SYSTEM_DOMAIN=\"instabase.sandboxes.site (http://instabase.sandboxes.site)\"\ndeclare -x SANDBOX_SYSTEM_URL=\"https://instabase.sandboxes.site\"\ndeclare -x SANDBOX_TEMPLATE=\"ibdev-backend\"\ndeclare -x SANDBOX_TEMPLATE_FULL_NAME=\"ibdev-backend\"\ndeclare -x SANDBOX_WORKLOAD=\"dev\"\ndeclare -x SANDBOX_WORKSPACE=\"dev\"```",
+      "time": "14:32",
+      "timestamp": "1736807551.621059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'd go with localhost. You probably also need to set up a tunnel, since Cypress runs on your laptop and can't access the sandbox's localhost.",
+      "time": "14:33",
+      "timestamp": "1736807605.139249",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Using HTTP instead of HTTPS results in ssl client handshake failures.\n\n@mfichman, where would we configure $SANDBOX_ENDPOINT_DNS_SUFFIX?",
+      "time": "14:33",
+      "timestamp": "1736807612.636899",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "So run the cypress tests on localhost?",
+      "time": "14:33",
+      "timestamp": "1736807629.795909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@tony.shi can you schedule some time with me tomorrow? Getting cypress working is important, but I think I need to be hands-on to figure out what's going on.",
+      "time": "14:34",
+      "timestamp": "1736807657.160929",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Would love to; Thank you so much!",
+      "time": "14:34",
+      "timestamp": "1736807673.727789",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Thanks!!",
+      "time": "14:34",
+      "timestamp": "1736807678.822459",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For those following along, I think the way to get Cypress working is:\n\n(1) Tunnel into the crafting sandbox, so your laptop can reach nginx on localhost:8080\n```cs ssh -- -N -L8080:localhost:80```\n(2) Configure your local Cypress to connect to http://localhost:8080\n\n\nAs a test, if you can load http://localhost:8080 on your laptop, then Cypress would probably (?) work.",
+      "time": "14:38",
+      "timestamp": "1736807921.950619",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Was 8080 supposed to be used for something else already? Or can we just try to kill whatever is on that?\n```owner@dev:~/instabase$ cs ssh -- -N -L8080:localhost:80\n✔ tonyshi1/dev\nbind [127.0.0.1]:8080: Address already in use\nWarning: remote port forwarding failed for listen path /tmp/.cs-ssh-cu2pc5ggcna74b7s2bfg.sock```",
+      "time": "14:40",
+      "timestamp": "1736808038.108689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh, maybe. You might have to pick a different port.",
+      "time": "14:41",
+      "timestamp": "1736808073.171459",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-01-13.json",
+    "message_count": 36,
+    "start_time": "1736802879.474139",
+    "end_time": "1736808073.171459",
+    "is_thread": true
+  }
+}

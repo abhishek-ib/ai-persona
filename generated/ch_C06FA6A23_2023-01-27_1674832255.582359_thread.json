@@ -1,0 +1,79 @@
+{
+  "id": "ch_C06FA6A23_2023-01-27_1674832255.582359_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Chuba",
+    "mfichman",
+    "Abhinav",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "How do I see what’s in our sql database on an environment? for example, dogfood",
+      "time": "07:10",
+      "timestamp": "1674832255.582359",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "You can run a temp pod on the cluster, mysql or postgres. Exec in to it and connect to db and run queries.\nor connect directly to DB if its available over internet.",
+      "time": "07:19",
+      "timestamp": "1674832777.114969",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "I wrote this bash function that you can execute within a sandbox cluster to spin up a pod temporarily with the database credentials pulled automatically from file-tservice’s config\n```function ksql() {\n    temp=$(kubectl describe deployment deployment-file-tservice | grep DB_P | sed s/username=/user=/ | awk '{$1 = \"\"; print \"mysql\" $0; }' | uniq)\n    kubectl run mysql-client --image=mysql:5.7 -it --rm --restart=Never -- sh -c \"$temp\"\n}```\nAnother option, if you have the credentials, is to mount the db into the file explorer in the webapp",
+      "time": "07:21",
+      "timestamp": "1674832890.673809",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i see. are the credentials no longer stored in plain text in some config somewhere? i remember reading somewhere that we maybe don’t do that anymore?",
+      "time": "07:22",
+      "timestamp": "1674832956.844699",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "I think it depends on the environment, for instance the 22.10 sandbox currently is still stored plaintext",
+      "time": "07:24",
+      "timestamp": "1674833081.834379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Obligatory PSA: Please be careful when directly connecting to databases, particularly dogfood/uat/production :)",
+      "time": "12:20",
+      "timestamp": "1674850811.271929",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": ":slightly_smiling_face: on that same note, especially if you’re trying to do data manipulation, using transactions is nice and safe",
+      "time": "12:21",
+      "timestamp": "1674850881.550479",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-01-27.json",
+    "message_count": 7,
+    "start_time": "1674832255.582359",
+    "end_time": "1674850881.550479",
+    "is_thread": true
+  }
+}

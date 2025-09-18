@@ -1,0 +1,438 @@
+{
+  "id": "ch_C06FA6A23_2019-05-02_1556849606.378300_conversation",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "conversation",
+  "participants": [
+    "Ashish",
+    "dlluncor",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "anyone know why this will happen on Lending Club's demo environment?\n```(! 535)-> kubectl logs -n instabase deployment-account-tservice-85d76fb5bf-26n2t\n2019/05/03 02:11:19 ERROR accountservice/handler/acl.go:102 -- strconv.ParseBool: parsing \"\": invalid syntax\n2019/05/03 02:11:19 ERROR accountservice/handler/acl.go:145 -- Failed to convert acl enable value to bool: strconv.ParseBool: parsing \"\": invalid syntax\n2019/05/03 02:11:19 ERROR accountservice/handler/acl.go:691 -- Fail: Failed to convert acl enable value to bool: strconv.ParseBool: parsing \"\": invalid syntax```",
+      "time": "19:13",
+      "timestamp": "1556849606.378300",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "@Heymian looks like some env variable in Go is expecting true or false and is getting \"\"",
+      "time": "19:16",
+      "timestamp": "1556849795.379300",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah looks like some env var default value isn’t getting set to true or false",
+      "time": "19:17",
+      "timestamp": "1556849863.379400",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "It's this method in acl.go ```func (h *AccountServiceHandler) isAclEnabledForRepo(repoID string) (bool, error) {\n\tkeyName := getACLEnableDBKey(repoID)\n\tentry, err := h.dbAccessor.GetKeyValue(keyName)\n\tif err != nil {\n\t\t// not enabled\n\t\treturn false, nil\n\t}\n\n\tenabled, err := strconv.ParseBool(*entry.KeyValue)\n\tif err != nil {\n\t\tlog.Errorf(\"%v\", err)\n\t\treturn false, fmt.Errorf(\"Failed to convert acl enable value to bool: %v\", err)\n\t}\n\n\treturn enabled == true, nil\n}```",
+      "time": "19:18",
+      "timestamp": "1556849932.380900",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "not at a computer but can you check if the ENABLE_ACL has a default set boolean set in the deployment json file?",
+      "time": "19:18",
+      "timestamp": "1556849937.381100",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "i'll check",
+      "time": "19:19",
+      "timestamp": "1556849946.381300",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "when was the last tine we deployed to them",
+      "time": "19:19",
+      "timestamp": "1556849973.381800",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "do they have the aclperm table in their DB?",
+      "time": "19:19",
+      "timestamp": "1556849981.382300",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "69 days ago",
+      "time": "19:19",
+      "timestamp": "1556849994.382500",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "okay, nix my last question",
+      "time": "19:20",
+      "timestamp": "1556850026.383200",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "they have acl_perms",
+      "time": "19:21",
+      "timestamp": "1556850073.384400",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "super weird, so the value we’re reading out of their DB is not a boolean value, which shouldn’t happen",
+      "time": "19:21",
+      "timestamp": "1556850076.384600",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "It's empty",
+      "time": "19:21",
+      "timestamp": "1556850079.384700",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "I feel like I have seen this error in the past on instabase.com (http://instabase.com)",
+      "time": "19:22",
+      "timestamp": "1556850129.386000",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "is the Ui up and running? Can you find the repo in question, go to Sharing > Manage ACL > and try to toggle the enable and disable button on “Enable ACL”",
+      "time": "19:22",
+      "timestamp": "1556850145.386700",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "I had fixed it by restarting redis",
+      "time": "19:22",
+      "timestamp": "1556850149.386800",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "ohhh interesting",
+      "time": "19:22",
+      "timestamp": "1556850174.387100",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "would love to get some repo steps for how you got it into this state",
+      "time": "19:23",
+      "timestamp": "1556850201.387900",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "",
+      "time": "19:23",
+      "timestamp": "1556850208.388200",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "That's what happens when I try to open ACL Manager",
+      "time": "19:23",
+      "timestamp": "1556850221.388800",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Enable ACL button doesn't show up",
+      "time": "19:24",
+      "timestamp": "1556850251.389600",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrm i don’t know where the button is in the new UI",
+      "time": "19:24",
+      "timestamp": "1556850275.390500",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "is it under edit?",
+      "time": "19:24",
+      "timestamp": "1556850280.390800",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Some more context for you: there are three repos. All of these problems occur only for one of the repos.",
+      "time": "19:24",
+      "timestamp": "1556850289.391300",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "The button shows up for other repos. Just not for this one repo.",
+      "time": "19:25",
+      "timestamp": "1556850304.391700",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i see",
+      "time": "19:25",
+      "timestamp": "1556850321.392100",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "how urgent is this?",
+      "time": "19:25",
+      "timestamp": "1556850328.392300",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i out and don’t even have a computer i can go to",
+      "time": "19:25",
+      "timestamp": "1556850338.392800",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Not urgent",
+      "time": "19:25",
+      "timestamp": "1556850356.393400",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "```[2019-05-03 02:22:46,514] {/instabase-server/py/instabase/utils/web/launcher_util.py:44} ERROR - Error looking up whether ACL was enabled on repo admin/my-repo for user admin. Failed to convert acl enable value to bool: strconv.ParseBool: parsing \"\": invalid syntax\n[2019-05-03 02:22:46,516] {/instabase-server/py/instabase/utils/web/launcher_util.py:44} ERROR - Error looking up whether ACL was enabled on repo admin/my-repo for user admin. Failed to convert acl enable value to bool: strconv.ParseBool: parsing \"\": invalid syntax```",
+      "time": "19:25",
+      "timestamp": "1556850359.393600",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "We can debug this further tonight",
+      "time": "19:26",
+      "timestamp": "1556850378.393900",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Looks like ACL_ENABLED issue with the Boolean value stored in the database?",
+      "time": "19:27",
+      "timestamp": "1556850441.394800",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "which table would that be?",
+      "time": "19:27",
+      "timestamp": "1556850458.395000",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "key value",
+      "time": "19:28",
+      "timestamp": "1556850489.395200",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "ok checking",
+      "time": "19:28",
+      "timestamp": "1556850493.395400",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "it’s empty",
+      "time": "19:28",
+      "timestamp": "1556850498.395600",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i need to probably add a fix that if it’s empty... to treat that as false",
+      "time": "19:28",
+      "timestamp": "1556850519.396400",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i’m surprised i didn’t handle that case already",
+      "time": "19:28",
+      "timestamp": "1556850531.397100",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "key value is all okay; it has no ACL data at the moment",
+      "time": "19:28",
+      "timestamp": "1556850537.397400",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "so will need to try to reproduce this somehow",
+      "time": "19:29",
+      "timestamp": "1556850546.397900",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Just encryption keys for file system",
+      "time": "19:29",
+      "timestamp": "1556850550.398100",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "ok sounds good",
+      "time": "19:29",
+      "timestamp": "1556850556.398500",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "let's chat later",
+      "time": "19:29",
+      "timestamp": "1556850558.398700",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "enjoy your evening for the moment",
+      "time": "19:29",
+      "timestamp": "1556850566.399000",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "that’s... so weird! i must handle that case. why do the other repos work",
+      "time": "19:29",
+      "timestamp": "1556850588.399600",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "*shrug*",
+      "time": "19:30",
+      "timestamp": "1556850600.399800",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "it's fixed",
+      "time": "19:33",
+      "timestamp": "1556850808.400000",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "it was a caching issue",
+      "time": "19:33",
+      "timestamp": "1556850831.400600",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Even though we had restarted redis during our deployment; due to the nature of rolling deployments, there was a phase when we had both old and new pods running and as a result, the old pods wrote a state to redis that the new couldn't understand",
+      "time": "19:34",
+      "timestamp": "1556850876.401600",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "A redis restart after all the pods had restarted fixed the matter",
+      "time": "19:34",
+      "timestamp": "1556850898.402100",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "This is identical to what I had seen in production a few months ago",
+      "time": "19:35",
+      "timestamp": "1556850915.402500",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "good fix, thanks ashish!",
+      "time": "19:37",
+      "timestamp": "1556851041.402700",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-05-02.json",
+    "message_count": 52,
+    "start_time": "1556849606.378300",
+    "end_time": "1556851041.402700",
+    "is_thread": false
+  }
+}

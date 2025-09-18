@@ -1,0 +1,28 @@
+{
+  "id": "ch_C06FA6A23_2025-07-19_1752943295.714099_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":bar_chart: :chart_with_downwards_trend: *Pre-merge goodies again!*\nHowdy!\nWhile I chill at a Starbucks as my son is at a 6 hour driving course with my car... Some optimizations to share!\n\n:white_check_mark: *Smarter Work Distribution in PyTest*\nWe’re using PyTest and its attendant `xdist` plugin to get multiprocessing into our test runs, which was responsible for shaving nearly an hour off our two longest-running services (api-server and celery-app-tasks). There are, however, still some tests that run much longer than others, and with thousands of tests queued up that can become a significant waste of cycles while shorter tests back up behind them. Lovely feature of `xdist` is the ability to choose your distribution mode, and one that was very helpful for our case is `worksteal`.\n\nIn essence, it causes test execution workers to detect when their queue is nearly empty, and subsequently “steal” a test from the queue of another worker whose queue is _not_ almost empty. Thus we end up with those enqueued short tests being siphoned off as the long-running tests complete, and we get a better workload distribution and shorter overall runtime. The runtime of each tests is entirely unaffected, but the enqueued time is dramatically shortened.\n\n:exclamation-bang: *Impact*\nWhen testing the 4 “heaviest hitters” in our service list - `api-server`, `celery-app-tasks`, `ibllm`, and `webapp` - runtime was cut (again!) by *~52%*, from 25 minutes to *12 minutes*. :dancing-penguin:\nYay for trivial algorithms! :joy:\nThe PR is here (https://github.com/instabase/instabase/pull/72493), and you can see the results here (https://grafana.infra.instabase.com/d/eep1uln88mltsa/ci-pre-merge3a-comparisons?orgId=1&from=2025-07-18T18:27:22.609Z&to=2025-07-18T21:27:22.609Z&timezone=browser&var-pr=PR-72493&var-spl=14&var-grp=15&var-left=31&var-right=30) (for the next 60 days or so, then the traces age out - included screenshot #1 below for posterity). The top-left pane is a bit light on service names listed, due to some data collection issues I’ve since ironed out - but the underlying trace for each build is identical in span count and content, just a different order. :+1:",
+      "time": "09:41",
+      "timestamp": "1752943295.714099",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-07-19.json",
+    "message_count": 1,
+    "start_time": "1752943295.714099",
+    "end_time": "1752943295.714099",
+    "is_thread": true
+  }
+}

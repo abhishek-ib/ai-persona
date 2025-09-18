@@ -1,0 +1,145 @@
+{
+  "id": "ch_C06FA6A23_2023-04-10_1681145115.426689_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "songeun.you",
+    "Ashwin",
+    "Ashish",
+    "shaunak",
+    "Jag"
+  ],
+  "messages": [
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "I've been seeing this error come up on dogfood today and late last week.",
+      "time": "09:45",
+      "timestamp": "1681145115.426689",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "this is being fixed actively cc @Ashwin",
+      "time": "09:47",
+      "timestamp": "1681145226.563199",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Do you know which endpoint is triggering this error @Jag?",
+      "time": "09:49",
+      "timestamp": "1681145354.990799",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Or @Ashish",
+      "time": "09:49",
+      "timestamp": "1681145381.016309",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "i think it is one of the /solutions/ endpoints",
+      "time": "09:50",
+      "timestamp": "1681145404.683139",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "This is what I see in the network tab",
+      "time": "09:50",
+      "timestamp": "1681145417.248979",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "When loading dogfood",
+      "time": "09:50",
+      "timestamp": "1681145420.973069",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "I think this is unrelated to the marketing nginx changes",
+      "time": "09:50",
+      "timestamp": "1681145422.999759",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "`/list?is_intalled=true`  gives this error\n```An unexpected error occurred. (Error=<_InactiveRpcError of RPC that terminated with:\n\tstatus = StatusCode.UNKNOWN\n\tdetails = \"dpiStmt_execute: ORA-01795: maximum number of expressions in a list is 1000\"\n\tdebug_error_string = \"{\"created\":\"@1681145395.529248535\",\"description\":\"Error received from peer ipv4:127.0.0.1:28602\",\"file\":\"src/core/lib/surface/call.cc\",\"file_line\":1067,\"grpc_message\":\"dpiStmt_execute: ORA-01795: maximum number of expressions in a list is 1000\",\"grpc_status\":2}\"\n>)```",
+      "time": "09:50",
+      "timestamp": "1681145447.449869",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "ah! apologies",
+      "time": "09:51",
+      "timestamp": "1681145500.941179",
+      "is_reply": true
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "^ The error should be coming from `/api/v1/marketplace/list`, I can look into why this is being called here",
+      "time": "09:51",
+      "timestamp": "1681145514.366299",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@mfichman as well.  I think we need to optimize this query :wink:",
+      "time": "09:52",
+      "timestamp": "1681145549.831349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We need to change that endpoint to disallow non-paginated results via that endpoint, and fix legacy callers. The endpoint supports pagination, which resolves this issue -- but some legacy callers still do not paginate.",
+      "time": "09:55",
+      "timestamp": "1681145758.680149",
+      "is_reply": true
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "ahh thanks for the context @mfichman :slightly_smiling_face: we'll have to change this in the frontend. Both places where it's being called right now are not implemented with pagination",
+      "time": "09:59",
+      "timestamp": "1681145941.943179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let me know if you need more info!",
+      "time": "09:59",
+      "timestamp": "1681145972.164809",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-04-10.json",
+    "message_count": 15,
+    "start_time": "1681145115.426689",
+    "end_time": "1681145972.164809",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "id": "ch_C06FA6A23_2024-05-24_1716534896.535219_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Armaan",
+    "Pramod Munemanik"
+  ],
+  "messages": [
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "I just tested it on platform.instabase.com (http://platform.instabase.com), and it's working as expected. Can you please use the latest version (2.0.0) of ibtools and let me know if you are still seeing the issue? You can download it from Marketplace Admin.",
+      "time": "00:14",
+      "timestamp": "1716534896.535219",
+      "is_reply": false
+    },
+    {
+      "sender": "Armaan",
+      "user_id": "U047JSUBAPJ",
+      "message": "Thank you -- I've published it in UAT (where I wrongly assumed version 1.0.4 was up-to-date), and have run into an error where I'm not seeing/able to pull refined phrases out of my input docs. Am I doing something wrong with my function call (https://uat.dogfood.instabase.com/apps/text-editor/armaan.dodd/armaan/fs/Instabase%20Drive/testflow7325/modules/testo.udf/scripts.py)?\n\n```\"e02e8027-d0a0-4707-9f4a-4fe0d3f4dc20\",\"ERROR\",\"2024-05-24 07:21:07,264\",\"fa680562da77fb91\",\"16eb305ded7013db\",\"Failed running post-flow UDF. Error:Error executing Post-Flow UDF step h1. Reason: Exception calling function - flow_custom_finish: 'NoneType' object has no attribute 'get_ibocr_records'. Defined in testo.udf/scripts.py (line 14)\n\nTraceback:\n  File \"\"testo.udf/scripts.py\"\", line 14, in postflow\n  File \"\"ib/market/ibtools/export_fns.py\"\", line 406, in export_as_excel\n  File \"\"ib/market/ibtools/export_fns.py\"\", line 181, in extract_refined_phrases_from_ibdocs\n\",\"e02e8027-d0a0-4707-9f4a-4fe0d3f4dc20-Stage2\",\"armaan.dodd\",\"Stage2\",\n\"e02e8027-d0a0-4707-9f4a-4fe0d3f4dc20\",\"ERROR\",\"2024-05-24 07:21:07,263\",\"fa680562da77fb91\",\"88f951164c179f70\",\"Error executing Post-Flow UDF step h1. Reason: Exception calling function - flow_custom_finish: 'NoneType' object has no attribute 'get_ibocr_records'. Defined in testo.udf/scripts.py (line 14)\n\nTraceback:\n  File \"\"testo.udf/scripts.py\"\", line 14, in postflow\n  File \"\"ib/market/ibtools/export_fns.py\"\", line 406, in export_as_excel\n  File \"\"ib/market/ibtools/export_fns.py\"\", line 181, in extract_refined_phrases_from_ibdocs\n\",\"e02e8027-d0a0-4707-9f4a-4fe0d3f4dc20-Stage2\",\"armaan.dodd\",\"Stage2\",\n\"e02e8027-d0a0-4707-9f4a-4fe0d3f4dc20\",\"ERROR\",\"2024-05-24 07:21:07,260\",\"fa680562da77fb91\",\"88f951164c179f70\",\"Error executing Post-Flow UDF step h1. Reason: Exception calling function - flow_custom_finish: 'NoneType' object has no attribute 'get_ibocr_records'. Defined in testo.udf/scripts.py (line 14)\n\nTraceback:\n  File \"\"testo.udf/scripts.py\"\", line 14, in postflow\n  File \"\"ib/market/ibtools/export_fns.py\"\", line 406, in export_as_excel\n  File \"\"ib/market/ibtools/export_fns.py\"\", line 181, in extract_refined_phrases_from_ibdocs\n, details: Traceback (most recent call last):\n  File \"\"/instabase/workers/celery-app-tasks/py/instabase/_sheet/parser_lib/parser.py\"\", line 359, in __call__\n    return fn_dict.get('fn')(*args, **kwargs)\n  File \"\"testo.udf/scripts.py\"\", line 14, in postflow\n  File \"\"ib/market/ibtools/export_fns.py\"\", line 406, in export_as_excel\n  File \"\"ib/market/ibtools/export_fns.py\"\", line 181, in extract_refined_phrases_from_ibdocs\nAttributeError: 'NoneType' object has no attribute 'get_ibocr_records'```",
+      "time": "00:26",
+      "timestamp": "1716535611.873969",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "I don't have access to your code. Could you please try something like this ?\n\n```from ib.market.ibtools.export_fns import export_as_csv, export_as_excel\nfrom instabase.provenance.registration import register_fn\nimport logging\nimport os\nfrom typing import Any\n\n#call from reduce udf\n#test(ROOT_OUTPUT_FOLDER, STEP_FOLDER, CLIENTS)\n@register_fn(provenance=False)\ndef test(root_output_folder, step_folder, clients, **kwargs):\n    logging.info (http://logging.info)('Inside test function')\n\n    records_folder = 'pramod21/explore-use-cases/fs/Instabase Drive/ibtools/testing/flowv3/out/s3_apply_refiner'\n    out_filepath = 'pramod21/explore-use-cases/fs/Instabase Drive/ibtools/testing/flowv3/csv/abcd.xls'\n    ibfile = clients.ibfile\n\n    export_as_excel(records_folder, out_filepath, ibfile, split_files_into_tabs=True)\n    \n    return```",
+      "time": "00:29",
+      "timestamp": "1716535759.857429",
+      "is_reply": true
+    },
+    {
+      "sender": "Armaan",
+      "user_id": "U047JSUBAPJ",
+      "message": "Edited my function to the following, and am still seeing the same error --\n\n```from ib.market.ibtools.export_fns import export_as_csv, export_as_excel\nfrom instabase.provenance.registration import register_fn\nimport logging\nimport os\nfrom typing import Any\n\n#call from reduce udf\n#test(ROOT_OUTPUT_FOLDER, STEP_FOLDER, CLIENTS)\n@register_fn(provenance=False)\ndef test( **kwargs):\n  records_folder = f'armaan.dodd/armaan/fs/Instabase Drive/inputstuff'\n  out_filepath = f'armaan.dodd/armaan/fs/Instabase Drive/outputstuff'\n\n  fn_context = kwargs.get('_FN_CONTEXT_KEY')\n  clients, _ = fn_context.get_by_col_name(\"CLIENTS\")\n  ibfile = clients.ibfile\n  export_as_excel(records_folder,out_filepath,ibfile,split_files_into_tabs=True,tabnames='filenames',output_format='xls')\n\n  return```",
+      "time": "00:35",
+      "timestamp": "1716536145.708389",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "Can you give me access to your repo ?",
+      "time": "00:37",
+      "timestamp": "1716536237.217689",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "The `ibmsg` in `inputstuff` was not showing any refined phrases. I set up a new flow for you. It is now able to generate an XLS file using `export_as_excel`.\nFlow: https://uat.dogfood.instabase.com/apps/flow/edit/armaan.dodd/armaan/fs/Instabase%20Drive/test_flow_pramod/test.ibflow\nXLS output: https://uat.dogfood.instabase.com/armaan.dodd/armaan/fs/Instabase%20Drive/test_flow_pramod/out/xls/",
+      "time": "00:56",
+      "timestamp": "1716537362.547549",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-05-24.json",
+    "message_count": 6,
+    "start_time": "1716534896.535219",
+    "end_time": "1716537362.547549",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "id": "ch_C06FA6A23_2024-09-17_1726590248.163819_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Yash Aggarwal",
+    "Sayd"
+  ],
+  "messages": [
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "@Aaron Tami Created a separate thread of 23.07\nI am seeing similar issues while trying to upgrade opencv. I am seeing this error in the CICD for this vuln PR: https://github.com/instabase/instabase/pull/61057\nThis was blocking the petsbest deployment..\n```[2024-09-17T11:34:21.909Z]   • Installing zope-interface (6.4.post2)\n[2024-09-17T11:34:21.909Z] \n[2024-09-17T11:34:21.909Z]   ChefBuildError\n[2024-09-17T11:34:21.909Z] \n[2024-09-17T11:34:21.909Z]   Backend 'setuptools.build_meta:__legacy__' is not available.\n[2024-09-17T11:34:21.909Z] \n[2024-09-17T11:34:21.909Z]   at /home/jenkins/poetry/venv/lib/python3.7/site-packages/poetry/installation/chef.py:152 in _prepare\n[2024-09-17T11:34:21.909Z]       148│ \n[2024-09-17T11:34:21.909Z]       149│                 error = ChefBuildError(\"\\n\\n\".join(message_parts))\n[2024-09-17T11:34:21.909Z]       150│ \n[2024-09-17T11:34:21.909Z]       151│             if error is not None:\n[2024-09-17T11:34:21.909Z]     → 152│                 raise error from None\n[2024-09-17T11:34:21.909Z]       153│ \n[2024-09-17T11:34:21.909Z]       154│             return path\n[2024-09-17T11:34:21.909Z]       155│ \n[2024-09-17T11:34:21.909Z]       156│     def _prepare_sdist(self, archive: Path, destination: Path | None = None) -> Path:\n[2024-09-17T11:34:21.909Z] make[2]: Leaving directory '/instabase_dir/distributed-tasks/celery/webdriver-tasks'```\nLooks like some packages dont have a install backend specified so they are trying to use `setuptools.build_meta:__legacy__` and failing.\ncc: @Kerry",
+      "time": "09:24",
+      "timestamp": "1726590248.163819",
+      "is_reply": false
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "This is only happening with the `build test`  command at `Installing dependencies from lock file` only if the lock file is updated",
+      "time": "09:25",
+      "timestamp": "1726590346.192589",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "do you know which package",
+      "time": "09:28",
+      "timestamp": "1726590514.504269",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "that is trying to use `setuptools.build_meta:__legacy__`",
+      "time": "09:29",
+      "timestamp": "1726590554.667089",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "In the jenkins run, this package is causing the error:\n```Installing zope-interface (6.4.post2)```\nOne of the failed runs: https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-61057/19/pipeline/\nWhen I repro the issue in a local docker image, I am seeing the failures with scikit learn\n`Updating scikit-learn (0.23.2 9869a76 -> 0.23.2 4e35641): Failed`",
+      "time": "09:30",
+      "timestamp": "1726590616.658239",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Yash Aggarwal how did you generate the requirements.txt file? scikit-learn is not updated in the poetry file, but it got updated in the generated requirement.txt file to a different commit",
+      "time": "10:06",
+      "timestamp": "1726592768.339159",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "cc @Sayd",
+      "time": "10:06",
+      "timestamp": "1726592776.814559",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "this is the branch https://github.com/instabase/scikit-learn/commits/0.23.2-ib/ and the last commit is `9869a76d259464959c5406d9dee1d1ac7e9ee4bb`\n\nin a sense  `scikit-learn (0.23.2 9869a76 -> 0.23.2 4e35641)` is wrong probably because of the requirements.txt file change",
+      "time": "10:08",
+      "timestamp": "1726592920.772989",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "see if you can edit the requirements.txt file to get passed this. cc @Rakesh for help if needed",
+      "time": "10:09",
+      "timestamp": "1726592961.482439",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "iirc, pre-commit checks automatically update `requirements.txt` from poetry file. This does seem like a mistake because my PR was pinning scikit learn to `9869a76`",
+      "time": "10:10",
+      "timestamp": "1726593024.686089",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "> @Yash Aggarwal how did you generate the requirements.txt file? scikit-learn is not updated in the poetry file, but it got updated in the generated requirement.txt file to a different commit\nI had used `make generate-requirements`\n\n> see if you can edit the requirements.txt file to get passed this. cc @Rakesh for help if needed\nThanks! trying this",
+      "time": "10:29",
+      "timestamp": "1726594175.168729",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "right but my point is @Yash Aggarwal ran into\n`Updating scikit-learn (0.23.2 9869a76 -> 0.23.2 4e35641): Failed`\n\n`4e35641` is not the latest commit -- it was by Shiqi on July 19\nwhereas `9869a76` is the latest commit by Sean two weeks ago https://github.com/instabase/scikit-learn/commits/0.23.2-ib/\n\nso this update line from Yash is wrong, it is rolling backward which I do't knwo why",
+      "time": "10:42",
+      "timestamp": "1726594966.126799",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "I think issue was something else entirely... :grimacing:\n\nI rebuilt poetry.lock and requirements.txt from the jenkins image instead of my local. Now, `scikit-learn`'s version is still unpinned but this time `zope-interface` wasn't updated. This somehow didn't trigger a downgrade for scikit-learn:\n```Installing scikit-learn (0.23.2 9869a76): Cloning...```\nThe build step is still running, will update here when its done but it would normally fail at this point",
+      "time": "10:58",
+      "timestamp": "1726595905.626809",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "It worked now :sweat_smile:\nOne of the packages updated `poetry.lock` was causing downgrade for scikit-learn. poetry.lock just has this for scikit learn\n```[[package]]\nname = \"scikit-learn\"\nversion = \"0.23.2\"```\nCould one of the package updates made poetry re-resolve scikit-learn due to which it tried to downgrade the build image's scikit learn from `0.23.2 9869a76` to `0.23.2 4e35641` ?\n`One of the other packages upgraded in",
+      "time": "11:06",
+      "timestamp": "1726596400.964429",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "check one of these\n```[tool.poetry.dependencies.extractmsg]\nbranch = \"master\"\ngit = \"https://github.com/instabase/msg-extractor\"\n[tool.poetry.dependencies.opencensus]\ngit = \"https://github.com/instabase/opencensus-python\"\nrev = \"ec72cd39b431ec28ebcf72861852bccaef00c961\"\n[tool.poetry.dependencies.opencensus-ext-prometheus]\ngit = \"https://github.com/instabase/opencensus-python\"\nrev = \"ec72cd39b431ec28ebcf72861852bccaef00c961\"\nsubdirectory = \"contrib/opencensus-ext-prometheus\"\n[tool.poetry.dependencies.\"pdfminer.six\"]\ngit = \"https://github.com/instabase/pdfminer.six.public\"\nrev = \"47baa0dda534f8389a67c9c984c23b52bf4614e0\"```\nbecause no public package should update the sklearn in our own branch",
+      "time": "11:08",
+      "timestamp": "1726596502.741289",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "btw on things like this -- it's all about following the breadcrumb to unblock yourself. i honestly don't have more knowledge in webdriver or sklearn than you all :slightly_smiling_face: will let you drive and unblock here, when you get stuck loop in relevant engineers -- we won't move at the speed we need to if i need to step in to unblock. thanks for pushing this through!",
+      "time": "11:12",
+      "timestamp": "1726596768.805309",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-09-17.json",
+    "message_count": 16,
+    "start_time": "1726590248.163819",
+    "end_time": "1726596768.805309",
+    "is_thread": true
+  }
+}

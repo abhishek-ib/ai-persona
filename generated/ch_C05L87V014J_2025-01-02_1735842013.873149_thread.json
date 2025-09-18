@@ -1,0 +1,149 @@
+{
+  "id": "ch_C05L87V014J_2025-01-02_1735842013.873149_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "tony.shi"
+  ],
+  "messages": [
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Hey! Happy New Year! My crafting sandbox (https://instabase.sandboxes.site/sandboxes/tonyshi?cw=dev) is out of storage and I've already tried pruning unused docker containers (`docker system prune -a`). Do we have any guidance on how to further free up storage space?\n\n`sudo ncdu / --exclude-kernfs` shows several hundred GB of containerd snapshots",
+      "time": "10:20",
+      "timestamp": "1735842013.873149",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Can you show me the output of ncdu?",
+      "time": "10:32",
+      "timestamp": "1735842741.061689",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "",
+      "time": "10:32",
+      "timestamp": "1735842750.205579",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Huh. Can you give me the output of `docker status`?",
+      "time": "10:33",
+      "timestamp": "1735842826.149439",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Sorry, I mean `docker system info`",
+      "time": "10:34",
+      "timestamp": "1735842843.461339",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Can I follow up in an hour? Sorry",
+      "time": "10:34",
+      "timestamp": "1735842852.171129",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Of course!",
+      "time": "10:34",
+      "timestamp": "1735842859.474079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For ref, here is mine:\n\n```owner@dev:~$ docker system info  \nClient: Docker Engine - Community\n Version:    25.0.4\n Context:    default\n Debug Mode: false\n Plugins:\n  buildx: Docker Buildx (Docker Inc.)\n    Version:  v0.13.0\n    Path:     /usr/libexec/docker/cli-plugins/docker-buildx\n  compose: Docker Compose (Docker Inc.)\n    Version:  v2.24.7\n    Path:     /usr/libexec/docker/cli-plugins/docker-compose\n\nServer:\n Containers: 13\n  Running: 12\n  Paused: 0\n  Stopped: 1\n Images: 14\n Server Version: 25.0.5\n Storage Driver: overlayfs\n  driver-type: io.containerd.snapshotter.v1\n Logging Driver: json-file\n Cgroup Driver: none\n Cgroup Version: 2\n Plugins:\n  Volume: local\n  Network: bridge host ipvlan macvlan null overlay\n  Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog\n Swarm: inactive\n Runtimes: io.containerd.runc.v2 runc\n Default Runtime: runc\n Init Binary: docker-init\n containerd version: ae07eda36dd25f8a1b98dfbf587313b99c0190bb\n runc version: v1.1.12-0-g51d5e94\n init version: de40ad0\n Security Options:\n  seccomp\n   Profile: builtin\n  rootless\n  cgroupns\n Kernel Version: 6.1.112-122.189.amzn2023.x86_64\n Operating System: Ubuntu 22.04.2 LTS (containerized)\n OSType: linux\n Architecture: x86_64\n CPUs: 32\n Total Memory: 123.8GiB\n Name: dev\n ID: 70da689a-768f-42f6-ae6c-863ad4bdaaff\n Docker Root Dir: /var/lib/docker\n Debug Mode: false\n Experimental: false\n Insecure Registries:\n  127.0.0.0/8\n Live Restore Enabled: false```",
+      "time": "10:34",
+      "timestamp": "1735842872.689229",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "The output is below. Also, idk if this helps, but I had to restart containerd several times over the last 2 weeks due to issues connecting to the docker dameon\n\n```owner@dev:~$ docker system info\nClient: Docker Engine - Community\n Version:    25.0.4\n Context:    default\n Debug Mode: false\n Plugins:\n  buildx: Docker Buildx (Docker Inc.)\n    Version:  v0.13.0\n    Path:     /usr/libexec/docker/cli-plugins/docker-buildx\n  compose: Docker Compose (Docker Inc.)\n    Version:  v2.24.7\n    Path:     /usr/libexec/docker/cli-plugins/docker-compose\n\nServer:\n Containers: 12\n  Running: 12\n  Paused: 0\n  Stopped: 0\n Images: 14\n Server Version: 25.0.5\n Storage Driver: overlayfs\n  driver-type: io.containerd.snapshotter.v1\n Logging Driver: json-file\n Cgroup Driver: none\n Cgroup Version: 2\n Plugins:\n  Volume: local\n  Network: bridge host ipvlan macvlan null overlay\n  Log: awslogs fluentd gcplogs gelf journald json-file local splunk syslog\n Swarm: inactive\n Runtimes: io.containerd.runc.v2 runc\n Default Runtime: runc\n Init Binary: docker-init\n containerd version: ae07eda36dd25f8a1b98dfbf587313b99c0190bb\n runc version: v1.1.12-0-g51d5e94\n init version: de40ad0\n Security Options:\n  seccomp\n   Profile: builtin\n  rootless\n  cgroupns\n Kernel Version: 6.1.112-122.189.amzn2023.x86_64\n Operating System: Ubuntu 22.04.2 LTS (containerized)\n OSType: linux\n Architecture: x86_64\n CPUs: 32\n Total Memory: 123.8GiB\n Name: dev\n ID: 70da689a-768f-42f6-ae6c-863ad4bdaaff\n Docker Root Dir: /var/lib/docker\n Debug Mode: false\n Experimental: false\n Insecure Registries:\n  127.0.0.0/8\n Live Restore Enabled: false\n\nWARNING: Running in rootless-mode without cgroups. Systemd is required to enable cgroups in rootless-mode.\nWARNING: bridge-nf-call-iptables is disabled\nWARNING: bridge-nf-call-ip6tables is disabled```",
+      "time": "11:25",
+      "timestamp": "1735845947.575989",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Also, to add, I don't have permissions for /var/lib/docker, so I can't seem to remove the snapshots manually either",
+      "time": "11:44",
+      "timestamp": "1735847061.777399",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You can use `sudo`  to access it!",
+      "time": "11:54",
+      "timestamp": "1735847668.327579",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Is it safe to delete?",
+      "time": "12:06",
+      "timestamp": "1735848411.997289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, you can delete the whole var/lib/docker I believe, but you will have to restart docker afterwards (kill it to restart it)",
+      "time": "12:14",
+      "timestamp": "1735848891.473349",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "You mean restart the actual docker daemon right?",
+      "time": "12:44",
+      "timestamp": "1735850666.151479",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Not the services using docker",
+      "time": "12:44",
+      "timestamp": "1735850671.304869",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Right, `pkill -a docker`",
+      "time": "12:58",
+      "timestamp": "1735851483.149019",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-01-02.json",
+    "message_count": 16,
+    "start_time": "1735842013.873149",
+    "end_time": "1735851483.149019",
+    "is_thread": true
+  }
+}

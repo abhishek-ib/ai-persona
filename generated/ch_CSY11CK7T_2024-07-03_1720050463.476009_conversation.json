@@ -1,0 +1,28 @@
+{
+  "id": "ch_CSY11CK7T_2024-07-03_1720050463.476009_conversation",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "conversation",
+  "participants": [
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ":cypress-spin: *Cypress update for the week of 7/1:*\nThis week, Cypress runs were pretty reliable, with an overall test run failure rate of 33% (https://cloud.cypress.io/projects/cfhedy/analytics/runs-over-time?branches=%5B%5D&browsers=%5B%5D&chartRangeMostCommonErrors=%5B%5D&chartRangeSlowestTests=%5B%5D&chartRangeTopFailures=%5B%5D&committers=%5B%5D&cypressVersions=%5B%5D&flaky=%5B%5D&operatingSystems=%5B%5D&runGroups=%5B%5D&specFiles=%5B%5D&status=%5B%7B%22label%22%3A%22Passed%22%2C%22value%22%3A%22PASSED%22%7D%2C%7B%22label%22%3A%22Failed%22%2C%22value%22%3A%22FAILED%22%7D%5D&tags=%5B%7B%22disabled%22%3Afalse%2C%22label%22%3A%22ci%22%2C%22labelProperties%22%3A%7B%22color%22%3A%22%23dadade%22%7D%2C%22suggested%22%3Afalse%2C%22value%22%3A%22ci%22%7D%5D&tagsMatch=ANY&timeInterval=WEEK&timeRange=%7B%22startDate%22%3A%222024-07-01%22%2C%22endDate%22%3A%222024-07-03%22%7D&viewBy=TEST_CASE) and a median individual test case failure rate of 4% (https://cloud.cypress.io/projects/cfhedy/analytics/top-failures?branches=%5B%5D&browsers=%5B%5D&chartRangeMostCommonErrors=%5B%5D&chartRangeSlowestTests=%5B%5D&chartRangeTopFailures=%5B%5D&committers=%5B%5D&cypressVersions=%5B%5D&flaky=%5B%5D&operatingSystems=%5B%5D&runGroups=%5B%5D&specFiles=%5B%5D&status=%5B%7B%22label%22%3A%22Passed%22%2C%22value%22%3A%22PASSED%22%7D%2C%7B%22label%22%3A%22Failed%22%2C%22value%22%3A%22FAILED%22%7D%5D&tags=%5B%7B%22disabled%22%3Afalse%2C%22label%22%3A%22ci%22%2C%22labelProperties%22%3A%7B%22color%22%3A%22%23dadade%22%7D%2C%22suggested%22%3Afalse%2C%22value%22%3A%22ci%22%7D%5D&tagsMatch=ANY&timeInterval=WEEK&timeRange=%7B%22startDate%22%3A%222024-07-01%22%2C%22endDate%22%3A%222024-07-03%22%7D&viewBy=TEST_CASE) :tada::blob-dance:.\n\nThings that cause test failure (top failures dashboard (https://cloud.cypress.io/projects/cfhedy/analytics/top-failures?branches=%5B%5D&browsers=%5B%5D&chartRangeMostCommonErrors=%5B%5D&chartRangeSlowestTests=%5B%5D&chartRangeTopFailures=%5B%5D&committers=%5B%5D&cypressVersions=%5B%5D&flaky=%5B%5D&operatingSystems=%5B%5D&runGroups=%5B%5D&specFiles=%5B%5D&status=%5B%7B%22label%22%3A%22Passed%22%2C%22value%22%3A%22PASSED%22%7D%2C%7B%22label%22%3A%22Failed%22%2C%22value%22%3A%22FAILED%22%7D%5D&tags=%5B%7B%22disabled%22%3Afalse%2C%22label%22%3A%22ci%22%2C%22labelProperties%22%3A%7B%22color%22%3A%22%23dadade%22%7D%2C%22suggested%22%3Afalse%2C%22value%22%3A%22ci%22%7D%5D&tagsMatch=ANY&timeInterval=WEEK&timeRange=%7B%22startDate%22%3A%222024-07-01%22%2C%22endDate%22%3A%222024-07-03%22%7D&viewBy=TEST_CASE)):\n1. Backend bug:\n    a. Intermittent backend error for UDF (https://instabase.slack.com/archives/CSY11CK7T/p1719858285174609?thread_ts=1719858031.850669&cid=CSY11CK7T). `aihub-validation-udf`, `aihub-refinement-udf.spec.ts`  failed due to this \n    b. The extraction (https://instabase.slack.com/archives/CSY11CK7T/p1719856822010259) method failed to process fields with  (https://instabase.slack.com/archives/CSY11CK7T/p1719856822010259)`description: None` .  `field-editor`  failed due to this \n2. We pushed the home page re-design feature to GA without updating Cypress tests (https://instabase.slack.com/archives/CSY11CK7T/p1719936840852499) caused these tests to fail: `view-home-page, send-product-feedback, aihub-templates, build-project-crud, billing, converse-app, converse-project-crud` failed due to this \n3. Frontend bug:\n    a. Resetting review dashboard redux state (https://instabase.slack.com/archives/CSY11CK7T/p1719948567204119?thread_ts=1719946793.168239&cid=CSY11CK7T). `review-manager-dashboard`, `review-reviewer-dashboard` failed due to this\n4. Our new Cypress CI sandbox (cypress-cyp) was updating every 4 hours compared to every 8 hours previously so this caused some failures due to timeouts\nChanges made:\n• Sean updated Cypress CI sandbox to re-deploy every 12 hours (5 am & 5 pm PST) (https://sandbox.console.instabase.com/customer/Engineering/tenant/crafting-cyp/info), so the sandbox should be stable during workdays\n• CJ turned on retries in aihub sandbox and uat\n• I skipped these tests this week: `field-editor, review-manager-dashboard, review-reviewer-dashboard` \nAction items:\n• Unskip `field-editor` : PR (https://github.com/instabase/instabase/pull/59557) @Xindi Xu \n• Fix `review-manager-dashboard, review-reviewer-dashboard` : PR (https://github.com/instabase/instabase/pull/59479) @Udit \n• Update these tests to use the new home page to navigate: `view-home-page, send-product-feedback, aihub-templates, build-project-crud, billing, converse-app, converse-project-crud`  @Weiming Wu \n• Consider triggering all Cypress tests on PRs that push a feature to GA: @Xindi Xu \n• Configure Doc Translation app (https://instabase.slack.com/archives/CSY11CK7T/p1719591375848849) for the new Cypress org in aihub sandbox and uat for `view-app/billing` test @Aayush",
+      "time": "16:47",
+      "timestamp": "1720050463.476009",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-07-03.json",
+    "message_count": 1,
+    "start_time": "1720050463.476009",
+    "end_time": "1720050463.476009",
+    "is_thread": false
+  }
+}

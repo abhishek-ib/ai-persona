@@ -1,0 +1,71 @@
+{
+  "id": "ch_C0516UPPMT3_2024-12-04_1733327100.934959_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Udit",
+    "Jessica",
+    "Prasad",
+    "Elan Sharony"
+  ],
+  "messages": [
+    {
+      "sender": "Prasad",
+      "user_id": "U079T360Y9G",
+      "message": "The message that is displayed is incorrect\ncc : @Nithin",
+      "time": "07:45",
+      "timestamp": "1733327100.934959",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "This looks like the issue where we’re rounding confidence values instead of taking the floor. I can’t remember if it was on the frontend or backend we needed to do this, @Elan Sharony do you know the status of this?",
+      "time": "07:59",
+      "timestamp": "1733327982.883619",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Yup looks like the issue is on the backend where we're rounding to 2 decimal places instead of taking the floor (likely the confidence score here was something like 0.999 which converts to 1.0 after rounding where the ideal behavior would show 0.99). I'll create a ticket to take the floor instead of rounding here:\n\n`float_model_confidence = ~round~floor(model_confidence, 2)`",
+      "time": "09:57",
+      "timestamp": "1733335028.991159",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "I'm still seeing class validations return very large decimal points for the message from backend. This has been a ticket for a long time and still hasn't been changed",
+      "time": "10:14",
+      "timestamp": "1733336097.802299",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "cc @Elan Sharony maybe we assign this ticket to Sayan or Prateek?",
+      "time": "10:15",
+      "timestamp": "1733336137.977919",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Yeah this is a similar idea, we're not cleaning the actual class confidence at all. I'll include this in the ticket above",
+      "time": "10:58",
+      "timestamp": "1733338681.336339",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-12-04.json",
+    "message_count": 6,
+    "start_time": "1733327100.934959",
+    "end_time": "1733338681.336339",
+    "is_thread": true
+  }
+}

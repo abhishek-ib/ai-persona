@@ -1,0 +1,206 @@
+{
+  "id": "ch_C06FA6A23_2019-06-19_1560986126.325800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Heymian",
+    "Chetan",
+    "achao"
+  ],
+  "messages": [
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "^ any guesses anyone? :poke:\n\nconfirmed password works (logged out and back into instabase.com (http://instabase.com)). could it be a 2FA problem? (haven’t logged in locally since i enabled it 6-8 wks back)",
+      "time": "16:15",
+      "timestamp": "1560986126.325800",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "delete your redis and try again?",
+      "time": "16:25",
+      "timestamp": "1560986757.326300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "successfully restarted but no bueno",
+      "time": "16:31",
+      "timestamp": "1560987085.326500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "still getting explicit “wrong password” errors from account service:\n```\ndocker run  --name instabase-account-tservice --env-file /Users/chetanmishra/projects/instabase/core-services/account-tservice/tmp/docker_env_local.list --rm -p 5050:5050 -t -i instabase/account-tservice\n2019/06/19 23:10:12 ERROR accountservice/handler/account.go:116 -- Fail: Wrong Password.\n2019/06/19 23:30:39 ERROR accountservice/handler/account.go:116 -- Fail: Wrong Password.\n2019/06/19 23:30:54 ERROR accountservice/handler/account.go:116 -- Fail: Wrong Password.\n```",
+      "time": "16:31",
+      "timestamp": "1560987103.326900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "(happens on local runs too — that log is just from docker)",
+      "time": "16:32",
+      "timestamp": "1560987150.327100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "did you delete your dump.rdb file?",
+      "time": "16:33",
+      "timestamp": "1560987198.327300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "sorry should’ve been more clear than restart redis.",
+      "time": "16:33",
+      "timestamp": "1560987215.327500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "`rm dump.rdb`",
+      "time": "16:33",
+      "timestamp": "1560987224.327700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "just tried locally, and working fine for me",
+      "time": "16:34",
+      "timestamp": "1560987249.327900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "have you restarted webapp?",
+      "time": "16:34",
+      "timestamp": "1560987274.328100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yea webapp restarted. the logs show it hitting account service — so could it still be webapp?",
+      "time": "16:34",
+      "timestamp": "1560987296.328300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "deleted `dump.rdb` and restarted redis. still no good.",
+      "time": "16:35",
+      "timestamp": "1560987334.328500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "hmm i actually do have nasty error messages on the webapp:\n```\n127.0.0.1 - - [2019-06-19 19:35:11] \"GET /account/login?next=%2F HTTP/1.1\" 200 5054 0.002110\n[2019-06-19 19:35:12,951] {/Users/chetanmishra/projects/instabase/webserver/webapp/build/py/instabase/utils/rpc/client.py:102} ERROR - Error executing thrift service method: TSocket read 0 bytes\n[2019-06-19 19:35:12,953] {/Users/chetanmishra/projects/instabase/webserver/webapp/build/py/instabase/utils/rpc/client.py:103} ERROR - Traceback (most recent call last):\n  File \"/Users/chetanmishra/projects/instabase/webserver/webapp/build/py/instabase/utils/rpc/client.py\", line 88, in __method_call__\n    result = self.__execute_method__(client, method, *args, **kwargs)\n  File \"/Users/chetanmishra/projects/instabase/webserver/webapp/build/py/instabase/utils/rpc/client.py\", line 79, in __execute_method__\n    return getattr(client, method)(*args, **kwargs)\n  File \"/Users/chetanmishra/projects/instabase/webserver/webapp/build/py/instabase/account/AccountService.py\", line 543, in check_auth\n    return self.recv_check_auth()\n  File \"/Users/chetanmishra/projects/instabase/webserver/webapp/build/py/instabase/account/AccountService.py\", line 555, in recv_check_auth\n    (fname, mtype, rseqid) = iprot.readMessageBegin()\n  File \"/Users/chetanmishra/projects/instabase/venv/lib/python2.7/site-packages/thrift/protocol/TBinaryProtocol.py\", line 134, in readMessageBegin\n    sz = self.readI32()\n  File \"/Users/chetanmishra/projects/instabase/venv/lib/python2.7/site-packages/thrift/protocol/TBinaryProtocol.py\", line 217, in readI32\n    buff = self.trans.readAll(4)\n  File \"/Users/chetanmishra/projects/instabase/venv/lib/python2.7/site-packages/thrift/transport/TTransport.py\", line 60, in readAll\n    chunk = self.read(sz - have)\n  File \"/Users/chetanmishra/projects/instabase/venv/lib/python2.7/site-packages/thrift/transport/TTransport.py\", line 161, in read\n    self.__rbuf = BufferIO(self.__trans.read(max(sz, self.__rbuf_size)))\n  File \"/Users/chetanmishra/projects/instabase/venv/lib/python2.7/site-packages/thrift/transport/TSocket.py\", line 132, in read\n    message='TSocket read 0 bytes')\nTTransportException: TSocket read 0 bytes\n\n127.0.0.1 - - [2019-06-19 19:35:13] \"POST /account/login HTTP/1.1\" 200 5196 0.170418\n```",
+      "time": "16:36",
+      "timestamp": "1560987385.328700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "think that’s okay. webapp couldn’t find account service when you restarted it",
+      "time": "16:41",
+      "timestamp": "1560987704.328900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i have the world’s dumbest question (i’m sorry!!) are you sure you have the right password… :stuck_out_tongue:",
+      "time": "16:42",
+      "timestamp": "1560987743.329100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "what if you disable 2FA on instabase.com (http://instabase.com). can you login then?",
+      "time": "16:42",
+      "timestamp": "1560987768.329300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "next random suggestion. try running webapp inside docker. (maybe some python lib hasn’t been updated locally)",
+      "time": "16:44",
+      "timestamp": "1560987852.329500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yes i am sure — logged out and logged back into production instabase normally. can try to disable 2FA, haven’t yet",
+      "time": "16:45",
+      "timestamp": "1560987902.329800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "trying to run webapp in docker now @Heymian. also leaving work now, so will report back when i’m in tomorrow morning.",
+      "time": "16:45",
+      "timestamp": "1560987925.330000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "thanks for the help :slightly_smiling_face:",
+      "time": "16:45",
+      "timestamp": "1560987931.330200",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "^you’re connecting to prod db right?",
+      "time": "19:32",
+      "timestamp": "1560997926.331600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "Yea. I don't think that's even optional though?",
+      "time": "19:50",
+      "timestamp": "1560999053.331800",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "haha yeah you'd have to have changed that yourself",
+      "time": "20:00",
+      "timestamp": "1560999634.332000",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-06-19.json",
+    "message_count": 23,
+    "start_time": "1560986126.325800",
+    "end_time": "1560999634.332000",
+    "is_thread": true
+  }
+}

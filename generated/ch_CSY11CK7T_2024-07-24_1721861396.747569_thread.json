@@ -1,0 +1,102 @@
+{
+  "id": "ch_CSY11CK7T_2024-07-24_1721861396.747569_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Jessica",
+    "Travis",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I've seen a couple of unexpected but intermittent errors on Cypress tests in the past couple of runs -\n• In aihub-refinement the full value wasn't extracted https://cloud.cypress.io/projects/cfhedy/runs/12472/overview/6cea1f17-214c-407c-a3d2-0409b3c1e62b?roarHideRunsWithDiffGroupsAndTags=1\n• In aihub-validation-library a case that should have been a PASS was a FAIL https://cloud.cypress.io/projects/cfhedy/runs/12475/overview/585cfdae-2390-40dc-bcc2-21d8f5acc674?roarHideRunsWithDiffGroupsAndTags=1 (I saw this on one of Xindi's runs too)\nI know CJ is out, maybe cc @Arjun",
+      "time": "15:49",
+      "timestamp": "1721861396.747569",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i saw the aihub-validation-library failure in some of my recent CI runs as well, but it’s a flaky failure, so it passed when i reran CI",
+      "time": "16:15",
+      "timestamp": "1721862955.288319",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i just changed aihub-refinement to actually run extraction, instead of using a mocked extraction job, so let me take a look",
+      "time": "16:16",
+      "timestamp": "1721862991.113289",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "I had my eyes on the runs, but didn’t see a pattern. But good to know!",
+      "time": "16:18",
+      "timestamp": "1721863129.349449",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the model isn’t returning the entire expected value - it’s returning `5701 GOLDEN HILLS DRIVE` instead of `5701 GOLDEN HILLS DRIVE MINNEAPOLIS, MN 55416-1297`",
+      "time": "16:28",
+      "timestamp": "1721863710.515829",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "when i ran `aihub-refinement`, it succeeded twice, but now that i’m looking at the extraction result, the field confidence is pretty low (around 50%)\n\ni tweaked the field name, and the field confidence is a lot higher (around 80%), so we can try that to see if it works more consistently",
+      "time": "16:37",
+      "timestamp": "1721864238.588099",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i got the same failure on my PR (https://github.com/instabase/instabase/pull/60377), so i pushed the field name change there to see if CI passes",
+      "time": "16:54",
+      "timestamp": "1721865246.227319",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the aihub-validation-library flaky failures pre-date my changes, so they’re flaky for a different reason",
+      "time": "16:54",
+      "timestamp": "1721865277.551419",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah i remember now, arjun has previously mentioned that `aihub-validation-library` is flaky because `resetBuildProjectData` is sometimes flaky\n\n`aihub-validation-library` uses `resetBuildProjectData` to set up the schema in the project and save some hard-coded extraction values (see here (https://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/BuildApp/aihub-validation-library.spec.ts#L50-L75))\n\nhowever, sometimes this hard-coding doesn’t work, and we still trigger extraction (see screenshot of `POST extraction` being called in Jessica’s CI run)\n\ni diffed the hard-coded extracted values with the results of the unexpected `POST extraction` call and found some discrepancies that could trigger the extraction call - i’m testing my changes for resolving these discrepancies rn",
+      "time": "17:38",
+      "timestamp": "1721867909.512789",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "again, after testing locally, i pushed the same fix to my existing PR (https://github.com/instabase/instabase/pull/60377), so we’ll see if CI passes",
+      "time": "17:50",
+      "timestamp": "1721868625.683169",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-07-24.json",
+    "message_count": 10,
+    "start_time": "1721861396.747569",
+    "end_time": "1721868625.683169",
+    "is_thread": true
+  }
+}

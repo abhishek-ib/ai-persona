@@ -1,0 +1,44 @@
+{
+  "id": "ch_CSY11CK7T_2025-07-21_1753118410.980869_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Also heads up that the Cypress sandboxes are unable to start because of the AWS issue we're having since last week. Here's a workaround if you're motivated to ssh into your PR sandbox:\nhttps://instabase.slack.com/archives/C05L87V014J/p1753073546111569",
+      "time": "10:20",
+      "timestamp": "1753118410.980869",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "actually, this workaround isn't working for me TT let me see if what's going on",
+      "time": "11:31",
+      "timestamp": "1753122702.975929",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Update on Cypress sandboxes + AWS ECR issue, I got a hack fix working to unblock PRs.\n\nIf you got a PR that's failing to create the Crafting sandbox, do the following:\n1. ssh into your sandbox `cs ssh --workspace pr-<PR_NUMBER>-cypress/dev`\n2. Go to https://d-9067ba412e.awsapps.com/start/#/?tab=accounts\n3. Go to `instabase-dev` > `aws-powerUserAccess` > `Access keys`\n4. Copy Option 1 (the one with `export AWS_ACCESS_KEY_ID=...` )\n5. Paste your clipboard (that exports AWS credentials) into your sandbox ssh\n6. Then run this god forsaken one-liner in your sandbox:\n```echo -e '#!/bin/bash\\necho \"'$(aws ecr get-login-password --region us-east-2)'\"' \\\n  | sudo tee /usr/local/bin/aws.tmp > /dev/null \\\n  && sudo chmod +x /usr/local/bin/aws.tmp \\\n  && sudo mv /usr/local/bin/aws.tmp /usr/local/bin/aws ```\n7. In a browser, visit https://instabase.sandboxes.site/sandboxes and find your sandbox\n8. Suspend your sandbox, then resume it.\n9. Go into your Github Cypress action and re-run all jobs.\n\nYour sandbox should be working after 10 minutes + get Cypress results in your PR.\n\nLet me know if you have issues",
+      "time": "19:45",
+      "timestamp": "1753152322.976429",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-07-21.json",
+    "message_count": 3,
+    "start_time": "1753118410.980869",
+    "end_time": "1753152322.976429",
+    "is_thread": true
+  }
+}

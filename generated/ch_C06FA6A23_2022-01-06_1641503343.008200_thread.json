@@ -1,0 +1,53 @@
+{
+  "id": "ch_C06FA6A23_2022-01-06_1641503343.008200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "The Flow Load Test scripts are now working great. You can find them at https://github.com/instabase/ibt\nThere are two scripts currently:\nloadtest.py - to do load testing\ndepot.py - to copy benchmark flows and inputs across environments\n\nThe main difference vs the old load test script by Kunal is that is build around concept of environment.\nTo load test a new sandbox, all you have to do populate its details in .config file. We have a central repo containing flows and inputs. Lets say we have a sandbox called loadtestaws configured, you can copy over benchmark flow and input by doing\n```# copy ocr-v3 flow and bankStatement1 (BS1) input dir \npython depot.py dogfood loadtestaws flow:ocrMsftV3\npython depot.py dogfood loadtestaws input:bankStatement1 ```\nThen run the loadtest as follows:\n```python loadtest.py loadtestaws ocrMsftV3 bankStatement1 baseload```\nDid some initial testing with two datasets:\nbankStatement1 BS1 - input is a single doc\nbankStatement20 BS20 - input is 20 docs\nFlow V3 throughput\nBS1 2556.05 pages/hour\nBS20 10201.40 pages/hour\nFlow V2 throughput\nBS1 1787.59 pages/hour\nBS20 10231.95 pages/hour\n\nFlow v3 gets better throughput for single doc workloads but is same as flow v2 when you have many docs. Wanted to verify this as V3 has added overhead of writing stage plan, forking, etc - always wondered if V3 degraded perf vs V2. Also you can see single document throughput is quite bad compared to batch execution.\n\nThe loadtest script captures a whole bunch of additional stats. You can find the documentation in the github repo. If you any questions / suggestions, reach out to me and/or @Rakesh",
+      "time": "13:09",
+      "timestamp": "1641503343.008200",
+      "is_reply": false
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi @Anil @Rakesh This is great! Thank you so much for putting this together. I see that there is a new repo created for IBT and I wonder whether we could integrate the code into our main code base? One thing we may want to do is to run these flow load tests as benchmarks on a regular cadence via Jenkins, and I tend to think that using the same repo would make it easier to manage?",
+      "time": "16:23",
+      "timestamp": "1641515018.011700",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "The reason we kept it independent is we can make it public in the near future. Customers want to load test too - they can use this to run the test.\nIt has no dependencies, so we can easily move it in to main code, have it run with jenkins too :slightly_smiling_face:",
+      "time": "17:22",
+      "timestamp": "1641518546.012100",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Does it mean you'd also have to maintain a release of this repo since it will keep evolving, and it can mismatch with certain releases in the long run? I am just considering the long-term trade off here :slightly_smiling_face: Definitely agree that keeping dependency off is an absolute plus.",
+      "time": "19:50",
+      "timestamp": "1641527448.016400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-01-06.json",
+    "message_count": 4,
+    "start_time": "1641503343.008200",
+    "end_time": "1641527448.016400",
+    "is_thread": true
+  }
+}

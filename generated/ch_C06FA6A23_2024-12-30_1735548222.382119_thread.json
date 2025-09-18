@@ -1,0 +1,268 @@
+{
+  "id": "ch_C06FA6A23_2024-12-30_1735548222.382119_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "sudeep",
+    "astpierre",
+    "vp",
+    "Varun Nandan",
+    "gurkirat",
+    "sitaram",
+    "Rakesh",
+    "Nithin"
+  ],
+  "messages": [
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "It may be one of these buckets but I am not sure",
+      "time": "00:43",
+      "timestamp": "1735548222.382119",
+      "is_reply": false
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Thanks, these are not used for our integration / prod / load tests as I know. Tagging @mfichman / @Pridhvi Vegesna - they might be aware about the core services bucket above and if it used for any crawler/connector load tests - then that might involve download / data transfer out of buckets.",
+      "time": "00:46",
+      "timestamp": "1735548377.135259",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "Rakesh, any new behaviour with this bucket since oct 30?\n*`natwest-loadtest-aws-ib-sandbox-sandbox-storage`*",
+      "time": "01:02",
+      "timestamp": "1735549340.877919",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Ok, this bucket wont be related to any enterprise search load tests.,\nBased on naming it looks like bucket is related to a sandbox ? But I dont find this sandbox anymore - but there was an old sandbox by this name used for load tests for natwest in 2022.\nCopying @vp in case this is being used recently ?",
+      "time": "01:29",
+      "timestamp": "1735550953.628029",
+      "is_reply": true
+    },
+    {
+      "sender": "vp",
+      "user_id": "U02ENFDJHC0",
+      "message": "Not using this explicitly. Unless this bucket got assigned to another sandbox which is active. I thought our NW sbx got archived couple of years back :thinking_face:",
+      "time": "01:31",
+      "timestamp": "1735551100.249979",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "Just to be clear, we haven't confirmed on this bucket being the issue, just asking",
+      "time": "01:32",
+      "timestamp": "1735551132.438099",
+      "is_reply": true
+    },
+    {
+      "sender": "vp",
+      "user_id": "U02ENFDJHC0",
+      "message": "this bucket was assigned to one of the oldest load test environment. Sbx got archived while back. So this cannot be the one.",
+      "time": "01:33",
+      "timestamp": "1735551189.664029",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "As a later follow up — we should clean all buckets / sandboxes on old admiral (this is a admiral sandbox) cc: @jayapandian.ponraj",
+      "time": "01:33",
+      "timestamp": "1735551196.445199",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "hey folks - just catching back up here. i think we should open a support request with AWS support to help identify the bucket and plan next steps based on the response. (while we continue our own investigation)",
+      "time": "01:44",
+      "timestamp": "1735551871.276319",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "yes, already did that, will keep updating as we find more.\nWe are also checking if there are any S3 metrics that could be included in our obs stack for easier debugging (compared to cloudwatch) and even be able to set alerts",
+      "time": "01:46",
+      "timestamp": "1735551996.015719",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "sounds good, thanks just wanted to make sure that we have a support ticket linked",
+      "time": "01:47",
+      "timestamp": "1735552031.276209",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Also i am running some investigations via s3 storage lens, i think the suspect here to me is `solutions-eng-s3`. Just based on raw data this bucket grew by *60 TB* in last 2 weeks. Its hard to tell if that is indeed it, as a lot of S3 billing happens based on traffic, and i am yet to find a graph that can tell which of these buckets has highest throughput.",
+      "time": "01:52",
+      "timestamp": "1735552347.862039",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "",
+      "time": "01:53",
+      "timestamp": "1735552394.078419",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "the main cost here is retrival of data which is in glacial instant storage",
+      "time": "01:53",
+      "timestamp": "1735552405.084579",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "yes",
+      "time": "01:53",
+      "timestamp": "1735552410.584419",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "From cost explorer what we were able to pin point was the usage type is `USE2-Retrieval-GIR` and the resource doesn't seem to have `Owner` `Name` and `Environment` tag.\nThere is `aws:createdBy` tag but haven't been able to locate the bucket",
+      "time": "01:54",
+      "timestamp": "1735552450.685069",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "one interesting thing is that almost all labels on this usage increase is from bucket(s) that have *null label values* (when you group by labels in billing dashboard -- this is visible). I plan to confirm that the suspect bucket's tags are aligned with what is seen in billing dashboard",
+      "time": "01:54",
+      "timestamp": "1735552481.268369",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "Support has suggested to use `Data Export` asked them to get on a call to select the right options which could get us the bucket name, will update more",
+      "time": "01:55",
+      "timestamp": "1735552532.710989",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "The aws support had requested to create a billing case as technical team doesn't have visibility in bucket names. They mentioned they have understood the issue will coordinate with billing team to help.\nMeanwhile I checked what metrics are available for s3, turns out request metrics which would be more helpful in our case, need to be turned on via metric filter creation which actually needs to be done per bucket. In our case we don't know the bucket so it wont' be helpful much.  The generic storage bytes metrics doesn't help with knowing bucket name either so no point (for now) to get that metrics in our obs stack.\ncc @gurkirat",
+      "time": "03:32",
+      "timestamp": "1735558351.994379",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "I will update once I hear back on support case (either billing or technical)",
+      "time": "03:32",
+      "timestamp": "1735558378.122979",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "cc @astpierre",
+      "time": "05:50",
+      "timestamp": "1735566623.608059",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "hey all -- looks like this is the `solutions-eng-s3` bucket\n\nwe recently got access to a new cloud costs tool called Vantage and i was able to track down which bucket through their cost reporting dashboard (link (https://console.vantage.sh/reports/rprt_1a723da615aea690?anomaly_id=99221413&category=Other&end_date=2024-12-30&provider=aws&report%5Bchart_type%5D=bar&report%5Bdate_bucket%5D=day&service_id=AmazonS3&start_date=2024-12-03+00%3A00%3A00+UTC&report%5Bdate_interval%5D=last_30_days&service_costs_report_groupings%5B%5D=resource_id))",
+      "time": "10:20",
+      "timestamp": "1735582839.186799",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "cc @Nithin any idea here?",
+      "time": "11:42",
+      "timestamp": "1735587743.536959",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@astpierre we should do a knowledge sharing session on how to use vantage :slightly_smiling_face:",
+      "time": "11:42",
+      "timestamp": "1735587773.021449",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "I had some information regarding vantage and was looking around for link to dashboard but didnt knew it was active. This is amazing @astpierre! Can you share some more info around the same? Would love take this for a spin :slightly_smiling_face:",
+      "time": "16:39",
+      "timestamp": "1735605563.976139",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "Also @sitaram looks like this is one of the inital 5 buckets we were looking into lol :joy:",
+      "time": "16:40",
+      "timestamp": "1735605603.619339",
+      "is_reply": true
+    },
+    {
+      "sender": "Nithin",
+      "user_id": "UNXFBRZ6D",
+      "message": "Currently `solutions-eng-s3` has been mounted on following environments.\n1. https://platform.instabase.com/ib_solutions/solutions/fs/solutions-drive/\n2. https://aihub.instabase.com/workspaces/data?workspace=SolEng_workspace\n3. https://aihub-uat.internal.instabase.com/\nWe did not perform any activity in past month which should use *60 TB* of space.\n\nWe need help in debugging following.\n1. What is writing lot of data to this bucket? \n2. Which environment is this happening? I suspect https://aihub-uat.internal.instabase.com/ as this has been mounted recently.",
+      "time": "19:43",
+      "timestamp": "1735616603.863769",
+      "is_reply": true
+    },
+    {
+      "sender": "Nithin",
+      "user_id": "UNXFBRZ6D",
+      "message": "Copying @Varun Nandan to help in debug.",
+      "time": "19:50",
+      "timestamp": "1735617040.796899",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "thanks @astpierre for confirming the bucket! this was a suspect here as well (https://instabase.slack.com/archives/C06FA6A23/p1735552347862039?thread_ts=1735530466.257659&cid=C06FA6A23). It looks like Vantage has some good dashboards about the different request type data as well to split the cost incurred into storage, vs any requests going in/out from this bucket etc.",
+      "time": "21:03",
+      "timestamp": "1735621384.339499",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Nandan",
+      "user_id": "UKLRUHCUF",
+      "message": "@sudeep I have mounted this S3 to aihub-uat.internal on Dec 19th and I have been reading files and triggering flows present in this drive from 23rd onwards. I see these dates has a spike in the chart shared by @astpierre. Is there a way for us to track the network calls that causes this spike?",
+      "time": "21:29",
+      "timestamp": "1735622984.788169",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-12-30.json",
+    "message_count": 30,
+    "start_time": "1735548222.382119",
+    "end_time": "1735622984.788169",
+    "is_thread": true
+  }
+}

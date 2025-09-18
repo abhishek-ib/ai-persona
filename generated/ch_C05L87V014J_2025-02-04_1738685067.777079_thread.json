@@ -1,0 +1,118 @@
+{
+  "id": "ch_C05L87V014J_2025-02-04_1738685067.777079_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe",
+    "Goto Tools Go Links"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, ibdev-backend has the same settings (PATH and PYENV_ROOT). But people are still having trouble.",
+      "time": "08:04",
+      "timestamp": "1738685067.777079",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "08:05",
+      "timestamp": "1738685114.943369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```  - PATH=/opt/sandboxd/docker:/usr/local/workspace/go/bin:/usr/local/go/bin:/usr/local/poetry/bin:/usr/local/pyenv/bin:/usr/local/pyenv/shims:/usr/local/nodenv/bin:/usr/local/nodenv/shims:$PATH\n  - PYENV_ROOT=/usr/local/pyenv```",
+      "time": "08:05",
+      "timestamp": "1738685131.067919",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/bin:/usr/local/go/bin:/usr/local/poetry/bin:/usr/local/pyenv/bin:/usr/local/pyenv/shims:/usr/local/nodenv/bin:/usr/local/nodenv/shims:$PATH",
+      "time": "08:05",
+      "timestamp": "1738685131.734899",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "interesting, what's the reason for managing `.bashrc` in the template then? for some historical context, I've personally advised others to preserve their environment customizations in their shell runtime configs as part of a personal snapshot (e.g. https://instabase.atlassian.net/wiki/spaces/TI/pages/2214101018/Personalize+Your+Crafting+Environment#Sandbox-Preferences), which I believe would no longer work with those files being managed (unless you've added some ability to merge them?)",
+      "time": "09:42",
+      "timestamp": "1738690938.724849",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I would rather not manage .bashrc, but I don't know of a different way to ensure the right node/python versions are used by default.\n\nIIRC the node/python version differ depending on which directory you're in...and nodenv/pyenv take care of that.",
+      "time": "12:20",
+      "timestamp": "1738700448.718239",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The original onboarding guide had instructions for adding this to bashrc:\n\n```eval \"$(/usr/local/pyenv/bin/pyenv init --path)\"\neval \"$(/usr/local/nodenv/bin/nodenv init -)\"```\nWhich is the genesis of all this. If you have another way to fix it, lmk!",
+      "time": "12:21",
+      "timestamp": "1738700496.314439",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm, though maybe things have changed?\n\n```# cat core-services/control-plane/.node-version\n18.16.1\n# cat webserver/shared/src/js/webpacked/.node-version\n18.16.1```\nIf the base image uses Python 3.9 and Node 18.16 by default, then we can do away with pyenv/nodenv entirely I think.",
+      "time": "12:23",
+      "timestamp": "1738700589.356249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Original threads:\n\nhttps://instabase.slack.com/archives/C073F3T5KRQ/p1738100699959679\nhttps://instabase.slack.com/archives/D07R3B0KK4J/p1733841956759989",
+      "time": "12:27",
+      "timestamp": "1738700842.099759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm after thinking this over, I think we should remove the bashrc/zshrc configs from the ibdev-backend template. PR for that here (https://github.com/instabase/instabase/compare/mfichman/crafting?expand=1).\n\nPython/Node issues should be fixed by the base image update.",
+      "time": "12:43",
+      "timestamp": "1738701798.174299",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Ah gotcha gotcha, thank you for the context! Based on my own understanding of pyenv/nodenv the env switching is dictated by .python-version/.node-version, so directories without those just use the global default (which was what all the headaches on 3.7.3 were from). \n\nI’m still down to include the pyenv/nodenv config snippets, it might just be a sign that it’s time for us to start using custom built images rather than the ansible snapshots :upside_down_face: Will take a look at your PR once I’m back from lunch, and I’ll see how quickly we could port the snapshot configs to docker!",
+      "time": "12:54",
+      "timestamp": "1738702451.386219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It would be great to switch to the custom-built images for sure",
+      "time": "12:56",
+      "timestamp": "1738702608.859639",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-02-04.json",
+    "message_count": 12,
+    "start_time": "1738685067.777079",
+    "end_time": "1738702608.859639",
+    "is_thread": true
+  }
+}

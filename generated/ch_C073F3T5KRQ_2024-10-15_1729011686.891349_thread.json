@@ -1,0 +1,362 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-10-15_1729011686.891349_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Anil",
+    "Goto Tools Go Links",
+    "Kerr Yoo",
+    "Heymian",
+    "Jeff",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Okay I'm back... I did some more tracing of the code and I would have to drill this variable through a longgg way in many places :cold_sweat: I'm trying to think of other ways I could get access to it. What about putting it on the FlowV2Input type? @Anil what do you think, am I allowed to change that and would putting hostname on that be okay?",
+      "time": "10:01",
+      "timestamp": "1729011686.891349",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@Jessica why not use `INSTABASE_HOSTNAME` like you suggested - looks like other services are using it already",
+      "time": "10:04",
+      "timestamp": "1729011863.507859",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Add this to the yaml and then add it to config.go",
+      "time": "10:04",
+      "timestamp": "1729011878.191619",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm trying that, but then that needs to be passed into a function in notifications_util, and then that is called in four functions in job_service_util, and then those 4 functions are called in base_batch_lib and step_util, and then so on and so on.... lots of util files deep! I'm just not sure if it's best practice to be drilling down a variable that far, but maybe that's okay?",
+      "time": "10:08",
+      "timestamp": "1729012093.405799",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Or am I maybe allow to access the config from job_service_util?? That'd be nice. I see some other config variables being accessed that way",
+      "time": "10:10",
+      "timestamp": "1729012203.222029",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "you shouldn't do that because that gets you into the same pickle you mentioned originally, it becomes very not obvious if the env var is actually initiatlized at all by the service.",
+      "time": "10:10",
+      "timestamp": "1729012247.359459",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "yes access config directly\nsee shared-utils/py-utils/jobs-lib/src/py/instabase/jobs/jobs_util.py for example\ndo the same in job service util",
+      "time": "10:11",
+      "timestamp": "1729012264.457199",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrm, how do you know if the env is actually initialized though depending on which service is calling it?",
+      "time": "10:11",
+      "timestamp": "1729012287.575689",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "okay yeah I see a couple config variables like `GRPC_MAX_SEND_MESSAGE_SIZE_BYTES` and `TRACER_TYPE` and `FLOW_LOGS_DIR` being accessed",
+      "time": "10:14",
+      "timestamp": "1729012493.779699",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "And I do only see FLOW_LOGS_DIR defined in job_service - so it should be okay then?",
+      "time": "10:15",
+      "timestamp": "1729012517.762269",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Why do you need this in job-service - you only need this in shared-utils/py-utils/jobs-lib/src/py/instabase/jobs/notification_util.py right?",
+      "time": "10:17",
+      "timestamp": "1729012647.702499",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I actually don’t have context on what you are trying to do - sync with @tony.shi or I can catch you later.",
+      "time": "10:18",
+      "timestamp": "1729012681.618889",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Okay sounds good. Thank you both for the backend coaching haha!",
+      "time": "10:18",
+      "timestamp": "1729012707.167979",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Actually that' s a good question, haha I'm confused too how you're going from job-service goland into a python util?",
+      "time": "10:18",
+      "timestamp": "1729012735.550929",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The utils in notification_util are being called both in api-server and by functions in job_service_util. It seems that the config referenced in job_service_util is job-service, is that not right?",
+      "time": "10:19",
+      "timestamp": "1729012789.291719",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "nope! job-service is all go code. job_service_utils is used across a bunch of python services like api-server, app-tasks, etc.",
+      "time": "10:21",
+      "timestamp": "1729012861.522399",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Why would a variable like FLOW_LOGS_DIR be able to be accessed in that file then?",
+      "time": "10:22",
+      "timestamp": "1729012930.387389",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I chatted with Tony and it seems there would be an option to store the hostname in the database with the notification info but we'd prefer to not have to do that. @Anil lmk when you're free to look at this again! I just want to be very sure it's okay to access the variable from that util file.",
+      "time": "10:52",
+      "timestamp": "1729014779.511239",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think the code that sends the email notification would execute in either api-server or celery-app-tasks, right?",
+      "time": "11:54",
+      "timestamp": "1729018493.343279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If you're looking for an example, @Jeff recently worked on sending email notifs when Search indexing completes. I think he sent a request from search-service (Go) to api-server, where the hostname is available, and where email rendering is usually done.",
+      "time": "11:56",
+      "timestamp": "1729018568.165779",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "The code that sends the email notification is in webapp",
+      "time": "11:56",
+      "timestamp": "1729018613.203929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah right, sorry :slightly_smiling_face:",
+      "time": "11:57",
+      "timestamp": "1729018626.590779",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I was able to get the actual email sending part working, I'm just not sure where this env var needs to go. Here's the PR in its current state: https://github.com/instabase/instabase/pull/63848",
+      "time": "11:57",
+      "timestamp": "1729018671.054949",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The difference with this one is that I need to be able to link back to the product and also display illustrations in the email so I need to the hostname",
+      "time": "11:58",
+      "timestamp": "1729018706.140859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":ack: Looking at the code, I think it's probably celery-app-tasks!",
+      "time": "11:58",
+      "timestamp": "1729018734.649489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "eg https://github.com/instabase/instabase/pull/63848/files#diff-f19fdc253519645729d11da2e9e6e2544f24f4302d1489c0309d9007658e6fd3R813 => the call stack for that likely points to a celery task.",
+      "time": "11:59",
+      "timestamp": "1729018775.929829",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Okay cool!! So I could possibly add the var there and be safe? I'm still wondering why there are other functions in that file that pull from the job-service config though",
+      "time": "11:59",
+      "timestamp": "1729018788.602909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm, you mean from here? https://github.com/instabase/instabase/pull/63848/files#diff-f19fdc253519645729d11da2e9e6e2544f24f4302d1489c0309d9007658e6fd3L13",
+      "time": "12:02",
+      "timestamp": "1729018922.421499",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "`instabase.config_utils.config` that is",
+      "time": "12:02",
+      "timestamp": "1729018955.250539",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The `get_job_logs` function uses `config.get_config().FLOW_LOGS_DIR`",
+      "time": "12:03",
+      "timestamp": "1729018992.537299",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "IIRC that is the \"common\" config for Python services. There might be some overlap in env var names with job service's config, which is defined here (https://github.com/instabase/instabase/blob/master/core-services/job-service/src/go/src/instabase/jobservice/config/config.go#L17).",
+      "time": "12:03",
+      "timestamp": "1729019018.277979",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase/jobservice/config/config",
+      "time": "12:03",
+      "timestamp": "1729019019.103599",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Is that one just okay because it's meant to be used from a specific endpoint? I only see that variable in job service",
+      "time": "12:03",
+      "timestamp": "1729019037.646259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, that is quite strange. I wonder if there's a default value for it in Python.",
+      "time": "12:04",
+      "timestamp": "1729019063.832889",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yep, looks like there is: https://github.com/instabase/instabase/blob/c2fbbb6364f48e79d9dadfb476174fa5d69fa2[…]s/py-utils/config-utils/src/py/instabase/config_utils/config.py (https://github.com/instabase/instabase/blob/c2fbbb6364f48e79d9dadfb476174fa5d69fa250/shared-utils/py-utils/config-utils/src/py/instabase/config_utils/config.py#L227)",
+      "time": "12:04",
+      "timestamp": "1729019083.593299",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This kind of thing drives me nuts btw :slightly_smiling_face: :slightly_smiling_face: :slightly_smiling_face: I wish we could define these system-global configs in one place!",
+      "time": "12:05",
+      "timestamp": "1729019113.915249",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Does this mean though that if I add INSTABASE_HOSTNAME to the celery-app-tasks config, I can use `config.get_config().INSTABASE_HOSTNAME` in those files?",
+      "time": "12:05",
+      "timestamp": "1729019114.987119",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, I think so. To be safe, I would also add it to `webapp` and `api-server` as well.",
+      "time": "12:05",
+      "timestamp": "1729019138.863959",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "It's already in those!",
+      "time": "12:05",
+      "timestamp": "1729019149.668439",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "TBH, I wonder if there is a way to set `INSTABASE_HOSTNAME` for all services across the board. cc @Kerr Yoo",
+      "time": "12:06",
+      "timestamp": "1729019183.934019",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "Yeah, we can do that. I’ll make a ticket for it. We just need to make this (https://instabase.atlassian.net/wiki/spaces/TI/pages/2260959295/Common+Config+Changes+with+Helm#Add-multiple-environment-variables-to-a-group-of-resources) minor helm chart change.",
+      "time": "12:26",
+      "timestamp": "1729020366.689209",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I changed my PR to add it to app-tasks in the meantime! Thanks so much for your help everyone!",
+      "time": "12:30",
+      "timestamp": "1729020641.409579",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-10-15.json",
+    "message_count": 42,
+    "start_time": "1729011686.891349",
+    "end_time": "1729020641.409579",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "id": "ch_C06FA6A23_2025-05-30_1748627763.915359_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Cody Boggs",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Anyone know where on earth this pre-commit bit is defined?\nI can see the shell commands it runs, yes, but where the actual pre-commit hook that invokes it is... :magic:\nAnd it's a right pain in the arse as it unwinds my changes to any of the `test-cmd-*.json` files to try and handle Bazel borkedness. :smile:\n\nCC: @Heymian @Yash Botadra @Victor Zeng if any of you have context :pray::skin-tone-3:\n\n```Updates the python post-merge unit test list.............................Failed\n- hook id: python-unit-tests\n- files were modified by this hook\n\nmkdir -p /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/build/py\nsh -c 'rm -f /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/build/pydeps.txt; rm -f /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/build/pythriftdeps.txt; rm -f /home/owner/projects/instabase\n/shared-utils/py-utils/internal/static-analyzer/build/protodeps.txt; make -s list-deps >> /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/build/pydeps.txt && make -s list-thrift-deps >> /home/owner/projects/instabase/shared\n-utils/py-utils/internal/static-analyzer/build/pythriftdeps.txt && make -s list-proto-deps >> /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/build/protodeps.txt && cp -r /home/owner/projects/instabase/shared-utils/py-utils\n/internal/static-analyzer/../../../../shared-utils/py-utils/thrift-utils/types/src/py/* /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/build/py && python /home/owner/projects/instabase/shared-utils/py-utils/internal/static\n-analyzer/../../../../shared-utils/build-utils/shared/src/py/copy_py_deps.py --file /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/build/pydeps.txt --thrift_file /home/owner/projects/instabase/shared-utils/py-utils/interna\nl/static-analyzer/build/pythriftdeps.txt --proto_deps_file /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/build/protodeps.txt --build_path /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/build\n/py/ --project_dir /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/../../../.. --skip_pygen=false; '\nsh -c 'rsync -auh /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/src/py/* /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/build/py'\nsh -c 'python /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/../../../../shared-utils/build-utils/shared/src/py/create_init.py --root /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/build/py;\n'\ncd /home/owner/projects/instabase/shared-utils/py-utils/internal/static-analyzer/build/py && python gen_test_spec.py```",
+      "time": "10:56",
+      "timestamp": "1748627763.915359",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(been getting around it with `--no-verify` for now but that's not ideal of course)",
+      "time": "10:56",
+      "timestamp": "1748627785.241919",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Sorry, what are you trying to do? why do you need no-verify?",
+      "time": "11:09",
+      "timestamp": "1748628565.887679",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Interesting. I didn't know this hook existed",
+      "time": "11:10",
+      "timestamp": "1748628614.797709",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Fair question Heymian lol\nI'm trying to add a bazel flag to specific test commands in `shared-utils/test-utils/src/test-cmds-py-unit.json`:\n```-                \"make bazel-build bazel-test\"\n+                \"make bazel-build bazel-test EXTRA_BAZEL_ARGS=\\\"--noexperimental_python_import_all_repositories\\\"\"```\nI can do so in `run_tests_for_affected_code.py` but it's a very \"blanket\" approach that will add it to every bazel-ified command in _all_ of the `test-cmds-*.json` files :grimacing:\nI don't know what the impact might be on any given service - so I'm experimenting with certain test suites that yield this infuriating `Argument list too long` failure in pre-merge runs. :sweat_smile:\n\nBut if I update `test-cmds-py-unit.json` directly, this pre-commit hook unstages my change, regenerates all these JSON files, and fails the commit. :sob:",
+      "time": "11:15",
+      "timestamp": "1748628938.973699",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I added this one, it's a hook that scans for new python modules added and makes sure it's included in the test-cmds-py-unit.json file. I noticed folks kept adding new modules and the tests would not be run.",
+      "time": "11:33",
+      "timestamp": "1748629980.398039",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "The should should pass though, if not something is broken and should be fixed. :slightly_smiling_face: Is there a PR where you might'e changed related functionality?\n\nThis file should be autogenerated, so if you need to change something, we need to fix the autogeneration script.",
+      "time": "11:33",
+      "timestamp": "1748630037.224709",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "If you want that command added everywhere, can you add it to the make target: `bazel-build` or `bazel-test`?",
+      "time": "11:36",
+      "timestamp": "1748630164.175829",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea, I don't want to make it apply to everything, because it has the potential to force some services to fully qualify their import paths for internal packages. Hasn't so far, but that's why I'm doing such a targeted test for now. :smile:\n\nCan you show me where it's actually defined? I can't for the life of me figure out where the invocation of it is committed :sweat_smile:",
+      "time": "11:40",
+      "timestamp": "1748630457.467459",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "This is the list of pre-commit hooks: https://github.com/instabase/instabase/blob/master/.pre-commit-config.yaml#L74\nAnd this is the script that generates the list: https://github.com/instabase/instabase/blob/master/shared-utils/py-utils/internal/static-analyzer/src/py/gen_test_spec.py",
+      "time": "11:47",
+      "timestamp": "1748630825.127739",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "In the script, this is how that bazel command is generated:\nhttps://github.com/instabase/instabase/blob/master/shared-utils/py-utils/internal/static-analyzer/src/py/gen_test_spec.py#L57",
+      "time": "11:49",
+      "timestamp": "1748630940.162459",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I dunno why I couldn't seem to find these references anywhere :sob:\nripgrep shouldn't be ignoring hidden files, but I guess it is. :thonk:\n\nThanks!!",
+      "time": "12:01",
+      "timestamp": "1748631680.879049",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "To be clear, I'm not advocating we drop it or stop generating them on pre-commit, just wanted to solve the mini mystery my own brain was the architect of, it seems. lol\n\nI'll need to address it in a better manner soon enough regardless otherwise i'll start failing everyone's pre-commit checks until we check in the generated version again, so all good. I'll handle :slightly_smiling_face:",
+      "time": "12:42",
+      "timestamp": "1748634149.327619",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "VS code search doesn't ignore hidden files :slightly_smiling_face:",
+      "time": "15:03",
+      "timestamp": "1748642638.326309",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-05-30.json",
+    "message_count": 14,
+    "start_time": "1748627763.915359",
+    "end_time": "1748642638.326309",
+    "is_thread": true
+  }
+}

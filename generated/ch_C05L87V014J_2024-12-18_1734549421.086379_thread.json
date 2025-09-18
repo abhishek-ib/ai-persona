@@ -1,0 +1,167 @@
+{
+  "id": "ch_C05L87V014J_2024-12-18_1734549421.086379_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Jag",
+    "sean.donohoe",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "Hi team,\n\nI am creating an app on my crafting sandbox (https://https--jagjeetwani-instabase.instabase.site.sandboxes.run/build/0193daea-33c0-7d41-82ae-6e820e187dd7/app/create). I am using the ibdev-backend template. From looking at the logs (https://instabase.sandboxes.site/logviewx/instabase/jagjeetwani/dev/daemon/celery-app-tasks%40instabase), the app is failing to be created due to the error I pasted below. Basically, the app creation task is attempting to create a directory in system/global, but the acl permissions were not able to be retrieved.\n\nI think the reason is because the `system/global/fs/Instabase Drive/Applications/Deployed/All` hasn't been created yet, so the BE app creation code tries to create that directory first, but the user doesn't seem to have permission to do so. Is there a way we can manually access the crafting file-system, and create the root deployed solution folder that way?\n\n```[2024-12-18 18:48:26,217] [ForkPoolWorker-47/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/utils/grpc/client.py:268} ERROR - [trace_id=da19837f4ce6710b] - Request /file_service.FileService/Mkdir failed. Error code=INTERNAL, Error=(13, 'internal'), Message: Failed to get system repo FS perms. Non-retriable error\n[2024-12-18 18:48:26,217] [ForkPoolWorker-47/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/solution_utils/deployed_solution_util.py:215} ERROR - [trace_id=da19837f4ce6710b] - Error in creating directories system/global/fs/Instabase Drive/Applications/Deployed/All/b4e39fc1-64c3-407e-9139-ffd997e24b67. Err: [File_service_v2 Enabled] Error occurred executing GRPC method: Request /file_service.FileService/Mkdir failed. Error code=INTERNAL, Error=(13, 'internal'), Message: Failed to get system repo FS perms. Non-retriable error```",
+      "time": "11:17",
+      "timestamp": "1734549421.086379",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "> Is there a way we can manually access the crafting file-system\nCould you elaborate a bit on what you mean by this? If you're looking to create directories on your crafting virtual machine then yes, you can do that at the command line via `cs ssh`, the vscode terminal, or the web terminal :slightly_smiling_face:",
+      "time": "11:37",
+      "timestamp": "1734550679.643139",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "Ah sorry I meant the ib file-system.",
+      "time": "11:38",
+      "timestamp": "1734550724.521819",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "For example if I try to access -> https://https--jagjeetwani-instabase.instabase.site.sandboxes.run/system/global/fs/Instabase%20Drive/\n\nI get an error",
+      "time": "11:39",
+      "timestamp": "1734550760.269999",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": ":ack: this is unfortunately outside my knowledge, maybe @mfichman and/or @Serena can provide some pointers when they have a moment?",
+      "time": "11:40",
+      "timestamp": "1734550814.100159",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "to be able to access the file system in AI Hub environments, you need the “Manage AI Hub” site permission\n\nare you logged in with a site admin account or an account with the “Manage AI Hub” site permission?",
+      "time": "11:41",
+      "timestamp": "1734550900.621719",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for your original question about writing to `system/global/fs/Instabase Drive/Applications/Deployed/All` to create an app, when did you create your sandbox?\n\nMatt already included the AI Hub post-install action in the ibdev-backend template\n\nthe post-install action should take care of setting up an `aihub_marketplace_admin` user to be used for creating apps - see thread (https://instabase.slack.com/archives/C05L87V014J/p1733778752131259) from before the inclusion of the post-install action in `ibdev-backend`",
+      "time": "11:44",
+      "timestamp": "1734551041.715559",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "Ah dang I should've looked at that thread sorry.\n\nI created the sandbox last week, but I rebuilt all the services since then so I thought that should take care of all post-install actions.",
+      "time": "11:45",
+      "timestamp": "1734551132.797109",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "I might just try creating a brand new sandbox then",
+      "time": "11:45",
+      "timestamp": "1734551143.908459",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah i see that you created your sandbox 5 days ago, which is also when Matt merged his changes (https://github.com/instabase/instabase/commit/4498ff70431c3fc65f60532f50fd76e706a8e6cd) for the post-install action :sweat_smile:",
+      "time": "11:45",
+      "timestamp": "1734551150.578219",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "you should be able to fix your existing sandbox by following this (https://instabase.slack.com/archives/C05L87V014J/p1734530848129839?thread_ts=1734481620.095859&cid=C05L87V014J)!",
+      "time": "11:46",
+      "timestamp": "1734551160.857629",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "Hmm, yes that was the thread I followed to get my sandbox the new updates.\n\n `cs update` doesn't seem to be a command so I had done `cs restart` as I saw in another thread that rebuilds everything.\n\nTrying `cs build` right now. Ty Serena!",
+      "time": "11:49",
+      "timestamp": "1734551391.152189",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "some cs commands are described in matt’s slides (https://docs.google.com/presentation/d/1Fl2QBxoLnP1EIegMcHPC9qRlrBdQKmic_cn_wTb4Wu8/edit#slide=id.g31cbd307c56_0_68), the rest are documented in crafting docs\n• `cs restart` restarts the ib services running as daemons in your environment (docs (https://docs.sandboxes.cloud/docs/command-line-tool#daemon-management))\n• `cs sandbox update` syncs your sandbox with the latest version of the template (docs)\n• `cs build` runs the `build` hook (docs (https://docs.sandboxes.cloud/docs/command-line-tool#daemon-management), configured in our template here (https://github.com/instabase/instabase/blob/4498ff70431c3fc65f60532f50fd76e706a8e6cd/.sandbox/ibdev-backend/hooks/build))",
+      "time": "11:55",
+      "timestamp": "1734551739.337299",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "hmm, am I doing something wrong? cs update doesn't seem to be a command",
+      "time": "11:56",
+      "timestamp": "1734551815.428749",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think the correct command (based on thread (https://instabase.slack.com/archives/C05L87V014J/p1734016000948949) and docs) is `cs sandbox update`",
+      "time": "11:58",
+      "timestamp": "1734551906.033279",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "haha I just found that as well!",
+      "time": "11:58",
+      "timestamp": "1734551921.349889",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "it's running now, ty!",
+      "time": "11:58",
+      "timestamp": "1734551927.060209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Thanks @Serena :slightly_smiling_face: Glad this is resolved!",
+      "time": "12:41",
+      "timestamp": "1734554511.374389",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-18.json",
+    "message_count": 18,
+    "start_time": "1734549421.086379",
+    "end_time": "1734554511.374389",
+    "is_thread": true
+  }
+}

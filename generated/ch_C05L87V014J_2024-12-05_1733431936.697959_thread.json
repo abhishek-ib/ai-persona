@@ -1,0 +1,497 @@
+{
+  "id": "ch_C05L87V014J_2024-12-05_1733431936.697959_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Ashwin",
+    "William Helmrath",
+    "Jessica",
+    "Heymian",
+    "sean.donohoe",
+    "donagh"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "https://instabase.slack.com/archives/C01N7DV1137/p1733431888642989",
+      "time": "12:52",
+      "timestamp": "1733431936.697959",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I thought we deleted core-tasks recently :thonk: @Heymian did any of your deletions get reverted recently?",
+      "time": "12:53",
+      "timestamp": "1733432015.751349",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "looks like envoy-proxy specifically is not passing readiness checks in the core-tasks pod, but I can't find anything significant in its error logs",
+      "time": "12:56",
+      "timestamp": "1733432188.574719",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "though the containers are also using images from 23.37....? did someone override the release version for crafting-aihub recently?",
+      "time": "12:57",
+      "timestamp": "1733432242.766889",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "and they're on gcr :thonk: :thonk:",
+      "time": "12:57",
+      "timestamp": "1733432279.274469",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "someone must have done something they shouldn't have recently lol",
+      "time": "12:58",
+      "timestamp": "1733432295.218489",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I'm going to scale the pods down to 0, I don't believe this service is used any more",
+      "time": "12:58",
+      "timestamp": "1733432309.040709",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "scaled down, going to kick off another upgrade\n\nsomething is extremely fucky though -- other deployments _also_ appear to be using images from gcr and 23.37, but ICC says the cluster should be deployed off master -- @Ashwin / @jtau would either of you know how to identify when/why/who/how the registry + release version got set?",
+      "time": "13:01",
+      "timestamp": "1733432482.221999",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@William Helmrath I see a ton of patches submitted by you on the 5th -- would you happen to know whether those are related?",
+      "time": "13:02",
+      "timestamp": "1733432578.387099",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "It also thinks the sandbox is no longer an AI Hub one, the legacy platform is showing up",
+      "time": "13:03",
+      "timestamp": "1733432589.904739",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ok something got seriously screwed up",
+      "time": "13:03",
+      "timestamp": "1733432621.191169",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I don't think it's related, but @donagh was also doing some DB work on crafting-aihub -- any relation?",
+      "time": "13:04",
+      "timestamp": "1733432697.898429",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "what the whatting what",
+      "time": "13:05",
+      "timestamp": "1733432743.594279",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Hey @sean.donohoe Donagh and I were investigating some crafting-aihub deploy failures caused by patches failing to apply. After the DB cleanup I manually uploaded the patch zip that failed to apply today",
+      "time": "13:05",
+      "timestamp": "1733432754.462879",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Hey Sean, we can revert to the snapshot to undo any changes",
+      "time": "13:06",
+      "timestamp": "1733432780.885019",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Looks like something happened to the DB or its pointing to the wrong one",
+      "time": "13:06",
+      "timestamp": "1733432808.303099",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Unless someone went into the DB and cleared things, my hunch is that the DB DM is pointing to got changed",
+      "time": "13:07",
+      "timestamp": "1733432825.748639",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "I was cleaning the DB, my guess is version ordering wasn't correct in one of the queries",
+      "time": "13:07",
+      "timestamp": "1733432829.204879",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "@sean.donohoe feel free to revert",
+      "time": "13:07",
+      "timestamp": "1733432844.810929",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I'm a bit surprised the patch zip applied these changes though -- it appears we disabled this as an aihub env, can we even do that through patches alone?",
+      "time": "13:07",
+      "timestamp": "1733432860.620719",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "at any rate, restoring via the snapshot now",
+      "time": "13:08",
+      "timestamp": "1733432904.181039",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Which changes are referring to? There are two things that happened:\n\n1) DB clearing (we have 250K+ configs in this DB, was attempting to clear the unneeded ones, but looks like the ordering of versions in one of my queries may have been incorrect)\n\n2) the patch zip that was applied is the patch zip from the pipeline, just applied manually (this should be safe)",
+      "time": "13:10",
+      "timestamp": "1733433017.327829",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Re core-tasks, yes this has been deprecated from master. Though core-services was not.",
+      "time": "13:10",
+      "timestamp": "1733433053.038859",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "This was an aihub cluster previously, but now it appears to be an enterprise cluster",
+      "time": "13:11",
+      "timestamp": "1733433063.899369",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Now that I don't know about",
+      "time": "13:11",
+      "timestamp": "1733433087.671999",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "And, on top of that, we're now pulling certified GCR images for 23.38, whereas before we were pulling from ECR using master",
+      "time": "13:11",
+      "timestamp": "1733433093.944699",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Let's check state after the DB restore",
+      "time": "13:12",
+      "timestamp": "1733433123.264729",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "The GCR and version issue is likely due to my changes. The aihub -> enterprise, I'm not quite sure",
+      "time": "13:15",
+      "timestamp": "1733433353.400519",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": ":ack:  just waiting on the existing db to get deleted first!",
+      "time": "13:16",
+      "timestamp": "1733433396.605419",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yup, core-tasks is deprecated/deleted on master + and future AI Hub branches.",
+      "time": "13:41",
+      "timestamp": "1733434907.414399",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Snapshot restore is done, going to run an upgrade now to be sure everything's synced",
+      "time": "13:46",
+      "timestamp": "1733435204.240549",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "unfortunately upgrades on this instance have been failing at the apply patch stage for a couple of days (just a heads up)",
+      "time": "13:47",
+      "timestamp": "1733435256.259279",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "looks like the images are back to their correct values, at any rate :slightly_smiling_face:",
+      "time": "13:52",
+      "timestamp": "1733435557.930599",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Great, sorry for the mess! I'll look into what happened",
+      "time": "13:53",
+      "timestamp": "1733435594.646599",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "No worries whatsoever, nice call on taking a snapshot beforehand :raised_hands:  I'm still not entirely convinced the AIHub -> enterprise change is related, but lmk if I can help with any debugging :slightly_smiling_face:",
+      "time": "13:54",
+      "timestamp": "1733435653.266619",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Yeah im not either, where are you seeing this?",
+      "time": "13:55",
+      "timestamp": "1733435741.512139",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "if you go to https://crafting-aihub.test.instabase.com/ it's giving a (broken) enterprise view rather than the usual aihub view",
+      "time": "13:56",
+      "timestamp": "1733435776.383349",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I _think_ it's because the images deployed to the cluster are still the gcr ones -- is there a way to force DM to sync its configs to the cluster?",
+      "time": "13:56",
+      "timestamp": "1733435802.011459",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I started noticing that all the api-server endpoints were failing on AI Hub, was refreshing a bit, and then it just turned into the enterprise version",
+      "time": "13:57",
+      "timestamp": "1733435825.641839",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "that certainly sounds like it could be the incorrect gcr images getting rolled out to the cluster",
+      "time": "13:57",
+      "timestamp": "1733435863.556529",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "DM has the right images in its configs, but the deployments are still configured to use the wrong ones, which I think would get resolved if we could manually trigger a DM sync",
+      "time": "13:58",
+      "timestamp": "1733435916.893919",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Ok I get the aihub login :thinking_face:",
+      "time": "13:59",
+      "timestamp": "1733435951.955019",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "I'll trigger the sync via api",
+      "time": "13:59",
+      "timestamp": "1733435971.128809",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "very weird lmao :thonk:",
+      "time": "13:59",
+      "timestamp": "1733435989.346189",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm logged in... I wonder if there's a difference between apps-server and webserver?",
+      "time": "14:00",
+      "timestamp": "1733436006.003099",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I do have an upgrade running at the moment if we wanted to wait for that to try syncing @donagh -- https://jenkins.instabase.com/job/SAAS-AWS/job/deploy-saas-aws-preprod/30062/console",
+      "time": "14:00",
+      "timestamp": "1733436026.838619",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Ah ok, yeah sounds good to me",
+      "time": "14:00",
+      "timestamp": "1733436040.529789",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Alright, here is what happened with the DB: usually we sort base configs by version in decreasing order. We keep the top three (highest version) and clear the rest. However on this instance the version numbers are like so:\n```-cluster_fix \n-1733436771 \n-1733416148```\nThe most recent version returned by DM's \"get latest\" endpoint is `-1733436771` .\nSo these all were cleared and `23.37.0-1695840674` was kept :upside_down_face:",
+      "time": "14:43",
+      "timestamp": "1733438605.565679",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "whelp there is 0% chance I would have ever been able to identify that lmao :sweat_smile: I remember having to do some janky stuff to get crafting-aihub initially, should we just nuke those weird versions?",
+      "time": "14:45",
+      "timestamp": "1733438740.524419",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "The weird versions are the ones being applied it seems. The only 'normal' versions in the db are:\n```| 23.37.0-1695840674-np\n| 23.37.0-1695840674   \n| 23.35.1-1695337418   \n| 23.35.1-1694454428-np\n| 23.35.1-1694454428```\nWe don't want to clear the negative ones because those are actually the most recent (that's what i mistakenly did in the first place)",
+      "time": "14:47",
+      "timestamp": "1733438846.629379",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "interesting! so, asking this because I am severely uneducated in DM, is there a need for us to keep those `23` bundles around?",
+      "time": "14:48",
+      "timestamp": "1733438920.136459",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "No, we need only keep the most recent 2 versions— the current and the prev (in case we need to roll back)",
+      "time": "14:49",
+      "timestamp": "1733438977.073489",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "gotcha gotcha, so the `23-...` bundles should have been purged a long time ago but for some reason got persisted? (also lmk if I'm distracting you from anything, the questions are purely for my own curiosity :stuck_out_tongue: )",
+      "time": "14:50",
+      "timestamp": "1733439046.169719",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "All good, I'm happy to answer (and document)\n\nWe actually don't auto purge configs anywhere. The build up of configs is only an issue for our internal envs that we update several times a day. Our customers generally don't upgrade often enough (yet) for the DB to get saturated like this.\n\nWe also don't enforce any particular version string pattern, so while versions in DM configs are conventionally in the `XX.XX.XX` pattern, they don't have to be for DM to accept them. This is because we've had customers in the past request to use their own versioning conventions.",
+      "time": "14:55",
+      "timestamp": "1733439307.369499",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ahhhh ok I get you, TIL! so would it help keep these clusters healthier if we added some post-deployment logic (or even a cron job) to purge versions outside the last 3?",
+      "time": "14:57",
+      "timestamp": "1733439455.157609",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "Yes, we've toyed with the idea for a while, just hasn't been high enough priority yet.",
+      "time": "14:58",
+      "timestamp": "1733439492.902859",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah for sure, sounds like something that could be good for @mfichman and/or myself to experiment with specifically for the crafting clusters :smile:",
+      "time": "14:59",
+      "timestamp": "1733439552.383029",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "also @Jessica the cluster should be back online!",
+      "time": "14:59",
+      "timestamp": "1733439567.786909",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "If you do, don't rely on release version to tell you what's latest unless you're sure nobody will ever add a custom version. You can see how DM does it here (https://github.com/instabase/instabase/blob/cb7fa80fd8f69fdb6e644c3be92aee597ff92785/shared-utils/go-utils/src/instabase/utils/db/accessor/deployment_accessor.go#L527) (its not pretty)",
+      "time": "15:08",
+      "timestamp": "1733440114.358119",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-05.json",
+    "message_count": 59,
+    "start_time": "1733431936.697959",
+    "end_time": "1733440114.358119",
+    "is_thread": true
+  }
+}

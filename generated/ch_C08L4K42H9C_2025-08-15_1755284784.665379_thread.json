@@ -1,0 +1,158 @@
+{
+  "id": "ch_C08L4K42H9C_2025-08-15_1755284784.665379_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "Charles",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "Hey team! Just wanted to bring up an issue with resuming an app deployment run, after the run starts, and it stops because of validation errors, when I click submit and continue, the status endpont returns the job-ids which need to be resumed. The endpoint to actually resume them (which is the retry endpoint in job_handler.py), is not being called. I don't have a downstream integration, could this be why?\n\nI'm trying to test the coverage for resuming an app deployment run\n\ncc: @prateek.tenkale",
+      "time": "12:06",
+      "timestamp": "1755284784.665379",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "did you check the status of the returned job ids?\n\nthe FE only resumes the job if the job's review status is marked as completed (https://github.com/instabase/instabase/blob/13360d69f395c1563b5e489a6154e6102437a56f/webserver/shared/src/js/webpacked/apps/src/aihub/store/review/resultsSlice/updateDocumentsReviewStatus/actions.ts#L79)",
+      "time": "13:18",
+      "timestamp": "1755289084.893099",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I thought it just looked at jobsReadyForResume?",
+      "time": "13:44",
+      "timestamp": "1755290678.334399",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "How does it know the run status from the human review page?",
+      "time": "13:45",
+      "timestamp": "1755290734.921719",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yes it just looks at `jobsReadyForResume`\n\n`jobsReadyForResume` is populated (https://github.com/instabase/instabase/blob/13360d69f395c1563b5e489a6154e6102437a56f/webserver/shared/src/js/webpacked/apps/src/aihub/store/review/resultsSlice/updateDocumentsReviewStatus/actions.ts#L83) based on `jobResumeStatuses` returned by `PATCH api/v2/documents/review/status`\n\nfor example, for this API response (see screenshot), we would not continue the job yet since `jobReadyForResume` is false",
+      "time": "13:59",
+      "timestamp": "1755291594.666349",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I see yeah in his case the flag was true but no retry endpoint was being called",
+      "time": "14:06",
+      "timestamp": "1755291984.352469",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "got it - i agree that's unexpected, seems like a frontend issue then?\n\n@Charles do you want to meet to debug?",
+      "time": "14:09",
+      "timestamp": "1755292170.388129",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "the coverage is there - just unsure how to proceed with testing/release",
+      "time": "14:21",
+      "timestamp": "1755292875.493869",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "to answer your original message, the `/retry` endpoint should be called, regardless of whether the deployment has a downstream integration\n\nshould we meet now to debug?",
+      "time": "14:23",
+      "timestamp": "1755292998.978159",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "I can meet at 3! But Im unsure what we’ll debug since Prateek and I discovered the bug already on a call",
+      "time": "14:39",
+      "timestamp": "1755293941.133979",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Guessing Serena probably want to put debugger statements in the FE code",
+      "time": "15:03",
+      "timestamp": "1755295382.300099",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "yeah let me know when’s a good time!",
+      "time": "15:03",
+      "timestamp": "1755295421.220509",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "sorry was in a meeting, i can meet now!",
+      "time": "15:13",
+      "timestamp": "1755295981.995539",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "https://instabase.zoom.us/j/96934864169",
+      "time": "15:20",
+      "timestamp": "1755296439.455709",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "@Serena @prateek.tenkale ill be waiting, make some noise when you're in!",
+      "time": "15:23",
+      "timestamp": "1755296590.071329",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "there's a frontend bug on master (reproducible in aihub-sandbox but not aihub-uat) where the job is never resumed when `useSubmitAndContinue` is clicked for doc-based reviews",
+      "time": "16:00",
+      "timestamp": "1755298803.582349",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Charles for now, call `GET <sandbox-domain>/api/v1/jobs/retry?job_id=c06ce8bf-c036-4ddb-b078-db3448b6c61c&queue_permissions=true&type=all&workspace=Product-Team` manually via Postman or curl",
+      "time": "16:00",
+      "timestamp": "1755298823.368849",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-08-15.json",
+    "message_count": 17,
+    "start_time": "1755284784.665379",
+    "end_time": "1755298823.368849",
+    "is_thread": true
+  }
+}

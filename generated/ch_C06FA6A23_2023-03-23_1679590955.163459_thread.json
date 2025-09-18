@@ -1,0 +1,149 @@
+{
+  "id": "ch_C06FA6A23_2023-03-23_1679590955.163459_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "lenny",
+    "Franklin Chian"
+  ],
+  "messages": [
+    {
+      "sender": "Franklin Chian",
+      "user_id": "U01PESF24HW",
+      "message": "Is there something here that I'm missing? I'm trying to import `deployed_solutions` using\n`instabase.api_server_apps.handler.api.v2.flows import deployed_solutions` but keep getting the error message: `No module named 'instabase.api_server_apps.handler.api.v2.deployed_solutions'`",
+      "time": "10:02",
+      "timestamp": "1679590955.163459",
+      "is_reply": false
+    },
+    {
+      "sender": "Franklin Chian",
+      "user_id": "U01PESF24HW",
+      "message": "Essentially, the 'flows' directory isn't getting picked up and the compiler is looking directly in `api.v2` for `deployed_solutions`",
+      "time": "10:03",
+      "timestamp": "1679590996.836489",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I thought `api_server_apps` was gone and merged with `api_server` :thinking_face:",
+      "time": "10:04",
+      "timestamp": "1679591087.520379",
+      "is_reply": true
+    },
+    {
+      "sender": "Franklin Chian",
+      "user_id": "U01PESF24HW",
+      "message": "`webserver/api-server/src/py/instabase/api_server_apps/handler/api/v2/flows/deployed_solutions.py`\n\nSo this is the relative path of deployed_solutions - what should I be importing from then?",
+      "time": "10:07",
+      "timestamp": "1679591232.999659",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "oh I see, yeah then `instabase.api_server_apps.handler.api.v2.flows.deployed_solutions` seems right to me I think — is the file there in the `build` folder?",
+      "time": "10:11",
+      "timestamp": "1679591498.271469",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "also if this is part of a test `@patch` you _might_ need to import it first? don’t remember for sure",
+      "time": "10:12",
+      "timestamp": "1679591533.377509",
+      "is_reply": true
+    },
+    {
+      "sender": "Franklin Chian",
+      "user_id": "U01PESF24HW",
+      "message": "yes it's in the build folder - I'm following the structure of how other tests are in the folder and the only difference is that deployed_solutions is inside the \"flows\" folder of `api/v2`",
+      "time": "10:17",
+      "timestamp": "1679591872.879669",
+      "is_reply": true
+    },
+    {
+      "sender": "Franklin Chian",
+      "user_id": "U01PESF24HW",
+      "message": "Full error message:\n```Traceback (most recent call last):\n  File \"/Users/franklinchian/.pyenv/versions/3.7.13/lib/python3.7/site-packages/mock/mock.py\", line 1197, in _dot_lookup\n    return getattr(thing, comp)\nAttributeError: module 'instabase.api_server_apps.handler.api.v2' has no attribute 'deployed_solutions'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/franklinchian/.pyenv/versions/3.7.13/lib/python3.7/site-packages/mock/mock.py\", line 1297, in patched\n    arg = patching.__enter__()\n  File \"/Users/franklinchian/.pyenv/versions/3.7.13/lib/python3.7/site-packages/mock/mock.py\", line 1353, in __enter__\n    self.target = self.getter()\n  File \"/Users/franklinchian/.pyenv/versions/3.7.13/lib/python3.7/site-packages/mock/mock.py\", line 1523, in <lambda>\n    getter = lambda: _importer(target)\n  File \"/Users/franklinchian/.pyenv/versions/3.7.13/lib/python3.7/site-packages/mock/mock.py\", line 1210, in _importer\n    thing = _dot_lookup(thing, comp, import_path)\n  File \"/Users/franklinchian/.pyenv/versions/3.7.13/lib/python3.7/site-packages/mock/mock.py\", line 1199, in _dot_lookup\n    __import__(import_path)\nModuleNotFoundError: No module named 'instabase.api_server_apps.handler.api.v2.deployed_solutions'```",
+      "time": "10:19",
+      "timestamp": "1679591973.670629",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "hm, what file are you trying to import `deployed_solutions` from?",
+      "time": "10:27",
+      "timestamp": "1679592433.098839",
+      "is_reply": true
+    },
+    {
+      "sender": "Franklin Chian",
+      "user_id": "U01PESF24HW",
+      "message": "a new test file called `test_deployed_solutions`",
+      "time": "10:27",
+      "timestamp": "1679592451.536699",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "in what directory?",
+      "time": "10:27",
+      "timestamp": "1679592470.285169",
+      "is_reply": true
+    },
+    {
+      "sender": "Franklin Chian",
+      "user_id": "U01PESF24HW",
+      "message": "`webserver/api-server/test/unit/py/instabase/handler/api/v2/flows`",
+      "time": "10:28",
+      "timestamp": "1679592496.449729",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": ":thinking_face: yeah sorry i’m not sure then",
+      "time": "10:34",
+      "timestamp": "1679592899.225529",
+      "is_reply": true
+    },
+    {
+      "sender": "Franklin Chian",
+      "user_id": "U01PESF24HW",
+      "message": "no worries thanks for looking into this!",
+      "time": "10:35",
+      "timestamp": "1679592929.137479",
+      "is_reply": true
+    },
+    {
+      "sender": "Franklin Chian",
+      "user_id": "U01PESF24HW",
+      "message": "fixed it - just cleaned up a bunch of code and I added the file and pushed to my branch, then reran and it worked",
+      "time": "11:43",
+      "timestamp": "1679596993.179529",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "weird!",
+      "time": "11:43",
+      "timestamp": "1679597016.133589",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-03-23.json",
+    "message_count": 16,
+    "start_time": "1679590955.163459",
+    "end_time": "1679597016.133589",
+    "is_thread": true
+  }
+}

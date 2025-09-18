@@ -1,0 +1,102 @@
+{
+  "id": "ch_CSY11CK7T_2024-06-13_1718313605.949539_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Serena",
+    "Jeff"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "there’s a problematic Converse project that can’t be deleted - `01901359-7486-7014-81b3-0f38cd596a7e` -> this is causing `view-my-hub` to fail sometimes and `converse-project-crud` to fail sometimes\n• https://cloud.cypress.io/projects/cfhedy/runs/11293 on @Udit’s PR\n• https://cloud.cypress.io/projects/cfhedy/runs/11292 on @Xindi Xu’s PR\nwe get a `Could not read project` error from `GetDataDrivePath` in `core-platform-service` - any thoughts on why this would occur? any recent db changes maybe?",
+      "time": "14:20",
+      "timestamp": "1718313605.949539",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "example trace (https://crafting-aihub.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22tf6%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D,%22query%22:%22f8926a66edf53b5f%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1) `f8926a66edf53b5f`",
+      "time": "14:22",
+      "timestamp": "1718313757.768929",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @mfichman @Jeff in case this could be related to the db migrations from earlier this week",
+      "time": "14:23",
+      "timestamp": "1718313814.603549",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I just checked the SQL query. The query does not select any entries from the repos table to which the db migration failure relates.",
+      "time": "14:31",
+      "timestamp": "1718314288.885849",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the error is being returned on this line https://github.com/instabase/instabase/blob/3a9e9ca/core-services/core-platform-se[…]rvice/src/go/src/instabase/coreplatformservice/aihub/handler.go (https://github.com/instabase/instabase/blob/3a9e9ca/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/aihub/handler.go#L946)\n\nis there any way to see what error the db returned?",
+      "time": "14:50",
+      "timestamp": "1718315433.231289",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i logged in as <mailto:support-testing+1@instabase.com|support-testing+1@instabase.com> and was somehow able to delete this Converse project :confused_dog:\n\nso i guess we should be good??",
+      "time": "14:57",
+      "timestamp": "1718315877.242669",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "The GetModel function fails usually because the row does not exist. I try to select this project from the database directly and it seems like it does not exist.",
+      "time": "15:01",
+      "timestamp": "1718316073.396549",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "The err returned from db is discarded. I think code could be improved by returning the error message from db.\nhttps://github.com/instabase/instabase/blob/3a9e9ca/core-services/core-platform-se[…]rvice/src/go/src/instabase/coreplatformservice/aihub/handler.go (https://github.com/instabase/instabase/blob/3a9e9ca/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/aihub/handler.go#L944C11-L944C14)",
+      "time": "15:02",
+      "timestamp": "1718316158.906709",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If there was a true error (not the not-found case) then the DB layer would log it",
+      "time": "16:00",
+      "timestamp": "1718319615.121259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "To see if the error exists, you can search Loki for that trace id. It will turn up any log messages related to the trace.",
+      "time": "16:00",
+      "timestamp": "1718319656.954979",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-06-13.json",
+    "message_count": 10,
+    "start_time": "1718313605.949539",
+    "end_time": "1718319656.954979",
+    "is_thread": true
+  }
+}

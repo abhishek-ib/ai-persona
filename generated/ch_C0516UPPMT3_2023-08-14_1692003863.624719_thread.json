@@ -1,0 +1,360 @@
+{
+  "id": "ch_C0516UPPMT3_2023-08-14_1692003863.624719_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "fernando",
+    "Kerry",
+    "Varun Jain",
+    "pauline.comising",
+    "Lee",
+    "Eric Han",
+    "naveen",
+    "shaunak",
+    "avi",
+    "Sławek Biel",
+    "Serena",
+    "Kathy Wu",
+    "Rafal"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I need to take back what I said above about it working. The results in build when on advanced mode works really well, but only when you’re actually in the configuration stage. When you preview or compile your app it seems like it reverts back to the old way of running advanced queries, which results in significantly worse results.\n\nhttps://www.loom.com/share/aa4aabc0283b4f6cad539474f8cda50d?sid=94f5930d-c810-487c-9c5e-428ce06d69c1",
+      "time": "02:04",
+      "timestamp": "1692003863.624719",
+      "is_reply": false
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "@Varun Jain this seems like quite a high priority bug in UAT.",
+      "time": "02:04",
+      "timestamp": "1692003886.837659",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "I noticed a similar issue even with simple prompts producing inconsistent results when building and in a compiled app - https://instabase.slack.com/archives/C0516UPPMT3/p1691763807327799?thread_ts=1691746551.430779&cid=C0516UPPMT3 (https://instabase.slack.com/archives/C0516UPPMT3/p1691763807327799?thread_ts=1691746551.430779&cid=C0516UPPMT3)",
+      "time": "02:08",
+      "timestamp": "1692004100.945319",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "@Eric Han @Sławek Biel @Rafal can you take a look?",
+      "time": "02:20",
+      "timestamp": "1692004802.775109",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Is it possible this uses a different ibllm version somehow?\nHow can I inspect the requests being made to ibllm when it’s run as a flow?\n@vineeth do you know?",
+      "time": "02:23",
+      "timestamp": "1692005007.404639",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "CC @avi do you know of differences between the build mode configuration page vs running as an app? Are the requests to ibllm different somehow?",
+      "time": "03:31",
+      "timestamp": "1692009087.723499",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "Afair, flow is using some files stored in the `avivaid/my-repo/fs/Instabase%20Drive/.flow/ib/custom/`\n@avi is it still accurate?",
+      "time": "03:35",
+      "timestamp": "1692009314.576229",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Hm, I'm not sure about this, @Eric Han would know how model usage may differ for build projects v/s apps. In the case of the brokerage statements app I created, I just made it on builder and then compiled the app and ran it, but it had different results on the same docs. I didn't do any customisation in flow/refiner",
+      "time": "03:54",
+      "timestamp": "1692010457.887899",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "I don’t know of any differences in build projects and apps in how we use ibllm. @naveen is this something you have time to verify?",
+      "time": "08:52",
+      "timestamp": "1692028344.308729",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "I can dig into this today.",
+      "time": "09:00",
+      "timestamp": "1692028834.175849",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "maybe something changed with how we call `ibllm` in Refiner in 23.07? for build projects, we call the `/run_sync` API directly without going through Refiner or any UDF, while for apps, we run `ibllm` via a generated refiner",
+      "time": "09:04",
+      "timestamp": "1692029043.976259",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "let's make sure we investigate this before GA 23.07 AI Hub. cc @shaunak please wait for GA on this.\n\n@naveen please investigate this as a priority for today, thank you",
+      "time": "09:32",
+      "timestamp": "1692030739.061599",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Build and app are both using `ibllm==1.1.17` Build app calls model service with the same args as the refiner in the compiled app.  I don’t see any meaningful differences. cc @Sławek Biel",
+      "time": "10:35",
+      "timestamp": "1692034519.839679",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "@naveen did you get the same output from both calls?",
+      "time": "10:41",
+      "timestamp": "1692034901.062059",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Yes I did. Here’s my build project (https://aihub.uat.instabase.com/hub/apps/build/fd68bbab-5a81-4d23-b0c8-af08b942fcde) and here’s the preview of the app (the flow). (https://aihub.uat.instabase.com/hub/apps/build/fd68bbab-5a81-4d23-b0c8-af08b942fcde/app/preview) Here’s the generated refiner script (https://aihub.uat.instabase.com/naveen/my-repo/fs/Instabase%20Drive/aihub/fd68bbab-5a81-4d23-b0c8-af08b942fcde/flows/1692033148109/modules/Passport.refiner/scripts/run_model.py).",
+      "time": "10:43",
+      "timestamp": "1692035034.355629",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@fernando thread to follow.",
+      "time": "11:05",
+      "timestamp": "1692036351.793969",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "btw, what is the version of monorepo deployed to UAT sandbox right now?",
+      "time": "11:32",
+      "timestamp": "1692037930.983439",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@fernando :point_up::skin-tone-4:",
+      "time": "11:39",
+      "timestamp": "1692038388.732899",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "27.07.6",
+      "time": "11:41",
+      "timestamp": "1692038462.147689",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "@Rafal and I tried to debug this issue. How can we open the generated flow and refiner in their respective apps? Those apps don’t seem to work on UAT.",
+      "time": "12:16",
+      "timestamp": "1692040578.010089",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "The apps are just published solutions. They should be in the system/global drive",
+      "time": "12:26",
+      "timestamp": "1692041171.477119",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Right, I can also find them in my repo on the filesystem. Here (https://aihub.uat.instabase.com/naveen/my-repo/fs/Instabase%20Drive/aihub/fd68bbab-5a81-4d23-b0c8-af08b942fcde/flows/1692033148109/codelabs.ibflow) is a generated flow. What we can’t seem to do is open the flow from the flow editor app. this (https://aihub.uat.instabase.com/apps/flow/edit/naveen/my-repo/fs/Instabase%20Drive/aihub/fd68bbab-5a81-4d23-b0c8-af08b942fcde/flows/1692033148109/codelabs.ibflow) is how I’d expect to open it but the route isn’t found. So I’m wondering if the route has been disabled. A similar case for the generated refiner.",
+      "time": "12:36",
+      "timestamp": "1692041765.514789",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i just changed the `server-nginx` config so that you can open the flow app in this environment\n\ni’m restarting `server-nginx` now",
+      "time": "12:47",
+      "timestamp": "1692042478.746529",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "@Serena can you also do the same for the refiner app? @Rafal can you confirm that you’d need the refiner app to help in your debugging?",
+      "time": "12:49",
+      "timestamp": "1692042585.784689",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the same change also enables the refiner app",
+      "time": "12:50",
+      "timestamp": "1692042611.195699",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Thanks!",
+      "time": "12:50",
+      "timestamp": "1692042629.632449",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for future reference, the instructions for how to enable these routes is here https://docs.google.com/document/d/1IndR3LfrkciQR-M_of76Rdxd9uAIMRSaXRirhTLyBcw/edit#heading=h.i5sz5ymxlpi3",
+      "time": "12:51",
+      "timestamp": "1692042665.924389",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`server-nginx` has been restarted, and i confirmed i can open the flow Naveen linked above (https://aihub.uat.instabase.com/apps/flow/edit/naveen/my-repo/fs/Instabase%20Drive/aihub/fd68bbab-5a81-4d23-b0c8-af08b942fcde/flows/1692033148109/codelabs.ibflow)",
+      "time": "12:53",
+      "timestamp": "1692042833.782209",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i can also open refiners (example in screenshot)",
+      "time": "12:54",
+      "timestamp": "1692042893.259749",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Wonderful, thank you! @Rafal this should unblock you",
+      "time": "12:55",
+      "timestamp": "1692042926.523439",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "Yep, I could reproduce what Lee showed in the video, and I am able to run it in the refiner as well\nSo the root cause seems to be that `ip_sdk` call is actually giving a very different result than the ibllm call in the build mode\nI am not that familiar with this library package\n@lydia, @pauline.comising do you guys have any idea how to get to the actual payload to ibllm which is passed by ip_sdk?",
+      "time": "13:26",
+      "timestamp": "1692044791.318009",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "This issue appears for the long documents so this might be related to indexing and adding chunks to weaviate",
+      "time": "13:31",
+      "timestamp": "1692045099.050599",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "hey rafal, here's the ip_sdk.run_model func def and the req is on this line (https://github.com/instabase/instabase/blob/master/shared-utils/py-utils/udf-utils/src/py/instabase/udf_utils/ib_intelligence/functions.py#L196), is this what you're looking for?",
+      "time": "13:34",
+      "timestamp": "1692045289.991119",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "I think I found the reason for it\nIt is caused by the refiner function `entities_to_value` — this function would limit the model output only for words that are found by the provenance algorithm - in the case of complex prompts provenance is not always accurate\nI guess we should instead show the whole value as it was generated by the model and show provenance only for tokens that are found\ncc @lydia, @Kathy Wu",
+      "time": "15:17",
+      "timestamp": "1692051423.027839",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "@Kathy Wu would you have some time to do a PR with this fix?",
+      "time": "15:42",
+      "timestamp": "1692052969.983989",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "yup will do!",
+      "time": "15:43",
+      "timestamp": "1692053025.090619",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "please prioritize this fix -- this is a blocking release bug",
+      "time": "15:43",
+      "timestamp": "1692053025.280949",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "thank you",
+      "time": "15:43",
+      "timestamp": "1692053029.591879",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "let's add a test together with the fix",
+      "time": "15:44",
+      "timestamp": "1692053081.943949",
+      "is_reply": true
+    },
+    {
+      "sender": "Rafal",
+      "user_id": "U023S84DFDJ",
+      "message": "I found another issue with the refiner code\napparently, jobs submitted with this code\n```  with ThreadPoolExecutor(max_workers=num_threads) as tpe:\n    for field in FIELDS:\n      future = tpe.submit(_run_extraction_per_field, ip_sdk, record, field,\n                          cached_index, app_id, **kwargs)\n      result_futures.append(future)```\nyield the same output for all the fields :exploding_head:\nwe will put a task to find the root cause of it (cc @vineeth)\n\nto unblock us, a simple workaround is adding a sleep in between the submitted jobs\n```  with ThreadPoolExecutor(max_workers=num_threads) as tpe:\n    for field in FIELDS:\n      future = tpe.submit(_run_extraction_per_field, ip_sdk, record, field,\n                          cached_index, app_id, **kwargs)\n      time.sleep(0.5) \n      result_futures.append(future)```\n@Kathy Wu since you are working on the refiner PR can you add this fix as well?",
+      "time": "16:42",
+      "timestamp": "1692056542.363989",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "oo yes I can add that fix",
+      "time": "16:46",
+      "timestamp": "1692056793.493799",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-08-14.json",
+    "message_count": 41,
+    "start_time": "1692003863.624719",
+    "end_time": "1692056793.493799",
+    "is_thread": true
+  }
+}

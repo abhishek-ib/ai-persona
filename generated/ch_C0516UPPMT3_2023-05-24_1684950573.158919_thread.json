@@ -1,0 +1,232 @@
+{
+  "id": "ch_C0516UPPMT3_2023-05-24_1684950573.158919_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Hari",
+    "vineeth",
+    "Rakesh",
+    "avi",
+    "Gaurav Saini"
+  ],
+  "messages": [
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "FYI, Anant and Clemens want to consider bumping this up to 25MB a blocker.\n\n@Rakesh @Hari @vineeth - do you have any concerns from a digitisation POV on bumping up to 25MB?\n\ncc: @Pridhvi Vegesna for load test implications",
+      "time": "10:49",
+      "timestamp": "1684950573.158919",
+      "is_reply": false
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "We have seen a 400 page document be within 10 mb. With 25mb we can reach page limits of 1k we haven't tested the indexing performance on 1k pages yet.",
+      "time": "20:53",
+      "timestamp": "1684986836.078389",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Can we implement a page limit in addition to file size limit?",
+      "time": "21:17",
+      "timestamp": "1684988235.172009",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Tbh the right thing to do is token limit.",
+      "time": "21:18",
+      "timestamp": "1684988293.315749",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "We need to do some work to get this in though",
+      "time": "21:18",
+      "timestamp": "1684988309.238569",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Across model UI backend etc",
+      "time": "21:18",
+      "timestamp": "1684988322.929119",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "cc: @Weiming Wu, let's confirm with @vineeth and the model team before we check in this ticket.\n[FLOW-6308] Bump up file size for upload to 25MB from 10MB - Jira (atlassian.net) (https://instabase.atlassian.net/browse/FLOW-6308)",
+      "time": "21:24",
+      "timestamp": "1684988687.442139",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "@Hari @vineeth - It sounds like we should hold on making the UI change to bump up the file size limit until we look into how we'll limit doc size (tokens)? Is there a path where we can do this before launch?",
+      "time": "21:26",
+      "timestamp": "1684988784.610249",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "MHO I dont think we should risk pulling it off by GA, we can give it a try though. Whats the priority on this @avi?",
+      "time": "21:28",
+      "timestamp": "1684988916.845879",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Is it really a blocker :sweat_smile:",
+      "time": "21:29",
+      "timestamp": "1684988996.692639",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Anant and Clemens mentioned its high. Adding @Clemens here too to help weigh in",
+      "time": "21:30",
+      "timestamp": "1684989027.369639",
+      "is_reply": true
+    },
+    {
+      "sender": "Gaurav Saini",
+      "user_id": "U02DRKLCSSV",
+      "message": "How would the users know how many tokens are there in the document? Page size and file size limits are something the user can adhere to easily. For tokens he 'll run the doc and then find out.",
+      "time": "21:30",
+      "timestamp": "1684989051.369359",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Yeah correct",
+      "time": "21:31",
+      "timestamp": "1684989064.609749",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "We need OCR text for counting tokens",
+      "time": "21:31",
+      "timestamp": "1684989077.339939",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Can we get some really large docs and atleast test it by increasing to 25 MB limit? I think we can do that first on some dev sandbox and see where it goes",
+      "time": "21:32",
+      "timestamp": "1684989124.991209",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "I’m just worried on the amount of embedding calls that goes to openai + weaviate add to index (we could see this for the wierd NASDAQ doc you shared which had some wierd tokens- cc: @Gaurav Saini)",
+      "time": "21:33",
+      "timestamp": "1684989214.092679",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "The best middle ground is to have a no of pages check! That way we can support smaller docs that are large in size cos of rich content but at the same time not go beyond 500 pages.. @vineeth thoughts?",
+      "time": "21:34",
+      "timestamp": "1684989257.195789",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "This will reduce the index and embedding load right? Hopefully.. there might be some edge cases for sure",
+      "time": "21:34",
+      "timestamp": "1684989298.986919",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "I agree, but pages can only be calculated before digitization for files like pdf, for other files like for eg ppt can you get page numbers before digitization anyways?",
+      "time": "21:35",
+      "timestamp": "1684989334.715619",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "> This will reduce the index and embedding load right? Hopefully.. there might be some edge cases for sure  (edited)\nWe cant say this based on no of pages, its always dependent on no of tokens, we saw that a ~ 140 page document had 2 million tokens and it timed out",
+      "time": "21:36",
+      "timestamp": "1684989380.230139",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "But those will be rare cases right? I don’t think we can have guardrails for all.",
+      "time": "21:37",
+      "timestamp": "1684989446.114609",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "we can but we need to have token count check rather than page count check",
+      "time": "21:37",
+      "timestamp": "1684989471.670089",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "I agree we need to do a test run!",
+      "time": "21:37",
+      "timestamp": "1684989472.851969",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "For guardrails, we can intercept token count and reject such ones right post digitisation ?",
+      "time": "21:39",
+      "timestamp": "1684989542.821049",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "For large docs it’s the UX aspect as well, we need lots of OCR capacity to crunch them in parallel.",
+      "time": "21:39",
+      "timestamp": "1684989598.311729",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "Moving this conversation to the internal channel..",
+      "time": "21:41",
+      "timestamp": "1684989688.346909",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-05-24.json",
+    "message_count": 26,
+    "start_time": "1684950573.158919",
+    "end_time": "1684989688.346909",
+    "is_thread": true
+  }
+}

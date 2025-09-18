@@ -1,0 +1,45 @@
+{
+  "id": "ch_C06FA6A23_2021-05-26_1622016546.098800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ashish",
+    "Nidhi"
+  ],
+  "messages": [
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "@Nidhi @achao @Heymian\n\nthere appears to be some type of bad state with file service. none of the notebook containers are running correctly as they try to fetch the ipynb files from instabase.com (http://instabase.com) via the file apis which i believe is internally invoking grpc based file service\n\n```[I 2021-05-26 08:04:23.591 SingleUserNotebookApp log:49] 302 GET /user/ashish-nb/tree/ashish/my-playground/fs/Instabase%20Drive/notebooks/demo.ipynb (10.48.9.5) 800.72ms\nFuture exception was never retrieved\nfuture: <Future finished exception=HTTPError()>\nTraceback (most recent call last):\n  File \"/depot/build/py/instabase/notebook/services/contents/filemanager.py\", line 37, in wrapper\n    return f(*args, **kwargs)\n  File \"/depot/build/py/instabase/notebook/services/contents/filemanager.py\", line 412, in get\n    model = self._notebook_model(path, content=content)\n  File \"/depot/build/py/instabase/notebook/services/contents/filemanager.py\", line 391, in _notebook_model\n    raise IOError('{0}'.format(json_resp.get('msg')))\nOSError: [File_service_v2 Enabled] - Stat RPC error: Error occurred executing GRPC method: Retrying b'/file_service.FileService/Stat' request in 1.5s due to StatusCode DEADLINE_EXCEEDED, Error (4, 'deadline exceeded'), Message Deadline Exceeded. Retries left 0\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/mnt/disks/notebook-disk/conda/current/envs/python3/lib/python3.7/site-packages/tornado/gen.py\", line 209, in wrapper\n    yielded = next(result)\n  File \"/mnt/disks/notebook-disk/conda/current/envs/python3/lib/python3.7/site-packages/notebook/notebook/handlers.py\", line 84, in get\n    model = yield maybe_future(cm.get(path, content=False))\n  File \"/depot/build/py/instabase/notebook/services/contents/filemanager.py\", line 41, in wrapper\n    raise HTTPError(400, str(e))\ntornado.web.HTTPError: HTTP 400: Bad Request ([File_service_v2 Enabled] - Stat RPC error: Error occurred executing GRPC method: Retrying b'/file_service.FileService/Stat' request in 1.5s due to StatusCode DEADLINE_EXCEEDED, Error (4, 'deadline exceeded'), Message Deadline Exceeded. Retries left 0)```",
+      "time": "01:09",
+      "timestamp": "1622016546.098800",
+      "is_reply": false
+    },
+    {
+      "sender": "Nidhi",
+      "user_id": "U0179LPQK29",
+      "message": "Thanks @Ashish! We are looking into this as part of the prod issue Lee reported above.",
+      "time": "01:10",
+      "timestamp": "1622016655.100100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "ok thank you\n\ncc @Naveen for reference",
+      "time": "01:11",
+      "timestamp": "1622016675.100300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-05-26.json",
+    "message_count": 3,
+    "start_time": "1622016546.098800",
+    "end_time": "1622016675.100300",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "id": "ch_C06FA6A23_2019-02-07_1549560934.003100_conversation",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "conversation",
+  "participants": [
+    "shaunak",
+    "Ted"
+  ],
+  "messages": [
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Do we have any long running celery tasks that also are transient with respect to disk?\n\nvisual_refiner has an API call that will take between 1ms and 60s to complete. The results don’t need to be in disk \n\nMy strategy is to return a job_id to the client and then use flow helper libraries to write the results into the job status update in redis for the client to poll and fetch. \n\nIs this how you all would do it?",
+      "time": "09:35",
+      "timestamp": "1549560934.003100",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "the model that we’d use is something similar to what you described (write to redis)",
+      "time": "09:37",
+      "timestamp": "1549561041.003700",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "however, I would not put the data into job-status",
+      "time": "09:37",
+      "timestamp": "1549561057.004200",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Should I create another key and write to that, then out the key in job status?",
+      "time": "09:37",
+      "timestamp": "1549561076.005000",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Yes, create a different key; not sure about writing the result to job-status",
+      "time": "09:38",
+      "timestamp": "1549561105.005600",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "can we chat in person?  It might just be easier",
+      "time": "09:38",
+      "timestamp": "1549561126.006400",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "The flow update helpers let you pass a dict that gets inserted into the status obj and seems to be used in lots of places like this. I’ll just stash the key to a separate redis obj in there & show you in person — thanks :pray:",
+      "time": "09:39",
+      "timestamp": "1549561178.008300",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-02-07.json",
+    "message_count": 7,
+    "start_time": "1549560934.003100",
+    "end_time": "1549561178.008300",
+    "is_thread": false
+  }
+}

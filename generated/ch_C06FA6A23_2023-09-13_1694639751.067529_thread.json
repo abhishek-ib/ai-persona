@@ -1,0 +1,44 @@
+{
+  "id": "ch_C06FA6A23_2023-09-13_1694639751.067529_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hey all, I have a persistent issue w/ getting celery-app-tasks to run correctly on my Mac. In some situations, it segfaults. Using docker instead works, but the image takes forever to build on an M1 (like > 1 hour).\n\nSo anyway, while I waited, I traced the segfault to here:\n```* thread #13, queue = 'com.apple.root.default-qos', stop reason = EXC_BAD_ACCESS (code=1, address=0x110)\n  * frame #0: 0x00007ff80f0a8679 libdispatch.dylib`_dispatch_apply_with_attr_f + 1182\n    frame #1: 0x000000013718aef2 cv2.cpython-39-darwin.so`cv::parallel_for_(cv::Range const&, cv::ParallelLoopBody const&, double) + 562\n    frame #2: 0x0000000137363b94 cv2.cpython-39-darwin.so`bool cv::CvtColorIPPLoopCopy<cv::IPPReorderFunctor>(unsigned char const*, unsigned long, int, unsigned char*, unsigned long, int, int, cv::IPPReorderFunctor const&) + 1140\n    frame #3: 0x00000001373636a0 cv2.cpython-39-darwin.so`cv::hal::cvtBGRtoBGR(unsigned char const*, unsigned long, unsigned char*, unsigned long, int, int, int, int, int, bool) + 1152\n    frame #4: 0x00000001373693cb cv2.cpython-39-darwin.so`cv::cvtColorBGR2BGR(cv::_InputArray const&, cv::_OutputArray const&, int, bool) + 1963\n    frame #5: 0x0000000137337c83 cv2.cpython-39-darwin.so`cv::cvtColor(cv::_InputArray const&, cv::_OutputArray const&, int, int) + 2867\n    frame #6: 0x0000000136b5ee40 cv2.cpython-39-darwin.so`pyopencv_cv_cvtColor(_object*, _object*, _object*) + 832\n    frame #7: 0x000000010ce78275 libpython3.9.dylib`cfunction_call + 69\n    frame #8: 0x000000010ce33d68 libpython3.9.dylib`_PyObject_MakeTpCall + 376\n    frame #9: 0x000000010cf26762 libpython3.9.dylib`call_function + 626\n    frame #10: 0x000000010cf235e5 libpython3.9.dylib`_PyEval_EvalFrameDefault + 27653\n    frame #11: 0x000000010ce34553 libpython3.9.dylib`function_code_fastcall + 163\n    frame #12: 0x000000010cf2668d libpython3.9.dylib`call_function + 413\n    frame #13: 0x000000010cf235c1 libpython3.9.dylib`_PyEval_EvalFrameDefault + 27617\n    frame #14: 0x000000010ce34553 libpython3.9.dylib`function_code_fastcall + 163```\nIt looks like a problem with how we're calling `cvtColor` in `opencv`. There are several callsites in our codebase that call `cvtColor`. Wondering if we are passing an invalid image at one of those points.\n\nIf anyone knows how to fix this _without_ using Docker, let me know!",
+      "time": "14:15",
+      "timestamp": "1694639751.067529",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/opencv/opencv/issues/5150 perhaps relevant",
+      "time": "14:19",
+      "timestamp": "1694639962.928639",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For the next person who comes along, I think this was it. I tracked down where `cv2` was being imported in the main celery process, and made a change to avoid importing it. That fixed it!\n\n```diff --git a/shared-utils/py-utils/flow/server/src/py/instabase/flow/v2/mappers/step/apply_redactor_to_refined_fields.py b/shared-utils/py-utils/flow/server/src/py/instabase/flow/v2/mappers/step/apply_redactor_to_refined_fields.py\nindex 93a1f543fde..e29dcd94fad 100644\n--- a/shared-utils/py-utils/flow/server/src/py/instabase/flow/v2/mappers/step/apply_redactor_to_refined_fields.py\n+++ b/shared-utils/py-utils/flow/server/src/py/instabase/flow/v2/mappers/step/apply_redactor_to_refined_fields.py\n@@ -1,4 +1,3 @@\n-import cv2\n import logging\n import random\n\n@@ -13,18 +12,16 @@ from instabase.flow.v2.common.execution_types import RecordOutput\n from instabase.flow.v2.common import step_util\n from instabase.flow_lib import cast_step\n from instabase.flow_lib.flow_types import ApplyRedactorToRefinedFieldsConstants\n-from instabase.image_utils import util as image_util\n-from instabase.image_utils import file_io\n-from instabase.image_utils.text import overlay_text\n from instabase.license_utils import license_mgr\n from instabase.ocr.client.libs import ibocr\n from instabase.ocr.client.libs.ibmsg_utils import ibmsg_converter_utils\n from instabase.utils.path import ibpath\n from instabase.protos.license_service import license_service_pb2\n\n-\n def apply_redaction_to_image(img, config_for_field, top_left, bottom_right):\n   # type: (cv2.ImageType, Dict, Tuple[int, int], Tuple[int, int]) -> cv2.ImageType\n+  import cv2\n+\n   config_type = config_for_field.get('type', 'black_box')\n   if config_type == 'black_box':\n     cv2.rectangle(img, top_left, bottom_right, (0, 0, 0), -1)\n@@ -52,6 +49,10 @@ def run(step_ctx: StepContext) -> Tuple[RecordOutput, ib_error.IBError]:\n   \"\"\"\n   The Flow V2 mapper for Redactor on refined fields.\n   \"\"\"\n+  from instabase.image_utils import util as image_util\n+  from instabase.image_utils import file_io\n+  from instabase.image_utils.text import overlay_text\n+\n   file_client = clients_factory.file_client\n\n   step, err = cast_step.to_apply_redactor_to_refined_fields(step_ctx.step)```",
+      "time": "15:07",
+      "timestamp": "1694642871.373989",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-09-13.json",
+    "message_count": 3,
+    "start_time": "1694639751.067529",
+    "end_time": "1694642871.373989",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "id": "ch_C06FA6A23_2021-08-10_1628623704.093100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "shaunak",
+    "Andrey"
+  ],
+  "messages": [
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Do you also see this with actual lists and collections?",
+      "time": "12:28",
+      "timestamp": "1628623704.093100",
+      "is_reply": false
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi Shaunak, I think this is orthogonal to string interning property. Rather, this has to do with 1) default ctor param only gets evaluated once and 2) assigning collection like List is by reference. Therefore, if you consider the following Ctor:\n\n```  1 class Foo:\n  2   def __init__(self, l = []):\n  3     self.l = l```\nWhen you call `foo=Foo()`, the default ctor param l is evaluated (only once), and its reference gets assigned to the created Foo object. Thus if you create multiple `Foo` object using the default Ctor, all their l attribute share the default list.\n\nI think the bottom line here is that we should avoid passing empty collection as default value for Ctor, rather we should pass `None` to avoid the issues we see here.",
+      "time": "14:05",
+      "timestamp": "1628629523.094000",
+      "is_reply": true
+    },
+    {
+      "sender": "Andrey",
+      "user_id": "UTDAKGB8U",
+      "message": "This doesn't have anything to do with class constructors. This is the behavior for all Python functions. It is generally bad practice to use any mutable Python object as the default value of a Python function argument.",
+      "time": "14:09",
+      "timestamp": "1628629748.094200",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "The mutable default param is not related to Ctors, but it is easy to get trapped into this when defining default params in Ctor, because we often copy them into the object's attribute, but when the param is a collection, the copy is shadow.",
+      "time": "14:12",
+      "timestamp": "1628629949.094400",
+      "is_reply": true
+    },
+    {
+      "sender": "Andrey",
+      "user_id": "UTDAKGB8U",
+      "message": "The thing I try to remember is: function bodies are parsed and interpreted when the function is called, whereas function signatures (the `def` line of code) are parsed and fully-interpreted when the `def` line of code is encountered by the interpreter. For example, note that the first time the interpreter sees line 2, there is no symbol named `factory`, but that's not an error:\n```def f():\n  def g(val, acc=factory()):\n    acc.append(val)\n    return acc\n  return g\n\nfactory = list\n\nlist_builder = f()\nprint(list_builder(0)) # [0]\nprint(list_builder(1)) # [0, 1]\nprint(list_builder(2)) # [0, 1, 2]\n\nother_list_builder = f()\nprint(other_list_builder(3)) # [3]\n\ndel factory\n\nf() # NameError: name 'factory' is not defined```",
+      "time": "14:16",
+      "timestamp": "1628630164.094600",
+      "is_reply": true
+    },
+    {
+      "sender": "Andrey",
+      "user_id": "UTDAKGB8U",
+      "message": "Also, compare with this:\n```factory = list\n\ndef f(acc=factory()):\n  def g(val):\n    acc.append(val)\n    return acc\n  return g\n\nlist_builder = f()\nprint(list_builder(0)) # [0]\nprint(list_builder(1)) # [0, 1]\nprint(list_builder(2)) # [0, 1, 2]\n\nother_list_builder = f()\nprint(other_list_builder(3)) # [0, 1, 2, 3]```",
+      "time": "14:28",
+      "timestamp": "1628630909.095000",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-08-10.json",
+    "message_count": 6,
+    "start_time": "1628623704.093100",
+    "end_time": "1628630909.095000",
+    "is_thread": true
+  }
+}

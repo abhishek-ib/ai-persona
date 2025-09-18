@@ -1,0 +1,126 @@
+{
+  "id": "ch_CSY11CK7T_2025-02-21_1740167906.427939_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I noticed in our Cypress tests, we try to delete old users. But I see the same user being deleted in different runs (screenshot 1 and 3). I checked one of the timestamps from one of today’s run `1727891450049` and that corresponds to Oct 2024 (screenshot 2), 5 months ago!\n\nWhile I can fix this (the `/list_users` endpoint accepts a `include_disabled` param, defaults to true), I wanted to ask broader questions — especially since this cleanup takes 20 minutes before a test body runs:\n\n1. Should we still clean up old users? I recall this is to fix a bug but I forgotten which one\n2. If we’re cleaning up old users, should we put this action in a dummy, non-blocking test so that main tests don’t take 20+ mins to run?",
+      "time": "11:58",
+      "timestamp": "1740167906.427939",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Okay nvm, `include_disabled: false` doesn’t filter out deactivated users sadge\n\nThe questions still stand though. Given that tests were passing with this broken, I’m inclined to move it into its own dummy test and we can fix it when we get free time.\n\nEDIT: Looking at the code, maybe we can’t move it into a dummy test file — it makes more sense for the deletion to remain in their current files. Hmm.",
+      "time": "12:07",
+      "timestamp": "1740168457.141469",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @Xindi Xu",
+      "time": "12:32",
+      "timestamp": "1740169961.180989",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "1. Deleting users shouldn't take 20 mins to run... :sweat: I wonder if it's too long to run because of some env issues. Cleaning up users so that the UI doesn't show a bunch of users from the old run. If we don't do that, we need some way to reset the DB back to an earlier snapshot so that the test can run in a clean state. \n2. We could. But again, I think it makes more sense to clean up users in the same tests where they are created. \nI think the real fix is to figure out why deleting users takes 20 minutes. Maybe it is because we failed to delete users in created a while back and we just keep on retrying them.",
+      "time": "12:44",
+      "timestamp": "1740170649.680489",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ohh for these super old users, it's probably because some foreign key constraints are missing so we failed to delete them, which I fixed a while back. I think one simple fix is to give these users a different prefix. We'll ignore these invalid users and keep cleaning up new users",
+      "time": "12:46",
+      "timestamp": "1740170782.602939",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "It’s weird that the endpoint returns a 200 despite failing to delete. Nothing in the response payload either =(",
+      "time": "12:50",
+      "timestamp": "1740171043.872279",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "api v1 endpoints will always return 200 unless there's a network issue.",
+      "time": "12:51",
+      "timestamp": "1740171102.494849",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "i'll put up a PR to test it out",
+      "time": "12:52",
+      "timestamp": "1740171124.935929",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Wow, I’m so appreciative of api v2 now",
+      "time": "12:52",
+      "timestamp": "1740171138.302249",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I hope this will work :crossed_fingers: . I'll try to delete newly created users to verify\nhttps://github.com/instabase/instabase/pull/68291",
+      "time": "12:58",
+      "timestamp": "1740171489.548989",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Looks like the `/deactivate` endpoint takes ~30s to complete\nhttps://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22ijz%22:%[…]m%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1 (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22ijz%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D,%22query%22:%22db143d67caab52dc%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)\n\nGiven 50 emails, that’s 25 mins which kinda tracks what we’re seeing\n\nEDIT: And the endpoint also calls `invalidateAllSessions()` in the go code, which takes 19+ seconds to complete and is a known issue (https://instabase.slack.com/archives/C011FHLBN8N/p1740171832842789) =(",
+      "time": "13:12",
+      "timestamp": "1740172370.877779",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Paul H do you need help force-merging https://github.com/instabase/instabase/pull/68284?",
+      "time": "15:25",
+      "timestamp": "1740180348.356349",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "@Serena Yeah, let’s force merge this one in for now. I might have a few other fixes coming in later",
+      "time": "15:57",
+      "timestamp": "1740182239.828179",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-02-21.json",
+    "message_count": 13,
+    "start_time": "1740167906.427939",
+    "end_time": "1740182239.828179",
+    "is_thread": true
+  }
+}

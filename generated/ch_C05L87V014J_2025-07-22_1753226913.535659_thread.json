@@ -1,0 +1,174 @@
+{
+  "id": "ch_C05L87V014J_2025-07-22_1753226913.535659_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "mfichman",
+    "Jet"
+  ],
+  "messages": [
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Hi all, so I've been trying to set up crafting sandbox, I ran in to issues with starting some of our services which was fixed by resyncing, but now I am running into issues where the services seem to be running fine but the dependencies are not working. This is what I'm seeing and the error message:\n```[Gateway] rpc error: code = Unavailable desc = connection error: desc = \"transport: failed to write client preface: write tcp 10.253.132.178:54944->3.12.88.253:443: use of closed network connection\"```\nI've also suspended and restarted my crafting sandbox a couple times and it doesn't seem to affect it",
+      "time": "16:28",
+      "timestamp": "1753226913.535659",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Link to your sandbox?",
+      "time": "16:43",
+      "timestamp": "1753227790.065959",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "https://instabase.sandboxes.site/sandboxes/ptenkale?cw=dev",
+      "time": "16:43",
+      "timestamp": "1753227812.624749",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "`ptenkale/dev`",
+      "time": "16:43",
+      "timestamp": "1753227819.791489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also, you can ignore those particular errors if the sandbox otherwise working. Look at the health check and actually try it out to see if it works.",
+      "time": "16:43",
+      "timestamp": "1753227822.823769",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I’m working with the crafting folks on why those kubernetes errors keep happening, but they don’t seem to affect anything",
+      "time": "16:44",
+      "timestamp": "1753227851.264419",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Hm okay",
+      "time": "16:44",
+      "timestamp": "1753227858.404189",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I tried going to the main page and I get this:",
+      "time": "16:44",
+      "timestamp": "1753227873.832179",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Just assumed it was because of the issues with connecting to mysql from k8s",
+      "time": "16:44",
+      "timestamp": "1753227884.602369",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "But let me make sure I've migrated the db",
+      "time": "16:44",
+      "timestamp": "1753227898.622819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It might be. Can you look at the core platform Service logs?",
+      "time": "16:45",
+      "timestamp": "1753227906.483669",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I see this:\n```2025/07/22 23:44:05 level=ERROR path=utils/db/session/dbsession.go:619 msg=\"SQL DB: Error 1054 (42S22): Unknown column 'accounts.deleted_at' in 'field list'\" operation=db/session/DBSessionImpl.Query query=\"SELECT `accounts`.`account_type` AS `accounts.account_type`, `accounts`.`deleted_at` AS `accounts.deleted_at`, `accounts`.`id` AS `accounts.id`, `accounts`.`metadata` AS `accounts.metadata`, `accounts`.`public_id` AS `accounts.public_id`, `accounts`.`registered_on` AS `accounts.registered_on`, `users`.`account_id` AS `users.account_id`, `users`.`deleted_at` AS `users.deleted_at`, `users`.`deletion_started_at` AS `users.deletion_started_at`, `users`.`email` AS `users.email`, `users`.`id` AS `users.id`, `users`.`is_active` AS `users.is_active`, `users`.`is_admin` AS `users.is_admin`, `users`.`is_approved` AS `users.is_approved`, `users`.`is_verified` AS `users.is_verified`, `users`.`metadata` AS `users.metadata`, `users`.`password` AS `users.password`, `users`.`pwd_reset_required` AS `users.pwd_reset_required`, `users`.`state` AS `users.state`, `users`.`type` AS `users.type` FROM `users`, `accounts` WHERE ((`account_id` = `accounts`.`id`) AND (`accounts`.`public_id` = ?))\" query_type=select table=users trace_id=ee5b6b932583614c\n2025/07/22 23:44:05 ERROR utils/perms/user_principal.go:61 -- [INTERNAL]: Error while retrieving user account (Err: Error 1054 (42S22): Unknown column 'accounts.deleted_at' in 'field list')```",
+      "time": "16:45",
+      "timestamp": "1753227947.328329",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Might be a db migration issue, let me try migrating, I only recently pulled latest master",
+      "time": "16:45",
+      "timestamp": "1753227958.271899",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Ah yes that was it",
+      "time": "16:48",
+      "timestamp": "1753228129.550539",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Seems to work after running db migrate",
+      "time": "16:49",
+      "timestamp": "1753228142.044519",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ahh yeah that makes sense",
+      "time": "16:55",
+      "timestamp": "1753228529.346029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "One of these days I’ll see if I can make a banner show up if the db hasn’t migrated",
+      "time": "16:56",
+      "timestamp": "1753228567.433559",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Yupp, good to know that those kubernetes errors for the dependencies don't really affect the sandbox env",
+      "time": "16:57",
+      "timestamp": "1753228629.309449",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "i had the same error earlier\n\nhere is the fix\nhttps://instabase.slack.com/archives/C05L87V014J/p1749767684716479",
+      "time": "17:14",
+      "timestamp": "1753229642.906209",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-22.json",
+    "message_count": 19,
+    "start_time": "1753226913.535659",
+    "end_time": "1753229642.906209",
+    "is_thread": true
+  }
+}

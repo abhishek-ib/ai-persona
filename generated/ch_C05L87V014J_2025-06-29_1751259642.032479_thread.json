@@ -1,0 +1,182 @@
+{
+  "id": "ch_C05L87V014J_2025-06-29_1751259642.032479_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "abhijnan",
+    "Prashant Kikani",
+    "Vasu"
+  ],
+  "messages": [
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Hi team,\nI was getting `500` errors for `/udfs` endpoint for this (https://instabase.sandboxes.site/sandboxes/prashantkikani1?cw=dev) newly created crafting sandbox.\nThe sandbox seems to be fully ready (with green tick) and all the services are up.\n\nDocument uploads are also stuck at 0% progress.\nAny ideas?\ncc: @Atinder",
+      "time": "22:00",
+      "timestamp": "1751259642.032479",
+      "is_reply": false
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "celery-app-tasks is failing to come up with the following:\n```Try 'celery --help' for help.\n\nError: Invalid value for '-A' / '--app': \nUnable to load celery application.\nWhile trying to load the module instabase.registry.tasks the following error occurred:\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.9/site-packages/celery/app/utils.py\", line 383, in find_app\n    sym = symbol_by_name(app, imp=imp)\n  File \"/usr/local/lib/python3.9/site-packages/kombu/utils/imports.py\", line 64, in symbol_by_name\n    return getattr(module, cls_name) if cls_name else module\nAttributeError: module 'instabase.registry' has no attribute 'tasks'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.9/site-packages/celery/bin/celery.py\", line 58, in convert\n    return find_app(value)\n  File \"/usr/local/lib/python3.9/site-packages/celery/app/utils.py\", line 386, in find_app\n    sym = imp(app)\n  File \"/usr/local/lib/python3.9/site-packages/celery/utils/imports.py\", line 109, in import_from_cwd\n    return imp(module, package=package)\n  File \"/usr/local/lib/python3.9/importlib/__init__.py\", line 127, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n  File \"<frozen importlib._bootstrap>\", line 1030, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1007, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 986, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 680, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 850, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"/instabase/workers/celery-app-tasks/py/instabase/registry/tasks.py\", line 67, in <module>\n    import instabase.flow.v3.tasks  # noqa\n  File \"/instabase/workers/celery-app-tasks/py/instabase/flow/v3/tasks.py\", line 8, in <module>\n    from instabase.executor_lib.executor import stage_executor\n  File \"/instabase/workers/celery-app-tasks/py/instabase/executor_lib/executor/stage_executor.py\", line 9, in <module>\n    from instabase.flow.v3 import step_util\n  File \"/instabase/workers/celery-app-tasks/py/instabase/flow/v3/step_util.py\", line 19, in <module>\n    from instabase.flow.v3.export_results_util import export_ibflowresults\n  File \"/instabase/workers/celery-app-tasks/py/instabase/flow/v3/export_results_util.py\", line 26, in <module>\n    from instabase.ground_truth_set_utils.ground_truth_sets import GroundTruthSet\n  File \"/instabase/workers/celery-app-tasks/py/instabase/ground_truth_set_utils/ground_truth_sets.py\", line 29, in <module>\n    from instabase.aihub_utils import aihub_apps_util\n  File \"/instabase/workers/celery-app-tasks/py/instabase/aihub_utils/aihub_apps_util.py\", line 70, in <module>\n    from instabase.utils.web import handler_util_v2\nModuleNotFoundError: No module named 'instabase.utils.web'```\nLooks like we're trying to import an api layer specific util here.",
+      "time": "22:13",
+      "timestamp": "1751260430.422829",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Yeah.. btw, a silly question but, how did you figured out that `celery-app-tasks` is the problem here, since it's showing Status as `RUNNING`?",
+      "time": "22:18",
+      "timestamp": "1751260706.483719",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "You mentioned that uploads were stuck, so the uploads/digitization go through api-server -> celery-app-tasks -> model-service. Just checked the logs for each of these, api-server seemed fine, so next stop was celery-app-tasks and that's where the issue was.",
+      "time": "22:22",
+      "timestamp": "1751260950.654659",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "makes sense.. just curious, seems like that \"Status\" column is not reliable then? Since it's showing \"Running\", but actually there was an issue?",
+      "time": "22:23",
+      "timestamp": "1751261028.360779",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Crafting will show the status as running even when a service is building. The key here is running `cs ps` and seeing if the restart count for a service is high that may point to errors while building. And since the build was failing, it'd keep on retrying keeping the status column at RUNNING.",
+      "time": "22:24",
+      "timestamp": "1751261071.348379",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Using the cli is more reliable than the UI in my experience!",
+      "time": "22:25",
+      "timestamp": "1751261103.756769",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Thanks Vasu for the help regarding the sandbox. It's working now.\n\nHowever, I am still facing `500` error for `/udfs` - and when I check the logs in `api-server` I see `botocore.exceptions.NoRegionError: You must specify a region.` error. Attaching screenshot for the logs.\n\nIs this just a logging error and not the reason behind `500` error? Or do I need to add any region in the crafting sandbox?",
+      "time": "22:42",
+      "timestamp": "1751262174.275869",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "I think the lambda configuration is not setup correctly. I think for local dev we run the udfs within celery-app-tasks instead of aws lambda. There's an env var that can be swtiched to make it run within celery.",
+      "time": "22:50",
+      "timestamp": "1751262612.299009",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "I tried pulling in latest `master` - but that seems to be causing different errors in app-tasks and api-server..",
+      "time": "22:51",
+      "timestamp": "1751262664.698899",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "I think @abhijnan is working on a fix for the above - https://instabase.slack.com/archives/C05L87V014J/p1751049539621039",
+      "time": "22:52",
+      "timestamp": "1751262744.910779",
+      "is_reply": true
+    },
+    {
+      "sender": "abhijnan",
+      "user_id": "U056NM536PP",
+      "message": "The fix is running `make clean build`",
+      "time": "22:53",
+      "timestamp": "1751262800.052779",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "@Prashant Kikani For udf execution issue - you can set `aihub_udf_execution` to `LOCAL` in env-local-overrides.json in your sandbox in order to run the udf's within your local. That should help get over the udf execution error.",
+      "time": "22:54",
+      "timestamp": "1751262893.783289",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Where can I find this `env-local-overrides.json` file? If I need to create it, to which location I can create?",
+      "time": "22:55",
+      "timestamp": "1751262937.589259",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Your file content would look something like below:\n```{\n  \"base\": {\n    \"aihub_udf_execution\": \"LOCAL\"\n  }\n}```",
+      "time": "22:55",
+      "timestamp": "1751262938.196859",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "You have to create it within `shared-utils/build-utils/shared/env-local-overrides.json`",
+      "time": "22:56",
+      "timestamp": "1751262972.655079",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Please do confirm, if it does work. We can add this as the default value for local execution!",
+      "time": "22:57",
+      "timestamp": "1751263030.787819",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "I will let you know if it works out..",
+      "time": "22:57",
+      "timestamp": "1751263046.094529",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Update: This `env-local-overrides.json` change seems to be working, as expected!",
+      "time": "23:08",
+      "timestamp": "1751263738.703889",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Nice!",
+      "time": "23:12",
+      "timestamp": "1751263926.625109",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-06-29.json",
+    "message_count": 20,
+    "start_time": "1751259642.032479",
+    "end_time": "1751263926.625109",
+    "is_thread": true
+  }
+}

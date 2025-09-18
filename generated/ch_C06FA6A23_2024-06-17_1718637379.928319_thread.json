@@ -1,0 +1,804 @@
+{
+  "id": "ch_C06FA6A23_2024-06-17_1718637379.928319_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Cheryl Zhou",
+    "Anil",
+    "Kerr Yoo",
+    "shiqi",
+    "Arjun",
+    "jtau",
+    "sean.donohoe",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": ":rotating_light: Hey team, we’re seeing an issue with all jobs that go through `celery-app-tasks` on `aihub-sandbox` and `crafting-aihub`. On both deployments the pods for app-tasks are constantly restarting/unable to come up. Original thread is here (https://instabase.slack.com/archives/C05L87V014J/p1718636231197199) cc <!subteam^S05BKH20B4K> <!subteam^S02FJA6A7U5>",
+      "time": "08:16",
+      "timestamp": "1718637379.928319",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I'm also seeing jobs completely backed up on platform dogfood (first observed last Friday afternoon). Could it be related?",
+      "time": "09:06",
+      "timestamp": "1718640366.584579",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "that timing lines up with when the ^ PR was merged, Friday at 2:34pm PT. Just checked DM for platform dogfood and seeing the same issue w/ app-tasks not coming up",
+      "time": "09:09",
+      "timestamp": "1718640555.425979",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "```'onnx.onnx_cpp2py_export.defs.formalparameter' object has no attribute 'typestr'```",
+      "time": "09:11",
+      "timestamp": "1718640679.106879",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "",
+      "time": "09:11",
+      "timestamp": "1718640698.724399",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "Yup @Anil, current theory is that this (https://github.com/instabase/instabase/pull/58718) is the offending PR",
+      "time": "09:12",
+      "timestamp": "1718640739.765399",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "let's revert this PR - @Anil @Arjun any concerns with that? The PRs that came after don't seem like they are dependent on it (cc @mfichman)",
+      "time": "09:12",
+      "timestamp": "1718640762.206059",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "",
+      "time": "09:13",
+      "timestamp": "1718640817.485109",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Lets wait for 30 mins to see @mfichman can confirm if this is indeed the issue / if there is a quick fix\nThis is quite a big PR. If not, will go ahead and revert.",
+      "time": "09:14",
+      "timestamp": "1718640849.698239",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Revert it",
+      "time": "09:19",
+      "timestamp": "1718641142.615399",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "https://github.com/instabase/instabase/pull/58745",
+      "time": "09:22",
+      "timestamp": "1718641320.450639",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "should we also revert all the backports?",
+      "time": "09:22",
+      "timestamp": "1718641361.356909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes :cry:",
+      "time": "09:29",
+      "timestamp": "1718641792.141659",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "merged the revert for master",
+      "time": "09:36",
+      "timestamp": "1718642166.238479",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@jtau / @lydia do we know who would be a good point of contact for celery app tasks? It's extremely concerning that pre-merge wasn't able to flag this prior to deployment -- we need to identify whether we need the app-tasks developers to increase test coverage and/or improve our pre-merge process to ensure we're capturing these failure domains",
+      "time": "09:54",
+      "timestamp": "1718643246.974749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "celery-app-tasks doesn't have a clear owner, b/c it's owned by everyone. It runs (nearly) all the async tasks for the the whole platform. Individual tasks may have owners. If there is an owner for celery-app-tasks as a whole, it's likely Infra.",
+      "time": "09:54",
+      "timestamp": "1718643299.259639",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Also want to make a blanket statement that there's absolutely no way @mfichman could have caught this beforehand, and is objectively a failure with our systems for validating/testing code prior to merging to master",
+      "time": "09:55",
+      "timestamp": "1718643356.194079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I could have caught it by running celery-app-tasks locally (`make runlocal`) on each of the backport branches, but that takes a ton of time for each security patch we need to support.",
+      "time": "09:56",
+      "timestamp": "1718643384.255969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I do find it very odd that the unit tests didn't hit the same import error though...",
+      "time": "09:57",
+      "timestamp": "1718643434.527189",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yes, but that's also a ridiculous ask of our developers and is something that should be encompassed by CI (by definition), so I'd still say this is entirely a failure of our systems",
+      "time": "09:57",
+      "timestamp": "1718643471.012759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "No argument from me there :laughing:",
+      "time": "09:58",
+      "timestamp": "1718643506.138359",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Do we have a good POC for the infra team in this case? Mostly looking for someone to help drive resolving this gap in our coverage",
+      "time": "09:58",
+      "timestamp": "1718643525.636319",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I suspect this wasn't caught because package upgrades aren't really caught by our CI unless you update the Jenkins CI image, which not sure @mfichman if you're PR did? unit tests don't run in Docker images (as far as I know..?)",
+      "time": "09:58",
+      "timestamp": "1718643535.080399",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "or, maybe my info is very outdated. do we run unit tests with the right pyenv now for each service? If that's the case, maybe we can add a few unit tests that would catch this case?",
+      "time": "09:59",
+      "timestamp": "1718643570.453039",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@lydia that's correct, however we also install dependencies prior to executing pre-merge tests, so I'd still expect this to have been caught",
+      "time": "09:59",
+      "timestamp": "1718643571.988509",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "> I could have caught it by running celery-app-tasks locally (`make runlocal`) on each of the backport branches\nIn this case, master was also broken. @mfichman did that run successfully for you locally?",
+      "time": "10:00",
+      "timestamp": "1718643641.378969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Reverts (https://github.com/pulls?q=is%3Aopen+is%3Apr+archived%3Afalse+CVE-2023-7104+author%3Amfichman+Revert)",
+      "time": "10:00",
+      "timestamp": "1718643651.846739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ">  In this case, master was also broken. @mfichman did that run successfully for you locally?\nNo, I usually rely on CI for testing things like security patches.",
+      "time": "10:01",
+      "timestamp": "1718643684.215329",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "> do we run unit tests with the right pyenv now for each service?\nWe run with poetry in this case, so it's less likely a pyenv-specific issue -- that said @shiqi has recently pointed out that we encounter transient bugs on a regular basis due to us running poetry in parallel (https://instabase.slack.com/archives/C035SLYCJ9X/p1718407931897179?thread_ts=1718404708.750639&cid=C035SLYCJ9X). Might be time for us to disable parallel runs for python code not onboarded to bazel :confused:",
+      "time": "10:01",
+      "timestamp": "1718643703.191349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "> Do we have a good POC for the infra team in this case? Mostly looking for someone to help drive resolving this gap in our coverage\nHonestly, it may end up being me and Heymian",
+      "time": "10:02",
+      "timestamp": "1718643737.481579",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "> I suspect this wasn't caught because package upgrades aren't really caught by our CI unless you update the Jenkins CI image\nDoes this mean jenkins image needs the same packages bumped / changed to catch these issues?",
+      "time": "10:02",
+      "timestamp": "1718643749.077369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Wait, so when we bump package versions, CI does not run against those bumped versions during pre-merge tests?",
+      "time": "10:03",
+      "timestamp": "1718643806.044429",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "It sounds like we're saying that app-tasks unit tests should run in the app-tasks poetry env (can someone confirm if this is true?)\n\nIf that's the case, then @mfichman i think adding a unit test to cover this bug should catch this in the future, right?",
+      "time": "10:03",
+      "timestamp": "1718643815.431309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If so, that throws my whole mental model of how CI works (for Python at least) out the window :laughing:",
+      "time": "10:03",
+      "timestamp": "1718643834.667449",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also: Should I wait for CI, or merge the reverts right now?",
+      "time": "10:04",
+      "timestamp": "1718643892.548779",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Ok so the CI setup is a bit strange because we have such massive python dependencies _and_ we've been hack-patching an insufficient solution forever (one of the main focal points of releng work at the moment is transforming this into a sane, performant solution):\n• Pre-merge checks start by triggering a jenkins job run\n• That jenkins job run spawns a docker container with some minimal dependencies (i.e. pyenv, shared objects, etc)\n• That docker container also has three EBS snapshots mounted to it as overlay file systems\n• One of those mounts are for poetry dependencies, and acts as a \"luke warm\" package cache\n• When we run python unit tests we run `poetry run`, which will install any out of date/missing dependencies into the overlay file system\n• We *don't*, however, have proper isolation between test runs within the pre-merge jenkins job\n• This means any \"parallel\" test execution will translate to concurrent calls to `poetry run`, which we suspect triggers some state clobbering (which is also non-deterministic from it being a race condition)",
+      "time": "10:09",
+      "timestamp": "1718644185.384119",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ok, confirmed that app-tasks is using poetry, so it does run with the right pyenv. It's possible that there wasn't a unit test for this case. Or the unit test for this case was in the shared python module, and not in celery-app-tasks. @sean.donohoe do you know what pyenv we use to run the shared python modules?",
+      "time": "10:09",
+      "timestamp": "1718644199.743329",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "So we do technically install up-to-date python dependencies prior to executing unit tests, however I would not be shocked if that is unreliable due to how we're running them",
+      "time": "10:10",
+      "timestamp": "1718644233.496679",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I also imagine that once we move to Bazel, that would address this pyenv issue?",
+      "time": "10:10",
+      "timestamp": "1718644248.372059",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Do you know what requirements.in (http://requirements.in) file we use for running shared python modules? I see a requirements_py39.in (http://requirements_py39.in) in third-party/bazel/py/. is that what is used? (in which case, onnx was updated there)",
+      "time": "10:12",
+      "timestamp": "1718644331.165479",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@lydia we are stuck on python 3.7.3 due to some restrictions placed by https://github.com/instabase/instabase/blob/master/tools/devtools/code-dependencies/python/requirements_py37.txt -- that said, @youngmok.cho has almost completed the migration of py-utils to bazel, and bazel does not use pyenv nor poetry (i.e. those modules would not be affected by the janky parts of the current pre-merge setup)",
+      "time": "10:12",
+      "timestamp": "1718644335.136349",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "It seems like maybe we need to dig more into where the error was thrown, and why it wasn't caught by unit tests - @mfichman can I let you take a look first? can you let us know what python module the error is coming from? Then I can figure out who to bring in to help debug / add the right unit tests",
+      "time": "10:17",
+      "timestamp": "1718644678.140879",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "cc @jtau we need control plane approval for some of these\n\nhttps://instabase.slack.com/archives/C06FA6A23/p1718643651846739?thread_ts=1718637379.928319&cid=C06FA6A23",
+      "time": "10:19",
+      "timestamp": "1718644778.660809",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I can override it if needed.",
+      "time": "10:20",
+      "timestamp": "1718644833.159109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'll override those that have passed CI so far.",
+      "time": "10:20",
+      "timestamp": "1718644853.972069",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Thanks @Ashwin",
+      "time": "10:23",
+      "timestamp": "1718645007.777169",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Is dogfood fixed yet? I'm still seeing a ton of jobs in the scheduler queue (https://dogfood.instabase.com/api/v1/jobs/view_scheduler_state)",
+      "time": "15:18",
+      "timestamp": "1718662689.478479",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I just tried running something and it seems like it's still broken with the same onnx error. has the backport been merged yet?",
+      "time": "15:21",
+      "timestamp": "1718662880.293529",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "dogfood deploy with the revert is currently deploying: https://prod.jenkins.instabase.com/job/deployments/job/deploy-dogfood/job/master/3026/",
+      "time": "15:21",
+      "timestamp": "1718662899.034779",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ah ok thanks. do you know why it took so long for the revert to deploy?",
+      "time": "15:22",
+      "timestamp": "1718662932.137609",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "It looks like dogfood deploys are now every 6 hours instead of 4 like it used to be",
+      "time": "15:22",
+      "timestamp": "1718662978.032049",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Though @Cheryl Zhou was looking into fixing something that could cause this deploy to fail",
+      "time": "15:23",
+      "timestamp": "1718662997.988499",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ah ok. for reverts like this, is it possible to trigger a deploy? since dogfood isn't usable until it's deployed",
+      "time": "15:24",
+      "timestamp": "1718663068.446829",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "or rather, are there any reasons we wouldn't want to trigger a redeploy?",
+      "time": "15:24",
+      "timestamp": "1718663093.315359",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Yeah we should've triggered a manual deploy right after the fix; no reason I think just forgot :disappointed:",
+      "time": "15:25",
+      "timestamp": "1718663125.105579",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "What is the fix Cheryl is still looking into? Is there a reason we think this deploy is going to fail?",
+      "time": "15:29",
+      "timestamp": "1718663357.926509",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "If this deploy fails btw - we'll trigger a manual redeploy right after\n\nhttps://instabase.slack.com/archives/C053W8B06EL/p1718656639475359",
+      "time": "15:29",
+      "timestamp": "1718663386.939889",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Seems a couple of PRs that got past CI :disappointed: let's discuss these two in incident review",
+      "time": "15:32",
+      "timestamp": "1718663549.656479",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Quite a few things are failing in this deploy run\nhttps://prod.jenkins.instabase.com/job/deployments/job/deploy-service/\n\nI tried app-tasks on local, it starts up fine. Don’t quite understand why there is an onnx import even in the app-tasks.",
+      "time": "15:32",
+      "timestamp": "1718663563.146419",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "I need to step out soon - but <!subteam^S02FJA6A7U5> please support any necessary re-deploys",
+      "time": "15:33",
+      "timestamp": "1718663598.501179",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Yeah the ones failing are the ones @Cheryl Zhou is looking into",
+      "time": "15:33",
+      "timestamp": "1718663637.756619",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "yea i should have triggered some code change that will trigger CI in my initial PR (all changes were go.mod/go.sum so no tests got run). I did it in this PR though: https://github.com/instabase/instabase/pull/58779",
+      "time": "15:34",
+      "timestamp": "1718663698.929739",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Anil onnx is used for running sklearn models in app-tasks, so I imagine maybe it's imported by model_utils or some classifier-related modules.",
+      "time": "15:35",
+      "timestamp": "1718663702.501629",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I don't see the failing import being explicitly imported anywhere in our code base, so I'm guessing it's in the onnx package -- we need to see the full stack trace to see what's importing in onnx",
+      "time": "15:35",
+      "timestamp": "1718663743.173619",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I'm surprised your app-tasks starts fine locally :disappointed: can you double-check if it's running in a pyenv with the upgraded version of onnx?",
+      "time": "15:37",
+      "timestamp": "1718663831.120209",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "",
+      "time": "15:39",
+      "timestamp": "1718663968.893489",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "the new version Matt upgraded to is 1.16 - so that looks like it's still using the older version?",
+      "time": "15:40",
+      "timestamp": "1718664032.357289",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "we reverted Matt’s PR in the morning - so master should be on the old one",
+      "time": "15:40",
+      "timestamp": "1718664047.578709",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oo, then it should be working. dogfood hasn't been redeployed yet",
+      "time": "15:41",
+      "timestamp": "1718664067.846479",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "? i'm confused. oh, do you mean why are deploys still failing? I think that's Cheryl's new error (fixed by the PR she linked above).\n\nSorry I thought you were trying to say you couldn't replicate the onnx import error locally",
+      "time": "15:42",
+      "timestamp": "1718664156.749609",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Lets do a quick zoom?",
+      "time": "15:42",
+      "timestamp": "1718664169.827379",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "sure",
+      "time": "15:42",
+      "timestamp": "1718664175.177159",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "https://instabase.zoom.us/j/9525369662",
+      "time": "15:43",
+      "timestamp": "1718664198.567409",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@Cheryl Zhou can you join the zoom?",
+      "time": "15:44",
+      "timestamp": "1718664242.017139",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "yes",
+      "time": "15:44",
+      "timestamp": "1718664257.113959",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "looks like the last dogfood deployment just failed with the same errors anil linked to earlier",
+      "time": "15:45",
+      "timestamp": "1718664323.230569",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I manually updated the image of app-tasks to gcr.io/instabase-dogfood/celery-app-tasks:24.06.17-2cfbd30a48 (http://gcr.io/instabase-dogfood/celery-app-tasks:24.06.17-2cfbd30a48)\n\nOld broken image gcr.io/instabase-dogfood/celery-app-tasks:24.06.17-f9b3b4185d (http://gcr.io/instabase-dogfood/celery-app-tasks:24.06.17-f9b3b4185d)\n\nClearing the queue right now",
+      "time": "15:57",
+      "timestamp": "1718665040.591439",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Dogfood is working fine now :slightly_smiling_face: @Cheryl Zhou will merge in a fix for the deploy pipeline and trigger a re-deploy.",
+      "time": "16:26",
+      "timestamp": "1718666805.433279",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "PR is merged: https://github.com/instabase/instabase/pull/58779 @Kerr Yoo Could you help with re-triggering another deployment? Thanks!",
+      "time": "16:44",
+      "timestamp": "1718667855.991389",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "Sure, give me ten minutes",
+      "time": "17:09",
+      "timestamp": "1718669354.635739",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "It looks like I don’t have permissions to trigger another deployment. Could we get some help from <!subteam^S038TM462UX>",
+      "time": "17:13",
+      "timestamp": "1718669609.618319",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "Looks like most of the problems are resolved, but building the db tools image is still failing with the auth issue https://prod.jenkins.instabase.com/job/deployments/job/deploy-service/201056/console cc @Cheryl Zhou",
+      "time": "17:52",
+      "timestamp": "1718671924.963189",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Sorry seems like there's another wrong path. This is a dummy package and seems like CI didn't validate it so it slipped again: https://github.com/instabase/instabase/pull/58789",
+      "time": "18:19",
+      "timestamp": "1718673581.275719",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Are we ready to kick off another dogfood deploy with this PR merged?",
+      "time": "18:54",
+      "timestamp": "1718675642.012779",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Yes!",
+      "time": "18:54",
+      "timestamp": "1718675665.452349",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "https://prod.jenkins.instabase.com/job/deployments/job/deploy-dogfood/job/master/3028/",
+      "time": "18:54",
+      "timestamp": "1718675675.601529",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "All the services were deployed successfully, but now it looks like search tservice is crash looping. Taking a closer look\n```2024/06/18 03:00:28 FATAL searchservice/main.go:594 -- Failed to initialize index handler. Err: rpc error: code = Internal desc = Failure during mkdir. Could not stat Path System/tmp/IndexService Err code = INTERNAL msg = Failure during stat.```",
+      "time": "20:06",
+      "timestamp": "1718679984.777049",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "All s3 operations are failing on the platform it seems\n```{\"caller\":\"fileservice/clients/s3_client.go:361\",\"level\":\"ERROR\",\"msg\":\"Failure during stat. Path: 37c19bc6-5b57-4ba9-a252-49eacac2e174/System/var/health/PlatformChecks/filesystem/write-file-check.txt Err: not found, ResolveEndpointV2\"}```",
+      "time": "20:07",
+      "timestamp": "1718680032.586959",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Seems like we're getting the aws-sdk-v2 error again: https://instabase.slack.com/archives/C06QMK02LBD We might have accidentally upgraded that package",
+      "time": "20:08",
+      "timestamp": "1718680132.946509",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "i upgraded that package intentionally for ICC :melting_face:",
+      "time": "20:10",
+      "timestamp": "1718680243.680029",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "I’m looking at the original PR (https://github.com/instabase/instabase/pull/54943) and that was the exact reason why I upgraded the aws-sdk-v2",
+      "time": "20:13",
+      "timestamp": "1718680394.760769",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "i think this PR was reverted eventually",
+      "time": "20:17",
+      "timestamp": "1718680641.634029",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "I’m going to try to forward fix. If I can’t in 15 minutes, I’ll revert the pr",
+      "time": "20:21",
+      "timestamp": "1718680906.541149",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "here’s the revert pr (https://github.com/instabase/instabase/pull/58791)",
+      "time": "20:36",
+      "timestamp": "1718681779.699699",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "The CI on the revert PR failed https://github.com/instabase/instabase/actions/runs/9558572685/job/26347464879?pr=58791\n\nThe error is something like\n```transferData failed: ORA-04021: timeout occurred while waiting to lock object\"} (\"transferData failed: ORA-04021: timeout occurred while waiting to lock object```\non the db tools clean up test... since this revert is blocking dogfood deploys, I'm going to force merge, hoping this test failure is un-related and flakey since this revert PR touches aws sdk not really anything db related",
+      "time": "21:41",
+      "timestamp": "1718685680.339669",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "that is the beta version of our CI run on github action, you can ignore it because it is still under testing, as it is not required check, for this particular issue I think it is because both jenkins and github action are trying to access the same db because we are running the same test suite side by side",
+      "time": "21:44",
+      "timestamp": "1718685884.201609",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "we put the title `Run tests for affected code -- beta version non blocking` to avoid confusion",
+      "time": "21:45",
+      "timestamp": "1718685921.895689",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-06-17.json",
+    "message_count": 97,
+    "start_time": "1718637379.928319",
+    "end_time": "1718685921.895689",
+    "is_thread": true
+  }
+}

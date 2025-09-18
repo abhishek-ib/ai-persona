@@ -1,0 +1,223 @@
+{
+  "id": "ch_C05L87V014J_2025-07-02_1751461468.685639_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Victor Zeng",
+    "Vasu",
+    "Gauti"
+  ],
+  "messages": [
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Hi Team, I am unable to perform any action on my sandbox as it shows monthly usage quota has been reached. Even though the org has been upgraded to an enterprise account. I tried spinning new sandboxes, but those also have similar issues. Has anything changed around billing or metronome?\nSandbox:- https://instabase.sandboxes.site/sandboxes/user-query-db-test?cw=dev\nFYI:- I am trying a clean rebuild now, if that can help in any way.",
+      "time": "06:04",
+      "timestamp": "1751461468.685639",
+      "is_reply": false
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "cc @Victor Zeng Can you help suggest ways to fix this?",
+      "time": "06:11",
+      "timestamp": "1751461886.338639",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Could you confirm the `/billing` request is not 500 and is returning a proper payload?",
+      "time": "10:39",
+      "timestamp": "1751477981.632189",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "(sometimes, the “monthly quota reached” error appears when we can’t reach the billing endpoint)",
+      "time": "10:40",
+      "timestamp": "1751478019.303379",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "`/billing-plan` is returning 404.",
+      "time": "10:50",
+      "timestamp": "1751478645.656059",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "can you give me your log in credentials for the ib sandbox? I’ll play around",
+      "time": "10:56",
+      "timestamp": "1751478964.307629",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "@Gauti can you copy the Metronome ID.?",
+      "time": "10:57",
+      "timestamp": "1751479036.943229",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "One thing to note, org creation in new crafting sandboxes are failing with following error:-\n```\"Uncaught exception in webserver while handling request: Error=Rate card alias is not supported yet. Traceback=Traceback (most recent call last):;File \"/instabase-api-server/py/instabase/utils/web/handler_util_v2.py\", line 415, in inner_func;return f(*args, **kwargs);File \"/instabase-api-server/py/instabase/utils/oauth2/oauth2.py\", line 313, in wrapped_f;return f(*args, **kwargs);File \"/instabase-api-server/py/instabase/api_server/handler/api/v2/org.py\", line 729, in post;resp = self._setup_after_org_creation(;File \"/instabase-api-server/py/instabase/api_server/handler/api/v2/org.py\", line 547, in _setup_after_org_creation;_, err_resp = self._setup_metronome(create_org_request, org_info);File \"/instabase-api-server/py/instabase/api_server/handler/api/v2/org.py\", line 522, in _setup_metronome;return self._assign_contract(org, create_org_request, start_trial);File \"/instabase-api-server/py/instabase/api_server/handler/api/v2/org.py\", line 459, in _assign_contract;billing_utils_contracts.create_paid_contract(;File \"/instabase-api-server/py/instabase/tracing/utils.py\", line 364, in wrapped;raise error;File \"/instabase-api-server/py/instabase/tracing/utils.py\", line 359, in wrapped;r = func(*args, **kwargs);File \"/instabase-api-server/py/instabase/billing_utils/contracts.py\", line 134, in create_paid_contract;raise NotImplementedError('Rate card alias is not supported yet');NotImplementedError: Rate card alias is not supported yet;\"  path=\"/instabase-api-server/py/instabase/utils/web/handler_util_v2.py:422\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_0\" trace_id=\"\"\n172.17.0.1 - - [02/Jul/2025:17:55:31 +0000] \"POST /api/v2/organizations/test-scaling-chatbot-1 HTTP/1.0\" 500 66 \"https://https--user-query-db-test-instabase.instabase.site.sandboxes.run/settings/billing\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36\"```\nI think, it creates the org but fails to register a link with metronome.",
+      "time": "10:59",
+      "timestamp": "1751479193.249159",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "@Victor Zeng, Here is the metronome ID:- `3f346af7-c267-4519-b05d-22ab6fe58219`",
+      "time": "11:00",
+      "timestamp": "1751479211.808109",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Oh I think I know what the issue is. One second",
+      "time": "11:10",
+      "timestamp": "1751479841.081909",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "@Gauti can you try again with the enterprise org?",
+      "time": "11:11",
+      "timestamp": "1751479892.608499",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Try-again loading the billing page??",
+      "time": "11:26",
+      "timestamp": "1751480774.964169",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Tried with enterprise org, still seeing the same error in `/billing-plan`",
+      "time": "11:29",
+      "timestamp": "1751480953.819429",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Hmmm. Are you on the latest master?",
+      "time": "11:30",
+      "timestamp": "1751481010.834089",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Yes",
+      "time": "11:30",
+      "timestamp": "1751481037.280849",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Can you try signing up with the fake credit card?",
+      "time": "11:31",
+      "timestamp": "1751481061.859579",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "(all 42s)",
+      "time": "11:31",
+      "timestamp": "1751481069.974119",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Yes that's what I used for commercial plan subscription",
+      "time": "11:31",
+      "timestamp": "1751481087.343409",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "But I had observed this error for the above card:- `Rate card alias is not supported yet;`",
+      "time": "11:32",
+      "timestamp": "1751481152.281079",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I was able to create a working enterprise org with your DM’d credentials @Gauti, would this be enough to unblock you?",
+      "time": "11:33",
+      "timestamp": "1751481203.102979",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Let me rephrase. Can you sign up for a trial them upgrade to commercial?",
+      "time": "11:33",
+      "timestamp": "1751481215.741169",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I signed up for a trial commercial plan, then upgraded to enterprise via `/apps/aihub-admin`",
+      "time": "11:34",
+      "timestamp": "1751481279.831789",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Thanks @Paul H, this will unblock me for now.",
+      "time": "11:34",
+      "timestamp": "1751481282.285969",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "PR here for the rate card alias issue: https://github.com/instabase/instabase/pull/71928",
+      "time": "13:16",
+      "timestamp": "1751487390.335799",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Fix has been merged. Please rebase.",
+      "time": "16:05",
+      "timestamp": "1751497520.725889",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-02.json",
+    "message_count": 25,
+    "start_time": "1751461468.685639",
+    "end_time": "1751497520.725889",
+    "is_thread": true
+  }
+}

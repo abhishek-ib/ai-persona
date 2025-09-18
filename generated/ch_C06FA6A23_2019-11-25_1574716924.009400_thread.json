@@ -1,0 +1,159 @@
+{
+  "id": "ch_C06FA6A23_2019-11-25_1574716924.009400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Aaron Vontell",
+    "lydia",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I am getting the following error for lots of my services when starting with provisioner.py in Docker mode: `ERROR - Could not start service - api-server-apps. Error=b\"Unable to find image 'instabase/api-server-apps:latest' locally\\ndocker: Error response from daemon: pull access denied for instabase/api-server-apps, repository does not exist or may require 'docker login': denied: requested access to the resource is denied.\\nSee 'docker run --help'.\\nmake: *** [run-docker] Error 125\\n\"`",
+      "time": "13:22",
+      "timestamp": "1574716924.009400",
+      "is_reply": false
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "make sure docker is configured for gcloud access.",
+      "time": "13:23",
+      "timestamp": "1574716998.009900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "assuming you have the gcloud SDK installed, you can do this @Aaron Vontell with\n\n```docker-credential-gcr configure-docker```",
+      "time": "13:23",
+      "timestamp": "1574717039.010500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@Chetan it starts up some of them like refiner tservice with no problem...",
+      "time": "13:24",
+      "timestamp": "1574717062.010800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "those are already pulled or not using prebuild images",
+      "time": "13:24",
+      "timestamp": "1574717074.011000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Ah I see",
+      "time": "13:24",
+      "timestamp": "1574717086.011200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "hmm wait…",
+      "time": "13:24",
+      "timestamp": "1574717089.011400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i see it’s not using the full GCR path. it should be `gcr.io/instabase/* (http://gcr.io/instabase/*)` if it was trying to actually pull.",
+      "time": "13:25",
+      "timestamp": "1574717105.011600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "make sure you have the images built locally.",
+      "time": "13:26",
+      "timestamp": "1574717214.011900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "if you’re trying to use prebuilt, it should be pulling the images with a different path. i imagine someone using the script will be more helpful though…",
+      "time": "13:27",
+      "timestamp": "1574717239.012100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Can you first run `provisioner compile …`",
+      "time": "13:27",
+      "timestamp": "1574717240.012300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "followed by `provisioner start …`",
+      "time": "13:27",
+      "timestamp": "1574717252.012600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "The command I am using `ib compile all --use-prebuilt && ib start all --as-docker && ib status all`",
+      "time": "13:27",
+      "timestamp": "1574717267.012800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "(ib is an alias to the provisioner)",
+      "time": "13:28",
+      "timestamp": "1574717285.013200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "use-prebuilt will download images from our docker registry, so you probably need the gcloud config chetan said",
+      "time": "14:01",
+      "timestamp": "1574719294.019400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "the error messages don’t have the `gcr.io/* (http://gcr.io/*)` prefix though @lydia",
+      "time": "14:02",
+      "timestamp": "1574719321.019800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@lydia is there an easy way to see if my gcloud config was successful?",
+      "time": "18:48",
+      "timestamp": "1574736505.031000",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-11-25.json",
+    "message_count": 17,
+    "start_time": "1574716924.009400",
+    "end_time": "1574736505.031000",
+    "is_thread": true
+  }
+}

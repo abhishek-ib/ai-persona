@@ -1,0 +1,247 @@
+{
+  "id": "ch_C05L87V014J_2024-11-19_1732037182.390939_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "jordy.vlan",
+    "sean.donohoe",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "<!here> Apologies for the blast, but I wanted to share some findings from some ppy debugging @jordy.vlan and I did this morning!\n\n[REDIS] If you are experiencing ppy slowness and/or errors related to not being able to connect to redis, you should run\n\n```cat <<< $(jq '.base=(.base + {\"cache_host\": \"redis\"})' $f) > $f```\nfor `$f` being set to each of the following\n• `data-services/search-services/search-tservice/deployment/env/deployment-config.json`\n• `distributed-tasks/celery/app-tasks/deployment/env/deployment-config.json`\n• `webserver/webapp/deployment/env/deployment-config.json`\n• `webserver/api-server/deployment/env/deployment-config.json` \n• `core-services/core-platform-service/deployment/env/deployment-config.json`\n• `core-services/file-service/deployment/env/deployment-config.json`\n• `core-services/license-service/deployment/env/deployment-config.json`\n• `core-services/job-service/ deployment/env/deployment-config.json` \n[TERMINAL] If you are noticing slow command line interactions with your crafting sandbox and you are running commands via the vscode terminal, switch to running commands via the web terminal (the big \"Terminal\" button on your sandbox page), or via `cs ssh`. It's unclear why vscode is so slow in certain instances, but we confirmed this is specific to the vscode terminal!",
+      "time": "09:26",
+      "timestamp": "1732037182.390939",
+      "is_reply": false
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "cc @Sławek Biel",
+      "time": "09:38",
+      "timestamp": "1732037898.537499",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmm...this shouldn't be necessary, since cache_host: redis is set in env-local.json. IIRc.",
+      "time": "09:39",
+      "timestamp": "1732037943.607649",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Something isn't getting picked up correctly then, as none of those services were setting their hosts correctly :slightly_smiling_face:",
+      "time": "09:39",
+      "timestamp": "1732037977.714799",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Another away to set it though is to add it to env-local-overrides.json rather than editing every deployment-config",
+      "time": "09:39",
+      "timestamp": "1732037988.138279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I take it back: it's not set in env-local, just in the sandbox's environment -- which doesn't work for services run in docker. You should set this in shared-utils/build-utils/env-local-overrides.json (create the file if it doesn't exist) instead:\n\n```{\n  \"base\": {\n    \"cache_host\": \"redis\"\n  }\n}```\nIf you use my experimental backend template (https://instabase.sandboxes.site/templates/mfichman-ibdev-docker), this is automatic.",
+      "time": "09:41",
+      "timestamp": "1732038089.086539",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "we aren't setting it in the sandbox environment either, but that would be a good thing to add, I'll update the ibdev template shortly :slightly_smiling_face:",
+      "time": "09:43",
+      "timestamp": "1732038219.672019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Pardon? It's experimental because it's not ready for everyone yet. Some people are testing it though; don't want to confuse anyone who is using it.",
+      "time": "09:43",
+      "timestamp": "1732038232.155929",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "So starting a new crafting sandbox would be better from that template?",
+      "time": "09:45",
+      "timestamp": "1732038334.989719",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You can certainly try it! And let me know if you have problems.",
+      "time": "09:45",
+      "timestamp": "1732038357.394059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Here is the brief: Backend Crafting Sandboxes (https://docs.google.com/document/d/1XgxmHi0idz-UoT9hfKhKg0s8099kh2DGWrhvxQbd3-g/edit?tab=t.0#heading=h.hypuww29lzaw)",
+      "time": "09:47",
+      "timestamp": "1732038455.779469",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Does your template by any chance support running OCR with Azure FormRecognizer in Build projects?",
+      "time": "09:58",
+      "timestamp": "1732039083.625519",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I haven't tried it -- I think it uses Microsoft OCR (?) by default, but I could be wrong. In any case, you can override the settings required in `env-local-override.json` to switch to Azure FormRecognizer, I figure.",
+      "time": "11:20",
+      "timestamp": "1732044053.446279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In any case, if you know which env vars need to be changed, I can show you how to do it.",
+      "time": "11:21",
+      "timestamp": "1732044085.909099",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I was just about to ask about this in the channel! I tried running this for each of the config files and then restarting the sandbox, but I still can't load my sandbox. https://instabase.sandboxes.site/sandboxes/jessica?cw=dev",
+      "time": "11:35",
+      "timestamp": "1732044905.994029",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I also tried adding the env-local-overrides, also no luck",
+      "time": "11:41",
+      "timestamp": "1732045317.037069",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@Jessica you appear to be running intercepted services, not ppy, these changes won't have any effect on your env",
+      "time": "11:51",
+      "timestamp": "1732045896.222899",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Ah... is there something else going wrong then? Or do I need to do something for nginx?",
+      "time": "11:52",
+      "timestamp": "1732045921.695799",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "not sure, I see that your endpoint is super slow but I don't see anything particularly odd in the nginx logs :thonk:",
+      "time": "11:53",
+      "timestamp": "1732046039.117339",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I haven't been able to load my sandbox at all for the past hour :sadparrot:",
+      "time": "11:55",
+      "timestamp": "1732046134.447879",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah this is odd, I'm taking a look now, will update you with anything I find :slightly_smiling_face:",
+      "time": "11:56",
+      "timestamp": "1732046176.166489",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Thanks!",
+      "time": "11:57",
+      "timestamp": "1732046225.049839",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@Jessica I won't lie, I have no idea why this seemed to work, but deleting `webserver/shared/src/js/webpacked/node_modules` and accessing your sandbox via an incognito tab works :neutral_face:",
+      "time": "12:41",
+      "timestamp": "1732048911.280549",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Whaaat that's so weird, it was working one second and then I wanted to test my next innocuous change and it wasn't working anymore, I thought for sure it was an infra problem",
+      "time": "12:42",
+      "timestamp": "1732048976.983169",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah I'm not sure, it could still be one haha, I still can't get it to load in my normal tabs :upside_down_face:",
+      "time": "12:43",
+      "timestamp": "1732049022.790979",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "oop and now it's failing in my incognito tab too :bang-head:",
+      "time": "12:44",
+      "timestamp": "1732049059.359639",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I did install another few packages the other day, maybe it's a problem with the node watchers or whatever that is we've run into a few times... I'll stop spamming this thread since it's unrelated, thanks for looking into it @sean.donohoe!",
+      "time": "12:48",
+      "timestamp": "1732049308.754329",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Sooo I created a new sandbox and it's working haha. I tried a different sandbox I'd been using for the hackathon and that didn't work either :thinking_face:",
+      "time": "14:32",
+      "timestamp": "1732055526.550889",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-11-19.json",
+    "message_count": 28,
+    "start_time": "1732037182.390939",
+    "end_time": "1732055526.550889",
+    "is_thread": true
+  }
+}

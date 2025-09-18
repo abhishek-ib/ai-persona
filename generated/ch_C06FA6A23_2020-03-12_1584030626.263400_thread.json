@@ -1,0 +1,439 @@
+{
+  "id": "ch_C06FA6A23_2020-03-12_1584030626.263400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "will",
+    "shaunak",
+    "Heymian",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "I see a _lot_ of queue'd messages on prod... coincidentally I am also not able to execute any refiner programs at the moment. Anyone know how to resolve / what the cause was?\n\nEDIT: stuff runs, but is horrendously slow. like >6 mins for https://www.instabase.com/apps/refiner-v3/ib_sales/sales-demo/fs/Instabase%20Drive/token-matcher-date/prog/refiner.ibprog",
+      "time": "09:30",
+      "timestamp": "1584030626.263400",
+      "is_reply": false
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "<!subteam^SQ9BZ7S2Y>",
+      "time": "09:30",
+      "timestamp": "1584030641.263800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "seems better now :man-shrugging: albeit the large, large list of queued' messages is still there",
+      "time": "10:18",
+      "timestamp": "1584033512.265500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "aaand the long lits of message is gone now. i assume someone cleaned something up...",
+      "time": "12:15",
+      "timestamp": "1584040505.269700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "it could have also just slowly finished processing. Matt is asking Ashish about resourcing on the infra thread. No updates, but there’s probably something we can do on the resourcing side.",
+      "time": "12:16",
+      "timestamp": "1584040569.269900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "nah -- i watched the queue for ~30 mins. The number of messages in \"Ready\" didn't change (other than by <20 as people submitted new jobs). After another ~40 minutes they're all suddenly gone.",
+      "time": "12:20",
+      "timestamp": "1584040821.270200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "and there was some toll -- my jobs taking ~3/4 minutes before are back down to 30 seconds (about what i'd expect).",
+      "time": "12:20",
+      "timestamp": "1584040849.270700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ah got it, maybe it got cleaned then!",
+      "time": "12:27",
+      "timestamp": "1584041274.271900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "aaaand they're back @Heymian is there a way to check what's creating all of these messages?",
+      "time": "12:42",
+      "timestamp": "1584042156.272500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "all the pods look like their evicting and slowly coming back up. What evicted them in the first place is still unknown. @shaunak might have more ideas.",
+      "time": "12:46",
+      "timestamp": "1584042406.273100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "hmm that confuses me a bit.... what do pod evictions have to do with this message onslaught? pod evictions would cause sluggishness / slowness, but it wouldn't cause the message queue to be this backed up. this should be coming from some API call gone amok? @Heymian",
+      "time": "12:48",
+      "timestamp": "1584042499.273300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "not sure, looking into the evictions. looks like they ran oom `The node was low on resource: memory. Container celery-app-tasks was using 10790528Ki, which exceeds its request of 4Gi.`will clean this up first",
+      "time": "12:50",
+      "timestamp": "1584042651.273500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "that looks like it might be a consequence of this and not the cause though... unsure :confusedparrot: @shaunak ?",
+      "time": "12:51",
+      "timestamp": "1584042698.273700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "hmm all the messages i saw before have suddenly been evicted from the history (i.e. 15:30 before showed ~1k messages and now shows 0 messages). any reason why the history would be revised like this @Heymian?",
+      "time": "13:08",
+      "timestamp": "1584043700.274000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I'll be back at home in 30 mins",
+      "time": "13:31",
+      "timestamp": "1584045095.274500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I'll take a look then",
+      "time": "13:31",
+      "timestamp": "1584045101.274700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "in interview, can look after",
+      "time": "13:37",
+      "timestamp": "1584045456.274900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I lied, did not look after. @shaunak did you have a chance to look?",
+      "time": "16:48",
+      "timestamp": "1584056936.276600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Yup, I’m in the middle of looking :slightly_smiling_face:",
+      "time": "16:49",
+      "timestamp": "1584056974.276800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "awesome, thank you!",
+      "time": "16:50",
+      "timestamp": "1584057013.277000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "OK, so I think I know what the error is",
+      "time": "17:01",
+      "timestamp": "1584057663.278500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "we have refiner functions that have an infinite loop in them",
+      "time": "17:01",
+      "timestamp": "1584057673.278700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "",
+      "time": "17:01",
+      "timestamp": "1584057715.279000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I’m trying to look through the code right now :slightly_smiling_face:",
+      "time": "17:02",
+      "timestamp": "1584057735.279200",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "But it looks like an apply_refine function was started around 2:00 pm but it hasn’t completed yet.",
+      "time": "17:02",
+      "timestamp": "1584057762.279400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": ":neutral_face:",
+      "time": "17:02",
+      "timestamp": "1584057764.279600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "timeouts don’t help here?",
+      "time": "17:03",
+      "timestamp": "1584057781.279800",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I don’t see any timeouts for this particular task",
+      "time": "17:03",
+      "timestamp": "1584057818.280100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Infinite timeouts.",
+      "time": "17:03",
+      "timestamp": "1584057820.280300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "aah `apply_refiner` the flow step has a timeout but `apply_refiner` the celery task / api-server-apps endpoint does not",
+      "time": "17:04",
+      "timestamp": "1584057862.280500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "yes",
+      "time": "17:04",
+      "timestamp": "1584057871.280700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "maybe that should be on: https://docs.google.com/document/d/1UJoxaw0AqBiSOWrMxsVlgB8Zx4OAcglwhLce9bUxwaU/edit?ts=5cb65d48# putting timeouts on customer-facing endpoints\n\ni’ll file a bug request with doc insights / mint (unless you have already @shaunak)",
+      "time": "17:06",
+      "timestamp": "1584057976.280900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "not yet, I’m still looking through the code to understand why the task is not reliquishing the control back after the exception is thrown",
+      "time": "17:07",
+      "timestamp": "1584058022.281600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "hmmm so an exception is hit but the task doesn’t exist :confusedparrot:",
+      "time": "17:07",
+      "timestamp": "1584058056.281800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "sg i’ll let you file it then.",
+      "time": "17:07",
+      "timestamp": "1584058070.282100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "mystery resolved: `scan_box` has an infinite loop, this has been fixed in master, but it currently is present on instabase.com (http://instabase.com)",
+      "time": "17:40",
+      "timestamp": "1584060049.282900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I’ll get `app-tasks` back in shape",
+      "time": "17:41",
+      "timestamp": "1584060068.283200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "we were seeing this problem on dogfood though which should be master? @shaunak",
+      "time": "17:42",
+      "timestamp": "1584060136.283400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "this is a problem on instabase.com (http://instabase.com), I haven’t seen this on dogfood",
+      "time": "17:42",
+      "timestamp": "1584060161.283600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "which might have other issues :slightly_smiling_face:",
+      "time": "17:42",
+      "timestamp": "1584060173.283800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "I don’t exactly recall whether the first screenshot is prod or dogfood, but the second and third screenshots i posted on this thread were definitely on dogfood.",
+      "time": "17:43",
+      "timestamp": "1584060188.284000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "the first screenshot was an issue that I actually resolved today morning",
+      "time": "17:43",
+      "timestamp": "1584060221.284200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "even now — prod is better behaved than dogfood :slightly_smiling_face:",
+      "time": "17:43",
+      "timestamp": "1584060225.284400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "aah got it",
+      "time": "17:44",
+      "timestamp": "1584060241.285000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "we were not running any search-tservice which resulted in messages being accumulated in rabbit-mq",
+      "time": "17:44",
+      "timestamp": "1584060242.285200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "one more question then: is seeing the history revised is expected?  i.e. the second and third screenshots I posted on this thread both show 15:20 time but dramatically different message queue sizes (500 messages vs 0 messages)",
+      "time": "17:47",
+      "timestamp": "1584060477.287100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "ideally the history is not revised, unless rabbit-mq restarted",
+      "time": "17:49",
+      "timestamp": "1584060544.287300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": ":slightly_smiling_face:",
+      "time": "17:49",
+      "timestamp": "1584060545.287500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "so presumably it restarted in dogfood?",
+      "time": "17:52",
+      "timestamp": "1584060743.287700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "kk good to know",
+      "time": "17:52",
+      "timestamp": "1584060746.287900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "yup, probably",
+      "time": "17:53",
+      "timestamp": "1584060786.288200",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "A push to dogfood did go through around 4:09 pm.  (As can be seen on discuss-deployments channel)",
+      "time": "17:53",
+      "timestamp": "1584060806.288500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-03-12.json",
+    "message_count": 52,
+    "start_time": "1584030626.263400",
+    "end_time": "1584060806.288500",
+    "is_thread": true
+  }
+}

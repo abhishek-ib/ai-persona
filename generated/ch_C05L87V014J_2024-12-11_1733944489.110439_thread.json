@@ -1,0 +1,110 @@
+{
+  "id": "ch_C05L87V014J_2024-12-11_1733944489.110439_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "sean.donohoe",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "After pulling in Heymian's PR (https://instabase.slack.com/archives/C06FA6A23/p1733940015491109) that merges apps-server to webapp, I can't access the UI using ppy on crafting. Detail in the thread",
+      "time": "11:14",
+      "timestamp": "1733944489.110439",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Error from nginx:\n```2024/12/11 19:12:24 [error] 18#18: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 169.254.31.254, server: , request: \"GET / HTTP/1.1\", upstream: \"http://172.17.0.1:6001/\", host: \"localhost\"\n{\"msec\": \"1733944344.119\", \"connection\": \"2\", \"connection_requests\": \"4\", \"pid\": \"18\", \"request_id\": \"ba09b3dfc6808fdf75668eebac2ec5e4\", \"request_length\": \"999\", \"remote_addr\": \"169.254.31.254\", \"remote_user\": \"\", \"remote_port\": \"58852\", \"time_local\": \"11/Dec/2024:19:12:24 +0000\", \"time_iso8601\": \"2024-12-11T19:12:24+00:00\", \"request\": \"GET / HTTP/1.1\", \"request_uri\": \"/\", \"args\": \"\", \"status\": \"502\", \"body_bytes_sent\": \"21\", \"bytes_sent\": \"171\", \"http_referer\": \"\", \"http_user_agent\": \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36\", \"http_x_forwarded_for\": \"\", \"http_host\": \"localhost\", \"server_name\": \"\", \"request_time\": \"0.000\", \"upstream\": \"172.17.0.1:6001\", \"upstream_connect_time\": \"-\", \"upstream_header_time\": \"-\", \"upstream_response_time\": \"0.000\", \"upstream_response_length\": \"0\", \"upstream_cache_status\": \"\", \"ssl_protocol\": \"\", \"ssl_cipher\": \"\", \"scheme\": \"http\", \"request_method\": \"GET\", \"server_protocol\": \"HTTP/1.1\", \"pipe\": \".\", \"gzip_ratio\": \"\", \"http_cf_ray\": \"\",}```",
+      "time": "11:15",
+      "timestamp": "1733944509.801849",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "oop yep, we need to remove apps-server as a daemon from the CLI/template -- for now could you try\n```cs sandbox update -D 'dev/env[API_SERVER_LITE_ENABLED]=0' -D 'dev/env[APPS_SERVER_ENABLED]=0' && cs down apps-server```",
+      "time": "11:17",
+      "timestamp": "1733944625.681099",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "actually sorry, just read this is specific to ppy, my command won't have any effect on ppy :upside_down_face:  -- @Heymian would you happen to know if there are any ppy invocation tweaks needed now that apps-server is merged?",
+      "time": "11:18",
+      "timestamp": "1733944715.649289",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "or if there are any nginx config tweaks needed to drop apps-server, since it appears it's still trying to treat apps-server as an upstream?",
+      "time": "11:19",
+      "timestamp": "1733944776.239629",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm going to hunt down all `set $apps_server_backend` in nginx config files to set to `{webapp}` . We have soo many nginx config files and I'm not sure which one we are using locally :sweat_smile:",
+      "time": "11:22",
+      "timestamp": "1733944920.736359",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ok. I fixed it locally. I'll open a PR for it",
+      "time": "11:25",
+      "timestamp": "1733945150.778349",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ohh sorry, I might’ve missed one/some! I thought I only needed to update the template.",
+      "time": "11:27",
+      "timestamp": "1733945256.891199",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "No problem! Server nginx is using `webserver/server-nginx/config/nginx-config-template.jinja.yml` locally :sweat_smile: . This is so confusing :cry:",
+      "time": "11:30",
+      "timestamp": "1733945453.132299",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Fix: https://github.com/instabase/instabase/pull/66185",
+      "time": "11:31",
+      "timestamp": "1733945463.870179",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "looks good, thanks!",
+      "time": "11:42",
+      "timestamp": "1733946124.846579",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-11.json",
+    "message_count": 11,
+    "start_time": "1733944489.110439",
+    "end_time": "1733946124.846579",
+    "is_thread": true
+  }
+}

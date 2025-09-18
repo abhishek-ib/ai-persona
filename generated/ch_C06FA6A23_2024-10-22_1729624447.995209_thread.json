@@ -1,0 +1,109 @@
+{
+  "id": "ch_C06FA6A23_2024-10-22_1729624447.995209_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I have an issue where the all FS urls return an error\nFlow dashboard opens fine. Has anyone seen this issue before?",
+      "time": "12:14",
+      "timestamp": "1729624447.995209",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Maybe relavant? https://instabase.slack.com/archives/C05L87V014J/p1729241555380249\nFS pages are handled by webapp and the flow dashboard is handled by apps-server. @Prakhar is seeing the opposite, the home page is handled by webapp and the converse app is handled by apps-server.\nFor Anil's case, in IB classic, webapp doesn't work and apps-server works.\nFor Prakhar's case, in AIHub, webapp works and apps-server doesn't work.\n\nI think it might be caused by some missing nginx route, or `isAIHubEnvironment` isn't set correctly?\nThis file (https://github.com/instabase/instabase/blob/991c8a85e6a031f589d3d68a2e38926a3904776f/webserver/server-nginx/config/nginx-config-template.jinja.yml#L1753-L1763) controls the local nginx routes. It's quite different from this file (https://github.com/instabase/instabase/blob/0fe7b0f57b901c55689b1903827a0840ff57a194/deployment-configs/chart/files/nginx.conf) that controls the deployed envs. I believe the local version also needs to take in `isAIHubEnvironment` to determine the fallback path.",
+      "time": "12:26",
+      "timestamp": "1729625215.438369",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "My sandbox is working fine... @Anil can you try following steps in this msg?\nhttps://instabase.slack.com/archives/C05L87V014J/p1729621130038959?thread_ts=1729241555.380249&cid=C05L87V014J",
+      "time": "12:32",
+      "timestamp": "1729625576.973769",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I am using my local, not sandbox. Also using the enterprise platform and not aihub for a quick test.",
+      "time": "12:43",
+      "timestamp": "1729626186.990459",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Maybe the later is the issue. Checking",
+      "time": "12:43",
+      "timestamp": "1729626195.017559",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ">  I am using my local, not sandbox.\nDo you use ppy on crafting sandbox or completely local?",
+      "time": "12:46",
+      "timestamp": "1729626366.838169",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Completely local",
+      "time": "12:46",
+      "timestamp": "1729626378.546949",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "OK. I'm using ppy on crafting sandbox and I think both should behave the same :thinking_face:",
+      "time": "12:46",
+      "timestamp": "1729626405.094349",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "All good. Looks like just urls like /username and / don’t work\n\nhttp://localhost/anils401/my-repo/fs/Instabase%20Drive/ - this works\nMight be a breaking change got introduced now that we don’t use enterprise platform on master.",
+      "time": "12:48",
+      "timestamp": "1729626510.882079",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "",
+      "time": "12:49",
+      "timestamp": "1729626546.004569",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yep, in local, we have rules `^/[^/]+/[^/]+/fs` to go to the webapps and the fallback path `/` is going to apps-server. So if you use `/username`, it goes to apps-server and apps-server doesn't serve the explorer app so it returns 404\nhttps://github.com/instabase/instabase/blob/991c8a85e6a031f589d3d68a2e38926a390477[…]f/webserver/server-nginx/config/nginx-config-template.jinja.yml (https://github.com/instabase/instabase/blob/991c8a85e6a031f589d3d68a2e38926a3904776f/webserver/server-nginx/config/nginx-config-template.jinja.yml#L1729-L1762)",
+      "time": "12:51",
+      "timestamp": "1729626666.804539",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-22.json",
+    "message_count": 11,
+    "start_time": "1729624447.995209",
+    "end_time": "1729626666.804539",
+    "is_thread": true
+  }
+}

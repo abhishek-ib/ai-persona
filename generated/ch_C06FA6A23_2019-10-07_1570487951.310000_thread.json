@@ -1,0 +1,358 @@
+{
+  "id": "ch_C06FA6A23_2019-10-07_1570487951.310000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Chetan",
+    "Heymian",
+    "will"
+  ],
+  "messages": [
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "It looks like it is using a very old version of the jenkins image: `19.08.22.23.57.35: Pulling from instabase-build/jenkins`",
+      "time": "15:39",
+      "timestamp": "1570487951.310000",
+      "is_reply": false
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Oops, that was for a different thread, though I guess it could be related here",
+      "time": "15:41",
+      "timestamp": "1570488074.310100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "I'd see it locally them pretty easily - - and I don't",
+      "time": "16:07",
+      "timestamp": "1570489659.310300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Which test specifically is this? which file?",
+      "time": "17:10",
+      "timestamp": "1570493418.311200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Found file. Hrm, from the test that seems to be segfaulting, it looks like it’s possible it’s your test @Chetan? Still digging though to see if there’s another root cause.\n```\nERROR:root:Could not read file chetan/my-repo/fs/Instabase Drive/redactor/data/out/s1_process_files/document-1.pdf.ibocr: Content not found for chetan/my-repo/fs/Instabase Drive/redactor/data/out/s1_process_files/document-1.pdf.ibocr\nERROR:root:IBOCR at path chetan/my-repo/fs/Instabase Drive/redactor/data/out/s1_process_files/document-1.pdf.ibocr is invalid: Invalid IBOCR / IBDOC format. Path: chetan/my-repo/fs/Instabase Drive/redactor/data/out/s1_process_files/document-1.pdf.ibocr\nERROR:root:Document chetan/my-repo/fs/Instabase Drive/redactor/data/out/s1_process_files/document-1.pdf.ibocr and the annotated template have a different number of pages\nERROR:root:: Path out/s1_process_files/images/document-1.pdf_p0.jpg.JPEG does not exist.\nERROR:root:Error reading image file: Failed to read file: Cannot open a non-existent file in r mode. Path: chetan/my-repo/fs/Instabase Drive/out/s1_process_files/images/document-1.pdf_p0.jpg.JPEG\nERROR:root:Error creating input record for page chetan/my-repo/fs/Instabase Drive/redactor/data/out/s1_process_files/document-1.pdf.ibocr: Error decoding image bytes: 'NoneType' object has no attribute 'shape'\n................................ERROR:root:: Path metaflow_classify_files/Data/out/classes.json does not exist.\nERROR:root:: Path metaflow_classify_files/Data/out/predictions.json does not exist.\nERROR:root:: Path metaflow_classify_files/Data/out/_class_to_processed.json does not exist.\n.......Segmentation fault (core dumped)\nmake[2]: *** [run-test-local] Error 139\n```",
+      "time": "17:29",
+      "timestamp": "1570494541.311400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I can’t reproduce this locally, or in the jenkins image. Are you relying on a file that lives in our s3 bucket? or is `chetan/my-repo/fs/Instabase Drive/redactor/data/out/s1_process_files/document-1.pdf.ibocr`  that just a mocked out file path?",
+      "time": "17:49",
+      "timestamp": "1570495763.311600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Okay, I _think_ it’s just because of the old jenkins image we were pulling. Can you try rebasing on top of master and push your PR again?",
+      "time": "17:52",
+      "timestamp": "1570495968.311900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Okay, never mind. still looks broken. I have no ideas why this only fails on py2 in travis.",
+      "time": "20:51",
+      "timestamp": "1570506687.312200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "I can't tell which test is failing (since i have no idea what order the tests are run in). I could comment out various tests in flow/server until they all pass (albeit that's a LOT of tests) in travis, but that would take much time (since the iteration is happening on travis not locally).",
+      "time": "22:25",
+      "timestamp": "1570512321.312400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "@Heymian why do you say it's my test? bc my name is in some of the logs above?",
+      "time": "22:25",
+      "timestamp": "1570512355.312600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah that’s all i had to go on. I also couldn’t narrow it down to a single test",
+      "time": "22:26",
+      "timestamp": "1570512376.312800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "aaah kk. yea presumably it could be. but it could be any of the other ones too :question: :question: :question:",
+      "time": "22:31",
+      "timestamp": "1570512684.313000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "if only it wasn't a seg fault -- we'd be getting some meaningful output...",
+      "time": "22:31",
+      "timestamp": "1570512694.313200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "trying a few more things.... i'm pretty stuck though.",
+      "time": "22:31",
+      "timestamp": "1570512706.313400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "oh yeah could be anyone/anything. i just really had nothing to go on in that very useful and informative log. Do you happen to know which test/file is testing that NoneType Shape thing? If it’s alphabetical, it might be a test that happens after that (desperate times :P)",
+      "time": "22:33",
+      "timestamp": "1570512809.313600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "nope -- even worst i think it's >20 tests after that. `................................` and `.......` _all_ represent tests passing i believe... :anant_why:",
+      "time": "22:36",
+      "timestamp": "1570513002.313800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": ":party_try_not_to_cry:",
+      "time": "22:40",
+      "timestamp": "1570513238.314000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "the only idea i have left is hook up circleci and see if everything passes there. if yes, we just switch to that.",
+      "time": "22:41",
+      "timestamp": "1570513278.314200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Nono, not worth it to try that. Cooking up a plan with @will  to move it all into Jenkins. We’re close to being able to do that now.",
+      "time": "22:42",
+      "timestamp": "1570513331.314400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i already tried deleting the cache... my guess is some corruption/problem in the VM that's getting into our test environment despite the docker layer in the middle :bow_and_arrow: :new_moon:",
+      "time": "22:42",
+      "timestamp": "1570513350.314600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "awesome -- then i'll just ignore it... maybe something comes to me between now and then...",
+      "time": "22:42",
+      "timestamp": "1570513373.314900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah and the weird thing is i ran it inside the jenkins image as well, and it was totally fine",
+      "time": "22:42",
+      "timestamp": "1570513377.315100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Is there a way you can disable just that test in py2 on travis?",
+      "time": "22:43",
+      "timestamp": "1570513387.315300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yup same",
+      "time": "22:43",
+      "timestamp": "1570513388.315500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "would love to keep the rest of travis running",
+      "time": "22:43",
+      "timestamp": "1570513420.315900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "we'd be disabling unittests for all of `flow/server`. it's a pretty important library...",
+      "time": "22:43",
+      "timestamp": "1570513421.316100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i think just disabling travis is better than making people think it's working as normal? even if we \"announce\" i think there's risk people miss that `flow/server` tests are disabled....",
+      "time": "22:44",
+      "timestamp": "1570513451.316300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i'm fine with either path though. you guys can chat about it in SF when you get in tomorrow.",
+      "time": "22:44",
+      "timestamp": "1570513465.316500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "kk sg",
+      "time": "22:45",
+      "timestamp": "1570513521.316700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "if i want to hack around to see if I can fuse of py2, do I do that in the flow/server/makefile? or is there a better place (especially if I only want to affect travis).",
+      "time": "22:45",
+      "timestamp": "1570513554.316900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "\"fuse of py2\"?",
+      "time": "22:46",
+      "timestamp": "1570513570.317100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "we’ll also still have coverage with our hourly jenkins runs even if we disable this test in travis",
+      "time": "22:46",
+      "timestamp": "1570513573.317300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "it only fails with py2 right? so if we make unit tests for flow/server on travis always run with py3, then this should be ok for now?",
+      "time": "22:46",
+      "timestamp": "1570513602.317500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "true -- plus we don't need to disable it for PY3 (we can make the exclusion conditional on the USE_PY3 environment var).",
+      "time": "22:46",
+      "timestamp": "1570513608.317700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yea -- that's do-able. will implement that now...",
+      "time": "22:47",
+      "timestamp": "1570513625.318000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": ":bananadance:thanks!",
+      "time": "22:47",
+      "timestamp": "1570513633.318200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "good to know that you/will are close to integrating jenkins for CI -- we can then stop wasting all the time downloading the jenkins image repeatedly! :smile:",
+      "time": "22:53",
+      "timestamp": "1570514037.318400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "https://github.com/instabase/instabase/pull/11348 <- let's see if it works.",
+      "time": "22:54",
+      "timestamp": "1570514048.318700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "feel free to go sleep! I’ll keep an eye on it and merge it if it goes green",
+      "time": "22:58",
+      "timestamp": "1570514326.319100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "It’s green!!!",
+      "time": "23:04",
+      "timestamp": "1570514685.319300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": ":white_check_mark:",
+      "time": "23:04",
+      "timestamp": "1570514695.319500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": ":smile:",
+      "time": "23:07",
+      "timestamp": "1570514837.319700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-10-07.json",
+    "message_count": 42,
+    "start_time": "1570487951.310000",
+    "end_time": "1570514837.319700",
+    "is_thread": true
+  }
+}

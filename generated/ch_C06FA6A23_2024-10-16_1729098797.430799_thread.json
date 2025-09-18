@@ -1,0 +1,295 @@
+{
+  "id": "ch_C06FA6A23_2024-10-16_1729098797.430799_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "mfichman",
+    "Abhinav",
+    "Ashwin"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@jtau @Ashwin Can someone take a peek at 23.07 release sandbox?\nhttps://jenkins.instabase.com/job/SAAS-AWS/job/saas-pipelines/job/install-ib-platform/16260/console\n\nFailing on registry update, can't get a DB lock:\n```11:06:53  Starting update registry\n11:11:06  500 Server Error: Internal Server Error for url: https://release-23-07.internal.instabase.com/api/v1/control_plane/patches/registry\n11:11:06  {\"statusCode\":500,\"data\":null,\"error\":\"ApplyPatchToConfigs failed: Failed to create patch. Error: Failed to update row. Err: Failed to update row. Err: Error 1205 (HY000): Lock wait timeout exceeded; try restarting transaction\"}\n11:11:06  make: *** [Makefile:362: run-update-registry] Error 1```",
+      "time": "10:13",
+      "timestamp": "1729098797.430799",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Was this upgrade manually abandonded? Its currently in the turned down state and I dont see an upgrade in progress",
+      "time": "10:15",
+      "timestamp": "1729098917.199539",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Its possible we may be getting throttled by the DB limits, can check this in grafana",
+      "time": "10:15",
+      "timestamp": "1729098945.090749",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":man-shrugging::skin-tone-3: Deploy failed on its own when I kicked the sandbox update, then reran the install pipeline.",
+      "time": "10:16",
+      "timestamp": "1729098982.589699",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Ya the pipeline abandons any in progress updates, I'm manually deleting the existing turn down patches",
+      "time": "10:16",
+      "timestamp": "1729099010.917849",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Oh wow, it failed to delete the turn down patches",
+      "time": "10:17",
+      "timestamp": "1729099028.396209",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Not sure what to make of this graph, but waiting for mutex's seems to be taking a lot of compute, its possible we ran into a deadlock somewhere or a bug in mysql which led to it",
+      "time": "10:20",
+      "timestamp": "1729099201.663779",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Lets see if theres a way to manually free locks",
+      "time": "10:20",
+      "timestamp": "1729099207.957979",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "So the DB user for the sandbox doesnt have permission to look into the system tables, I need to use the master account. Master password is hidden on RDS. @Abhinav is it safe to reset the master password?",
+      "time": "10:25",
+      "timestamp": "1729099549.422549",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "It should be available in secrets manager",
+      "time": "10:26",
+      "timestamp": "1729099610.525239",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "https://us-east-2.console.aws.amazon.com/secretsmanager/secret?name=insan-use2-major-rls-host-db-master-creds-optimal-elf&region=us-east-2",
+      "time": "10:28",
+      "timestamp": "1729099717.827999",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "got it thank you",
+      "time": "10:28",
+      "timestamp": "1729099725.970329",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Looks like the db_master account doesn't have the permissions to kill the in progress transaction..",
+      "time": "10:31",
+      "timestamp": "1729099874.789289",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Let me try something",
+      "time": "10:32",
+      "timestamp": "1729099972.310369",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Ya im not able to kill the processes with the 23-07 DB user either",
+      "time": "10:40",
+      "timestamp": "1729100440.188599",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Based on what Im reading from ChatGPT, it doesnt seem like its possible to create a SUPER on RDS because its a  managed service",
+      "time": "10:41",
+      "timestamp": "1729100471.578499",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "The other recommendation is to restart the DB, but this will also affect all the other release sandboxes since they use the same one",
+      "time": "10:41",
+      "timestamp": "1729100490.433129",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "@Abhinav @mfichman do you have other suggestions?",
+      "time": "10:41",
+      "timestamp": "1729100499.121759",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "What I was trying was `SELECT trx_mysql_thread_id FROM information_schema.innodb_trx;` to find the active transactions, then `KILL <ID>;` for each of them",
+      "time": "10:42",
+      "timestamp": "1729100532.973779",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/mysql-stored-proc-ending.html (https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/mysql-stored-proc-ending.html) \n\nThis?",
+      "time": "10:43",
+      "timestamp": "1729100596.385939",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "If it won't cause irreparable harm to the release sandboxes, I'd say bounce it and call it a day",
+      "time": "10:44",
+      "timestamp": "1729100699.586009",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(only because I don't care one whit about the release sandboxen uptime. :joy:)",
+      "time": "10:48",
+      "timestamp": "1729100932.246779",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Here is the locking transaction (output of `SHOW ENGINE INNODB STATUS;`)\n```---TRANSACTION 1285760783, ACTIVE 5934 sec\n10 lock struct(s), heap size 1128, 257 row lock(s), undo log entries 1019\nMySQL thread id 18647925, OS thread handle 22548912342784, query id 1937848706 10.170.16.16 insan-use2-release-23-07-user\nTrx read view will not see trx with id >= 1285760617, sees < 1285760617```\nAfter running `CALL mysql.rds_kill_query(18647925)`\n```mysql> CALL mysql.rds_kill_query(18647925);\nQuery OK, 0 rows affected (0.06 sec)```\nIt doesnt seem to be stopping the process",
+      "time": "10:54",
+      "timestamp": "1729101250.087769",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Nvm, it just took a second. That did the trick to kill the query",
+      "time": "10:55",
+      "timestamp": "1729101348.401649",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Okay the deadlock has been resolved, and the original patch was able to be deleted",
+      "time": "10:58",
+      "timestamp": "1729101506.932799",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "@Cody Boggs is there a pipeline run in progress",
+      "time": "10:58",
+      "timestamp": "1729101532.954519",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Not that I know of",
+      "time": "10:58",
+      "timestamp": "1729101537.971389",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "that was kicked off outside of ICC",
+      "time": "10:59",
+      "timestamp": "1729101541.423169",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "bet",
+      "time": "10:59",
+      "timestamp": "1729101542.144939",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Nah just the one I linked at the start of this thread so it should be quiet lol",
+      "time": "10:59",
+      "timestamp": "1729101571.087369",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Deleting the second turn down patch, one this is done, this environment should be ready for the next update",
+      "time": "11:00",
+      "timestamp": "1729101603.555229",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Sweet thanks yo",
+      "time": "11:01",
+      "timestamp": "1729101700.217869",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "and thanks @Abhinav too :smile:",
+      "time": "11:01",
+      "timestamp": "1729101715.647689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "What query was taking the lock for so dang long?",
+      "time": "11:09",
+      "timestamp": "1729102148.580939",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-16.json",
+    "message_count": 34,
+    "start_time": "1729098797.430799",
+    "end_time": "1729102148.580939",
+    "is_thread": true
+  }
+}

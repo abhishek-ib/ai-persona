@@ -1,0 +1,105 @@
+{
+  "id": "ch_C06FA6A23_2021-02-24_1614190592.053600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Balaram",
+    "Chetan",
+    "dmitry",
+    "Anant",
+    "Daniel Cahn",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "ok ladies, and gentleman. in order to iterate over pages, I had to use my plan B of breaking INPUT_COL on `'\\\"\\n\\\"'` which gives me a list of `page_text` and using `idx+1` as page_number for the page so that I can pass that specific page to `form_recognizer.recognize_tables`. Can we please provide native functions for iterating over pages in refiner?",
+      "time": "10:16",
+      "timestamp": "1614190592.053600",
+      "is_reply": false
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "This will definitely be part of the new document format, yes. It won’t be immediate unfortunately.",
+      "time": "10:19",
+      "timestamp": "1614190760.055400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "in the short term, ibtools can do this — mind linking to your program and we can investigate why it didn’t work @Anant?",
+      "time": "10:19",
+      "timestamp": "1614190785.055600",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "Can you try reading from the process files output?",
+      "time": "10:19",
+      "timestamp": "1614190789.055800",
+      "is_reply": true
+    },
+    {
+      "sender": "dmitry",
+      "user_id": "U0103E8RBA9",
+      "message": "@Anant, as Chetan mentioned above,  this functionality is implemented in `ibtools`:\nhttps://github.com/instabase/appengrepo/tree/master/packages/ibtools#get_pages\n\nyou need to add this to your scripts file:\n```from ib.market.ibtools.page_fns import get_pages, get_pages_fn_v\n\ndef register(name_to_fn):\n  name_to_fn.update({\n   'get_pages':{'fn': get_pages, 'fn_v':get_pages_fn_v}\n})```\nafter that you can add call `get_pages()` into your Refiner. the result will be a list of provenance tracked strings, each being the text of a corresponding page",
+      "time": "10:35",
+      "timestamp": "1614191754.056000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "alternatively this method of registration also works:\n```from ib.market.ibtools import register\n# no register function should be defined in the file```\nif using `get_pages` in a UDF, `**kwargs` needs to be passed to it (since `_FN_CONTEXT` is needed and not globally available), i.e.:\n```from ib.market.ibtools.page_fns import get_pages\n\ndef my_udf(input, **kwargs):\n  contents_of_each_pages = get_pages(**kwargs)\n  for page_num, page_str in enumerate(contents_of_each_pages):\n    # logic ```",
+      "time": "10:41",
+      "timestamp": "1614192107.056200",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "I'll try later today. The bigger question is: why is it not there in product yet? This is a basic thing one would want in a multi-page document [this case would be a common case for many use-cases -- isn't it]?",
+      "time": "11:07",
+      "timestamp": "1614193633.058600",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Agreed that this is basic functionality that we should be supporting.\n\nI believe the holdup gets back to a core flaw with our current data extraction pipeline, where it was inflexibly designed for text-only extractions (from `INPUT_COL`), which didn’t have awareness of anything like page numbers, coordinates, etc. Then we hackily added a bunch of these features _on top_ of that with provenance tracking, UDFs that manually iterate through the `lines` in an `IBOCRRecord` , visual functions, etc.\n\nBecause adding this particular feature _on top_ of `IBOCRRecord` wouldn’t work efficiently with the current way the underlying data is stored (and would be a bit hacky, creating bugs in edge-case ibdocs like provenance tracking and visual functions do), we don’t want to support this feature in a poorly-version-controlled way in the codebase. UDFs are a great way to bridge the product gaps in the platform with things like this in the short-term.\n\nI’m ready to help work on the next version whenever we’re ready to do so as a company/team, but until we have better-designed and better-versioned APIs, I support keeping this functionality in dev exchange/ibtools instead of in the codebase :disappointed:",
+      "time": "11:26",
+      "timestamp": "1614194778.058900",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "confirming that `get_pages(**kwargs)` works -- the reason it failed earlier is I didn't pass `**kwargs`. @Daniel Cahn @lydia @Chetan",
+      "time": "14:27",
+      "timestamp": "1614205640.064200",
+      "is_reply": true
+    },
+    {
+      "sender": "Daniel Cahn",
+      "user_id": "U01BA1SDWP4",
+      "message": "@Erick @Anant great question about why it's not in the product. That was def part of the motivation (and tech spec) for Koala Document back in November/December. I'm psyched that Koala Document is finally ready and I'll definitely demo that soon :grin:",
+      "time": "14:41",
+      "timestamp": "1614206507.065900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-02-24.json",
+    "message_count": 10,
+    "start_time": "1614190592.053600",
+    "end_time": "1614206507.065900",
+    "is_thread": true
+  }
+}

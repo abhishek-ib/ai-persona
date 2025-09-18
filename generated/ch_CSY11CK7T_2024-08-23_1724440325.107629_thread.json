@@ -1,0 +1,240 @@
+{
+  "id": "ch_CSY11CK7T_2024-08-23_1724440325.107629_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Udit",
+    "Weiming Wu",
+    "sean.donohoe",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "<!subteam^S07855GV3GV> Seems like Cypress CI is flaky today? Seeing a bunch of errors across different branchs: 13316 (https://cloud.cypress.io/projects/cfhedy/runs/13316/overview?roarHideRunsWithDiffGroupsAndTags=1), 13315 (https://cloud.cypress.io/projects/cfhedy/runs/13315/overview?roarHideRunsWithDiffGroupsAndTags=1), 13313 (https://cloud.cypress.io/projects/cfhedy/runs/13313/overview?roarHideRunsWithDiffGroupsAndTags=1), 13312 (https://cloud.cypress.io/projects/cfhedy/runs/13312/overview?roarHideRunsWithDiffGroupsAndTags=1). These tests are failing:\n• advanced-apps\n• aihub-refinement\n• aihub-refindment-udf\n• aihub-split-classification\n• aihub-validation-library",
+      "time": "12:12",
+      "timestamp": "1724440325.107629",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Crafting backend failed to deploy. Not sure if that's related\nhttps://sandbox.console.instabase.com/customer/Engineering/tenant/crafting-cyp/info",
+      "time": "12:12",
+      "timestamp": "1724440372.125699",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "I'm seeing that a lot of CI runs from earlier today were incomplete on the dashboard",
+      "time": "12:13",
+      "timestamp": "1724440417.995039",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "seems like you're talking about the more recent runs though, yah I see those failing quite a bit",
+      "time": "12:16",
+      "timestamp": "1724440608.637549",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, incomplete because of timeout. We need to bump this again",
+      "time": "12:17",
+      "timestamp": "1724440638.696699",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It takes 32:44 mins to complete 29 specs and we have 54 :sweat_smile:\nhttps://cloud.cypress.io/projects/cfhedy/runs/13315/specs",
+      "time": "12:19",
+      "timestamp": "1724440741.272269",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for my PR’s CI run (https://cloud.cypress.io/projects/cfhedy/runs/13316/overview/e1e2b68b-2392-43cd-a871-3a9c99fca02e?roarHideRunsWithDiffGroupsAndTags=1), the upload buttons inside a Build project are disabled for an unexpectedly long time\n\nthis was the reason for the following failures:\n• aihub-refinement\n• aihub-refindment-udf\n• aihub-split-classification\n• aihub-validation-library",
+      "time": "12:19",
+      "timestamp": "1724440796.560999",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "@Weiming Wu The other 2 advanced apps tests (update, delete) are failing due to not being able to click the cypress-advanced-app card in the Hub. Could you take a look at these?",
+      "time": "12:23",
+      "timestamp": "1724440997.401359",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "I can upload on crafting-cyp normally right now myself, so the backend seems fine",
+      "time": "12:26",
+      "timestamp": "1724441169.321019",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i just edited a Build project’s name in crafting-cyp.test.instabase.com (http://crafting-cyp.test.instabase.com), and it works but feels slow\n\n• the `PATCH` request takes 1-2s\n• the `GET` request for re-listing the projects in the workspace takes ~2s\n• the `GET` request for getting the edited project’s new metadata takes ~10s\nthis sometimes put us past the 15000ms timeout, so i think that’s why these are flaky failures",
+      "time": "12:29",
+      "timestamp": "1724441353.672829",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems we could (1) try to fix the underlying slowness or (2) increase timeouts\n\nif we choose (2), we’ll need to (a) increase the github actions timeout beyond 35 min and (b) increase the timeout for clicking the upload buttons in Build",
+      "time": "12:31",
+      "timestamp": "1724441499.475809",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@sean.donohoe any thoughts between (1) and (2)?",
+      "time": "12:32",
+      "timestamp": "1724441573.131419",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "is the slowness seen for 1) common in build across environments?",
+      "time": "12:33",
+      "timestamp": "1724441628.716609",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "unfortunately aihub-sandbox is a lot faster (see screenshot of latencies for the same 3 requests, in the same order)",
+      "time": "12:35",
+      "timestamp": "1724441711.917089",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The GET project request takes 4.22 s on aihub sandbox and 14.71 s on crafting",
+      "time": "12:35",
+      "timestamp": "1724441727.656809",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey there! We should definitely shoot for (1) if we can -- just to clarify, this slowness is being observed directly on the crafting-cyp cluster and not from an intercepted sandbox, yeah?",
+      "time": "12:36",
+      "timestamp": "1724441816.854309",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Also does aihub-sandbox typically have the same load as crafting-cyp over the course of a day?",
+      "time": "12:37",
+      "timestamp": "1724441842.062279",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yep i went directly to crafting-cyp.test.instabase.com (http://crafting-cyp.test.instabase.com), not a specific crafting-cyp PR sandbox",
+      "time": "12:37",
+      "timestamp": "1724441851.654639",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "bc of concurrent cypress tests, crafting-cyp probably gets a lot more load than aihub-sandbox\n\nso yes it’s not easy to directly compare them",
+      "time": "12:38",
+      "timestamp": "1724441903.084729",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah just quickly glancing at each cluster's resource dashboards crafting-cyp definitely has higher average cpu util -- I'm going to double check crafting-cyp's DM is actually setting the cluster size to standard",
+      "time": "12:41",
+      "timestamp": "1724442093.543019",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "The biggest error that I saw both on Xindi's linked runs and my local runs was the create advanced app test not consistently clicking \"Next\", so I changed how we look for the element:\nhttps://github.com/instabase/instabase/pull/61816",
+      "time": "13:05",
+      "timestamp": "1724443533.010639",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "alrighty looks like DM didn't get updated with the standard size when I did the last resize -- just updated its configuration, anyone have some tests they'd be willing to trigger so we can check if it helped?",
+      "time": "13:07",
+      "timestamp": "1724443620.723859",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’ll just rerun CI on my PR!",
+      "time": "13:07",
+      "timestamp": "1724443656.206239",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "that makes sense! we didn’t have these timeouts / flaky failures yesterday, so something changed recently",
+      "time": "13:08",
+      "timestamp": "1724443739.330549",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "average cpu util seems to be coming down, so that's a good sign :slightly_smiling_face:",
+      "time": "13:09",
+      "timestamp": "1724443791.288269",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think we’re good? the same tests are not failing in the rerun (https://cloud.cypress.io/projects/cfhedy/runs/13322/test-results?actions=%5B%5D&browsers=%5B%5D&groups=%5B%5D&isFlaky=%5B%5D&modificationDateRange=%7B%22startDate%22:%221970-01-01%22,%22endDate%22:%222038-01-19%22%7D&orderBy=EXECUTION_ORDER&oses=%5B%5D&specs=%5B%5D&statuses=%5B%5D&testingTypesEnum=%5B%5D) :tada:",
+      "time": "13:28",
+      "timestamp": "1724444916.541309",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "awesome!! I'm also putting up a patch to delete any cpu limits -- they're completely unnecessary for saas and I suspect are contributing to the slowness",
+      "time": "13:29",
+      "timestamp": "1724444958.983529",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-08-23.json",
+    "message_count": 27,
+    "start_time": "1724440325.107629",
+    "end_time": "1724444958.983529",
+    "is_thread": true
+  }
+}

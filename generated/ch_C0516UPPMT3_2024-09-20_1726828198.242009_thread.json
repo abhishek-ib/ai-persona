@@ -1,0 +1,241 @@
+{
+  "id": "ch_C0516UPPMT3_2024-09-20_1726828198.242009_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Hari",
+    "Jira",
+    "gurkirat",
+    "Rakesh",
+    "Vasu"
+  ],
+  "messages": [
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "Hey team,\nI was trying out internal search preview. I was tried query `Give me a short summary of elastic search migration at GS.`  I basically expected to get summary of this (https://docs.google.com/document/d/10C-whu2aD9BcZDD80CVyI9cSfjdtnxB1RHYy2UcZHhQ/edit#heading=h.pkic668lyqea) document in shared drive, but search did not give a good answer:",
+      "time": "03:29",
+      "timestamp": "1726828198.242009",
+      "is_reply": false
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "attaching screen shot here",
+      "time": "03:30",
+      "timestamp": "1726828259.591249",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Hi @gurkirat\nI see this is in Engg -> Infrastructure -> ElasticSearch.\nI see this folder marked as `No download permissions`\nI think that blocks GDrive crawler from being able to fetch this item and hence not be able to index. Correct me if wrong  @mfichman",
+      "time": "03:42",
+      "timestamp": "1726828967.244819",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "Definitely seems like a data missing issues here! But I am curious about this response from Lite model. I couldn't view the document either, so not sure how to verify! cc: @vineeth @Subash",
+      "time": "04:02",
+      "timestamp": "1726830137.871239",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Are you able to open this in new tab ? If yes this might be a csp issue for preview dialog.",
+      "time": "04:03",
+      "timestamp": "1726830195.937769",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "This doc is present in S3:\nhttps://test-default-drives.s3.us-east-1.amazonaws.com/018e3035-e10a-71e6-8ae2-d7cf8bfea7ff/aihub/ap[…]f520ef30647b269b0354d3cf328664eff179b5fe81809 (https://test-default-drives.s3.us-east-1.amazonaws.com/018e3035-e10a-71e6-8ae2-d7cf8bfea7ff/aihub/apps/57fe895e-f169-4848-866c-4449b0733c41/ibdocs/original/images/Example%201%20FI_eJxLzMwoTdItLi0oyC8q0XetSMwtyElVMFRw89QrSEkDAK-JCrc%3D.pdf_p33.JPEG.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARG3DSRG3XEBUM65H%2F20240920%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20240920T111244Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&response-expires=Fri%2C%2020%20Sep%202024%2011%3A17%3A44%20GMT&x-id=GetObject&X-Amz-Signature=69c864ab6514facc17af520ef30647b269b0354d3cf328664eff179b5fe81809)",
+      "time": "04:13",
+      "timestamp": "1726830808.433199",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "FYI.. @vineeth Not sure about the relevancy of the chunk retrieved here. Something to check! Multi-step does not get this!",
+      "time": "04:14",
+      "timestamp": "1726830894.970429",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Hmm.. This S3 path is interesting - the path has:\namazonaws.com/018e3035-e10a-71e6-8ae2-d7cf8bfea7ff/aihub/apps/57fe895e- (http://amazonaws.com/018e3035-e10a-71e6-8ae2-d7cf8bfea7ff/aihub/apps/57fe895e-)\n\naihub/apps - Is this from Prod / aihub-sandbox ? Since we have not exposed S3 drives in aihub prod",
+      "time": "04:16",
+      "timestamp": "1726830970.905859",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "It's in aihub-sandbox!",
+      "time": "04:16",
+      "timestamp": "1726831011.099709",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "I am seeing project loading issues too! We need to make sure it's not a regression!",
+      "time": "04:21",
+      "timestamp": "1726831263.139099",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Ok, so this is coming from a S3 test drive that Xindi had uploaded into aihub-sandbox and hence the aihub app paths are also present there. Display preview issue is likely a CSP issue @Subash\n- To reproduce `What was issue in elastic search migration at GS`  and limit to `Amazon S3 - Xindi Test` data source.\n\nAlso I see project loading issues too - for me its for some queries I ran in aihub-sandbox with Confluence connector yesterday and since its does not have references populated due to missing metadata during connector store metadata - I think its getting blocked on loading. cc: @Yash Aggarwal @Vasu",
+      "time": "04:26",
+      "timestamp": "1726831611.858239",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "> I see this is in Engg -> Infrastructure -> ElasticSearch.\n> I see this folder marked as `No download permissions`\nhttps://instabase.slack.com/archives/C0516UPPMT3/p1726828967244819?thread_ts=1726828198.242009&cid=C0516UPPMT3\n@sudeep can we fix this ?",
+      "time": "05:45",
+      "timestamp": "1726836327.746759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes -- :no download permissions\" will likely block downloads of PDFs and other files.\n\nThe crawler may still be possible to export native docs (gdocs) though; I'm not sure.",
+      "time": "06:01",
+      "timestamp": "1726837261.381529",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "The doc in question was a gdoc only, so I don’t think that works as well",
+      "time": "06:01",
+      "timestamp": "1726837304.907299",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "What's the name of the drive in the UI? I can look to see if there is an entry in the DB for this particular doc.",
+      "time": "06:02",
+      "timestamp": "1726837328.639679",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "It is the `Engineering Drive`",
+      "time": "06:02",
+      "timestamp": "1726837372.443389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You mean this one?",
+      "time": "06:05",
+      "timestamp": "1726837510.226529",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "I was doing on aihub-prd. This one",
+      "time": "06:06",
+      "timestamp": "1726837560.033579",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah, prod. Gotcha",
+      "time": "06:06",
+      "timestamp": "1726837570.110209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "What org is this? Can you invite me?",
+      "time": "06:06",
+      "timestamp": "1726837608.762679",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Nvm, I think I found it",
+      "time": "06:07",
+      "timestamp": "1726837622.083529",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "It is the Instabase Org only",
+      "time": "06:07",
+      "timestamp": "1726837626.792789",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://aihub.instabase.com/workspaces/data?workspace=search-preview => Instabase org, search-preview workspace",
+      "time": "06:07",
+      "timestamp": "1726837631.582169",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yep, that file can't be exported (Google is throwing access_denied)\n\nhttps://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%2221f%22:%7B%22d[…]%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1 (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%2221f%22:%7B%22datasource%22:%22mysql%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22mysql%22,%22uid%22:%22mysql%22%7D,%22format%22:%22table%22,%22rawSql%22:%22select%20index_items.id,%20data_source_key,%20index_items.status,%20index_items.last_error,%20mount_points.mount_point%20from%20index_items,%20mount_points%20where%20mount_point_id%20%3D%20mount_points.id%20and%20data_source_key%20like%20%27%25whu2aD9BcZDD80CVyI9cSfjdtnxB1RHYy2UcZHhQ%25%27;%22,%22editorMode%22:%22code%22,%22sql%22:%7B%22columns%22:%5B%7B%22type%22:%22function%22,%22parameters%22:%5B%5D%7D%5D,%22groupBy%22:%5B%7B%22type%22:%22groupBy%22,%22property%22:%7B%22type%22:%22string%22%7D%7D%5D,%22limit%22:50%7D,%22dataset%22:%22instabase%22,%22rawQuery%22:true%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)\n\n```code = ACCESS_DENIED msg = Failed to read file: This file cannot be exported by the user.```",
+      "time": "06:37",
+      "timestamp": "1726839428.151999",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hence, it's not in the index. Working as designed :slightly_smiling_face:",
+      "time": "06:37",
+      "timestamp": "1726839443.875749",
+      "is_reply": true
+    },
+    {
+      "sender": "Jira",
+      "user_id": "UKQ9J9REC",
+      "message": "@mfichman transitioned CS-5282  from To Do ⟶ Done",
+      "time": "06:37",
+      "timestamp": "1726839451.255779",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "The project loading issues/slowness on aihub-sandbox is happening because of DEADLINE_EXCEEDED errors from index service. @mfichman Can you help here? We faced a similar issue earlier as well, back then index service was being overloaded because of it crawling a relatively bigger datasource.",
+      "time": "11:14",
+      "timestamp": "1726856088.406019",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-09-20.json",
+    "message_count": 27,
+    "start_time": "1726828198.242009",
+    "end_time": "1726856088.406019",
+    "is_thread": true
+  }
+}

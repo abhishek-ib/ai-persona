@@ -1,0 +1,85 @@
+{
+  "id": "ch_C06FA6A23_2019-04-19_1555706950.198500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Is that runtime enforcement or mypy static level enforcement? I'd prefer static and not runtime. Don't want surprise runtime errors",
+      "time": "13:49",
+      "timestamp": "1555706950.198500",
+      "is_reply": false
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "static @dlluncor",
+      "time": "13:54",
+      "timestamp": "1555707263.199100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Interesting. Send over a PR to show us how it works",
+      "time": "13:57",
+      "timestamp": "1555707440.199300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i’ll add you onto the PR so you can take a look, but briefly:\n```\n@six.with_metaclass(abc.ABCMeta)\nclass InterfaceSpec(object):\n\n   @abc.abstractmethod()\n   def read():\n      pass\n\n   def print(*args):\n      print(*args)\n\nclass ExtendsInterface(InterfaceSpec):\n   def read():\n      print(\"implementation!\")\n\ntest = ExtendsInterface()\ntest.print(\"hi\")\n```",
+      "time": "16:34",
+      "timestamp": "1555716881.213200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "mypy will ensure `ExtendsInterface` implements all methods of `InterfaceSpec` labeled abstract (`read` in this case)",
+      "time": "16:35",
+      "timestamp": "1555716902.213400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "that’s the main benefit vs standard inheritance here, albeit those benefits (common function definitions, expecting parent and receiving any children) also apply.",
+      "time": "16:36",
+      "timestamp": "1555716977.213600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "mypy interprets abc.ABCMeta?",
+      "time": "17:00",
+      "timestamp": "1555718434.213900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yup. i was surprised too. both python2 and python3 compatible with `six.with_metaclass`.",
+      "time": "17:08",
+      "timestamp": "1555718936.214100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-04-19.json",
+    "message_count": 8,
+    "start_time": "1555706950.198500",
+    "end_time": "1555718936.214100",
+    "is_thread": true
+  }
+}

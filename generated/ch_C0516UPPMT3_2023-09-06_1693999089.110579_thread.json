@@ -1,0 +1,94 @@
+{
+  "id": "ch_C0516UPPMT3_2023-09-06_1693999089.110579_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Dale DeLoy",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "Using ib_llm_tools but see that version 0.0.6 is installed while the latest version in the instructions is version 0.0.4",
+      "time": "04:18",
+      "timestamp": "1693999089.110579",
+      "is_reply": false
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "Instabase version is 23.07.8",
+      "time": "04:18",
+      "timestamp": "1693999137.764649",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "modified deployment to use version 1.1.9 - got similar error:\n```'Invalid arguments: Model Registration (name=ibllm, version=1.1.9, is_project_model=False) failed with the following reason: Model registration not found (Name: ibllm, Version: 1.1.9): sql: no rows in result set (StatusCode.INVALID_ARGUMENT)'). Defined in ib/market/ib_llm_tools/ai_hub.py (line 54)\n\nTraceback:\n  File \"ib/market/ib_llm_tools/ai_hub.py\", line 217, in call_model_converse\n  File \"ib/market/ib_llm_tools/ai_hub.py\", line 54, in _run_extraction_per_field_chat_mode\n  File \"/instabase/workers/celery-app-tasks/py/instabase/udf_utils/ib_intelligence/functions.py\", line 303, in add_record\n    self.ip_sdk.run_model(**request, **self.ip_sdk.udf_kwargs)  # type: ignore\n  File \"/instabase/workers/celery-app-tasks/py/instabase/udf_utils/ib_intelligence/functions.py\", line 220, in run_model\n    raise Exception(err_msg)```",
+      "time": "05:01",
+      "timestamp": "1694001697.115629",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Dale DeLoy the latest should be ibllm should be 1.1.19. Sorry I realized the instructions are a bit confusing in that regard because the ibllm used for AI Hub (2.0.0) has diverged from the latest for the 23.07 branch, because it has been a while since 23.07\n\nCan you also doublecheck that 1.1.19 is in Marketplace? That version is what's installed by the base model Docker image during deployment",
+      "time": "08:47",
+      "timestamp": "1694015225.525359",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Updated the version instructions to the docs, and also added this to a Troubleshooting (https://instabase.atlassian.net/wiki/spaces/PROD/pages/2080178179/Enabling+LLMs+in+Refiner+in+23.07#Troubleshooting) section of the docs",
+      "time": "08:56",
+      "timestamp": "1694015773.582289",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "In the deployment it had 1.1.18 so I changed DM to use 1.1.18",
+      "time": "11:24",
+      "timestamp": "1694024675.327909",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "New Error:\n```Exception calling function - call_model_converse: 'response'. Defined in ib/market/ib_llm_tools/ai_hub.py (line 221)\n\nTraceback:\n  File \"ib/market/ib_llm_tools/ai_hub.py\", line 221, in call_model_converse\n. Traceback (most recent call last):\n  File \"/instabase/workers/celery-app-tasks/py/instabase/_sheet/parser_lib/parser.py\", line 1054, in __call__\n    fn_dict.get('fn')(*unwrapped_args, **unwrapped_kwargs))\n  File \"ib/market/ib_llm_tools/ai_hub.py\", line 221, in call_model_converse\nKeyError: 'response'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/instabase/workers/celery-app-tasks/py/instabase/refiner_utils/refiner_util.py\", line 730, in _run_sheet\n    execute_result = executor.execute(\n  File \"/instabase/workers/celery-app-tasks/py/instabase/data_api_utils/_sheet/executors/executor.py\", line 414, in execute\n    orig_result = parsed_fn.run(fn_ctx)\n  File \"/instabase/workers/celery-app-tasks/py/instabase/_sheet/parser_lib/parser.py\", line 743, in run\n    return self._fn_callable(_FN_CONTEXT_KEY=ctx)\n  File \"/instabase/workers/celery-app-tasks/py/instabase/_sheet/parser_lib/parser.py\", line 1085, in __call__\n    raise e\n  File \"/instabase/workers/celery-app-tasks/py/instabase/_sheet/parser_lib/parser.py\", line 1076, in __call__\n    raise IBError.create_from_exception(\ninstabase.errors.ib_error.IBError: Exception calling function - call_model_converse: 'response'. Defined in ib/market/ib_llm_tools/ai_hub.py (line 221)\n\nTraceback:\n  File \"ib/market/ib_llm_tools/ai_hub.py\", line 221, in call_model_converse```",
+      "time": "11:34",
+      "timestamp": "1694025284.593709",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "```openai.error.AuthenticationError: Incorrect API key provided: sk-Miro9***************************************40ls. You can find your API key at https://platform.openai.com/account/api-keys.\"```\n@Dale DeLoy I think you’re missing the OpenAI key setup steps",
+      "time": "11:36",
+      "timestamp": "1694025400.554609",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "waiting on Infra Support to do those unless I can do them",
+      "time": "11:37",
+      "timestamp": "1694025434.548509",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-09-06.json",
+    "message_count": 9,
+    "start_time": "1693999089.110579",
+    "end_time": "1694025434.548509",
+    "is_thread": true
+  }
+}

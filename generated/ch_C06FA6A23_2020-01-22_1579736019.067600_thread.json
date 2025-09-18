@@ -1,0 +1,63 @@
+{
+  "id": "ch_C06FA6A23_2020-01-22_1579736019.067600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Mohit",
+    "Aaron Vontell",
+    "dlluncor",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@python-<!subteam^SQ3KR3V17> FYI - i noticed a lot of `POST handlers` in our codebase have:\n`form = json.loads(request.data)`\ninstead of\n```try:\n  form = json.loads(request.data)\nexcept:\n  err = u'POST request must be a JSON object.'\n  return handler_util.bad_json_request(err)```\nThis means, it will throw a `JSONDecodeError` for POST requests without-a-body/containing-invalid-json-body.\n*Impact:* For the most part, requests are from UI. So, we should be fine. Although, we risk sending confusing error message to caller/UI.\n*Solution:* Use try-catch block :point_up_2: + have your tests for POST handlers include a test-case with request-body.",
+      "time": "15:33",
+      "timestamp": "1579736019.067600",
+      "is_reply": false
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "I will fix all such instances in marketplace code — https://instabase.atlassian.net/browse/MARKET-95",
+      "time": "15:34",
+      "timestamp": "1579736084.067700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "We should create a decorator for POST functions that will do this check",
+      "time": "15:39",
+      "timestamp": "1579736383.068200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "decorator is a good idea!",
+      "time": "15:52",
+      "timestamp": "1579737133.068500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "also we should catch just JSONDecodeError, not `except Exception` and especially not `except` by itself",
+      "time": "16:07",
+      "timestamp": "1579738074.068800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-01-22.json",
+    "message_count": 5,
+    "start_time": "1579736019.067600",
+    "end_time": "1579738074.068800",
+    "is_thread": true
+  }
+}

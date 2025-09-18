@@ -1,0 +1,202 @@
+{
+  "id": "ch_C06FA6A23_2024-04-02_1712068749.837349_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Cody Boggs",
+    "andy",
+    "Jag",
+    "Heymian",
+    "Adam",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "Hi all,\n\nI'm having trouble with compiling `core-platform-service` locally after pulling the latest master. Did we change something about how we run `core-platform-service`?\n\nHere are the `core-platform-service` logs as well:\n\n```        /Users/jwani/instabase/shared-utils/build-utils/shared/env-local.json \\\n        /Users/jwani/instabase/shared-utils/build-utils/shared/env-local-overrides.json \\\n        /Users/jwani/instabase/core-services/core-platform-service/deployment/local/docker-env.json > /Users/jwani/instabase/core-services/core-platform-service/tmp/env_local \\\n        echo \"export LEGACY=''\" >> /Users/jwani/instabase/core-services/core-platform-service/tmp/env_local\nxargs: invalid option -- d\nusage: xargs [-0opt] [-E eofstr] [-I replstr [-R replacements] [-S replsize]]\n             [-J replstr] [-L number] [-n number [-x]] [-P maxprocs]\n             [-s size] [utility [argument ...]]\nmake: bazel: No such file or directory\nmake: *** [runlocal] Error 1```\nThis appears to be the changing PR after git bisecting: https://github.com/instabase/instabase/pull/55184\ncc: @sean.donohoe",
+      "time": "07:39",
+      "timestamp": "1712068749.837349",
+      "is_reply": false
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "Following this guide to install bazel\n\nhttps://instabase.atlassian.net/wiki/spaces/TI/pages/2077065265/Getting+Started",
+      "time": "08:01",
+      "timestamp": "1712070075.853929",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Hmm getting two errors on startup\n```2024/04/02 11:01:23 ERROR utils/db/session/dbsession.go:157 -- SQL DB: Failed to parse DB params: Empty DBParam string\n2024/04/02 11:01:23 ERROR coreplatformservice/main.go:324 -- Failed to create DBSession: Empty DBParam string, Exiting...```",
+      "time": "08:02",
+      "timestamp": "1712070173.525329",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "After following the guide and steps in this thread (https://instabase.slack.com/archives/C035SLYCJ9X/p1701124656406069), I am still not able to build `core-platform-service`. I was previously getting, the protobuf errors Victor was getting but those disappeared once I did `mv /usr/local/include/google /usr/local/include/google-bak` and reran.\n\nNow I am getting the following errors ->\n\n\n```dyld[60237]: missing symbol called\n2024/04/02 11:28:00 error running protoc: signal: abort trap\nERROR: /private/var/tmp/_bazel_jwani/8619f2b9f99f478c1254adb15d030bda/external/protos/instabase/protos/mount_service/BUILD.bazel:12:17: Generating into bazel-out/darwin-fastbuild-ST-bf8d8dd18fcc/bin/external/protos/instabase/protos/mount_service/mount_service_go_proto_/instabase/protos/mount_service failed: (Exit 1): go-protoc-bin failed: error executing command (from target @protos//instabase/protos/mount_service:mount_service_go_proto) bazel-out/darwin-opt-exec-2B5CBBC6-ST-e846b08c7501/bin/external/io_bazel_rules_go/go/tools/builders/go-protoc/go-protoc-bin -protoc ... (remaining 20 arguments skipped)```",
+      "time": "08:31",
+      "timestamp": "1712071913.729559",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Sounds like we should revert that PR.",
+      "time": "09:02",
+      "timestamp": "1712073773.767569",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "cc @Heymian",
+      "time": "09:03",
+      "timestamp": "1712073792.223259",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yes we can revert as a quick fix to unblock but I saw @sean.donohoe merge a similar change for a bunch of go services, so this isn’t the only affected service, might need to revert them all.",
+      "time": "09:06",
+      "timestamp": "1712073998.947649",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "cc <!subteam^S038TM462UX>",
+      "time": "09:08",
+      "timestamp": "1712074087.602869",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Please do not revert, we know what the problem is and are working on a fix https://instabase.slack.com/archives/C035SLYCJ9X/p1712049759258469 (https://instabase.slack.com/archives/C035SLYCJ9X/p1712049759258469)",
+      "time": "09:16",
+      "timestamp": "1712074567.682419",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@mfichman @Heymian @Jag ^^",
+      "time": "09:17",
+      "timestamp": "1712074629.350659",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "I switched that line in my makefile and the db params error is still present for me. Is that also expected?",
+      "time": "09:20",
+      "timestamp": "1712074823.307749",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@Adam if you uncomment the `@` symbol at the beginning of that line we can see all the args getting passed to the run command",
+      "time": "09:22",
+      "timestamp": "1712074949.984379",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "Ah got it working!",
+      "time": "09:25",
+      "timestamp": "1712075147.127929",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "If we could, I'd like to have a chat (*outside* this thread) about what perceived blockers prevent us from defaulting to a \"fix-forward\" workflow instead of \"roll back via revert\". It's generally so much more breakage-inducing and hasn't been the preferred code fix method for most (all, really) of my career. :slightly_smiling_face:\n\nI'll start a thread elsewhere later today perhaps, would appreciate any enlightenment :+1:",
+      "time": "09:33",
+      "timestamp": "1712075604.173609",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Fix ready for review at https://github.com/instabase/instabase/pull/55437 <!subteam^S038TM462UX>",
+      "time": "09:52",
+      "timestamp": "1712076721.875849",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ">  what perceived blockers prevent us from defaulting to a \"fix-forward\" workflow instead of \"roll back via revert\".\nMy $.02: Rollback is a guaranteed _immediate fix_ to the build. Fix-forward is not! That said, if the fix is quick and easy, fix-forward is fine IMO.\n\nThanks @sean.donohoe for the quick response!",
+      "time": "10:00",
+      "timestamp": "1712077200.412749",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "For sure, thanks for raising and apologies for the churn -- hopefully we can get all our devs on crafting soon so bugs like this become completely irrelevant :slightly_smiling_face:",
+      "time": "10:01",
+      "timestamp": "1712077270.354879",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "> Rollback is a guaranteed _immediate fix_ to the build\nGotcha, therein lies the mismatch. :smile:\nOkie doke, I'll take it offline at some point. Thanks!",
+      "time": "10:07",
+      "timestamp": "1712077672.339959",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "Let’s please rollback. Also, in the future, it would be appreciative to have a heads up on these kinds of significant changes around dev behavior.",
+      "time": "10:09",
+      "timestamp": "1712077755.594429",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@andy this wasn't a significant change around dev behavior, rather an artifact of still needing to support a development environment that our team (releng) does not utilize anymore (and one which we have been very actively encouraging people to stop using). The bazel work has been well advertised for the past year -- I know this was an inconvenient bug, but claiming this was the result of silently merging major changes seems a bit hyperbolic to myself. (cc @Aaron Tami)",
+      "time": "10:12",
+      "timestamp": "1712077978.736279",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "If memory serves, this change was fulfilling a request for service-local go module removal because of a separate issue that caused version conflicts in local dev",
+      "time": "10:18",
+      "timestamp": "1712078339.359789",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "not claiming that anyone was silently merging in major changes, and hopefully my message does not read as blaming in any sort of way. it just seems symptomatically clear to me that we should have had more proactive communication in terms of exactly when the bazel upgrade was happening so that other engineers did not have to find out through broken local builds and git digging :smile:",
+      "time": "10:20",
+      "timestamp": "1712078405.551649",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-04-02.json",
+    "message_count": 22,
+    "start_time": "1712068749.837349",
+    "end_time": "1712078405.551649",
+    "is_thread": true
+  }
+}

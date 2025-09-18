@@ -1,0 +1,54 @@
+{
+  "id": "ch_C0516UPPMT3_2023-09-20_1695193604.260139_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "joshbronko",
+    "Balaram",
+    "Varun Jain"
+  ],
+  "messages": [
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "@Vasu @Balaram - By which release would we have document level tracking for success of the upload operation?",
+      "time": "00:06",
+      "timestamp": "1695193604.260139",
+      "is_reply": false
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "How does the ui do it today?",
+      "time": "01:04",
+      "timestamp": "1695197051.447929",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "As part of create_conversation, we will perform below steps:\n1. Synchronously create project and upload documents. Return the project_id and status of the uploaded documents\n2. Asynchronously digitise and index the uploaded documents. get_conversation (using project_id from step <#C05LLRV7VK3|>) will return the status for this step\n*Scenario <#C05LLRV7VK3|>:*\nA user created a conversation with 3 documents (Doc1, Doc2, Doc3). If one of the document failed at the upload step then create_conversation response will looks like this. Doc3 won't be stored anywhere.\n\n`{`\n    `\"id\": \"a64b7284-0fca-47bf-91df-18193c81e68c\",`\n    `\"name\": \"Conversation 2023-09-20 10:26:46.280674\",`\n    `\"upload_status\": {`\n        `\"success\": [`\n            `{`\n                `\"name\": \"Doc1.pdf\"`\n            `},`\n            `{`\n                `\"name\": \"Doc2.pdf\"`\n            `}`\n        `],`\n        `\"failure\": [`\n            `{`\n                `\"name\": \"Doc3.jkl\",`\n                `\"reason\": \"`jkl` extension not supported.\"`\n            `}`\n        `]`\n    `}`\n`}`\n\n*Scenario #2:*\nOut of the two uploaded documents (Doc1 and Doc2) if one of the document (Doc2) fails during digitise or indexing then we won't return it as part of the document list and cleaned up from the database and drive. A document list will always contain the successfully processed documents\n\n`{`\n    `\"id\": \"a64b7284-0fca-47bf-91df-18193c81e68c\",`\n    `\"name\": \"Conversation 2023-09-20 10:26:46.280674\",`\n    `\"description\": \"\",`\n    `\"documents\": [`\n        `{`\n            `\"id\": 475,`\n            `\"name\": \"Doc1.pdf\"`\n        `}`\n    `],`\n    `\"state\": \"COMPLETE\",`\n    `\"status\": \"Documents Processed!\"`\n`}`\n\n*Scenario #3:*\nif both the uploaded documents (Doc1 and Doc2) fails during digitise or indexing then the document list will be empty and status will be \"Failed\"\n\n`{`\n    `\"id\": \"a64b7284-0fca-47bf-91df-18193c81e68c\",`\n    `\"name\": \"Conversation 2023-09-20 10:26:46.280674\",`\n    `\"description\": \"\",`\n    `\"documents\": [`\n    `],`\n    `\"state\": \"Failed\",`\n    `\"status\": \"All Documents failed processing!\"`\n`}`",
+      "time": "03:40",
+      "timestamp": "1695206430.538689",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "@Varun Jain we are already tracking this feature here (https://instabase.atlassian.net/browse/DR-2401). I will come up with a timeline.\n\ncc: @upendra @Vasu",
+      "time": "03:45",
+      "timestamp": "1695206720.379329",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-09-20.json",
+    "message_count": 4,
+    "start_time": "1695193604.260139",
+    "end_time": "1695206720.379329",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "id": "ch_C06FA6A23_2023-09-07_1694100693.944519_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Serena",
+    "pauline.comising"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Hey team, I'm having trouble opening up redesigned refiners on localhost, which is a feature gated behind a flag, I'm assuming `enable_refiner_redesign`, but when I look for where the flag is set in `deployment-config.json` I see it set to `true` for `local` in apps-server. Any tips on making sure feature flags are correctly configured for localhost?",
+      "time": "08:31",
+      "timestamp": "1694100693.944519",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`enable_refiner_redesign` is a hot config variable, so you need to set the value of it differently (using `deployment-config.json` or `env-local.json` won’t work)",
+      "time": "09:03",
+      "timestamp": "1694102634.587139",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "how are you running `apps-server? locally or in docker?",
+      "time": "09:04",
+      "timestamp": "1694102647.340289",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "oh interesting, docker",
+      "time": "09:04",
+      "timestamp": "1694102679.448629",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for future reference, you can also refer to “Updating configs in local environments” in https://docs.google.com/document/d/14U9YpnnNxS02hvU8l9Iukfo-HkryBTHVrOQyq5opa20/edit\n\nok so here’s what you need to do\n1. exec into the running `apps-server` container by running `docker exec -it instabase-apps-server sh`\n2. inside the `apps-server` container, run this command `echo \"ENABLE_REFINER_REDESIGN: true\" > /config/base-hot-config.yml>`\n3. after you run this command, you can check the `apps-server` logs and you should see something about updated hot configs\n4. refresh the UI -> you should see the new Refiner\nyou should not need to recompile or restart `apps-server` at all",
+      "time": "09:09",
+      "timestamp": "1694102971.310539",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "ahh thanks, will do",
+      "time": "09:22",
+      "timestamp": "1694103775.417039",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "it worked, tyy",
+      "time": "09:27",
+      "timestamp": "1694104048.558619",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-09-07.json",
+    "message_count": 7,
+    "start_time": "1694100693.944519",
+    "end_time": "1694104048.558619",
+    "is_thread": true
+  }
+}

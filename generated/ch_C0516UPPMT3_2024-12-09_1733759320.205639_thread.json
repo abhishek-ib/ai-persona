@@ -1,0 +1,159 @@
+{
+  "id": "ch_C0516UPPMT3_2024-12-09_1733759320.205639_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "lydia",
+    "Brian",
+    "Serena",
+    "pauline.comising"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Oo, is this on prod? I couldn't reproduce on sandbox, but @Serena do you know under what circumstance a gt set name might disappear? I've only ever seen an unclickable, but displayed name for gt sets that aren't ready to be opened (ie cancelled/in progress first run)",
+      "time": "07:48",
+      "timestamp": "1733759320.205639",
+      "is_reply": false
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "Yep, it was in prod. I'll try screen recording to see if I can repro. :brb:",
+      "time": "08:36",
+      "timestamp": "1733762165.118749",
+      "is_reply": true
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "EDIT: The below +1 bug actually resolved, it just took much longer than expected for status parity to occur\n\nCouldn't repro, yet, but another bug popped up:\n• I updated the underlying project/app\n• (SS1) Went to GT datasets management page but noticed one was showing `READY TO USE` despite being now outdated\n• (SS2) Clicked into the dataset in question and noticed the status shows contradictory (but correct) `OUTDATED`",
+      "time": "08:42",
+      "timestamp": "1733762526.341129",
+      "is_reply": true
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "I was able to repro the no-render issue:\n• After re-running an app to address the `OUTDATED` status:\n    ◦ Click the `review pencil` icon to review the results\n    ◦ Mark as resolved\n    ◦ Immediately go back to view datasets\n    ◦ Encounter blank/no render issue\nZoom Clip showing repro (https://instabase.zoom.us/clips/share/A2F3MRZDSkIwV2NzRVM2bVBydE5BbXFtUEZ3AQ)\nPasscode: d!SaNq19",
+      "time": "08:47",
+      "timestamp": "1733762871.103649",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m not able to reproduce on prod - can we hop on a quick screenshare?",
+      "time": "09:04",
+      "timestamp": "1733763882.813569",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah thanks for the diligent bug finding :pray: so we've got 2 bugs in this thread:\n1. gt set status doesn't update after updating app until opening the gt set\n    a. I think this is because the FE uses some cached gt set data, aka if you update app > go to gt set management > refresh, the status should be as expected. I imagine there are tradeoffs to always re-fetching status but @Serena is this a known bug\n2. name render bug after a gt set re-run (not due to accuracy run test)",
+      "time": "09:18",
+      "timestamp": "1733764722.141879",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "1a - yes this is expected\n2 - we still need to investigate this",
+      "time": "09:23",
+      "timestamp": "1733765006.830019",
+      "is_reply": true
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "@Serena did you want to have a screenshare session? Happy to hop on",
+      "time": "09:24",
+      "timestamp": "1733765060.686199",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "https://instabase.zoom.us/j/96221174370",
+      "time": "09:25",
+      "timestamp": "1733765159.009519",
+      "is_reply": true
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "@Serena actually, when I go back to the 'review results' page and back out again to the GT datasets overview page, the link is still missing.",
+      "time": "09:33",
+      "timestamp": "1733765592.174419",
+      "is_reply": true
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "(refreshing does bring it back though, as noted)",
+      "time": "09:33",
+      "timestamp": "1733765611.858639",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah i was using a project files gt set to test, and this bug never occurs for a project files gt set\n\ni was able to reproduce on prod when after marking a document as reviewed for a gt set created with uploaded files",
+      "time": "10:33",
+      "timestamp": "1733769187.620249",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "here are the steps to reproduce\n• create a gt set by uploading files\n    ◦ it actually doesn’t matter whether you create a gt set or rerun an existing outdated one\n• open the human review page for this gt set\n• mark a document as reviewed\n• go back to the ground truth sets table\n@pauline.comising can you add this check to the list of things to check in this UAT item (https://instabase.testmo.net/runs/view/66?group_id=426&test_id=42014)? we should have caught this during UAT :disappointed:",
+      "time": "10:36",
+      "timestamp": "1733769375.021539",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah got it, yep can do",
+      "time": "10:43",
+      "timestamp": "1733769798.172689",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this is why this bug occurs\n1. when the user clicks “Mark document as reviewed”, the human review frontend calls  (https://github.com/instabase/instabase/blob/098cc83/webserver/shared/src/js/webpacked/apps/src/flow-review/components/FlowReviewResults/FlowReviewContainer.tsx#L335)`updateGroundTruth`\n2. `updateGroundTruth` then sets the ground truth set’s name  (https://github.com/instabase/instabase/blob/54b5b6d/webserver/shared/src/js/webpacked/apps/src/aihub/hooks/appAccuracy/useUpdateGroundTruth.ts#L53)in the frontend’s cached state to `newName`, which is undefined in this call of `updateGroundTruth`\nnone of this code has been modified since ~3 months ago, so i think this bug has existed since GA :disappointed:",
+      "time": "10:43",
+      "timestamp": "1733769801.615309",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Serena is it possible to fix this before the next prod push this weekend?",
+      "time": "12:33",
+      "timestamp": "1733776410.527879",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yep i can backport the fix to 24.48",
+      "time": "13:29",
+      "timestamp": "1733779760.072669",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-12-09.json",
+    "message_count": 17,
+    "start_time": "1733759320.205639",
+    "end_time": "1733779760.072669",
+    "is_thread": true
+  }
+}

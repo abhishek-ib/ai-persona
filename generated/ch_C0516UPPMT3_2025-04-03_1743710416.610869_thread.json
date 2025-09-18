@@ -1,0 +1,134 @@
+{
+  "id": "ch_C0516UPPMT3_2025-04-03_1743710416.610869_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "hannah",
+    "jack.robbins",
+    "andy"
+  ],
+  "messages": [
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Sharing interesting feedback from Kering about review/workspace permissions cc: @jack.robbins @andy\n• Kering has strict data privacy requirements where one brand/location can't see another brand/location lease agreements\n• The current workflow they want is:\n    ◦ A financial controllers will start an AI Hub deployment run (either through a third party system that makes an API call to AI Hub) or manually in AI Hub\n    ◦ Once the run is complete, the financial controller will review the data for correctness\n    ◦ The financial controller should only see the runs from their brand/team and should be able to reference them again\n• The challenge is that to enforce strict data permissions, they will need to create 200+ workspaces with 200+ deployments (one deployment per workspace)\n    ◦ This will ensure that a run is only assigned visible to someone from that specific brand/team\n    ◦ Without this, any financial controller could be assigned to review any run\n• Their ideal state to not create 200 workspaces/deployments and only create 1 workspace/1 deployment for the lease agreement use case. To do this they would need:\n    ◦ Reviewer to be assigned via API (so it can be assigned to the person who initiated the run or from someone in the department) or if run manually the reviewer is assigned to the person running the app\n    ◦ Those users can only see the runs they reviewed (and can reference them once marked as complete); they should not be able to see any other runs",
+      "time": "13:00",
+      "timestamp": "1743710416.610869",
+      "is_reply": false
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "Interesting...I almost want to say Personal workspaces are a decent fit for this but that'd make it hard to set up all those deployments properly.\n\nWhat happens when they need to update the app versions or any settings related to these deployments?",
+      "time": "13:59",
+      "timestamp": "1743713958.148879",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "We want to figure out a solutions that doesn't require them to maintain 200 workspaces and 200 deployments! So ideally they only have to update one deployment with different app versions/configurations.",
+      "time": "15:37",
+      "timestamp": "1743719831.231949",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "I was thinking it could be potentially \"easy\" to have a custom assignment method or even the ability to assign/reassign via API",
+      "time": "15:38",
+      "timestamp": "1743719917.577579",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "is this possible in IB platform - assigning via API?",
+      "time": "16:10",
+      "timestamp": "1743721816.982279",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "ya assignment via API is possible",
+      "time": "16:31",
+      "timestamp": "1743723096.174699",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "its not a dedicated reviewer assignment API, but it can be done through updating the reviewed status of the Run",
+      "time": "16:31",
+      "timestamp": "1743723119.651529",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "does that get us around the requirement of \"not being able to see any other runs\" tho?",
+      "time": "16:32",
+      "timestamp": "1743723143.846799",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "to me, these requirements sound like employing our app sharing visibility settings to the run results level",
+      "time": "16:32",
+      "timestamp": "1743723157.332019",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "not sure I follow that last part - on app sharing & run results.\n\nOn the Review dashboard, Reviewers should only see items that have been assigned to them. This is true today for Members, and will be in the future for the new Reviewer roles (who shouldn't be able to see anything that isn't already assigned to them) - that's part of the requirements for EPD-2388 (https://instabase.atlassian.net/browse/EPD-2388).\n\nIs there a way we could send the reviewer assignment as part of the Run deployment (https://docs.instabase.com/api-sdk/api-reference/runs/run-deployment) request - as an alternative to manual review assignment & round-robin via groups?",
+      "time": "16:46",
+      "timestamp": "1743724015.289099",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "we shouldn’t lump functionality into an API endpoint like that for functionality’s sake. ideally, we have a specific reviewer assignment action endpoint in the Run API",
+      "time": "16:59",
+      "timestamp": "1743724751.792339",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "my point is that we don’t protect against these users viewing all other Runs though if all these Runs are generated by the same Deployment",
+      "time": "16:59",
+      "timestamp": "1743724784.666889",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Though @andy a reviewer would only be able to see the runs that are assigned to them right?",
+      "time": "17:03",
+      "timestamp": "1743725034.058609",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "(once we have fine grain user roles)",
+      "time": "17:04",
+      "timestamp": "1743725056.084179",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-04-03.json",
+    "message_count": 14,
+    "start_time": "1743710416.610869",
+    "end_time": "1743725056.084179",
+    "is_thread": true
+  }
+}

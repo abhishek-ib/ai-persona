@@ -1,0 +1,126 @@
+{
+  "id": "ch_C06FA6A23_2023-03-30_1680215787.058229_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cheryl Zhou",
+    "Jessica",
+    "shiqi"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm seeing CI tests failing with errors in apps-server and user-notebook - here's an example run: https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-38246/2/pipeline",
+      "time": "15:36",
+      "timestamp": "1680215787.058229",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The last 5 PRs I've put up have failed with this, are other people seeing this too?",
+      "time": "16:21",
+      "timestamp": "1680218488.154999",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "looks like there is something wrong with apps-server and nb-reaper's env doc tests. i see Wilson's PR failing and the logs in this PR (https://jenkins.instabase.com/blue/rest/organizations/jenkins/pipelines/instabase/branches/PR-38259/runs/1/nodes/16/log/?start=0) also say: `Failed to run spec-dep-dogfood-gc on apps-server, fallback to raw yml. Err: exit status 2 and Failed to run spec-dep-dogfood-gc on nb-reaper, fallback to raw yml. Err: exit status 2`\nhttps://instabase.slack.com/archives/C011FHLBN8N/p1680219063251859",
+      "time": "17:20",
+      "timestamp": "1680222039.368819",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "@Wilson",
+      "time": "17:21",
+      "timestamp": "1680222082.873919",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "did some code tracing. seems like we are failing on gen_spec.py:37, which is when we run this command :thinking_face:\n```cmd = 'gcloud container clusters describe {cluster} --zone={zone} --format=json --project={project}'.format(\n      cluster=cluser_name, zone=zone, project=project)```",
+      "time": "17:38",
+      "timestamp": "1680223086.028469",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "@shiqi any idea why this would throw an error on the build machine?",
+      "time": "17:43",
+      "timestamp": "1680223411.360009",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "no I don't know, that command is generic, if it fails then I would assume all PRs to 23.01 will fail, is that the case?",
+      "time": "17:50",
+      "timestamp": "1680223808.904449",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Yes I see a lot of PRs targeting master failing with this error",
+      "time": "17:53",
+      "timestamp": "1680224022.935599",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "yeah turns out it is a generic command and i was able to replicate this error locally but need to step out for dinner. will come back to this afterwards!",
+      "time": "18:28",
+      "timestamp": "1680226114.054499",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "for now on local i have\n```$ gcloud container clusters describe instabase-user-containers-dogfood-001 --zone=us-central1-b --format=json --project=instabase-dogfood\nERROR: (gcloud.container.clusters.describe) ResponseError: code=404, message=Not found: projects/instabase-dogfood/zones/us-central1-b/clusters/instabase-user-containers-dogfood-001.\nNo cluster named 'instabase-user-containers-dogfood-001' in instabase-dogfood.```\ndoesn't look like this is a valid cluster to me?",
+      "time": "18:30",
+      "timestamp": "1680226242.966029",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "releng didn't make any chance for them either in code or on the cluster",
+      "time": "18:39",
+      "timestamp": "1680226773.121659",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "we can help updating those values though",
+      "time": "18:45",
+      "timestamp": "1680227134.528959",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "https://github.com/instabase/instabase/pull/38277 running CI and sandbox to test it out\nif somebody knows what those `nb_*` env are for please review this PR and advise, my guess is that they are related to notebook which is deprecated, I am unsure why they start failing today though cc @Ashish",
+      "time": "18:51",
+      "timestamp": "1680227498.951949",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-03-30.json",
+    "message_count": 13,
+    "start_time": "1680215787.058229",
+    "end_time": "1680227498.951949",
+    "is_thread": true
+  }
+}

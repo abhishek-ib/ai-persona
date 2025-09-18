@@ -1,0 +1,80 @@
+{
+  "id": "ch_C06FA6A23_2023-01-09_1673286580.669479_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "naveen",
+    "Serena",
+    "lydia",
+    "AD"
+  ],
+  "messages": [
+    {
+      "sender": "AD",
+      "user_id": "U02T7NHQF1N",
+      "message": ":alarm: :alarm: Hi <!channel>, we are going to remove hard coded Github tokens that is used to download `instabase-docs` repo. Hard coding access tokens is a bad practice from security point of view. Now, Model-service will also need GitHub tokens to fetch Ibformer repo. Going ahead these tokens should be made available as `GITHUB_TOKEN` environment variable. This PR (https://github.com/instabase/instabase/pull/34696) from @shiqi sets the GitHub token for jenkins pipeline, but *to build model-service and Webapp locally, every developer will need to setup their own `GITHUB_TOKEN`  in their local dev environment*. Pls follow  these steps to complete one time setup.\n1. steps to create classic personal access tokens (https://docs.github.com/en/enterprise-cloud@latest/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token#creating-a-personal-access-token-classic)\n2. copy the generated token and add this `export GITHUB_TOKEN=<YOUR-PRESONAL-TOKEN-CREATED-IN-STEP1>`  command in your zshrc/bash file. Restart the terminal or execute `source ~/.zshrc` To verify you can run `echo $GITHUB_TOKEN` command if it is set correctly. You can store this token safely in a file for future reuse.\n3. steps to authorise that token  (https://docs.github.com/en/enterprise-cloud@latest/authentication/authenticating-with-saml-single-sign-on/authorizing-a-personal-access-token-for-use-with-saml-single-sign-on)for Instabase SAML SSO.\nPls ping me if you are facing any difficulties. I will also add these steps in the developer setup doc.",
+      "time": "09:49",
+      "timestamp": "1673286580.669479",
+      "is_reply": false
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Which scopes do you recommend for the access token?",
+      "time": "09:53",
+      "timestamp": "1673286808.398499",
+      "is_reply": true
+    },
+    {
+      "sender": "AD",
+      "user_id": "U02T7NHQF1N",
+      "message": "Only `Repo` should be fine.",
+      "time": "09:54",
+      "timestamp": "1673286885.515319",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw i didn’t find anything specific about SSO in the link for #3, so in case anyone’s wondering, there’s a button to configure SSO after the token is created",
+      "time": "10:01",
+      "timestamp": "1673287262.922629",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "why does model-service download the ibformers repo? @Yash Botadra",
+      "time": "10:52",
+      "timestamp": "1673290366.659909",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "@lydia this is a recent change that @AD has added as a feature to support spinning up model processes in different virtual environments defined by the dependencies listed in the ibformers version that the model uses. The detailed design doc is here (https://docs.google.com/document/d/17QEJjpczdFlC2QnsNz2BvA-mWwl2bXipgrOr6hX_ibU/edit#heading=h.w10te2e0k70w)\n\nWhile building model-service, we need a way to dynamically fetch the requirements.txt from the ibformers repo so that a venv can be created using those dependencies. If we refer to 3 versions of the ibformers, we will need to fetch the requirements.txt files for those 3 versions to create their respective venvs. Fetching this file is what requires the tokens to be configured. We do not copy/download the entire repo.",
+      "time": "11:29",
+      "timestamp": "1673292545.829629",
+      "is_reply": true
+    },
+    {
+      "sender": "AD",
+      "user_id": "U02T7NHQF1N",
+      "message": "Thanks @Yash Botadra for explaining. @lydia pls lmk if you need mode info.",
+      "time": "22:17",
+      "timestamp": "1673331423.936419",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-01-09.json",
+    "message_count": 7,
+    "start_time": "1673286580.669479",
+    "end_time": "1673331423.936419",
+    "is_thread": true
+  }
+}

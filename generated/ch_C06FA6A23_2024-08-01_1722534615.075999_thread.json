@@ -1,0 +1,216 @@
+{
+  "id": "ch_C06FA6A23_2024-08-01_1722534615.075999_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cheryl Zhou",
+    "Sayd",
+    "shiqi",
+    "Aayush",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "Experiencing same issue right now when connecting local to dogfood",
+      "time": "10:50",
+      "timestamp": "1722534615.075999",
+      "is_reply": false
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "dogfood DB or S3? we didn't touch dogfood DB",
+      "time": "10:52",
+      "timestamp": "1722534735.098389",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "for S3 I recommend creating your own S3 keys to access, we are going to revoke the shared one",
+      "time": "10:52",
+      "timestamp": "1722534774.403149",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "sorry, S3",
+      "time": "10:53",
+      "timestamp": "1722534811.390589",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "Which environment variable should we change?",
+      "time": "10:55",
+      "timestamp": "1722534958.022089",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "export AWS_ACCESS_KEY_ID\nexport AWS_SECRET_ACCESS_KEY\nexport AWS_SESSION_TOKEN\n\nI updated the above ones",
+      "time": "10:58",
+      "timestamp": "1722535136.001919",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "this is what I removed https://github.com/instabase/instabase/pull/60613/files from the code",
+      "time": "11:01",
+      "timestamp": "1722535294.806749",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "those keys will be rotated today in k8s and no longer in the code",
+      "time": "11:02",
+      "timestamp": "1722535323.781759",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "Does adding your own keys in `aws_access_key_id` and `aws_secret_access_key` to env-local fix this? Facing this issue in file service since morning - not able to access S3 drives in localhost",
+      "time": "11:26",
+      "timestamp": "1722536770.168129",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "yeah you can try the setup as @Sayd mentioned above with the session token",
+      "time": "11:29",
+      "timestamp": "1722536975.958939",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "Hmm, I'm still getting\n\n```ERROR fileservice/clients/s3_client.go:374 -- Failure during stat. Path: ** Err: operation error S3: HeadObject, https response error StatusCode: 403, RequestID: **, HostID: **, api error Forbidden: Forbidden```\nI added the credentials of `powerUserAccess` profile from `~/.aws/credentials` to env-local.json as suggested. Should I use a different profile?",
+      "time": "11:57",
+      "timestamp": "1722538627.071859",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "Ok I added back the keys removed in the above PR (https://github.com/instabase/instabase/pull/60613/files) to env-local.json - it's working now.",
+      "time": "12:00",
+      "timestamp": "1722538812.804549",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "Yes, `powerUserAccess` didn't work for me either",
+      "time": "12:02",
+      "timestamp": "1722538949.795029",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "What's the long term fix for it -- are we supposed to add our own keys to env-local? Can update the onboarding doc with it then",
+      "time": "12:10",
+      "timestamp": "1722539413.095599",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "did you guys use the keys from instabase(083423824311) or instabase-dev (549230430157)?",
+      "time": "12:45",
+      "timestamp": "1722541521.338539",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "yeah from security perspective we want people to use their own keys, will update the doc",
+      "time": "12:48",
+      "timestamp": "1722541712.872019",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i don’t see any recent edits to https://docs.google.com/document/d/1yQOCxOISV_ukUxXdPJDoN-rERtOhdVRe7zv1swF1igw/edit relevant to this issue?\n\n> did you guys use the keys from instabase(083423824311) or instabase-dev (549230430157)?\n@shiqi which one are we supposed to use?",
+      "time": "15:22",
+      "timestamp": "1722550972.877479",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "I haven't updated it yet, sorry,  and we are supposed to use `instabase(083423824311)` , the base user role should work for readonly access",
+      "time": "15:50",
+      "timestamp": "1722552630.586419",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we should also be able to write to the S3 drive though since we may upload, edit, or delete files as well",
+      "time": "15:51",
+      "timestamp": "1722552687.869969",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "oh I see, I will ask IT to create a new role and assign to everybody then, the existing key is not revoked so to unblock you can use the one from the PR above (see the removed lines from that PR), will send an update once IT have the new role ready and then revoke the old key, do we know what bucket dogfood, uat and prod are using btw?",
+      "time": "15:53",
+      "timestamp": "1722552825.072909",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Cheryl Zhou do you know which buckets we’re using? ^",
+      "time": "15:59",
+      "timestamp": "1722553190.619609",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "dogfood is using `hosted-files-non-prod`\nuat is using `hosted-files-uat-dogfood-instabase-com`\nprod is using `hosted-files-prod`",
+      "time": "16:09",
+      "timestamp": "1722553762.078389",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "Thanks @Cheryl Zhou I will work with IT to grant full access to those buckets for baseEng role (or a new role) on instabase aws account",
+      "time": "16:21",
+      "timestamp": "1722554474.953319",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "@derrick.smith I put this request as a follow up on the existing IT ticket for this",
+      "time": "16:25",
+      "timestamp": "1722554748.204989",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-08-01.json",
+    "message_count": 24,
+    "start_time": "1722534615.075999",
+    "end_time": "1722554748.204989",
+    "is_thread": true
+  }
+}

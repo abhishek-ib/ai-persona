@@ -1,0 +1,166 @@
+{
+  "id": "ch_C05L87V014J_2025-07-23_1753266516.551539_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Jet",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "<!channel> :star: :star: :star: :star:\n\nHi all........I apologize. There was another piece to the `docker pull` problems that I forgot to add to the template:\n\n```\ncs/mfichman❯ cat ~/.aws/config\n[profile default]\nregion = us-east-2\ncredential_process = idfed aws 519787998606 crafting-sandbox-role```\nYour AWS config should have this snippet.\n\n• If the file doesn't exist, please resync your sandbox again.\n• I*f your ~/.aws/config already exists, you need to edit it manually.* \nCrafting has an option to force-overwrite this file, but I don't want to to turn that on, b/c many people have custom AWS profiles set up here.",
+      "time": "03:28",
+      "timestamp": "1753266516.551539",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "now i'm getting this error in the `bazel-remote` daemon, and none of the other daemons are even starting",
+      "time": "03:39",
+      "timestamp": "1753267169.908039",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Sandbox link?",
+      "time": "03:40",
+      "timestamp": "1753267220.195039",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "https://instabase.sandboxes.site/sandboxes/serena-w2?cw=dev",
+      "time": "03:40",
+      "timestamp": "1753267229.755009",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, that bazel-remote daemon got removed recently",
+      "time": "03:42",
+      "timestamp": "1753267321.060739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "By me",
+      "time": "03:42",
+      "timestamp": "1753267339.116699",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I did a cs restart and that seemed to help:\n```^_^ 10:41:36|owner:~/instabase (master)$ cs restart\n✔ serena-w2/dev\ndaemon:table-service@instabase: Stopped\ndaemon:celery-app-tasks@instabase: Stopped\ndaemon:conversion-service@instabase: Stopped\ndaemon:weaviate-titan@instabase: Stopped\ndaemon:license-service@instabase: Stopped\ndaemon:api-server@instabase: Stopped\ndaemon:file-service@instabase: Stopped\ndaemon:search-service@instabase: Stopped\ndaemon:weaviate@instabase: Stopped\ndaemon:server-nginx@instabase: Stopped\ndaemon:webapp@instabase: Stopped\ndaemon:model-service@instabase: Stopped\ndaemon:core-platform@instabase: Stopped\ndaemon:control-plane@instabase: Stopped\ndaemon:job-service@instabase: Stopped\ndaemon:webpack@instabase: Stopped\ndaemon:ocr-service@instabase: Stopped\ndaemon:license-service@instabase: Starting\ndaemon:table-service@instabase: Starting\ndaemon:file-service@instabase: Starting\ndaemon:server-nginx@instabase: Starting\ndaemon:job-service@instabase: Starting\ndaemon:weaviate-titan@instabase: Starting\ndaemon:webapp@instabase: Starting\ndaemon:celery-app-tasks@instabase: Starting\ndaemon:model-service@instabase: Starting\ndaemon:control-plane@instabase: Starting\ndaemon:core-platform@instabase: Starting\ndaemon:ocr-service@instabase: Starting\ndaemon:weaviate@instabase: Starting\ndaemon:search-service@instabase: Starting\ndaemon:conversion-service@instabase: Starting\ndaemon:webpack@instabase: Starting\ndaemon:api-server@instabase: Starting\ndaemon:license-service@instabase: Started\ndaemon:job-service@instabase: Started\ndaemon:webapp@instabase: Started\ndaemon:file-service@instabase: Started\ndaemon:model-service@instabase: Started\ndaemon:ocr-service@instabase: Started\ndaemon:api-server@instabase: Started\ndaemon:table-service@instabase: Started\ndaemon:server-nginx@instabase: Started\ndaemon:weaviate-titan@instabase: Started\ndaemon:webpack@instabase: Started\ndaemon:celery-app-tasks@instabase: Started\ndaemon:control-plane@instabase: Started\ndaemon:core-platform@instabase: Started\ndaemon:weaviate@instabase: Started\ndaemon:search-service@instabase: Started\ndaemon:conversion-service@instabase: Started\n^_^ 10:42:11|owner:~/instabase (master)$ cs ps\n✔ serena-w2/dev\nREPO      NAME               KIND   ENABLE PID   RESTART START    EXIT     STATUS   ERROR\n          bazel-remote       DAEMON Yes          134     10:42:01 10:42:03 Exit:125      \ninstabase api-server         DAEMON Yes    29842         10:41:44                        \ninstabase celery-app-tasks   DAEMON Yes    29529         10:41:44                        \ninstabase control-plane      DAEMON Yes    29520         10:41:44                        \ninstabase conversion-service DAEMON Yes    29803         10:41:44                        \ninstabase core-platform      DAEMON Yes    29798         10:41:44                        \ninstabase file-service       DAEMON Yes    29500         10:41:44                        \ninstabase job-service        DAEMON Yes    29791         10:41:44                        \ninstabase license-service    DAEMON Yes    29491         10:41:44                        \ninstabase model-service      DAEMON Yes    29509         10:41:44                        \ninstabase ocr-service        DAEMON Yes    29800         10:41:44                        \ninstabase search-service     DAEMON Yes    29809         10:41:44                        \ninstabase server-nginx       DAEMON Yes    29496         10:41:44                        \ninstabase table-service      DAEMON Yes    29493         10:41:44                        \ninstabase weaviate           DAEMON Yes    29825         10:41:44                        \ninstabase weaviate-titan     DAEMON Yes    29512         10:41:44                        \ninstabase webapp             DAEMON Yes    29538         10:41:44                        \ninstabase webpack            DAEMON Yes    29831         10:41:44 ```\nThough the bazel-remote is still there -- you may need to pull/rebase master, but you can ignore it for now",
+      "time": "03:43",
+      "timestamp": "1753267383.202989",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Weirdly in your sandbox, every time I do `cs ps` it prompts for which sandbox to look at. Probably some custom config in your sandbox...?",
+      "time": "03:43",
+      "timestamp": "1753267425.701469",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Normally, it doesn't prompt you",
+      "time": "03:44",
+      "timestamp": "1753267441.600379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```O_O 10:44:06|owner:~/instabase (master)$ ^C\nO_O 10:44:06|owner:~/instabase (master)$ cs ps\nUse the arrow keys to navigate: ↓ ↑ → ← \n? Sandbox and workspace: \n  ▸ serena-w2/dev\n    serena-w/dev\n    pr-69634-cypress/dev\n    pr-72729-cypress/dev\n↓   pr-72535-cypress/dev```",
+      "time": "03:44",
+      "timestamp": "1753267458.281659",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i have no idea, i'm frustrated by that too\n\nit's probably bc workspace:dev was stuck at `[Step 14] Build:instabase` forever? i just created this sandbox yesterday",
+      "time": "03:44",
+      "timestamp": "1753267459.284029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Weird -- let's try resetting the base image to see if we can fix that",
+      "time": "03:44",
+      "timestamp": "1753267481.133239",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i'll do that later after the services all finish building :pray:",
+      "time": "03:45",
+      "timestamp": "1753267548.364919",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "cc @Jet",
+      "time": "08:45",
+      "timestamp": "1753285534.487719",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "yeah i did this",
+      "time": "08:46",
+      "timestamp": "1753285569.616889",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "~/.aws/config\n[profile default]\nregion = us-east-2\ncredential_process = idfed aws 519787998606 crafting-sandbox-role\n\nstill has the error\n\ni added and the placeholder turn into access key and secret access key",
+      "time": "08:47",
+      "timestamp": "1753285640.090179",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "`region = us-east-2`\nthis is gone.:thinking_face:",
+      "time": "08:49",
+      "timestamp": "1753285796.865569",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": ":tada: things start to look good!",
+      "time": "08:53",
+      "timestamp": "1753286026.646129",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-23.json",
+    "message_count": 18,
+    "start_time": "1753266516.551539",
+    "end_time": "1753286026.646129",
+    "is_thread": true
+  }
+}

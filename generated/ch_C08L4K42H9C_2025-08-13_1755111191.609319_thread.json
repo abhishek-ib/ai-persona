@@ -1,0 +1,143 @@
+{
+  "id": "ch_C08L4K42H9C_2025-08-13_1755111191.609319_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "demetr.starshov",
+    "Serena",
+    "jack.robbins"
+  ],
+  "messages": [
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "@jack.robbins @Serena\nHi there! @prateek.tenkale and I have discussed remapping during the user review and I want to make our life better by changing the workflow and removing most of the buggy functionality :slightly_smiling_face:\n\nFirst of all in terms of project priorities - remapping looks like the very last resort, when AiHub fails to correctly process document(s). It's the most hard thing during the user review and overall the functionality we hope will not be used.\n\nCurrently in the user review workflow we try to do some partial remerge and recalculation, which (1) very buggy, (2) doesn't account for newest features like case management - if we change the source document, we surely should rerun all best doc calculations, case extractions, validations, etc.\n\nMy idea is to instead of trying to bandaid it, we should clone and rerun the job from scratch with file remapping set.\n\nFrom UI perspective it should be:\n• User can freely edit pages from document(s) - we don't try to recalculate anything, just store a draft\n• When user satisfied with the document split, they can press a button \"rerun the job with remapping\" (and potentially can switch the app version/etc)\n• Once the button clicked we abandon the current job results and point a user to the app run page with the new job.\n    ◦ We might support link from a previous job and transferring overwrites, etc, but I believe it's low priority, because if we remap documents, everything is not working correctly\nPros:\n• We don't have to fix existing bugs\n• We don't have to support the feature which we don't want users to use (except for the small easy flow)\n• We don't have to port all new logic to the remapping flow - it will be used automatically, as we will reuse normal job run\nCons:\n• If someone rely on the current functionality it can be inconvenient - it doesn't seem to be used though\nWDYT?",
+      "time": "11:53",
+      "timestamp": "1755111191.609319",
+      "is_reply": false
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "My thoughts are that it will def stabilize remapping a lot, but it will also increase amount of time to save remapping edits and consumption costs if the whole job has to be re run every time. Maybe there’s a way to do it for a particular file only though where we pass in a page split, similar to how we run re extraction for a specified class label",
+      "time": "13:02",
+      "timestamp": "1755115337.383879",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Overall it’s a good idea though, just depends on how long users are okay with waiting to save mapping changes. Would def make implementation much easier and less buggy as well",
+      "time": "13:03",
+      "timestamp": "1755115410.954049",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Will also reduce complexity in codebase fs",
+      "time": "13:03",
+      "timestamp": "1755115422.906579",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "We don't have to run it each time they remap. We can wait until the final split and run the job on it",
+      "time": "13:04",
+      "timestamp": "1755115497.127719",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Yeah I meant even then, when they save their edits",
+      "time": "13:06",
+      "timestamp": "1755115579.946249",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Maybe it’s worth talking to Matt sol eng to see how velocity is using it",
+      "time": "13:06",
+      "timestamp": "1755115613.917549",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> we abandon the current job results and point a user to the app run page with the new job.\nwhy is a new job necessary if the page order / page split is changed?",
+      "time": "13:22",
+      "timestamp": "1755116530.323959",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "> why is a new job necessary if the page order / page split is changed?\nBecause we want to basically run flow on the new split:\n• Re-extract values based on the new classes\n• Run prompts and UDFs based on newly extracted values\n• Rerun all validation since we have new values\n• Run case field extraction\n• Run case field validation\nEtc. Basically by changing active classes and information in these classes we can change everything.",
+      "time": "13:31",
+      "timestamp": "1755117103.581929",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Imo I don't think we should worry about updating cross class fields. To keep it simpler, when a new page split is defined, we could potentially re run single class field extraction for that file only. Essentially just rerun the relevant parts of the job for that file only, with the page split & classes pre-defined. Don't know if this would actually work with the flow framework rn though",
+      "time": "13:37",
+      "timestamp": "1755117429.159809",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Based on my discussion with @jack.robbins idk if customers would really even want everything (including single class fields, cross class fields, and validations) to be recalculated on a new page split",
+      "time": "13:39",
+      "timestamp": "1755117549.931749",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yep exactly, so i'm not sure that we _need_ to rerun the whole job if the page order / page split is changed",
+      "time": "14:17",
+      "timestamp": "1755119867.608719",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "Yeah, we intentionally postponed many decisions about re-extraction since we don’t have strong customer signals on what controls are needed. Some customers - especially those with well-trained human review teams - might be fine with re-extraction, while others may want to avoid it entirely to conserve consumption. For now, we’re aiming to keep it to minimal, low-risk scenarios, like when an entire document is reclassified (which we already support today) or when pages from one document are reclassified.",
+      "time": "15:24",
+      "timestamp": "1755123871.628449",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "So what we do if there is no reclassification, but we have, let's say, reordered pages?",
+      "time": "16:13",
+      "timestamp": "1755126820.453389",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yes, currently if you move pages or create a new document, we keep the classification labels and field values from the pre-existing document\n\nexample scenario:\n• user separates \"P. 1-4\" into \"P. 1-2\" and \"P. 3-4\"\n• \"P. 1-2\" will have the same classification label and field values as the previous document \"P. 1-4\"\n    ◦ and same for \"P. 3-4\"",
+      "time": "16:49",
+      "timestamp": "1755128987.885299",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-08-13.json",
+    "message_count": 15,
+    "start_time": "1755111191.609319",
+    "end_time": "1755128987.885299",
+    "is_thread": true
+  }
+}

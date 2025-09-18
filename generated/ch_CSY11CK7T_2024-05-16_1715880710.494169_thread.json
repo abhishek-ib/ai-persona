@@ -1,0 +1,143 @@
+{
+  "id": "ch_CSY11CK7T_2024-05-16_1715880710.494169_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Aayush",
+    "Serena",
+    "Arjun"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "`converse-app.spec.ts` (uploads, digitizes, deletes, and displays the files correctly and responds correctly to pdf and csv queries) is pretty flaky. It seems like the digitization took a while\n• https://cloud.cypress.io/projects/cfhedy/runs/9933/overview/fe2a4307-03ef-426d-ad83-a99af02e2a1a?roarHideRunsWithDiffGroupsAndTags=1\n• https://cloud.cypress.io/projects/cfhedy/runs/9934/overview/cbfe677c-8baf-4f52-abbd-f476f58ee124?roarHideRunsWithDiffGroupsAndTags=1",
+      "time": "10:31",
+      "timestamp": "1715880710.494169",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for 9934, it seems trying to get the digitization status returned this error\n```{\n  \"message\": \"No digitization jobs found for project\"\n}```",
+      "time": "10:40",
+      "timestamp": "1715881221.001629",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for 9933, it seems the Converse project somehow disappeared?\n```{\n  \"message\": \"Failed to find conversation with id 018f8241-8039-7020-b2da-211f44df1957\"\n}```",
+      "time": "10:41",
+      "timestamp": "1715881261.205519",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ":thinking_face: Does this test still have concurrency issue?\nhttps://github.com/instabase/instabase/blob/d2990391b44da6e640915d0e346e4a0a84232a[…]bpacked/apps/src/aihub/__e2e__/ConverseApp/converse-app.spec.ts (https://github.com/instabase/instabase/blob/d2990391b44da6e640915d0e346e4a0a84232ad0/webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/ConverseApp/converse-app.spec.ts#L45-L47)\nWe might delete a conversation with name `conversationName` while another test is trying to use the conversation that's newly created but renamed to `conversationName`\ncc @Aayush",
+      "time": "10:57",
+      "timestamp": "1715882242.847139",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Another run but failed at `loadRecords`\nhttps://cloud.cypress.io/projects/cfhedy/runs/9952/overview/9dd9f512-cc53-4a8d-9e7e-5[…]rHideRunsWithDiffGroupsAndTags=1&ts=1715887866519.4297&att=1 (https://cloud.cypress.io/projects/cfhedy/runs/9952/overview/9dd9f512-cc53-4a8d-9e7e-5eca3b5f1af5/replay?roarHideRunsWithDiffGroupsAndTags=1&ts=1715887866519.4297&att=1)",
+      "time": "12:56",
+      "timestamp": "1715889360.806929",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this run ^ (9952) is failing for the same reason as 9934 https://instabase.slack.com/archives/CSY11CK7T/p1715881221001629?thread_ts=1715880710.494169&cid=CSY11CK7T",
+      "time": "12:57",
+      "timestamp": "1715889434.475449",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ahh thank you!",
+      "time": "12:58",
+      "timestamp": "1715889509.090109",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": ">  We might delete a conversation with name `conversationName` while another test is trying to use the conversation that's newly created but renamed to `conversationName`\nHmm, don't think this should happen. We're using a unique `conversationName` for each test suite, so it cleans up just the test's conversation.\n\nWill need to check how the project got deleted though :thinking_rotating:",
+      "time": "13:02",
+      "timestamp": "1715889735.774139",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "what if the same test suite runs at the same time in different PR cypress runs?",
+      "time": "13:03",
+      "timestamp": "1715889796.799009",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "For the digitization api error, do we have a trace id? I suspect there's a chance that could also be related and caused by somehow a deleted project?",
+      "time": "13:03",
+      "timestamp": "1715889803.599269",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": ">  what if the same test suite runs at the same time in different PR cypress runs?\nOh so will it run with the same project list? I was under the impression that each PR has a separate list of projects etc\nCan parallel runs on PRs list the same projects?",
+      "time": "13:04",
+      "timestamp": "1715889849.617259",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "All PRs are run with a shared backend and since we are using the same account/org, users will see the same list of projects/converse.",
+      "time": "13:08",
+      "timestamp": "1715890088.060069",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ">  I was under the impression that each PR has a separate list of projects etc\nSame... we've been writing tests under the assumption that no two cypress tests will run in the same env at the same time",
+      "time": "13:09",
+      "timestamp": "1715890141.390609",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "we have checks in build to make sure the test is older than 20 minutes before deleting",
+      "time": "13:17",
+      "timestamp": "1715890642.946169",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "https://github.com/instabase/instabase/pull/57238/files#diff-bd033cb08f97b413f9d5a5c166c4418a55d9caa293ecf7dc532f44d581ff03e4",
+      "time": "13:17",
+      "timestamp": "1715890658.171959",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-05-16.json",
+    "message_count": 15,
+    "start_time": "1715880710.494169",
+    "end_time": "1715890658.171959",
+    "is_thread": true
+  }
+}

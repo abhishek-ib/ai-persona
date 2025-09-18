@@ -1,0 +1,199 @@
+{
+  "id": "ch_C05L87V014J_2025-06-16_1750107857.762689_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "tony.shi",
+    "Goto Tools Go Links",
+    "prateek.tenkale"
+  ],
+  "messages": [
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Hey! I'm having issues building services on crafting today. Seems like we can't mount the buildkit directories. Is there a way to get access to these?\n\nOn core-platform for example:\n```#1 [internal] load build definition from Dockerfile\n#1 transferring dockerfile: 1.26kB done\n#1 DONE 0.0s\nERROR: failed to solve: failed to read dockerfile: failed to mount /var/lib/docker/tmp/buildkit-mount3759332522: [{Type:bind Source:/var/lib/docker/containerd/daemon/io.containerd.snapshotter.v1.overlayfs/snapshots/85442/fs Target: Options:[rbind ro]}]: function not implemented\nmake: *** [Makefile:33: build-docker] Error 1\nmake: Leaving directory '/home/owner/instabase/core-services/core-platform-service'```",
+      "time": "14:04",
+      "timestamp": "1750107857.762689",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Huhhh, that's weird. Seems like a docker issue. Can you do the following?\n\n```cs sandbox restart dev```\nThat may fix it. If not, lmk and I'll ask the crafting folks.",
+      "time": "14:06",
+      "timestamp": "1750108015.682799",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Thanks! Running now!",
+      "time": "14:08",
+      "timestamp": "1750108096.325689",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Still failing to build :disappointed:\n\nApi server:\n```docker build --cache-to=type=registry,ref=549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/api-server:cache,mode=max,image-manifest=true,oci-mediatypes=true (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/api-server:cache,mode=max,image-manifest=true,oci-mediatypes=true) --cache-from=type=registry,ref=549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/api-server:cache (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/api-server:cache) --progress=plain \\\n--build-arg BASE_PY_IMAGE_TAG=master \\\n--build-arg BASE_PY39_IMAGE_TAG=master \\\n-f Dockerfile -t instabase/api-server .\nERROR: NotFound: forwarding Ping: no such job k9m4lco3ekxajf5f80xggw8y1\nmake: *** [/home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/build-python.mk:172: build-docker-py-default] Error 1\nmake: Leaving directory '/home/owner/instabase/webserver/api-server'```",
+      "time": "14:44",
+      "timestamp": "1750110267.310069",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "```Core platform is similar[58 / 59] GoLink core-services/core-platform-service/src/go/src/instabase/coreplatformservice/core-platform-service_/core-platform-service; 0s remote-cache, processwrapper-sandbox\nAspect //third-party/bazel/py/rules_mypy:mypy.bzl%mypy_aspect of //core-services/core-platform-service/src/go/src/instabase/coreplatformservice:core-platform-service up-to-date (nothing to build)\nINFO: Elapsed time: 9.286s, Critical Path: 8.45s\nINFO: 25 processes: 1 internal, 24 processwrapper-sandbox.\nINFO: Build completed successfully, 25 total actions\nERROR: NotFound: forwarding Ping: no such job 7m8e9cd3ueevdjq9jh81w4q8r\nmake: *** [Makefile:33: build-docker] Error 1\nmake: Leaving directory '/home/owner/instabase/core-services/core-platform-service'```",
+      "time": "14:44",
+      "timestamp": "1750110294.594289",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase/coreplatformservice:core-platform-service",
+      "time": "14:44",
+      "timestamp": "1750110295.718689",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase/coreplatformservice/core-platform-service_/core-platform-service;",
+      "time": "14:44",
+      "timestamp": "1750110295.720879",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "What on earth? :laughing:  that’s a new one :)",
+      "time": "14:59",
+      "timestamp": "1750111144.564289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "just wondering how much disk space do you have? “df -ah”",
+      "time": "14:59",
+      "timestamp": "1750111170.646759",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Disk space looks alright\n\n```(api-server-R9J_7aBi-py3.9) owner@dev:~/instabase/webserver/api-server$ df -ah\nFilesystem      Size  Used Avail Use% Mounted on\noverlay         314G  145G  169G  47% /```",
+      "time": "15:00",
+      "timestamp": "1750111215.597599",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "https://instabase.sandboxes.site/sandboxes/tonybackend3?cw=dev",
+      "time": "15:00",
+      "timestamp": "1750111226.881289",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Ok...for some reason, the issue seems to have resolved itself with another restart :shrug:\nhttps://instabase.sandboxes.site/sandboxes/tonybackend3?cw=dev\n\nThis time the restart was done through the UI. Model service is still building, but things are looking promising",
+      "time": "15:13",
+      "timestamp": "1750112026.106839",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, hmm. Yeah, let’s keep an eye on it.",
+      "time": "15:49",
+      "timestamp": "1750114178.039119",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "It broke again after I pulled from master :disappointed:",
+      "time": "15:57",
+      "timestamp": "1750114674.474299",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Some error as before with the buildkit",
+      "time": "15:58",
+      "timestamp": "1750114692.328179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm",
+      "time": "17:43",
+      "timestamp": "1750121010.218309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I’ll take a look tomorrow tony!",
+      "time": "17:43",
+      "timestamp": "1750121034.010089",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "In the meantime you can just run api-server locally",
+      "time": "18:57",
+      "timestamp": "1750125435.597479",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "That's what I've been doing",
+      "time": "18:57",
+      "timestamp": "1750125438.607949",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "`cd webserver/api-server` , `make clean build runlocal`",
+      "time": "18:57",
+      "timestamp": "1750125455.931239",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I also ran into issues with api-server on docker",
+      "time": "18:57",
+      "timestamp": "1750125462.781169",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "All good; I found the issue this evening - it was a missing db migration for querying role based permissions! Migrating the db fixed this",
+      "time": "20:08",
+      "timestamp": "1750129730.169859",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-06-16.json",
+    "message_count": 22,
+    "start_time": "1750107857.762689",
+    "end_time": "1750129730.169859",
+    "is_thread": true
+  }
+}

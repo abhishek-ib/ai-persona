@@ -1,0 +1,175 @@
+{
+  "id": "ch_C06FA6A23_2025-06-02_1748892763.646119_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "instakarma",
+    "Cody Boggs",
+    "Charles",
+    "pauline.comising"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Heyo team, wanted to start a new thread about `Argument list too long` errors to see if there's any other tips to efficiently unblock aside from switching all failing test suites to not run units with bazel. Asking cus we've got a handful of backend PRs blocked from my team atm :woman-bowing::skin-tone-2: here are a couple as reference - 1 (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-71068/3/pipeline/) 2 (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-70978/6/pipeline/)\ncc @Serena @ayesha.ali @Cody Boggs",
+      "time": "12:32",
+      "timestamp": "1748892763.646119",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Hey-o! :slightly_smiling_face: Yes, there's a maybe-fix... lol One sec",
+      "time": "12:33",
+      "timestamp": "1748892821.283769",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "So I started chasing this last week in this PR (https://github.com/instabase/instabase/pull/71033/files?diff=split&w=1), but there were lots of other issues with imports and the like happening... and i was running two other experiments concurrently and such so I dropped this for a bit. :smile:\n\nBUT I did piggyback off @Sayan's PR last week to see if this helped, and it does indeed get rid of the error for the affected modules...\n\nEXCEPT that I was explicitly forcing a more targeted application of the new flag you see in the PR. That targeted approach wasn't sustainable but this is a more blanket-ish approach... Which means this one might break lots of things. :man-shrugging::skin-tone-3:\n\nWithout kicking off a \"full\" pre-merge run that tests all modules, I can't really know for sure... @pauline.comising if you'd like to try and trigger such a test with this change in place, that'd be super handy. :smile:",
+      "time": "12:40",
+      "timestamp": "1748893248.844339",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "pre-merge for this PR wasn't completed last week since there were unrelated breakages that made me drop it for a bit, but I've rebased onto master and restarted pre-merge here (https://jenkins.instabase.com/job/instabase/job/PR-71033/7/console)",
+      "time": "12:41",
+      "timestamp": "1748893295.326829",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Oo to make sure I understand, I can add the changes in that PR to any blocked PR to verify whether its affected modules are resolved? If so, I can start with that and then look into how to kick off a \"full\" pre-merge test (i expect i find some gating logic for running impacted test suites only, and I can just remove the gate)",
+      "time": "13:01",
+      "timestamp": "1748894461.673429",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea I tried that (removing the gate) but I couldn't seem to figure it out. :sweat_smile:\n\nBut yes! If you have a PR that is affected by it, you can just cherrypick that PR's commit and try it out!",
+      "time": "13:15",
+      "timestamp": "1748895333.384619",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Also if you can't get the gating disablement to work, we can also try adding some inert comments to a handful of Python files in modules that we _know_ hit this a lot (I had a list... I'll find it) and also to a handful of other random modules that _don't_ hit this issue... and if they all pass, with this change, then it's probably fine?\nlol",
+      "time": "13:16",
+      "timestamp": "1748895401.359739",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "haha ya that was the other option i was thinking with the git diff logic :,) sounds good, thankss",
+      "time": "13:17",
+      "timestamp": "1748895456.045189",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Thank YOU for helping to test :lolcry:\nI'm drowning a _little_ bit :joy:",
+      "time": "13:18",
+      "timestamp": "1748895519.088389",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "And thank you @pauline.comising++ for taking the initiative on this failure case!!",
+      "time": "13:19",
+      "timestamp": "1748895549.740829",
+      "is_reply": true
+    },
+    {
+      "sender": "instakarma",
+      "user_id": "U085XLWMN58",
+      "message": ":thumbsup_all: @pauline.comising leveled up, now has 2 karma",
+      "time": "13:19",
+      "timestamp": "1748895551.358059",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "haha np, I can start with the suites I see failing across a few PRs and add other ones you've got in your list when that's sent",
+      "time": "13:21",
+      "timestamp": "1748895699.451889",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Actually I probably have a query stashed away, I'll find that",
+      "time": "13:40",
+      "timestamp": "1748896836.983149",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ok so I didn't actually have one stashed away :sweat_smile:\nBut here's one I whipped up now:\nhttps://grafana.infra.instabase.com/explore?schemaVersion=1&panes=%7B%22l84%22:%7B%22datas[…]%22visualisationType%22:%22table%22%7D%7D%7D%7D&orgId=1 (https://grafana.infra.instabase.com/explore?schemaVersion=1&panes=%7B%22l84%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22count%20by%20%28test_path%29%20%28count_over_time%28%7Bservice_name%3D%5C%22jenkins-preprod%5C%22%7D%5Cn%7C%20ci_pipeline_id%20%3D~%20%60instabase%2FPR-.%2B%60%20%7C%3D%20%60Argument%20list%20too%20long%60%20%7C%20regexp%20%60k8-fastbuild%2Fbin%28%3F%3Ctest_path%3E.%2B%29%2Ftest%5C%5C.runfiles%60%20%7C%20test_path%20%21%3D%20%5C%22%5C%22%5B1h%5D%29%29%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22code%22,%22direction%22:%22forward%22%7D%5D,%22range%22:%7B%22from%22:%22now-24h%22,%22to%22:%22now%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22table%22%7D%7D%7D%7D&orgId=1)",
+      "time": "13:47",
+      "timestamp": "1748897247.000609",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Handy to watch if it actually changes the graph if / when we merge it to",
+      "time": "13:47",
+      "timestamp": "1748897275.307969",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "yaa makes sense, and haha nice ty, I've started off with this PR (https://github.com/instabase/instabase/pull/71102/files) with comments on the files me and @ayesha.ali had changed for our failing PRs, since the grafana logs are showin me a lot of logs shared by my PR, and ye maybe if ayesha, @prateek.tenkale and @Sayan you guys could share links to any of your blocked PRs, I can add similar file changes to this test PR and we can get decent coverage if not completely comprehensive",
+      "time": "13:53",
+      "timestamp": "1748897618.640849",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ooh I can tweak that query one sec",
+      "time": "13:55",
+      "timestamp": "1748897718.368839",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "The numbers aren't all that handy but the grouping is:\nhttps://grafana.infra.instabase.com/explore?schemaVersion=1&panes=%7B%22l84%22:%7B%22datas[…]%22visualisationType%22:%22table%22%7D%7D%7D%7D&orgId=1 (https://grafana.infra.instabase.com/explore?schemaVersion=1&panes=%7B%22l84%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22sum%20by%20%28ci_pipeline_id,%20test_path%29%20%28count_over_time%28%7Bservice_name%3D%5C%22jenkins-preprod%5C%22%7D%5Cn%7C%20ci_pipeline_id%20%3D~%20%60instabase%2FPR-.%2B%60%20%7C%3D%20%60Argument%20list%20too%20long%60%20%7C%20regexp%20%60k8-fastbuild%2Fbin%28%3F%3Ctest_path%3E.%2B%29%2Ftest%5C%5C.runfiles%60%20%7C%20test_path%20%21%3D%20%5C%22%5C%22%5B1h%5D%29%29%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22code%22,%22direction%22:%22forward%22%7D%5D,%22range%22:%7B%22from%22:%22now-24h%22,%22to%22:%22now%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22table%22%7D%7D%7D%7D&orgId=1)",
+      "time": "13:56",
+      "timestamp": "1748897806.698409",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "@pauline.comising I think I'm experiencing the same issue with this PR: https://github.com/instabase/instabase/pull/71083\n```[2025-06-02T20:54:54.619Z] OSError: [Errno 7] Argument list too long: '/root/.cache/bazel/_bazel_root/eecbca7b87c7c33fd2d8ffba03ee98a3/sandbox/processwrapper-sandbox/2337/execroot/__main__/bazel-out/k8-fastbuild/bin/shared-utils/py-utils/checkpoint-utils/test/test.runfiles/python3_9_x86_64-unknown-linux-gnu/bin/python3'```",
+      "time": "15:26",
+      "timestamp": "1748903213.651729",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-06-02.json",
+    "message_count": 19,
+    "start_time": "1748892763.646119",
+    "end_time": "1748903213.651729",
+    "is_thread": true
+  }
+}

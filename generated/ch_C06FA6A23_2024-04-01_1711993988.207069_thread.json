@@ -1,0 +1,146 @@
+{
+  "id": "ch_C06FA6A23_2024-04-01_1711993988.207069_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Kerry",
+    "Anil",
+    "sudeep",
+    "Aaron Tami",
+    "gurkirat",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Hi Team\nprovisioner compile redis and rabbitmq are failing on master.\nRabbitMQ fails due to a plugin error.\n``` => ERROR [16/17] RUN rabbitmq-plugins enable --offline rabbitmq_management                                                                                           0.5s\n------\n > [16/17] RUN rabbitmq-plugins enable --offline rabbitmq_management:\n0.485 Segmentation fault\n------\nDockerfile:64\n--------------------\n  62 |     ENV RABBITMQ_FEATURE_FLAGS=stream_single_active_consumer,feature_flags_v2,listener_records_in_ets,stream_sac_coordinator_unblock_group,tracking_records_in_ets,direct_exchange_routing_v2\n  63 |\n  64 | >>> RUN rabbitmq-plugins enable --offline rabbitmq_management\n  65 |     RUN rabbitmq-plugins enable --offline rabbitmq_prometheus\n  66 |\n--------------------\nERROR: failed to solve: process \"/bin/sh -c rabbitmq-plugins enable --offline rabbitmq_management\" did not complete successfully: exit code: 139\nmake: *** [build-docker] Error 1```\nRedis fails with\n```Error response from daemon: manifest for gcr.io/instabase-dev/redis:scan not found: manifest unknown: Failed to fetch \"scan\" from request \"/v2/instabase-dev/redis/manifests/scan\".```\nAnyone know a fix for this?",
+      "time": "10:53",
+      "timestamp": "1711993988.207069",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@shaunak @sudeep?",
+      "time": "11:11",
+      "timestamp": "1711995103.707869",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Rabbitmq build is not supported on m1 machines. Theres a thread for it let me find it. Also cc @gurkirat",
+      "time": "11:24",
+      "timestamp": "1711995870.198579",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "I am not on an M1 but still facing a similar issue:\n```$> p3 provisioner.py compile redis\n\nError response from daemon: manifest for gcr.io/instabase-dev/redis:scan (http://gcr.io/instabase-dev/redis:scan) not found: manifest unknown: Failed to fetch \"scan\" from request \"/v2/instabase-dev/redis/manifests/scan\".```",
+      "time": "11:24",
+      "timestamp": "1711995899.241089",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "For rmq here is the recommendation to use prebuilt version\n\nhttps://instabase.slack.com/archives/C06FA6A23/p1707145959921929?thread_ts=1705527203.009189&channel=C06FA6A23&message_ts=1707145959.921929 (https://instabase.slack.com/archives/C06FA6A23/p1707145959921929?thread_ts=1705527203.009189&channel=C06FA6A23&message_ts=1707145959.921929)",
+      "time": "11:28",
+      "timestamp": "1711996094.000269",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "More details in that thread on incompatibility",
+      "time": "11:28",
+      "timestamp": "1711996112.055229",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "https://instabase.slack.com/archives/C06FA6A23/p1707293259483909?thread_ts=1705527203.009189&cid=C06FA6A23\n^ The fix for rabbitmq :sweat_smile:",
+      "time": "11:30",
+      "timestamp": "1711996206.131939",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@sudeep do you know the fix for redis?",
+      "time": "11:31",
+      "timestamp": "1711996287.358189",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Will slip in here that if you develop on crafting there’s no need for any of these workarounds/fixes :)",
+      "time": "12:18",
+      "timestamp": "1711999082.191619",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Using a prebuilt redis image still doesn’t work for on an Intel Mac\n```$> p3 provisioner.py compile redis --as-docker --use-prebuilt\n\nError response from daemon: manifest for gcr.io/instabase-dev/redis:scan (http://gcr.io/instabase-dev/redis:scan) not found: manifest unknown: Failed to fetch \"scan\" from request \"/v2/instabase-dev/redis/manifests/scan\".```",
+      "time": "14:57",
+      "timestamp": "1712008625.524279",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "The above error mainly looks like there is not scan tag available for the image in container repository, does building the image (p3 provisioner.py complile redis) give same error ?",
+      "time": "22:25",
+      "timestamp": "1712035545.107029",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "> do you know the fix for redis?\nno i have not been looking at redis for some time. @Aaron Tami can you take a look",
+      "time": "22:26",
+      "timestamp": "1712035615.130959",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "You can just brew install redis and run it\n\nOr better yet you can take @sean.donohoe’s suggestion and switch to crafting, we are trying to deprecate provisioner",
+      "time": "22:29",
+      "timestamp": "1712035742.357009",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "@gurkirat could we do the same for rabbitmq as well to install it via brew?\n@sean.donohoe @Aaron Tami are we able to use crafting for rabbitmq as well?",
+      "time": "22:30",
+      "timestamp": "1712035809.534789",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "I think you can brew install rabbitmq too.\n\nI’ll let Sean answer the crafting questions",
+      "time": "22:31",
+      "timestamp": "1712035863.317429",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-04-01.json",
+    "message_count": 15,
+    "start_time": "1711993988.207069",
+    "end_time": "1712035863.317429",
+    "is_thread": true
+  }
+}

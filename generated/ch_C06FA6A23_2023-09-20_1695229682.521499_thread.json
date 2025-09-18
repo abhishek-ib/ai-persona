@@ -1,0 +1,86 @@
+{
+  "id": "ch_C06FA6A23_2023-09-20_1695229682.521499_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "youngmok.cho",
+    "sean.donohoe",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": ":construction: *Building Code With Bazel* :construction: \n\n*What’s Going On?*\nMany of you may have noticed an ongoing effort by the release engineering team to introduce a new build system, Bazel, into the Instabase code base\n\nThis project is being carried out for a wide variety of reasons, the highlights being:\n• A standardized and easy-to-maintain build system\n• Improved build and test execution times\n• Better enforcement of monorepo practices\n• Minimization of the blast radius of bugs added through improper build configuration\n*What’s Next?*\nAs of today we have enabled the execution of unit tests with Bazel in PR checks for our core services written in Golang\n\nOver the next few months we will be expanding upon this by:\n• Updating these services’ images to utilize artifacts built by Bazel instead of the current makefile system\n• Enabling PR checks for Python services\n• Deleting fully-deprecated components of the makefile system\n• Implementing the foundation for building non-Go/Python services with Bazel\n*What Does This Mean For Me?*\nFrom a development perspective this is a major change regarding how service build processes are expressed. Some highlights of what you can expect from working on Go and Python code:\n• Unit test failures in PR checks will be increasingly conveyed through Bazel, which does not have the exact same output as that emitted by our current build system. If you are ever confused about how to interpret this output please reach out to the release engineering team for help\n• PR checks will begin to execute significantly faster\n    ◦ Bazel caches successful test runs and if a test is executed for code which has received no updates it will merely display the cached result instead of actually re-executing the test\n• Dependency versioning will shift to being specified globally\n    ◦ Save for some special exceptions, developers must utilize third party package versions set for the entire Instabase repository rather than specifying on a per-service basis\n• Developers are expected to update Bazel configuration files when making dependency changes to relevant code\n• Developers are expected to build and test code locally using Bazel\n• Any developer looking to help contribute to covering more code with Bazel is strongly encouraged to do so, and to reach out to release engineering for guidance\n*Where Can I Find More Information?*\n• The release engineering team is working on documenting all aspects of working with Bazel at Instabase in this wiki (https://instabase.atlassian.net/wiki/spaces/TI/pages/2076475445/Bazel+at+Instabase)\n• Release engineering office hours are open for anyone to request more in-depth discussion of the inner workings of Bazel and how it’s implemented for Instabase\n• <#C035SLYCJ9X|> can be used for obtaining help with miscellaneous bugs and clarifications\n(<!subteam^S038TM462UX>, @amit.gupta, @shaunak)",
+      "time": "10:08",
+      "timestamp": "1695229682.521499",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "so excited for this!! :blob_excited:\n\nis the plan for bazel to completely replace our makefiles at some point in the future?",
+      "time": "10:34",
+      "timestamp": "1695231242.831789",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Any makefile that is used for building/testing code outside local dev environments (and in most cases even those), yes! We aren’t going to enforce that make can’t be used _at all_, just that we won’t be using make anywhere in our ci/cd. This is far off in the future, though, so no immediate deprecation danger :)",
+      "time": "10:37",
+      "timestamp": "1695231446.813049",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "that makes sense! i think this should also make eng onboarding easier since bazel builds are supposed to be fully reproducible (at least in theory)",
+      "time": "10:40",
+      "timestamp": "1695231605.877089",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> • Dependency versioning will shift to being specified globally\nwill this impact how we currently use `poetry` to manage python dependencies?",
+      "time": "10:40",
+      "timestamp": "1695231637.655909",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Yes it will! We still have ability to introduce multiple versions of dependencies, however those will be treated as special cases",
+      "time": "10:43",
+      "timestamp": "1695231786.363119",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "so will our usage of bazel eventually eliminate the need for `poetry` and at some point, we’ll stop using `poetry`?",
+      "time": "10:44",
+      "timestamp": "1695231853.230189",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "In Bazel, a global single-version method is preferred over multi-version method.\n\nCurrently, we primarily rely on `pip` to manage third party py packages in Bazel, so yes `poetry` will not be used in Bazel.",
+      "time": "10:47",
+      "timestamp": "1695232024.631449",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-09-20.json",
+    "message_count": 8,
+    "start_time": "1695229682.521499",
+    "end_time": "1695232024.631449",
+    "is_thread": true
+  }
+}

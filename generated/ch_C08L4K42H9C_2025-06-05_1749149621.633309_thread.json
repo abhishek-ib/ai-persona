@@ -1,0 +1,101 @@
+{
+  "id": "ch_C08L4K42H9C_2025-06-05_1749149621.633309_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "> 1. Is FE passing in the single-class field model confidence scores when running cross-class custom function field?\n> 2. Are we able to reference something like class_fields[“W2”][“W2.employee name”][“model_confidence”])in custom function code?\nBefore I answer these questions, I got some observations on the existing behavior.\n• I thought that the `udfs/run` endpoint was supposed to trigger when someone hits the “Run code” button in the UDF editor, and `/case-extraction` is used within the cells themselves. But it seems like they’re switched. The Cell (https://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpacked/apps/src/aihub/pages/BuildApp/ActiveProjectCaseFields/LoadedCaseFieldsView/PacketsView/MainContent/AllPacketsView/PacketsTableWithCaseFields/RefinerUdfPacketsTable/columns/udf.tsx#L19) component calls `udfs/run` and when I hit the button, it actually triggers a `/case-extraction` call (indirectly)\n    ◦ Should we switch it so hitting the “Run code” button calls the `udfs/run` endpoint? I assume this means logs get populated too.\n    ◦ Is my assumption about `/case-extraction` correct? That it’s ultimately used to get the final value for a case field (prompt + clean lines), thus used in the cells themselves (after checking cache)? \nAnyway, the answer to the questions:\n1. yes and no. Yes for `/case-extraction` (see screenshot 1) and no for `udfs/run` (see screenshot 2). I assume we don’t need it for `udfs/run` bc we don’t display it anywhere in the UDF editor\n2. The frontend is sending the params in the `udfs/run` call (see screenshot 2), but I’ve yet to confirm the backend works as expected (still working on fixing my sandbox).",
+      "time": "11:53",
+      "timestamp": "1749149621.633309",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": ">     ◦ Should we switch it so hitting the “Run code” button calls the `udfs/run` endpoint? I assume this means logs get populated too.\nyes!\n\n>     ◦ Is my assumption about `/case-extraction` correct? That it’s ultimately used to get the final value for a case field (prompt + clean lines), thus used in the cells themselves (after checking cache)?\nyes! `/case-extraction` should give you the final value for whatever lines you give it",
+      "time": "14:25",
+      "timestamp": "1749158701.885869",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> I assume we don’t need it for `udfs/run` bc we don’t display it anywhere in the UDF editor\nhmm we will need to pass in the single-class field confidence scores though?\n\notherwise, `udfs/run` won't be able to properly run a custom function that refers to `class_fields[\"W2\"][\"W2.employee name\"][\"model_confidence\"]`",
+      "time": "14:27",
+      "timestamp": "1749158840.310689",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "ah right, I misread the question. So as part of the `packet_args[uuid]` body param, there needs to be a `['class_fields[\"W2\"][\"W2.employee name\"][\"model_confidence\"]']: number` value for the udf to use",
+      "time": "15:42",
+      "timestamp": "1749163321.957469",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yes i think so\n\nbut you'll need to connect with @ayesha.ali and @pauline.comising - i think the backend for running a cross-class custom function field (https://github.com/instabase/instabase/blob/79052fc/shared-utils/py-utils/data-api-utils/src/py/instabase/data_api_utils/_sheet/lambda_fns.py#L138-L139) doesn't handle this yet",
+      "time": "15:58",
+      "timestamp": "1749164326.714519",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm when i click \"Run code\" for a custom function cross-class field on aihub-sandbox, i do see a request to `/udfs/run`, though? @Paul H",
+      "time": "15:59",
+      "timestamp": "1749164386.990139",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> i think the backend for running a cross-class custom function field (https://github.com/instabase/instabase/blob/79052fc/shared-utils/py-utils/data-api-utils/src/py/instabase/data_api_utils/_sheet/lambda_fns.py#L138-L139) doesn't handle this yet\nbtw i think this is why referencing another field in a cross-class custom function field never works!\n• the UI tells the user to write code to reference `class_fields[\"W2\"][\"employee_name\"][\"value\"]`\n• but the backend is actually only providing `{\"W2\": {\"employee_name\": \"John Doe\"}}` as `class_fields`",
+      "time": "16:02",
+      "timestamp": "1749164530.546579",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": ">  hmm when i click “Run code” for a custom function cross-class field on aihub-sandbox, i do see a request to `/udfs/run`, though?\nThat’s if you’re viewing all packets. Try changing the view to “Packet 1\" in the top left and clicking on “Run code”",
+      "time": "16:04",
+      "timestamp": "1749164681.186059",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I suspect the Cell component is rendered on the “All packets”, which is calling `udfs/run`",
+      "time": "16:05",
+      "timestamp": "1749164713.210349",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oh yes, when i switch to \"Packet 1\" and click \"Run code\", I reproduce what you described - `/case_extraction` is called instead of `/udfs/run` :disappointed:",
+      "time": "16:45",
+      "timestamp": "1749167145.722209",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-06-05.json",
+    "message_count": 10,
+    "start_time": "1749149621.633309",
+    "end_time": "1749167145.722209",
+    "is_thread": true
+  }
+}

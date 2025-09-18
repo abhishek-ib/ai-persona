@@ -1,0 +1,70 @@
+{
+  "id": "ch_C06FA6A23_2025-06-04_1749049840.146459_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "mfichman",
+    "jayapandian.ponraj"
+  ],
+  "messages": [
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "Looks like we are hard coding stripe and metronome API endpoints in codebase.\n\nI have a few question on this:\n• What will be the backup/DR endpoint for metronome and stripe ?\n• Does US and EU customers both use same endpoints for metronome and stripe ?\n• IF we are the switch over to DR endpoints, does that require a code change and deployment ?",
+      "time": "08:10",
+      "timestamp": "1749049840.146459",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "1 => It's not supposed to be hardcoded; there are supposed to be flags to turn these on/off.\n2 => Backup/DR for Metronome events is RabbitMQ + OpenSearch. During a Metronome outage, events are buffered in RabbitMQ, with an additional backup copy in OpenSearch, until Metronome becomes available again.\n3 => Backup/DR for Stripe -- @Victor Zeng we need to move the Stripe customer setup to an async background task that we retry when available. I think we've discussed this before. It should not block org setup (I consider this a bug). *However, Stripe should _not_ be enabled in ST deployments at all. It is a MT-only feature.*",
+      "time": "09:43",
+      "timestamp": "1749055416.397319",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Victor Zeng will follow up on these things @jayapandian.ponraj ^",
+      "time": "09:45",
+      "timestamp": "1749055516.712289",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "1. Enabling metronome/stripe is done via the presence/absence of the Metronome/Stripe API keys. We should not be deploying single-tenant endpoints with Stripe. \n2. Correct. There is only one global url for Metronome and Stripe: api.metronome.com (http://api.metronome.com) and api.stripe.com (http://api.stripe.com)",
+      "time": "13:17",
+      "timestamp": "1749068221.782219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "So tl;dr, in ST environments:\n\nSet METRONOME_API_KEY=xyz\n*Unset* STRIPE_API_KEY",
+      "time": "13:26",
+      "timestamp": "1749068816.451799",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "Ok.\nLet me refine questions based on these datapoints:\n• What is the backup/DR endpoint for stripe ? (metronome can handle outage with queing, so no DR endpoint)\n• Can US and EU customers use a common endpoint for metronome and Stripe ?\n• Chanigng metronome endpoint requires a code change, is it the same for stripe ?",
+      "time": "21:54",
+      "timestamp": "1749099263.329719",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-06-04.json",
+    "message_count": 6,
+    "start_time": "1749049840.146459",
+    "end_time": "1749099263.329719",
+    "is_thread": true
+  }
+}

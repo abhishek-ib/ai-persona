@@ -1,0 +1,149 @@
+{
+  "id": "ch_C06FA6A23_2024-10-09_1728480597.970979_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK...it broke again. This time I am 100% sure I'm logged in to AWS:\n\n```cs/mattfichman1❯ aws sts get-caller-identity\n{\n    \"UserId\": \"AROAX7YFPI7GSATWZXVZO:matt.fichman@instabase.com\",\n    \"Account\": \"549230430157\",\n    \"Arn\": \"arn:aws:sts::549230430157:assumed-role/AWSReservedSSO_aws-readOnlyAccess_b42bb9fdbff33147/matt.fichman@instabase.com\"\n}\ncs/mattfichman1❯ docker pull 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13)\nError response from daemon: pull access denied for 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang), repository does not exist or may require 'docker login': denied: Your authorization token has expired. Reauthenticate and try again.\ncs/mattfichman1❯```",
+      "time": "06:29",
+      "timestamp": "1728480597.970979",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "`aws s3 ls` is working, so something in the container registry is broken.",
+      "time": "06:51",
+      "timestamp": "1728481866.013219",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oof\nThis is such a pain with Docker. Sorry for the headache\n\nTry this - add `\"credsStore\":\"ecr-login\"` to `~/.docker/config.json`",
+      "time": "10:06",
+      "timestamp": "1728493568.091969",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Or you can try to refresh the static token in your docker config with the normal `aws ecr get-login-password | docker login ...` stuff that exists in our repo in various places. That might be the better option for now until we have all of those usages removed (some day)",
+      "time": "10:31",
+      "timestamp": "1728495071.213689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm...I've never had to do this in the past...what changed?",
+      "time": "12:36",
+      "timestamp": "1728502576.208979",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "It's a mess of things unfortunately, but I think it's just that the token we have baked into the crafting snapshot(s) is expired. :upside_down_face:",
+      "time": "12:48",
+      "timestamp": "1728503302.211209",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "In an ideal state we'd all be:\n1. Using Crafting\n2. Logging into AWS via SSO in all cases\n3. Using the AWS-provided ECR credential helper in the stock Docker config on Crafting\n4. Never using static credentials ever again because oooommmmggggggg this has been a no-no for so damned long but I can't freaking fix things without setting my neighbor's house on fire and :head-desk: :shaking-angry-fist: :rage: :dead:",
+      "time": "12:48",
+      "timestamp": "1728503302.467209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh, I see. Thanks for explaining. I wonder if there is a way to automate this -- I would like to get my crafting sandbox up in a single click. `aws sso configure/aws sso login` is a manual step I want to avoid.",
+      "time": "12:54",
+      "timestamp": "1728503662.007229",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Nope, SSO login is explicitly and intentionally designed to be a periodically required step, because otherwise we're back to static credentials, in effect. That's not a thing that can be permitted further. :slightly_smiling_face:",
+      "time": "12:59",
+      "timestamp": "1728503974.190299",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "The `sso configure` part should be handle-able via personal snapshots, FWIW - I have mine set up thusly and it just carries over as needed. The only thing I have to do is run my handy zsh function to login to the profile I want (and then i can just use `AWS_PROFILE=<some other profile here>` for anything that needs to auth against a different account. Seeing as it's proper SSO it works across all of them so long as the profiles exist. :slightly_smiling_face:\n\n```> cat ~/.aws/config\n[profile core-infra]\n# Core Infrastructure\nsso_account_id = 601729033846\n# sso_role_name = aws-powerUserAccess\nsso_role_name = aws-administratorAccess\nregion = us-east-2\nsso_start_url = https://d-9067ba412e.awsapps.com/start#\nsso_region = us-east-1\nsso_registration_scopes = sso:account:access\n\n[profile dev]\nsso_account_id = 549230430157\nsso_role_name = aws-administratorAccess\nregion = us-east-2\nsso_start_url = https://d-9067ba412e.awsapps.com/start#\nsso_region = us-east-1\nsso_registration_scopes = sso:account:access\n\n[profile public]\nsso_account_id = 083423824311\nsso_role_name = aws-powerUserAccess\nregion = us-east-1\nsso_start_url = https://d-9067ba412e.awsapps.com/start#\nsso_region = us-east-1\nsso_registration_scopes = sso:account:access\n\n[profile sandbox]\nsso_account_id = 591759939757\nsso_role_name = aws-powerUserAccess\nregion = us-east-1\nsso_start_url = https://d-9067ba412e.awsapps.com/start#\nsso_region = us-east-1\nsso_registration_scopes = sso:account:access\n\n[profile ib-test]\nsso_account_id = 519787998606\nsso_role_name = aws-administratorAccess\nregion = us-east-2\nsso_start_url = https://d-9067ba412e.awsapps.com/start#\nsso_region = us-east-1\nsso_registration_scopes = sso:account:access\n\n[profile default]\nregion = us-east-2```\n```# Login to AWS via SSO, then export credentials to ~/.aws/credentials under [default] profile\nfunction aws-login () {\n  profiles=(\"core-infra\" \"dev\" \"sandbox\" \"public\")\n  aws sso login --profile ${1}\n  echo \"[default]\" > ~/.aws/credentials\n  aws configure export-credentials \\\n    --profile ${1} \\\n    --format env-no-export \\\n    | grep -v AWS_CREDENTIAL_EXPIRATION \\\n    | awk -F '=' '{ print tolower($1) \"=\" $2 }' >> ~/.aws/credentials\n\n  for profile in ${profiles[@]}; do\n    echo \"[${profile}]\" >> ~/.aws/credentials\n    aws configure export-credentials \\\n      --profile ${profile} \\\n      --format env-no-export \\\n      | grep -v AWS_CREDENTIAL_EXPIRATION \\\n      | awk -F '=' '{ print tolower($1) \"=\" $2 }' >> ~/.aws/credentials\n  done\n}```",
+      "time": "13:02",
+      "timestamp": "1728504121.772639",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Still dunno how to get `aws sso login` to pop up a browser window locally like it does from my mac, but I suspect the crafting devs could help there",
+      "time": "13:02",
+      "timestamp": "1728504152.661759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Don’t refresh tokens exist for exactly this reason?",
+      "time": "13:02",
+      "timestamp": "1728504175.631359",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "You'd still have to run it each day when you spin up your sandbox, I believe. It persists through a full day for me, so I only login once per morning when I get my sandbox revived.\n\nIf AWS SSO supports them, I haven't seen any mention of such - but also haven't looked, as it's a task that takes up ~17 seconds of my day. lol",
+      "time": "13:04",
+      "timestamp": "1728504248.079309",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(There is the potential to use something like IAM Instance Profiles to make this all work by virtue of 'trusting' the Crafting nodes, but that's an instance-scoped thing and I don't know that there's any reasonable way to piggyback on that - if you find one I'd be excited to try it)",
+      "time": "13:10",
+      "timestamp": "1728504615.229919",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm, OK",
+      "time": "13:43",
+      "timestamp": "1728506625.692899",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Somehow the clusters are able to pull new images without constant re-login. Maybe we can just extend the time, and move dev images to a less-secure scheme?",
+      "time": "15:49",
+      "timestamp": "1728514171.945629",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-09.json",
+    "message_count": 16,
+    "start_time": "1728480597.970979",
+    "end_time": "1728514171.945629",
+    "is_thread": true
+  }
+}

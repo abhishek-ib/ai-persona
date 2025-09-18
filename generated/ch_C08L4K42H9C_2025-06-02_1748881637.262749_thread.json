@@ -1,0 +1,37 @@
+{
+  "id": "ch_C08L4K42H9C_2025-06-02_1748881637.262749_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "Serena",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "hey everyone, i have a pr up for this ticket https://github.com/instabase/instabase/pull/70872 (~unittested but still have to test on crafting~ tested and in review) based on melissa's approach, but before this change goes into the next release, i imagine we would want the frontend to handle the errors, especially since it does change previous behavior. any frontend bandwidth for that?",
+      "time": "09:27",
+      "timestamp": "1748881637.262749",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we just need to edit the error toast to mention which table fields on which docs are in the wrong format, right?\n\nif so, we just need to add `description` to this object (https://github.com/instabase/instabase/blob/865bba1/webserver/shared/src/js/webpacked/apps/src/aihub/hooks/appAccuracy/useRunAccuracyTest.ts#L32-L34) passed to `toastErrorWithReport`\n\nyou should be able to get the error response body from the `err` argument in that `onError` function, but you'll probably need to make these changes to satisfy typescript\n• add `import ApiError from 'IBApi/utils/ApiError';` to the top of the file\n• change `err: Error` to `err: ApiError`\n    ◦ `runAccuracyTestApi` calls `fetchWithRetriesAndV1StyleErrors`, which calls `fetchWithRetries`, which throws an `ApiError` here (https://github.com/instabase/instabase/blob/5eccaaa/webserver/shared/src/js/webpacked/lib/src/IBApi/utils/api.ts#L194) if the API returns an error response\nthen you can probably use `err.response.table_errors` to set `description` for the toast\n\ncan you make these FE changes since you already have tested the BE changes on your branch?",
+      "time": "12:29",
+      "timestamp": "1748892579.921449",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-06-02.json",
+    "message_count": 2,
+    "start_time": "1748881637.262749",
+    "end_time": "1748892579.921449",
+    "is_thread": true
+  }
+}

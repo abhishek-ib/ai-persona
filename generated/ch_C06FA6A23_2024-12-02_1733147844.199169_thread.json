@@ -1,0 +1,37 @@
+{
+  "id": "ch_C06FA6A23_2024-12-02_1733147844.199169_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "jayapandian.ponraj"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "It's a bit circuitous but I'll try to condense it down :sweat_smile:\n\nTL;DR:  *`model-service` appears (again) to be somehow managing to invalidate its own docker cache objects on every build.* We have to build each image twice during certify, because we push each image to two remote registries and there are nuances and quirks to how Buildkit operates that makes the double-build approach the most viable given the circumstances. Fixing this requires a couple of 'never going to happen' events/circumstances, so we don't have plans to do so. So for `model-service`, instead of the usual \"1x build time for the ECR build, and then a few seconds for the subsequent GCR build\", `model-service` is taking 80+ minutes for the two builds.\n\n----------------------------------------------------------------------------\nThe minimally detailed version:\n1. For most builds (sandboxes and such), we build images on the buildkit-farm cluster and push directly from Buildkit to the remote registry.\n2. For any build that _requires_ the image to be present in the local Docker registry, one must build with the `--load` option set. This prevents pushing to directly to a remote registry and instead exports over the network to the local registry.\n3. Certify has to push to *two* remote registries - GCR and ECR. As a result, we can either:\n    a. Use `--load` to build the image in Buildkit and then export it to the local registry to subsequently do a `docker tag [ ... ] && docker push [ ... ]` once for each remote registry.\n    b. Use direct push via `--push` and build each image twice, relying on the build cache to make the second build a virtual no-op.\n4. An important detail is that exporting large / complicated images with many and/or large layers from Buildkit to the local registry is an exceptionally inefficient and slow process. For example, an inflated image like `model-service` that takes 40+ minutes to build can take an *additional* 40+ minutes to export the image to the local registry. :upside_down_face: \nToday's certify job takes option `3b` to avoid the (honestly, ludicrously) slow export behavior of Buildkit - and to make that workflow more consistent, we don't use the buildkit farm, but rather a local buildkit instance on each Jenkins builder node. This guarantees that the build cache from the first build (to push to ECR) will be present on the second build (for GCR), and thus the second build is (usually) just a few seconds to build a manifest from the same cache objects and push the image to GCR.\n\nThe ultimate issue _here_ I think, is that the double-build is biting us - `model-service` is apparently invalidating the cache on every build ... again. :upside_down_face: So each build is taking 40-ish minutes, yielding an 80ish-minute build process, and if the job has to wait very long for a builder to become available, it will time out because there is always the potential for literally any part of the process to run super slow for <insert bizarre reason here>. :lolcry:\n\nI won't detail the brute force methods I used yesterday to get the certify to finally work, they're not that relevant.\n\nThe fix is likewise not as interesting to most folks as it will be to @sean.donohoe @astpierre and @Abhinav, so I won't detail it here unless you just really want it. :slightly_smiling_face:",
+      "time": "05:57",
+      "timestamp": "1733147844.199169",
+      "is_reply": false
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "> The fix is likewise not as interesting\nAm interested :hand:",
+      "time": "20:24",
+      "timestamp": "1733199843.784639",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-12-02.json",
+    "message_count": 2,
+    "start_time": "1733147844.199169",
+    "end_time": "1733199843.784639",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "id": "ch_C06FA6A23_2025-05-03_1746289074.487849_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "jayapandian.ponraj",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "I looked into CI jobs and found that we could change the parallelism on the test CIs.\nCurrently its set at 4\nhttps://github.com/instabase/instabase/blob/master/shared-utils/test-utils/Makefile#L23\nref - help text (https://github.com/instabase/instabase/blob/master/shared-utils/test-utils/src/runtest/runtest.go#L169)\n\nmore details in :thread:",
+      "time": "09:17",
+      "timestamp": "1746289074.487849",
+      "is_reply": false
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "I took this CI job which took 1h40m - ref (https://jenkins.instabase.com/job/instabase/job/PR-70306/) and attempted to see if the runtime can be reduced.\n\nI created a opp PR which to test this and played around with `-j` values.\nsample PR - link (https://github.com/instabase/instabase/pull/70314/files). Found that the timing comes down to 1h20m (reduction of 20m) .",
+      "time": "09:20",
+      "timestamp": "1746289233.100959",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "I see that we have beefy boxes for running CI\n```c6id.4xlarge\nvCPUs: 16\nMemory: 32 GiB```\nand CPU is not a bottleneck on the workers. Attaching before and after CPU graphs.",
+      "time": "09:21",
+      "timestamp": "1746289309.728639",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "@Cheryl Zhou @Heymian ^ any insights on this ?\n\nI see this as a no risk change. Am I missing something ? Was any benchmarking carried out when we last set the value at 4 ?",
+      "time": "09:23",
+      "timestamp": "1746289439.500959",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "With the move to Bazel the parallelism for Go tests using the old CI script is meaningless. Only a single Bazel build/test can run at a time so all the other concurrent Bazel tests just block. The way you’re supposed to do this is to have Bazel manage its own parallelism but unfortunately… we can’t do that yet because our codebase hasn’t been converted over, so we have half our stuff (all python) on non Bazel and most of our Go stuff on Bazel.",
+      "time": "09:44",
+      "timestamp": "1746290698.953359",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Can you check on the resource utilization of the DB’s used in the unit tests also? That could also be the bottleneck. I think the problem here is the DB’s aren’t running in RDS, so it’s pretty hard to see the resource utilization. If we can move it out, that would also be helpful.",
+      "time": "09:45",
+      "timestamp": "1746290757.821729",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "Looks like python tests are also running serially.\n\nIn this case though once the changed files are found and the relevant tests identified we go throught them in batches of 4. Increasing the batch is shows ing timing reduces.",
+      "time": "10:28",
+      "timestamp": "1746293301.827489",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Hrm python shouldn’t be running serially, where do you see that?",
+      "time": "10:29",
+      "timestamp": "1746293364.253269",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/build-python.mk#L232",
+      "time": "10:34",
+      "timestamp": "1746293688.086959",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Oh you mean with each invocation of each python module, not the parallelism across modules. How do you parallelize tests within a module?",
+      "time": "10:55",
+      "timestamp": "1746294905.800309",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "Across the modules - looking to increase parallelism.\n\nFor within looking to see if we can change to unittest_parallel (https://github.com/craigahobbs/unittest-parallel)",
+      "time": "10:58",
+      "timestamp": "1746295123.708379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-05-03.json",
+    "message_count": 11,
+    "start_time": "1746289074.487849",
+    "end_time": "1746295123.708379",
+    "is_thread": true
+  }
+}

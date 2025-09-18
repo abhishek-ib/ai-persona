@@ -1,0 +1,138 @@
+{
+  "id": "ch_C06FA6A23_2021-07-19_1626680278.176000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Gunjan",
+    "Kerry",
+    "Mohit",
+    "sudeep",
+    "Naveen",
+    "Shubham Oli",
+    "shaunak"
+  ],
+  "messages": [
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "@shaunak, tried to reproduce this on dogfood ( by bringing license service down and then running a flow 2-3 times), the flow did complete, and request did go through…",
+      "time": "00:37",
+      "timestamp": "1626680278.176000",
+      "is_reply": false
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "We didn't faced much issues later on the training after that. Mostly it went smooth. So I guess that was something intermittent",
+      "time": "00:46",
+      "timestamp": "1626680810.176200",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hey team, have we figured out what was the issue? any followup actions need to be done?",
+      "time": "08:10",
+      "timestamp": "1626707458.176500",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "@Kerry, looks like client side GRPC load balancing error: https://instabase.slack.com/archives/C06FA6A23/p1626675003175200?thread_ts=1626671191.163100&cid=C06FA6A23",
+      "time": "08:21",
+      "timestamp": "1626708115.176700",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Got it, thanks. is there any followup we need to do here @sudeep @shaunak?",
+      "time": "08:45",
+      "timestamp": "1626709524.177100",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "I think this has the same RC for file service outage. As next steps I proposet that- we need to allocate resources to reproduce and investigate GRPC client side load balancing issues in kubernetes. I proposed the use of kube-resolver earlier (https://instabase.slack.com/archives/C06FA6A23/p1625172088048600?thread_ts=1625077797.039600&cid=C06FA6A23). We have seen similar errors for job-service as well. We can look into the usage of kube-resolver but it would be quite an undertaking to debug investigate and prep a migration plan-https://instabase.slack.com/archives/C06FA6A23/p1625172088048600?thread_ts=1625077797.039600&cid=C06FA6A23\n\n@shaunak thoughts?",
+      "time": "10:57",
+      "timestamp": "1626717475.177300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@sudeep and @Shubham Oli could this be related to the issue on GKE where the node was decommissioned, but k8s did not realize it and as a result, the gRPC channel never got terminated?",
+      "time": "11:01",
+      "timestamp": "1626717694.177600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I think we have seen a few errors around this pattern TBH.  For instance the outage at BofA was because RabbitMQ thought that app-task pod was connected, but there was no IP address associated with it",
+      "time": "11:33",
+      "timestamp": "1626719620.177800",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Can we try to do a deeper dive some time tomorrow to look through this?",
+      "time": "11:33",
+      "timestamp": "1626719634.178000",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "> @sudeep and @Shubham Oli could this be related to the issue on GKE where the node was decommissioned, but k8s did not realize it and as a result, the gRPC channel never got terminated?\nHey @shaunak - took a closer look\n\nLicense service was running on the node that became unhealthy (https://instabase.slack.com/archives/C01FG18R59B/p1626665610020100), and the node terminated at 9am IST.\nThis pod was then rescheduled on a different node, however it did not receive new calls for next couple hours (during which we started to see slowness/get notified from CS team).\n\nWe will take a look in more detail tomorrow and try to reproduce this. It does look like the channel never got terminated on api-server-apps side grpc client.",
+      "time": "11:51",
+      "timestamp": "1626720660.178200",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Yeah, I think that the node becoming unhealthy is the root cause here.  We need to figure out what are good mechanisms around failure.",
+      "time": "11:52",
+      "timestamp": "1626720772.178600",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Yeah - will take a look and share findings.\n\nAlso for later reference -\n• link to last log (https://console.cloud.google.com/logs/query;cursorTimestamp=2021-07-18T16:49:45.103457052Z;query=resource.type%3D%22container%22%0Aresource.labels.cluster_name%3D%22instabase-main-prod-002%22%0Aresource.labels.namespace_id%3D%22instabase-prod%22%0Aresource.labels.project_id%3D%22instabase-main%22%0Aresource.labels.zone:%22us-central1-%22%0Aresource.labels.container_name%3D%22license-service%22%0Aresource.labels.pod_id:%22deployment-license-service-%22%0Atimestamp%3D%222021-07-18T16:49:45.103457052Z%22%0AinsertId%3D%221sdyjp2g1bdp9lz%22;timeRange=2021-07-17T18:44:17.275Z%2F2021-07-19T03:45:00.000000001Z?project=instabase-main) from license service before restart shows it was running  on `gke-instabase-main-prod--default-pool-114a1d9d-ogqk`\n• link to first log (https://console.cloud.google.com/logs/query;cursorTimestamp=2021-07-19T03:38:35.579259204Z;query=resource.type%3D%22container%22%0Aresource.labels.cluster_name%3D%22instabase-main-prod-002%22%0Aresource.labels.namespace_id%3D%22instabase-prod%22%0Aresource.labels.project_id%3D%22instabase-main%22%0Aresource.labels.zone:%22us-central1-%22%0Aresource.labels.container_name%3D%22license-service%22%0Aresource.labels.pod_id:%22deployment-license-service-%22%0Atimestamp%3D%222021-07-19T03:38:35.579259204Z%22%0AinsertId%3D%22327fmag1i1d96r%22;timeRange=2021-07-17T18:44:17.275Z%2F2021-07-19T03:45:00.000000001Z?project=instabase-main) from license service after restart scheduled on a diff node",
+      "time": "11:56",
+      "timestamp": "1626720992.178800",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I think another important question to ask is whether licensing started to work fine when @Shubham Oli actually removed the node.",
+      "time": "13:06",
+      "timestamp": "1626725175.179100",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "I did wait for all pods to be gracefully evicted rather than force removing them but didn’t check if the newer pods started getting traffic normally.",
+      "time": "19:02",
+      "timestamp": "1626746560.179900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-07-19.json",
+    "message_count": 14,
+    "start_time": "1626680278.176000",
+    "end_time": "1626746560.179900",
+    "is_thread": true
+  }
+}

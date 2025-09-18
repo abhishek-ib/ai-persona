@@ -1,0 +1,28 @@
+{
+  "id": "ch_C06FA6A23_2024-10-07_1728325722.397969_conversation",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "conversation",
+  "participants": [
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":wave: Hi!\n\nAs of a few minutes ago, on 24.07-enterprise and master, all services *except* `server-nginx` are being built on the buildkit infra we rolled out earlier this year.\n\nThe holdouts were kept back on the legacy pipelines because they generate layers that entirely too large, and thus S3 one-shot uploads for cache objects would fail. These images still generate these giant layers, which is still an anti-pattern that needs addressed - but for now they are at least buildable with the remote caching and other buildkit optimizations we've been implementing.\n\nThe requalified services are:\n• `model-service`\n• `post-install-action-base-model-upload`\n• `ray-model-training-worker`\n• `third-party-translate-msft`\n(Unfortunately `server-nginx` still breaks when being built on the new infrastructure, so it will still need to be run on the legacy pipeline. I haven't found my notes on it yet, but there are a number of strange and fragile build patterns in that one, hence the breakages.)\n\nThere should be no noticeable difference in behavior for dogfood and sandbox builds, other than them potentially becoming a bit faster and more stable. :+1:",
+      "time": "11:28",
+      "timestamp": "1728325722.397969",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-07.json",
+    "message_count": 1,
+    "start_time": "1728325722.397969",
+    "end_time": "1728325722.397969",
+    "is_thread": false
+  }
+}

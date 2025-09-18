@@ -1,0 +1,159 @@
+{
+  "id": "ch_CSY11CK7T_2024-12-05_1733424839.667839_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Weiming Wu",
+    "Jag",
+    "Serena",
+    "Liam Callanan"
+  ],
+  "messages": [
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "loginless-sample-results.spec.ts is failing due to \"You do not have access to this app\" and I have no clue how to fix that",
+      "time": "10:53",
+      "timestamp": "1733424839.667839",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it’s quite strange since public apps should be accessible by users who aren’t logged i",
+      "time": "10:54",
+      "timestamp": "1733424858.225689",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "it’s also strange that I can manaully visit the cyp crafting sandbox where the test failed & have no issues reaching the modal",
+      "time": "11:00",
+      "timestamp": "1733425232.452099",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "you need to be not logged in to reproduce the issue",
+      "time": "11:00",
+      "timestamp": "1733425253.827269",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "I know, if I visit /hub when logged out it works",
+      "time": "11:01",
+      "timestamp": "1733425268.234989",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the redirect is happening on the frontend side, so there must be some recent change to react-router that is causing this",
+      "time": "11:01",
+      "timestamp": "1733425271.784999",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "",
+      "time": "11:01",
+      "timestamp": "1733425287.463629",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm i’m not able to reproduce what you’re describing @Liam Callanan",
+      "time": "11:02",
+      "timestamp": "1733425343.949759",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "It’s only when visiting from the main page that I get redirected, going to /hub like the first test in the suite does seems to work",
+      "time": "11:02",
+      "timestamp": "1733425360.176839",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "you need to click “Open app” since the test will click that to try to run the app",
+      "time": "11:04",
+      "timestamp": "1733425454.653009",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm even if i log in, i see the same “You do not have access to this app” modal",
+      "time": "11:56",
+      "timestamp": "1733428597.511259",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems that `GET /api/v2/zero-shot-idp/projects/app/5b626fd4-bca8-4171-8364-acafb1b26fbc` always returns 500 with `Failed to get app details` after the most recent crafting-cyp deployment this morning",
+      "time": "11:57",
+      "timestamp": "1733428633.691549",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i see `Expected one project for app, found 0` error messages in the `api-server` logs (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22gla%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22api-server%5C%22%7D%20%7C%3D%20%60%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)\n\nthis error message is coming from https://github.com/instabase/instabase/blob/1a850ee/shared-utils/py-utils/aihub-utils/src/py/instabase/aihub_utils/aihub_apps_util.py#L934\n\n@Jag i think your PR (https://github.com/instabase/instabase/pull/65828) broke access for apps without associated Build projects - can you help look into this?",
+      "time": "11:59",
+      "timestamp": "1733428765.028129",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "yes",
+      "time": "12:01",
+      "timestamp": "1733428906.306119",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw this is also causing `run-public-app` to fail in CI, in case anyone else runs into a similar failure and is wondering why (example (https://cloud.cypress.io/projects/cfhedy/runs/16084/overview/00492a33-e7e9-48d1-b9fa-95d4ac2d9ceb?roarHideRunsWithDiffGroupsAndTags=1&runStatus=PASSED&runStatus=FAILED&runStatus=RUNNING&runStatus=CANCELLED&runStatus=ERRORED&runStatus=NOTESTS&runStatus=TIMEDOUT))",
+      "time": "12:02",
+      "timestamp": "1733428933.092689",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "i thought the PR handled that... :thinking_face:, I'll put up a fix by EOD!",
+      "time": "12:02",
+      "timestamp": "1733428962.435059",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "So the code should've caught that if we get the right status from the grpc layer:\n\nIf no project is found, we _don't_ throw an error. But it looks like for this app, the NOT_FOUND is not being sent back as we are reaching line 904 even though there is no project associated with the app.\n\nI can investigate the grpc code to see why that is the case but I think for the short-term, I'll just change the error to be logging.",
+      "time": "12:59",
+      "timestamp": "1733432399.620919",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-12-05.json",
+    "message_count": 17,
+    "start_time": "1733424839.667839",
+    "end_time": "1733432399.620919",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,468 @@
+{
+  "id": "ch_C0516UPPMT3_2023-07-12_1689178458.104579_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Gwen",
+    "Kerry",
+    "mfichman",
+    "Hari",
+    "joshbronko",
+    "Rakesh",
+    "Varun Jain",
+    "Pridhvi Vegesna",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "Having issues with asking questions at this specific document - no question I ask it will come back a response. A list of things I have tried\n\n```- Hello\n- What document is this?\n- What is the date?```\nall returns\n```Exception calling function - call_model_v: Value issue. Value not set. Defined in scripts/aihub_concurrent.py (line 292)\n\nTraceback:\n  File \"scripts/aihub_concurrent.py\", line 292, in call_model_v\n. Traceback (most recent call last):\n  File \"/instabase/workers/celery-app-tasks/py/instabase/_sheet/parser_lib/parser.py\", line 1046, in __call__\n    fnv_result = fn_dict.get('fn_v')(*args, **kwargs)\n  File \"scripts/aihub_concurrent.py\", line 292, in call_model_v\nException: Value issue. Value not set\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/instabase/workers/celery-app-tasks/py/instabase/refiner_utils/refiner_util.py\", line 729, in _run_sheet\n    execute_result = executor.execute(\n  File \"/instabase/workers/celery-app-tasks/py/instabase/data_api_utils/_sheet/executors/executor.py\", line 414, in execute\n    orig_result = parsed_fn.run(fn_ctx)\n  File \"/instabase/workers/celery-app-tasks/py/instabase/_sheet/parser_lib/parser.py\", line 743, in run\n    return self._fn_callable(_FN_CONTEXT_KEY=ctx)\n  File \"/instabase/workers/celery-app-tasks/py/instabase/_sheet/parser_lib/parser.py\", line 1085, in __call__\n    raise e\n  File \"/instabase/workers/celery-app-tasks/py/instabase/_sheet/parser_lib/parser.py\", line 1076, in __call__\n    raise IBError.create_from_exception(\ninstabase.errors.ib_error.IBError: Exception calling function - call_model_v: Value issue. Value not set. Defined in scripts/aihub_concurrent.py (line 292)\n\nTraceback:\n  File \"scripts/aihub_concurrent.py\", line 292, in call_model_v```",
+      "time": "09:14",
+      "timestamp": "1689178458.104579",
+      "is_reply": false
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "we need to understand what the payload is coming back from the api in aihub. Can you log the response as well",
+      "time": "09:15",
+      "timestamp": "1689178520.705709",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "I have turned on ‘force OCR’ on it (to be sure)",
+      "time": "09:15",
+      "timestamp": "1689178536.787899",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "Can you share the document @Gwen?\n\n@Hari @Rakesh",
+      "time": "09:17",
+      "timestamp": "1689178634.734389",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Hi @Gwen\nIs this in build mode or converse ?",
+      "time": "09:18",
+      "timestamp": "1689178681.152269",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "@Varun Jain i think this is due to refiner scripting",
+      "time": "09:18",
+      "timestamp": "1689178681.727409",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "give me a few before i hand to you guys",
+      "time": "09:18",
+      "timestamp": "1689178691.506849",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": ":open_mouth:",
+      "time": "09:18",
+      "timestamp": "1689178694.253799",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Yep, its on AIHub UAT\n```INFO: /api/v2/zero-shot-idp/projects/inference_lite/run_sync {'model_name': 'ibllm', 'model_version': '1.1.15', 'model_payload': {'custom_request': {'task': 'multi_doc', 'user_prompt': 'What document is this? Respond only with one of the choices: [Email, Broker/Market/Owners Presentation, Survey Report, Claims History, Other]', 'ibdocs': ['gwen.wong/my-repo/fs/Instabase Drive/ibdocs_submissions/FW_ Cobden Court Management Ltd - Property Owners Quotation_(#1532857574) Submission.pdf.ibdoc'], 'cached_index': '{\"message\": \"Unknown node-type None\"}', 'model_name': 'gpt-3.5-turbo'}}}\nINFO: {'status': 'ERROR', 'msg': 'Value issue. Value not set'}```",
+      "time": "09:23",
+      "timestamp": "1689179019.017459",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "I have seen this issue on uat lately as well",
+      "time": "09:23",
+      "timestamp": "1689179028.445689",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "@Rakesh on that document in converse mode",
+      "time": "09:25",
+      "timestamp": "1689179156.769719",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "I can share document offline with you",
+      "time": "09:26",
+      "timestamp": "1689179161.754959",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "@joshbronko Can you try your UAT sample again pls? We did an update today and hoping it's fixed now.",
+      "time": "09:26",
+      "timestamp": "1689179209.864809",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "I’m surprised that worked in converse mode as I had to force OCR it to work.",
+      "time": "09:26",
+      "timestamp": "1689179211.302689",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "I just uploaded this in UAT 1 min ago",
+      "time": "09:27",
+      "timestamp": "1689179245.185969",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "We will need to tshoot the api call on the backside, let me check loki",
+      "time": "09:30",
+      "timestamp": "1689179410.610879",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "`'model_version': '1.1.15'` -- this is calling 1.1.15?",
+      "time": "09:30",
+      "timestamp": "1689179412.077069",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "@joshbronko\nCan you try with updated 1.1.17 version that is published in UAT ? 1.1.17 is still undergoing some testing.",
+      "time": "09:30",
+      "timestamp": "1689179416.078029",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "checking now",
+      "time": "09:30",
+      "timestamp": "1689179430.024709",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "its on 1.1.15 currently",
+      "time": "09:30",
+      "timestamp": "1689179439.331099",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Same error on 1.1.17",
+      "time": "09:30",
+      "timestamp": "1689179459.426489",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Is this a custom refiner ? Or one generated by build mode ?",
+      "time": "09:31",
+      "timestamp": "1689179517.123779",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "custom refiner using converse api endpoint",
+      "time": "09:32",
+      "timestamp": "1689179533.256339",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "",
+      "time": "09:33",
+      "timestamp": "1689179609.713899",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "This seems like a digitization failure. I think the exception is misleading. Will dig deeper on this.",
+      "time": "09:33",
+      "timestamp": "1689179623.305969",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "We digitize on the sandbox side not aihub",
+      "time": "09:33",
+      "timestamp": "1689179637.098899",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "someone with admin roles, can you confirm this file exisit while @Gwen is away\n\"Exception Failed to read file: Cannot open a non-existent file in rb mode. Path: gwen.wong/my-repo/fs/Instabase Drive/ibdocs_submissions_test/FW_ Cobden Court Management Ltd - Property Owners Quotation_(#1532857574) Submission.pdf.ibdoc\"",
+      "time": "09:34",
+      "timestamp": "1689179681.556629",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "I bet i know what it is, file # value in the name",
+      "time": "09:40",
+      "timestamp": "1689180031.859989",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Looks like we are getting back a 204 from the file api but its not writing there",
+      "time": "09:49",
+      "timestamp": "1689180548.176609",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "cc: @Yash Botadra @Yan Wang @Pridhvi Vegesna",
+      "time": "09:56",
+      "timestamp": "1689180960.860239",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "To summarize, we suspect file-service is failing to find files with the # char in the filename?",
+      "time": "09:59",
+      "timestamp": "1689181171.352019",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "It seems i cannot PUT a file with a # in it",
+      "time": "10:00",
+      "timestamp": "1689181234.052029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Looks like a badly sanitized file path name. `#` needs to be properly URL-escaped so that it can be used as a file system path.",
+      "time": "10:25",
+      "timestamp": "1689182758.523149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Possibly a bug in `ibfile` ?",
+      "time": "10:26",
+      "timestamp": "1689182780.513359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Or somewhere in the pipeline :slightly_smiling_face:",
+      "time": "10:26",
+      "timestamp": "1689182788.558819",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Its odd we can write it via reader api though",
+      "time": "10:26",
+      "timestamp": "1689182800.309439",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, reader may be properly escaping it. We should find out where the # is leaking through",
+      "time": "10:27",
+      "timestamp": "1689182820.206509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Probably the `#`  needs to be URL-encoded when the file is initially digitized, in the AI Hub API handler",
+      "time": "10:27",
+      "timestamp": "1689182860.374259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@joshbronko Can you confirm if this file exists:\n\n```wen.wong/my-repo/fs/Instabase Drive/ibdocs_submissions_test/FW_ Cobden Court Management Ltd - Property Owners Quotation_(```\n(strip everything after the #)",
+      "time": "10:28",
+      "timestamp": "1689182939.300109",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "From the converse app we get this error `Unable to display image ...` . In the http response for the file api, the error message is `{\"message\": \"Unknown node-type None\"}`. Even though the `expect-node-type` url param is supplied. As Matt mentioned the `#` character is treated as a special character in urls so if it's in the file path like: `/api/v2/files/pridhvi.vegesna/my-repo/fs/Instabase Drive/aihub/6b82b5fb-7fa9-4ca5-82a0-3ea1eaa8e535/documents/out/original/images/FW_ Cobden Court Management Ltd - Property Owners Quotation_(#1532857574) Submission_a3b7bb924127af3ede9cb0a231de27bde1a4d3ce46005122d5432a71a0616425.pdf_p0.JPEG.jpeg?expect-node-type=file'` , the url param `?expect=node-type=file` is not recognized in the request call because of interference from the `#`",
+      "time": "10:29",
+      "timestamp": "1689182972.223539",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Try replacing the `#` with `%23`, which is the escape code for `#`",
+      "time": "10:30",
+      "timestamp": "1689183024.152939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Since it looks like you're using postman :slightly_smiling_face:",
+      "time": "10:30",
+      "timestamp": "1689183047.657609",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "```https://aihub.uat.instabase.com/api/v2/files/gwen.wong/my-repo/fs/Instabase Drive/ibdocs_submissions_test/FW_ Cobden Court Management Ltd - Property Owners%23 Quotation_Submission.pdf.ibmsg.JOSH.TEST```",
+      "time": "10:31",
+      "timestamp": "1689183111.184409",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "that did not work",
+      "time": "10:31",
+      "timestamp": "1689183116.193499",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "but we are using python requests on our other calls",
+      "time": "10:32",
+      "timestamp": "1689183129.731589",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Can you share the code that's making the API call?",
+      "time": "10:32",
+      "timestamp": "1689183162.283479",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "```def ib_api_call(uri, type, payload = None, ib_api_args = None, params = None, data = None):\n    url = URL_ROOT + uri\n    \n    # Base IB Headers for Auth\n    headers = {\n        'Authorization': 'Bearer {}'.format(TOKEN),\n        'Content-Type': 'application/json'\n    }\n    # Add ib api args when present\n    if ib_api_args:\n        headers['Instabase-API-Args'] = json.dumps(ib_api_args)\n        #print(url, str(headers), sep='---------')\n    \n    # Retry automatically on gateway timeout\n    retry_strategy = Retry(\n        total=10,\n        status_forcelist=[429, 500, 502, 503, 504],\n        allowed_methods=[\"HEAD\", \"GET\", \"OPTIONS\", \"POST\"],\n        backoff_factor=1\n    )\n    adapter = HTTPAdapter(max_retries=retry_strategy)\n    http = requests.Session()\n    http.mount(\"https://\", adapter)\n    http.mount(\"http://\", adapter)\n    # TODO(1) - add checks for payload being valid for POST AND PUT calls\n    if type == 'GET':\n        response = http.get(url, headers=headers, params=params)\n    \n    elif type == 'POST':\n        response = http.post (http://http.post)(url, headers=headers, json=payload)\n   \n    elif type == 'PUT':\n        response = http.put(url, headers=headers, data=data)\n    elif type == 'HEAD':\n        response = http.head(url, headers=headers)\n    else:\n        pass\n    \n    return response```",
+      "time": "10:33",
+      "timestamp": "1689183215.293709",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "This worked for me: https://aihub.uat.instabase.com//api/v2/files/pridhvi.vegesna/my-repo/fs/Instabase%20Dri[…]5432a71a0616425.pdf_p0.JPEG.jpeg?expect-node-type=file (https://aihub.uat.instabase.com//api/v2/files/pridhvi.vegesna/my-repo/fs/Instabase%20Drive/aihub/6b82b5fb-7fa9-4ca5-82a0-3ea1eaa8e535/documents/out/original/images/FW_%20Cobden%20Court%20Management%20Ltd%20-%20Property%20Owners%20Quotation_(%231532857574)%20Submission_a3b7bb924127af3ede9cb0a231de27bde1a4d3ce46005122d5432a71a0616425.pdf_p0.JPEG.jpeg?expect-node-type=file)",
+      "time": "10:34",
+      "timestamp": "1689183240.540579",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Okay so let me add that into the code then",
+      "time": "10:36",
+      "timestamp": "1689183374.979009",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "bingo!\n```def ib_api_call(uri, type, payload = None, ib_api_args = None, params = None, data = None):\n    url = URL_ROOT + requests.utils.quote(uri)```",
+      "time": "10:38",
+      "timestamp": "1689183515.062109",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "For ib / aihub frontend, should we be detecting these special url characters and properly encoding them before interacting with the file api?",
+      "time": "10:40",
+      "timestamp": "1689183600.568629",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "@Gwen should be working now for you.",
+      "time": "10:40",
+      "timestamp": "1689183600.692119",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "Guys this is amazing, thank you very much will check it in a sec",
+      "time": "11:18",
+      "timestamp": "1689185924.171319",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "> For ib / aihub frontend, should we be detecting these special url characters and properly encoding them before interacting with the file api?\nYes, looks like this is an issue with our doc viewer UI. @Eric Han can you help assign a frontend eng to fix this? Think you can reproduce this by having a file that has a `#` in the name, run it through any AI Hub app, and see the doc viewer not able to display the image (like the screenshot shared in Josh's message linked here).\nhttps://instabase.slack.com/archives/C0516UPPMT3/p1689179156769719?thread_ts=1689178458.104579&cid=C0516UPPMT3\n\nFrontend needs to escape the file name before sending the http request",
+      "time": "11:31",
+      "timestamp": "1689186678.527989",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i assume this needs to be backported to both `release-23.04.0-aihub` and `release-23.07.0`",
+      "time": "12:12",
+      "timestamp": "1689189164.947239",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-07-12.json",
+    "message_count": 55,
+    "start_time": "1689178458.104579",
+    "end_time": "1689189164.947239",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,351 @@
+{
+  "id": "ch_C06FA6A23_2025-07-21_1753123893.120259_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "instakarma",
+    "mfichman",
+    "Abhinav",
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also, having trouble with ArgoCD: (https://jenkins.instabase.com/blue/organizations/jenkins/SAAS-AWS%2Fsaas-pipelines%2Fstart-argocd-deployment/detail/start-argocd-deployment/2906/pipeline)\n\n```\n[2025-07-21T18:38:59.132Z] + helm package deployment-configs/chart charts/post-install-actions charts/grafana-dashboards-charts/autoscaling-dashboards charts/grafana-dashboards-charts/default-dashboards charts/grafana-dashboards-charts/internal-dashboards charts/grafana-dashboards-charts/k8s-dashboards --version 0.1.0-pipeline-test-2906-d9f70cc6f6\n\n[2025-07-21T18:38:59.332Z] Successfully packaged chart and saved it to: /home/ib-build/workspace/start-argocd-deployment-2906/instabase-repo/instabase-0.1.0-pipeline-test-2906-d9f70cc6f6.tgz\n\n[2025-07-21T18:38:59.332Z] walk.go:74: found symbolic link in path: /home/ib-build/workspace/start-argocd-deployment-2906/instabase-repo/charts/post-install-actions/values.yaml resolves to /home/ib-build/workspace/start-argocd-deployment-2906/instabase-repo/deployment-configs/chart/values.yaml. Contents of linked file included and used\n\n[2025-07-21T18:38:59.332Z] Successfully packaged chart and saved it to: /home/ib-build/workspace/start-argocd-deployment-2906/instabase-repo/post-install-actions-0.1.0-pipeline-test-2906-d9f70cc6f6.tgz\n\n[2025-07-21T18:38:59.332Z] Successfully packaged chart and saved it to: /home/ib-build/workspace/start-argocd-deployment-2906/instabase-repo/autoscaling-dashboards-0.1.0-pipeline-test-2906-d9f70cc6f6.tgz\n\n[2025-07-21T18:38:59.433Z] Successfully packaged chart and saved it to: /home/ib-build/workspace/start-argocd-deployment-2906/instabase-repo/default-dashboards-0.1.0-pipeline-test-2906-d9f70cc6f6.tgz\n\n[2025-07-21T18:38:59.433Z] Successfully packaged chart and saved it to: /home/ib-build/workspace/start-argocd-deployment-2906/instabase-repo/internal-dashboards-0.1.0-pipeline-test-2906-d9f70cc6f6.tgz\n\n[2025-07-21T18:38:59.433Z] Successfully packaged chart and saved it to: /home/ib-build/workspace/start-argocd-deployment-2906/instabase-repo/k8s-dashboards-0.1.0-pipeline-test-2906-d9f70cc6f6.tgz\n\n[2025-07-21T18:38:59.433Z] + aws ecr get-login-password --region us-east-2 --profile helm-registry\n\n[2025-07-21T18:38:59.433Z] + helm registry login --username AWS --password-stdin 549230430157.dkr.ecr.us-east-2.amazonaws.com\n\n[2025-07-21T18:38:59.934Z] Login Succeeded\n\n[2025-07-21T18:38:59.934Z] + helm push instabase-0.1.0-pipeline-test-2906-d9f70cc6f6.tgz <oci://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/helm-charts>\n\n[2025-07-21T18:39:00.135Z] Error: unexpected status from POST request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-dev/helm-charts/instabase/blobs/uploads/: 403 Forbidden\n\nscript returned exit code 1```\ncc @Cody Boggs",
+      "time": "11:51",
+      "timestamp": "1753123893.120259",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "`helm push` failed w/ credentials problem",
+      "time": "11:52",
+      "timestamp": "1753123928.407269",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@Abhinav looks like another pipeline is doing the ECR login business perhaps?",
+      "time": "11:52",
+      "timestamp": "1753123948.815449",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "start-argocd-deployment is the pipeline -- @Cody Boggs do you have a link to a PR that fixed the other pipelines? I can pitch in",
+      "time": "11:52",
+      "timestamp": "1753123976.880789",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "It won't align there sadly :disappointed:\nThe previous fix was to just stop running the old unsupported deploy-service-v2 pipeline. This one will require a an actual pipeline fix",
+      "time": "11:53",
+      "timestamp": "1753124021.610139",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I'll take a quick look, it shouldn't need much I think",
+      "time": "11:54",
+      "timestamp": "1753124040.097239",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mfichman❯ git grep -l 'ecr get-login' -- '*.groovy'\ntools/releasetools/jenkins/pipelines/publish-deployment-package.groovy\ntools/releasetools/jenkins/pipelines/publish-helm-chart.groovy\ntools/releasetools/jenkins/pipelines/saas/start-argocd-deployment.groovy```\nthere are several actually",
+      "time": "11:54",
+      "timestamp": "1753124056.190459",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea I think I'm just gonna set cursor loose on it and see if we can blanket drop those. No telling what will break, but they're already busted now so :man-shrugging::skin-tone-3:",
+      "time": "11:54",
+      "timestamp": "1753124091.219219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "How did we fix the other pipelines? Is there a PR?",
+      "time": "11:56",
+      "timestamp": "1753124185.121439",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(this is why it rankled me so badly when I was told \"no\" to removing these patterns almost 2 years ago :sob:)",
+      "time": "11:56",
+      "timestamp": "1753124194.719209",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "> The previous fix was to just stop running the old unsupported deploy-service-v2 pipeline.\nThey weren't fixed, just stopped running the old busted one lol",
+      "time": "11:57",
+      "timestamp": "1753124221.596369",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "This was that one though\nhttps://github.com/instabase/instabase/pull/72626",
+      "time": "11:57",
+      "timestamp": "1753124236.534229",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "No, I mean the  `build-service`  pipeline for example",
+      "time": "11:57",
+      "timestamp": "1753124239.090539",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oooh I see",
+      "time": "11:57",
+      "timestamp": "1753124244.570609",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea basically boils down to \"remove the login call entirely\"\nBecause with IAM instance profiles, there's no need - there's an ECR docker credential helper that handles it all via role assumption, which is tightly controlled by core-infra automation",
+      "time": "11:58",
+      "timestamp": "1753124288.364409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, let me try removing this line to see what happens",
+      "time": "11:58",
+      "timestamp": "1753124339.638519",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":+1: Yea should do the trick, I'm having cursor dig up all the references and potential inclusions around it to see what corners to dust out",
+      "time": "12:00",
+      "timestamp": "1753124400.710289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/72630",
+      "time": "12:01",
+      "timestamp": "1753124509.048179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I doubt it will work, b/c `helm`  needs to get the credentials from somewhere",
+      "time": "12:02",
+      "timestamp": "1753124525.186579",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Either an env var, credentials file that is mounted into the workspace, or IAM role on the Jenkins runner VM.",
+      "time": "12:02",
+      "timestamp": "1753124559.693909",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "give me few mins before merge this. I am looking into it",
+      "time": "12:03",
+      "timestamp": "1753124611.887549",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I won't merge it, no worries. Just trying it on my branch.",
+      "time": "12:03",
+      "timestamp": "1753124626.322829",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "My PR seems to have worked FWIW -- I'm assuming the Jenkins runner(s) have an IAM role assigned (this is good!)\n\nhttps://jenkins.instabase.com/blue/organizations/jenkins/SAAS-AWS%2Fsaas-pipelines%2Fst[…]deployment/detail/start-argocd-deployment/2907/pipeline/84 (https://jenkins.instabase.com/blue/organizations/jenkins/SAAS-AWS%2Fsaas-pipelines%2Fstart-argocd-deployment/detail/start-argocd-deployment/2907/pipeline/84)",
+      "time": "12:13",
+      "timestamp": "1753125221.073019",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "Can you run the deployment from master branch?",
+      "time": "12:15",
+      "timestamp": "1753125330.178529",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "I added the permissions",
+      "time": "12:15",
+      "timestamp": "1753125345.881769",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Using the pipeline from my branch?",
+      "time": "12:15",
+      "timestamp": "1753125348.006689",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "use master as pipeline branch",
+      "time": "12:16",
+      "timestamp": "1753125368.112889",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK",
+      "time": "12:16",
+      "timestamp": "1753125380.473109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Just to clarify: You want me to run a deployment of `master` using the pipeline from `master`?",
+      "time": "12:17",
+      "timestamp": "1753125438.241089",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "No, your deployment branch with pipeline from master",
+      "time": "12:17",
+      "timestamp": "1753125468.295429",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah, all right",
+      "time": "12:18",
+      "timestamp": "1753125488.639219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It's interesting that my pipeline just passed when I removed the `ecr get-login-password | helm login` thing entirely",
+      "time": "12:18",
+      "timestamp": "1753125539.898069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Do we really need it?",
+      "time": "12:19",
+      "timestamp": "1753125543.935959",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "No",
+      "time": "12:22",
+      "timestamp": "1753125722.474129",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "we need to test it for Prod too before removing it",
+      "time": "12:22",
+      "timestamp": "1753125729.099129",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "Prod ECR permissions are setup at repo level. @Cody Boggs",
+      "time": "12:22",
+      "timestamp": "1753125779.452219",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "If it is needed for Prod, then we'll need to get the Prod Jenkins builder role added to those policies :grimacing:",
+      "time": "12:23",
+      "timestamp": "1753125794.160649",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, I see -- I was running the `master` pipeline all along. So, I'll close my PR.",
+      "time": "12:25",
+      "timestamp": "1753125904.729639",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@Abhinav I'll need more info on what helm interactions we have with ECR. If the only thing that needs to push/pull the helm charts in ECR is jenkins, then that's a pretty easy fix overall. If the prod stacks themselves have to do so, then that's certainly a large lift",
+      "time": "12:26",
+      "timestamp": "1753125969.002209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Thank you @Abhinav ++",
+      "time": "12:26",
+      "timestamp": "1753125987.628779",
+      "is_reply": true
+    },
+    {
+      "sender": "instakarma",
+      "user_id": "U085XLWMN58",
+      "message": ":thumbsup_all: @Abhinav leveled up, now has 2 karma",
+      "time": "12:26",
+      "timestamp": "1753125989.416259",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-07-21.json",
+    "message_count": 41,
+    "start_time": "1753123893.120259",
+    "end_time": "1753125989.416259",
+    "is_thread": true
+  }
+}

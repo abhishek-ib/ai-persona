@@ -1,0 +1,157 @@
+{
+  "id": "ch_C06FA6A23_2019-11-27_1574866179.039700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Aaron Vontell",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "What’s the right way to restart our docker containers using provisioner? Do I need to run compile again?",
+      "time": "06:49",
+      "timestamp": "1574866179.039700",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "if you just need to restart you can just do stop/start",
+      "time": "06:49",
+      "timestamp": "1574866198.039800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "if you need to rebuild some code or something, then you need to compile",
+      "time": "06:50",
+      "timestamp": "1574866207.040000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "but i also make an option to mount code directly into the docker container so you don't have to rebuild the containers each time code changes",
+      "time": "06:50",
+      "timestamp": "1574866231.040200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "what are you trying to do?",
+      "time": "06:50",
+      "timestamp": "1574866234.040400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I see, yeah asking about the iteration of changing code and restarting to test those changes",
+      "time": "06:50",
+      "timestamp": "1574866244.040600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oo yup so for that, I stop the service with provisioner",
+      "time": "06:50",
+      "timestamp": "1574866259.040800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "But whenever I run compile it redoes some things like setting up cassandra which takes so so long",
+      "time": "06:51",
+      "timestamp": "1574866262.041000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "and then start the docker manually with `make run-docker-reload`",
+      "time": "06:51",
+      "timestamp": "1574866277.041300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "you still have to run `make build-reload` everytime the code changes (outside docker) because we copy code from the src dir into build",
+      "time": "06:51",
+      "timestamp": "1574866298.041500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "but you don't have to restart the docker container",
+      "time": "06:51",
+      "timestamp": "1574866305.041700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "`make run-docker-reload` mounts the build dir into the docker container",
+      "time": "06:51",
+      "timestamp": "1574866319.041900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "you do have to stop/restart the server script (`start-worker.sh` or `start.sh` depending on what service it is",
+      "time": "06:52",
+      "timestamp": "1574866337.042100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "since our servers unfortunately don't yet hot reload",
+      "time": "06:52",
+      "timestamp": "1574866346.042300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "make sense?",
+      "time": "06:53",
+      "timestamp": "1574866408.042800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "it's still like 2 steps too many, but to get rid of these 2 steps require some build system rewriting",
+      "time": "06:53",
+      "timestamp": "1574866421.043000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I see I see, i’ll try that!",
+      "time": "06:55",
+      "timestamp": "1574866522.043200",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-11-27.json",
+    "message_count": 17,
+    "start_time": "1574866179.039700",
+    "end_time": "1574866522.043200",
+    "is_thread": true
+  }
+}

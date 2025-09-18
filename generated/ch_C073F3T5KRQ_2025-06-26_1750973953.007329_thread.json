@@ -1,0 +1,110 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-06-26_1750973953.007329_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "mfichman",
+    "Jeff"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ahhh... CPS is still crashing in crafting-cyp after merging in my fixes... <!subteam^S02FJA6A7U5> is this the same OOM-killed issue as the thread (https://instabase.slack.com/archives/C073F3T5KRQ/p1750709889580189) above?",
+      "time": "14:39",
+      "timestamp": "1750973953.007329",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I searched for \"exiting\" in the log and checked the lines before it,\nhttps://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22oco%22:%[…]22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1 (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22oco%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22core-platform-service%5C%22%7D%20%7C%3D%20%60Exiting%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22forward%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1)\n\nseems to point to this `GetMountPoints` accessor\nhttps://github.com/instabase/instabase/blob/696a41eb0c70ad5a82cf7b8679ec0a36f74db5[…]-utils/src/instabase/coreplatformservice/mount/handler/mount.go (https://github.com/instabase/instabase/blob/696a41eb0c70ad5a82cf7b8679ec0a36f74db5a2/shared-utils/go-utils/src/instabase/coreplatformservice/mount/handler/mount.go)",
+      "time": "14:40",
+      "timestamp": "1750974032.050679",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "cc @Jeff @mfichman regarding the `GetMountPoints` accessor",
+      "time": "15:01",
+      "timestamp": "1750975291.592059",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "This line (https://github.com/instabase/instabase/blob/9e71f1687f7e5bacb4b10e7fde400761a1710e36/shared-utils/go-utils/src/instabase/coreplatformservice/repo/handler/deployed_solutions.go#L727) of code is printed before exiting.",
+      "time": "15:11",
+      "timestamp": "1750975878.205149",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "CPS is up now and I see the `GetMountPoints` accessor function are being invoked multiple times. I wonder if there are something going on with the `ListDeployedSolutions` endpoint that causes cps to crash.",
+      "time": "15:23",
+      "timestamp": "1750976590.867079",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Abhinav helped me figure out the commands. CPS was OOMKilled...\n``` - containerID: <containerd://0f979200977e103d7ffa5434e6d9142cf297d01c62563ce6aa84f8267f625c0>0\n    image: 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/core-platform-service:tami-crafting-cyp-25.06.26-5e3b4e4345d3658c52f88b52b38981c11df1a5cd (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/core-platform-service:tami-crafting-cyp-25.06.26-5e3b4e4345d3658c52f88b52b38981c11df1a5cd)\n    imageID: 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/core-platform-service@sha256:4207544fcbd37a126082c5d8b7aa7dde40391a0a99433f80b98c272aa126225c (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-dev/core-platform-service@sha256:4207544fcbd37a126082c5d8b7aa7dde40391a0a99433f80b98c272aa126225c)\n    lastState:\n      terminated:\n        containerID: <containerd://5af46c6b8c25d207a09742558319eaffeee72766d932904c9101cf4cbf8619d>8\n        exitCode: 0\n        finishedAt: \"2025-06-26T22:16:33Z\"\n        reason: OOMKilled\n        startedAt: \"2025-06-26T22:16:11Z\"\n    name: core-platform-service\n    ready: true\n    restartCount: 26\n    started: true\n    state:\n      running:\n        startedAt: \"2025-06-26T22:17:16Z\"```",
+      "time": "15:54",
+      "timestamp": "1750978447.209369",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "btw, Jet applied a patch to bump up the memory limit https://instabase.slack.com/archives/C01N7DV1137/p1750978900075939?thread_ts=1750748217.029719&cid=C01N7DV1137",
+      "time": "16:03",
+      "timestamp": "1750979006.557129",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Jeff – what makes you think that `ListDeployedSolutions` is the reason for cps to crash?",
+      "time": "16:05",
+      "timestamp": "1750979135.046969",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm also wondering if there's anything wrong with the `GetSession` grpc endpoint. Error rate spikes at 2.67 req/s around the time CPS shuts down. From the trace (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22a87%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D,%22queryType%22:%22search%22,%22service%22:%22core-platform-service%22,%22operation%22:%22account_service.AccountService%2FGetSession%22%7D%5D,%22range%22:%7B%22from%22:%221750975811000%22,%22to%22:%221750976433000%22%7D%7D,%22agy%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22query%22:%22b9575db0c3a1cd06%22,%22refId%22:%22A%22%7D%5D,%22range%22:%7B%22from%22:%221750975811000%22,%22to%22:%221750976433000%22%7D%7D%7D&orgId=1), the duration for lots of requests is very long and seems off. Seeing `invalid parent span IDs=662b373913f577d7; skipping clock skew adjustment` warning too.",
+      "time": "16:09",
+      "timestamp": "1750979357.527689",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I saw this function is invoked before the crash. But after double checked the recent changes, that endpoint should be fine.",
+      "time": "16:26",
+      "timestamp": "1750980391.239879",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "GetSession is pretty old (and also simple, right?)",
+      "time": "18:10",
+      "timestamp": "1750986627.815429",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-06-26.json",
+    "message_count": 11,
+    "start_time": "1750973953.007329",
+    "end_time": "1750986627.815429",
+    "is_thread": true
+  }
+}

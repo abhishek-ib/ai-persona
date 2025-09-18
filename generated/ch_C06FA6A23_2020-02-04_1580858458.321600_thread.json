@@ -1,0 +1,37 @@
+{
+  "id": "ch_C06FA6A23_2020-02-04_1580858458.321600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Jessica",
+    "cross talk - a podcast about crosswords - listen on apple podcasts or spotify"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Hey team, @Chetan and I are trying to get to the bottom of what looks like a problem with uploading that is just on dogfood, and not instabase.com (http://instabase.com) or locally (thanks @rahul for reporting one of the bugs that led us to this!).\n\nWhat we know:\n1. Uploading files via the File Submission app works on instabase.com (http://instabase.com) and locally but not on dogfood.\n2. However, the endpoint is returning as if it were successful - it is getting to here (https://github.com/instabase/instabase/blob/master/webserver/apps-server/src/py/instabase/handler/views/apps/file_submission.py#L334) but possibly timing out and not catching it correctly.\n3. When you upload a file to the File Browser locally or on instabase.com (http://instabase.com), it works as expected.\n4. When you do it on dogfood, the network request shows that the operation was successful, and if you reload the page, you find that the upload has indeed completed successfully, but...\n5. The code takes us down this error branch: https://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpacked/lib/src/IBUploadManager/components/components/Uploader.js#L144. In the line `const { statusText, responseText } = data.response().jqXHR;`, the `responseText` parameter is from the request made to instabase, and the `statusText` parameter is a special upload-specific thing that appears to be erroring. Thus, we're getting a warning instatoast and no automatic page refresh.\n\nSo, in one case the uploading is not successful and in one case it is, but I find it mighty suspicious that both have to do with uploading and both work locally and on instabase.com (http://instabase.com) but not on dogfood. Does anyone have any insight into this mystery?",
+      "time": "15:20",
+      "timestamp": "1580858458.321600",
+      "is_reply": false
+    },
+    {
+      "sender": "cross talk - a podcast about crosswords - listen on apple podcasts or spotify",
+      "user_id": "UMAGLK657",
+      "message": "I don’t think this is the issue (since it’s fine locally), but I believe I touched that file (Uploader.js) in this release cut? Can confirm tomorrow when I’m at a computer",
+      "time": "17:41",
+      "timestamp": "1580866886.330700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-02-04.json",
+    "message_count": 2,
+    "start_time": "1580858458.321600",
+    "end_time": "1580866886.330700",
+    "is_thread": true
+  }
+}

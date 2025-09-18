@@ -1,0 +1,69 @@
+{
+  "id": "ch_C06FA6A23_2022-11-16_1668618668.522749_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "danny.lan"
+  ],
+  "messages": [
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "I don't think that immediately mean you have the right credentials setup in file service, because aws takes what's in your ~/.aws/config for credential, but file service doesn't do that. Creds are set in core-platform-service for default drives.\n\nThat being said, the error is indicating you are trying to connect to S3 via the IAM role, instead of using creds:\n```\"http://169.254.169.254/latest/meta-data/iam/security-credentials/\": dial tcp 169.254.169.254:80: i/o timeout```\nSo I'd first check whether `USE_AWS_CREDS` env var is set up properly in your core-platform-service?\n\nMount details are also cached, so to troubleshoot this you may want to restart your Redis (locally)",
+      "time": "09:11",
+      "timestamp": "1668618668.522749",
+      "is_reply": false
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "That’s good to know, thanks!\nI’m not sure what the root cause is but I was able to get my environment working by recompiling `grpc-file-service`  on branch `release-22.11.0`",
+      "time": "09:47",
+      "timestamp": "1668620855.382689",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Got it - what if you recompile again under master and try again? This'd rule out if there is a breaking change between master and 22.11.0, or it is just things need to be recompiled.",
+      "time": "09:49",
+      "timestamp": "1668620966.312259",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "I just tried running `ppy compile --as-docker grpc-file-service` on master and I get the same error above",
+      "time": "10:07",
+      "timestamp": "1668622053.291629",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Got it, thanks for confirming, I think I know which PR altered this behavior, and I think that's only affecting local env behavior. Will follow up on this.",
+      "time": "10:21",
+      "timestamp": "1668622897.735609",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Actually do you mind trying one thing - can you add\n```\"use_aws_access_creds\": true,```\nto `deployment/local/docker-env.json` of core-platform-service (not file service but core-platform).\nRestart redis, core-platform-service (I supposed you do so in docker), grpc-file-service and try again?",
+      "time": "10:23",
+      "timestamp": "1668623004.491619",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-11-16.json",
+    "message_count": 6,
+    "start_time": "1668618668.522749",
+    "end_time": "1668623004.491619",
+    "is_thread": true
+  }
+}

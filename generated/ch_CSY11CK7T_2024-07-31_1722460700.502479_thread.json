@@ -1,0 +1,85 @@
+{
+  "id": "ch_CSY11CK7T_2024-07-31_1722460700.502479_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Arjun"
+  ],
+  "messages": [
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "Hey folks, hoping to get some help on an issue I’m experiencing. I have this component that I’m trying to re-use and the expected behavior can be seen in the first video, where double clicking allows me to type inside the cell. I’m noticing however that when I place this component inside a `Modal`, there’s an issue where the overlay isn’t showing up and typing shifts the focus to the first focusable element inside the modal (see second video).\n\nWondering if anyone has any suggestions because I am stumped about this focus stealing! cc @Liam Callanan bc I feel like you’d have a good suggestion :stuck_out_tongue:",
+      "time": "14:18",
+      "timestamp": "1722460700.502479",
+      "is_reply": false
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "or rather if someone wants to huddle with me that’s also appreciated :slightly_smiling_face:",
+      "time": "14:25",
+      "timestamp": "1722461151.077279",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think this can be solved by nested focus traps, but i'm not sure how we can do that easily since we implemented our own focus trap in Pollen.\n\nThe modal component traps focus using `keydown` and `focusin` events. I wonder if we can stop event propagation on the overlay component?",
+      "time": "14:37",
+      "timestamp": "1722461849.007689",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "hm so I guess the issue is two-fold:\n1. the focus trapping discussed above\n2. the overlay that should be rendered when double clicking a cell is being covered by the modal (so even if we weren’t focus trapping you wouldn’t be able to see your changes) :sad-pikachu:",
+      "time": "14:47",
+      "timestamp": "1722462438.932759",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Is the overlay component rendered within the modal?",
+      "time": "14:57",
+      "timestamp": "1722463033.393869",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "It’s rendered in a portal looks like, so no",
+      "time": "14:58",
+      "timestamp": "1722463109.283819",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I see. Yea, so i think we need a way to pause the focus trap of the modal and have the overlay trap the focus.\nFor 2, can we change the z-index to move the overlay above the modal :thinking_face:",
+      "time": "15:02",
+      "timestamp": "1722463355.754619",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "yeah that makes sense @Xindi Xu!@Liam Callanan would it be possible to make this change in Pollen (enabling pausing focus trapping in `Modal`)?\n\nFor updating the styling of the overlay for a cell in `Spreadsheet` this should be pretty straightforward — tested locally and yeah updating z-index fixes it",
+      "time": "17:52",
+      "timestamp": "1722473556.872589",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-07-31.json",
+    "message_count": 8,
+    "start_time": "1722460700.502479",
+    "end_time": "1722473556.872589",
+    "is_thread": true
+  }
+}

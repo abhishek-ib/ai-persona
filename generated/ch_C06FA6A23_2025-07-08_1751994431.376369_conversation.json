@@ -1,0 +1,28 @@
+{
+  "id": "ch_C06FA6A23_2025-07-08_1751994431.376369_conversation",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "conversation",
+  "participants": [
+    "sitaram"
+  ],
+  "messages": [
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "Hi team,\nFollowing up on the earlier discussion (https://instabase.slack.com/archives/C0547G8P0F5/p1751364720875639) around improving service reliability and handling node restarts more gracefully:\nWe've now split the *default nodegroup* into two:\n• *Default nodegroup* – for highly available (HA) services\n• *Critical nodegroup* – for singleton or non-HA workloads\nAll singleton or non-HA services have been migrated to the *critical nodegroup*. The guiding principle going forward is:\n> The *default nodegroup* should be resilient to node restarts, regardless of the cause, by following HA best practices.\nThis separation allows us to perform AMI updates on the default nodegroup *even outside of maintenance windows*, while updates to the critical nodegroup will only occur *during scheduled maintenance*.\n\n## What's Next\nThe *long-term goal* is to make all services HA and migrate them back to the *default nodegroup*. We still need help to achieve this, and help is needed.\nNow when we add New Services\n• If your service *is HA*, which it should be ideally,  goes to the *default nodegroup* — no additional configuration needed.\n• If your service *is not HA or is a singleton*, explicitly assign it to the *critical nodegroup* using `nodeAffinity`.\nCurrent Services in the Critical Nodegroup\n1. Mesh Manager\n2. License Service\n3. Job Service\n4. OpenSearch (StatefulSet)\n5. Redis Persistent (StatefulSet)\n6. Search TService\n7. Weaviate (StatefulSet)\nLet us know if you have questions or need help reviewing a service's deployment setup.",
+      "time": "10:07",
+      "timestamp": "1751994431.376369",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-07-08.json",
+    "message_count": 1,
+    "start_time": "1751994431.376369",
+    "end_time": "1751994431.376369",
+    "is_thread": false
+  }
+}

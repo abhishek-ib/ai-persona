@@ -1,0 +1,235 @@
+{
+  "id": "ch_C0516UPPMT3_2023-05-22_1684747833.569929_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Varun Nandan",
+    "vineeth",
+    "Siddhant",
+    "Eric Han",
+    "Rakesh",
+    "avi",
+    "Vasu"
+  ],
+  "messages": [
+    {
+      "sender": "Varun Nandan",
+      "user_id": "UKLRUHCUF",
+      "message": "Hi Team, I was trying to utilise the builder app in UAT environment for 10-K documents. I’m getting the following exception in the Classification step.\ncc: @avi @Shubham @Nithin",
+      "time": "02:30",
+      "timestamp": "1684747833.569929",
+      "is_reply": false
+    },
+    {
+      "sender": "Varun Nandan",
+      "user_id": "UKLRUHCUF",
+      "message": "Documents used can be found here: https://instabase.com/ib_solutions/solutions/fs/instabase-solutions/pre-built/Annual_Reports/Documents/downloaded%20AR/10K_Documents/\n\nLeave out the documents greater than 10MB",
+      "time": "02:32",
+      "timestamp": "1684747920.043729",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Nandan",
+      "user_id": "UKLRUHCUF",
+      "message": "",
+      "time": "02:33",
+      "timestamp": "1684748002.730619",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Trying it out",
+      "time": "02:35",
+      "timestamp": "1684748126.171619",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Running into this too. @vineeth, any ideas what may be happening? Wonder if there's something specific with these files?\n\nIt seems to work with other files",
+      "time": "03:35",
+      "timestamp": "1684751746.865729",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Not sure, looks like something on the UI side?",
+      "time": "03:37",
+      "timestamp": "1684751855.955919",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Trying a smaller subset of the files to see if I can identify which one is causing issues. It's one of these, trying to see if I can bisect again and find the problematic one.",
+      "time": "03:59",
+      "timestamp": "1684753176.549959",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Seems like 1 of these files are failing digitization causing this issue.",
+      "time": "04:32",
+      "timestamp": "1684755160.695799",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Seems like this file is causing an issue. Could we do the following:\n1. @Varun Nandan, please drop this file and try to create the builder project, it should work to unblock you. Let us know once you've been unblocked.\n2. @vineeth, who should we reach out to on the frontend side to resolve this? The file seems to fail digitization causing this issue",
+      "time": "04:48",
+      "timestamp": "1684756087.173999",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Not sure adding @Vasu he might have some context too",
+      "time": "04:48",
+      "timestamp": "1684756139.006039",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "@vineeth This seems like UI is trying to read something from the model result while classifying, and getting a key error looking at the above ss",
+      "time": "04:51",
+      "timestamp": "1684756279.335729",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "@Varun Nandan Which environment are you working with?",
+      "time": "04:52",
+      "timestamp": "1684756366.941979",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "This is in UAT",
+      "time": "04:52",
+      "timestamp": "1684756378.589119",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "It only happens with this one file from what I see",
+      "time": "04:53",
+      "timestamp": "1684756391.842659",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Checking",
+      "time": "04:53",
+      "timestamp": "1684756398.890969",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Getting a deadline exceeded from model-service while indexing this document",
+      "time": "05:19",
+      "timestamp": "1684757983.963059",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Will have a look in sometime",
+      "time": "05:21",
+      "timestamp": "1684758067.015449",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Thanks team.\n@avi can you attach the problematic sample file to the ticket?\n\nI change the ticket type to a bug -- bug ticket is always high priority, please prioritize to address these bugs and make sure we handle error gracefully. In this case, if digitization failed for a file, we should still be able to use the rest of the files, and return clearly what file fails.",
+      "time": "07:04",
+      "timestamp": "1684764257.319469",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "@Kerry I’ll have team investigate if we can do this. Not 100% sure if it’ll require a larger refactor to how we’re loading digitized files.",
+      "time": "07:49",
+      "timestamp": "1684766971.991599",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Thanks. cc @Rakesh here :point_up: ideally we handle digitization failure in the same way across chat and build app. a lot of time backend needs to return the right error state for the frontend to move forward",
+      "time": "08:25",
+      "timestamp": "1684769111.366759",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "@Kerry\nChecked its the same API and digitization that we trigger here. For chat mode, yes we can continue chatting with docs that succeeded, we can replicate same for build mode.\nI was also interested to check what causes the failure here - its the indexing bit.\nI checked a bit more here and see that the file that consistently fails is the  file `NASDAQ_KELYA_2020.pdf` attached in this thread.\n@Siddhant - can you check on what causes the failure - either its the collective time across all index addition across chunks (whether its weaviate batch call that times out OR the combined embedding calls take time) ?\n\nAlso @Kerry is there a rough guideline on largest file (roughly pages - should translate into tokens) that we support  in AIhub ? We may need to tune timeouts to handle that largest size.",
+      "time": "09:31",
+      "timestamp": "1684773110.470459",
+      "is_reply": true
+    },
+    {
+      "sender": "Siddhant",
+      "user_id": "U02V2C0DFQD",
+      "message": ":eyes:",
+      "time": "19:38",
+      "timestamp": "1684809529.448839",
+      "is_reply": true
+    },
+    {
+      "sender": "Siddhant",
+      "user_id": "U02V2C0DFQD",
+      "message": "> Getting a deadline exceeded from model-service while indexing this document\nThis one was because of model load timeout: https://aihub-dev-1.aws.sandbox.instabase.com/jaeger/trace/6fc7f5ea841446f0\n\nFrom what we are seen - these are transient errors. And this incident was right on the cusp of a new deployment yesterday,",
+      "time": "19:46",
+      "timestamp": "1684809971.875569",
+      "is_reply": true
+    },
+    {
+      "sender": "Siddhant",
+      "user_id": "U02V2C0DFQD",
+      "message": "Regarding the file `NASDAQ_KELYA_2020.pdf` -- there is something wrong with weaviate. The model service RPC call exceeds deadline after 235 secs. However, the LLM calls are taking just 10s of seconds (summation over all). So there is some error in weaviate while adding this document.\n\nhttps://aihub.uat.instabase.com/grafana/explore?orgId=1&left=%7B%22datasource%22:%22PC9A[…]ge%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D (https://aihub.uat.instabase.com/grafana/explore?orgId=1&left=%7B%22datasource%22:%22PC9A941E8F2E49454%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22PC9A941E8F2E49454%22%7D,%22query%22:%2298905360bb87680d%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D)",
+      "time": "20:08",
+      "timestamp": "1684811288.972109",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Let me get back to you on limit; currently i think there's only a size limit (25MB). We can set a default timeout first, i think 5 minutes should be max.",
+      "time": "20:10",
+      "timestamp": "1684811409.918949",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Let’s reproduce this error in dev sandbox @Siddhant so we can narrow down further. Also to confirm if this is more related to size of doc. We can try much larger doc as well.",
+      "time": "20:25",
+      "timestamp": "1684812339.395539",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-05-22.json",
+    "message_count": 26,
+    "start_time": "1684747833.569929",
+    "end_time": "1684812339.395539",
+    "is_thread": true
+  }
+}

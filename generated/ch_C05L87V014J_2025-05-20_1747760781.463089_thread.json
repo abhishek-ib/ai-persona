@@ -1,0 +1,101 @@
+{
+  "id": "ch_C05L87V014J_2025-05-20_1747760781.463089_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "alex.zhou"
+  ],
+  "messages": [
+    {
+      "sender": "alex.zhou",
+      "user_id": "U083DU4JNJW",
+      "message": "Hi team, I got an `docker: no port specified: : <empty>` for webpack log on crafting. Checking the error, `--publish` seems to be unspecified, anyone has ideas?",
+      "time": "10:06",
+      "timestamp": "1747760781.463089",
+      "is_reply": false
+    },
+    {
+      "sender": "alex.zhou",
+      "user_id": "U083DU4JNJW",
+      "message": "Following William's solution",
+      "time": "10:11",
+      "timestamp": "1747761110.156019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hey Alex, did you resolve this?",
+      "time": "11:28",
+      "timestamp": "1747765696.351669",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.zhou",
+      "user_id": "U083DU4JNJW",
+      "message": "Yes, and no. Fixed webpack, and replied here https://instabase.slack.com/archives/C05L87V014J/p1747761729781539?thread_ts=1747404563.451399&cid=C05L87V014J",
+      "time": "11:34",
+      "timestamp": "1747766097.547739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mfichman❯ make build-docker run-docker\n#0 building with \"default\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile\n#1 transferring dockerfile: 725B done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0)\n#2 ERROR: unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/docker-hub/library/node/manifests/22.14.0: 403 Forbidden\n\n#3 [auth] sharing credentials for 549230430157.dkr.ecr.us-east-2.amazonaws.com (http://549230430157.dkr.ecr.us-east-2.amazonaws.com)\n#3 DONE 0.0s\n------\n > [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0):\n------\nDockerfile:1\n--------------------\n   1 | >>> FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0)\n   2 |     \n   3 |     # Ensure that the node_modules from the container does not collide with\n--------------------\nERROR: failed to solve: 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0): failed to resolve source metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0): unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/docker-hub/library/node/manifests/22.14.0: 403 Forbidden\nmake: *** [Makefile:70: build-docker] Error 1```\nI got this",
+      "time": "11:40",
+      "timestamp": "1747766425.593909",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.zhou",
+      "user_id": "U083DU4JNJW",
+      "message": "403 error - restart may fix?\nMy webpack log is now good\n#6 [1/6] FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0@sha256:e5ddf893cc6aeab0e5126e4edae35aa43893e2836d1d246140167ccc2616f5d7 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0@sha256:e5ddf893cc6aeab0e5126e4edae35aa43893e2836d1d246140167ccc2616f5d7)\n#6 resolve 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0@sha256:e5ddf893cc6aeab0e5126e4edae35aa43893e2836d1d246140167ccc2616f5d7 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/node:22.14.0@sha256:e5ddf893cc6aeab0e5126e4edae35aa43893e2836d1d246140167ccc2616f5d7) 0.1s done\n#6 DONE 0.1s",
+      "time": "11:43",
+      "timestamp": "1747766637.281889",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Not sure why the PORT isn't getting set anymore. There was some makefile magic that does that.",
+      "time": "11:45",
+      "timestamp": "1747766710.895969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Maybe it fails when the image can't be built",
+      "time": "11:45",
+      "timestamp": "1747766749.400589",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.zhou",
+      "user_id": "U083DU4JNJW",
+      "message": "Seems node was updated, and the right port wasn't retrieved. Installing new node according to William's steps should fix",
+      "time": "11:47",
+      "timestamp": "1747766826.119879",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK",
+      "time": "11:47",
+      "timestamp": "1747766876.144229",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-05-20.json",
+    "message_count": 10,
+    "start_time": "1747760781.463089",
+    "end_time": "1747766876.144229",
+    "is_thread": true
+  }
+}

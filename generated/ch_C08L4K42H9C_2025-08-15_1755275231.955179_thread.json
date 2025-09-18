@@ -1,0 +1,150 @@
+{
+  "id": "ch_C08L4K42H9C_2025-08-15_1755275231.955179_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "Serena",
+    "Charles"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Charles can you link the relevant line in `job_handler.py` on Github?\n\n@prateek.tenkale can you help provide context?",
+      "time": "09:27",
+      "timestamp": "1755275231.955179",
+      "is_reply": false
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "It should be retry",
+      "time": "09:28",
+      "timestamp": "1755275317.857739",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Did you see a retry endpoint being called",
+      "time": "09:29",
+      "timestamp": "1755275349.428239",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "so, in code it did have coverage under retry and I made changes there. But when I test this out none of this code got triggered starting on line 140:\n```def retry(job_id: Text,\n          username: Text,\n          retry_type: Text = FlowRetryTypes.ALL,\n          check_queue_permissions: bool = False,\n          job_repo_id: str = None) -> Tuple[Dict[Text, Text], Text]:\n  if clients_factory.job_client is None:\n    return None, 'Retrying is not enabled.'\n  if clients_factory.repo_client is None:\n    return None, 'Retrying is not enabled.'\n  if not job_id:\n    return None, 'Please specify a job_id'\n\n  logging.debug(f'Retry Flow request received for {job_id}')\n\n  if not retry_type in FlowRetryTypes.type_options:\n    return None, 'Unknown type specified for retry'\n\n  perms, err = FlowRunPerms.create(\n      username, job_id, clients_factory.account_client,\n      clients_factory.repo_client, clients_factory.job_client)\n  if err:\n    return None, f'{_ACCESS_DENIED} : {err}'\n\n  has_deployment_permissions = False\n  deployment_uuid, err = deployed_solution_util.get_deployment_id_for_job(\n      clients_factory.repo_client, username, job_id, job_repo_id)\n  if err:\n    return None, err\n  if deployment_uuid:\n    app_deployment_dict, err = app_deployment_utils.get_deployment(\n          username, clients_factory.repo_client, deployment_uuid)\n    # audit_log = AuditLogsManagerWeb.create_app_deployment_run_audit_log(\n    #     app_deployment_run_op_type=audit_logs_pb2.AppDeploymentRunOpLog.\n    #     RESUME_DEPLOYMENT_RUN,\n    #     app_deployment_id=deployment_uuid,\n    #     app_deployment_run_id=job_id)\n    # app_deployment_run_op_log = audit_log.audit_log_message.app_deployment_run_op_log\n\n    # Use the update app deployment endpoint to check if the user has manage access to the app deployment\n    user_access_request = repo_service_pb2.CheckRetryDeploymentPermReq(\n        context=context_pb2.Context(username=username),\n        app_deployment_uuid=deployment_uuid,\n        job_id=job_id)\n    _, err = GRPCClient.execute(\n        user_access_request,\n        clients_factory.repo_client.CheckRetryDeploymentPerm)\n    if err:\n      err_msg = f'{_ACCESS_DENIED} : {err}'\n      http_status_code = HTTPStatus.FORBIDDEN\n      audit_log = AuditLogsManagerWeb.create_app_deployment_run_audit_log(\n          audit_logs_pb2.AppDeploymentOpLog.RESUME_DEPLOYMENT_RUN,\n          app_deployment_run_id = job_id,\n          deployment_id=deployment_uuid,\n          deployment_name=app_deployment_dict.get('name'),\n          workspace_id=app_deployment_dict.get('workspace_id'),\n          workspace_name=app_deployment_dict.get('workspace_name'),\n          app_id=app_deployment_dict.get('deployed_solution_id'),\n          app_name=app_deployment_dict.get('deployed_solution_name'),\n          http_status_code=http_status_code,\n          status_message=err_msg)\n      audit_logs_manager.record_audit_log(audit_log)\n      return None, err_msg\n\n    http_status_code = HTTPStatus.OK\n    status_message = f'Resume app deployment run for {job_id} successful'\n    audit_log = AuditLogsManagerWeb.create_app_deployment_run_audit_log(\n          audit_logs_pb2.AppDeploymentOpLog.RESUME_DEPLOYMENT_RUN,\n          app_deployment_run_id = job_id,\n          deployment_id=deployment_uuid,\n          deployment_name=app_deployment_dict.get('name'),\n          workspace_id=app_deployment_dict.get('workspace_id'),\n          workspace_name=app_deployment_dict.get('workspace_name'),\n          app_id=app_deployment_dict.get('deployed_solution_id'),\n          app_name=app_deployment_dict.get('deployed_solution_name'),\n          http_status_code=http_status_code,\n          status_message=status_message)\n    audit_logs_manager.record_audit_log(audit_log)\n\n    has_deployment_permissions = True\n    # If the user has access to the app deployment, we don't need to check queue permissions\n    check_queue_permissions = False\n\n  has_queue_permissions = False\n  if check_queue_permissions:\n    has_queue_permissions, err = deployed_solution_util.is_review_queue_manager_for_job(\n        job_id, username)\n    if err:\n      return None, f'{_ACCESS_DENIED} : {err}'\n\n  is_reviewer = perms.is_reviewer(username=username)\n  # if user is not reviewer and does not have execute permission or queue permission\n  # then don't allow to retry this flow run\n  if not is_reviewer and not perms.can_execute(\n      username=username\n  ) and not has_queue_permissions and not has_deployment_permissions:\n    return None, _ACCESS_DENIED\n\n  status_req = job_service_pb2.GetFlowStatusReq(\n      context=context_pb2.Context(username=username), job_id=job_id)\n  status_resp, err = GRPCClient.execute(\n      status_req, clients_factory.job_client.GetFlowStatus)\n\n  if err:\n    return None, err\n\n  flow_input = FlowV2Input(status_resp.flow_input)\n  is_flow_v3 = flow_input.get_ibmsg_enabled()\n  flow_status = status_resp.flow_status\n  input_dir = flow_input.get_input_dir()\n  if flow_status.progress:\n    input_dir = flow_status.progress.input_dir\n\n  if retry_type == FlowRetryTypes.ALL:\n    proto_retry_type = job_service_pb2.ALL\n  elif retry_type == FlowRetryTypes.STEP_FAILURE:\n    proto_retry_type = job_service_pb2.STEP_FAILURE\n  else:\n    proto_retry_type = job_service_pb2.CHECKPOINT_FAILURE\n\n  if is_flow_v3:\n    # Retry the flow.\n    req = job_service_pb2.RetryFlowReq(\n        context=context_pb2.Context(username=username),\n        job_id=job_id,\n        fail_if_no_tasks=True,\n        retry_type=proto_retry_type)\n    resp, err = GRPCClient.execute(req, clients_factory.job_client.RetryFlow)\n    if err:\n      return None, err\n\n    # Reset update job status - to remove previous 'Flow Completed' message.\n    _, err = job_service_util.update_flow_progress(\n        flow_input, flow_index=0, msg='Running flow', step='flow_v3_resume')\n    if err:\n      return None, err\n\n    return {'status': 'OK'}, None```",
+      "time": "09:30",
+      "timestamp": "1755275443.045559",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Do you see the endpoint getting called though",
+      "time": "09:36",
+      "timestamp": "1755275809.405659",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "It won't actually resume until all docs in the run are shifted to completed",
+      "time": "09:37",
+      "timestamp": "1755275826.997349",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "There should be a field in /status response body called job_ready_to_resume",
+      "time": "09:37",
+      "timestamp": "1755275874.112539",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "I don't, when the submit and continue button is clicked, the only relevant API call I see is PATCH where the job review status is changed to \"completed\". Would you be able to hop on a call later?",
+      "time": "09:41",
+      "timestamp": "1755276062.622089",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Sorry I meant in the run**",
+      "time": "09:41",
+      "timestamp": "1755276098.153089",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Yeah sure we can chat after",
+      "time": "09:41",
+      "timestamp": "1755276103.460219",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "oh like in the logs?",
+      "time": "09:47",
+      "timestamp": "1755276456.333299",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I mean every deployment run will have a set of review entries created for it",
+      "time": "09:48",
+      "timestamp": "1755276514.257249",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "So all of those review entries need to be shifted to completed before retry gets called",
+      "time": "09:48",
+      "timestamp": "1755276533.715309",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "gotcha, are you able to sync in 20 minutes?",
+      "time": "11:02",
+      "timestamp": "1755280968.063099",
+      "is_reply": true
+    },
+    {
+      "sender": "Charles",
+      "user_id": "U02DYSCHQUS",
+      "message": "@prateek.tenkale let me know when you can sync today!",
+      "time": "11:15",
+      "timestamp": "1755281729.418179",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Let’s sync at 11:30?",
+      "time": "11:18",
+      "timestamp": "1755281922.462199",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-08-15.json",
+    "message_count": 16,
+    "start_time": "1755275231.955179",
+    "end_time": "1755281922.462199",
+    "is_thread": true
+  }
+}

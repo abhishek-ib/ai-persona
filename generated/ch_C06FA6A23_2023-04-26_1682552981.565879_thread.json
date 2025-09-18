@@ -1,0 +1,142 @@
+{
+  "id": "ch_C06FA6A23_2023-04-26_1682552981.565879_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Adam",
+    "Heymian",
+    "Gauti"
+  ],
+  "messages": [
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Hi Team, If I make a change in one of the shared-utils. Is there a way to identify which services' `MakeFile,` i have to change and add dependency for `protos and lib`?  I have the following scenarios:-\n• I have introduced a new client inside clients_factory.py using aihub proto.\n• I have added proto dependency in Makefile for `celery-app-tasks, api-server, webapp`. Since these were failing without it.\n• But is there a systematic way to identify all these Makefiles, where we should introduce these dependency.\nCc: @Balaram @Adam",
+      "time": "16:49",
+      "timestamp": "1682552981.565879",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Generally we need to be thoughtful about adding clients, because it’s not only a dependency at the code level, you’re introducing more cross-service dependencies. Can I get some more details\n1. which shared-utils are you adding it to?\n2. What is the client?\n3. Which services do you actually need the client in?",
+      "time": "16:51",
+      "timestamp": "1682553119.935269",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "If you find yourself changing a lot of service’s Makefiles to add a feature, something is probably not plumbed through right",
+      "time": "16:54",
+      "timestamp": "1682553292.304229",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "1. I am adding client in clients-factory-lib. here (https://github.com/instabase/instabase/pull/39819/files#diff-06ac10855fc65cc83fcf5018857d2dafaca516de5ab1b880df894e3e09c09e6aR62)\n2. Its an `aihub_client` which will used to `access aihub_protos` .\n3. Currently, we are only using it in `solution_utils` .\nAlso is it a good practice to initialize a client inside a service directly (solution_utils), if that service is only using it?",
+      "time": "16:58",
+      "timestamp": "1682553533.843959",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "I thought it is best practice to follow : Intialize all the clients in one central place and use it from there.",
+      "time": "17:00",
+      "timestamp": "1682553639.941549",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "This is the protos for the AI Hub Projects right? The server is running in core-platform-service?",
+      "time": "17:01",
+      "timestamp": "1682553687.574959",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Yes correct",
+      "time": "17:01",
+      "timestamp": "1682553711.349569",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "solution_utils is not a service, it’s a python module with utility functions",
+      "time": "17:02",
+      "timestamp": "1682553729.669049",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "clients should always be initialized in a service, it should not be initalized in python utility modules. e.g. clients should be initialized in app-tasks, but not in solution-utils",
+      "time": "17:02",
+      "timestamp": "1682553776.728349",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Sorry my bad, i literally pointed the code function utility. I ll using it in celery-app-task.",
+      "time": "17:03",
+      "timestamp": "1682553802.598169",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "@Gauti I think you are using this in celery-app-tasks. Is that client ever used in api-server as well?",
+      "time": "17:03",
+      "timestamp": "1682553835.122049",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Yes, but in api-server we are intializing it separately. Also, just to add @Heymian points, we have introduced the `aihub-client` in `clients-factory-lib`, but we are intializing it in `celery-app-tasks` only .(worker_util.py (https://github.com/instabase/instabase/pull/39819/files#diff-e8d6f5a463eb0beda7479f7de5c3faac0b68bb7ff7aac6411514d991e3408f43R292))",
+      "time": "17:08",
+      "timestamp": "1682554131.432289",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Got it, skimmed the PR. So basically I think you need to add the new aihub proto dependency to 3 places: solution-utils, app-tasks and api-server right. How did you end up in model-service-sdk and webdriver?",
+      "time": "17:18",
+      "timestamp": "1682554699.386529",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "That's where I am confused whether I should add the dependency in those services or not?\nLast time when I tried pushing my changes to aihub branch with client changes, it started breaking other services like runner-service. So I am being extra conscious this time and added it in other services which have listed client-factory-lib as dependency.\nBut I want to confirm, whether we should add it in those two or any other places?\nAlso is there a way to identify dependencies across services to add it in Makefile.",
+      "time": "17:23",
+      "timestamp": "1682555016.091379",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "You’ll need to add to services that would invoke the method that you’re calling in solution-utils which you’ll have to do this by manual inspection. I would not think that webdriver for example would have a dependency on solution-utils, and if there is likely it’s a copy paste mistake in the Makefile. Building all the services should help you catch missing dependencies, but since this is python and there’s no compilation, you sometimes need to run code (e.g. regression tests) that touch the function to catch errors.",
+      "time": "22:00",
+      "timestamp": "1682571639.472349",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-04-26.json",
+    "message_count": 15,
+    "start_time": "1682552981.565879",
+    "end_time": "1682571639.472349",
+    "is_thread": true
+  }
+}

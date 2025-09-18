@@ -1,0 +1,117 @@
+{
+  "id": "ch_C0976HB6ZPT_2025-08-19_1755624228.026999_thread",
+  "type": "channel",
+  "channel_name": "proj-agent-mode",
+  "conversation_type": "thread",
+  "participants": [
+    "jordy.vlan",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "@Anil github issue (https://github.com/googleapis/python-genai/issues/1148) w/ the implicit caching w/ response schemas",
+      "time": "10:23",
+      "timestamp": "1755624228.026999",
+      "is_reply": false
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "The issue responses make it seem more like a user error.",
+      "time": "10:33",
+      "timestamp": "1755624785.682589",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Also:\n> *Implicit caching*: The minimum input token count for context caching is 1,024 for 2.5 Flash and 4,096 for 2.5 Pro.\nSo we need to make sure we make this total :stuck_out_tongue_winking_eye: for single page documents likely we do not hit the cache",
+      "time": "10:33",
+      "timestamp": "1755624820.921889",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Larger question: should we look into *EXPLICIT* *context caching*, though requires at least 1K tokens\nhttps://ai.google.dev/gemini-api/docs/caching?lang=python#explicit-caching\nhttps://ai.google.dev/gemini-api/docs/caching?lang=python#considerations\n\n> Context pricing = /4 of original pricing, though additional storage cost PER HOUR!\n$0.31, prompts <= 200k tokens\n$0.625, prompts > 200k\n$4.50 / 1,000,000 tokens per hour (storage price)",
+      "time": "10:35",
+      "timestamp": "1755624948.675789",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Perhaps the issue here is that Google places the response format at the start of their internal prompt building and thus invalidating the caching mechanism ;/",
+      "time": "10:36",
+      "timestamp": "1755624971.669639",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "hmm yeah i was trying this as well, and only w/ fields running serially and w/ no response schema do i get implicit caching to work",
+      "time": "10:36",
+      "timestamp": "1755625015.331319",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "even when using the same response schema?",
+      "time": "10:37",
+      "timestamp": "1755625035.568519",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "(though I understand the use-case of using different schemas :stuck_out_tongue_winking_eye: )",
+      "time": "10:38",
+      "timestamp": "1755625091.743719",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "haven't tried with the same one yet!",
+      "time": "10:38",
+      "timestamp": "1755625105.276439",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "With explicit context caching this should be likely feasible",
+      "time": "10:38",
+      "timestamp": "1755625124.739479",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "i was implementing reasoning fields w/o structured output which was our first thought, but going to add response schema since we need for provenance and all, so i can see if it works w/ the same one but yeah, seems like explicit context caching might be the way to go",
+      "time": "10:39",
+      "timestamp": "1755625186.557139",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "an alternative design decision would be not to provide provenance for reasoning fields? IMHO the answers would be abstractive, so it would not make much sense to try and point to evidence (instead of the answer), which might be super scattered across pages even.",
+      "time": "10:40",
+      "timestamp": "1755625259.665359",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0976HB6ZPT",
+    "channel_name": "proj-agent-mode",
+    "date_file": "2025-08-19.json",
+    "message_count": 12,
+    "start_time": "1755624228.026999",
+    "end_time": "1755625259.665359",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "id": "ch_C06FA6A23_2024-08-27_1724788059.129489_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "tony.shi",
+    "pauline.comising",
+    "Elan Sharony"
+  ],
+  "messages": [
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "When running AI Hub apps locally, I seem to be missing permissions related to running validations. Is there another aws account that has these permissions? I currently do have access to the file system.\n\n```Error from execute_step:apply_checkpoint, error:Exception occured while running step s4 apply_checkpoint: An error occurred (AccessDeniedException) when calling the Invoke operation: User: arn:aws:iam::083423824311:user/S3DogfoodUser is not authorized to perform: lambda:InvokeFunction on resource: arn:aws:lambda:us-west-1:083423824311:function:insan-use2-local-testing-default-udf:2 because no identity-based policy allows the lambda:InvokeFunction action ```",
+      "time": "12:47",
+      "timestamp": "1724788059.129489",
+      "is_reply": false
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "You'll need to provide separate AWS creds to access the instabase-dev AWS lambda environment. Here's a doc which walks through the steps: https://docs.google.com/document/d/1YA1mqwNzrxFUN2m1hLT3-IooyJ6lPvShug76mL6A2Pg/edit#heading=h.410iwzj43cpb",
+      "time": "12:52",
+      "timestamp": "1724788326.545189",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "This seems to cause issues when aihub looks for the uploaded files. I suspect this might be due to config conflits between using instabase baseEng for fs and instabase-dev power user for lambdas?  Do you comment out that section of the code and hard code it?\n\n```Level    : ERROR\nTime     : 2024-08-27 16:34:23,623\nMessage  : Uncaught exception in webserver while handling request: \n           Error=[Errno 2] No such file or directory.\n           \nTraceback:\n-----------\nTraceback (most recent call last):\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/utils/web/handler_util_v2.py\", line 410, in inner_func\n    return f(*args, **kwargs)\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/utils/oauth2/oauth2.py\", line 225, in wrapped_f\n    return f(*args, **kwargs)\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/utils/license/license.py\", line 58, in wrapper_f\n    return f(*args, **kwargs)\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/api_server_apps/handler/api/v2/aihub/projects.py\", line 2326, in post\n    passed_file_limit = _confirm_input_file_limit(input_dir, file_client,\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/api_server_apps/handler/api/v2/aihub/projects.py\", line 134, in _confirm_input_file_limit\n    list_dir_info, err = ibfile.list_dir(\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/content/filehandle/stats_utils.py\", line 128, in stats_wrapper\n    raise e\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/content/filehandle/stats_utils.py\", line 121, in stats_wrapper\n    resp, err = func(*args, **kwargs)\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/content/filehandle/ibfile.py\", line 260, in list_dir\n    tree_resp = file_client.list_dir(\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/utils/rpc/client.py\", line 78, in __get_proxy_method__\n    return self.__method_call__(method, *args, **kwargs)\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/utils/rpc/file_client.py\", line 331, in __method_call__\n    return self._grpc_method_call(grpc_helper_method, *args, **kwargs)\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/utils/rpc/file_client.py\", line 325, in _grpc_method_call\n    return helper_func(req)\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/utils/rpc/file_client.py\", line 788, in _list_dir\n    nodes.append(_node_info_v2_to_v1(v2_node, treq.path))\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/utils/rpc/file_client.py\", line 267, in _node_info_v2_to_v1\n    rel_path = os.path.relpath(v2_node_info.name.strip('/'), dir_path.strip('/'))\n  File \"/Users/tonyshi/.pyenv/versions/3.9.17/lib/python3.9/posixpath.py\", line 472, in relpath\n    start_list = [x for x in abspath(start).split(sep) if x]\n  File \"/Users/tonyshi/.pyenv/versions/3.9.17/lib/python3.9/posixpath.py\", line 380, in abspath\n    cwd = os.getcwd()\nFileNotFoundError: [Errno 2] No such file or directory;\n\nPath      : /Users/tonyshi/instabase/webserver/api-server/build/py/instabase/utils/web/handler_util_v2.py:414\nProcess   : MainProcess\nThread    : ThreadPoolExecutor-0_2\nTrace ID  : (none provided)```",
+      "time": "13:36",
+      "timestamp": "1724791007.613089",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Ah that makes sense, I haven’t tried to set up lambda locally since we started using baseEng for fs creds\n\nCc @raman.goel do you know how we can leverage lambda AWS creds in api-server/app-tasks separate from those used by fs?",
+      "time": "14:21",
+      "timestamp": "1724793685.353619",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "@pauline.comising found the solution!\n\ndistributed-tasks/celery/app-tasks/deployment/local/docker-env.json\nwebserver/api-server/deployment/local/docker-env.json\n\nShe configures the docker-env.json files separately for app-tasks and api-server so that those 2 services use the instabase-dev power user creds while the others use instabase baseEng.",
+      "time": "14:27",
+      "timestamp": "1724794050.275359",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Glad it workss, and for added detail- since the s3 dogfood aws credentials are for core-platform-service, setting it for just that service or in base/env-local should be equivalent",
+      "time": "14:44",
+      "timestamp": "1724795058.083579",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-08-27.json",
+    "message_count": 6,
+    "start_time": "1724788059.129489",
+    "end_time": "1724795058.083579",
+    "is_thread": true
+  }
+}

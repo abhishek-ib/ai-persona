@@ -1,0 +1,168 @@
+{
+  "id": "ch_C06FA6A23_2020-02-06_1581004003.375000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Aaron Tami",
+    "Chetan",
+    "Jonathan Shih",
+    "georgia chestnuts rust-ing on an open fire",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "georgia chestnuts rust-ing on an open fire",
+      "user_id": "ULA3N12G2",
+      "message": "Hi team :wave: working on a few questions for BofA and wondering if it's possible to write a UDF or add some config logic to map records based on if a barcode is found on the page. For example, if barcode is found on a page, this is 1 record.  (cc: @Jonathan Shih )",
+      "time": "07:46",
+      "timestamp": "1581004003.375000",
+      "is_reply": false
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "I'll look into this and see what I can do",
+      "time": "08:05",
+      "timestamp": "1581005116.375100",
+      "is_reply": true
+    },
+    {
+      "sender": "georgia chestnuts rust-ing on an open fire",
+      "user_id": "ULA3N12G2",
+      "message": "I'm just wondering if this is generally possible to create.. not if we can do it right now through a preexisting UDF.",
+      "time": "08:07",
+      "timestamp": "1581005226.375300",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "I see. Yeah let me take a look and see if we are actually storing the required info",
+      "time": "08:08",
+      "timestamp": "1581005303.375500",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "Btw @georgia chestnuts rust-ing on an open fire do you have some examples of docs with barcodes?",
+      "time": "08:30",
+      "timestamp": "1581006620.375700",
+      "is_reply": true
+    },
+    {
+      "sender": "georgia chestnuts rust-ing on an open fire",
+      "user_id": "ULA3N12G2",
+      "message": "Not right now - this is a question that came up from a demo Anant gave to BofA. The exact question is: \"Can IB identify Bar codes? Would IB be able to separate documents using bar codes?\"",
+      "time": "08:31",
+      "timestamp": "1581006660.375900",
+      "is_reply": true
+    },
+    {
+      "sender": "georgia chestnuts rust-ing on an open fire",
+      "user_id": "ULA3N12G2",
+      "message": "I haven't talked with this person before but this question came out of the demo so trying to give them an answer and then can meet with them to learn more.",
+      "time": "08:31",
+      "timestamp": "1581006683.376100",
+      "is_reply": true
+    },
+    {
+      "sender": "georgia chestnuts rust-ing on an open fire",
+      "user_id": "ULA3N12G2",
+      "message": "For the first question I have this answer:\n• Using Instabase’s Refiner v5 tool, you can extract the image of a barcode when provided the expected barcode region.",
+      "time": "08:32",
+      "timestamp": "1581006748.376400",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "Yes refiner can definitely be used for this. I just wanted to make sure that we have access to the barcodes extracted by Abbyy, so we might be able to get them earlier on. @Chetan do you know anything about this?",
+      "time": "09:26",
+      "timestamp": "1581010013.380000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "I don’t believe barcodes have been ported to refiner-v5 (@Erick can you confirm)?",
+      "time": "09:43",
+      "timestamp": "1581010991.381200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "I’m also not sure how well the “barcode find” works, but our barcode decode (assuming common formats) works pretty well",
+      "time": "09:43",
+      "timestamp": "1581011004.381400",
+      "is_reply": true
+    },
+    {
+      "sender": "georgia chestnuts rust-ing on an open fire",
+      "user_id": "ULA3N12G2",
+      "message": "@Chetan are there any docs on this?",
+      "time": "09:45",
+      "timestamp": "1581011124.382900",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "I can easily add a udf for qr. haven’t played too much with that feature though. We might even be able to auto detect too, in which case, this would be pretty straightforward",
+      "time": "09:45",
+      "timestamp": "1581011126.383100",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "I can check this out around 10:30",
+      "time": "09:46",
+      "timestamp": "1581011164.383800",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Wow I misread this — barcodes are not a docops thing (mistook for qr codes). @Aaron Tami seems to have created a bunch of those commits.\n\nI’ve never used it, and it seems like you can just add a process files config of `\"detect_barcodes\": true`  and you could use that in some kind of map records script.\n\n*As for decoding the barcode contents in refiner 5 — that is definitely something we don’t support at the moment*, and depending how that `detect_barcodes` flag works, it would be pretty easy to make a UDF that just extracts any barcodes that mostly overlap with the annotated box. However, you can definitely extract an _image_ of it as @georgia chestnuts rust-ing on an open fire said",
+      "time": "10:38",
+      "timestamp": "1581014319.384000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "ya barcodes are supported in OCR< only with Abbyy, and not all types of barcodes",
+      "time": "10:39",
+      "timestamp": "1581014369.384300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "but most types of barcodes",
+      "time": "10:39",
+      "timestamp": "1581014386.384500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "the udf can just check if any barcodes are present on the ibocr",
+      "time": "10:40",
+      "timestamp": "1581014437.384700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-02-06.json",
+    "message_count": 18,
+    "start_time": "1581004003.375000",
+    "end_time": "1581014437.384700",
+    "is_thread": true
+  }
+}

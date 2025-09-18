@@ -1,0 +1,111 @@
+{
+  "id": "ch_C06FA6A23_2024-03-04_1709579366.051619_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Elan Sharony",
+    "Dominic Fannjiang",
+    "Anil",
+    "andy"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "FYI if APIs don't seem to be passing a trace id from `api-server` to `app-tasks`, UPDATE: Make sure you register your task (https://github.com/instabase/instabase/blob/master/webserver/shared-apps/src/py/instabase/registry/tasks.py)! ~check how you are starting the task from `api-server` . In some places in our code, we have this pattern of doing the following:~\n```job_service_util.start_job(job_id, ...)\ntask = flow_types.FlowTask(job_service_pb2.Task(...))\njob_service_util.update_task(task, username)```\n~But this doesnt seem to pass the trace id to app-tasks.~\n\n~Instead, what we need to do is 1) create a signature of the task (https://github.com/instabase/instabase/blob/master/webserver/shared-apps/src/py/instabase/registry/tasks.py) and 2) start the task like so:~\n```job_service_util.start_job(job_id, ...)\ntask_sig = tasks.<your task signature fn name>.si(...)\njobs_util.run_async_task(current_app, request, task_sig, ...)```\nDoing this will properly pass the tracing to app-tasks.\ncc @Elan Sharony @daniel @pauline.comising @Sayd @Vishnu",
+      "time": "11:09",
+      "timestamp": "1709579366.051619",
+      "is_reply": false
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "sounds like you want to refactor this across the codebase. thanks for volunteering, @Dominic Fannjiang :thank_you::lmaocry:",
+      "time": "12:58",
+      "timestamp": "1709585939.673559",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "thanks for flagging this @Dominic Fannjiang! I'll look to tackle this for our APIs this week",
+      "time": "13:00",
+      "timestamp": "1709586036.331539",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "These are two very different ways of launching tasks\nThe first runs via task scheduler\nThe second runs using celery canvas - which we should avoid",
+      "time": "14:40",
+      "timestamp": "1709592056.540999",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "You should not use the second one unless you have very tiny tasks. Most of the codebase uses the 1st pattern.",
+      "time": "14:41",
+      "timestamp": "1709592092.619299",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Hm so then do you know why tracing is not be propagated in the first method? That is the main reason for me wanting to move away from it. Without tracing, it’s very hard to debug and understand where APIs are slow",
+      "time": "14:44",
+      "timestamp": "1709592258.970459",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Tracing does work - all of the flow. Eg: https://dogfood.instabase.com/jaeger/trace/a5071f1e8c5521e9",
+      "time": "14:48",
+      "timestamp": "1709592503.305549",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Ok the start job is missing tracing context. Let me quickly catch you.",
+      "time": "14:50",
+      "timestamp": "1709592622.067509",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Ok after alot of trail/error, it seems like all you need to do is create the task signature, and you don't need to change the way the job is started. @Anil would you be able to explain this observation?\n\nI think tracing works without adding the code you sent me to `StartJob` because that code already exists in `UpdateTask`",
+      "time": "17:42",
+      "timestamp": "1709602947.421989",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@Dominic Fannjiang the way to create tasks through task scheduler is via method 1\nWe don’t create a signature per se. We create individual tasks and add deps\n\nTask signature method might work but it messes up scheduling. You can use it for testing but we shouldn’t add that to the codebase.",
+      "time": "19:40",
+      "timestamp": "1709610022.167349",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Re: Tracing - StartFlow and the flow paths have tracing being propagated\nStartJob doesn’t have this. I didn’t add to StartFlow - so trying to figure this out.\nLooks like @puneet added for Flow path, will catch him tomorrow to understand what is needed to get it to work.",
+      "time": "19:41",
+      "timestamp": "1709610087.576559",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-03-04.json",
+    "message_count": 11,
+    "start_time": "1709579366.051619",
+    "end_time": "1709610087.576559",
+    "is_thread": true
+  }
+}

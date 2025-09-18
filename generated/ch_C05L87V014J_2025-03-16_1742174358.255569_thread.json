@@ -1,0 +1,44 @@
+{
+  "id": "ch_C05L87V014J_2025-03-16_1742174358.255569_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "I somehow broke the python env in my sandbox (https://instabase.sandboxes.site/sandboxes/serena-w) :disappointed:\n\nnow `api-server` always fails with this error (see screenshot)\n```ImportError: cannot import name 'runtime_version' from 'google.protobuf'```\nhow do i delete my poetry env and re-install dependencies to fix it?\n\n(i'll put what i did to my sandbox in a thread, in case it's helpful)",
+      "time": "18:19",
+      "timestamp": "1742174358.255569",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "1. to remove a feature flag, i needed to run `cd webserver/shared/src/js/webpacked && make build-protos FAST=false`\n    a. i got a *`Poetry was unable to find a compatible version. If you have one, you can explicitly use it via the \"env use\" command.`* error and set `pyenv global 3.9.17` as recommended here (https://instabase.slack.com/archives/C05L87V014J/p1738629930706539?thread_ts=1738628167.417559&cid=C05L87V014J)\n2. almost all files were getting updated correctly, except for the files in `shared-utils/py-utils/typing-utils` bc `grpc_tools` couldn't be found (ss1)\n    a. i ran `poetry shell` as recommended here (https://instabase.slack.com/archives/C05L87V014J/p1741039179693849?thread_ts=1741037961.004999&cid=C05L87V014J)\n    b. still got the `grpc_tools` module not found error :disappointed: \n    c. i gave up and ran `pip install grpcio-tools` within the poetry shell\n    d. then i got a `protoc-gen-mypy: program not found or is not executable` error\n    e. then i ran `pip install mypy-protobuf` to get around this error\n    f. then running `cd webserver/shared/src/js/webpacked && make build-protos FAST=falsed` successfully updated the `shared-utils/py-utils/typing-utils` files! but now `api-server` fails to run :lolcry:",
+      "time": "18:19",
+      "timestamp": "1742174381.337609",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i already tried re-installing dependencies in my poetry env (https://stackoverflow.com/questions/70064449/how-to-force-reinstall-poetry-environment-from-scratch)\n```# inside webserver/api-server\npoetry shell\npoetry env remove $(which python)\npoetry install```\ni also cleared my docker's build cache and tried rebuilding `api-server`, but i still get the same `ImportError: cannot import name 'runtime_version' from 'google.protobuf'` error :sob:",
+      "time": "18:27",
+      "timestamp": "1742174864.486229",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-16.json",
+    "message_count": 3,
+    "start_time": "1742174358.255569",
+    "end_time": "1742174864.486229",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "id": "ch_C06FA6A23_2021-09-03_1630663187.001300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Anil",
+    "Naveen",
+    "Eric Han",
+    "Matt Weaver"
+  ],
+  "messages": [
+    {
+      "sender": "Matt Weaver",
+      "user_id": "U01B8GFNUAC",
+      "message": "Document image preview loading is very very slow on ib.com (http://ib.com) today. Impacting customer demos in that env (switching to demo.instabase.com (http://demo.instabase.com) where i can for now)\nAre there any known issues in the environment?",
+      "time": "02:59",
+      "timestamp": "1630663187.001300",
+      "is_reply": false
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "@Matt Weaver can you share the document that you’re trying to access…",
+      "time": "03:25",
+      "timestamp": "1630664716.001600",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Weaver",
+      "user_id": "U01B8GFNUAC",
+      "message": "any document :slightly_smiling_face: in any flow",
+      "time": "04:20",
+      "timestamp": "1630668026.001800",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "I tried to open a document (~1 MB in size), which was fast (2-3 seconds to render)…",
+      "time": "04:22",
+      "timestamp": "1630668165.002000",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "From instabase.com (http://instabase.com) file service stats  as well, i can see all (99%) requests returning within 1 second… We can hop on a quick call to see if you’re still facing slowness and debug this?",
+      "time": "04:25",
+      "timestamp": "1630668344.002200",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Weaver",
+      "user_id": "U01B8GFNUAC",
+      "message": "https://instabase.com/apps/flow/results/SA_team/demo_new/fs/Instabase%20Drive/Use%20Cases/Consumer%20Lending/out/batch.ibflowresults",
+      "time": "04:25",
+      "timestamp": "1630668348.002400",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Weaver",
+      "user_id": "U01B8GFNUAC",
+      "message": "This ibflowresults specifically is very slow",
+      "time": "04:27",
+      "timestamp": "1630668426.002600",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Weaver",
+      "user_id": "U01B8GFNUAC",
+      "message": "the same binary run on the same document in demo.instabase.com (http://demo.instabase.com) loads in 2 seconds, but is not done loading after 30s in instabase.com (http://instabase.com)",
+      "time": "04:27",
+      "timestamp": "1630668450.002800",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Weaver",
+      "user_id": "U01B8GFNUAC",
+      "message": "and loading each record in the doc takes longer",
+      "time": "04:27",
+      "timestamp": "1630668459.003000",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Strange, this seems to be loading fine for me… Can you try clearing cache and hard refresh maybe?",
+      "time": "04:28",
+      "timestamp": "1630668529.003200",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Weaver",
+      "user_id": "U01B8GFNUAC",
+      "message": "That has helped a bit, but some thumbnails don't load until i've opened the doc in full screen mode.\nthis may be a flow review issue CC @Kerry @Eric Han",
+      "time": "04:31",
+      "timestamp": "1630668707.003400",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hmm, that is very strange, i’ll give it a test now. we didn’t change anything in prod :thinking_face:",
+      "time": "08:02",
+      "timestamp": "1630681336.003800",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "Could be jobservice communication with dbs if file service is looking normal?",
+      "time": "08:09",
+      "timestamp": "1630681797.004200",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i can confirm this is _not_ a problem with flow review. loading takes a bit of time, the grid view’s loading logic is loading from the selected record one record a time (not the record in view / the record people scroll to), whereas when in the doc view the frontend prioritize to load the selected record. That makes the doc view seems getting images back faster, but really this is the slowness in getting the files.\n\n@Matt Weaver, one thing to speed up the grid view - if this is in the July release forward, you add `write_thumbnail` to the process files step. This lets the flow generates smaller thumbnails that help the overall load time for the grid view.\n\nOn my laptop, the images take a while to load. Looking at the console, the content download time is quite long. I’m going to do some research to see if this is my network problem or something with Chrome’s setting.",
+      "time": "08:17",
+      "timestamp": "1630682241.004400",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Should we make write_thumbnail yes by default?",
+      "time": "13:01",
+      "timestamp": "1630699315.004600",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "yes already did for flow v3 :smile: https://github.com/instabase/instabase/pull/21402 we’ll have an updated default OCR configs in the September release",
+      "time": "13:24",
+      "timestamp": "1630700677.004800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-09-03.json",
+    "message_count": 16,
+    "start_time": "1630663187.001300",
+    "end_time": "1630700677.004800",
+    "is_thread": true
+  }
+}

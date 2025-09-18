@@ -1,0 +1,238 @@
+{
+  "id": "ch_C05L87V014J_2025-07-28_1753723137.040809_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "demetr.starshov",
+    "Abhinav"
+  ],
+  "messages": [
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "Hi there,\n\nmy crafting envs are stuck.\nhttps://instabase.sandboxes.site/sandboxes/demetr-sand8?cw=dev is on todays's master, I tried to restart/resync it, still getting 401:\n```ERROR: failed to build: failed to solve: 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.24.4 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.24.4): failed to resolve source metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.24.4 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.24.4): unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/docker-hub/library/golang/manifests/1.24.4: 401 Unauthorized```\nWhat can I do to fix it?",
+      "time": "10:18",
+      "timestamp": "1753723137.040809",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Looking now",
+      "time": "10:54",
+      "timestamp": "1753725262.345069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "But while I do that -- did you check this thread for solutions first?",
+      "time": "10:54",
+      "timestamp": "1753725275.834429",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "Right now I try to find what have I missed from our threads. I recall latest master + restart should have worked :wink:\nhttps://instabase.slack.com/archives/C05L87V014J/p1753403161253539",
+      "time": "10:57",
+      "timestamp": "1753725424.386709",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, no worries. I think there is a problem w/ your AWS roles. I direct-messaged you -- lmk.",
+      "time": "11:08",
+      "timestamp": "1753726130.347829",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Abhinav having trouble with the crafting credentials again. `aws sts get-calller-identity` is not working in Demetr's sandbox, despite a correct config.",
+      "time": "11:31",
+      "timestamp": "1753727483.592189",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```owner@dev:~$ aws sts get-caller-identity        \n\nAn error occurred (InvalidClientTokenId) when calling the GetCallerIdentity operation: The security token included in the request is invalid.```",
+      "time": "11:31",
+      "timestamp": "1753727486.364939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```owner@dev:~$ cat ~/.aws/config \n[profile default]\nregion = us-east-2\ncredential_process = idfed aws 519787998606 crafting-sandbox-role```",
+      "time": "11:31",
+      "timestamp": "1753727502.285899",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```owner@dev:~$ idfed aws 519787998606 crafting-sandbox-role\n{\n\"Version\":1,\n\"AccessKeyId\":\"ASIAXSBOHNWHPEJBMOWG\",\n\"SecretAccessKey\":\"NA...REDACTED...1r\",\n\"SessionToken\":\"FwoGZX...REDACTED...Nuj30Xnr\"\n}```",
+      "time": "11:32",
+      "timestamp": "1753727542.624429",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "FWIW, all of the above is working correctly for me.\n\nSo, maybe @demetr.starshov doesn't have the right link-up to the crafting-sandbox-role? Is this something we need to grant all engineers the right to assume?\n\n(I figure others will have the same problem as Demetr until we fix this)",
+      "time": "11:33",
+      "timestamp": "1753727612.935509",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "Access is not granted to human users. it is granted to pod identity running on the crafting cluster. As long as the pods have same setup, it should work.",
+      "time": "11:39",
+      "timestamp": "1753727981.155769",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Want to take a look for yourself?",
+      "time": "11:43",
+      "timestamp": "1753728222.353069",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "Is it running on same cluster with “instabase” org",
+      "time": "11:43",
+      "timestamp": "1753728226.332519",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "sure",
+      "time": "11:43",
+      "timestamp": "1753728227.222179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://instabase.sandboxes.site/terminal/instabase/demetr-sand8/dev",
+      "time": "11:43",
+      "timestamp": "1753728233.203679",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, AFAIK all the crafting sandboxes run on the same cluster.",
+      "time": "11:44",
+      "timestamp": "1753728248.389689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think there is still a link to the human user -- somehow, it knows that I am <mailto:matt.fichman@instabase.com|matt.fichman@instabase.com> and that I'm assuming \"crafting-sandbox-role.\" I think this is part of the ID federation that Crafting uses.",
+      "time": "11:44",
+      "timestamp": "1753728286.278239",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ref:\n```cs/mfichman❯ aws sts get-caller-identity --profile=default\n{\n    \"UserId\": \"AROAXSBOHNWHIQDYTV5RB:matt.fichman@instabase.com\",\n    \"Account\": \"519787998606\",\n    \"Arn\": \"arn:aws:sts::519787998606:assumed-role/crafting-sandbox-role/matt.fichman@instabase.com\"\n}```",
+      "time": "11:45",
+      "timestamp": "1753728308.911529",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Note how the userID ends with `:<mailto:matt.fichman@instabase.com|matt.fichman@instabase.com>` (and the ARN as well)",
+      "time": "11:45",
+      "timestamp": "1753728326.308929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "My guess is that we need to allow all engineers to assume the crafting-sandbox-role if they are unable to do so now.",
+      "time": "11:47",
+      "timestamp": "1753728436.239719",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "check now. I deleted `default` creds from credentials files",
+      "time": "11:49",
+      "timestamp": "1753728566.190179",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "this is the file `~/.aws/credentials`",
+      "time": "11:50",
+      "timestamp": "1753728622.053409",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "```owner@dev:~$ aws sts get-caller-identity\n{\n    \"UserId\": \"AROAXSBOHNWHIQDYTV5RB:demetr.starshov@instabase.com\",\n    \"Account\": \"519787998606\",\n    \"Arn\": \"arn:aws:sts::519787998606:assumed-role/crafting-sandbox-role/demetr.starshov@instabase.com\"\n}```",
+      "time": "11:51",
+      "timestamp": "1753728663.825599",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "If default creds are in templates or individual sandboxes, they need to be removed.",
+      "time": "11:54",
+      "timestamp": "1753728844.926829",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm, so there was additional state in `~/.aws/credentials` in addition to `~/.aws/config`?",
+      "time": "11:58",
+      "timestamp": "1753729135.645709",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@demetr.starshov looks to be working now",
+      "time": "11:59",
+      "timestamp": "1753729159.001389",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "this should help\nhttps://docs.aws.amazon.com/cli/v1/userguide/cli-configure-files.html",
+      "time": "12:00",
+      "timestamp": "1753729225.104539",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-28.json",
+    "message_count": 27,
+    "start_time": "1753723137.040809",
+    "end_time": "1753729225.104539",
+    "is_thread": true
+  }
+}

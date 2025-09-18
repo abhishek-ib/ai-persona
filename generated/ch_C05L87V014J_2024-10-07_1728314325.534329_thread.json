@@ -1,0 +1,117 @@
+{
+  "id": "ch_C05L87V014J_2024-10-07_1728314325.534329_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "sean.donohoe",
+    "Arek"
+  ],
+  "messages": [
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "@sean.donohoe I see this behavior only on crafting, almost every time i run my own bazel command it seems something else is running\n```Another command (pid=353556) is running. Waiting for it to complete on the server (server_pid=1711)...```",
+      "time": "08:18",
+      "timestamp": "1728314325.534329",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "That's most likely from vscode (it calls some shims under `third-party/bazel/go` for indexing and whatnot). If you aren't running vscode then are you trying to run some builds in parallel? Bazel only allows one side-effecting command to run at a time to ensure hermetic builds and protection against race conditions with the artifact cache",
+      "time": "08:25",
+      "timestamp": "1728314714.304749",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "No its probably the vscode haha",
+      "time": "08:25",
+      "timestamp": "1728314738.453559",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Is there any way to speed up indexing (especially since not many files are being changed quickly)? or avoid this altogether?",
+      "time": "08:25",
+      "timestamp": "1728314755.469969",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "aight in that case it might be good to restart the vscode processes in your sandbox (I can take care of that for you, I'd like to take a quick peek at your resource consumption before doing so)\n\nfor a potential fix, could you try adding `build --incompatible_strict_action_env` to a file `/home/owner/.bazelrc` ? I've been investigating some behavior around unnecessary rebuilds of protobuf that I think could be happening to you too, and adding this flag helps mitigate those rebuilds which in turn saves a ton of cpu",
+      "time": "08:28",
+      "timestamp": "1728314896.871539",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "oh wow yeah, if you take a look at `htop` on your sandbox there are some bazel processes using upward of 500% cpu :grimacing:",
+      "time": "08:29",
+      "timestamp": "1728314968.968829",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "(also `ps aux | grep bazel` shows all the bazel processes if you're curious)",
+      "time": "08:31",
+      "timestamp": "1728315072.737289",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "damn thats crazy",
+      "time": "08:33",
+      "timestamp": "1728315232.930529",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "lol yeah, idk how it gets so out of control\n\nI just reset your bazel state, hopefully that helps clear up some of this",
+      "time": "08:34",
+      "timestamp": "1728315297.222019",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "ok tysm",
+      "time": "08:35",
+      "timestamp": "1728315310.538989",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "If i run into this again, how can I do the reset?",
+      "time": "08:35",
+      "timestamp": "1728315322.073539",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "np :slightly_smiling_face: also looks like you're getting close to full disk utilization, I'd recommend running `ncdu --exclude-kernfs /` soon to help identify some parts of your filesystem that can be cleaned up\n\nI reset yours via `sudo kill -9 <bazel-server-pid> && bazel clean --expunge`, obtaining `bazel-server-pid` from either `bazel info server_pid` or the output\n```Another command (pid=353556) is running. Waiting for it to complete on the server (server_pid=1711)...```",
+      "time": "08:37",
+      "timestamp": "1728315437.200359",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-10-07.json",
+    "message_count": 12,
+    "start_time": "1728314325.534329",
+    "end_time": "1728315437.200359",
+    "is_thread": true
+  }
+}

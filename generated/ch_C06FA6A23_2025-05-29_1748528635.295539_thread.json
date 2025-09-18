@@ -1,0 +1,101 @@
+{
+  "id": "ch_C06FA6A23_2025-05-29_1748528635.295539_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "pauline.comising"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Hmm looks like the run is marked as pass despite 19 suite failures, and the logs cutoff before i can see whether `data-api-utils` worked. Considering I've locally tested the test suite and had a prev run where all other suites passed, I'm inclined to keep this pass and merge after some reviews, but let me know if there's a better practice i should follow here @Cody Boggs",
+      "time": "07:23",
+      "timestamp": "1748528635.295539",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":thonk: Logs cut off?\nThat's bizarre",
+      "time": "07:24",
+      "timestamp": "1748528652.738089",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "if you don't mind keeping it open for a bit, I'd like to debug that a bit, it's weird",
+      "time": "07:24",
+      "timestamp": "1748528675.997599",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "oo i've seen this often with the top getting cut off, and it's been  awhile since i first noticed some button like `view full logs` have disappeared from that screenshot view, but I imagine there's some other jenkins view where I could find em?",
+      "time": "07:25",
+      "timestamp": "1748528759.724949",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "ah yep, I'm happy to keep it open for a bit longerr",
+      "time": "07:26",
+      "timestamp": "1748528777.419589",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "They shouldn't get truncated ever, I thought. :sweat_smile: one moment please! :smile:",
+      "time": "07:26",
+      "timestamp": "1748528797.038489",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@pauline.comising I'm able to see the full log for run #7 in Jenkins, but in case your browser isn't playing nice (it just loads everything super inefficiently through the Jenkins UI :sob:) Here's a quick query to look at them in Loki: https://grafana.infra.instabase.com/explore?schemaVersion=1&panes=%7B%22y1b%22:%7B%22datas[…]2table%22,%22labelFieldName%22:%22labels%22%7D%7D%7D%7D (https://grafana.infra.instabase.com/explore?schemaVersion=1&panes=%7B%22y1b%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bservice_name%3D%60jenkins-preprod%60%7D%20%7C%20ci_pipeline_id%20%3D%20%60instabase%2FPR-70859%60%20%7C%20ci_pipeline_run_number%20%3D%207%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22code%22,%22direction%22:%22forward%22,%22maxLines%22:3000%7D%5D,%22range%22:%7B%22to%22:%221748469187032%22,%22from%22:%221748455241495%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22columns%22:%7B%220%22:%22Time%22,%221%22:%22Line%22%7D,%22visualisationType%22:%22table%22,%22labelFieldName%22:%22labels%22%7D%7D%7D%7D)",
+      "time": "08:01",
+      "timestamp": "1748530912.619809",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Or one that checks for case-insensitive `err|fail` strings: https://grafana.infra.instabase.com/explore?schemaVersion=1&panes=%7B%22y1b%22:%7B%22datas[…]22logs%22,%22labelFieldName%22:%22labels%22%7D%7D%7D%7D (https://grafana.infra.instabase.com/explore?schemaVersion=1&panes=%7B%22y1b%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bservice_name%3D%60jenkins-preprod%60%7D%20%5Cn%7C%20ci_pipeline_id%20%3D%20%60instabase%2FPR-70859%60%20%5Cn%7C%20ci_pipeline_run_number%20%3D%207%5Cn%7C~%5C%22%28%3Fi%29err%7Cfail%5C%22%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22code%22,%22direction%22:%22forward%22,%22maxLines%22:3000%7D%5D,%22range%22:%7B%22to%22:%221748469187032%22,%22from%22:%221748455241495%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22columns%22:%7B%220%22:%22Time%22,%221%22:%22Line%22%7D,%22visualisationType%22:%22logs%22,%22labelFieldName%22:%22labels%22%7D%7D%7D%7D)",
+      "time": "08:03",
+      "timestamp": "1748530996.720119",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "The failures I see at a glance look like bazel tests, but also they seem to be clustered around mypy typechecks. There might be another occurrence of this test in `shared-utils/test-utils/src/test-cmds-mypy.json`",
+      "time": "08:05",
+      "timestamp": "1748531100.813229",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@pauline.comising I actually might have accidentally found the fix for the argument list too long issue. :joy: I'll let you know, but there might be a small fix I can get merged for all affected tests that will make that particular case go away",
+      "time": "14:42",
+      "timestamp": "1748554929.471699",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-05-29.json",
+    "message_count": 10,
+    "start_time": "1748528635.295539",
+    "end_time": "1748554929.471699",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "id": "ch_C08L4K42H9C_2025-05-16_1747408216.651859_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "Serena",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "quick question about human review frontend, do we not display `__model_result` (aihub native apps) because it is a hidden field (denoted by \"__\") or do we acc match the app schema to the results endpoint response?",
+      "time": "08:10",
+      "timestamp": "1747408216.651859",
+      "is_reply": false
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "i ask cuz i wanna know if it's easier to mark any helper fields in the case program as hidden or if it'll work as is",
+      "time": "08:12",
+      "timestamp": "1747408332.166679",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i inspected the elements of the field list -> saw `data-testid=\"FIELD_LIST\"` -> this attribute is applied in `FlowFieldEditor/index.ts`\n\ni investigated this manually, then asked Cursor -> Cursor did a pretty good job! but i'll still type out the explanation from my manual investigation :sweat_smile:\n\ni added `FlowFieldEditor/index.ts` to the context and asked `how does FlowFieldEditor decide what fields to list? how are hidden fields filtered out?`",
+      "time": "12:21",
+      "timestamp": "1747423296.772539",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "• `FlowFieldEditor` calls useFilteredResults (https://github.com/instabase/instabase/blob/efb9f4f/webserver/shared/src/js/webpacked/apps/src/aihub/features/Review/components/SingleDocumentView/helpers.tsx#L392) and lists fields according to the `fields.required` returned by `useFilteredResults`\n• `fields.required` is returned based on `requiredFields`\n    ◦ which is computed from `filteredFields`\n    ◦ which is computed from `resultsByErrorsAndHidden`\n    ◦ which is computed from `resultsByHidden`\n• `resultsByHidden` is computed by useFilteredHiddenFields (https://github.com/instabase/instabase/blob/efb9f4f/webserver/shared/src/js/webpacked/apps/src/aihub/features/Review/components/SingleDocumentView/helpers.tsx#L96), which uses `isHiddenField` to filter the list\n• isHiddenField (https://github.com/instabase/instabase/blob/efb9f4ff1a781c5a42c6fdac12141763be273270/webserver/shared/src/js/webpacked/lib/src/IBUtils/lib/StrUtils.ts#L27) just returns whether the field name starts with `__` \nso @ayesha.ali yes to your first question! and yes, helper fields that start with `__` should be filtered out with the existing FE code",
+      "time": "12:26",
+      "timestamp": "1747423613.906919",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "Sounds good! For now we have no hidden fields in the case program but we can make that change for every field that is not an actual case field",
+      "time": "13:16",
+      "timestamp": "1747426583.656709",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-05-16.json",
+    "message_count": 5,
+    "start_time": "1747408216.651859",
+    "end_time": "1747426583.656709",
+    "is_thread": true
+  }
+}

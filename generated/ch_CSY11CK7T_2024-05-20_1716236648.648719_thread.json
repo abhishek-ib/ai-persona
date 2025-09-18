@@ -1,0 +1,77 @@
+{
+  "id": "ch_CSY11CK7T_2024-05-20_1716236648.648719_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Jessica",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@Serena aihub-validation-udf had a gateway error then timed out twice in a row here: https://cloud.cypress.io/projects/cfhedy/runs/10139/overview/c68b5207-2547-4cad-bc59-bd95b904e224?roarHideRunsWithDiffGroupsAndTags=1\nSandbox state perhaps, or maybe we should increase the timeout here?",
+      "time": "13:24",
+      "timestamp": "1716236648.648719",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think there’s something wrong with nginx/crafting since i see errors in the nginx logs around this test run time",
+      "time": "13:30",
+      "timestamp": "1716237024.644929",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "actually, that should only be a warning, not an error https://serverfault.com/questions/511789/nginx-client-request-body-is-buffered-to-a-temporary-file\n\nlet me take another look",
+      "time": "13:30",
+      "timestamp": "1716237057.424489",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "there were a lot of errors (https://crafting-aihub.test.instabase.com/deployment-manager/logs?deployments=api-server&start_time=1716235460000000000&end_time=1716235465000000000) in `api-server` around this time (1:04:22pm PT), which caused the first attempt in this CI run to get a 502 error\n\nthen later attempts also called `api-server` in the `beforeEach` hook, and those calls timed out bc of the `api-server` issues mentioned above\n\ni haven’t debugged why `api-server` had so many errors yet",
+      "time": "13:36",
+      "timestamp": "1716237402.339779",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "So sandbox state then? :grimacing:",
+      "time": "13:41",
+      "timestamp": "1716237706.265849",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm it seems that we got an `invalid file descriptor` error after trying to read a non-existent file path?\n\nit’s expected that sometimes the `extracted_fields.json` file doesn’t exist, so `api-server` shouldn’t crash in this case…\n\ni see that this was previously discussed here as well https://instabase.slack.com/archives/CV8V33RPV/p1701287288854239?thread_ts=1701276164.780159&cid=CV8V33RPV",
+      "time": "15:20",
+      "timestamp": "1716243642.024089",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we’d need someone from the backend side to investigate, this is outside my realm of expertise :sweat_smile:",
+      "time": "15:26",
+      "timestamp": "1716243992.569269",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-05-20.json",
+    "message_count": 7,
+    "start_time": "1716236648.648719",
+    "end_time": "1716243992.569269",
+    "is_thread": true
+  }
+}

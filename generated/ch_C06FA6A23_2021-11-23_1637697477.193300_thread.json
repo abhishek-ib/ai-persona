@@ -1,0 +1,110 @@
+{
+  "id": "ch_C06FA6A23_2021-11-23_1637697477.193300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Josh Xie",
+    "Xi Cheng",
+    "advait"
+  ],
+  "messages": [
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "Question about retry when calling Instabase APIs:\nI have to add some retry logic to call our APIs when I write the models CI testing (similar to system testing but I try to detect regression in model training scripts instead of regression in our code). For example, sometimes get_job_status would fail intermittently (only observe it twice in last 2 weeks, but I added retry logic right away). I also see intermittent failures in other APIs too such as file service. I think intermittent failures are unavoidable (or failures due to violations of SLA).\nI'm wondering if adding retry is a common practice in our system testing? Do we plan to have SDK in the future so users can specify retry policy, credential management, data marshaling, serialization, etc. in the SDK client?\n(cc: @Xi Cheng)",
+      "time": "11:57",
+      "timestamp": "1637697477.193300",
+      "is_reply": false
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi Josh, thanks for bringing this up! Retry is a common practice to deal with intermittent behaviors and to poll status that gets updated asynchronously. It is common in system tests but I have not made retries default in all interfaces (for context, system tests issue http requests and do not have access to rpc clients) because that may mask some real problem. For example, there is currently an intermittent 502 error on dogfood which is an actual platform-level issue that needs to be fixed, and I think adding retry against it would would not be beneficial.\n\nThe `requests` package already has retry config built into its interface: https://findwork.dev/blog/advanced-usage-python-requests-timeouts-retries-hooks/ and on the RPC client level, we have retry logic built in - check `shared-utils/py-utils/grpc-utils/src/py/instabase/utils/grpc/client.py` . Can you elaborate on the other few things you mentioned, e.g. credential management, data marshaling and serialization? Are they related to retry, or the requests/RPC interfaces?",
+      "time": "16:37",
+      "timestamp": "1637714225.198400",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "Thank you!  @Xi Cheng  the few other things are just benefits of having an Instabase sdk, which can save caller the time to implement their own http call wrappers. I  only mentioned it because I think we need to write some sdk-like code when we implement system test anyway. \n\nI have seen the 502 errors too! Good to know it's already being tracked.",
+      "time": "16:43",
+      "timestamp": "1637714600.198700",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Sound good! I see what you meant. The system tests utilized the public-lib's `ibfile.py` which is a type of sdk we have. Furthermore, the `ibfile.py` in shared-utils is another common SDK for file operations that our flow and other applications uses (but that is built upon file client). System test also has its own SDK-like library called `system_test_user.py` which wraps around http method. I haven't thought about a unifying SDK though because different areas seem to have different need. But we can keep this in our mind.\n\nYes, 502 is a known issue but it is only impacting dogfood/uat, and @Shubham Oli is tracking it.",
+      "time": "16:47",
+      "timestamp": "1637714878.198900",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "I think we can still discover intermittent issues via reviewing stats dashboard/tracing/logs. That shouldn't prevent us from adding retries to make sure the APIs are stable. I do see your point of adding retry for everything wouldn't be beneficial - however we can configure retries to retriable errors only (although I don't know if we can easily distinguish those two currently).",
+      "time": "16:48",
+      "timestamp": "1637714880.199100",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Josh Xie That sounds good - do you know what is the root cause of the intermittent failures? Would be good to understand.",
+      "time": "16:48",
+      "timestamp": "1637714926.199300",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "I didn't keep track all of them. 502 is only one of them. Some other possible root causes for some errors i have seen could be: 1) container restart; 2) I didn't rate limit my tests so I get throttled (or something like that); 3) resources related issues; 4) client library related (JSON serialization issues due to empty response). Those are just some I can remember. After adding retry logic in my tests I stop seeing them so I didn't document them in more details unfortunately...\n\nyeah ibfiles.py and system_test_user.py are good examples. I was writing tests only using http requests library (try not to have dependency to Instabase in Ibformers CI tests; also need to have a clean way to switch between different environments with a API key).",
+      "time": "16:56",
+      "timestamp": "1637715416.199500",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Josh Xie Oh I see, do you see anything in `system_test_user.py` useful that can be extended for your tests as well? If so feel free to include it in your tests as well. We may not be able to change `ibfile.,py` very often because they got shipped to customer and they are using it as well.",
+      "time": "17:00",
+      "timestamp": "1637715652.199800",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "sounds good! Thank you for all the information sharing :slightly_smiling_face: @Xi Cheng! let me check out `system_test_user.py` . We also have some similar wrapper code in Ibformers for different APIs.",
+      "time": "17:06",
+      "timestamp": "1637716010.200100",
+      "is_reply": true
+    },
+    {
+      "sender": "advait",
+      "user_id": "U02EBF84QKB",
+      "message": "hey @Josh Xie! just wanted to mention this here as this may be relevant as well - in building out the on-prem testing framework, we've also planned for allowing polling for endpoints such as job status (current open PR (https://github.com/instabase/instabase/pull/22975)) where you'll be able to define retry logic for any HTTP request in the tests JSON (number of iterations/interval for linear polling). We were originally thinking of this use case for Flows where you'll have to wait for the job to finish. cc @kunal",
+      "time": "17:28",
+      "timestamp": "1637717315.203600",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "@advait nice! I just looked at the PR. Thank you for sharing!",
+      "time": "17:37",
+      "timestamp": "1637717876.204100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-11-23.json",
+    "message_count": 11,
+    "start_time": "1637697477.193300",
+    "end_time": "1637717876.204100",
+    "is_thread": true
+  }
+}

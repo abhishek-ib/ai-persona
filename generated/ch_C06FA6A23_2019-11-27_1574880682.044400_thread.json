@@ -1,0 +1,270 @@
+{
+  "id": "ch_C06FA6A23_2019-11-27_1574880682.044400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Aaron Vontell",
+    "dlluncor",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Getting the following error when attempting to run webdriver locally, any ideas?:\n\n```cd /Users/aaronvontell/Projects/instabase/distributed-tasks/celery/webdriver-tasks/build/py && /bin/bash start-celery-local.sh\n  File \"/Users/aaronvontell/.pyenv/shims/celery\", line 3\n    [ -n \"$PYENV_DEBUG\" ] && set -x\n                      ^\nSyntaxError: invalid syntax\nmake: *** [runlocal] Error 1```",
+      "time": "10:51",
+      "timestamp": "1574880682.044400",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i setup my laptop recently on catalina — haven’t run into this issue",
+      "time": "11:38",
+      "timestamp": "1574883504.049600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "what is PYENV_DEBUG? — by the way I followed the getting started guide and I’m using virtualenv",
+      "time": "11:38",
+      "timestamp": "1574883518.049900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "so haven’t had any experience using pyenv besides for keeping track of which python version to use",
+      "time": "11:38",
+      "timestamp": "1574883532.050400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Hmmm alright, yeah the setup guide now has us using pyenv with no virtualenv I believe (it’s very possible I missed a section)",
+      "time": "11:39",
+      "timestamp": "1574883545.051000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "interesting — never used the full pyenv @Chetan possibly updated the docs to use this — chetan have you gotten all the services to work with pyenv?",
+      "time": "11:43",
+      "timestamp": "1574883796.051200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "I’m still using the virtualenv setup",
+      "time": "11:43",
+      "timestamp": "1574883802.051400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "k just restored the instructions for virtualenv",
+      "time": "11:46",
+      "timestamp": "1574883962.051700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "provided 2 options in the doc (Option 1 being pyenv, Option 2 being virtualenv) — I personally have much more experience with virtualenv so I’m more comfortable using that",
+      "time": "11:46",
+      "timestamp": "1574883988.051900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "why do we do `python $(which celery) -A […]` in webdriver but `celery -A […]` in image-tasks? How does that work at all 0.o?",
+      "time": "11:52",
+      "timestamp": "1574884378.052300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "The error here is expected — `celery` is a bash executable that’s being fed to `python` for some reason. I’ll modify `webdriver`’s startup scripts to call the celery executable directly.",
+      "time": "11:53",
+      "timestamp": "1574884420.052600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "once i merge that you shouldn’t see this error @Aaron Vontell",
+      "time": "11:53",
+      "timestamp": "1574884431.052800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "but @dlluncor any reason why we do `python $(which celery)`?",
+      "time": "11:54",
+      "timestamp": "1574884441.053000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@Chetan awesome, let me know when that PR is ready",
+      "time": "11:55",
+      "timestamp": "1574884540.053200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i have to build webdriver from scratch to test it o.o might take 20-30 mins…",
+      "time": "11:57",
+      "timestamp": "1574884662.053400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "haha alright, no worries",
+      "time": "11:59",
+      "timestamp": "1574884762.053600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@Chetan is it as simple as changing the  `python which celery` to just be `celery`? Tried that and I get `ModuleNotFoundError: No module named 'eventlet'`",
+      "time": "12:13",
+      "timestamp": "1574885625.053900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yup — 0.o worked for me. want to call and we can take a look?",
+      "time": "12:16",
+      "timestamp": "1574885770.054100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Im on a bus so can’t hop on a call XD note that I actually run `runlocal-threadsafe` instead of `runlocal`",
+      "time": "12:17",
+      "timestamp": "1574885846.054300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "hmm that seems to be unrelated / a separate problem i’d say. we’re actually missing `eventlet` from our `requirements_py37.txt` for our dev installation. presumably it should be there if it’s required to run celery in a threadsafe manner…",
+      "time": "12:21",
+      "timestamp": "1574886115.054500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "fix merged.",
+      "time": "12:57",
+      "timestamp": "1574888247.059100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i dont remember exactly why i had made that change to use ‘which celery’ — don’t know why it would cause errors though?",
+      "time": "14:25",
+      "timestamp": "1574893530.059300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i just pulled your fix and re-tested — webdriver-tasks still seems to work for me in the virtualenv which is good",
+      "time": "14:25",
+      "timestamp": "1574893543.059500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "in this case it causes errors because `celery` is an executable that points to a `bash`/`sh` script.",
+      "time": "15:10",
+      "timestamp": "1574896230.059700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "so `python $(which celery)` means python is trying to interpret a bash file.",
+      "time": "15:10",
+      "timestamp": "1574896244.059900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i’m not sure why the old version even works in venv tbh… :man-shrugging: where does your `which celery` point? is it really a python file?",
+      "time": "15:11",
+      "timestamp": "1574896283.060100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Yes all bin files in Python are files",
+      "time": "17:25",
+      "timestamp": "1574904358.060300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "“/Users/davidlluncor/GitHub/venv-instabase37/bin/celery”",
+      "time": "17:26",
+      "timestamp": "1574904366.060500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "that is weird.",
+      "time": "17:33",
+      "timestamp": "1574904838.060700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "how’s that? I’d say most Python binaries are just files — either .py or .pyc files",
+      "time": "17:35",
+      "timestamp": "1574904920.060900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "weird that for `celery==4.3.0` , with pyenv we seem to be getting version where the `celery` executable is bash whereas with venv we get a version that gets one a python file. I would imagine for the same version it should be identical…",
+      "time": "19:18",
+      "timestamp": "1574911084.061200",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-11-27.json",
+    "message_count": 31,
+    "start_time": "1574880682.044400",
+    "end_time": "1574911084.061200",
+    "is_thread": true
+  }
+}

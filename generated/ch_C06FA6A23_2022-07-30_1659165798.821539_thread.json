@@ -1,0 +1,237 @@
+{
+  "id": "ch_C06FA6A23_2022-07-30_1659165798.821539_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "lenny"
+  ],
+  "messages": [
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Folks, not sure where to ask, but are there any load testing that runs flows on dogfood going on recently? The celery queue got backlogged for ~ 30mins (see graph below), and this is affecting system tests (some runs a single flow but the job times out after 10mins).\n\nThe flow dashboard on dogfood shows lots of running flows by golden-testers as well. I don't think they belong to goldens. Can someone clarify?",
+      "time": "00:23",
+      "timestamp": "1659165798.821539",
+      "is_reply": false
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I see a backlog of about 900 running jobs on dogfood now, could be related to https://github.com/instabase/instabase/pull/28770 — taking a look",
+      "time": "05:09",
+      "timestamp": "1659182992.021429",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "ok, a few things going on here:\n1. there are some golden runs that have a failing step (e.g. `004ad591-2eb4-4719-99c4-69cc8397b88b-fetchfiles-0`). we see the failure in the logs, but the step never seems to actually get triggered again — still looking into why that is\n2. the tasks that are clogging up the running queue in the task scheduler are not in the `celery` queue, so they shouldn't count against the concurrency limit — this is a task scheduler bug, I'll have a PR up for it soon\nin the meantime, to unblock dogfood, I'm going to cancel all of the outstanding jobs, which should allow new jobs to run fine.",
+      "time": "05:30",
+      "timestamp": "1659184200.569219",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "dogfood should be unblocked now :white_check_mark:\n\nif this happens again, you can open /api/v1/jobs/cancel_all in your browser to cancel all of the outstanding running/waiting jobs. will look into the 2 issues and follow up",
+      "time": "05:35",
+      "timestamp": "1659184508.856999",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@lenny Thank you so much for looking into this! I see that the queue is mostly cleared, however, the stress test still times out and I see the flows are in \"waiting for resources\" stage - do you know what that means?",
+      "time": "09:08",
+      "timestamp": "1659197333.822659",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "yes, this is the new task scheduler feature we added to limit the number of concurrent jobs that can be running at a time. in this case, it looks like there are some jobs that are getting stuck as \"running\" which is preventing some other jobs from starting",
+      "time": "09:10",
+      "timestamp": "1659197439.446569",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Yes, just saw this. There is no changes made to these flows, and they are supposed to finish really fast.",
+      "time": "09:11",
+      "timestamp": "1659197515.409939",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "yes, weird thing is the goldens ran fine the first few times after we deployed this change, and then stopped...im going to cancel the outstanding running jobs again to unblock dogfood while I investigate further",
+      "time": "09:12",
+      "timestamp": "1659197554.286929",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "It all started from yesterday:\nhttps://jenkins.instabase.com/job/system-stress-test/",
+      "time": "09:12",
+      "timestamp": "1659197558.519879",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "https://github.com/instabase/instabase/pull/28770 the change was merged around noon ET on friday",
+      "time": "09:15",
+      "timestamp": "1659197750.416979",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I see the webdriver queue is very full, so I think these tasks are taking up capacity and preventing other jobs from progressing:",
+      "time": "09:17",
+      "timestamp": "1659197833.521589",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "and I see a lot of these kinds of errors in the webdriver logs:\n\n```[2022-07-30 16:16:52,647: INFO/ForkPoolWorker-2] job-id=2a643a5c-d543-46ba-bca1-0f9c82b9b11a task-id=2a643a5c-d543-46ba-bca1-0f9c82b9b11a-fetchfiles-0 Cache miss in fetching binary=ib_eng/tests/fs/local-nfs-dogfood/tests/system-tests/run_flow_tests/Flow-Sample-1/run_goldens-tester/2022-07-30-05:54:52/2a643a5c-d543-46ba-bca1-0f9c82b9b11a/out/bin/flow-sample-1-2022-04-02-06:57:56.ibflowbin```\nso these tasks get retried many times",
+      "time": "09:19",
+      "timestamp": "1659197941.146129",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I'm going to purge the webdriver queue for now to see if that fixes the next golden/system test run",
+      "time": "09:20",
+      "timestamp": "1659198008.792269",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@lenny Thanks for looking further. The test runs this flow binary: https://dogfood.instabase.com/apps/flow/run/ib_eng/tests/fs/local-nfs-dogfood/tests/sys[…]mple-1/out/bin/flow-sample-1-2022-04-02-06:57:56.ibflowbin (https://dogfood.instabase.com/apps/flow/run/ib_eng/tests/fs/local-nfs-dogfood/tests/system-tests/run_flow_tests/Flow-Sample-1/out/bin/flow-sample-1-2022-04-02-06:57:56.ibflowbin) - the flow is very simple and this is to test some NFS related file operations that are involved in flow running. Let me know if I should recompile the flow? It always runs the same binary and this very flow gets stuck starting from yesterday:",
+      "time": "09:22",
+      "timestamp": "1659198154.628089",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "i don't think you need to recompile the flow — lets see if the next run works now that the webdriver queue is empty",
+      "time": "09:24",
+      "timestamp": "1659198275.853879",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": ":+1:",
+      "time": "09:25",
+      "timestamp": "1659198355.038199",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Btw, do you know why these flows that got stuck don't get timed out? I did set\n```240         \"settings\": {\n241           \"output_has_run_id\": true,\n242           \"delete_out_dir\": true,\n243           \"step_timeout\": 300\n244         }```",
+      "time": "09:49",
+      "timestamp": "1659199786.750769",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "that's a good question, im not sure",
+      "time": "10:17",
+      "timestamp": "1659201456.618969",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Yes that's something we need to understand as well",
+      "time": "10:21",
+      "timestamp": "1659201687.574579",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@lenny The latest stress test with the flows run successfully. We need to understand why the stuck/backlog happens, otherwise this'd become an issue in production and customer's infra",
+      "time": "12:01",
+      "timestamp": "1659207661.291529",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "great that it works now. my theory is that this was because of how we restore task scheduler state when we restart job service, which is an outstanding issue i wanted to fix by monday. i'll dig into the logs more tonight/tomorrow to try to understand what happened",
+      "time": "12:03",
+      "timestamp": "1659207784.699689",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@lenny Thanks! I just created a bug to keep this tracked. I will keep my eyes on dogfood :slightly_smiling_face:",
+      "time": "12:05",
+      "timestamp": "1659207911.210359",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@lenny it shows up again - check the flow dashboard you will see",
+      "time": "16:40",
+      "timestamp": "1659224435.270499",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I think my theory about this having to do with how we restore TS state is wrong, because the running jobs that are clogging the scheduler were started around 6pm ET, and job service was last deployed at 4:40pm ET",
+      "time": "16:47",
+      "timestamp": "1659224850.967689",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I see a lot of `instabase.registry.tasks.invoke_run_test` calls timing out in the webdriver logs, so I think these are clogging up the webdriver workers and preventing them from taking the `fetchfiles-0` tasks — looking into where these are coming from",
+      "time": "16:59",
+      "timestamp": "1659225591.996509",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I have a theory about what's causing this, and can have a PR up tomorrow to fix this; in the meantime I'll put up a PR to revert the scheduler changes so nobody is blocked until then",
+      "time": "17:03",
+      "timestamp": "1659225815.879729",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "if someone wants to :white_check_mark: + :merged: https://github.com/instabase/instabase/pull/29202 — in the meantime I will clean up the running jobs and webdriver tasks",
+      "time": "17:09",
+      "timestamp": "1659226193.900999",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-07-30.json",
+    "message_count": 27,
+    "start_time": "1659165798.821539",
+    "end_time": "1659226193.900999",
+    "is_thread": true
+  }
+}

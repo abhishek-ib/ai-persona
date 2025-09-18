@@ -1,0 +1,62 @@
+{
+  "id": "ch_C06FA6A23_2020-04-13_1586817536.304800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Jonathan Shih",
+    "Chetan",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Has anyone figured out how to use typing (not mypy comments) with opencv/cv2?\n\nI think most of our codebase uses mypy comments with `cv2.ImageType=np._ArrayLike[Any]`, but I’m pretty sure this `ImageType` isn’t something actually built into cv2, so when I try to use it, I get that `ImageType` doesn’t exist on the module. If I use `np._ArrayLike[Any]`, I get that it doesn’t exist on `np`. And if I use `np.ndarray` (which is what it actually is), I get “Argument <n> to “<function_name>” has incompatible type “_ArrayLike[Any]“; expected “ndarray[Any]“” for each time I use it",
+      "time": "15:38",
+      "timestamp": "1586817536.304800",
+      "is_reply": false
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "we’d have to go and change our mypy typing stubs i believe to get this working properly. maybe there’s another way?",
+      "time": "15:43",
+      "timestamp": "1586817784.305200",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "hmm… at least one of those seems like it should work. what does the code look like?",
+      "time": "15:55",
+      "timestamp": "1586818530.305400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "it doesn’t work because we created `_ArrayLike[Any]` as a fake type (it doesn’t actually exist in numpy) but `np.ndarray` does but won’t work as valid typing since our mypy stubs don’t expect that type",
+      "time": "17:18",
+      "timestamp": "1586823494.305600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "maybe we could redefine `_ArrayLike[Any]` as an alias of `np.ndarray`?",
+      "time": "17:18",
+      "timestamp": "1586823505.305800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-04-13.json",
+    "message_count": 5,
+    "start_time": "1586817536.304800",
+    "end_time": "1586823505.305800",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "id": "ch_C06FA6A23_2025-05-30_1748620170.996269_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "suleiman.odat",
+    "Chuba",
+    "William Helmrath",
+    "Alex Sgueglia"
+  ],
+  "messages": [
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Seeing the same issue again - has this been resolved?",
+      "time": "08:49",
+      "timestamp": "1748620170.996269",
+      "is_reply": false
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "@Alex Sgueglia do you know if Rolly is running his tests now or if we're doing anything significant in this environment?",
+      "time": "08:50",
+      "timestamp": "1748620256.243079",
+      "is_reply": true
+    },
+    {
+      "sender": "Alex Sgueglia",
+      "user_id": "U03JT469GFP",
+      "message": "He said he would tell us before running the load test and i didnt see anything come in about that.  We are doing some development work but nothing that significant in terms of load",
+      "time": "08:55",
+      "timestamp": "1748620521.999829",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": ":thinking_face: okay  @William Helmrath these 500s are at the same endpoint as previously noted in the alert?",
+      "time": "08:57",
+      "timestamp": "1748620643.622639",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Yep, `GET /api/v2/apps/runs/<string:job_id>`",
+      "time": "08:58",
+      "timestamp": "1748620692.610959",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "Huh, the 500's have been super consistent since around 2:30 AM",
+      "time": "09:23",
+      "timestamp": "1748622201.937879",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "The calls are coming every 5 seconds or so, and they’re all asking for the status of `7853d78f-850d-4800-8892-847d94f57de5` @suleiman.odat could you quickly check if there’s anything interesting about that job?",
+      "time": "09:25",
+      "timestamp": "1748622323.343029",
+      "is_reply": true
+    },
+    {
+      "sender": "Alex Sgueglia",
+      "user_id": "U03JT469GFP",
+      "message": "cc @shreya.rajput @Atul Grover @julia.fung for vis",
+      "time": "09:25",
+      "timestamp": "1748622344.327689",
+      "is_reply": true
+    },
+    {
+      "sender": "suleiman.odat",
+      "user_id": "U041EDX9QKC",
+      "message": "same issue as the other run, classifier is failing",
+      "time": "09:27",
+      "timestamp": "1748622465.419659",
+      "is_reply": true
+    },
+    {
+      "sender": "suleiman.odat",
+      "user_id": "U041EDX9QKC",
+      "message": "not sure if the input doc is same as the others",
+      "time": "09:27",
+      "timestamp": "1748622477.494639",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "They’re also all flagged `\"remote_addr\": \"155.188.180.248\"`  which is not in the ip-whitelisting list. This same IP has been making this same call for hours and getting 500'ed the whole time.",
+      "time": "09:31",
+      "timestamp": "1748622674.850499",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "Correction, that’s in the whitelist, I must have had the wrong page up when looking.",
+      "time": "09:33",
+      "timestamp": "1748622788.562979",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "The IP is coming from NW the `NW-On-prem-sever`  range of `155.188.0.0/16` , so I think maybe Rolly has a script that retries the check until it gets a good response, and doesn’t ever check if the response is not `2xx`",
+      "time": "09:34",
+      "timestamp": "1748622873.170749",
+      "is_reply": true
+    },
+    {
+      "sender": "suleiman.odat",
+      "user_id": "U041EDX9QKC",
+      "message": "I have rolly on the call with me should I ask?",
+      "time": "09:37",
+      "timestamp": "1748623040.469099",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "Yes, also concurrently trying to trace down why 500 is the response we’re giving",
+      "time": "09:38",
+      "timestamp": "1748623108.620009",
+      "is_reply": true
+    },
+    {
+      "sender": "suleiman.odat",
+      "user_id": "U041EDX9QKC",
+      "message": "yes he has a job running and every 5 seconds a script keep checking the status",
+      "time": "09:40",
+      "timestamp": "1748623210.025449",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "He needs to be reacting to non-2xx responses. I just checked and that endpoint is returning `500`\n\n```{\n    \"message\": \"All records had a runtime exception, last error observed: Failed to get split classification results: Error while running the model: Exception list index out of range\"\n}```",
+      "time": "09:46",
+      "timestamp": "1748623592.068259",
+      "is_reply": true
+    },
+    {
+      "sender": "suleiman.odat",
+      "user_id": "U041EDX9QKC",
+      "message": "can you reach out to his ticket to inform the correct way? Or does he have a ticket for it?",
+      "time": "10:01",
+      "timestamp": "1748624508.171999",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "He's been asked to open a ticket for the issue that is causing the 500, but this is a separate issue.",
+      "time": "10:09",
+      "timestamp": "1748624952.744689",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-05-30.json",
+    "message_count": 19,
+    "start_time": "1748620170.996269",
+    "end_time": "1748624952.744689",
+    "is_thread": true
+  }
+}

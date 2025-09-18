@@ -1,0 +1,176 @@
+{
+  "id": "ch_CSY11CK7T_2025-04-08_1744152463.939919_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Xindi Xu",
+    "mfichman",
+    "Heymian",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I’m seeing this error in my PR’s Cypress test `ground-truth-crud.spec.ts`:\n```ApiError: app_name, app_owner must be present in args```\nwhich I believe is coming from this PR: https://github.com/instabase/instabase/pull/69450\n\nWhen it comes to breaking backend API changes, can we do a 2 stage change? First change is backwards compatible w/ test updates (so that old tests don’t break), second change removes backwards compatibility once we’re sure everything is migrated over.\n\nEither that, or when we merge, we manually trigger a redeployment + notify this channel. I don’t want to wait for my PR Cypress tests finish if they’re guaranteed to break =(",
+      "time": "15:47",
+      "timestamp": "1744152463.939919",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "This is another data point for using the ib-dev-backend template to run Cypress CI – we won't run into this if the Cypress sandbox builds both the frontend and backend using the same PR branch\ncc @Heymian @mfichman",
+      "time": "15:51",
+      "timestamp": "1744152660.331489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Maybe we should accelerate that project? We need to make sure all the cypress tests seed required data on their own first, which is not the case for some of them.",
+      "time": "15:54",
+      "timestamp": "1744152867.968669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I don’t think making every backend commit backwards compatible is feasible. Too much overhead.",
+      "time": "15:56",
+      "timestamp": "1744152990.407519",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Ashish",
+      "time": "15:56",
+      "timestamp": "1744153004.118939",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "We have 24 test files to update (search for `usePreExistingUser: true`). We also compiled test prereqs & set ups here: https://docs.google.com/document/d/1EgbRiQijxrYqSvvN7Bd97r-px-5JcQeizExNh3UoiOU/edit?tab=t.0#heading=h.wagcddcvbcya",
+      "time": "15:57",
+      "timestamp": "1744153048.606739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Xindi Xu if most of these are due to a default user, we could seed that user via the db setup that runs. How much would that cut the list down?",
+      "time": "15:58",
+      "timestamp": "1744153131.174069",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Most of these tests actually require pre-existing states other than just the user. Tests that set up pre-reqs themselves are already using `usePreExistingUser: false`. This helps keeping tests running in isolation in our current Cypress CI",
+      "time": "16:00",
+      "timestamp": "1744153207.369419",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://github.com/instabase/instabase/pull/69630 - maybe we can cut down 2 of them :thinking_face:",
+      "time": "16:25",
+      "timestamp": "1744154730.521429",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "OK, CI passed in the above PR, which cuts down 2 files. I did a pass to verify the rest. We have 22 tests that need pre-existing apps, which are  captured by the doc linked above.",
+      "time": "17:36",
+      "timestamp": "1744159000.326269",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ok, so no easy out I suppose!",
+      "time": "18:27",
+      "timestamp": "1744162029.808089",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "One possibility might be to snapshot the crafting DB and reuse it as the base snapshot for the MySQL instance attached to the ibdev template. I would rather have the tests be hermetic, but this could accelerate progress a bit and get us off the crafting-aihub cluster sooner.",
+      "time": "18:28",
+      "timestamp": "1744162114.023569",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "would we still need to copy the underlying files in the FS from the cluster?",
+      "time": "18:30",
+      "timestamp": "1744162230.364379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "No, not if we use the same bucket as the original cluster.",
+      "time": "18:32",
+      "timestamp": "1744162324.270839",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ofc, there is still the chance this could go horribly wrong at some point bc the state is not isolated :)",
+      "time": "18:32",
+      "timestamp": "1744162357.451409",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Ah oops, I force merged the PR in question and forgot it would break the ground-truth-crud test :sweat:\n\n~It should be quite quick to fix, I’ll put up a fix soon~\n\n[EDIT] i misunderstood, the test code doesn't need to change -> the FE on master and the BE on crafting-cyp are just out of sync",
+      "time": "18:37",
+      "timestamp": "1744162632.662459",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@mfichman +1 to using the snapshot of the current crafting-cyp db!\n\nA side benefit of always resetting to start from a db snapshot is that we won’t have buildup of any test data that’s not cleaned up properly -> currently this sometimes happens and makes crafting-cyp slow\n\nWhy would the state not be isolated? We’d always start from the same static db snapshot, right?",
+      "time": "18:40",
+      "timestamp": "1744162809.881499",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "unfortunately, the auto-deployment (https://instabase.slack.com/archives/CCY413CSU/p1744158257633649?thread_ts=1744156963.071939&cid=CCY413CSU) of crafting-cyp failed :disappointed:\n\nokta says i don't have banyan on (even though i do, i just need to wait ~20min :triumph:) so i'm not able to view the jenkins logs\n\nin the evening, i'll check on the jenkins logs and trigger a manual deployment of crafting-cyp if that's appropriate",
+      "time": "18:58",
+      "timestamp": "1744163903.326779",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "nvm a container failed to build, so i won't trigger a manual deployment\n\ntagged infra-on-call to take a look in this thread (https://instabase.slack.com/archives/CCY413CSU/p1744179136160719?thread_ts=1744156963.071939&cid=CCY413CSU) :pray:",
+      "time": "23:12",
+      "timestamp": "1744179166.592389",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-04-08.json",
+    "message_count": 19,
+    "start_time": "1744152463.939919",
+    "end_time": "1744179166.592389",
+    "is_thread": true
+  }
+}

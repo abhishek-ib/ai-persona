@@ -1,0 +1,230 @@
+{
+  "id": "ch_C06FA6A23_2019-02-20_1550702172.032400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Aaron Vontell",
+    "dlluncor",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "^ also an alternative to provenance tracking which would make all of this obsolete is to figure out how to override Python’s default implementation of the string object - if we did it this way, all of the existing refiner formula code would support provenance tracking by default…",
+      "time": "14:36",
+      "timestamp": "1550702172.032400",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "but that’s for a rainy day maybe",
+      "time": "14:36",
+      "timestamp": "1550702193.032500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "hmm why would that let us support provenance tracking automatically?",
+      "time": "14:37",
+      "timestamp": "1550702275.032700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "I think having an object which having the same interface as a string is a cool idea",
+      "time": "14:48",
+      "timestamp": "1550702903.033400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Aaron would you be able to completely do confidence tracking if at the beginning of Refiner, we coerced all input strings to a string implementation",
+      "time": "14:48",
+      "timestamp": "1550702923.033600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "When initializing a python string, if each character in that string had knowledge about its position in that string, we might be able to keep that attached as various string operations are occurring.  So rather than worrying about mapping from some output to the original input, the original coordinates would be stored directly within characters. However, there may also be the issue of whether or not characters are reused or destroyed, etc… (plus the fact that characters are just integers) so this is most likely not possible at all, but its an interesting concept lol. @dlluncor yeah something like that could work. The one issue here is that while we don’t have to worry about computational overhead, the memory overhead may be sketchy (about 3x the size, since char --> char, int, int)",
+      "time": "14:50",
+      "timestamp": "1550703029.033800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@dlluncor it would be really cool if we could have our own implementation that supported all string operations including accessing ([]), slicing ([:]) etc… we would need to make sure the String class implements every possible string method",
+      "time": "14:51",
+      "timestamp": "1550703093.034000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Now that I think about it, this is kinda what we discussed in the meeting… basically writing helper functions for common string operations is exactly this",
+      "time": "14:52",
+      "timestamp": "1550703122.034200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Would basically require implementing all of these I would think: https://docs.python.org/3/library/stdtypes.html#string-methods",
+      "time": "14:53",
+      "timestamp": "1550703223.034400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "it wouldn’t be _terribly_ complicated either (famous last words, ik). because each specific operation is so small.",
+      "time": "14:55",
+      "timestamp": "1550703324.034700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "arguably easier than the text box juggling we’re doing now… not that we should try to do that before the current implementation/design breaks badly for some reason.",
+      "time": "14:56",
+      "timestamp": "1550703379.034900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "A good place to start, building on top of the `track_replaced_matches` function, that kinda goes along these lines might be to just implement functions like `upper`, `concat`, `split`, etc… within `ProvenanceTracker`",
+      "time": "14:56",
+      "timestamp": "1550703380.035100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yea that would be helpful. it would also be easier to understand for others i think @Aaron Vontell. i definitely had trouble understanding which helper function was for what :dizzy_face: , mainly bc naming in this domain is just quite tricky.",
+      "time": "14:57",
+      "timestamp": "1550703450.035300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yeah, let’s do that. I think the issue is that my mindset was `I am doing tricky bounding box stuff, let me write a helper function` rather than `let me write helper functions mimicking those of a string and use those in my computations`, so if we switch to that second mindset that would be helpful",
+      "time": "14:58",
+      "timestamp": "1550703512.035500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Soon I can implement and commit some of the common string operations :+1:",
+      "time": "14:59",
+      "timestamp": "1550703541.035800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "so it would be along the lines of:\n\n```\nresult = my_string.value()[5:15]\n\n# Now simulate on tracker\nmy_string.tracker().slice[5:15]\n```\n\nOr\n```\nresult = my_string.value().replace('hi', 'bye')\n# Simulate...\nmy_string.tracker().replace('hi', 'bye')\n```",
+      "time": "14:59",
+      "timestamp": "1550703598.036000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "that would be awesome Aaron to have an implementation that mimics string oeprations",
+      "time": "15:00",
+      "timestamp": "1550703622.036300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "in addition, perhaps the model could be",
+      "time": "15:05",
+      "timestamp": "1550703930.036800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "people who write functions only operate on tracker objects",
+      "time": "15:05",
+      "timestamp": "1550703944.037000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "e.g., tracker.replace, tracker.regex, tracker.clean, tracker.trim, and then we call tracker.get_value() in order to observer the final result",
+      "time": "15:06",
+      "timestamp": "1550703977.037200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "so people who write functions essentially can never access the string directly, they just operate on the Value object",
+      "time": "15:06",
+      "timestamp": "1550704008.037400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "@Aaron Vontell",
+      "time": "15:22",
+      "timestamp": "1550704962.037700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "good point, that could work, as long as the tracker also keeps track of things that are attached on during computations that arent from the input, such as string literals",
+      "time": "15:23",
+      "timestamp": "1550705003.037900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I guess the only reason I wasn’t doing that to begin with, and instead doing the string operation and tracking separately, was due to a lack of trusting my own code :joy:",
+      "time": "15:24",
+      "timestamp": "1550705094.038300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "And thanks for the ideas / feedback! I think going down this path is going to simplify things a lot",
+      "time": "15:25",
+      "timestamp": "1550705129.038500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "awesome, look forward to it!",
+      "time": "15:48",
+      "timestamp": "1550706515.039200",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-02-20.json",
+    "message_count": 26,
+    "start_time": "1550702172.032400",
+    "end_time": "1550706515.039200",
+    "is_thread": true
+  }
+}

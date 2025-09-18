@@ -1,0 +1,63 @@
+{
+  "id": "ch_C06FA6A23_2023-03-20_1679335463.155519_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Serena",
+    "Xindi Xu",
+    "Cheryl Zhou"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hey folks --- I have a branch that has some Python unit test failures (https://jenkins.instabase.com/blue/rest/organizations/jenkins/pipelines/instabase/branches/PR-37306/runs/11/nodes/17/steps/20/log/?start=0) in pre-merge tests related to opencensus.ext. All I did on this branch was add some declarations to `job_service.proto`  with no other Python changes. Are these unit tests broken?\n\n\n```[2023-03-20T16:13:32.212Z] ======================================================================\n[2023-03-20T16:13:32.212Z] ERROR: instabase_unit_tests.instabase.handler.api.v2.test_testrunner (unittest.loader._FailedTest)\n[2023-03-20T16:13:32.212Z] ----------------------------------------------------------------------\n[2023-03-20T16:13:32.212Z] ImportError: Failed to import test module: instabase_unit_tests.instabase.handler.api.v2.test_testrunner\n[2023-03-20T16:13:32.212Z] Traceback (most recent call last):\n[2023-03-20T16:13:32.212Z]   File \"/pyenv/versions/3.9.15/lib/python3.9/unittest/loader.py\", line 436, in _find_test_path\n[2023-03-20T16:13:32.212Z]     module = self._get_module_from_name(name)\n[2023-03-20T16:13:32.212Z]   File \"/pyenv/versions/3.9.15/lib/python3.9/unittest/loader.py\", line 377, in _get_module_from_name\n[2023-03-20T16:13:32.212Z]     __import__(name)\n[2023-03-20T16:13:32.212Z]   File \"/instabase_dir/webserver/api-server/build/test/py/instabase_unit_tests/instabase/handler/api/v2/test_testrunner.py\", line 6, in <module>\n[2023-03-20T16:13:32.212Z]     from instabase.api_server_apps.handler.api.v2 import testrunner\n[2023-03-20T16:13:32.212Z]   File \"/instabase_dir/webserver/api-server/build/test/py/instabase/api_server_apps/handler/api/v2/testrunner.py\", line 10, in <module>\n[2023-03-20T16:13:32.212Z]     from instabase.flow_lib import flow_types\n[2023-03-20T16:13:32.212Z]   File \"/instabase_dir/webserver/api-server/build/test/py/instabase/flow_lib/flow_types.py\", line 13, in <module>\n[2023-03-20T16:13:32.212Z]     from instabase.clients_factory_utils import clients_factory\n[2023-03-20T16:13:32.212Z]   File \"/instabase_dir/webserver/api-server/build/test/py/instabase/clients_factory_utils/clients_factory.py\", line 6, in <module>\n[2023-03-20T16:13:32.212Z]     from instabase.cache import cache\n[2023-03-20T16:13:32.212Z]   File \"/instabase_dir/webserver/api-server/build/test/py/instabase/cache/cache.py\", line 17, in <module>\n[2023-03-20T16:13:32.212Z]     from instabase.cache.stats import stats_collector, types as stats_types\n[2023-03-20T16:13:32.212Z]   File \"/instabase_dir/webserver/api-server/build/test/py/instabase/cache/stats/stats_collector.py\", line 12, in <module>\n[2023-03-20T16:13:32.212Z]     from instabase.stats.api import catch_error, StatsExporter\n[2023-03-20T16:13:32.212Z]   File \"/instabase_dir/webserver/api-server/build/test/py/instabase/stats/api.py\", line 16, in <module>\n[2023-03-20T16:13:32.212Z]     from instabase.stats.agent.opencensus import OCAgent\n[2023-03-20T16:13:32.212Z]   File \"/instabase_dir/webserver/api-server/build/test/py/instabase/stats/agent/opencensus.py\", line 16, in <module>\n[2023-03-20T16:13:32.212Z]     from opencensus.ext.prometheus import stats_exporter as prometheus  # type: ignore\n[2023-03-20T16:13:32.212Z] ModuleNotFoundError: No module named 'opencensus.ext'```",
+      "time": "11:04",
+      "timestamp": "1679335463.155519",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Maybe `opencensus` was not added to some requirements.txt files?",
+      "time": "11:06",
+      "timestamp": "1679335602.343049",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Yeah https://instabase.slack.com/archives/C01N7DV1137/p1679332093350669 (https://instabase.slack.com/archives/C01N7DV1137/p1679332093350669) there’s a thread about it already looks like Young is working on a fix",
+      "time": "11:08",
+      "timestamp": "1679335727.035169",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I ran into a similar issue when I do `make runlocal` in api-server :thinking_face:",
+      "time": "11:10",
+      "timestamp": "1679335816.034659",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m seeing the same in my PR’s CI build as well https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-37604/1/pipeline",
+      "time": "11:23",
+      "timestamp": "1679336632.533849",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-03-20.json",
+    "message_count": 5,
+    "start_time": "1679335463.155519",
+    "end_time": "1679336632.533849",
+    "is_thread": true
+  }
+}

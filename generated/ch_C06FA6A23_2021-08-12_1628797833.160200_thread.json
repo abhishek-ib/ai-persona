@@ -1,0 +1,127 @@
+{
+  "id": "ch_C06FA6A23_2021-08-12_1628797833.160200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Mohit",
+    "Kerry",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Here’s some investigation for the 504 issue Daniel reported yesterday thanks to @Anil https://docs.google.com/document/d/1Xj5GLn0fJDU6ZQWdMIXhZ8Lr04709afG_KOGcfytzYU/edit#\nOverall, we looked at the services that return 504 using Grafana (api-server-apps (https://instabase.com/grafana/d/a164a7f0339f99e89cea5cb47e9be617/kubernetes-compute-resources-workload?orgId=1&var-datasource=1.%20Victoriametrics&var-cluster=&var-namespace=instabase-prod&var-workload=deployment-api-server-apps&var-type=deployment&from=now-2d&to=now&refresh=10s) for API 504 like the flow result API or docs API, webapp (https://instabase.com/grafana/d/a164a7f0339f99e89cea5cb47e9be617/kubernetes-compute-resources-workload?orgId=1&var-datasource=1.%20Victoriametrics&var-cluster=&var-namespace=instabase-prod&var-workload=deployment-webapp&var-type=deployment&from=now-2d&to=now&refresh=10s) for file loading 504, and the apps-server (https://instabase.com/grafana/d/a164a7f0339f99e89cea5cb47e9be617/kubernetes-compute-resources-workload?orgId=1&var-datasource=1.%20Victoriametrics&var-cluster=&var-namespace=instabase-prod&var-workload=deployment-apps-server&var-type=deployment&from=now-2d&to=now&refresh=10s) 504 that just returns a white nginx 504 page). All of them have this problem: one of the pods for a service is using significantly more CPU power than all other pods. If the crazy pod restarted, another pod might pick up the craziness (see webapp’s graph). Requests that go to the crazy pod likely got an 504. So something doesn’t look right here with our pod’s health. While we figure out what causes a pod to go crazy, if Nginx has some retry mechanism to try out the next pod when the first pod times out we might also alleviate this problem. cc @shaunak",
+      "time": "12:50",
+      "timestamp": "1628797833.160200",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Also just to note, I think we isolated the crazy pod i found yesterday in apps-server already, but the pod is still using crazy amount of CPU :eyes: did it just stuck at some infinite loop?\nhttps://instabase.com/grafana/d/6581e46e4e5c7ba40a07646395ef7b23/kubernetes-compute[…]server-84758ffccd-td48j&orgId=1&from=now-2d&to=now&refresh=10s (https://instabase.com/grafana/d/6581e46e4e5c7ba40a07646395ef7b23/kubernetes-compute-resources-pod?var-datasource=1.%20Victoriametrics&var-cluster=&var-namespace=instabase-prod&var-pod=deployment-apps-server-84758ffccd-td48j&orgId=1&from=now-2d&to=now&refresh=10s)",
+      "time": "12:52",
+      "timestamp": "1628797959.161000",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "When the issue happens again, we can confirm if its an issue with k8s services by checking if the service DNS resolved continuously to just one of the pods for some reason. Then, we will be able to root cause why were requests directed to just one pod of a particular service for the time period.",
+      "time": "12:56",
+      "timestamp": "1628798215.161400",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "What confusing is that, in the investigation, @Anil observed that the 2 failed requests *EDIT: NOT* logged in apps-server. Not sure if its because of a) missing logs in apps-server or b) because the requests never made to apps-server pod",
+      "time": "12:59",
+      "timestamp": "1628798369.161700",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "so what I read from a previous thread is that the 2 failed requests logged in apps-server might be the real failed requests. it’s just that all logs in apps-server are currently logged at the `ERROR` level :thinking_face: I also suspect that it might be nginx directing all requests to just one pod, but it seems that the total amount of CPU usage goes up also (for example, see the webapp graph). If it’s a routing issue, we might see the total CPU usage remains similar (traffic is static)?",
+      "time": "13:02",
+      "timestamp": "1628798562.162000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Kerry @Mohit @Anil you can most probably attach pdb by execing into the container to see what processes might be running and causing the CPU to spike up so much.",
+      "time": "13:49",
+      "timestamp": "1628801340.162600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Re: nginx, we are figuring out the retry at a high level.",
+      "time": "13:49",
+      "timestamp": "1628801378.162800",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "^^ any pointers on how to do that?\nMy guess is this is not related to something spiking CPU. This is a load balancing issue where requests are all going to one pod sometimes. Since these pods have only 0.2 CPU and we use gevent, it is not that hard to keep perma busy if requests are piled up.\nWill also look into apps server to see what we actually do in it",
+      "time": "13:58",
+      "timestamp": "1628801891.163600",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": ":point_up: this is right, i forgot that requests piling up could lead to heavy CPU usage",
+      "time": "14:15",
+      "timestamp": "1628802917.164900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "So, we have isolated the following apps-server (https://instabase.com/grafana/d/6581e46e4e5c7ba40a07646395ef7b23/kubernetes-compute-resources-pod?var-datasource=1.+Victoriametrics&var-cluster=&var-namespace=instabase-prod&var-pod=deployment-apps-server-84758ffccd-td48j&orgId=1&from=now-30m&to=now&refresh=10s) pod. Which means that it should not be receiving any requests as it is not part of the deployment spec.  But the CPU utilization is still quite high.",
+      "time": "15:37",
+      "timestamp": "1628807850.165400",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "yep",
+      "time": "15:39",
+      "timestamp": "1628807965.165700",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i think the next step is (first of all let’s keep isolating that pod) someone do what you suggest Shaunak earlier that we run the container locally and set a very low CPU limit to see if that causes a 504; meanwhile we monitor that isolated pod, and at some point someone can go into it to see what’s making it crazy (it could be still processing all the requests?). still, it doesn’t look like something that’s in the application code, because we see the same thing happening for webapp and api-server-apps too, kind of unlikely that all of them contain the same logic that creates the same behavior",
+      "time": "15:42",
+      "timestamp": "1628808129.165900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "So there are no new requests that are actually piling up here.  Also, during the time of the errors, can we check other pods in the deployments to see if they get any requests apart from the `alive.txt` requests?  You can do so by removing the `pod_id` field from the logging query.  I don’t suspect that it is send request to 1 pod issue.",
+      "time": "15:42",
+      "timestamp": "1628808156.166100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-08-12.json",
+    "message_count": 13,
+    "start_time": "1628797833.160200",
+    "end_time": "1628808156.166100",
+    "is_thread": true
+  }
+}

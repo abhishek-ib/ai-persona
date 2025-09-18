@@ -1,0 +1,198 @@
+{
+  "id": "ch_C06FA6A23_2019-12-09_1575924630.196600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "will",
+    "lydia",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i seem to have access to our base containers but not the prebuilt service containers used by provisioner script — anyone know why that would be? is the tag still `scan`/`scan-py3`  (i’ve tried both)",
+      "time": "12:50",
+      "timestamp": "1575924630.196600",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "it's works fine for me. you used this command? `python provisioner.py compile SERVICE_NAME --as-docker --use-prebuilt`",
+      "time": "13:40",
+      "timestamp": "1575927647.200100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "and your python version is 3?",
+      "time": "13:41",
+      "timestamp": "1575927666.200300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yup @lydia",
+      "time": "14:27",
+      "timestamp": "1575930475.201100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "```Chetans-MacBook-Pro:instabase chetanmishra$ python provisioner.py compile ocr-ari --as-docker --use-prebuilt\nError response from daemon: pull access denied for gcr.io/instabase-dev/ocr-ari (http://gcr.io/instabase-dev/ocr-ari), repository does not exist or may require 'docker login': denied: Permission denied for \"scan-py3\" from request \"/v2/instabase-dev/ocr-ari/manifests/scan-py3\".\nERROR - Error compiling service=ocr-ari error=None\nERROR -  Compilation output --- None\nChetans-MacBook-Pro:instabase chetanmishra$ python --version\nPython 3.7.3```",
+      "time": "14:28",
+      "timestamp": "1575930480.201300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hmm also don't have this issue with ocr-ari :disappointed:",
+      "time": "14:39",
+      "timestamp": "1575931154.201600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@will you have any idea why chetan might not have gcr access to certain images?",
+      "time": "14:39",
+      "timestamp": "1575931185.201800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Hmmm",
+      "time": "14:40",
+      "timestamp": "1575931200.202000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "What happens when you try to pull it manually? something like `docker pull gcr.io/instabase-dev/ocr-ari:scan (http://gcr.io/instabase-dev/ocr-ari:scan)`",
+      "time": "14:41",
+      "timestamp": "1575931267.202200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yea i get an error (the error in the screenshot at the top of the page). I can pull base images find though (`docker pull gcr.io/instabase-build/container-base-cpp-ari12-dev:19.11.27.20.44.46 (http://gcr.io/instabase-build/container-base-cpp-ari12-dev:19.11.27.20.44.46)` works) @will",
+      "time": "14:43",
+      "timestamp": "1575931433.202400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Sounds like maybe you aren’t in the dev repo with the prebuilt stuff let me take a look there",
+      "time": "14:44",
+      "timestamp": "1575931483.202600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Can you please try again?",
+      "time": "14:59",
+      "timestamp": "1575932340.202800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I manually added you to the Storage Viewer group, if that fixes it we can re-evaluate the way our groups are working and see what needs to be done to fix it correctly.",
+      "time": "14:59",
+      "timestamp": "1575932396.203000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "same problem @will\n```Chetans-MacBook-Pro:instabase chetanmishra$ docker pull gcr.io/instabase-dev/ocr-ari:scan-py3 (http://gcr.io/instabase-dev/ocr-ari:scan-py3)\nError response from daemon: pull access denied for gcr.io/instabase-dev/ocr-ari (http://gcr.io/instabase-dev/ocr-ari), repository does not exist or may require 'docker login': denied: Permission denied for \"scan-py3\" from request \"/v2/instabase-dev/ocr-ari/manifests/scan-py3\".```",
+      "time": "15:00",
+      "timestamp": "1575932402.203200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Have you already tried setting up the gcloud authorization thing?",
+      "time": "15:00",
+      "timestamp": "1575932434.203400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yup. that’s why i can pull the base images.\n```Chetans-MacBook-Pro:instabase chetanmishra$ docker pull gcr.io/instabase-build/container-base-cpp-ari12-dev:19.11.27.20.44.46 (http://gcr.io/instabase-build/container-base-cpp-ari12-dev:19.11.27.20.44.46)\n19.11.27.20.44.46: Pulling from instabase-build/container-base-cpp-ari12-dev\n6abc03819f3e: Downloading [>                                                  ]  289.4kB/28.86MB\n05731e63f211: Downloading [=============================>                     ]     499B/844B\n0bd67c50d6be: Download complete```",
+      "time": "15:01",
+      "timestamp": "1575932462.203600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Ok what about now?",
+      "time": "15:01",
+      "timestamp": "1575932507.203800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "though really storage object viewer should be enough",
+      "time": "15:02",
+      "timestamp": "1575932534.204000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "same result @will",
+      "time": "15:05",
+      "timestamp": "1575932709.204200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "If that doesn’t work, can we get together tomorrow to troubleshoot it together?",
+      "time": "15:05",
+      "timestamp": "1575932709.204400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i’m OOO until jan (starting thursday) anyways :slightly_smiling_face: let’s just troubleshoot when i get back, i’ll compile them all for now.",
+      "time": "15:05",
+      "timestamp": "1575932728.204600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Sounds good. If someone else runs into the same issue I will try to figure it out with them before then. :)",
+      "time": "15:06",
+      "timestamp": "1575932779.205800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-12-09.json",
+    "message_count": 22,
+    "start_time": "1575924630.196600",
+    "end_time": "1575932779.205800",
+    "is_thread": true
+  }
+}

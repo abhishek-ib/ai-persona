@@ -1,0 +1,193 @@
+{
+  "id": "ch_C06FA6A23_2021-06-29_1624975649.001800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Dale DeLoy",
+    "Hari",
+    "Anil",
+    "kunal",
+    "Lee",
+    "achao"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "<!here> We’ve having platform issues again which is affecting customer demos, a few of us are blocked until this is resolved. Please could someone take a look at prod ASAP?",
+      "time": "07:07",
+      "timestamp": "1624975649.001800",
+      "is_reply": false
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "Taking a look -- can you help me understand what you mean by 'platform issues' since that's quite broad? What pieces are having issues?",
+      "time": "07:11",
+      "timestamp": "1624975864.002100",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "I am seeing issue with file uploads timing out",
+      "time": "07:11",
+      "timestamp": "1624975904.002500",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "Hari - just had 504 on a customer demo",
+      "time": "07:12",
+      "timestamp": "1624975938.002800",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "can you share the URL?",
+      "time": "07:13",
+      "timestamp": "1624976004.003600",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "https://instabase.com/apps/flow/edit/anils401/my-repo/fs/Instabase%20Drive/SimpleFlow/workflow.ibflow - FlowEditor for example doesn't open",
+      "time": "07:13",
+      "timestamp": "1624976026.003900",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "FileSystem itself is opening fine",
+      "time": "07:14",
+      "timestamp": "1624976053.004300",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I’m unable to load any files in explorer,",
+      "time": "07:14",
+      "timestamp": "1624976055.004500",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "@Hari can you share the URL for the 504 error you were getting",
+      "time": "07:14",
+      "timestamp": "1624976063.004800",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I also can’t get refiner to open.",
+      "time": "07:14",
+      "timestamp": "1624976065.005000",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "https://instabase.com/solutions/hari/credit-agreements/fs/Instabase%20Drive/credits-agreement-ui/",
+      "time": "07:14",
+      "timestamp": "1624976076.005200",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "refiner didn't work either during the demo :flushed:",
+      "time": "07:14",
+      "timestamp": "1624976099.005400",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "I believe all these issues are linked to the grpc file service instability. I've temporarily scaled this up 10->20 pods as we continue to look into it. Please let me know if you continue to face issues.",
+      "time": "07:20",
+      "timestamp": "1624976409.005600",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Still facing issues at the moment. I can only open directories which seem to have been cached.",
+      "time": "07:24",
+      "timestamp": "1624976654.006000",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I’m not able to open this. https://www.instabase.com/SA_team/demo_new/fs/Instabase%20Drive/Docs/Motor%20Invoices%20Demo/",
+      "time": "07:24",
+      "timestamp": "1624976663.006200",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "There might be a cascaded effect here\n1) calls to fileservice are failing in api-server 2021-06-29 10:20:42.637 EDT[2021-06-29 14:20:42,636] {/instabase-api-server/py/instabase/utils/grpc/client.py:65} ERROR - Retrying b'/file_service.FileService/Stat' request in 1.5s due to StatusCode DEADLINE_EXCEEDED, Error (4, 'deadline exceeded'), Message Deadline Exceeded. Retries left 0\n2) api-server keeps retrying leading to it not being to accept new work\n[2021-06-29 14:14:23] \"GET /api/v1/drives/mayuk.bairagya/my-repo/fs/Instabase%20Drive/Bootcamp/Excercise%201%20Solution/prog/refiner.ibrefiner HTTP/1.0\" 200 391 183.026735 - some requests taking 3 minutes to finish!",
+      "time": "07:25",
+      "timestamp": "1624976723.006400",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "@Anil @Lee @Hari can you grant me access to those workspaces? username: achao",
+      "time": "08:34",
+      "timestamp": "1624980847.006600",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@achao the issue is resolved now - I think most files weren't opening during that one hour",
+      "time": "08:36",
+      "timestamp": "1624980961.006900",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "from private chat\nhttps://instabase.com/apps/flow/edit/anils401/my-repo/fs/Instabase%20Drive/SimpleFlow/workflow.ibflow - when i tried to load this it makes a call to api/v1/drive - which is in api-server\nthat is the only call pending - all other calls complete",
+      "time": "08:37",
+      "timestamp": "1624981072.007100",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "there are also logs in api-server where you see rpc failure",
+      "time": "08:38",
+      "timestamp": "1624981122.007300",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "fyi <!subteam^S01DXHX6FPT>",
+      "time": "11:26",
+      "timestamp": "1624991189.020700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-06-29.json",
+    "message_count": 21,
+    "start_time": "1624975649.001800",
+    "end_time": "1624991189.020700",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "id": "ch_C0516UPPMT3_2023-06-01_1685644394.279509_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Pridhvi Vegesna",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Hi Folks, following up after a call with the various EPD leads & Anant on the action items:\n• We are going to put a rate limit on the number of tasks that can be scheduled by a user to be 10% of the overall capacity of the system.\n    ◦ The assumption and the tradeoff here is that system is fairly loaded and that one person should not be able to bring down the experience for other users of the platform\n• The bug that prevented Medium tasks from getting scheduled while Highest priority tasks were running is getting resolved.\n• We are putting a “high” limit on the number of “Converse” requests that a user can make a minute.  This will be heuristically based how many requests it would take us to hit 2M tokens / minute (50% of our rate limit from OpenAI on GPT3.5)\n• Fixing the indexing phase of a large document to be more horizontally scalable, so that auto scaling can make use of it.\n    ◦ Investigating what is cause the CPU to thrash will be the next AI here.\n• Work aggressively on pushing out auto-scaling over the next 1-2 months to be able to support 10s of thousands of users concurrently.\n• Readjust resources and replica count based on the results observed as part of the load-test.\n@Kerry @Vikas Mehta @Sabyasachi Roy @Ashish please add anything that I might have missed.",
+      "time": "11:33",
+      "timestamp": "1685644394.279509",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "We currently have a rate limit based on number of tasks in the `interactive` group. If number of tasks in interactive group is > 25000, we reject incoming digitize job. The problem is it doesn’t restrict on any user and 25000 is a high limit.\n\nWe will change this to rate limit total number of users.  This prevents too many users from piling up in the queue incase the app goes viral, which would slow everyone down and give a denial of service-like  experience to all users.\n\nThis is in addition to restricting each user to max of 10% of cluster.\n\ncc @Kerry @Pridhvi Vegesna",
+      "time": "11:35",
+      "timestamp": "1685644548.794019",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "> Readjust resources and replica count based on the results observed as part of the load-test.\nAre we aiming to fix bottlenecks that might cause issues on individual requests (like text-dense documents) or are we trying to significantly increase the throughput of the entire system.\n\n^ And what is the timeline on the replica count / resource changes? Do we want that before launch?",
+      "time": "11:47",
+      "timestamp": "1685645244.866999",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-06-01.json",
+    "message_count": 3,
+    "start_time": "1685644394.279509",
+    "end_time": "1685645244.866999",
+    "is_thread": true
+  }
+}

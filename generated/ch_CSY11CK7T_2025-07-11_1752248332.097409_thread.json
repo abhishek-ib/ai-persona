@@ -1,0 +1,62 @@
+{
+  "id": "ch_CSY11CK7T_2025-07-11_1752248332.097409_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Xindi Xu",
+    "William Helmrath"
+  ],
+  "messages": [
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Hey team can someone looks at these cypress tests:\n```apps/src/aihub/__e2e__/BuildApp/aihub-validation-udf.spec.ts\napps/src/aihub/__e2e__/BuildApp/edit-existing-app.spec.ts\napps/src/aihub/__e2e__/ViewApp/ground-truth-crud.spec.ts\napps/src/aihub/__e2e__/BuildApp/aihub-results-table.spec.ts```\nThey’re failing on my PR here (https://github.com/instabase/instabase/pull/72211) and seems they’re failing on other PRs as well",
+      "time": "08:38",
+      "timestamp": "1752248332.097409",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Taking a look",
+      "time": "14:15",
+      "timestamp": "1752268502.966189",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "```apps/src/aihub/__e2e__/BuildApp/aihub-results-table.spec.ts\napps/src/aihub/__e2e__/BuildApp/aihub-validation-udf.spec.ts```\nThese are failing because we cannot create custom functions in `crafting-cyp` . We’re getting this error (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%226pf%22%3A%7B%22datasource%22%3A%22jaeger%22%2C%22queries%22%3A%5B%7B%22refId%22%3A%22A%22%2C%22datasource%22%3A%7B%22type%22%3A%22jaeger%22%2C%22uid%22%3A%22jaeger%22%7D%2C%22query%22%3A%220c32ea417f9680591fb9dd26e85f9ffe%22%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1) (apologies for the formatting):\n```Uncaught exception in webserver while handling request: Error=An error occurred (ResourceNotFoundException) when calling the ListVersionsByFunction operation: Function not found: arn:aws:lambda:us-east-2:519787998606:function:intes-use2-crafting-cyp-default-udf. Traceback=Traceback (most recent call last):;File \"/instabase-api-server/py/instabase/utils/web/handler_util_v2.py\", line 415, in inner_func;return f(*args, **kwargs);File \"/instabase-api-server/py/instabase/utils/oauth2/oauth2.py\", line 313, in wrapped_f;return f(*args, **kwargs);File \"/instabase-api-server/py/instabase/api_server_apps/handler/api/v2/aihub_build.py\", line 5789, in post;opaque_dependency_id = udf_executor.get_latest_dependency_env(;File \"/instabase-api-server/py/instabase/lambda_impl/udf_impl.py\", line 90, in get_latest_dependency_env;lambda_version = self._get_latest_version(;File \"/instabase-api-server/py/instabase/lambda_impl/udf_impl.py\", line 103, in _get_latest_version;response = self._lambda_client.list_versions_by_function(;File \"/usr/local/lib/python3.9/site-packages/botocore/client.py\", line 570, in _api_call;return self._make_api_call(operation_name, kwargs);File \"/usr/local/lib/python3.9/site-packages/botocore/context.py\", line 124, in wrapper;return func(*args, **kwargs);File \"/usr/local/lib/python3.9/site-packages/botocore/client.py\", line 1031, in _make_api_call;raise error_class(parsed_response, operation_name);botocore.errorfactory.ResourceNotFoundException: An error occurred (ResourceNotFoundException) when calling the ListVersionsByFunction operation: Function not found: arn:aws:lambda:us-east-2:519787998606:function:intes-use2-crafting-cyp-default-udf; ```\nI found this thread (https://instabase.slack.com/archives/C059K24M35E/p1741153288633229?thread_ts=1741099247.613599&cid=C059K24M35E) which switches AWS lambda execution to local if it’s a ST instance (which makes sense). I have no idea if crafting-cyp is supposed to be ST or MT (@Xindi Xu perhaps you may know?)\n\nThis also appears to be failing recently but I can’t find a config change.\n\n@Sayan can you take a look?",
+      "time": "16:14",
+      "timestamp": "1752275654.525329",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "And here’s the PR for the other Cypress failures:\nhttps://github.com/instabase/instabase/pull/72321",
+      "time": "16:18",
+      "timestamp": "1752275887.574859",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Crafting-cyp is supposed to simulate aihub.Instabase.com (http://aihub.Instabase.com), so it should be configured as MT.",
+      "time": "16:22",
+      "timestamp": "1752276125.757659",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-07-11.json",
+    "message_count": 5,
+    "start_time": "1752248332.097409",
+    "end_time": "1752276125.757659",
+    "is_thread": true
+  }
+}

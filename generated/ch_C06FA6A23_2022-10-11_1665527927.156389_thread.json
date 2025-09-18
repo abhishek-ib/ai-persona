@@ -1,0 +1,46 @@
+{
+  "id": "ch_C06FA6A23_2022-10-11_1665527927.156389_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Eric Han",
+    "Adrian"
+  ],
+  "messages": [
+    {
+      "sender": "Adrian",
+      "user_id": "U0250G5278C",
+      "message": "Hello all, ran into some confusing code and am asking in the hope that somebody has context on it. I’m working on implementing an updated file interface for UDFs, and the existing class we use (`IBFile`  in `udf_context.py`) encrypts the username passed to it, and decrypts it whenever it makes a call to its file client. However, the key used to decrypt that username is stored in the same object. I’m a bit confused by the utility of encrypting something and storing the key with the ciphertext, and unfortunately neither Jesika nor David L, who apparently discussed this, (https://github.com/instabase/instabase/pull/7105/files) are around to ask. Does anybody have an idea of why we needed this, and if we still do?",
+      "time": "15:38",
+      "timestamp": "1665527927.156389",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Warning: I’m not too familiar with Python so the following is just a guess.\n\nLooking at that PR, it looks like the `key` isn’t stored in the object but rather, it’s made available to the `_encrypt/_decrypt/get_username` methods via a closure. I suspect this is so that if you were to `print()`, inspect or (de)serialize the object, you wouldn’t see the `key` value but it can still be used in its methods. So perhaps you can do some testing around that to see if that’s the case.\n\nBut as to why you need to encrypt the username in the first place? No clue.",
+      "time": "16:42",
+      "timestamp": "1665531742.622149",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "@Kerry are you happened to be familiar with this?",
+      "time": "18:57",
+      "timestamp": "1665539864.842229",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-10-11.json",
+    "message_count": 3,
+    "start_time": "1665527927.156389",
+    "end_time": "1665539864.842229",
+    "is_thread": true
+  }
+}

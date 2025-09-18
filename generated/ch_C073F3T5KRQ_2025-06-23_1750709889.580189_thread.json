@@ -1,0 +1,351 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-06-23_1750709889.580189_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Pridhvi Vegesna",
+    "Jeff",
+    "Goto Tools Go Links"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "core-platform-service is crash-looping in crafing-cyp. Do we have any background jobs running against this env (other than Cypress tests)?\nhttps://crafting-cyp.test.instabase.com/deployment-manager/dashboard/deployments/apps/v1/cor[…]ice/deployment-core-platform-service-7f5c4b4789-wrznr (https://crafting-cyp.test.instabase.com/deployment-manager/dashboard/deployments/apps/v1/core-platform-service/deployment-core-platform-service-7f5c4b4789-wrznr)\nWe are doing a bunch of org permission checks\n```[ACCESS_DENIED]: Requestor can't perform actions (ORG:read) in ORG (93ebcae8-29db-442b-9eb8-782439e8b53b)```\nhttps://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22c40%22:%[…]22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1 (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22c40%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22core-platform-service%5C%22%7D%20%7C%3D%20%6093ebcae8-29db-442b-9eb8-782439e8b53b%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22backward%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1)",
+      "time": "13:18",
+      "timestamp": "1750709889.580189",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Seems like we are checking org permission against all orgs in the env... :sweat_smile:",
+      "time": "13:50",
+      "timestamp": "1750711808.320679",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "",
+      "time": "14:25",
+      "timestamp": "1750713902.385109",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Seems like it's triggered by `GET {{URL_BASE}}/api/v2/groups/{{ORG_NAME}}?expand_members=true` endpoint",
+      "time": "15:20",
+      "timestamp": "1750717232.147309",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Somehow it works when the org_name is `cypress-org-commercial-71518`\nhttps://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22eop%22:%[…]m%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1 (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22eop%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D,%22query%22:%2233a8573611161557%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)\nBut made cps to crash if org_name is `cypress-org-enterprise-71518`",
+      "time": "15:45",
+      "timestamp": "1750718751.938529",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "This log is produced by `NewAccessDeniedError` , which is called by `CheckOrgPermsByOrgName`.\n\n\n\nhttps://github.com/instabase/instabase/blob/2d03e61b8394303d609601e93ebb3705d4dd5a[…]/shared-utils/go-utils/src/instabase/utils/perms/org_helpers.go (https://github.com/instabase/instabase/blob/2d03e61b8394303d609601e93ebb3705d4dd5afa/shared-utils/go-utils/src/instabase/utils/perms/org_helpers.go#L58)",
+      "time": "15:56",
+      "timestamp": "1750719365.147719",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm searching thru the codebase for places where we call `CheckOrgPermsByOrgName(requestor, orgname, []Action{permsc.ActionOrgRead})` in a loop.\n\nI think this is the only suspicious one? `checkMountPointReadAccess` is called once per mount point.\nhttps://github.com/instabase/instabase/blob/7227f8705ba3a6ab0e427504e91d482d2d568a[…]src/go/src/instabase/coreplatformservice/mount/handler/mount.go (https://github.com/instabase/instabase/blob/7227f8705ba3a6ab0e427504e91d482d2d568a4d/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/mount/handler/mount.go#L1996-L2022)\n\nHowever, `v2/mount/list` works (which calls `checkMountPointReadAccess` )",
+      "time": "16:03",
+      "timestamp": "1750719804.399089",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase/coreplatformservice/mount/handler/mount",
+      "time": "16:03",
+      "timestamp": "1750719805.583749",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase/coreplatformservice/mount/handler/mount",
+      "time": "16:03",
+      "timestamp": "1750719805.665059",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Pridhvi Vegesna Do you happen to have any thoughts on this?",
+      "time": "16:04",
+      "timestamp": "1750719893.217619",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "`GET {{URL_BASE}}/api/v2/groups/{{ORG_NAME}}?expand_members=true` works when `ORG_NAME=cypress-org-commercial-71518` but failed when `ORG_NAME=cypress-org-enterprise-71518`",
+      "time": "16:07",
+      "timestamp": "1750720029.903299",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Catching up on this thread",
+      "time": "16:07",
+      "timestamp": "1750720043.237539",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "What makes you think that you are able to induce the crash by triggering the `GET {{URL_BASE}}/api/v2/groups/{{ORG_NAME}}?expand_members=true` endpoint?",
+      "time": "16:10",
+      "timestamp": "1750720236.169469",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "The service has crashed 38 times so my initial thought is its crashlooping",
+      "time": "16:11",
+      "timestamp": "1750720280.042279",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "and `GET {{URL_BASE}}/api/v2/groups/{{ORG_NAME}}?expand_members=true` seems like a one time operation that doesn't queue any retriable workloads",
+      "time": "16:11",
+      "timestamp": "1750720319.189359",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "I didn't see any go logs for a seg fault before the \"program exiting\" log. But the program is exiting, which is why readiness/liveness probes are failing",
+      "time": "16:16",
+      "timestamp": "1750720589.091149",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "My guesses:\n1. When I first saw the issue, the DM logs (https://crafting-cyp.test.instabase.com/deployment-manager/logs?deployments=core-platform-service&pod=deployment-core-platform-service-7f5c4b4789-wrznr&container=core-platform-service&start_time=1750719955000000000&end_time=1750720195000000000), has a ton of `Requestor can't perform actions (ORG:read) in ORG` with different org ids.\n2. I looked into the codebase to search for places we call `CheckOrgPermsByOrgName` in a loop, but found only the mount point one mentioned above. However, `api/v2/mount/list` works\n3. Separately, I'm seeing Cypress test failures (https://cloud.cypress.io/projects/cfhedy/runs/20250/overview/57c34bc3-877d-4a5a-988c-35c3a49dd33b/replay?roarHideRunsWithDiffGroupsAndTags=1) where `GET /api/v2/groups/{{ORG_NAME}}?expand_members=true` times out. I then looked into grafana live logs. I do see a bunch of `Requestor can't perform actions` logs when I send this request, but yes... i don't see how this endpoint would produce these logs",
+      "time": "16:18",
+      "timestamp": "1750720693.664159",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22lfs%22:%[…]22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1 (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22lfs%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22core-platform-service%5C%22%7D%20%7C%3D%20%60%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22,%22direction%22:%22forward%22%7D%5D,%22range%22:%7B%22from%22:%221750720745000%22,%22to%22:%221750720870000%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D&orgId=1)\n\nLogs right before \"exiting\"",
+      "time": "16:26",
+      "timestamp": "1750721198.079169",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "maybe this is a separate thread, but I'm wondering why we are getting so many of these `Requestor can't perform actions (ORG:read) in ORG(n)` logs.",
+      "time": "16:27",
+      "timestamp": "1750721231.209109",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "^ it feels like a (n+1) db pattern",
+      "time": "16:28",
+      "timestamp": "1750721312.542819",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, but I can't find any call sites checking `OrgRead` in a loop",
+      "time": "16:29",
+      "timestamp": "1750721382.265869",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hm, seeing some logs around deletion? @Jeff - wondering if you are running some script to delete orgs?",
+      "time": "16:31",
+      "timestamp": "1750721480.182089",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Jeff mentioned he was testing deleting enterprise orgs in standup today",
+      "time": "16:31",
+      "timestamp": "1750721519.012009",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Will wait a bit for Jeff to get back before investing any further",
+      "time": "16:33",
+      "timestamp": "1750721597.371539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Although... there are 100K something logs from previous weeks. Same for aihub-sandbox. Judging from the timing of the log spikes, they seemed to be produced by Cypress tests.",
+      "time": "16:37",
+      "timestamp": "1750721854.569269",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "No, I did not initiate the deletion.",
+      "time": "16:46",
+      "timestamp": "1750722395.790949",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Does the cypress test trigger delete org endpoint?",
+      "time": "16:47",
+      "timestamp": "1750722433.226329",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "No, but it calls `/account/<username>/deactivate` endpoint a lot, which calls `deleteOrg`\nhttps://github.com/instabase/instabase/blob/c926105f06cb37feb909d448164d2c613e9aec[…]src/go/src/instabase/coreplatformservice/account/handler/org.go (https://github.com/instabase/instabase/blob/c926105f06cb37feb909d448164d2c613e9aec41/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/account/handler/org.go#L479)",
+      "time": "16:47",
+      "timestamp": "1750722462.881949",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I see. Let me revert my PR (https://github.com/instabase/instabase/pull/71589) first.",
+      "time": "16:51",
+      "timestamp": "1750722696.034989",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Well, your PR was merged on Jun 17, but we are seeing all these logs starting Jun 11",
+      "time": "16:53",
+      "timestamp": "1750722807.731849",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Do we know when the crashing started?",
+      "time": "16:53",
+      "timestamp": "1750722830.523689",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "From Cypress test log, the same test passed on Jun 18 and failed on Jun 23\nhttps://cloud.cypress.io/projects/cfhedy/runs/20231/overview/d4d0b6d6-af18-4882-b9c5-7895f0e7f5b7?roarHideRunsWithDiffGroupsAndTags=1",
+      "time": "16:55",
+      "timestamp": "1750722942.072839",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I do have another PR (https://github.com/instabase/instabase/pull/71133/files#diff-649435bcf43d471f2eea3b44fd480fb9fb4ab5dc1f981fdb6443aad122c39c59) merged earlier. Maybe related to this change? Does this deactivate endpoint force delete an account?",
+      "time": "16:56",
+      "timestamp": "1750722966.693459",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "yes, Cypress tries to force delete the account",
+      "time": "16:57",
+      "timestamp": "1750723043.955259",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Ok, there is probably something I missed. Let me revert the change for now.",
+      "time": "16:58",
+      "timestamp": "1750723139.293819",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "group-saml-mappings.spec.ts ran at `Jun 23, 2025 01:43 AM PST`  passed. I think cps starts crashlooping after that\nhttps://cloud.cypress.io/projects/cfhedy/runs/20220/test-results/e59819fe-21a9-4550-8[…]9b%5C%22%5D%22%7D%5D&statuses=%5B%5D&testingTypesEnum=%5B%5D (https://cloud.cypress.io/projects/cfhedy/runs/20220/test-results/e59819fe-21a9-4550-8165-e642185bff17?actions=%5B%5D&browsers=%5B%5D&groups=%5B%5D&isFlaky=%5B%5D&modificationDateRange=%7B%22startDate%22%3A%221970-01-01%22%2C%22endDate%22%3A%222038-01-19%22%7D&orderBy=EXECUTION_ORDER&oses=%5B%5D&specs=%5B%7B%22label%22%3A%22apps%2Fsrc%2Faihub%2F__e2e__%2FSettings%2FOrganizations%2Fgroup-saml-mappings.spec.ts%22%2C%22value%22%3A%22%5B%5C%2272d5985f-2ed7-46fa-a3ec-e954f37bd19b%5C%22%5D%22%7D%5D&statuses=%5B%5D&testingTypesEnum=%5B%5D)",
+      "time": "17:00",
+      "timestamp": "1750723229.518379",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Ok lets wait and see what happens after the revert goes into crafting",
+      "time": "17:06",
+      "timestamp": "1750723561.323399",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Mind giving a stamp to this PR? https://github.com/instabase/instabase/pull/71589",
+      "time": "17:07",
+      "timestamp": "1750723679.635449",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I think this is where the error coming from. https://github.com/instabase/instabase/blob/master/core-services/core-platform-ser[…]go/src/instabase/coreplatformservice/account/handler/account.go (https://github.com/instabase/instabase/blob/master/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/account/handler/account.go#L648)",
+      "time": "23:53",
+      "timestamp": "1750748039.351329",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase/coreplatformservice/account/handler/account",
+      "time": "23:54",
+      "timestamp": "1750748040.690909",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/src/instabase/coreplatformservice/account/handler/account",
+      "time": "23:54",
+      "timestamp": "1750748040.759279",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-06-23.json",
+    "message_count": 41,
+    "start_time": "1750709889.580189",
+    "end_time": "1750748040.759279",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "id": "ch_C06FA6A23_2023-03-29_1680107231.136299_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "songeun.you",
+    "Xi Cheng",
+    "Jeff",
+    "Pridhvi Vegesna",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Team, is it expected that on dogfood now one has to login using MFA? If I am not mistaken this would impact all the E2E testing that requires cookies (login). Can someone help clarify?",
+      "time": "09:27",
+      "timestamp": "1680107231.136299",
+      "is_reply": false
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "Hm I don't know if this is a site-wide policy, Require MFA is on right now in the admin configs.",
+      "time": "09:32",
+      "timestamp": "1680107546.059399",
+      "is_reply": true
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "Should this be turned off?",
+      "time": "09:32",
+      "timestamp": "1680107564.596039",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Keeping it on would impact automated E2E tests, but I wanted to ask first if this is intended for some reason, or simply just toggled on accidentally.",
+      "time": "09:33",
+      "timestamp": "1680107637.950879",
+      "is_reply": true
+    },
+    {
+      "sender": "songeun.you",
+      "user_id": "U03RME5DV0R",
+      "message": "If it was toggled accidentally, then maybe it should be turned off for now to work with e2e, and leave this slack thread for discussion in case someone has a specific reason to turn it back on",
+      "time": "09:36",
+      "timestamp": "1680107811.353449",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i can confirm this would break all Cypress tests that require login",
+      "time": "09:44",
+      "timestamp": "1680108281.382989",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "If there's no object, I will toggle this off",
+      "time": "09:45",
+      "timestamp": "1680108317.160399",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "fun fact, apparently we don’t handle missing auth headers - i got a 500 error when the Cypress test made an API call without an auth header (Jaeger link (https://dogfood.instabase.com/jaeger/trace/ab866a4390aa0430))\n\n```{\n  \"key\": \"logging.error\",\n  \"type\": \"string\",\n  \"value\": \"Uncaught exception in webserver while handling request: Error=missing_authorization: Missing \\\"Authorization\\\" in headers.. Traceback=Traceback (most recent call last):;File \\\"/instabase-api-server/py/instabase/utils/web/handler_util_v2.py\\\", line 395, in inner_func;return f(*args, **kwargs);File \\\"/instabase-api-server/py/instabase/utils/oauth2/oauth2.py\\\", line 124, in wrapped_f;oauth2.validate_request(oauth2_scopes, request);File \\\"/home/ibuser/.local/lib/python3.9/site-packages/authlib/oauth2/rfc6749/resource_protector.py\\\", line 136, in validate_request;validator, token_string = self.parse_request_authorization(request);File \\\"/home/ibuser/.local/lib/python3.9/site-packages/authlib/oauth2/rfc6749/resource_protector.py\\\", line 123, in parse_request_authorization;raise MissingAuthorizationError(self._default_auth_type, self._default_realm);authlib.oauth2.rfc6749.errors.MissingAuthorizationError: missing_authorization: Missing \\\"Authorization\\\" in headers.;\"\n}```",
+      "time": "09:45",
+      "timestamp": "1680108345.439549",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "I disabled MFA requirement",
+      "time": "09:46",
+      "timestamp": "1680108403.141629",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "This will be a good use case to see whether we can tell who/what switched it on site wide.",
+      "time": "09:51",
+      "timestamp": "1680108703.339139",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Haha, I thought this should really be recorded in the auditlog?>",
+      "time": "09:52",
+      "timestamp": "1680108731.000639",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "But I think the content in auditlog is not very distinguishable",
+      "time": "09:52",
+      "timestamp": "1680108754.917029",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "@Jeff ^ can you check if the set default platform configs PR (https://github.com/instabase/instabase/commit/a78cf9c815347ca86c63ad23e127f0a1c393e734) may be related here?",
+      "time": "10:00",
+      "timestamp": "1680109229.817139",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "@Pridhvi Vegesna I merged the PR 26 mins ago, which shouldn’t cause this problem.",
+      "time": "10:14",
+      "timestamp": "1680110077.271139",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-03-29.json",
+    "message_count": 14,
+    "start_time": "1680107231.136299",
+    "end_time": "1680110077.271139",
+    "is_thread": true
+  }
+}

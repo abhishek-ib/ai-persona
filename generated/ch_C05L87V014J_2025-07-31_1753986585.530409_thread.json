@@ -1,0 +1,159 @@
+{
+  "id": "ch_C05L87V014J_2025-07-31_1753986585.530409_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "neerad.phansalkar",
+    "mfichman",
+    "tony.shi",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Hi Team,\nAfter some time with @tony.shi to debug https://instabase.slack.com/archives/C05L87V014J/p1753982411417919\nThe issue is getting AWS credits\n\nFrom ChatGPT I understand\n```What happens when you run an AWS command\n\nWhen you run aws s3 ls or anything similar:\n\n1. The AWS CLI sees you have a credential_process.\n2. It runs:\nidfed aws 519787998606 crafting-sandbox-role\nThe idfed tool authenticates you (usually using your company's Identity Federation system such as Okta, Azure AD, Ping, etc.).\n3. It calls AWS STS (Security Token Service) to assume the role crafting-sandbox-role in account 519787998606.\n4. It returns temporary credentials (usually valid for 1 hour or so).```\nThe following command returns the creds\n```idfed aws 519787998606 crafting-sandbox-role```\nThis command returns instantly on `tonybackend9/dev` that @tony.shi created today\nHowever, on an old sandbox `tonybackend3/dev`  - this returns but takes forever (more than 4 minutes). This is source of the problem. Quite a few times it returns 401 I think and it keeps retrying?\n\nCan someone peek into `tonybackend3/dev` to see why it is so much slower / what is missing?\nThat will help us resolve futures issue like this.",
+      "time": "11:29",
+      "timestamp": "1753986585.530409",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "cc @neerad.phansalkar if you know\ncc @mfichman if you have time",
+      "time": "11:30",
+      "timestamp": "1753986624.920619",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "I don't think I can help with this",
+      "time": "11:42",
+      "timestamp": "1753987328.616129",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "looks like idfed is a bash script in `/opt/sandboxd/bin/idfed ` so it should be possible to debug what part is taking long",
+      "time": "11:49",
+      "timestamp": "1753987799.265179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmm interesting",
+      "time": "12:00",
+      "timestamp": "1753988430.834599",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let's try upgrading the old sandbox to the latest base image",
+      "time": "12:00",
+      "timestamp": "1753988445.908349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@tony.shi I think it may be churn caused by services constantly rebuilding on your sandbox and eating up CPU...I ran `cs stop` to end the services, then the response time is OK:\n\n```owner@dev:~$ time idfed aws 519787998606 crafting-sandbox-role\n{\n\"Version\":1,\n\"AccessKeyId\":\"ASIAXSBOHNWHPJ3Y4P26\",\n\"SecretAccessKey\":\"rXHbqS63w+AS1YthG6lC1qHo2rh6BhuL4d/5npA5\",\n\"SessionToken\":\"FwoGZXIvYXdzEMT//////////wEaDILaSC+a8me/ar85JyK/AhDjP3/cWgLLzvQQHwfd4o1FNe0gLcwMMlU7XTy/LS3CeOZwjQejmWpFNPvRsRvuZ8eELxVEciVll/38Ean/s0XY4ay/bYNg9YkkXKEVjAxuTjXv77FPqCXvhbFkudyJv12tg6f/epb/+kOb+1KZx4eNpwcHZuvtaoF/W20UmY3G5aCA9TLm0ghGq4cPOJJfsNUoj8vuUDHzWOE5YizgPTnswlQyv6U413xsKOAV2IeKPQ1ymokTZdW6ahkHn61kr/oNLqHZw1Cz/6FNTOkA7vPyp6mQHHpLgrQZ+GAYBwr7XQe8Qmbflf2TzY6KUXVJsLma/JU1kEi5Fw7PbaZ+JuzxRL5HlkqXqiseG4qyPqWSPX1tdZU/RGSxY+MsZI7Mld271bFiJXeCfleCn/63DSfjkMYuzECWpn5a6w6Wk4Eog/uuxAYyJEcC751sQAGGYS8vYHv4HWVJ/n1KrrmNb5bPm4e54ygAwe3zjQ==\"\n}\n\nreal    0m0.073s\nuser    0m0.043s\nsys     0m0.001s\nowner@dev:~$ ```",
+      "time": "12:01",
+      "timestamp": "1753988513.479289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Now I'll run `cs up` again and see if the services build/run successfully",
+      "time": "12:02",
+      "timestamp": "1753988542.103949",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```--rm -v /private/tmp/models:/tmp/models -p 7800:7800 -i instabase/model-service\ndocker: Error response from daemon: Conflict. The container name \"/instabase-model-service\" is already in use by container \"092f69f35f3e1b5bcf2110447880ef9d2dc31c810c8394d41c4111dcb4c3009f\". You have to remove (or rename) that container to be able to reuse that name.\n\nRun 'docker run --help' for more information```\nDocker daemon misbehaving again",
+      "time": "12:03",
+      "timestamp": "1753988582.194379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If you see this in the logs, delete the container:\n```docker rm 092f69f35f3e1b5bcf2110447880ef9d2dc31c810c8394d41c4111dcb4c3009f```",
+      "time": "12:03",
+      "timestamp": "1753988600.978699",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "And the `docker rm` is hanging...the only way to resolve this is to restart the docker daemon",
+      "time": "12:03",
+      "timestamp": "1753988617.210629",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```pkill dockerd```\nand wait for it to restart\n```pgrep dockerd```",
+      "time": "12:03",
+      "timestamp": "1753988629.573609",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "That explains why I was previously able to get around this issue by suspending the sandbox and then restarting...",
+      "time": "12:04",
+      "timestamp": "1753988688.991549",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It's working now",
+      "time": "12:05",
+      "timestamp": "1753988752.662299",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The main issue I think is `dockerd` :\n\nSometimes `docker rm` hangs\nSometimes `docker run --rm` seems to hang at the `--rm` operation, causing a container name conflict on the next `docker run`\nSometimes `docker build` hangs\n\nWhen these things happen, Crafting retries the `docker build`...which probably exacerbates the problem. What I do is:\n\n```cs stop # if this takes too long, ctrl-c\nsudo pkill dockerd # need to do this a few times -- it tries to shut down gracefully\ncs up```",
+      "time": "12:07",
+      "timestamp": "1753988839.657079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'm working with the crafting folks on why `dockerd` is so darn unstable in Crafting...it wasn't this bad until recently.",
+      "time": "12:07",
+      "timestamp": "1753988866.399849",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "thank you :pray:",
+      "time": "12:10",
+      "timestamp": "1753989018.606629",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-31.json",
+    "message_count": 17,
+    "start_time": "1753986585.530409",
+    "end_time": "1753989018.606629",
+    "is_thread": true
+  }
+}

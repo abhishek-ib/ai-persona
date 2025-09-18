@@ -1,0 +1,94 @@
+{
+  "id": "ch_C06FA6A23_2021-08-13_1628869663.172100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Kerry",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "So I’m still monitoring this problem. There’s one pod in `apps-server` today that is about to get crazy :exploding_head: see the grafana dashboard (https://instabase.com/grafana/d/a164a7f0339f99e89cea5cb47e9be617/kubernetes-compute-resources-workload?orgId=1&var-datasource=1.%20Victoriametrics&var-cluster=&var-namespace=instabase-prod&var-workload=deployment-apps-server&var-type=deployment&from=now-2d&to=now&refresh=10s) (this is super useful! thanks to the observability team). pod deployment-apps-server-84758ffccd-b8f4v (https://instabase.com/grafana/d/6581e46e4e5c7ba40a07646395ef7b23/k8s-resources-pod?var-datasource=1.%20Victoriametrics&var-cluster=&var-namespace=instabase-prod&var-pod=deployment-apps-server-84758ffccd-b8f4v) is about to get crazier and crazier. It started around 6:30am ET today. Strangely, I looked at the gcloud log for the pod and found no logs (https://console.cloud.google.com/logs/query;query=resource.type%3D%22k8s_container%22%0Aresource.labels.project_id%3D%22instabase-main%22%0Aresource.labels.location%3D%22us-central1-c%22%0Aresource.labels.cluster_name%3D%22instabase-main-prod-002%22%0Aresource.labels.namespace_name%3D%22instabase-prod%22%0Aresource.labels.pod_name%3D%22deployment-apps-server-84758ffccd-b8f4v%22%0Aresource.labels.container_name%3D%22apps-server%22%0ANOT%20%22alive.txt%22;timeRange=2021-08-13T10:20:21.314Z%2F2021-08-13T10:40:37.314Z;cursorTimestamp=2021-08-13T10:58:24.739346939Z?organizationId=396394272939&project=instabase-main) but the `alive.txt` logs from 6:20-6:40. @Shubham Oli, can you help quarantine this node? Also, is it possible that you can exec into the pod to see what the processes running in the pod are? the CPU seems to just keeps spinning up (not to a point it would crash though, still below the limit, but the trend looks problematic)  cc @shaunak",
+      "time": "08:47",
+      "timestamp": "1628869663.172100",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "well I got into the machine - command to exec `kubectl -n instabase-prod exec -it deployment-apps-server-84758ffccd-lk27q /bin/bash`\nin b8f4v, the gevent server is always at 0.3%\n```ibuser@deployment-apps-server-84758ffccd-b8f4v:/instabase-server/py$ ps aux\nUSER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND\nibuser         1  0.0  0.0   7356  3848 ?        Ss   Aug12   0:00 /bin/bash start.sh\nibuser         7  0.3  0.1 1015128 176968 ?      Sl   Aug12   5:47 /usr/bin/python manage.py gevent_server\nibuser        41  0.1  0.0   7620  4532 pts/0    Ss   16:20   0:00 /bin/bash\nibuser        60  0.0  0.0   9864  3496 pts/0    R+   16:22   0:00 ps aux\nibuser@deployment-apps-server-84758ffccd-b8f4v:/instabase-server/py$ ps aux\nUSER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND\nibuser         1  0.0  0.0   7356  3848 ?        Ss   Aug12   0:00 /bin/bash start.sh\nibuser         7  0.3  0.1 1015128 176968 ?      Sl   Aug12   5:47 /usr/bin/python manage.py gevent_server\nibuser        41  0.1  0.0   7620  4536 pts/0    Ss   16:20   0:00 /bin/bash\nibuser        61  0.0  0.0   9864  3448 pts/0    R+   16:22   0:00 ps aux\nibuser@deployment-apps-server-84758ffccd-b8f4v:/instabase-server/py$ ps aux\nUSER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND\nibuser         1  0.0  0.0   7356  3848 ?        Ss   Aug12   0:00 /bin/bash start.sh\nibuser         7  0.3  0.1 1015128 176968 ?      Sl   Aug12   5:47 /usr/bin/python manage.py gevent_server\nibuser        41  0.1  0.0   7620  4536 pts/0    Ss   16:20   0:00 /bin/bash\nibuser        62  0.0  0.0   9864  3500 pts/0    R+   16:23   0:00 ps aux\nibuser@deployment-apps-server-84758ffccd-b8f4v:/instabase-server/py$ ps aux\nUSER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND\nibuser         1  0.0  0.0   7356  3848 ?        Ss   Aug12   0:00 /bin/bash start.sh\nibuser         7  0.3  0.1 1015128 176968 ?      Sl   Aug12   5:47 /usr/bin/python manage.py gevent_server\nibuser        41  0.1  0.0   7620  4536 pts/0    Ss   16:20   0:00 /bin/bash\nibuser        63  0.0  0.0   9864  3344 pts/0    R+   16:23   0:00 ps aux```\nin healthy pod it is at 0\n```ibuser@deployment-apps-server-84758ffccd-lk27q:/instabase-server/py$ ps aux\nUSER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND\nibuser         1  0.0  0.0   7356  3552 ?        Ss   Aug12   0:00 /bin/bash start.sh\nibuser         6  0.0  0.1 765008 148516 ?       Sl   Aug12   1:12 /usr/bin/python manage.py gevent_server\nibuser        32  0.4  0.0   7620  4444 pts/0    Ss   16:21   0:00 /bin/bash\nibuser        42  0.0  0.0   9864  3536 pts/0    R+   16:23   0:00 ps aux\nibuser@deployment-apps-server-84758ffccd-lk27q:/instabase-server/py$ ps aux\nUSER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND\nibuser         1  0.0  0.0   7356  3552 ?        Ss   Aug12   0:00 /bin/bash start.sh\nibuser         6  0.0  0.1 765008 148516 ?       Sl   Aug12   1:12 /usr/bin/python manage.py gevent_server\nibuser        32  0.4  0.0   7620  4444 pts/0    Ss   16:21   0:00 /bin/bash\nibuser        43  0.0  0.0   9864  3404 pts/0    R+   16:23   0:00 ps aux```",
+      "time": "09:25",
+      "timestamp": "1628871924.172500",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Don't see anything that is running at 2.7% consistently like grafana reports. Is it the sidecar?",
+      "time": "09:27",
+      "timestamp": "1628872029.173100",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "what’s a sidecar? :sidecar:",
+      "time": "09:28",
+      "timestamp": "1628872139.173800",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "sidecar is another container that runs along with the pod - like jaegar. the jaegar container runs as a sidecar, not sure if we have any other sidecars",
+      "time": "09:31",
+      "timestamp": "1628872278.174600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "there is no jaeger sidecar in the apps-server, just a kubectl proxy sidecar which is stateless",
+      "time": "09:51",
+      "timestamp": "1628873478.175300",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "trying to exec into the container myself, got this\n```Error from server (Forbidden): pods \"deployment-apps-server-84758ffccd-td48j\" is forbidden: User \"<mailto:kerry@instabase.com|kerry@instabase.com>\" cannot create resource \"pods/exec\" in API group \"\" in the namespace \"instabase-prod\": requires one of [\"container.pods.exec\"] permission(s).```\ncan someone give me permission? @shaunak?",
+      "time": "11:06",
+      "timestamp": "1628877995.176900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "whatt!!?  Let me check in a few minutes.",
+      "time": "12:16",
+      "timestamp": "1628882190.177500",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Heymian helped give me permission! :heart:",
+      "time": "12:28",
+      "timestamp": "1628882882.178100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-08-13.json",
+    "message_count": 9,
+    "start_time": "1628869663.172100",
+    "end_time": "1628882882.178100",
+    "is_thread": true
+  }
+}

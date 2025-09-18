@@ -1,0 +1,160 @@
+{
+  "id": "ch_C06FA6A23_2022-04-27_1651046900.208579_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Anil",
+    "Shubham Oli",
+    "shiqi",
+    "Eric Han",
+    "puneet"
+  ],
+  "messages": [
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "Hey team,\nI am trying to run a flow in my aws sandbox and getting the following error -\n```{\"code\":null,\"response\":{\"status\":\"ERROR\",\"msg\":\"err: Error occurred executing GRPC method: Retrying /job_service.JobService/StartFlow request in 1.5s due to StatusCode ABORTED, Error (10, 'aborted'), Message Failed to create job entry in database. Error: Failed to create model in jobs. Retries left 0 when updating job-service while starting flow: 35b21696-0944-4d40-9792-a90f68206311\"}}```\nOn investigating further I found the following logs in job-service -\n```2022/04/27 08:00:46 ERROR utils/db/session/tx.go:50 -- Prepare statement fail: Error 1054: Unknown column 'pipelines' in 'field list'\n2022/04/27 08:00:46 ERROR utils/db/accessor/db_accessor.go:660 -- Failed to create model in Error 1054: Unknown column 'pipelines' in 'field list': jobs\n2022/04/27 08:00:46 ERROR jobservice/handler/flow.go:183 -- [ABORTED]: Failed to create job entry in database. Error: Failed to create model in jobs```\nThis happened after I pulled the latest master into my branch. I am not sure if this is due to a recent change or if something is wrong with the DB.\n\nI can see this (https://github.com/instabase/instabase/pull/25588) PR which added some new columns into the job table which might be related.",
+      "time": "01:08",
+      "timestamp": "1651046900.208579",
+      "is_reply": false
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "c.c. @Anil",
+      "time": "01:09",
+      "timestamp": "1651046993.440879",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "@Anil do we need to run some db-update job to make it work.\n\nThis is breaking in sandboxes.",
+      "time": "01:10",
+      "timestamp": "1651047055.905919",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "Yes db update is needed because we changed the schema of the jobs table",
+      "time": "05:22",
+      "timestamp": "1651062153.507689",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "Thank you @Eric Han\n\ndo we also need to update dbinit? I can only see dbupdate is updated in the original PR but for newer sandboxes and new customer deployments we will need dbinit.",
+      "time": "05:37",
+      "timestamp": "1651063048.322239",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "Ya I think so. I'll let @Anil chime in here",
+      "time": "05:38",
+      "timestamp": "1651063096.093409",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "You need to run the Dbupdate. Dbupdate will migrate the schema. Dbinit will directly create the new schema",
+      "time": "07:22",
+      "timestamp": "1651069379.939679",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "That's correct but for future sandboxes created after this PR merge will need updated dbinit right?",
+      "time": "07:24",
+      "timestamp": "1651069494.165499",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "Okay, is it the one in `instabase/tools/onprem/dbupdate`",
+      "time": "07:25",
+      "timestamp": "1651069511.407129",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@Shubham Oli yes.  if we use a fixed image, it needs to be updated",
+      "time": "07:39",
+      "timestamp": "1651070393.601489",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "Yes we use fixed image for now.\n\nDoes building a new image from upstream will have this change asking because I cannot see related changes for dbinit service in your PR",
+      "time": "07:41",
+      "timestamp": "1651070488.969649",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "models.Job has changed, dbinit should automatically get the new schema",
+      "time": "07:43",
+      "timestamp": "1651070587.862549",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "Ok perfect. Thank you for the clarification.",
+      "time": "07:43",
+      "timestamp": "1651070617.236299",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Could you post an update on how to actually do the dbupdate? I know the CLI way to do it (launch dbupdate via kubectl) but how would some body withouot kubectl update their sandbox?",
+      "time": "07:45",
+      "timestamp": "1651070744.399159",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "(not urgent)",
+      "time": "07:45",
+      "timestamp": "1651070753.726349",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "I’ll also do it using kubectl and update dbinit image for future sandboxes.",
+      "time": "07:46",
+      "timestamp": "1651070801.661269",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "is this something we can add a check in danger to put a warning about? (e.g. warning: db change or something more intuitive)",
+      "time": "09:44",
+      "timestamp": "1651077853.283689",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-04-27.json",
+    "message_count": 17,
+    "start_time": "1651046900.208579",
+    "end_time": "1651077853.283689",
+    "is_thread": true
+  }
+}

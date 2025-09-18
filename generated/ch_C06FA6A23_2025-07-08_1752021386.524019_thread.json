@@ -1,0 +1,44 @@
+{
+  "id": "ch_C06FA6A23_2025-07-08_1752021386.524019_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Does anyone know how the docker images in `docker/` get built? The Makefile in there doesn't work; nor is there a README",
+      "time": "17:36",
+      "timestamp": "1752021386.524019",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I got it working w/ this diff, but there must be some other magic I don't see. I doubt people manually run that long `docker buildx bake` command, right?\n\n```cs/mfichman❯ git diff Makefile\ndiff --git a/docker/Makefile b/docker/Makefile\nindex 8650765f382..534afd8195f 100644\n--- a/docker/Makefile\n+++ b/docker/Makefile\n@@ -1,7 +1,18 @@\n project_dir=$(shell realpath $(PWD)/..)\n\n+\n+BUILDX=docker buildx bake \\\n+       -f $(project_dir)/docker/docker-bake.hcl \\\n+       -f $(project_dir)/docker/docker-bake.override.hcl \\\n+       -f $(project_dir)/docker/ib-services.hcl \\\n+       -f $(project_dir)/docker/docker-bake/variables.hcl \\\n+       -f $(project_dir)/docker/docker-bake/helpers.hcl\n+\n python:\n-       docker buildx bake -f $(project_dir)/docker/docker-bake.hcl -f $(project_dir)/docker/docker-bake.override.hcl python\n+       $(BUILDX) $@\n\n go-db:\n-       docker buildx bake -f $(project_dir)/docker/docker-bake.hcl -f $(project_dir)/docker/docker-bake.override.hcl go-db\n+       $(BUILDX) $@\n+\n+go-debug:\n+       $(BUILDX) $@```",
+      "time": "17:37",
+      "timestamp": "1752021474.806359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The shell script in there doesn't work either:\n\n```./bake```",
+      "time": "17:38",
+      "timestamp": "1752021497.828649",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-07-08.json",
+    "message_count": 3,
+    "start_time": "1752021386.524019",
+    "end_time": "1752021497.828649",
+    "is_thread": true
+  }
+}

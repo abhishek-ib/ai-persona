@@ -1,0 +1,28 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-07-23_1753320554.847619_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale"
+  ],
+  "messages": [
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Hi @pauline.comising @ayesha.ali, following up on the discussion about storing project configuration information in database tables (like `validation_rules`, `project_classes`, `udf_prompts`, etc.)  vs.  solely in the file system. I noticed we also store a lot of the same information stored in the `aihub/<project id>/project/flows`  directory, I see `post_extraction_schema.json` (seems to store validations / udfs),  `schema.json` (seems to store class information), and `project_snapshot.json` (not sure what this is used for but seems to store class schema, udfs, & validation rules). Sometimes the data appears to be inconsistent across these files and with what's in the database.\n\nFor example, I was playing around with udf validations, and I noticed that if I delete a udf validation the corresponding udf prompt doesn't get deleted in the `udf_prompts` table or in `project_snapshot.json`, resulting in stale data and inconsistency across multiple sources. I feel that this is a clear example of why I think we should try to rely solely on one source and remove any additional sources if it's not needed for the query patterns we are trying to optimize for. It simplifies the system a ton (saving developer time in iterating / onboarding), speeds up API performance, and avoids subtle bugs.\n\nI lean towards storing the project configuration information fully in the filesystem mainly because it's much easier to maintain configuration information in one filesystem directory than several database tables and it's less expensive overall ($) than a db. The main benefit I see for storing it in the database is if we wanted to query project configuration information across several projects at a time, but I haven't seen a user flow in the product where we would need to do that. We typically only fetch information for 1 project at a time, and in those cases we should be able to do fs read / writes instead.\n\nWhat do you think about potentially refactoring our project APIs to rely solely on the configuration information (like class schema, validations, udf) in the filesystem (like what's stored in `schema.json`, `post_extraction_schema,json`), then removing those database tables (like `validation_rules`, `udf_prompts` , `project_classes`, etc.) afterwards? Since we have some semblance of this information stored in the filesystem already, I feel that this would not be too much effort and save us a lot of time in the future. Not we need to do immediately but something we can look into after other projects wrap up.\n\nLet me know your thoughts and / or if there is additional context I'm missing!\n\ncc @mfichman bc we touched on this briefly earlier today",
+      "time": "18:29",
+      "timestamp": "1753320554.847619",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-07-23.json",
+    "message_count": 1,
+    "start_time": "1753320554.847619",
+    "end_time": "1753320554.847619",
+    "is_thread": true
+  }
+}

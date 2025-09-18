@@ -1,0 +1,313 @@
+{
+  "id": "ch_C06FA6A23_2021-06-28_1624887049.463800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Sujith",
+    "Aimé",
+    "Eric Han",
+    "Daniel Cahn",
+    "Anant",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Sujith",
+      "user_id": "U0135EMMCAG",
+      "message": "Hi team!!\n\nI have some feedback from Natwest while updating labels for split classifier in Flow Review.\n• In flow review If I want to classify a record to a new label, We are not taking label name as an input, rather It assumes a label automatically.\n• We are not able to create a new record by selecting non-sequential pages.",
+      "time": "06:30",
+      "timestamp": "1624887049.463800",
+      "is_reply": false
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "+ @lydia",
+      "time": "06:33",
+      "timestamp": "1624887224.463900",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "+ @Kerry",
+      "time": "06:33",
+      "timestamp": "1624887239.464100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Hi Sujith! We make the assumption of sequential pages throughout classifier. What is the reason for non-sequential pages? are the pages interleaved with another document? Or does the user want to exclude “junk” pages?",
+      "time": "06:34",
+      "timestamp": "1624887252.464300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Kerry is out this week. For the flow review feedback, are you saying you are not able to add a new class?",
+      "time": "06:34",
+      "timestamp": "1624887281.464600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "+ @Eric Han for Flow review feedback.",
+      "time": "06:34",
+      "timestamp": "1624887298.464800",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "Hey Sujith, we have received these feedback from @Aimé before. But just to clarify:\n1. The classification labels are from a list of what's available in the classifier. If they would like to classify a record to a new label, that label should be included in the trained classifier.\n2. We don't support none sequential pages right now due to the limitations of ibdoc format. This should be supported once we finish implementing flow v3",
+      "time": "06:38",
+      "timestamp": "1624887523.465000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Oh would be good to know if we decide to support non-sequential pages because that will be an important requirement for  the annotator product spec. I didn’t know we intended to support it in the future.",
+      "time": "06:40",
+      "timestamp": "1624887616.465300",
+      "is_reply": true
+    },
+    {
+      "sender": "Sujith",
+      "user_id": "U0135EMMCAG",
+      "message": "Thanks @Eric Han for that!!",
+      "time": "06:41",
+      "timestamp": "1624887662.465500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Sujith can you describe why you need non-sequential pages marked?",
+      "time": "06:44",
+      "timestamp": "1624887879.465700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Yeah I shared this with Kerry already. The reason they need non sequential pages marked is because right now the page splitter is not performing so great so sometimes we might have 5 pages of a bank statement and a passport on page 3. So have to break up the pages rather than just select and re-label page 3. I would t expect this to happen that often in prod with a better splitter. But it does make golden creation labeling frustrating.",
+      "time": "06:52",
+      "timestamp": "1624888360.468800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Hi Aime, not sure I totally follow. Do you mean the passport appears on page 3 in the middle of the bank statement? So pages 1, 2, 4, 5, and 6 are a single bank statement, and a passport happens to be on page 3?",
+      "time": "06:53",
+      "timestamp": "1624888435.470300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Yes",
+      "time": "06:54",
+      "timestamp": "1624888453.470700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "What does that have to do with the performance of the page splitter?",
+      "time": "06:54",
+      "timestamp": "1624888458.470900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "I dunno. This was my assumption. That pages weren’t being split properly?",
+      "time": "06:54",
+      "timestamp": "1624888493.471600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "and why does the original document have a passport randomly inserted? is it because it’s customer uploaded files or scanned documents and there’s no guarantee of page order?",
+      "time": "06:55",
+      "timestamp": "1624888504.472000",
+      "is_reply": true
+    },
+    {
+      "sender": "Sujith",
+      "user_id": "U0135EMMCAG",
+      "message": "@lydia Exactly so when you need to create a new document with page 3 and 4 its not possible",
+      "time": "06:55",
+      "timestamp": "1624888516.472300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "sorry what I mean is, the question is whether or not the _original file_ has interleaved documents. Our algorithm performance doesn’t matter.",
+      "time": "06:55",
+      "timestamp": "1624888539.472900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "So what you are seeing is, in the original PDFs that are uploaded, you might have `bank p1, bank p2, passport, bank p3, bank p4` where it is a single bank statement document (not 2 different ones)",
+      "time": "06:56",
+      "timestamp": "1624888598.473800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Maybe we can just show you",
+      "time": "06:56",
+      "timestamp": "1624888611.474200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yea haha happy to jump on a call now or we can find a time",
+      "time": "06:57",
+      "timestamp": "1624888623.474500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "this is very important because it’s a core assumption in our annotation design",
+      "time": "06:57",
+      "timestamp": "1624888637.474800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "I am out just now. @Sujith can you screen share?",
+      "time": "06:57",
+      "timestamp": "1624888645.475300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Also on point 1. I think they mean that When they click create a new record, they can’t chose the new label - the label is assigned to the record. @Eric Han  what logic is used to label the new one?",
+      "time": "06:57",
+      "timestamp": "1624888676.475700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "but you can change the label right? is this a blocker or an inconvenience?",
+      "time": "06:58",
+      "timestamp": "1624888696.475900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Inconvenience. Not a blocker",
+      "time": "06:59",
+      "timestamp": "1624888757.476700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Both are inconveniences not blockers",
+      "time": "06:59",
+      "timestamp": "1624888795.477300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh, the non-sequential issue doesn’t prevent you from properly labeling the documents?",
+      "time": "07:00",
+      "timestamp": "1624888827.477500",
+      "is_reply": true
+    },
+    {
+      "sender": "Sujith",
+      "user_id": "U0135EMMCAG",
+      "message": "@lydia we can have a call just to clarify:slightly_smiling_face:",
+      "time": "07:00",
+      "timestamp": "1624888848.477800",
+      "is_reply": true
+    },
+    {
+      "sender": "Daniel Cahn",
+      "user_id": "U01BA1SDWP4",
+      "message": "@lydia can you drop in a comment on the conclusion here, when y’all finish? (e.g. what the problem ended up being, what the workaround will be, if any)",
+      "time": "07:37",
+      "timestamp": "1624891059.478200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Hey! it sounds like there are sometimes interleaved or out of order documents in customer bundles, but Sujith didn’t have an example handy, so next time he sees any example, he’ll slack us (@Sujith feel free to slack in proj-classifier)",
+      "time": "08:05",
+      "timestamp": "1624892738.478500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "It’ll be useful to know how prevalent this issue is because it does have a lot of impact on the classifier algorithms / UI we develop",
+      "time": "08:06",
+      "timestamp": "1624892771.478800",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "In terms of the new record creation, is it that they want to assign the label right as the record is created instead of having one auto assigned?",
+      "time": "08:06",
+      "timestamp": "1624892818.479100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Sujith I realized I forgot to ask, what is your current workaround? Do you split a document into multiple docs even though they are the same doc? For example, with `bank p1, bank p2, passport, bank p3, bank p4`, do you create:\n• bank doc pages 1-2\n• passport page 3\n• bank doc pages 4-5",
+      "time": "08:07",
+      "timestamp": "1624892876.479300",
+      "is_reply": true
+    },
+    {
+      "sender": "Sujith",
+      "user_id": "U0135EMMCAG",
+      "message": "Yep exactly",
+      "time": "08:08",
+      "timestamp": "1624892926.479500",
+      "is_reply": true
+    },
+    {
+      "sender": "Sujith",
+      "user_id": "U0135EMMCAG",
+      "message": "And want to assign them to correct label, we have approx 30 labels",
+      "time": "08:09",
+      "timestamp": "1624892987.479800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-06-28.json",
+    "message_count": 36,
+    "start_time": "1624887049.463800",
+    "end_time": "1624892987.479800",
+    "is_thread": true
+  }
+}

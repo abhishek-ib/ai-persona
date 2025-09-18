@@ -1,0 +1,112 @@
+{
+  "id": "ch_C0516UPPMT3_2023-12-11_1702295207.226989_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Sayd",
+    "CJ",
+    "Lee",
+    "Nikolaos Kofinas",
+    "Sławek Biel"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Also working a lot more in build today for and the response time from the model is really slow, significantly slower than the same prompt in converse. To the point I can leave the computer to make a drink come back and its still going.\n\nWhy would build be so much slower than converse? Is there a way to improve this as we are trying to stop customers protoyping prompts in converse and copying over, but it makes things so much slower with the current setup.\n\n@Sławek Biel",
+      "time": "03:46",
+      "timestamp": "1702295207.226989",
+      "is_reply": false
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Thank for reporting, this is curious. I was able to reproduce it when the same prompt took  5 sec in converse and 14sec in build.\n\n@Nikolaos Kofinas I looked at the attached logs and there is a suspicious gap I don’t understand. This is running a single long doc reasoning field\n\nThe `Mapped lines to pages using ibdocv2` line is written after the doc has been already loaded. And the `Got active_document_id` line is at the start of `_extract_fields_for_long_doc` there shouldn’t be any work done between them other than deciding which pipeline to run and whether it’s a long doc or not. Yet it takes 7 seconds with multiple “Using tokenizer” messages. Can you figure out what happens there?\n\nAs a separate thing out of the 14 total seconds (stop watch in hand) a bit over 9 is spent inside IBLLM. The remaining 5 must be is setting up/submitting flow? CC @lydia if there is something we can streamline there",
+      "time": "04:51",
+      "timestamp": "1702299117.955569",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "is this code segment in dogfood? the get_weaviate_key_for_doc which logs the got activde docuemnt id was added recently and I dont know if it make the cat (cc @Dominic Fannjiang) the multiple using tokenizer calls come from the _is_long_doc_basic and is_long_doc_advanced calls (which do no work as you said).",
+      "time": "08:47",
+      "timestamp": "1702313258.733229",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "@Sayd its reaaaaaal",
+      "time": "09:07",
+      "timestamp": "1702314426.530739",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "What environment did you test on? Running on sandbox right now and it seemed the usual speed",
+      "time": "09:19",
+      "timestamp": "1702315190.924889",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "@Dominic Fannjiang is OOO, so I'll be taking a look @Nikolaos Kofinas. If you want to hop on a call and debug this",
+      "time": "09:20",
+      "timestamp": "1702315242.260459",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I was on prod when I found it slow. Its been slow today in demos. It seems particularly slow with clean requests which I assumed would be quicker as there’s less data going to the model",
+      "time": "09:26",
+      "timestamp": "1702315568.187609",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "if its on prod then that means that this is the older version of ibllm before the codecut right?",
+      "time": "09:27",
+      "timestamp": "1702315628.464599",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "before the last codecut yet",
+      "time": "09:27",
+      "timestamp": "1702315655.519919",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "I'm testing on prod and it works fast for me. @Lee can you share the doc you used and the prompt",
+      "time": "09:27",
+      "timestamp": "1702315671.655109",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I was in build, adding fields like the screenshot. The extraction is really slow, and the same for just getting me the email from the result.",
+      "time": "09:31",
+      "timestamp": "1702315917.444799",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-12-11.json",
+    "message_count": 11,
+    "start_time": "1702295207.226989",
+    "end_time": "1702315917.444799",
+    "is_thread": true
+  }
+}

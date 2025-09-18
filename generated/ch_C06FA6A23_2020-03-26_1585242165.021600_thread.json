@@ -1,0 +1,239 @@
+{
+  "id": "ch_C06FA6A23_2020-03-26_1585242165.021600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "rahul",
+    "dlluncor",
+    "Heymian",
+    "will"
+  ],
+  "messages": [
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "@achao Does this look like something you can help with? Goldens are timing out because it loops forever on `Polling for results on ['encrypt-and-run-singleflow', 'encrypt-and-run-multiflow', 'encrypt-and-run-metaflow']`",
+      "time": "10:02",
+      "timestamp": "1585242165.021600",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "that’s @rahul I think, for encrypting flows.",
+      "time": "10:04",
+      "timestamp": "1585242289.022500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "ooooh. Maybe it could be something that will work on master then?",
+      "time": "10:05",
+      "timestamp": "1585242322.023300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@dlluncor might have just put in a fix related to this",
+      "time": "10:05",
+      "timestamp": "1585242325.023600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "we need master yes",
+      "time": "10:05",
+      "timestamp": "1585242353.023800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i believe dogfood is running master yes?",
+      "time": "10:05",
+      "timestamp": "1585242359.024000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I’ll force another run and see what happens. If it works it will let us know in a couple minutes.",
+      "time": "10:06",
+      "timestamp": "1585242378.024200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "also @rahul we should look for failure conditions and make sure that we don’t poll forever on encrypt",
+      "time": "10:06",
+      "timestamp": "1585242389.024400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Now dogfood is master, yeah. but the golden tests hadn’t passed since Thursday",
+      "time": "10:06",
+      "timestamp": "1585242405.024600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Im adding a fix to run fewer tests at once, to prevent flakiness, but I don’t think it will fix this particular problem",
+      "time": "10:06",
+      "timestamp": "1585242408.024800",
+      "is_reply": true
+    },
+    {
+      "sender": "rahul",
+      "user_id": "USC1G2ZKR",
+      "message": "Oh hmm @will which environment is this on?",
+      "time": "10:07",
+      "timestamp": "1585242475.025400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "@rahul we should be able to reproduce this locally if you are running against the dogfood env",
+      "time": "10:08",
+      "timestamp": "1585242492.025600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "was on dogfood, but may be related to running golden tests from master against the release-2020-03-19 deploys",
+      "time": "10:08",
+      "timestamp": "1585242514.025800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "If you want to test against that environment, it is on uat.dogfood.instabase.com (http://uat.dogfood.instabase.com) now",
+      "time": "10:08",
+      "timestamp": "1585242529.026000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "cool, Rahul you can try IB_TEST_ENV=uat and IB_TEST_ENV=dogfood",
+      "time": "10:09",
+      "timestamp": "1585242553.026200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "and see if you get any differences. Goldens should be passing on both I believe though @rahul",
+      "time": "10:09",
+      "timestamp": "1585242572.026400",
+      "is_reply": true
+    },
+    {
+      "sender": "rahul",
+      "user_id": "USC1G2ZKR",
+      "message": "Yeah should be passing on both, I'll give it a look",
+      "time": "10:13",
+      "timestamp": "1585242821.026600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I’m going to make a brief doc with some of these details, but just so you know in this thread for now:\nThe way jenkins handles timeouts by default is the abend the job which will fail the job silently since the post job action doesn’t get run. I am testing try-catch blocks to force the job to fail instead of abend, but am not sure if that would work in this case since the output to stdout is continuous.",
+      "time": "10:17",
+      "timestamp": "1585243021.026800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Here’s a PR that will cap the amount of time that each individual test amongst all running in the goldens can take to 10 minutes (https://github.com/instabase/instabase/pull/13226) — configurable via command line",
+      "time": "10:44",
+      "timestamp": "1585244641.027200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Rahul is looking into the root cause and will fix this particular issue",
+      "time": "10:44",
+      "timestamp": "1585244653.027400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Nice! It looks like it adds the job that is timed out to the failed list and then moves on?",
+      "time": "10:51",
+      "timestamp": "1585245099.027600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "yep that’s correct",
+      "time": "10:52",
+      "timestamp": "1585245174.027800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "if that one test takes longer than 10 minutes, it fails it, and then moves on",
+      "time": "10:53",
+      "timestamp": "1585245182.028000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "we can configure that timeout as appropriate if you want, but I defaulted it to 600 seconds",
+      "time": "10:53",
+      "timestamp": "1585245195.028200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I think 10 should be good. Jenkins will currently abend the job at 15 minutes, so that gives time for the other parts of the job to run too",
+      "time": "10:53",
+      "timestamp": "1585245238.028400",
+      "is_reply": true
+    },
+    {
+      "sender": "rahul",
+      "user_id": "USC1G2ZKR",
+      "message": "Hey guys, golden tests from flow-binary-compilation-tests.json should be working now, no code changes needed.\n\nI had modified the pypkg solution on marketplace that the tests relied on, those should be fixed now",
+      "time": "12:05",
+      "timestamp": "1585249505.029000",
+      "is_reply": true
+    },
+    {
+      "sender": "rahul",
+      "user_id": "USC1G2ZKR",
+      "message": "thank you for catching this :slightly_smiling_face:",
+      "time": "12:06",
+      "timestamp": "1585249566.029300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-03-26.json",
+    "message_count": 27,
+    "start_time": "1585242165.021600",
+    "end_time": "1585249566.029300",
+    "is_thread": true
+  }
+}

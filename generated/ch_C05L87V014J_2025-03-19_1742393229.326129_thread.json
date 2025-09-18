@@ -1,0 +1,218 @@
+{
+  "id": "ch_C05L87V014J_2025-03-19_1742393229.326129_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "Udit",
+    "jordy.vlan",
+    "Jessica",
+    "Jeff",
+    "Liam Callanan",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "my sandboxes using the ibdev template still are not able to load workspaces and other endpoints using grpc. I thought the revival from yesterday would have been done by now and everything would be working as expected. What can I do to get it working again?",
+      "time": "07:07",
+      "timestamp": "1742393229.326129",
+      "is_reply": false
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "not sure if related but it still shows unknown for these?",
+      "time": "07:08",
+      "timestamp": "1742393309.640189",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "I fixed my issues by just creating a new sandbox from scratch",
+      "time": "07:41",
+      "timestamp": "1742395300.183759",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "I tried that but its the same issues because the ibdev templates that the frontend use intercept to the same cluster",
+      "time": "07:44",
+      "timestamp": "1742395453.362539",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "I will create an ibdev-backend sandbox for now and see if I can work from it instead",
+      "time": "07:44",
+      "timestamp": "1742395469.579029",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey @Udit, on which sandbox were you seeing these errors? Afaict udit-dev-2 and udit-dev-3 are working as expected",
+      "time": "09:34",
+      "timestamp": "1742402043.226069",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "i see it on both of those -- you can load it but none of the endpoints really work",
+      "time": "10:09",
+      "timestamp": "1742404140.267279",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "",
+      "time": "10:09",
+      "timestamp": "1742404158.958999",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "You should be able to fix it by migrating db\n```cd $IB_HOME/shared-utils/go-utils/src/instabase/utils/db\nexport INSTABASE_BACKEND_DB_PARAMS=\"--username=root --host=mysql --database=ibdb --port=3306\"\nbazel run tools/dbmigrate```\nRun the above, refresh the page and it should work",
+      "time": "10:35",
+      "timestamp": "1742405747.526759",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "No need to create a new sandbox",
+      "time": "10:35",
+      "timestamp": "1742405757.075809",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "The underlying issue was that the grpc endpoint was returning an unknown column error indicating a mismatch between application code and schema in db",
+      "time": "10:36",
+      "timestamp": "1742405787.027339",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Amazing, thank you very much for the support @prateek.tenkale :pray: @Udit let me know whether these steps work for you, I'm happy to continue investigating your sandbox if issues persist afterward",
+      "time": "10:55",
+      "timestamp": "1742406925.555459",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Is there a thread for this getting fixed on `https://crafting-aihub.test.instabase.com/`?",
+      "time": "11:39",
+      "timestamp": "1742409556.879999",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "@sean.donohoe I think Prateeks fix is for the ibdev-backend template so we need someone to run it on the shared db for the ibdev templates",
+      "time": "12:03",
+      "timestamp": "1742411009.511099",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I think it should be run automatically as part of the crafting-aihub deployment? Might be failing though, I see\n```job-dbmigrate                                                 Failed     0/1           139m       139m\n...\n\n% kubectl logs job-dbmigrate-s7tzw                                                                                                                                                                             crafting-aihub\n2025/03/19 16:48:32 INFO utils/db/tools/dbmigrate/main.go:47 -- Migrate database schema to version latest\n2025/03/19 16:48:32 INFO utils/db/session/params.go:383 -- Starting dbSession with dialect mysql\n2025/03/19 16:48:32 INFO utils/db/session/dbsession.go:255 -- DB Connection Pool: MaxIdle=1, MaxOpen=10, ConnMaxLifetime=7h0m0s, ConnMaxIdleTime=7h0m0s, VerboseLog=false\n2025/03/19 16:48:32 INFO utils/stats/stats_constants.go:1843 -- Intialising the stats\n2025/03/19 16:48:32 INFO utils/db/tools/dbmigrate/main.go:57 -- Updating database schema\n2025/03/19 16:48:37 level=WARNING path=utils/db/session/stats_utils.go:317 msg=\"SQL DB: Slow query\" args_count=1 duration_ms=5013 operation=query query=\"SELECT COUNT(*) AS `count` FROM `information_schema`.`tables` WHERE ((`table_schema` = database()) AND (`table_name` = ?))\" query_type=select table=information_schema\n2025/03/19 16:48:37 INFO utils/db/tools/migrate.go:108 -- Applying data migration: 00000264_0000_migrate_data_from_index_item_to_ingestion_item[0000]\n2025/03/19 16:48:37 INFO utils/db/tools/migrate_data.go:183 -- Migrator: IndexItemToIngestionItemMigrator\n2025/03/19 16:48:37 INFO utils/db/tools/migrate_data.go:275 -- Reading batch: {\"id\":936696,\"uuid\":[1,149,33,30,131,170,125,64,147,161,225,99,25,201,21,135],\"mount_point_id\":263,\"data_source_key\":\"Pdf/ZKGOIITRHIYI24D2FHP5NHRNQAWT6IQM.pdf\",\"status\":\"INDEXING\",\"updated_at\":\"2024-11-12T04:31:04Z\",\"created_at\":\"2024-11-12T04:31:04Z\",\"requested_at\":\"2025-02-20T02:10:03Z\",\"deleted_at\":null,\"scanned_at\":\"2025-02-20T02:10:00Z\",\"fetched_at\":\"2025-02-20T02:29:21Z\",\"indexed_at\":null,\"failed_at\":null,\"last_error\":null,\"content_type\":\"application/octet-stream\",\"content_size\":39250,\"content_key\":\"\\\"58d39054403ae77cd3148eb71f5f204a-1\\\"\",\"metadata\":{},\"locked_until\":\"0001-01-01T00:00:00Z\",\"lock_uuid\":[1,149,33,47,248,22,125,176,184,71,120,41,127,174,214,237],\"invalidated_at\":\"2025-02-20T02:29:21Z\",\"data_source_url\":null,\"data_source_key_digest\":\"88b7936d5ec915be4905e4fd895f2d5bfbf5b2d7b20d0761022b4a6c728de521\",\"acl_hash\":\"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=\",\"access_check_url\":null}\n2025/03/19 16:48:37 INFO utils/db/tools/migrate_data.go:275 -- Reading batch: {\"id\":936843,\"uuid\":[1,149,35,225,154,155,122,140,181,245,221,143,7,251,78,30],\"mount_point_id\":207,\"data_source_key\":\"jeff_empty_drive/FSA Enrollment Kit (1).pdf\",\"status\":\"INDEXING\",\"updated_at\":\"2024-12-09T23:16:44Z\",\"created_at\":\"2024-12-09T23:16:44Z\",\"requested_at\":\"2025-02-20T15:02:23Z\",\"deleted_at\":null,\"scanned_at\":\"2025-02-20T15:02:22Z\",\"fetched_at\":\"2025-02-20T15:02:24Z\",\"indexed_at\":null,\"failed_at\":null,\"last_error\":null,\"content_type\":\"application/octet-stream\",\"content_size\":908600,\"content_key\":\"\\\"94c74e1bca2cf260fc4d9b6b68215f09-1\\\"\",\"metadata\":{},\"locked_until\":\"0001-01-01T00:00:00Z\",\"lock_uuid\":[1,149,35,225,155,207,122,156,184,144,250,213,154,215,235,146],\"invalidated_at\":\"2025-02-20T15:02:24Z\",\"data_source_url\":null,\"data_source_key_digest\":\"99be9326a6c2646f1ddbc4769894fd6e15a019d55c7267fc19ef86f0d1d5c50a\",\"acl_hash\":\"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=\",\"access_check_url\":null}\n2025/03/19 16:48:37 INFO utils/db/tools/migrate_data.go:315 -- Migrating batch: {\"id\":936696,\"uuid\":[1,149,33,30,131,170,125,64,147,161,225,99,25,201,21,135],\"mount_point_id\":263,\"data_source_key\":\"Pdf/ZKGOIITRHIYI24D2FHP5NHRNQAWT6IQM.pdf\",\"status\":\"INDEXING\",\"updated_at\":\"2024-11-12T04:31:04Z\",\"created_at\":\"2024-11-12T04:31:04Z\",\"requested_at\":\"2025-02-20T02:10:03Z\",\"deleted_at\":null,\"scanned_at\":\"2025-02-20T02:10:00Z\",\"fetched_at\":\"2025-02-20T02:29:21Z\",\"indexed_at\":null,\"failed_at\":null,\"last_error\":null,\"content_type\":\"application/octet-stream\",\"content_size\":39250,\"content_key\":\"\\\"58d39054403ae77cd3148eb71f5f204a-1\\\"\",\"metadata\":{},\"locked_until\":\"0001-01-01T00:00:00Z\",\"lock_uuid\":[1,149,33,47,248,22,125,176,184,71,120,41,127,174,214,237],\"invalidated_at\":\"2025-02-20T02:29:21Z\",\"data_source_url\":null,\"data_source_key_digest\":\"88b7936d5ec915be4905e4fd895f2d5bfbf5b2d7b20d0761022b4a6c728de521\",\"acl_hash\":\"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=\",\"access_check_url\":null}\n2025/03/19 16:48:37 INFO utils/db/tools/migrate_data.go:353 -- Writing batch: {\"id\":936696,\"uuid\":[1,149,33,30,131,170,125,64,147,161,225,99,25,201,21,135],\"mount_point_id\":263,\"data_source_key\":\"Pdf/ZKGOIITRHIYI24D2FHP5NHRNQAWT6IQM.pdf\",\"status\":\"INDEXING\",\"updated_at\":\"2024-11-12T04:31:04Z\",\"created_at\":\"2024-11-12T04:31:04Z\",\"requested_at\":\"2025-02-20T02:10:03Z\",\"deleted_at\":null,\"scanned_at\":\"2025-02-20T02:10:00Z\",\"fetched_at\":\"2025-02-20T02:29:21Z\",\"indexed_at\":null,\"failed_at\":null,\"last_error\":null,\"content_type\":\"application/octet-stream\",\"content_size\":39250,\"content_key\":\"\\\"58d39054403ae77cd3148eb71f5f204a-1\\\"\",\"metadata\":{},\"locked_until\":\"0001-01-01T00:00:00Z\",\"lock_uuid\":[1,149,33,47,248,22,125,176,184,71,120,41,127,174,214,237],\"invalidated_at\":\"2025-02-20T02:29:21Z\",\"data_source_url\":null,\"data_source_key_digest\":\"88b7936d5ec915be4905e4fd895f2d5bfbf5b2d7b20d0761022b4a6c728de521\",\"acl_hash\":\"47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=\",\"access_check_url\":null}\n2025/03/19 16:48:37 FATAL utils/db/tools/dbmigrate/main.go:59 -- failed to migrateOne (nextSchema=platform, prevSchema=platform): writeBatch failed: CreateModels failed: code = EXISTS, msg = Unique constraint failure, wrappedErr = Error 1062 (23000): Duplicate entry '936697' for key 'migration_staging.PRIMARY'```\n@mfichman / @Jeff would either of you happen to recognize this failure?",
+      "time": "12:09",
+      "timestamp": "1742411375.474729",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I can help looking into this. I need to get access to the database. Is this the environment that having the issue? https://sandbox.console.instabase.com/customer/Engineering/tenant/crafting-aihub/info",
+      "time": "12:14",
+      "timestamp": "1742411646.440269",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yes, but you can access it directly from your crafting sandbox, no need for tpam/`aws eks update-kubeconfig` :slightly_smiling_face:",
+      "time": "12:14",
+      "timestamp": "1742411689.957869",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "How could I access it directly from the crafting sandbox?",
+      "time": "12:16",
+      "timestamp": "1742411775.794999",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "it's already hooked up to `kubectl` by default!",
+      "time": "12:16",
+      "timestamp": "1742411796.786209",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "e.g. `kubectl get pods` should return the pods for crafting-aihub right away",
+      "time": "12:16",
+      "timestamp": "1742411817.089539",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Do I need to spin up a crafting sandbox based off ibdev template?",
+      "time": "12:20",
+      "timestamp": "1742412040.287579",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ibdev or ibdev-backend or frontend should work",
+      "time": "12:21",
+      "timestamp": "1742412067.766129",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "It's back, thanks!!",
+      "time": "13:06",
+      "timestamp": "1742414760.376009",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "The database migration issue is now fixed. Sorry for the inconvenience.",
+      "time": "13:24",
+      "timestamp": "1742415860.937439",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-19.json",
+    "message_count": 24,
+    "start_time": "1742393229.326129",
+    "end_time": "1742415860.937439",
+    "is_thread": true
+  }
+}

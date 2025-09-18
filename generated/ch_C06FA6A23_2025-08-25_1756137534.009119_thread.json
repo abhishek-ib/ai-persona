@@ -1,0 +1,85 @@
+{
+  "id": "ch_C06FA6A23_2025-08-25_1756137534.009119_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Just catching up. The struggle is that the weaviate dockerfile is a combination of third party and IB service code.",
+      "time": "08:58",
+      "timestamp": "1756137534.009119",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ditto the RabbitMQ HA dockerfile. I think we should architecturally move away from having IB wrappers around these 3rd party services ASAP, as it is (a) confusing (b) has led to incidents in the past (3) is not really necessary at our scale and (4) leads to a huge support/security/maintenance burden for us above and beyond what the 3rd party service itself requires.",
+      "time": "09:00",
+      "timestamp": "1756137605.361989",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Matt - we can chat about this, but the statement above is exaggerated. The wrapper for RMQ provides an active passive HA solution that has been battle-tested without incidents at on-prem and SaaS for a while now.",
+      "time": "09:13",
+      "timestamp": "1756138424.093659",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Fwiw - we should not make it a need to have  one type of dockerfile build pattern for all services. Services have repevant owners, please let them figure out the appropriate way to build their service.",
+      "time": "09:14",
+      "timestamp": "1756138499.158669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "There's a balance to be struck here; many of our dockerfiles were outdated/not on chainguard/using incorrect user accounts/installing outdated dependencies. Not having a common Dockerfile makes it harder to patch security vulnerabilities as well.",
+      "time": "10:48",
+      "timestamp": "1756144138.913859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "tl;dr, I have cleaned up a _lot_ of junk from non-standard dockerfiles -- a project that Sean & Cody also spent a lot of time on before me.",
+      "time": "10:53",
+      "timestamp": "1756144423.762689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I would rather err in the other direction for the time being.",
+      "time": "10:53",
+      "timestamp": "1756144436.222859",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Yeah i am glad that we have cleaned this up. As you said - there is a balance to be struck - and in case of these third party deps - having custom setup has allowed us to manage things like vulns etc well. So imo that's a good place to strike a balance for specific services. For the rest, the tradeoff is better with common dockerfile.",
+      "time": "21:41",
+      "timestamp": "1756183270.145619",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-08-25.json",
+    "message_count": 8,
+    "start_time": "1756137534.009119",
+    "end_time": "1756183270.145619",
+    "is_thread": true
+  }
+}

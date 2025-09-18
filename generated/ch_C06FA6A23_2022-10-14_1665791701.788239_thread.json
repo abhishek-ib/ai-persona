@@ -1,0 +1,208 @@
+{
+  "id": "ch_C06FA6A23_2022-10-14_1665791701.788239_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Siddhant",
+    "Eric Han",
+    "deen",
+    "Dominic Fannjiang",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "Has anyone seen this error trying to build/start any of the python services?\n```ImportError: cannot import name 'Text' from 'foundation.entity' (/Users/erichan/.pyenv/versions/3.7.3/lib/python3.7/site-packages/foundation/entity.py)```\nis it possibly caused by this PR? https://github.com/instabase/instabase/pull/31472/ @Siddhant and @Rakesh",
+      "time": "16:55",
+      "timestamp": "1665791701.788239",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "could this be related to https://github.com/instabase/instabase/pull/31233? cc @Dominic Fannjiang",
+      "time": "16:58",
+      "timestamp": "1665791932.626439",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "oo..",
+      "time": "16:59",
+      "timestamp": "1665791980.239469",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Which service are you trying to build?",
+      "time": "17:00",
+      "timestamp": "1665792054.971399",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "and which commit are you on?",
+      "time": "17:01",
+      "timestamp": "1665792060.967509",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "api-server-apps and I ran the update-python command with dev tools. I’m also on the latest master",
+      "time": "17:03",
+      "timestamp": "1665792183.876199",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "hmm what command exactly are you trying to run and in which directory?",
+      "time": "17:13",
+      "timestamp": "1665792801.730089",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "make clean build runlocal",
+      "time": "17:15",
+      "timestamp": "1665792926.231599",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "hm i can run that without any problems on latest master in `webserver/api-server-apps`",
+      "time": "17:16",
+      "timestamp": "1665792968.356129",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "just curious, do you not see the `Text` class in `/Users/erichan/.pyenv/versions/3.7.3/lib/python3.7/site-packages/foundation/entity.py`?",
+      "time": "17:16",
+      "timestamp": "1665793019.995169",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "I actually don’t see that class in entity.py",
+      "time": "17:19",
+      "timestamp": "1665793156.455569",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "it says it’s last updated march 9th 2021 which feels wrong. Maybe I need to purge some cache?",
+      "time": "17:20",
+      "timestamp": "1665793204.351709",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "this is my entity.py",
+      "time": "17:20",
+      "timestamp": "1665793222.747629",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "but actually, shouldn’t we be trying to retrieve these classes from the py-utils/foundations folder instead of from the python lib?",
+      "time": "17:23",
+      "timestamp": "1665793424.784539",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "I uninstalled the dependency with pip but now I’m getting a different error:\n\n```  File \"/Users/erichan/instabase/webserver/api-server-apps/build/py/instabase/model_utils/input_utils/model_service/requests.py\", line 18, in <module>\n    from instabase.foundation_converters import FoundationTextManager\n  File \"/Users/erichan/instabase/webserver/api-server-apps/build/py/instabase/foundation_converters.py\", line 13, in <module>\n    from foundation.document import Document\nModuleNotFoundError: No module named 'foundation.document'```\nI looked in the api-server-apps/build folder and foundation is there\n```/Users/erichan/instabase/webserver/api-server-apps/build/py/foundation/src/foundation```",
+      "time": "17:37",
+      "timestamp": "1665794270.479539",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "@Dominic Fannjiang I figured out the issue, somehow our makefile dependency manager copied foundation py files to\n```/Users/erichan/instabase/webserver/api-server-apps/build/py/foundation/src/foundation/```\nwhen it should be\n```/Users/erichan/instabase/webserver/api-server-apps/build/py/foundation/```\nCan you review this PR?\nhttps://github.com/instabase/instabase/pull/31792/files\nI just moved all the files up 2 levels to where they get copied correctly\n\nAlthough I’m not sure if this breaks docker",
+      "time": "17:42",
+      "timestamp": "1665794559.309669",
+      "is_reply": true
+    },
+    {
+      "sender": "Siddhant",
+      "user_id": "U02V2C0DFQD",
+      "message": "> Although I’m not sure if this breaks docker (edited)\nCan we please try building and running `api-server-apps` ,`runner-service` ,`celery-webdriver-tasks` ,`api-server` ,`apps-server` in docker? They have `RUN python -m pip install /{IB_SERVER_PATH}/py/foundation` in the dockerfile.\n\nEarlier setup.py was at `...build/py/foundation` while the code was in `...build/py/foundation/src/foundation` .",
+      "time": "18:41",
+      "timestamp": "1665798063.444389",
+      "is_reply": true
+    },
+    {
+      "sender": "Siddhant",
+      "user_id": "U02V2C0DFQD",
+      "message": "Thanks for your PR @Eric Han!!",
+      "time": "18:50",
+      "timestamp": "1665798616.206689",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "I tried building api-server-apps in docker but got a permission denied error on run-docker command. Not sure if it’s related to my change though. The image built ok",
+      "time": "19:07",
+      "timestamp": "1665799635.395979",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "I think we've been having the permissions error for awhile. You can fix it to run locally by adding `RUN chmod -R +rx .` before `RUN chmod +x start.sh`",
+      "time": "19:32",
+      "timestamp": "1665801126.545519",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "everything seems to start up fine and tested with spot api server apps calls",
+      "time": "20:20",
+      "timestamp": "1665804017.999529",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "I think since this only affects local dev, i probably won’t backport it",
+      "time": "20:21",
+      "timestamp": "1665804092.872449",
+      "is_reply": true
+    },
+    {
+      "sender": "deen",
+      "user_id": "U041EDTPGBC",
+      "message": "I don't really have anything to contribute, but I also wanted to say that I had this error pop up",
+      "time": "20:31",
+      "timestamp": "1665804679.515649",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-10-14.json",
+    "message_count": 23,
+    "start_time": "1665791701.788239",
+    "end_time": "1665804679.515649",
+    "is_thread": true
+  }
+}

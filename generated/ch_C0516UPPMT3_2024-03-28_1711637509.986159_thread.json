@@ -1,0 +1,223 @@
+{
+  "id": "ch_C0516UPPMT3_2024-03-28_1711637509.986159_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Jason",
+    "Heymian",
+    "hannah",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "I ran into a pretty severe old-world/new-world incompatibility issue yesterday when trying to set up a load test for the translation container.  I created a new org using /apps/admin so that I could have an isolated place to put a flow and run performance testing.  At that point, it took my account and the other two accounts I added to it and changed the aihub org for them.  Removing the additional org does not put these accounts back in the original org so they are stranded at the moment.  It would seem that the way we reused the filesystem components to do user/group management significantly limits mixed scenarios between enterprise use cases and AIHub use cases.  Is this a short-term update so that AIHub could get shipped or is this the plan moving forward?",
+      "time": "07:51",
+      "timestamp": "1711637509.986159",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Can you clarify what you mean by “it took my account and the two other accounts”? And then “changed the aihub org” from what to what?",
+      "time": "08:12",
+      "timestamp": "1711638766.407199",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "Sure, here is the scenario.",
+      "time": "08:14",
+      "timestamp": "1711638863.013209",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "1. I logged in with my AIHub account on this environment\n2. I went into the old admin app at /apps/admin\n3. In the Spaces and Subspaces tab I created a new space as an organization space\n4. I added myself and two other accounts as managers\n5. Then I set up builder, added sample files, and started a flow\n6. When I went back to AIHub, the org showed the name of the new organization space I set up (also saying I didn't have any credits)\n7. I went back to the admin interface and deleted the new space I had created\n8. Going back to AIHub, I now get an error page from the platform styled in the non-AIHub manner\n9. To get out of the account, I have to type in a legacy URL (/apps/admin) and logout\n10. Logging in as a different account works, but the other accounts that I had added to my new space (now deleted) seem stranded",
+      "time": "08:20",
+      "timestamp": "1711639217.468869",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yeah. in general the aihub requirements are very strict and was not designed to allow free usage of the old filesysystem, spaces/subspaces with the old primitives. For example all orgs and users must be created through the AI Hub UI, you shouldn’t use the admin app to create things.",
+      "time": "08:23",
+      "timestamp": "1711639433.361199",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "And since treat the dependencies separately we don’t go and create things in the new world if you create with the old, and if you delete things in old world, we also don’t clean up the new world. Specifically for AIHub orgs, you can’t delete aihub orgs (completely unsupported), there’s a lot of more data that doesn’t get cleaned up. We also store org info in separate database tables, which don’t get cleaned up.",
+      "time": "08:26",
+      "timestamp": "1711639617.366979",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "So I would recommend creating everything from the AI Hub UI, and then you can navigate to the other apps like Explorer to flow to work within the repos created in this process.",
+      "time": "08:28",
+      "timestamp": "1711639692.902449",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "I think we should look closely at this for any migration scenarios.  That was the point of my feedback.  I wonder if in this particular aspect we have gone to far and limited what is possible when thinking about moving all clients to AIHub per our OKR...",
+      "time": "08:30",
+      "timestamp": "1711639843.736589",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thanks for feedback! \n\nWhen you add/remove a user to the new org in the enterprise platform, we’ll update the user’s active org bit. Not sure if this will fix it, but we can try adding the stranded user back to the original org in the classic enterprise platform to update the active org.",
+      "time": "08:31",
+      "timestamp": "1711639861.243039",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "Ok, thank you, I will try that as a restore.  I only tried to re-add them from AIHub side",
+      "time": "08:31",
+      "timestamp": "1711639899.447349",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "@Xindi Xu that did the trick, I should have tried that",
+      "time": "08:35",
+      "timestamp": "1711640104.527929",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Nice! Just to note that as this won’t work for adding new users to the org. As Heymian mentioned, for now, org creation and membership management should still go thru AIHub UI",
+      "time": "08:38",
+      "timestamp": "1711640314.006399",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "yup, I understand all that.  Now to put heavy warnings in all my training material for hopping cow",
+      "time": "08:41",
+      "timestamp": "1711640503.456319",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "along with procedures for recovery when someone inevitably follows the same path I did",
+      "time": "08:42",
+      "timestamp": "1711640528.760179",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "So we are planning for HC employees to use both the AI Hub UI and back door to the older enterprise apps?",
+      "time": "08:50",
+      "timestamp": "1711641043.795789",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "Yes, we have no choice at the moment.",
+      "time": "08:51",
+      "timestamp": "1711641095.155409",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Got it, yeah, I imagine this will get better after the eng teams rally together to work through the Advance Apps (Flow binaries) initiative in the next month or so which will get eng to start testing out what works/doesn’t work when we try to use the backdoor enterprise functionality in AI Hub envs. Lots of unknowns at the moment and we know that things will break, just not sure exactly what yet.",
+      "time": "09:24",
+      "timestamp": "1711643096.916019",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "@Jason this is an exception for federal. It is not our intention for customers to be able to freely use the old platform and new platform. The platforms were never designed to be used together, which is why we very intentionally ship AI Hub as a completely separate and independent deployment.\n\nThis will likely get a bit better as we work through advanced app use cases, but there is no plan right now to properly invest in letting customers freely and easily use both in a combined deployment.\n\n@Jason I'm wonder if that means we should just spin up an AI hub instance and an instabase platform instance for federal to unblock them here?",
+      "time": "09:32",
+      "timestamp": "1711643550.431789",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "The challenge is that this effectively doubles the compute, infrastructure, maintenance, and debugging.",
+      "time": "09:34",
+      "timestamp": "1711643675.258429",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "I'm not sure this is the ideal to pin our hopes on?",
+      "time": "09:34",
+      "timestamp": "1711643685.187849",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "It will likely make the user experience a lot better for federal though, they’re going to walk into all these unknown pitfalls and it’d probably make us look pretty bad",
+      "time": "09:53",
+      "timestamp": "1711644824.494069",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "that is the danger to be sure",
+      "time": "09:54",
+      "timestamp": "1711644872.158009",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Are we going to have any IB engineers approved to work in their environment to build these solutions out? I would recommend if possible, severely limiting the number of site admins they get to add (who are allowed to see the backdoor enterprise functionality, maybe platform admins and not the solution users) and only adding our folks as site admins. Most of their users should only be included in the AI Hub Org so that their experience is limited to that of AI Hub.",
+      "time": "10:45",
+      "timestamp": "1711647932.178639",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "Hi @Heymian we are working on this.  This requires a clearance which either means we get a clearance at the right level or we hire an integration partner and train them on the insides of Instabase.",
+      "time": "11:38",
+      "timestamp": "1711651125.204429",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "We are working on both paths, but none will be done before they have to have an applicaiton running.",
+      "time": "11:39",
+      "timestamp": "1711651154.710699",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-03-28.json",
+    "message_count": 25,
+    "start_time": "1711637509.986159",
+    "end_time": "1711651154.710699",
+    "is_thread": true
+  }
+}

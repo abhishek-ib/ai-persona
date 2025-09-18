@@ -1,0 +1,622 @@
+{
+  "id": "ch_C06FA6A23_2019-08-29_1567089768.015200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Handsome Dave",
+    "lydia",
+    "will"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Handsome Dave I noticed you bumped open-cv to 4.1.0.25 when you updated the dockerfiles -- was that intentional?",
+      "time": "07:42",
+      "timestamp": "1567089768.015200",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i think the API has changes that break existing code",
+      "time": "07:43",
+      "timestamp": "1567089783.015300",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "This was the python 3 updates?",
+      "time": "07:43",
+      "timestamp": "1567089829.015600",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "(Sorry, just trying to remember)",
+      "time": "07:46",
+      "timestamp": "1567089974.015800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "https://github.com/instabase/instabase/pull/10698/files",
+      "time": "07:46",
+      "timestamp": "1567089991.016000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yea and i realized i approved it haha but i missed the package upgrade",
+      "time": "07:46",
+      "timestamp": "1567090006.016200",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "I’m looking into it. I have vague memories of some stuff being deprecated, but I don’t recall exactly.",
+      "time": "07:51",
+      "timestamp": "1567090311.016600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ok we need to align all the various opencv versions:\n```\ndata-services/doc-services/docops-service/Dockerfile:RUN pip install --user opencv-contrib-python==3.4.0.12\ndata-services/ocr-services/ocr-emerson/Dockerfile.build:  && pip install --user opencv-python==4.1.0.25 \\\ndistributed-tasks/celery/app-tasks/Dockerfile:  pip install --user opencv-python-headless==4.1.0.25 && \\\ndistributed-tasks/celery/app-tasks/Dockerfile:  pip install --user opencv-contrib-python-headless==4.1.0.25 && \\\ndistributed-tasks/celery/image-tasks/Dockerfile:  pip install --user opencv-python-headless==4.1.0.25 && \\\ndistributed-tasks/celery/image-tasks/Dockerfile:  pip install --user opencv-contrib-python-headless==4.1.0.25 && \\\ndistributed-tasks/celery/webdriver-tasks/Dockerfile:  pip install --user opencv-contrib-python==3.4.0.12 && \\\ndistributed-tasks/celery/webdriver-tasks/Dockerfile:  pip install --user opencv-python==3.3.0.10 && \\\nexperimental/ted/checkbox/find/find_checkbox.ipynb:    \"  if len(opencv_image.shape) == 3:\\n\",\nshared-utils/py-utils/docops-lib/src/py/instabase/docops_lib/constellation/constellation.py:    if alignment_algorithm == 'opencv:homographic':\nshared-utils/py-utils/image-utils/src/py/instabase/image_utils/file_io.py:  if len(opencv_image.shape) == 3:\ntools/devtools/code-dependencies/py_licenses.csv:Python,opencv-contrib-python==3.4.0.12,MIT\ntools/devtools/code-dependencies/py_licenses.csv:Python,opencv-python==3.3.0.10,MIT\ntools/devtools/code-dependencies/python/requirements.txt: opencv-contrib-python==3.4.0.12\ntools/devtools/code-dependencies/python/requirements.txt: opencv-python==3.3.0.10\ntools/devtools/code-dependencies/python/requirements_py3.txt: opencv-contrib-python==3.4.0.12\ntools/devtools/code-dependencies/python/requirements_py3.txt: opencv-python==3.3.0.10\nwebserver/api-server-apps/Dockerfile:    pip install --user opencv-python-headless==4.1.0.25 && \\\n```",
+      "time": "07:56",
+      "timestamp": "1567090597.016800",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "*That* might have been it, actually. That other places we were using 4.1.0.25, so I thought I was ok to make it the same where I was touching?",
+      "time": "07:57",
+      "timestamp": "1567090675.017000",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Which is obviously, in hindsight, not brilliant. :upside_down_face:",
+      "time": "07:58",
+      "timestamp": "1567090689.017200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yea i'm a bit concerned what else might break",
+      "time": "07:58",
+      "timestamp": "1567090713.017400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "opencv also seems a bit lax on listing all its breaking changes in their changelog",
+      "time": "07:59",
+      "timestamp": "1567090757.017600",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "There was something else that made me look at updating in the first place (there are lots of deps that are “outdated” that I didn’t touch). It may have been an issue with the 3.x version compiling with python 3.6? I just can’t remember why I would have been looking at that particular module to begin with.",
+      "time": "08:02",
+      "timestamp": "1567090958.017800",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "That at least sounds plausible to me, that there was a py3 issue with the older version, then I saw we were using the newer version elsewhere and just “copied” the dep over.",
+      "time": "08:03",
+      "timestamp": "1567090989.018000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "can you find that issue?",
+      "time": "08:04",
+      "timestamp": "1567091071.018200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "in the meantime i'm going to switch everything back to 3.4.0",
+      "time": "08:04",
+      "timestamp": "1567091083.018400",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "I’ll dig into it, yeah.",
+      "time": "08:05",
+      "timestamp": "1567091102.019000",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "What errors were you seeing, btw?",
+      "time": "08:06",
+      "timestamp": "1567091219.020000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "the API changed for calls like cv2.findContours",
+      "time": "08:10",
+      "timestamp": "1567091425.023600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "in general when bumping versions, we have to read the changelogs for any API changes, especially when updating major versions",
+      "time": "08:10",
+      "timestamp": "1567091444.023800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "it's always a bit of a bumpy process, but ideally if we also had updated it in our devtools requirements.txt, travis would have caught it in unit tests",
+      "time": "08:11",
+      "timestamp": "1567091465.024000",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Yeah, I’m feeling pretty foolish, tbh. This isn’t my first major-library-version-upgrade-rodeo :confused:",
+      "time": "08:11",
+      "timestamp": "1567091502.024200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "no worries - i totally missed it as well",
+      "time": "08:12",
+      "timestamp": "1567091521.024600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "this is also why I want to help streamline our python module management, because with our current setup, it's super easy to create this kind of version skew",
+      "time": "08:12",
+      "timestamp": "1567091562.024800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ideally, the code module (e.g. the shared python util using cv2) would specify the version. and if two modules use different versions, it should complain at build time",
+      "time": "08:13",
+      "timestamp": "1567091594.025100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "and this way, when you bump versions, it's closer to the code where it's used. so hopefully harder to mess up",
+      "time": "08:13",
+      "timestamp": "1567091614.025300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "+1",
+      "time": "08:21",
+      "timestamp": "1567092105.026100",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Found it!",
+      "time": "08:24",
+      "timestamp": "1567092275.026300",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "The problem that I was looking into is that, when building opencv-3.x with python 3.6 (and this isn’t the case with 2.x for some reason) it doesn’t install the “headless” version.",
+      "time": "08:25",
+      "timestamp": "1567092355.026500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "what do you mean?",
+      "time": "08:26",
+      "timestamp": "1567092378.026700",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "So when you try to run it, you’ll get this error:\n```\nImportError: libSM.so.6: cannot open shared object file: No such file or directory\n```\nwhich, iirc, is eventually fixed by installing a bunch of X11 libraries.",
+      "time": "08:26",
+      "timestamp": "1567092397.026900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "weird i just tried pip installing it and it seems fine?",
+      "time": "08:27",
+      "timestamp": "1567092430.027100",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Whereas the opencv 4.x line has an explicit “headless” version in pip to install that bypasses that entirely.",
+      "time": "08:27",
+      "timestamp": "1567092437.027300",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "It pip installs but it doesn’t actually run.",
+      "time": "08:27",
+      "timestamp": "1567092447.027500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh interesting",
+      "time": "08:28",
+      "timestamp": "1567092480.027700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "should we just switch to not headless for now then?",
+      "time": "08:28",
+      "timestamp": "1567092487.027900",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "This is the full output of a `docker run` when built with USE_PY3=true:\n```\ndocker run  --name instabase-worker-image-tasks --env-file /Users/dbishop/workspace/instabase/distributed-tasks/celery/image-tasks/tmp/docker_env_local.list \\\n\t-P --rm -t -i instabase/worker-image-tasks\nTraceback (most recent call last):\n  File \"/home/ibuser/.local/lib/python3.6/site-packages/celery/app/utils.py\", line 359, in find_app\n    sym = symbol_by_name(app, imp=imp)\n  File \"/home/ibuser/.local/lib/python3.6/site-packages/celery/bin/base.py\", line 504, in symbol_by_name\n    return imports.symbol_by_name(name, imp=imp)\n  File \"/home/ibuser/.local/lib/python3.6/site-packages/kombu/utils/imports.py\", line 61, in symbol_by_name\n    return getattr(module, cls_name) if cls_name else module\nAttributeError: module 'instabase.registry' has no attribute 'tasks'\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/ibuser/.local/bin/celery\", line 10, in <module>\n    sys.exit(main())\n  File \"/home/ibuser/.local/lib/python3.6/site-packages/celery/__main__.py\", line 16, in main\n    _main()\n  File \"/home/ibuser/.local/lib/python3.6/site-packages/celery/bin/celery.py\", line 322, in main\n    cmd.execute_from_commandline(argv)\n  File \"/home/ibuser/.local/lib/python3.6/site-packages/celery/bin/celery.py\", line 496, in execute_from_commandline\n    super(CeleryCommand, self).execute_from_commandline(argv)))\n  File \"/home/ibuser/.local/lib/python3.6/site-packages/celery/bin/base.py\", line 273, in execute_from_commandline\n    argv = self.setup_app_from_commandline(argv)\n  File \"/home/ibuser/.local/lib/python3.6/site-packages/celery/bin/base.py\", line 479, in setup_app_from_commandline\n    self.app (http://self.app) = self.find_app(app)\n  File \"/home/ibuser/.local/lib/python3.6/site-packages/celery/bin/base.py\", line 501, in find_app\n    return find_app(app, symbol_by_name=self.symbol_by_name)\n  File \"/home/ibuser/.local/lib/python3.6/site-packages/celery/app/utils.py\", line 362, in find_app\n    sym = imp(app)\n  File \"/home/ibuser/.local/lib/python3.6/site-packages/celery/utils/imports.py\", line 104, in import_from_cwd\n    return imp(module, package=package)\n  File \"/usr/lib/python3.6/importlib/__init__.py\", line 126, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n  File \"<frozen importlib._bootstrap>\", line 994, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 971, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 955, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 665, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 678, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 219, in _call_with_frames_removed\n  File \"/instabase/workers/celery-image-tasks/py/instabase/registry/tasks.py\", line 17, in <module>\n    import cv2\n  File \"/home/ibuser/.local/lib/python3.6/site-packages/cv2/__init__.py\", line 9, in <module>\n    from .cv2 import *\nImportError: libSM.so.6: cannot open shared object file: No such file or directory\n```",
+      "time": "08:28",
+      "timestamp": "1567092507.028100",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "So I can absolutely make this work with opencv 3.x, I’ll just need to re-figure out all the underlying library deps and install them when we build it with py3.",
+      "time": "08:29",
+      "timestamp": "1567092555.028300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "how do i run a docker as py3?",
+      "time": "08:31",
+      "timestamp": "1567092666.028600",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "`make USE_PY3=true build-docker && make run-docker`",
+      "time": "08:31",
+      "timestamp": "1567092695.028800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ah ok -- are the resulting docker images different if you have use_py3 vs not?",
+      "time": "08:32",
+      "timestamp": "1567092743.029000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh i guess yea cause it has a different base image right?",
+      "time": "08:32",
+      "timestamp": "1567092774.029200",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Yeah",
+      "time": "08:32",
+      "timestamp": "1567092775.029400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "for now should i switch from headless back to desktop? i just need to fix it for this UAT",
+      "time": "08:33",
+      "timestamp": "1567092802.029600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "and then you can work on updating the dockerfiles with the right libraries for headless next week?",
+      "time": "08:33",
+      "timestamp": "1567092817.029800",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "If you give me ~10 minutes, I can have a version of the dockerfile that works for python 2 and 3, with opencv 3.x.",
+      "time": "08:34",
+      "timestamp": "1567092873.030000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Kk",
+      "time": "08:36",
+      "timestamp": "1567093015.030300",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "https://github.com/instabase/instabase/pull/10924",
+      "time": "09:03",
+      "timestamp": "1567094622.031800",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "ten, twenty seven. You say tomato…",
+      "time": "09:03",
+      "timestamp": "1567094631.032100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "awesome! commented. can you make the same changes to api-server-apps and app-tasks as well? because we import the same pyutils into all our services, it won't work if they have different versions",
+      "time": "09:09",
+      "timestamp": "1567094968.032400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "btw did you not want to use headless anymore?",
+      "time": "09:09",
+      "timestamp": "1567094997.032600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i'm actually ok with that because our travis/jenkins image requirements.txt isn't using headless. whatever we update, we should update that as well",
+      "time": "09:10",
+      "timestamp": "1567095047.032800",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "I was just reverting to what was there before.",
+      "time": "09:11",
+      "timestamp": "1567095118.033100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ocr-emerson is still on 4.0 but it sounds like it might need it so we leave that for now",
+      "time": "09:12",
+      "timestamp": "1567095120.033300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i think we should fix the version skew because i'm sure it'll cause additional problems. i can add it to your PR",
+      "time": "09:13",
+      "timestamp": "1567095211.033500",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "The earliest release of opencv-contrib-python-headless is 3.4.0.14, which is 0.0.0.2 newer than what we were using. I’m happy to bump up to it (if they have a backwards-incompatible change in a 0.0.0.2 bump, I’ll happy drive to their house and yell at them), but if we want to stick with exactly 3.4.0.12 then I’ll have to not use headless.",
+      "time": "09:17",
+      "timestamp": "1567095423.033700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "let's keep it without headless since that's what we have for the jenkin/travis image",
+      "time": "09:17",
+      "timestamp": "1567095465.033900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "how do you feel about fixing the version for api-server-apps and app-tasks as well?",
+      "time": "09:18",
+      "timestamp": "1567095500.034100",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Yup, doing that now.",
+      "time": "09:18",
+      "timestamp": "1567095513.034300",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Wait, so are we bumping the requirements.txt to 3.4.0.12? Or leaving it at 3.3.0.10?",
+      "time": "09:22",
+      "timestamp": "1567095728.034500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i think the requirements.txt has opencv-contrib-python at 3.4.0.12 and opencv-python at 3.3.0.10, so exactly what you have in the PR",
+      "time": "09:23",
+      "timestamp": "1567095808.034700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "why they are different i have no idea :disappointed:",
+      "time": "09:23",
+      "timestamp": "1567095837.034900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "there's definitely follow-up work to be done here",
+      "time": "09:24",
+      "timestamp": "1567095846.035100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i just want to cherry-pick the minimum amount of changes for UAT though",
+      "time": "09:24",
+      "timestamp": "1567095868.035300",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Yeah",
+      "time": "09:24",
+      "timestamp": "1567095877.035500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "actually i wonder if that just means we're actually on 3.3.0 because i assume pip uses the latest? not sure how that works when 2 modules override the same namespace",
+      "time": "09:25",
+      "timestamp": "1567095947.035700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "last one applied wins :slightly_smiling_face:",
+      "time": "09:26",
+      "timestamp": "1567095966.035900",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Which in requirements.txt was the 3.3 base version, but in the dockerfiles it was the 3.4 contrib module.",
+      "time": "09:27",
+      "timestamp": "1567096054.036100",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "“yay”",
+      "time": "09:27",
+      "timestamp": "1567096066.036300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Handsome Dave this PR looks good to me. I'm just building the dockers now so I can confirm that the issue I ran into is fixed",
+      "time": "09:43",
+      "timestamp": "1567097025.036500",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Good deal. Sorry for the trouble and I’ll be more careful going forward.",
+      "time": "09:44",
+      "timestamp": "1567097064.036700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "thank you!",
+      "time": "09:45",
+      "timestamp": "1567097116.036900",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Let me know when to merge (or you can merge it, either way)",
+      "time": "09:53",
+      "timestamp": "1567097594.037100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "approved! and i merged",
+      "time": "10:23",
+      "timestamp": "1567099415.038100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i'll cherry pick the pr into the release branch",
+      "time": "10:24",
+      "timestamp": "1567099477.038300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-08-29.json",
+    "message_count": 75,
+    "start_time": "1567089768.015200",
+    "end_time": "1567099477.038300",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "id": "ch_C06FA6A23_2023-07-17_1689618689.706409_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Jag",
+    "Yiqing",
+    "Sayd"
+  ],
+  "messages": [
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "I added a new GRPC function last week and now its usage in api-server is resulting in a typecheck error. \n\nAll the generated files are there and RepoServiceStub does have the mentioned function. Anyone encountered this before?",
+      "time": "11:31",
+      "timestamp": "1689618689.706409",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Have you generated the protos? Try:\n```cd api-server\nmake build-protos```",
+      "time": "11:32",
+      "timestamp": "1689618763.040059",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "Ya I've seen this before. You have to also edit the _grpc.pyi function as well to pass the mypy checks. Add a function definition for the rpc function you created.\n\nWas this merged in and had passed CI tests?",
+      "time": "11:34",
+      "timestamp": "1689618845.583799",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "Here's a PR that I recently put up. https://github.com/instabase/instabase/pull/43925\n\nI edited the `shared-utils/py-utils/typing-utils/src/py/stubs/instabase/protos/repo_service/repo_service_pb2_grpc.pyi` file to pass mypy.\n\nDo the same thing for whichever proto file you had edited.",
+      "time": "11:35",
+      "timestamp": "1689618957.895239",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "Yep, any (RPC functions) updates to the protos need to be manually added to the _grpc.pyi file",
+      "time": "11:38",
+      "timestamp": "1689619113.047899",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "Ah makes sense. Didn’t know there is a manual aspect to this too",
+      "time": "11:40",
+      "timestamp": "1689619245.733839",
+      "is_reply": true
+    },
+    {
+      "sender": "Jag",
+      "user_id": "U03MD12DZ5L",
+      "message": "This manual action should only be relavent when you add a new rpc function I think not when you just edit a proto. I'm still confused on how this had passed CI when mypy fails on api-server :thinking_face:",
+      "time": "11:44",
+      "timestamp": "1689619478.585559",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "Oh yes, of course,  added RPC functions to the original reply.:slightly_smiling_face:",
+      "time": "11:47",
+      "timestamp": "1689619650.694169",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-07-17.json",
+    "message_count": 8,
+    "start_time": "1689618689.706409",
+    "end_time": "1689619650.694169",
+    "is_thread": true
+  }
+}

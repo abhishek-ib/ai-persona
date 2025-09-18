@@ -1,0 +1,161 @@
+{
+  "id": "ch_C06FA6A23_2024-12-29_1735530466.257659_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Hari",
+    "sudeep",
+    "gurkirat",
+    "sitaram",
+    "Rakesh",
+    "Nikolaos Kofinas"
+  ],
+  "messages": [
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "Our s3 usage in the dev account has skyrocketed the past two months (20k for a month). Did we change something about s3?\ncc: @Kerry",
+      "time": "19:47",
+      "timestamp": "1735530466.257659",
+      "is_reply": false
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "This definitely looks sketchy and its trending even higher …",
+      "time": "19:52",
+      "timestamp": "1735530761.495669",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "we can see which opeartion mayhave increased in the cost explorer",
+      "time": "19:53",
+      "timestamp": "1735530786.800759",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "can you help on that? I am not familiar with the aws UI to understand where to look :stuck_out_tongue:",
+      "time": "20:00",
+      "timestamp": "1735531256.395319",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "sure! I’ll take a look and post here",
+      "time": "20:03",
+      "timestamp": "1735531423.810309",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "The main cost increase is in retrieval of S3 Glacier data in us-east-2 (USE2-Reterieval-GIR). I also see increased usage cost from Tier-3 Tier-4 data",
+      "time": "21:14",
+      "timestamp": "1735535692.050739",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "Basically glacier and tier storages are basically places where old data is pushed (which won’t be accessed that much) and we configure this while creating bucket how much old data needs to be to be sent to Tier / Glacier storage.\nThese storages are cheaper but retrieval from them is expensive (as we are seeing the case here).\n\nSo the case is:\n1. Either we have started regular access of some very old data\n2. Bucket configuration changed for something and recent data is being pushed down.\ncc: @Kerry @sudeep we need to resolve this asap otherwise the cost will be skyrocketting",
+      "time": "21:17",
+      "timestamp": "1735535878.431349",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "Definately we have started to access some old data because we are being costed not only for glacier but also for other tiers",
+      "time": "21:18",
+      "timestamp": "1735535932.943149",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Thank you both for highlighting. @jayapandian.ponraj / @Abhinav are both ooo. @sitaram would you mind taking a look here and isolating the usage here that is causing this increase?",
+      "time": "21:22",
+      "timestamp": "1735536165.594259",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "Cost definitions: https://docs.aws.amazon.com/AmazonS3/latest/userguide/aws-usage-report-understand.html",
+      "time": "21:23",
+      "timestamp": "1735536203.462429",
+      "is_reply": true
+    },
+    {
+      "sender": "sitaram",
+      "user_id": "U07AU3USQEN",
+      "message": "Yup, will debug this further",
+      "time": "21:26",
+      "timestamp": "1735536418.410509",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "@sitaram thanks for helping here.\nThis is `instabase-dev` account and we need to break into why are we getting costed so much for Glacier retrival",
+      "time": "21:28",
+      "timestamp": "1735536510.632859",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "It is a bucket created by @derrick.smith and map-migrated of `d-server-01erkawozk0dnl`",
+      "time": "21:36",
+      "timestamp": "1735536995.755379",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "",
+      "time": "21:38",
+      "timestamp": "1735537082.471829",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "Is this related to any Search testing with S3? @Rakesh",
+      "time": "23:53",
+      "timestamp": "1735545187.567209",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "@gurkirat\nDo you have link to the s3 bucket you can share. Just to confirm if it’s related to search.",
+      "time": "23:54",
+      "timestamp": "1735545297.586039",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "@Rakesh me and @sitaram are trying to isolate it to a bucket. We’ll post an update here once we have something",
+      "time": "23:56",
+      "timestamp": "1735545406.171829",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-12-29.json",
+    "message_count": 17,
+    "start_time": "1735530466.257659",
+    "end_time": "1735545406.171829",
+    "is_thread": true
+  }
+}

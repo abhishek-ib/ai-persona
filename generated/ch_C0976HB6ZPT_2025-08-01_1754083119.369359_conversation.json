@@ -1,0 +1,36 @@
+{
+  "id": "ch_C0976HB6ZPT_2025-08-01_1754083119.369359_conversation",
+  "type": "channel",
+  "channel_name": "proj-agent-mode",
+  "conversation_type": "conversation",
+  "participants": [
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "For reasoning fields implementation:\nCurrently, reasoning has its own prompts and generally uses RAG to answer questions.\nSeparate out “abstractive” questions / reasoning fields and use plenty thinking budget; send as parallel request and reconstitute the whole schema\n\nFor vision reasoning here is an old summary:\nCurrent Implementation & Limitations\n• Page Image Limitation: At most 7 page images are processed for each document.\n• Shortdoc Pipeline: Sends all available images for documents up to 7 pages.\n• Longdoc Pipeline: Selects the first 7 pages based on the textual similarity of the top-6 chunks with the visual prompt. Each chunk corresponds to a specific page.\n• Visuals Only: Currently, only visual information (images) is sent without any OCRed text.\n\nIn DocAI implementation:\n1. For reasoning, after the extraction is done, send another request with Gemini (with thinking on) and get the answer. The doc should be cached, so this should not cost much. Don’t send in parallel. Then add result to original results. If there are multiple reasoning fields, send them in parallel. \n2. For visual reasoning, treat it like normal reasoning field.\nWe will update guidance to use reasoning fields only when normal output doesn’t work.",
+      "time": "14:18",
+      "timestamp": "1754083119.369359",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "For confidence score:\nWe use the min aggregation method. We take the lowest token probability to be the value for the response.\n^ This is what the platform does today. We can implement the same.\nThis requires log probs which require switching to Vertex AI. PR by @jordy.vlan https://github.com/instabase/benchmarks/pull/62\nThe key file to look at is src/app_benchmarks/confidence/logprobs_utils.py",
+      "time": "14:22",
+      "timestamp": "1754083326.616889",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0976HB6ZPT",
+    "channel_name": "proj-agent-mode",
+    "date_file": "2025-08-01.json",
+    "message_count": 2,
+    "start_time": "1754083119.369359",
+    "end_time": "1754083326.616889",
+    "is_thread": false
+  }
+}

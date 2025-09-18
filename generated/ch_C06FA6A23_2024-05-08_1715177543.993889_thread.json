@@ -1,0 +1,175 @@
+{
+  "id": "ch_C06FA6A23_2024-05-08_1715177543.993889_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "jtau",
+    "Cody Boggs",
+    "William Helmrath",
+    "Aaron Tami"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":thread: Certify status for today\n\n*Enterprise*\n• 23.01: Running currently (https://prod.jenkins.instabase.com/job/certify/job/certify-release/job/release-23.01.0/124/).\n• 23.04: Running currently (https://prod.jenkins.instabase.com/job/certify/job/certify-release/job/release-23.04.0/106/).\n• 23.07: Sandbox deploys don't seem to be working (https://sandbox.console.instabase.com/customer/Official%20Releases/tenant/release-23-07/info), holding off until someone checks on the deployments.\n• 23.10: Sandbox is fine but check failed, rebuilding (https://prod.jenkins.instabase.com/job/certify/job/certify-release/job/release-23.10.0-enterprise/47/) with check disabled.\n• 24.01: Sandbox is fine but check failed, rebuilding (https://prod.jenkins.instabase.com/job/certify/job/certify-release/job/release-24.01.0-enterprise/35/) with check disabled.\n• 24.04: Running (https://prod.jenkins.instabase.com/job/certify/job/certify-release/job/release-24.04.0-enterprise/9/) currently.\n*AIHub*\n• 24.16: I don't know where (https://instabase.slack.com/archives/C035SLYCJ9X/p1715175338135659) this is deployed prior to certify, referred to Shiqi.\n• 24.18: UAT deployed fine but check failed, rebuilding (https://prod.jenkins.instabase.com/job/certify/job/certify-release/job/release-24.18.0-aihub/4/) with check disabled.",
+      "time": "07:12",
+      "timestamp": "1715177543.993889",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "The \"previous build\" checks are certainly a RelEng-owned issue that we need to get a handle on. They fail on all but the oldest of releases because of the move to Admiral-driven SaaS sandbox deploys, and the relationship between Admiral and Jenkins is... problematic, bordering on harmful.\n\nBut as RelEng was voted down repeatedly upon insisting this was a bad pattern, we'll have to figure out how to put another band-aid over the bullet hole and see what we can do.",
+      "time": "07:14",
+      "timestamp": "1715177669.204689",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "24.04 certify failed, seems an odd case in Jenkins\nDiscussing here (https://instabase.slack.com/archives/C035SLYCJ9X/p1715176254112459)\nRebuilding (https://prod.jenkins.instabase.com/job/certify/job/certify-release/job/release-24.04.0-enterprise/10/) to see if it's transient",
+      "time": "07:27",
+      "timestamp": "1715178423.691369",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "24.01 rebuild (https://prod.jenkins.instabase.com/job/certify/job/certify-release/job/release-24.01.0-enterprise/35/consoleFull) failed\nLooks like Control Plane failed to build (https://prod.jenkins.instabase.com/job/certify-service-v2/37836/consoleFull) with:\n```07:50:26  #25 ERROR: process \"/bin/sh -c nodenv install $(cat /tmp/.node-version) && nodenv global $(cat /tmp/.node-version)\" did not complete successfully: exit code: 1\n07:50:26  ------\n07:50:26   > [19/19] RUN nodenv install $(cat /tmp/.node-version) && nodenv global $(cat /tmp/.node-version):\n07:50:26  342.4 BUILD FAILED (Ubuntu 23.04 using node-build 4.9.145)\n07:50:26  342.4 \n07:50:26  342.4 Binary installation failed; try compiling from source with `--compile` flag\n07:50:26  342.4 \n07:50:26  342.4 Inspect or clean up the working tree at /tmp/node-build.20240508134437.17.c03lXB\n07:50:26  342.4 Results logged to /tmp/node-build.20240508134437.17.log\n07:50:26  342.4 \n07:50:26  342.4 Last 10 log lines:\n07:50:26  342.4 /tmp/node-build.20240508134437.17.c03lXB /go/src/instabase/core-services/control-plane\n07:50:26  342.4 curl: (92) HTTP/2 stream 1 was not closed cleanly: INTERNAL_ERROR (err 2)\n07:50:26  ------\n07:50:26  Dockerfile.build:64\n07:50:26  --------------------\n07:50:26    62 |     ADD .node-version /tmp\n07:50:26    63 |     RUN mkdir -p \"$(nodenv root)\"/plugins && git clone https://github.com/nodenv/node-build.git \"$(nodenv root)\"/plugins/node-build\n07:50:26    64 | >>> RUN nodenv install $(cat /tmp/.node-version) && nodenv global $(cat /tmp/.node-version)\n07:50:26    65 |     \n07:50:26    66 |     ENV HOST_USER_ID=${HOST_USER_ID}\n07:50:26  --------------------\n07:50:26  ERROR: failed to solve: process \"/bin/sh -c nodenv install $(cat /tmp/.node-version) && nodenv global $(cat /tmp/.node-version)\" did not complete successfully: exit code: 1\n07:50:26  make: *** [/home/ib-build/workspace/certify-service-v2/core-services/control-plane/../../shared-utils/build-utils/shared/build-go-service.mk:17: build-docker-no-host-build] Error 1```\nCC: @jtau, not sure who best to assign this one to.",
+      "time": "07:29",
+      "timestamp": "1715178589.118109",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "23.10 failed (https://prod.jenkins.instabase.com/job/certify/job/certify-release/job/release-23.10.0-enterprise/47/consoleFull) again, because apparently:\n```08:02:17  ERROR: certify-service-v2 #37661 was deleted```\nSo that's neat-o.\nOddly that's only 396 build ago as of right now, which seems soon for a deletion.\nI'll check retention configs and push PRs as needed.",
+      "time": "08:22",
+      "timestamp": "1715181724.529829",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Sigh\nIt's set to 300 builds @ 7days, which is even less than `deploy-service-v2` - which runs dramatically more frequently and breaks the world.\n\nI've bumped it manually for now but I think our approach of \"keep the pipelines in every release branch and allow each to overwrite the config every femtosecond\" isn't helping us",
+      "time": "08:24",
+      "timestamp": "1715181884.415429",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "I don't think we've changed anything with control plane's node @William Helmrath does this look like a network or transient issue?",
+      "time": "08:25",
+      "timestamp": "1715181901.806939",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Kicked a rebuild of just the failed CP job to see what we get :man-shrugging::skin-tone-3:",
+      "time": "08:30",
+      "timestamp": "1715182246.767199",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Yeah I believe this was just a network error, the next job should be successful :crossed_fingers:",
+      "time": "08:40",
+      "timestamp": "1715182800.022669",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea with it looking like a protocol mismatch it tends to be a pretty binary situation - either transient network error, or something has gone _very very very_ wrong with the build config. :smile:",
+      "time": "08:54",
+      "timestamp": "1715183691.104359",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Rebuilding 24.01-enterprise certify: https://prod.jenkins.instabase.com/job/certify/job/certify-release/job/release-24.01.0-enterprise/36/\n\nShould be quick-ish and succeed this time :crossed_fingers::skin-tone-3:",
+      "time": "08:55",
+      "timestamp": "1715183746.449729",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Who can take a look at the 23.07 (https://jenkins.instabase.com/job/SAAS-AWS/job/saas-pipelines/job/install-ib-platform/8494/) aborted install?\nCC: @jtau @Aaron Tami",
+      "time": "09:36",
+      "timestamp": "1715186171.569969",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "This is a timeout but the upgrade went through successfully... upload configs stage took about 47 minutes and then the write configs stage took another hour, which doesn't leave much time for the remaining steps like waiting for services to come up and post install actions to run",
+      "time": "09:41",
+      "timestamp": "1715186490.626449",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ok.\nIs this one in need of the sort of cleanup that was done previously?",
+      "time": "09:41",
+      "timestamp": "1715186511.122399",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "i think we've done the cleanup on these environents, but wrtiting configs is still taking an inordinate amount of time. @jtau do we have any ideas of how to fix this?",
+      "time": "09:50",
+      "timestamp": "1715187000.647219",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "we're going to look into whether if there's anything we can tweak or optimize in the upgrade flow or in the query but in the meantime since this is just taking longer but not failing, if we want to unblock we can increase the timeout for this pipeline from 2 hrs to 2.5 hrs",
+      "time": "09:52",
+      "timestamp": "1715187166.167129",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Extending timeouts is a last resort. Any other options?",
+      "time": "10:03",
+      "timestamp": "1715187810.035999",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Is DM on a manager node group for this?",
+      "time": "10:44",
+      "timestamp": "1715190268.791289",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":man-shrugging::skin-tone-3:\nHaven't the foggiest how it's configured. We just expect the sandbox to be online and successfully deployed-to when we certify - beyond that we don't mess with them",
+      "time": "12:04",
+      "timestamp": "1715195074.730059",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-05-08.json",
+    "message_count": 19,
+    "start_time": "1715177543.993889",
+    "end_time": "1715195074.730059",
+    "is_thread": true
+  }
+}

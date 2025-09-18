@@ -1,0 +1,95 @@
+{
+  "id": "ch_C08L4K42H9C_2025-05-07_1746640133.314639_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "Serena",
+    "jack.robbins",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we have a lot of recent bug reports ->let's try to prioritize so that the BE engineers (@ayesha.ali @prateek.tenkale @Sayan) can pull together to debug the highest priority bugs together\n\n:question-block:  root cause unknown\n:eyes:  root cause known\n\n1. :question-block: Fannie Mae - doc disappearing bc of discrepancy between FS vs DB (https://instabase.slack.com/archives/CKBRX13L5/p1746567239899629?thread_ts=1746487852.849759&cid=CKBRX13L5)\n    a. after this error, gt set is not able to be used for accuracy test\n    b. workaround: create new gt set\n    c. seems to be similar to https://instabase.atlassian.net/browse/EPD-3128, which we never fixed for Velocity :smiling_face_with_tear:  \n2. :question-block: Fannie Mae - unique constraint error when remapping records (https://instabase.slack.com/archives/C011FHLBN8N/p1746632970816559)\n    a. intermittent, doesn't prevent gt set from being used for accuracy test\n    b. we don't know yet if this is causing the blocker issue above ^\n3. :question-block: Fannie Mae - re-extraction \"no value found\" issue (https://instabase.slack.com/archives/C05BJCNKZAM/p1746635064536649)\n    a. intermittent\n    b. workaround: manually typing in field values\n4. :question-block: Nationwide - review dashboard missing docs (https://instabase.slack.com/archives/C05BJCNKZAM/p1746563980486969)\n    a. workaround ?\n5. :eyes: Commercial - email upstream integration permission issue (https://instabase.slack.com/archives/C05BJCNKZAM/p1745886274918409)\n    a. workaround ?\n6. :eyes: Fannie Mae - docs with classification validation failures not showing up in review dashboard (https://instabase.atlassian.net/browse/EPD-4284)\n    a. workaround: review by clicking deployment run link and removing deploymentId from URL :grimacing: \n7. :question-block: Soleng - field edits not getting saved in Human Review (https://instabase.slack.com/archives/C05BJCNKZAM/p1746539580840139)\n    a. workaround ?\n@jack.robbins can you weigh in how to prioritize these?",
+      "time": "10:48",
+      "timestamp": "1746640133.314639",
+      "is_reply": false
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "additionally one prateek is working on:\n• Fannie Mae - classification validation failures not showing up in doc reviews https://instabase.atlassian.net/browse/EPD-4284",
+      "time": "10:50",
+      "timestamp": "1746640234.144819",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "the first fannie mae issue is being worked around for now by recreating gt sets",
+      "time": "10:52",
+      "timestamp": "1746640369.173979",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "thanks just added that one to the list!",
+      "time": "10:53",
+      "timestamp": "1746640387.751539",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "'classification validation failures not showing up in doc reviews' I believe I've identified the issue, just need to think through the fix",
+      "time": "10:53",
+      "timestamp": "1746640416.239159",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@ayesha.ali @prateek.tenkale @Sayan for now, can you focus on 1, 2, and 3 this week?\n\n@Sayan can you pause working on 5 for now?\n\n@prateek.tenkale can you pause working on 6 for now?",
+      "time": "11:57",
+      "timestamp": "1746644223.798889",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "just had a call with suleiman and abhishek about 3, we were able to reproduce locally, abhishek will look into it https://instabase.atlassian.net/browse/EPD-4315",
+      "time": "12:25",
+      "timestamp": "1746645947.816539",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Ayesha Sayan Serena and I were talking about it, it seems like #1 and #2 are related so it makes the most sense for one person to look at those two together. #3 is already being taken care of by Abhishek. #4 is not a bug but rather a potential product improvement that needs product / design input, so we will hold off on that. The plan is:\n• I will take a look at #1 and #2 and investigate / reproduce on my end. Will continue work on #6 after #1 and #2 are addressed\n• Abhishek is looking at #3\n• #4 is not a bug\n• Sayan will look at #5\n• Ayesha will look into #7",
+      "time": "13:24",
+      "timestamp": "1746649482.166159",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "confirming on #4 - we note in the Deployment docs (https://docs.instabase.com/apps/run-and-deploy#creating-deployments):\n\n> Review by file — Sends only files that fail validation for human review, and assigns reviews by file.",
+      "time": "13:26",
+      "timestamp": "1746649585.964989",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-05-07.json",
+    "message_count": 9,
+    "start_time": "1746640133.314639",
+    "end_time": "1746649585.964989",
+    "is_thread": true
+  }
+}

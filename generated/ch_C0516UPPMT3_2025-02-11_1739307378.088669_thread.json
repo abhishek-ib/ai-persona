@@ -1,0 +1,72 @@
+{
+  "id": "ch_C0516UPPMT3_2025-02-11_1739307378.088669_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Ed",
+    "jade.kelly",
+    "hannah",
+    "Sam",
+    "Matt Vielkind"
+  ],
+  "messages": [
+    {
+      "sender": "jade.kelly",
+      "user_id": "U066F4RLZD5",
+      "message": "Hey team! Wanted to surface a few customer questions from a conversation with NWM today—would love your input:\n\n1. *Goldens & Ground Truths* – Liz flagged concerns about variability and effectiveness in ground truth results for document reasoning tasks. Results are often inconsistent and require a lot of manual verification.\n    a. Has anyone successfully worked through this with a customer to improve GT results for document reasoning? Liz was candid that she didn’t have a better alternative to suggest, but I’m wondering if this is something we’ve already identified and are actively working to resolve.\n2. *OCR Confidence in Output Results* – With the high volume of handwritten docs they process, they rely heavily on OCR confidence. They want to know whether OCR confidence is already factored into model confidence or if it’s handled separately.\n    a. If it's separate, what would it take to surface it as a distinct metric?\n3. *API to pull Prompts & Responses* – For future auditing purposes, they’re looking for an API to pull prompts and responses for each job run and deployment for compliance tracking.\n    a. I checked the API docs but didn’t see anything that fits—do we support this today? If not, is there a workaround or plans to introduce this?\nAppreciate any insights!\n\ncc: @norman.leitman @Sam @Matt Vielkind",
+      "time": "12:56",
+      "timestamp": "1739307378.088669",
+      "is_reply": false
+    },
+    {
+      "sender": "Matt Vielkind",
+      "user_id": "U04HBN6BZRB",
+      "message": "For #3 they would only need the prompts for a specific version of the app. Once they deploy a version of the app the prompts wouldn't change for that version.\n\nThere is an API endpoint to pull the prompts for an App version that's not listed in the docs. Not sure if there are plans to support this more formally.",
+      "time": "13:05",
+      "timestamp": "1739307902.229809",
+      "is_reply": true
+    },
+    {
+      "sender": "jade.kelly",
+      "user_id": "U066F4RLZD5",
+      "message": "Thanks @Matt Vielkind! Since the API endpoint to pull prompts for an App version isn’t listed in the docs, is there any guidance we can share with Liz on how to access it? Or would it be better to set up an office hours session to walk her through it?",
+      "time": "13:10",
+      "timestamp": "1739308206.434189",
+      "is_reply": true
+    },
+    {
+      "sender": "Sam",
+      "user_id": "U039ZHK4FPH",
+      "message": "For #1, I believe we can alleviate the issue by providing a specific format to get the results in for Doc Reasoning fields (e.g., explicitly state we want the output in JSON format and provide an example like). That would force the model to provide results in that format and the ground truth spreadsheet can be contain the result in the same format.\nFor #2, the old enterprise platform allowed for the surfacing of confidence scores as a separate field. I don't think we can do that now. However, we are able to use validation rules where we can specify whether we want OCR Confidence score , Field Confidence or Classification Confidence in the rule. That may be a way for NWM to validate the confidence score.",
+      "time": "13:30",
+      "timestamp": "1739309453.018149",
+      "is_reply": true
+    },
+    {
+      "sender": "Ed",
+      "user_id": "U02NTNLF25S",
+      "message": "for #3 we have multiple customers asking for this, Citi included. it seems the current API is not customer-facing - @hannah is this something we can add to our docs and give customers access to?\n\nand in the meantime do we have a workaround for what @jade.kelly mentioned to show customers how to use this before it is publicly documented?",
+      "time": "14:14",
+      "timestamp": "1739312089.880469",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Some more info:\n1. In the future, we are planning to explore semantic/fuzzy matching for document reasoning, but in meantime, the recommendation would be to either force the structure as Sam mentions or to exclude from the GT data set\n2. OCR confidence is available at the field level (this is separate from model confidence). This should actually be available in the run results API along with model confdience, but I'm now seeing that it's not there according to our docs @Anil @andy can you look into this? @jade.kelly can you file a bug for this?\n3. We don't currently support this right now. The API is an internal API. Can you please create a new feature request for this?",
+      "time": "14:56",
+      "timestamp": "1739314602.949519",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-02-11.json",
+    "message_count": 6,
+    "start_time": "1739307378.088669",
+    "end_time": "1739314602.949519",
+    "is_thread": true
+  }
+}

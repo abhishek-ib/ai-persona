@@ -1,0 +1,142 @@
+{
+  "id": "ch_C06FA6A23_2025-01-22_1737572665.387589_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Sayan",
+    "andy"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Hi team, I wanted to ask how I can verify a fix works in UAT with the correct database / configuration? I can test changes locally and I believe they worked locally (on localhost) but we might see issues in different environments :thread:\n\nWhat I think would be the most helpful is\n1. Getting access to the UAT db to query what db record this is erroring on\n2. Getting access to the UAT logs\n3. Being able to see if the change actually fixes the issue on UAT",
+      "time": "11:04",
+      "timestamp": "1737572665.387589",
+      "is_reply": false
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "here (https://instabase.slack.com/archives/C05BJCNKZAM/p1737568676284969)'s the context\n\nI will need the deployment ID, etc. to try to repro it but even after doing so, is there a way to verify a fix actually works in the environment? Dogfood db is different from UAT DB",
+      "time": "11:05",
+      "timestamp": "1737572709.031889",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "CC: @mfichman @Xindi Xu?",
+      "time": "13:55",
+      "timestamp": "1737582908.626269",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Sayan Do you mean that you want to test out your changes using the data stored in the UAT DB? I don't think we allow public access to UAT's DB. You can query the relevant rows in the DB in grafana and copy/paste them to your local DB. I'm curious to see if there's better way too",
+      "time": "13:58",
+      "timestamp": "1737583121.005109",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Is there a way to query mysql in grafana on uat? These are the data sources I see. This is the link I'm on: https://cassinfo.uat.instabase.com/grafana/explore",
+      "time": "14:13",
+      "timestamp": "1737584025.769049",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hm, seems like a permission issue? I can see `mysql`",
+      "time": "14:14",
+      "timestamp": "1737584082.649079",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I'm on https://cassinfo.uat.instabase.com/grafana/explore, is that the right link for uat?",
+      "time": "14:15",
+      "timestamp": "1737584116.222639",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Oh.. i see. We don't have *easy* access to customer's database",
+      "time": "14:15",
+      "timestamp": "1737584146.979689",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "You can use kubectl to connect to the DB:\nhttps://instabase.atlassian.net/wiki/spaces/TI/pages/2066644993/SaaS+Sandboxes#Kubernetes-Command-Line-Access-(Kubectl)",
+      "time": "14:17",
+      "timestamp": "1737584220.768069",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Oh now I see mysql here (different link than what I was using earlier): https://aihub-uat.internal.instabase.com/grafana/explore",
+      "time": "14:17",
+      "timestamp": "1737584256.295469",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I can't find a good documentation on this",
+      "time": "14:17",
+      "timestamp": "1737584262.747979",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Can't access customer DB for privacy reasons",
+      "time": "14:18",
+      "timestamp": "1737584283.690059",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I think we have some stale data in the uat database, can I delete it using the grafana? I believe that should fix the issue\n\nThere is 1 particular row which has invalid data which is causing loading the page to fail",
+      "time": "14:38",
+      "timestamp": "1737585510.882009",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "No, we can't delete data using grafana. Data manipulation requires a direct connection to the DB.\n\nHigh-level steps:\n(I only did this once a year ago, so some commands may be different now)\n1. Raise a TPAM request ticket to get access to a privileged aws iam role (doc (https://docs.google.com/document/d/1qckTBbywL62-UpvMdeFPz_sbSHc13iMSdyX-NzaMDc8/edit?usp=sharing))\n2. Use that iam role to access the customer's cluster (doc (https://instabase.atlassian.net/wiki/spaces/TI/pages/2066644993/SaaS+Sandboxes#Kubernetes-Command-Line-Access-(Kubectl)))\n3. Get the DB string from the secrets vault \n    a. `kubectl get secret -n <sandbox name> control-plane-db-backend-params -o yaml`\n    b. `printf '<DB_string>' | base64 -d`\n4. Connect to the DB \n    a. `kubectl -n <namespace> run mysql -it --rm --image=mysql -- /bin/bash`\n    b. `mysql -h <host> --database=instabase -P 3306 -u db_master --password=<password>`",
+      "time": "19:38",
+      "timestamp": "1737603531.811249",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "You can skip step 1 if you aren't dealing with customer sandboxes. (Since you mentioned both cassinfo, i included step 1 for reference)",
+      "time": "19:46",
+      "timestamp": "1737604003.912949",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-01-22.json",
+    "message_count": 15,
+    "start_time": "1737572665.387589",
+    "end_time": "1737604003.912949",
+    "is_thread": true
+  }
+}

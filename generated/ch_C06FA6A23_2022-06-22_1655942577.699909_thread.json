@@ -1,0 +1,254 @@
+{
+  "id": "ch_C06FA6A23_2022-06-22_1655942577.699909_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Heymian",
+    "Yiqing"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hi team! Have you seen this error before when fetching `GET https://localhost/api/v1/diagnostics/performance_test/result/perf-test-fs-f1ed8da6-dbeb-4428-8623-7274dd97db` . I dug into a few Slack threads but still stuck on this :cry:\n```HTTPSConnectionPool(host='localhost', port=443): Max retries exceeded with url: /api/v1/accounts/info (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1091)')))```",
+      "time": "17:02",
+      "timestamp": "1655942577.699909",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "More context:\n• I only see the issue for this particular route. Other api requests are working properly\n• I’m polling data from this endpoint every 30 secs, The first time I get this result properly. However, the second time I’ll get the above issue\n```status: \"OK\"\ntest_result: {}\ntest_status: \"PENDING\"```",
+      "time": "17:07",
+      "timestamp": "1655942846.350989",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "how are you sending the request?",
+      "time": "17:08",
+      "timestamp": "1655942893.409509",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "if via a python script, did you add `verify=False` into the request?",
+      "time": "17:09",
+      "timestamp": "1655942977.209989",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I tried sending it from the FE app and also with Python script (works with dogfood but see the error with localhost)\nhttps://gist.github.com/xindixu/168aa05bfe1e2ffca3412b3e50c63d61",
+      "time": "17:10",
+      "timestamp": "1655943014.531379",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Let me try that",
+      "time": "17:10",
+      "timestamp": "1655943021.415309",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I’ve tried passing in `verify=False` . It works for the first try but failed after that",
+      "time": "17:12",
+      "timestamp": "1655943178.023429",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "A slightly different error msg\n```requests.exceptions.SSLError: HTTPSConnectionPool(host='localhost', port=443): Max retries exceeded with url: /api/v1/diagnostics/performance_test/filesystem (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1091)')))```",
+      "time": "17:13",
+      "timestamp": "1655943227.651019",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think you’ll want verify=False everywhere, including this helper?\n```    resp = requests.get(api_root + '/performance_test/filesystem',\n                        headers=headers).json()```",
+      "time": "17:14",
+      "timestamp": "1655943286.245929",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Sure, but I don’t think this function is called",
+      "time": "17:15",
+      "timestamp": "1655943337.167599",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Still seeing the same error :cry:",
+      "time": "17:16",
+      "timestamp": "1655943399.609729",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "your environment is up, nginx? webapp?",
+      "time": "17:23",
+      "timestamp": "1655943811.367399",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "All up.",
+      "time": "17:29",
+      "timestamp": "1655944150.263309",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrm, from your script I doin’t see you calling /accounts/info anywhere, can you share the full log dump from running your script?",
+      "time": "17:39",
+      "timestamp": "1655944786.252489",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "With `verify=False`:\n```/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/urllib3/connectionpool.py:1020: InsecureRequestWarning: Unverified HTTPS request is being made to host 'localhost'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#ssl-warnings\n  InsecureRequestWarning,\n{\n    \"msg\": \"HTTPSConnectionPool(host='localhost', port=443): Max retries exceeded with url: /api/v1/accounts/info (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1091)')))\",\n    \"status\": \"ERROR\"\n}```\nWithout:\n```Traceback (most recent call last):\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/urllib3/connectionpool.py\", line 706, in urlopen\n    chunked=chunked,\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/urllib3/connectionpool.py\", line 382, in _make_request\n    self._validate_conn(conn)\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/urllib3/connectionpool.py\", line 1010, in _validate_conn\n    conn.connect()\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/urllib3/connection.py\", line 421, in connect\n    tls_in_tls=tls_in_tls,\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/urllib3/util/ssl_.py\", line 450, in ssl_wrap_socket\n    sock, context, tls_in_tls, server_hostname=server_hostname\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/urllib3/util/ssl_.py\", line 493, in _ssl_wrap_socket_impl\n    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/ssl.py\", line 423, in wrap_socket\n    session=session\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/ssl.py\", line 870, in _create\n    self.do_handshake()\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/ssl.py\", line 1139, in do_handshake\n    self._sslobj.do_handshake()\nssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1091)\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/requests/adapters.py\", line 449, in send\n    timeout=timeout\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/urllib3/connectionpool.py\", line 756, in urlopen\n    method, url, error=e, _pool=self, _stacktrace=sys.exc_info()[2]\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/urllib3/util/retry.py\", line 574, in increment\n    raise MaxRetryError(_pool, url, error or ResponseError(cause))\nurllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='localhost', port=443): Max retries exceeded with url: /api/v1/diagnostics/performance_test/result/perf-test-fs-75085c96-badb-4193-87d2-302cfb11b884 (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1091)')))\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"performance_tests.py\", line 75, in <module>\n    get_test_result(test_id)\n  File \"performance_tests.py\", line 65, in get_test_result\n    headers=headers).json()\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/requests/api.py\", line 75, in get\n    return request('get', url, params=params, **kwargs)\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/requests/api.py\", line 61, in request\n    return session.request(method=method, url=url, **kwargs)\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/requests/sessions.py\", line 542, in request\n    resp = self.send(prep, **send_kwargs)\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/requests/sessions.py\", line 655, in send\n    r = adapter.send(request, **kwargs)\n  File \"/Users/xindixu/.pyenv/versions/3.7.13/lib/python3.7/site-packages/requests/adapters.py\", line 514, in send\n    raise SSLError(e, request=request)\nrequests.exceptions.SSLError: HTTPSConnectionPool(host='localhost', port=443): Max retries exceeded with url: /api/v1/diagnostics/performance_test/result/perf-test-fs-75085c96-badb-4193-87d2-302cfb11b884 (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1091)')))```",
+      "time": "17:42",
+      "timestamp": "1655944927.340129",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "jw, are you running nginx with reload = true?",
+      "time": "17:45",
+      "timestamp": "1655945101.322699",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yes. I can also try without it",
+      "time": "17:45",
+      "timestamp": "1655945142.339959",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "if that doesn’t work, @Yiqing can I volunteer you to help Xindi out here? I’ve seen your postman setup for API calls and it looks quite seemless. :slightly_smiling_face:",
+      "time": "17:46",
+      "timestamp": "1655945204.207659",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "sure thing!",
+      "time": "17:47",
+      "timestamp": "1655945222.435979",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "@Xindi Xu, let me know if you want to try the postman",
+      "time": "17:47",
+      "timestamp": "1655945254.988009",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you! Let me try restarting my laptop first :crossed_fingers:",
+      "time": "17:50",
+      "timestamp": "1655945429.404389",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Yiqing Are you able to fetch data from this endpoint? `GET https://localhost/api/v1/diagnostics/performance_test/result/<test_id>`",
+      "time": "17:52",
+      "timestamp": "1655945576.015969",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "It seems able to work, I just don’t have the correct test_id.",
+      "time": "17:56",
+      "timestamp": "1655945772.312999",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Can you try running this script? https://gist.github.com/xindixu/168aa05bfe1e2ffca3412b3e50c63d61",
+      "time": "17:57",
+      "timestamp": "1655945822.816169",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, that seems ok. I’m building nginx and downloading postman",
+      "time": "17:57",
+      "timestamp": "1655945861.919959",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I’ve tried running nginx with reload=false, still seeing the same error",
+      "time": "18:04",
+      "timestamp": "1655946276.896509",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "Hey Xindi, here is my update. I took a look at the document (https://dogfood.instabase.com/docs/reference/apis/diagnostics/#request-3) and found that we need to set the `verify_ssl_certs` as False if we run the test locally. After I set the payload as follows, I was able to get the expected response from both Python script and postman.",
+      "time": "20:27",
+      "timestamp": "1655954855.639979",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "",
+      "time": "20:27",
+      "timestamp": "1655954865.393659",
+      "is_reply": true
+    },
+    {
+      "sender": "Yiqing",
+      "user_id": "U02T04U502J",
+      "message": "",
+      "time": "20:28",
+      "timestamp": "1655954923.013119",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-06-22.json",
+    "message_count": 29,
+    "start_time": "1655942577.699909",
+    "end_time": "1655954923.013119",
+    "is_thread": true
+  }
+}

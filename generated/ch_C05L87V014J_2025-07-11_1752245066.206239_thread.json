@@ -1,0 +1,126 @@
+{
+  "id": "ch_C05L87V014J_2025-07-11_1752245066.206239_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "jordy.vlan",
+    "pauline.comising"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Hey team, any tips on getting dependency installations to work when trying to run unit tests for `distributed/celery/app-tasks`? Currently, when I run `make run-test-local-no-mypy` I get issues installing pillow because *`The headers or library files could not be found for zlib, a required dependency when compiling Pillow from source.`* \n\nI've installed `zlib` on my crafting sandbox, but given running units creates a virtualenv, this didn't fix the issue. I looked into adding `zlib` to the poetry file but `poetry add zlib` (nor other `zlib` names I found in the code base, ie `zlib-dev`) didn't work, with *`Could not find a matching version`.* I also see no other example of `zlib` being in a poetry file anywhere else in the code base. Soo, any tips here? Would a diff pillow version fix this?",
+      "time": "07:44",
+      "timestamp": "1752245066.206239",
+      "is_reply": false
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "I am on Pillow Version: 10.4.0",
+      "time": "08:57",
+      "timestamp": "1752249427.583309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The best way to run those tests is to run them in poetry:\n\n```poetry shell -C distributed-tasks/celery/app-tasks\n\nmake test -C distributed-tasks/celery/app-tasks```",
+      "time": "09:13",
+      "timestamp": "1752250406.011459",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, I see the problem:\n\n```\n  The headers or library files could not be found for zlib,\n  a required dependency when compiling Pillow from source.\n\n  Please see the install instructions at:\n     https://pillow.readthedocs.io/en/latest/installation/basic-installation.html```",
+      "time": "09:14",
+      "timestamp": "1752250494.881409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```apt install libz-dev```\nWe should fix the base crafting image; it should really have build-essential and libz-dev installed",
+      "time": "09:15",
+      "timestamp": "1752250543.465919",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```\n  The headers or library files could not be found for jpeg,\n  a required dependency when compiling Pillow from source.```\nJpeg also missing",
+      "time": "09:16",
+      "timestamp": "1752250562.501329",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```sudo apt install libjpeg-dev```",
+      "time": "09:16",
+      "timestamp": "1752250581.209039",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@pauline.comising see if installing those 2 apt deps help, and I'll fix the crafting image",
+      "time": "09:16",
+      "timestamp": "1752250612.398049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW folks -- this kind of thing is something that any AI model can help with very quickly. Even chatgpt will figure out what to do (so it shouldn't be a blocker for anyone)",
+      "time": "09:17",
+      "timestamp": "1752250646.558119",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "09:21",
+      "timestamp": "1752250865.067619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/72306",
+      "time": "09:27",
+      "timestamp": "1752251239.572469",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah thanks for the response and PR, I'll try those out\n\n> The best way to run those tests is to run them in poetry\nI was under the impression that since `make run-test-local-no-mypy` ran outside of the shell also creates a virtual env, as indicated by my screenshotted `Using virtualenv: /home/owner/.cache/pypoetry/virtualenvs/celery-app-tasks-EhTOE89x-py3.9 Installing dependencies from lock file` log msg, running this vs `make test` in the poetry shell were equivalent. The errors I run into inside and outside the shell are the same as well\n\nAnd ah yes, I googled/cursored/chatgpt'ed the zlib and pillow error with varying solutions, and tried going down the updating the `poetry` files path, using `poetry add pillow==\"10.4.0\"` to resolve the initial issue to reveal following issues. I then prompted cursor to further fix poetry files according to those issues but ya, various package conflicts. Soo, ya would be good for me to better understand the best places to install required dependencies",
+      "time": "09:50",
+      "timestamp": "1752252645.656289",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Alrighty ran the sudo commands (and undid poetry changes) which resolved the zlib issue, thought I'm still running into the same issue as I got when I ran `poetry add pillow==\"10.4.0\"`\n\n```File \"/home/owner/.cache/pypoetry/virtualenvs/celery-app-tasks-EhTOE89x-py3.9/lib/python3.9/site-packages/cv2/__init__.py\", line 153, in bootstrap\n    native_module = importlib.import_module(\"cv2\")\n  File \"/usr/local/pyenv/versions/3.9.17/lib/python3.9/importlib/__init__.py\", line 127, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\nImportError: libGL.so.1: cannot open shared object file: No such file or directory```\nIssue with cv2, but trying to run `poetry add opencv-python` leads to conflicts with `numpy` and trying to update `numpy` leads to issues with `scipy`, I'll look at this more after meetings",
+      "time": "10:07",
+      "timestamp": "1752253641.577959",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-11.json",
+    "message_count": 13,
+    "start_time": "1752245066.206239",
+    "end_time": "1752253641.577959",
+    "is_thread": true
+  }
+}

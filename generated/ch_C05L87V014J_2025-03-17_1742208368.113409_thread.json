@@ -1,0 +1,246 @@
+{
+  "id": "ch_C05L87V014J_2025-03-17_1742208368.113409_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I usually run poetry env remove outside of poetry shell. Have you tried that? There is also poetry env remove —all",
+      "time": "03:46",
+      "timestamp": "1742208368.113409",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "my `poetry env info` says this\n```Virtualenv\nPython:         3.7.3\nImplementation: CPython\nPath:           NA\nExecutable:     NA\n\nSystem\nPlatform:   linux\nOS:         posix\nPython:     3.7.3\nPath:       /usr/local/pyenv/versions/3.7.3\nExecutable: /usr/local/pyenv/versions/3.7.3/bin/python3.7```\nwhich doesn't seem right? i should be using 3.9.17, right?",
+      "time": "10:34",
+      "timestamp": "1742232870.706419",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah...that seems wrong to me",
+      "time": "10:34",
+      "timestamp": "1742232897.486119",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "running `poetry env use 3.9.17` fixed that problem\n\nnow running `poetry install` inside `poetry shell`",
+      "time": "10:37",
+      "timestamp": "1742233077.954679",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`poetry install` finished, still getting the same issue when starting `api-server` :cry:",
+      "time": "10:43",
+      "timestamp": "1742233396.633899",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ok maybe i needed to clear the docker cache, going through the following steps again\n```cs stop api-server\npoetry env remove --all\npoetry env use 3.9.17\npoetry env info   # check 3.9.17 is used\ndocker image rm instabase/api-server:latest\ndocker system prune\npoetry shell\npoetry install\ncs start api-server```\n[EDIT] still get same error :cry:",
+      "time": "10:54",
+      "timestamp": "1742234067.682549",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@Serena you might also want to run a `pyenv global 3.9.17` for a general catchall\n\nyou can also get the path to your current api-server virtual env by running `poetry env list --full-path -C /home/owner/instabase/webserver/api-server` -- deleting that directory should cause it to be reinitialized the next time api-server is built",
+      "time": "10:59",
+      "timestamp": "1742234385.414319",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yep already ran `pyenv global 3.9.17`\n\n> deleting that directory should cause it to be reinitialized the next time api-server is built\ngot it, ran `rm -rf /home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9` and running the following\n```cs stop api-server\npoetry env use 3.9.17\npoetry env info   # check 3.9.17 is used\ndocker image rm instabase/api-server:latest\ndocker system prune\ncs start api-server```",
+      "time": "11:01",
+      "timestamp": "1742234511.424289",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "still getting the same issue",
+      "time": "11:09",
+      "timestamp": "1742234991.066759",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "based on the `pyproject.toml` and `requirements.txt` in `webserver/api-server`, the docker build sstep is downloading the correct version of `protobuf` (3.20.3) for the current python version (3.9)\n\nbut somehow `runtime_version.py` doesn't exist in the downloaded `protobuf` package :cry:",
+      "time": "11:16",
+      "timestamp": "1742235367.413219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Serena Where's your sandbox? Can I take a look directly at api-server?",
+      "time": "11:21",
+      "timestamp": "1742235698.013049",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ahhhh something went wrong when i ran `make build-protos`",
+      "time": "11:21",
+      "timestamp": "1742235698.963589",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "that's why the diff in my PR (https://github.com/instabase/instabase/pull/68873/files#diff-d747c9dffaea17e2e67761423395af25ab5e0321fab4f731646fb25f2e1119d6) is so big - somewhere i'm using a wrong version that caused a lot of unexpected changes in the auto-generated proto fiiles",
+      "time": "11:22",
+      "timestamp": "1742235726.305679",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the auto-generated files now have a `from google.protobuf import runtime_version as _runtime_version` line, and it's true that `runtime_version.py` does not exist in v3.20.3 of protobuf (https://github.com/protocolbuffers/protobuf/tree/v3.20.3/python/google/protobuf/internal)",
+      "time": "11:23",
+      "timestamp": "1742235789.230099",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm. Must be the wrong protoc version then?",
+      "time": "11:27",
+      "timestamp": "1742236062.445959",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mfichman❯ protoc --version\nlibprotoc 3.6.1```",
+      "time": "11:28",
+      "timestamp": "1742236099.793339",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "",
+      "time": "11:28",
+      "timestamp": "1742236122.824559",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mfichman❯ . /home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/bin/activate\n(api-server-py3.9) cs/mfichman❯ protoc --version\nlibprotoc 3.6.1```",
+      "time": "11:28",
+      "timestamp": "1742236124.843659",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm, can I check out your sandbox?",
+      "time": "11:28",
+      "timestamp": "1742236139.404119",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yup i used to get this error when i run `make build-protos` in `webserver/api-server`?\n```b\"/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/bin/python: Error while finding module specification for 'grpc_tools.protoc' (ModuleNotFoundError: No module named 'grpc_tools')\\n```\ni no longer get this error bc of several rounds of clearing poetry and re-running `poetry install`\n\nso the shared-utils/protos/instabase/generated/py/instabase/protos/config/config_pb2.py file looks correct now",
+      "time": "11:29",
+      "timestamp": "1742236179.300759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```(api-server-py3.9) cs/mfichman❯ pip freeze | grep proto\ngoogleapis-common-protos==1.66.0\nmypy-protobuf==1.9\nprotobuf==3.20.3\ntypes-protobuf==3.20.3\nwsproto==1.2.0```\n^ inside pyenv shell",
+      "time": "11:30",
+      "timestamp": "1742236200.437259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "My sandbox/pyenv is working, so if there is a delta we should find it",
+      "time": "11:30",
+      "timestamp": "1742236232.335839",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "currently waiting for `api-server` to rebuild and restart, but i'm hopeful now that the previous `runtime_version` not being found error will disappear (since config_pb.py is now fixed)",
+      "time": "11:30",
+      "timestamp": "1742236232.431929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK!",
+      "time": "11:30",
+      "timestamp": "1742236237.452599",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "after undo-ing the unexpected changes in `shared-utils/protos/instabase/generated/py` and `shared-utils/py-utils/typing-utils` , `api-server` is now working in my sandbox!\n\ni think it's clear where i went wrong :sweat_smile:",
+      "time": "12:08",
+      "timestamp": "1742238508.558399",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "to clarify, i should have just removed my virtual env and re-installed dependencies, right? is `poetry env rm --all` and removing the directory returned by `poetry env list --full-path -C /home/owner/instabase/webserver/api-server` equivalent?\n```pyenv global 3.9.17\ncd webserver/api-server\n\n# Either run this\npoetry env remove --all\n\n# Or run this\npoetry env list --full-path -C /home/owner/instabase/webserver/api-server\nrm -rf <path returned above>\n\npoetry shell\npoetry install\n\n# Retry\nmake build-protos```",
+      "time": "12:08",
+      "timestamp": "1742238526.856759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The fact that you even need to wipe the virtual env just shows how broken the Python package system is :laughing:",
+      "time": "13:18",
+      "timestamp": "1742242697.937999",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "But I do `poetry env rm --all` when things break, to great success. I used to do it when switching branches to fix security vulns, b/c that always broke something.",
+      "time": "13:18",
+      "timestamp": "1742242724.034269",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-17.json",
+    "message_count": 28,
+    "start_time": "1742208368.113409",
+    "end_time": "1742242724.034269",
+    "is_thread": true
+  }
+}

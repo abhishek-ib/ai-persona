@@ -1,0 +1,142 @@
+{
+  "id": "ch_C0516UPPMT3_2024-06-10_1718042039.038169_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Sunny Khatri",
+    "Kerry",
+    "Dale DeLoy"
+  ],
+  "messages": [
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Dale DeLoy, do you have some sample files and prompts you can share that we can try to recreate this? since you said it was pretty consistent.\n\nLLM is non-deterministic but if you are seeing this behavior consistently than something doesn't feel right. Models won't learn from our submissions, because we never submit the answers to the model we are just sending the prompts / instructions to the model; there's not really a explanation that when you ask the model more times it gives you the right answer in the end.",
+      "time": "10:53",
+      "timestamp": "1718042039.038169",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "We should look into your example and make sure it is really a model issue",
+      "time": "10:54",
+      "timestamp": "1718042094.863839",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "Samples",
+      "time": "11:01",
+      "timestamp": "1718042480.695829",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "Sample Prompts:\ncall_model_build(create_text_field('Provide the checked respopnse to the question:\nDo you require assistance to get in or out of tub/shower?\nPossible responses include:\n1 - no assist\n2 - needs only equipment\n3 - Verbal Cue\n4 - Standby\n5 - Hands on\n',complex=false),LLM_model='advanced-gpt')\n\ncall_model_build(create_text_field('Provide the checked respopnse to the question:\nDo you require assistance to wash and dry all body parts?\nPossible responses include:\n1 - no assist\n2 - needs only equipment\n3 - Verbal Cue\n4 - Standby\n5 - Hands on\n',complex=false),LLM_model='advanced-gpt')\n\ncall_model_build(create_text_field('provide the checked response\nfor the question:\nHow do you bathe?\nPossible responses include\nSponge Bath\nShower\nTub Bath',complex=false),LLM_model='advanced-gpt')\n\ncall_model_build(create_text_field('\nHow often do you typically bathe in a week?\n',complex=false),LLM_model='gpt')\n\ncall_model_build(create_text_field('provide the selected with [x] response\nfor the question:\nHow often do you require assistance from another person with bathing??\nPossible responses include:\nEvery Time,\nAt least 1xday,\nLess than weekly,\n1-3x/week,\n4-6x/week.',complex=false),LLM_model='advanced-gpt')",
+      "time": "11:11",
+      "timestamp": "1718043096.811829",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "I can try issuing the prompts multiple times and see if we see this behavior. Some level of non determinism should be expected.\nAlso Just to re-iterate on this point: We should refrain from using `[x]` tokens (It's ok if temporary) or anything from \"Text\" View as these are internal only, and can be updated any time breaking the prompts. We shouldn't use these in prod anywhere. Original PDF and Images should be the only reference point.\n```provide the selected with [x] response for the question:```\nYou might be asking for it to output [x] above, which is ok.",
+      "time": "11:16",
+      "timestamp": "1718043409.927549",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "Often the only way to get an accurate response is to tell the model the [x] is the expected manner to select a response.  Removing tell the model what to expect will drive down accuracy results.",
+      "time": "11:31",
+      "timestamp": "1718044312.221389",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "\"[x] is the expected manner to select a response\" - I'm not sure what this means. If its asking to use [x] token to infer what is the selected response, then its not ok. Otherwise its fine. I agree, it could bring down accuracy but some of the changes we are making, you wouldn't need to provide that.",
+      "time": "11:35",
+      "timestamp": "1718044559.468199",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "We have to drive accuracy today and set up customers for success in future versions.  Without a commitment on how prompts will be handled how are we suppose to do this?",
+      "time": "11:39",
+      "timestamp": "1718044779.130239",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "[x] is something we use internally, and ideally should not be disclosed to customers as it could change anytime. This token was something I mentioned in our discussions otherwise customers would not be aware of this token. Its fine we can use this for now if that is helping we just need to manage any changes appropriately. (cc @Rakesh). This shouldn't be required in future versions hopefully.",
+      "time": "11:46",
+      "timestamp": "1718045202.900469",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "Understood and appreciate the response, this is a concern for all that are building prompts today and getting very different answers in new versions, not just check boxes.",
+      "time": "11:53",
+      "timestamp": "1718045593.665529",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "This doesn't seem like issues with checkbox then, but in general. Different is ok, concern would be if we are regressing things in terms of correctness. We've been constantly making changes to reader and modeling side so some changes are expected, but definitely if we sare regressing things that is a concern.",
+      "time": "12:08",
+      "timestamp": "1718046528.650009",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "Definite regression",
+      "time": "12:09",
+      "timestamp": "1718046575.188139",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "If you are able to share some before and after samples in a ticket if you have those, that would be great.",
+      "time": "12:10",
+      "timestamp": "1718046637.777459",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "At this point nearly every checkbox and table with checkboxes regressed from 24.01 to 24.04.  I think you have seen that in other threads.",
+      "time": "12:16",
+      "timestamp": "1718046997.297049",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Thanks @Dale DeLoy for bringing this up. If you have some additional examples (I know you shared one in other thread) that would be helpful for us. We haven't heard this feedback around regressions in general so good to capture that.\n\n@Rakesh We should look into what changes went in and whether those changes were evaluated appropriately with right dataset. I imagine there have been many changes across reader and modeling side (TDF cc @Prashant Kikani, LLMs etc.), so we should see if we introduced some regressions that we didn't catch.",
+      "time": "16:11",
+      "timestamp": "1718061115.716859",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-06-10.json",
+    "message_count": 15,
+    "start_time": "1718042039.038169",
+    "end_time": "1718061115.716859",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "id": "ch_CSY11CK7T_2024-08-05_1722879114.573549_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Jessica",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Xindi Xu i just added a new member to an org on aihub-sandbox, and i got a blank screen with this error message (https://react.dev/errors/152?invariant=152&args%5B%5D=cell) *`Nothing was returned from render. This usually means a return statement is missing. Or, to render nothing, return null.`*\n\nshould we have an ErrorBoundary around this page/component?",
+      "time": "10:31",
+      "timestamp": "1722879114.573549",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Jessica since you've been working on this recently. Yea, i think adding error boundary makes sense",
+      "time": "10:33",
+      "timestamp": "1722879188.288009",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I have on my backlog to add error boundaries to this - will also look into the actual error asap once my crafting sandbox is back",
+      "time": "10:35",
+      "timestamp": "1722879334.467339",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Hmm I can't reproduce this, either on this sandbox or on crafting. Have you been able to reproduce again Serena? I wonder if it happens when there's an error or something...",
+      "time": "10:53",
+      "timestamp": "1722880418.487029",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm i’m not able to reproduce as well :sob:\n\nmaybe it was a transient thing?",
+      "time": "10:55",
+      "timestamp": "1722880554.343229",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Was your user successfully added?",
+      "time": "11:03",
+      "timestamp": "1722880987.655949",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Oh I just got this error without even doing anything on sandbox!! I just went back to the page and it was there",
+      "time": "11:26",
+      "timestamp": "1722882390.438669",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I can reproduce on sandbox now - open organization settings, navigate to workspace settings, then back to org settings. There must be a member with something odd going on.",
+      "time": "11:36",
+      "timestamp": "1722882998.927289",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "One thing I realized as I was investigating this is that if you have groups enabled, if there's a member of a group who's not a member of the org you're currently in, it will break. This won't be a problem once we switch to the v2 group endpoints",
+      "time": "12:06",
+      "timestamp": "1722884777.582779",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Okay I believe I've found the issue - there are some profiles coming back from the endpoint that are just this object: `{found: false}`. I'm not sure if they were recently deleted or if my migration to TableGrid made this break. I'm going to put in a change to filter those out.",
+      "time": "13:25",
+      "timestamp": "1722889552.213699",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The table breaks when you scroll down to about the \"e\"s, and eric han is the first person where this is an issue haha",
+      "time": "13:27",
+      "timestamp": "1722889640.790479",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ohh, nice find! Yea, if the current user can't access the user profile or if the user is deactivated, it will return `{found: false}`",
+      "time": "13:29",
+      "timestamp": "1722889776.881399",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-08-05.json",
+    "message_count": 12,
+    "start_time": "1722879114.573549",
+    "end_time": "1722889776.881399",
+    "is_thread": true
+  }
+}

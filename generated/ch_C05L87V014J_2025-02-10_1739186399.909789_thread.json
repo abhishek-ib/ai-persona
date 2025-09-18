@@ -1,0 +1,110 @@
+{
+  "id": "ch_C05L87V014J_2025-02-10_1739186399.909789_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Prashant Kikani",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Hi team,\n`server-nginx` service is not coming up due to `node` version mismatch error, in one of my sandbox (https://instabase.sandboxes.site/sandboxes/prashantkikani).\nAttaching the screen recording of `server-nginx` logs.\n\nThis same error is occurring for the newly created sandbox (https://instabase.sandboxes.site/sandboxes/prashantkikani2) also. So, most likely it's a backend issue, not a crafting issue, but just wanted to see if anyone has faced and solved this before.\nCan someone help here?",
+      "time": "03:19",
+      "timestamp": "1739186399.909789",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hey -- @Prashant Kikani can you run `node --version`?\n\n@sean.donohoe I think maybe nodejs is still the wrong version in sandboxes. I removed the `nodenv` snippet from `.bashrc`, which may be why @Prashant Kikani is having trouble. Wondering if we can fix this the same way we fixed `pyenv` troubles...?",
+      "time": "11:07",
+      "timestamp": "1739214475.615689",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ah indeed -- I think for this case we should add a `nodenv install -s $(cat webserver/shared/src/js/webpacked/.node-version) && nodenv global $(cat webserver/shared/src/js/webpacked/.node-version)` to unblock in the short term\n\nlonger term I've found a workaround to combining the shell *rc snippets with user-managed configs via `/etc/sandbox.d/setup`, which would allow us to completely pull these out of the templates",
+      "time": "11:10",
+      "timestamp": "1739214612.528749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think I had that in the post-checkout script at one point, but removed it...?",
+      "time": "11:10",
+      "timestamp": "1739214632.099659",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```commit d0014b1fcd542e404fc20d8efbcc44715df28d00\nAuthor: Matt Fichman <198761+mfichman@users.noreply.github.com>\nDate:   Wed Feb 5 15:06:22 2025 -0500\n\n    [CS-0000] Remove pyenv/nodenv setup from sandbox init (#67767)```",
+      "time": "11:10",
+      "timestamp": "1739214648.988509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah I see what happened. I was only supposed to remove the `pyenv` part. Let me fix it.",
+      "time": "11:11",
+      "timestamp": "1739214668.126529",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "oop that was 100% on me for missing in review, sorry about that Matt :disappointed:",
+      "time": "11:11",
+      "timestamp": "1739214704.746109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think you actually mentioned it, but I didn't understand :upside_down_face:",
+      "time": "11:12",
+      "timestamp": "1739214730.436629",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/67891",
+      "time": "11:12",
+      "timestamp": "1739214772.448599",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Prashant Kikani for you or anyone else reading this thread: rebase after the PR above merges, and you'll be good!",
+      "time": "11:13",
+      "timestamp": "1739214797.839919",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Hi @mfichman\nI just created a new crafting sandbox (i.e. from laster `master` with your changes) - and now I'm seeing below error in `server-nginx` logs (https://instabase.sandboxes.site/logviewx/instabase/prashantkikani1/dev/daemon/server-nginx%40instabase)\n```ERROR: failed to solve: error writing layer blob: unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/server-nginx/blobs/sha256:1377bb9842a2da639070fd41246786d3f1d75d247bcd4de42219e4c36d0caca1: 401 Unauthorized```\nLet me know, if this is just for me.",
+      "time": "22:42",
+      "timestamp": "1739256139.512079",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-02-10.json",
+    "message_count": 11,
+    "start_time": "1739186399.909789",
+    "end_time": "1739256139.512079",
+    "is_thread": true
+  }
+}

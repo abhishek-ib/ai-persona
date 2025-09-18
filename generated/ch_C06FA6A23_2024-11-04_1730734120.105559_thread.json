@@ -1,0 +1,438 @@
+{
+  "id": "ch_C06FA6A23_2024-11-04_1730734120.105559_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Serena",
+    "pauline.comising"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Hey y'all, anyone else getting weaviate connection refused errors on their local? I pulled master recently, and running apps or flows consistently gives me `ERROR` fields and I'm getting the same error log that's seen in this thread (https://instabase.slack.com/archives/C05BJCNKZAM/p1727112956374049?thread_ts=1726491060.999839&cid=C05BJCNKZAM). The fix PR is already on the branch I'm building from and I've recompiled model-service and weaviate a couple times (`ppy compile model-service --as-docker --use-prebuilt`). I also didn't notice any big weaviate-related env var changes recently so ya, would appreciate any tips on how to resolve this",
+      "time": "07:28",
+      "timestamp": "1730734120.105559",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "What's your local setup like? Can you dump the contents of `model-service/tmp/docker_env_local.list`?",
+      "time": "07:42",
+      "timestamp": "1730734940.485629",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It kind of looks like the weaviate DB process crashed, but the \"monitor\" (or whatever it's called?) did not",
+      "time": "07:44",
+      "timestamp": "1730735057.808369",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "~ah yep~",
+      "time": "07:44",
+      "timestamp": "1730735063.263299",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "ah to be cleaner:",
+      "time": "07:45",
+      "timestamp": "1730735150.735569",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Seems correct to me:\n```SERVICE_WEAVIATE_HOST=host.docker.internal\nSERVICE_WEAVIATE_PORT=5082```",
+      "time": "07:47",
+      "timestamp": "1730735234.826409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I wonder...can you purge the weaviate volume and restart it?",
+      "time": "07:47",
+      "timestamp": "1730735251.421869",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "for more context, the reason I'm looking at weaviate is because of these error logs in model-service and the ones raised in the flow UI",
+      "time": "07:47",
+      "timestamp": "1730735265.462969",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah would that just involve deleting the weaviate docker image and recompiling + restarting?",
+      "time": "07:48",
+      "timestamp": "1730735295.051569",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```docker rm -f --volumes instabase-weaviate```\nI think ^\n\nBut don't do it if you have data in weaviate you want to save.",
+      "time": "07:48",
+      "timestamp": "1730735300.077649",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Restarting (via ppy restart) still preserves the volume/weaviate state, I think. Might want to try a complete fresh restart.",
+      "time": "07:48",
+      "timestamp": "1730735319.957399",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "> But don't do it if you have data in weaviate you want to save.\nany/most weaviate data is \"recoverable\" or can be like recreated by re-running apps correct? like what are common example of weaviate data to save, would projects and the doc digitization break after a complete restart? :woman-bowing::skin-tone-2:",
+      "time": "07:50",
+      "timestamp": "1730735458.481939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, I think this would break your existing projects; you'd have to re-digitize or create a new project",
+      "time": "08:14",
+      "timestamp": "1730736867.498919",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "So I ran the docker command to purge the volume, and I'm still facing the same issue",
+      "time": "09:38",
+      "timestamp": "1730741898.335339",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "do you see any error logs in weaviate?",
+      "time": "09:43",
+      "timestamp": "1730742219.252709",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "yep, same issue as in same UI `error` field + same error logs:",
+      "time": "09:44",
+      "timestamp": "1730742286.579279",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "OPENAI_API_VERSION isn’t set in your model-service’s docker_env_local.list",
+      "time": "09:49",
+      "timestamp": "1730742566.574439",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "that’s probably why weaviate can’t call openai successfully",
+      "time": "09:49",
+      "timestamp": "1730742585.057439",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i have it in my local changes to the `docker-local` section in `env-local.json` but this should also be in the `base` section on master :cry:",
+      "time": "09:51",
+      "timestamp": "1730742670.503439",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "let me add to my existing PR",
+      "time": "09:51",
+      "timestamp": "1730742677.430349",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "ah thanks, I made sure openai_api_base was present and unchanged in recent env-local PRs but didn't see `openai_api_version`, I dont see it in the deleted model-service `docker-env.json` file here either (https://github.com/instabase/instabase/pull/64336/files#diff-08bc7ba735e09497e3fab091b8b4aac41c84599fe5e3778b12ccd952a56f1d6f). How'd you know it was needed?",
+      "time": "09:52",
+      "timestamp": "1730742774.691219",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "to confirm, this empty string is the value I want, not some secret value I'm not seeing on one-pass's env-local file?",
+      "time": "09:55",
+      "timestamp": "1730742938.444669",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i know it’s needed because Vishnu’s fix from a few weeks ago (https://github.com/instabase/instabase/pull/62966/files) passes `openai_api_version` into the request to wevaiate",
+      "time": "09:57",
+      "timestamp": "1730743047.452139",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the empty string is incorrect - i am using `\"2023-03-15-preview\"` for `OPENAI_API_VERSION` in my local env",
+      "time": "09:58",
+      "timestamp": "1730743088.326119",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "got it! ty, and ah makes sense, I only took note of the `openai_api_base` value mentioned in this msg (https://instabase.slack.com/archives/C05BJCNKZAM/p1727106688228999?thread_ts=1727078388.941959&cid=C05BJCNKZAM), testing noww",
+      "time": "09:59",
+      "timestamp": "1730743182.453179",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Hmm, I recompiled and restarted weaviate and model-service st both now have version in their `docker_env_local.list` and I'm still getting connection refused error",
+      "time": "10:10",
+      "timestamp": "1730743830.832069",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m uploading a doc into my Build project in my local env to make sure it still works, and then we can diff our `docker_env_local` to find what’s missing in yours",
+      "time": "10:53",
+      "timestamp": "1730746422.484679",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Thank youu, freference my env-local only contains additions from the env-local-secrets json on 1pass, openai_api_version, and the rabbitmq vars needed in `docker-local`",
+      "time": "10:55",
+      "timestamp": "1730746521.160999",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m getting the same error :smiling_face_with_tear:",
+      "time": "11:03",
+      "timestamp": "1730746984.855249",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oh i found this error in `model-service`\n```Incorrect API key provided: R6qxhUXC************************************BDzH.```",
+      "time": "11:05",
+      "timestamp": "1730747113.646899",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the openai api key in “env-local-secrets.json” in 1password is incorrect",
+      "time": "11:16",
+      "timestamp": "1730747773.612579",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@pauline.comising you need to replace it with the “OpenAI Dev API Key” from 1password",
+      "time": "11:16",
+      "timestamp": "1730747792.761969",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah ya, I wasn't getting the incorrect API error - it looks like your error message is missing the prefix `sk-` which is on a separate line in env-local-secrets, so I think env-local-secrets has the same key as the OpenAI Dev API Key? Did fixing it make document upload work for you?",
+      "time": "11:19",
+      "timestamp": "1730747949.388739",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yep fixing the openai api key made document upload work in my local env!",
+      "time": "11:20",
+      "timestamp": "1730748005.307609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It _was_ incorrect at one point. Since corrected :slightly_smiling_face:",
+      "time": "11:23",
+      "timestamp": "1730748210.206579",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah maybe i copied the incorrect version?",
+      "time": "11:23",
+      "timestamp": "1730748238.977809",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@pauline.comising the error in your weaviate logs screenshot is a red herring\n\nfor the error in `model-service` in this screenshot (https://instabase.slack.com/files/U03TWMC0T24/F07US6EULAW/screenshot_2024-11-04_at_10.46.39___am.png), are there any other errors before this?",
+      "time": "11:24",
+      "timestamp": "1730748297.184509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, likely :slightly_smiling_face:",
+      "time": "11:31",
+      "timestamp": "1730748670.331249",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Wow, I could've sworn I had the correct version of the key, but that latest rebuild did it, thank you!",
+      "time": "11:33",
+      "timestamp": "1730748809.791919",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Btw, I'm not sure if --use-prebuilt rebuilds docker_env_local.list or not. Could've been that.",
+      "time": "11:53",
+      "timestamp": "1730750015.983909",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "I might've spoke too soon :slightly_frowning_face: I ran a few flows since my latest rebuild (with --use-prebuilt) and while the first allowed me to successfully reproduce smth I've been seeing on aihub-sandbox etc, the following two runs have the same failures. I looked for any model-service error logs before the ones I sc, and I just found these",
+      "time": "12:13",
+      "timestamp": "1730751222.209309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Those pika/stream lost errors are usually innocuous (they have to do with exporting audit logs in the background), but check to make sure rabbitmq is up just to be sure.",
+      "time": "12:16",
+      "timestamp": "1730751409.635839",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "yep its up",
+      "time": "12:18",
+      "timestamp": "1730751515.970409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@pauline.comising can you grep your logs without the pika stuff?\n\nppy logs -f api-server | grep -v -e pika -e exporter",
+      "time": "12:18",
+      "timestamp": "1730751527.120989",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Or celery-app-tasks as the case may be",
+      "time": "12:18",
+      "timestamp": "1730751539.046279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also, anecdotally, --use-prebuilt rarely works for me for model-service. I always end up doing:\n\nppy compile model-service --as-aihub\n\nand that fixes a lot of issues. But it does take forever.",
+      "time": "12:20",
+      "timestamp": "1730751640.092799",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "ah ya, grepping without pika stuff shows that the main model-service errors are still chunk related, hm, I'll go ahead and try --as-aihub for model-service and see if that resolves it",
+      "time": "12:29",
+      "timestamp": "1730752158.417219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ok! Fingers crossed :crossed_fingers:",
+      "time": "12:30",
+      "timestamp": "1730752229.290429",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@pauline.comising are you still blocked? if so, let’s schedule some time to debug your local env together tomorrow?",
+      "time": "13:50",
+      "timestamp": "1730757036.178949",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, I can help too!",
+      "time": "14:16",
+      "timestamp": "1730758604.992159",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah thanks, ya I'm still blocked and will throw some time on our calendars to debug",
+      "time": "14:38",
+      "timestamp": "1730759884.490569",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "I added something to matt's calendar since he's on EST and hopefully will resolve it in the morning",
+      "time": "15:00",
+      "timestamp": "1730761247.864469",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-11-04.json",
+    "message_count": 52,
+    "start_time": "1730734120.105559",
+    "end_time": "1730761247.864469",
+    "is_thread": true
+  }
+}

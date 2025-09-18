@@ -1,0 +1,94 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-08-20_1755716721.875939_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "demetr.starshov",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "@Xindi Xu @mfichman\ncc @prateek.tenkale\nHi there, qq re *Role-based Access Control*\n(context: https://docs.google.com/document/d/1fqqrHFmQHb0uO8Qxfotg8Hx7q7tjzpr_Gl7uzkN0aUk/edit?tab=t.0#heading=h.bhz1ecyr6guv )\n\nI see that this design made with to support a reviewer role. I want to be sure I understand correctly how we should check permissions in several use cases.\n\n1. A reviewer should have an access only to reviews they have been assigned to. I don't see tasks as a separate resource type in the design doc. How should we test if a person have an access to the particular task?\n• Option 1: We should check if a person have review access to a repo and is assigned to a task - this approach has an issue that review managers, etc should be able to access reviews they are not assigned with\n2. A reviewer sometimes need access to run part of pipeline (reextract values, context: https://github.com/instabase/instabase/pull/73822) - what's your suggestions there?",
+      "time": "12:05",
+      "timestamp": "1755716721.875939",
+      "is_reply": false
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I think to check if it has access to a task it should be assigned to them",
+      "time": "12:08",
+      "timestamp": "1755716890.702899",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "In `review_tasks` table (future) there's a column called `reviewer_id` , same with current table `doc_reviews`",
+      "time": "12:08",
+      "timestamp": "1755716904.046349",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "That's why I think we'll need separate endpoints that reviewers have access to and eventually block off access to the run-based review endpoints",
+      "time": "12:09",
+      "timestamp": "1755716968.671189",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "> 1. A reviewer should have an access only to reviews they have been assigned to. I don't see tasks as a separate resource type in the design doc. How should we test if a person have an access to the particular task?\nThe permission data is stored outside of the permission system.\n\n> 2. A reviewer sometimes need access to run part of pipeline (reextract values, context\nMy suggestion is to use a separate endpoint and handle permission checks separately. If there are multiple calls like A → B → C, where B and C require other permissions, we have 2 options:\n1. Create A' → B' → C' where B' and C' skip permission check\n2. In A', perform necessary permission check and then overwrite the username to a proxy user that have sufficient permission to call B and C",
+      "time": "12:11",
+      "timestamp": "1755717104.380599",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "> We should check if a person have review access to a repo and is assigned to a task - this approach has an issue that review managers, etc should be able to access reviews they are not assigned with\nIn the endpoint, we can allow users with `DOC_REVIEW:manage` perm",
+      "time": "12:13",
+      "timestamp": "1755717224.516889",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "> The permission data is stored outside of the permission system.\nDoes that mean we can create a sub resource, e.g. specific run, which will propagate upper scope permissions?",
+      "time": "15:24",
+      "timestamp": "1755728674.765409",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Not sure what you mean by “propagate upper scope permissions”\nMy original message means that the info on who is assigned to which review task is managed outside of the permission system described in the doc",
+      "time": "15:41",
+      "timestamp": "1755729710.223079",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "ok, got it.",
+      "time": "15:44",
+      "timestamp": "1755729863.536029",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-08-20.json",
+    "message_count": 9,
+    "start_time": "1755716721.875939",
+    "end_time": "1755729863.536029",
+    "is_thread": true
+  }
+}

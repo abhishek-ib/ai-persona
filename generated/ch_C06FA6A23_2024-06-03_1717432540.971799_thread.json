@@ -1,0 +1,69 @@
+{
+  "id": "ch_C06FA6A23_2024-06-03_1717432540.971799_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "sean.donohoe",
+    "Nikolaos Kofinas"
+  ],
+  "messages": [
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey @Nikolaos Kofinas! Before we discuss this any further I would like to better understand your feelings on this:\n• Type systems exist for ensuring execution correctness (note: separate from semantic correctness), so disabling type checking in any part of a language exactly maps to opening large failure domains that cannot be identified statically. Could you help clarify how type checking doesn't provide any value for unit tests?\n• Can you help elaborate a bit more on what the significant refactor would be in this case? I completely understand the pain of picking up pre-existing tech debt, however requiring large refactors to make type checking pass is generally an indication of code that needs to be restructured anyway\n• I understand that unit test code is not something we're shipping to customers and therefore might seem like something we can be a bit more relaxed with in this case, however relaxing typing for tests can also introduce weird bugs that pass in unexpected ways (e.g. python allows us to set whatever fields we like on objects -- we can imagine a scenario in which a field is set to an incompatible type for production use cases, but passes our unit tests and results in a bug being silently shipped to customers) In other words: type checks for language like python are, in their own way, a form of unit testing. Can you explain a bit more why you feel it is safe to disable part of our unit testing framework for this code?\ncc <!subteam^S038TM462UX> / @Aaron Tami / @Kerry",
+      "time": "09:35",
+      "timestamp": "1717432540.971799",
+      "is_reply": false
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "I completely understand the concerns and I understand the value of the type systems.\n\nWhat I don’t like though is that in unit tests we have to be abide with them.\n\nThe scenario that I have a problem with is a class that during regular execution all the functions of it will be hidden (e.g. all the function that I want to unit test are called only by some api function).\nLets focus on the problem of this PR, I have a class that is a subclass of Chain and FromLLM (langchain). This class basically overrides a Chain and the code will only get accessed through the fucntions “call” and “acall”. Now inside our class we have created a lot of helper functions that we will like to unit test.\nThe catch is that this class is initialized with the FromLLM call which returns type Chain\n```class MapReduceClassificationChain(Chain, FromLLMChain):\n  \"\"\"Call the classification chain with 30 labels max, then collect the outputs and return a single class.\"\"\"\n  classification_chain: ClassifierChain\n  llm: BaseModelProtocol\n  tokenizer: Union[Encoding, InstallmTokenizer]\n  max_classes_per_batch: int\n\n  @classmethod\n  def from_llm(cls,\n               llm: BaseModelProtocol,\n               max_classes_per_batch: int = MAX_CLASSES_PER_BATCH) -> Chain:\n    return cls(\n        llm=llm,\n        classification_chain=ClassifierChain.from_llm(llm=llm),\n        tokenizer=encoding_for_model(llm.model_name),\n        max_classes_per_batch=max_classes_per_batch) ```\nas you can see the from_llm is not a “dumb” initialization it does extra stuff.\nWhile testing this the mypy interpreter was not happy because\n```chain: MapReduceClassificationChain\n...\ncls.chain = MapReduceClassificationChain.from_llm(...)```\nfrom_llm doesn’t return the type MapReduceClassificationChain\nand\n```chain: Chain\n...\ncls.chain = MapReduceClassificationChain.from_llm(...)\nTest:\nchain.internal_function <- not part of chain```\nwe cannot access the internal functions because they are not part of the Chain superclass.\n\nNow I found a solution around this by using the default constructor for the object:\n``` cls.chain = MapReduceClassificationChain(...)```\nbut I will argue that this is not the correct way to unittest things since the from_llm constructor may change and we may not pass the change to the unit test.\n\nAll in all, with mypy enabled for unit-tests I get the feeling that we do “compromises” to create a unit-test that will pass the mypy tests. From a developer perspective, unit-tests are the most “hard” part of creating the final PR and I am trying just to argue that fighting MyPy should not be part of it.",
+      "time": "09:52",
+      "timestamp": "1717433549.748769",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "> I am trying just to argue that fighting MyPy should not be part of it\nWe are 100% in agreement here, and I'd go even further to say that's a core goal of mypy as well :slightly_smiling_face: I would argue that, in this case, the class method `from_llm` is an inheritance anti-pattern and is the bit of code that is making your tests unnecessarily difficult to implement. Could you help explain the rationale for doing this, instead of for example:\n```class MapReduceClassificationChain(Chain):\n  \"\"\"Call the classification chain with 30 labels max, then collect the outputs and return a single class.\"\"\"\n  classification_chain: ClassifierChain\n  llm: BaseModelProtocol\n  tokenizer: Union[Encoding, InstallmTokenizer]\n  max_classes_per_batch: int\n\n  def __init__(self, llm: BaseModelProtocol, max_classes_per_batch: int = MAX_CLASSES_PER_BATCH):\n    self.llm = llm\n    self.classification_chain = ClassifierChain(llm=llm)\n    self.tokenizer = encoding_for_model(llm.model_name)\n    self.max_classes_per_batch = max_classes_per_batch\n\n    super(Chain, self).__init__()\n\n  ...\n\n...\n\nmr_chain = MapReduceClassificationChain(llm)\nchain: Chain = mr_chain```\nThat example lifts the `Chain` type enforcements outside the class while allowing you to reference the concrete class without needing to downcast, etc",
+      "time": "10:50",
+      "timestamp": "1717437021.508709",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Another motivating example would be how we might implement this in go:\n```type Chain interface {\n    ...\n}\n\ntype ChainFactory func(BaseModelProtocol, int) Chain\n\n...\n\ntype MapReduceClassificationChain struct {\n    llm BaseModelProtocol\n    ...\n}\n\nfunc NewMRCC(llm BaseModelProtocol, classificationChain ClassifierChain, ...) *MapReduceClassificationChain {\n    return &MapReduceClassificationChain{\n        llm: llm,\n        classificationChain: classificationChain,\n        ...\n    }\n}\n\nfunc MRCCFromLLM(llm BaseModelProtocol, ...) *MapReduceClassificationChain {\n   return NewMRCC(llm, NewClassifierChain(llm), ...)\n}\n\n...\n\ntype ChainManager struct {\n    newChain ChainFactory\n}\n\nfunc (c *ChainManager) DoSomething(llm BaseModelProtocol) {\n    chain := c.newChain(llm)\n    chain.SomeChainInterfaceMethod()\n}```",
+      "time": "11:02",
+      "timestamp": "1717437722.233749",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "so, the history is that we started using from_llm ebfore we enforced mypy in ibllm :slightly_smiling_face: I don’t know why we used the from_llm option @vineeth has the context but changing htat is a huge refactoring :stuck_out_tongue:",
+      "time": "11:03",
+      "timestamp": "1717437797.333979",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "gotcha, yeah that is super frustrating :confused: In that case, are you able to move this\n```chain: Chain\n...\ncls.chain = MapReduceClassificationChain.from_llm(...)\nTest:\nchain.internal_function <- not part of chain```\ninto something like\n```class MapReduceClassificationChain(Chain, FromLLMChain):\n  \"\"\"Call the classification chain with 30 labels max, then collect the outputs and return a single class.\"\"\"\n  classification_chain: ClassifierChain\n  llm: BaseModelProtocol\n  tokenizer: Union[Encoding, InstallmTokenizer]\n  max_classes_per_batch: int\n\n  @classmethod\n  def _from_llm(cls,\n               llm: BaseModelProtocol,\n               max_classes_per_batch: int) -> MapReduceClassificationChain:\n    return cls(\n        llm=llm,\n        classification_chain=ClassifierChain.from_llm(llm=llm),\n        tokenizer=encoding_for_model(llm.model_name),\n        max_classes_per_batch=max_classes_per_batch)\n\n\n  @classmethod\n  def from_llm(cls,\n               llm: BaseModelProtocol,\n               max_classes_per_batch: int = MAX_CLASSES_PER_BATCH) -> Chain:\n    return cls._from_llm(llm, max_classes_per_batch)```\nand have your tests instantiate via (EDIT)\n```chain = MapReduceClassificationChain._from_llm(...)\nchain.internal_function()```\nand\n```chain: MapReduceClassificationChain\n...\ncls.chain = MapReduceClassificationChain._from_llm(...)```",
+      "time": "11:09",
+      "timestamp": "1717438159.743779",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-06-03.json",
+    "message_count": 6,
+    "start_time": "1717432540.971799",
+    "end_time": "1717438159.743779",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "id": "ch_C0516UPPMT3_2024-11-04_1730731204.980459_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Piyush",
+    "hannah",
+    "Pramod Munemanik",
+    "jack.robbins"
+  ],
+  "messages": [
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Cc @jack.robbins @andy",
+      "time": "06:40",
+      "timestamp": "1730731204.980459",
+      "is_reply": false
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "@Pramod Munemanik are you interested in those metrics for all published apps? We're working on an initiative to make this far easier, but this data is available in Grafana today (just requires a bit of querying)",
+      "time": "09:47",
+      "timestamp": "1730742458.236969",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "FYI - this is a count of all-time app runs:",
+      "time": "10:43",
+      "timestamp": "1730745833.029009",
+      "is_reply": true
+    },
+    {
+      "sender": "Piyush",
+      "user_id": "U024EALC0UF",
+      "message": "This is awesome!! @jack.robbins any way our team can use this query on a periodic basis and publish this number?",
+      "time": "15:41",
+      "timestamp": "1730763697.731219",
+      "is_reply": true
+    },
+    {
+      "sender": "Piyush",
+      "user_id": "U024EALC0UF",
+      "message": "ideally i would love for this to be published on the 1st of every month to check the change",
+      "time": "15:41",
+      "timestamp": "1730763718.371499",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "Yeah - this is all accessible through Grafana. Anyone with access could drop the below query into the MySQL explore view to get month-by-month usage per public app:\nhttps://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%220uv%22:%7B%22d[…]%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1 (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%220uv%22:%7B%22datasource%22:%22mysql%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22mysql%22,%22uid%22:%22mysql%22%7D,%22format%22:%22table%22,%22rawSql%22:%22%22,%22editorMode%22:%22builder%22,%22dataset%22:%22instabase%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)\n\n```SELECT\n  ds.name,\n  DATE_FORMAT(FROM_UNIXTIME(j.completion_time / 1000000000), '%Y-%m') AS completion_year_month,  -- Combine year and month\n  COUNT(*) AS usage_count  -- Count the number of records for each name and month\nFROM\n  instabase.deployed_solution_jobs dsj\nJOIN\n  instabase.jobs (http://instabase.jobs) j ON dsj.job_id = j.id\nJOIN\n  instabase.deployed_solutions ds ON dsj.deployed_solution_id = ds.id\nWHERE\n  ds.visibility = 'PUBLIC'  -- Filter to include only records where visibility is PUBLIC\nGROUP BY\n  ds.name, completion_year_month\nORDER BY\n  completion_year_month DESC,  -- Sort by the combined year-month column for chronological order\n  usage_count DESC;  -- Then sort by usage count for ranking```",
+      "time": "16:02",
+      "timestamp": "1730764923.389159",
+      "is_reply": true
+    },
+    {
+      "sender": "Piyush",
+      "user_id": "U024EALC0UF",
+      "message": "@Anshu @Nithin can you check if anyone on the team has access",
+      "time": "16:06",
+      "timestamp": "1730765176.180089",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "Thank you @jack.robbins.\nI am able to access Grafana and execute the SQL query.",
+      "time": "20:37",
+      "timestamp": "1730781469.247029",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-11-04.json",
+    "message_count": 8,
+    "start_time": "1730731204.980459",
+    "end_time": "1730781469.247029",
+    "is_thread": true
+  }
+}

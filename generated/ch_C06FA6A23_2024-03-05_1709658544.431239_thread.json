@@ -1,0 +1,78 @@
+{
+  "id": "ch_C06FA6A23_2024-03-05_1709658544.431239_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Dominic Fannjiang",
+    "Anil",
+    "puneet"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "> all you need to do is create the task signature\nWhen I say this, I just meant adding the function to this file (https://github.com/instabase/instabase/blob/master/webserver/shared-apps/src/py/instabase/registry/tasks.py). That wouldn't mess up scheduling, would it?",
+      "time": "09:09",
+      "timestamp": "1709658544.431239",
+      "is_reply": false
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Re: Tracing - `UpdateTask` has the tracing code though, and we call `update_task` in method 1, so that's why I'm thinking that tracing actually should work",
+      "time": "09:13",
+      "timestamp": "1709658796.898509",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "In any case, I just merged in this PR https://github.com/instabase/instabase/pull/53959 - on my local testing, it makes tracing work. I'll verify once its deployed this afternoon PT",
+      "time": "09:14",
+      "timestamp": "1709658850.715889",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Sounds good. I was working on adding a simple test job that goes via test scheduler - so we have integration coverage on this path with tracing.",
+      "time": "09:15",
+      "timestamp": "1709658915.991209",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "One learning was that (as @Dominic Fannjiang noted) you need to add the task signature to webserver/shared-apps/src/py/instabase/registry/tasks.py\nWithout it, there is a warning in api-server\n```level=WARNING time=2024-03-05 10:23:35,188 msg=\"[Tracing] unable to extract the task or task_id, state=before_task_publish. This version of celery may not be supported.\" path=\"/Users/anil/dev/repos/instabase/webserver/api-server/build/py/celery_tracing/celery.py:32\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_0\" trace_id=\"696b34cceab72371\"```\nAnd tracing info isn’t propagated.\n\nhttps://github.com/instabase/instabase/pull/54225  - added a test job that can be used for future reference.",
+      "time": "10:45",
+      "timestamp": "1709664337.207859",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Verifying that we now have tracing for extraction from `api-server -> app-tasks -> model-service` :tada:",
+      "time": "14:30",
+      "timestamp": "1709677858.060389",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "> One learning was that (as @Dominic Fannjiang noted) you need to add the task signature to webserver/shared-apps/src/py/instabase/registry/tasks.py\nYes, for celery tracing to work we should have the task signature in `tasks.py` as it is used for patching the celery tasks to propagate traces on the client side (api-server).\n\n> Re: Tracing - StartFlow and the flow paths have tracing being propagated\n> StartJob doesn’t have this. I didn’t add to StartFlow - so trying to figure this out.\n> Looks like @puneet added for Flow path, will catch him tomorrow to understand what is needed to get it to work.\n@Anil this was done in StartFlow to propagate context for the request to task scheduler, earlier we were only passing the traceID with a Job (see here (https://github.com/instabase/instabase/blob/fdd7d9bd5629ee9f690051c4e457c265cf06c464/core-services/job-service/src/go/src/instabase/jobservice/handler/flow.go#L171)) which was stored in the DB. But a trace also contains other information apart from traceID (like context, parent span, etc) which was not propagated. This change added a new `traceMetadata` field in `JobMetadata` to propagate context and the `traceID` field was not changed, so this should not cause any tracing related issues.",
+      "time": "20:21",
+      "timestamp": "1709698900.736079",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-03-05.json",
+    "message_count": 7,
+    "start_time": "1709658544.431239",
+    "end_time": "1709698900.736079",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "id": "ch_C06FA6A23_2024-10-31_1730401294.226649_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Serena",
+    "pauline.comising"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah yes, I'm not using crafting and I'm back to running into this `ConnectionRefusedError`, to clarify `brew services restart rabbitmq` succeeds for me but I still get the connection refused msg. Is this when I should check if rabbitmq is reachable despite the ``*Successfully started `rabbitmq``` message?*",
+      "time": "12:01",
+      "timestamp": "1730401294.226649",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the connection refused error is still showing up in `api-server`? and how are you running `api-server` - locally or in Docker?",
+      "time": "12:24",
+      "timestamp": "1730402661.160469",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Yep in `api-server` and I'm running it in docker",
+      "time": "12:25",
+      "timestamp": "1730402714.751489",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "great! what is the value for `RABBIT_MQ_URL` in `webserver/api-server/tmp/docker_env_local.list`",
+      "time": "12:45",
+      "timestamp": "1730403900.178129",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah let me check, but yes an update here is that me and Anil did find that it works when I compile and start locally, and the docker_env_local.list doesn't set `RABBIT_MQ_URL`",
+      "time": "13:23",
+      "timestamp": "1730406183.125719",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Though, I run `make run-docker-reload` to open a docker shell and I exported all the default rabbitmq values anil sent from this code snippet and it still didn't fix my docker run. Are these default values incorrect?\n```RABBIT_MQ_URL = os.environ.get('RABBIT_MQ_URL', '127.0.0.1')\n  RABBIT_MQ_PORT = int(os.environ.get('RABBIT_MQ_PORT', '5672'))\n  RABBIT_MQ_USERNAME = os.environ.get('RABBIT_MQ_USERNAME', 'guest')\n  RABBIT_MQ_PASSWORD = os.environ.get('RABBIT_MQ_PASSWORD', 'guest')```",
+      "time": "13:26",
+      "timestamp": "1730406393.964869",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "those values are correct for running rabbitmq locally\n\nbut if you run rabbitmq via docker, `RABBIT_MQ_URL` should be `docker.for.mac.localhost` (the other variables can stay the same)",
+      "time": "13:58",
+      "timestamp": "1730408295.054619",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah makes sensee, I'll test exporting those for my docker shell tmrw, and I'll try and investigate why this configuration broke after I pulled from master yesterday :thinking_face: thanks!",
+      "time": "14:02",
+      "timestamp": "1730408569.672859",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw you probably lost your setting for `RABBIT_MQ_URL: docker.for.mac.localhost` bc of https://github.com/instabase/instabase/pull/64336\n\nsee how webserver/api-server/deployment/local/docker-env.json (https://github.com/instabase/instabase/pull/64336/files#diff-5f721d4394e74312f2bffa508088040e7165e15d39596fb275b09fc864d3c2fd), which contained this, was deleted",
+      "time": "18:26",
+      "timestamp": "1730424381.911069",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw i think we need to add `RABBIT_MQ_URL: docker.for.mac.localhost` to `docker-local` in env-local.json, i’ll create a PR (https://github.com/instabase/instabase/pull/64721)",
+      "time": "18:27",
+      "timestamp": "1730424441.156979",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-31.json",
+    "message_count": 10,
+    "start_time": "1730401294.226649",
+    "end_time": "1730424441.156979",
+    "is_thread": true
+  }
+}

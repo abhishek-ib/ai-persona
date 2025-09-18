@@ -1,0 +1,159 @@
+{
+  "id": "ch_CSY11CK7T_2024-12-10_1733862608.551629_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Weiming Wu",
+    "Jessica",
+    "Liam Callanan",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Dedicating a new thread:\nAs outlined here (https://instabase.slack.com/archives/CSY11CK7T/p1733862386494379?thread_ts=1733778897.301079&cid=CSY11CK7T), it doesn't look like we're able to delete apps on the crafting-cyp environment right now?",
+      "time": "12:30",
+      "timestamp": "1733862608.551629",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Apps with ground truth sets associated with them. @Serena this bug is still around?",
+      "time": "12:44",
+      "timestamp": "1733863445.177519",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@pauline.comising is it still expected that apps with old ground truth sets can’t be deleted?",
+      "time": "12:45",
+      "timestamp": "1733863508.325389",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "We might want to clear out the apps from crafting-cyp some other way if that's the case",
+      "time": "12:45",
+      "timestamp": "1733863536.885759",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i manually tested this yesterday, and deleting the ground truth set and then deleting the app still works\n\nso i can change the Cypress test do that instead",
+      "time": "12:46",
+      "timestamp": "1733863574.103109",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Maybe related: I’ve had a couple PRs today where I’m seeing a large list of tests failing either due to timed-out endpoints or 500s. Is the env unstable today?\nhttps://github.com/instabase/instabase/pull/66116#issuecomment-2532794627",
+      "time": "12:58",
+      "timestamp": "1733864280.233849",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": ":dizzy_face: that looks like what Kerry reported here: https://instabase.slack.com/archives/CSY11CK7T/p1733778897301079",
+      "time": "12:58",
+      "timestamp": "1733864328.897839",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "I know that a lot of the ones where apps are involved are failing because we can't scroll down to find the desired app due to all the ground truth apps",
+      "time": "12:58",
+      "timestamp": "1733864329.677129",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "You mean when looking for apps on /hub? I though I updated the helper for that so search for the exact name rather than scroll",
+      "time": "13:03",
+      "timestamp": "1733864607.491479",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "No there are some that look for apps in a modal, which are still only using scroll",
+      "time": "13:04",
+      "timestamp": "1733864646.078839",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "That's probably just the deployment ones then, and I recently updated that modal to have search. I'll update those tests! But that definitely doesn't explain Liam's long list",
+      "time": "13:08",
+      "timestamp": "1733864935.850059",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "PR for that action item: https://github.com/instabase/instabase/pull/66130",
+      "time": "13:23",
+      "timestamp": "1733865825.453649",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "I just cleared all the existing golden truth apps with a JS script so we're at least set for a little while, until we improve app cleanup to also delete ground truth sets beforehand",
+      "time": "13:44",
+      "timestamp": "1733867089.343749",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Nice thanks!!",
+      "time": "13:50",
+      "timestamp": "1733867440.091559",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "how did you clear the apps? @Weiming Wu\n\ndo i still need to change the cleanup script for `ground-truth-crud` ?",
+      "time": "13:51",
+      "timestamp": "1733867486.238289",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "@Serena I did a much of fetch().then() calls to:\n• get all the ground truth apps\n• get all the ground truth sets for each app\n• delete all the ground truth sets\n• delete all the apps\nIt works but it doesn't really fit Cypress, so I think it's best if you still make the changes. I'll include my script if you want to use it as a reference, in case it'll help",
+      "time": "13:54",
+      "timestamp": "1733867645.252339",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw i see `Error 1040 (08004): Too many connections` errors (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%223ou%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22core-platform-service%5C%22%7D%20%7C%3D%20%60Too%20many%20connections%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%221733860800000%22,%22to%22:%221733861939000%22%7D%7D%7D&orgId=1) in `core-platform-service` logs at around the time of Liam’s CI run, which would explain the 500 errors and the timeouts",
+      "time": "14:49",
+      "timestamp": "1733870982.788359",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-12-10.json",
+    "message_count": 17,
+    "start_time": "1733862608.551629",
+    "end_time": "1733870982.788359",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "id": "ch_C06FA6A23_2024-11-08_1731082085.746769_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":wave: <!here> As part of the project to migrate Jenkins from GCP to AWS (and in doing so consolidate the Jenkins runtimes entirely into a single account), I'll be making a one-off policy update to ALL of the ECR image repos in `instabase-dev` / `549230430157`.\n\n:heads-down: *This* *should not impact day-to-day operations.*\nIf that assertion proves false, please let me know and I'll jump on it. :+1:\n\n*Details*\n*When:*\nWith any luck, this ~afternoon~ morning, still need to get the script hashed out and tested. If not I'll update here and try for Monday.\n\n*Why:* The new Jenkins builders in `core-infrastructure` / `601729033846` account must be able to manipulate ECR repos as needed. Additionally `instabase-dev` is a mostly lawless frontier upon which I plan to impose a little more structure and constraint. :slightly_smiling_face:\n\n*What:*\n• I've taken a superset of all extant per-repo policies in ib-dev ECR, and will be applying that across the board to all ECR repos - whether they have a policy currently or not.\n• This should *not* impose new restrictions on any ib-dev ECR repos, though it *might* open up permissions on those repos that currently lack any policy.\n• I've validated that all principals across all ext policies are indeed members of the Instabase management account, and thus none are being (nor will be) shared outside of the company.\n*How:*\nFor now it's just a one-off script I'll run as needed. Some day we'll get all of these imported to Terraform, but for now I don't have a clean and safe way to allow non-Cody's to apply the core-infra / ib-dev terraform in a targeted / constrained fashion for the sake of managing ECR repos. :smile: So this keeps folks unblocked and gets me one step further down the path toward sanity and safety.",
+      "time": "08:08",
+      "timestamp": "1731082085.746769",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I forgot I already have a scrip mostly ready to go. :smile:\n\nTested on a handful of contrived (but representative) test repos (`cody/test{1,2,3}`), and it should be all +++.\n\n*Please let me know if you run into issues pushing to / pulling from `instabase-dev` ECR images.*",
+      "time": "08:55",
+      "timestamp": "1731084941.289859",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Change is complete. No errors, should be solid - I'll post here if anything comes up, and will make updates to the policy I just applied as needed.",
+      "time": "09:08",
+      "timestamp": "1731085707.037849",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Would this change impact the pre-built docker image pipeline?",
+      "time": "10:21",
+      "timestamp": "1731090085.274269",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "It doesn’t do anything in GCR so I don’t believe it will have an impact - but any ECR images that are affected by various pipelines should work just fine as I didn’t remove any permissions :+1:",
+      "time": "10:33",
+      "timestamp": "1731090806.295199",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-11-08.json",
+    "message_count": 5,
+    "start_time": "1731082085.746769",
+    "end_time": "1731090806.295199",
+    "is_thread": true
+  }
+}

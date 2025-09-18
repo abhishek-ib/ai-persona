@@ -1,0 +1,126 @@
+{
+  "id": "ch_C05L87V014J_2024-12-05_1733423013.099509_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "mfichman",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "After I resynced the ibdev template, `env-local-secrets.json` file is being overwritten to a blank file when I do `ppy restart lite`. It seems like syning ibdev template also started unwanted services. I want to use `ppy` only and want to turn off all crafting services. I've tried running `workspace service disable webpack`, `cs down nginx` and `cs down webpack` but still seeing this isssue. What else should I run?",
+      "time": "10:23",
+      "timestamp": "1733423013.099509",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Logs from `webapp` . It needs the env vars in `env-local-secrets.json` but it's overwritten when I start the services. It's overwritten because of we set up this (2nd screenshot) in Crafting?",
+      "time": "10:28",
+      "timestamp": "1733423316.625809",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Resolved. Found that in the latest template, we need to put the secrets in `env-local-crafting`. The crafting sandbox will generate the `env-local-secrets` from it.",
+      "time": "10:37",
+      "timestamp": "1733423858.920869",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Actually, i see this again... script `shared-utils/build-utils/stack-local/get-env-local.py` will break if  `env-local-secrets.json` is empty. I also don't see this file being auto populated by crafting.",
+      "time": "11:26",
+      "timestamp": "1733426795.244359",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@sean.donohoe do you know if we set up anything in crafting that would overwrite `env-local-secrets.json` ?",
+      "time": "11:28",
+      "timestamp": "1733426913.573429",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I am not, but @mfichman might know?",
+      "time": "11:32",
+      "timestamp": "1733427140.442009",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I tried deleting `env-local-secrets` but it regenerates when I run `ppy start <service>` . I ended up editing the `get-env-local.py` file to bypass json decode error. Seems like working now... But i'm a bit confused on how an empty `env-local-secrets` file keeps showing up :confused_dog:\n\n\n```diff --git a/shared-utils/build-utils/stack-local/get-env-local.py b/shared-utils/build-utils/stack-local/get-env-local.py\nindex 9b13e31af02..4ff522c09db 100644\n--- a/shared-utils/build-utils/stack-local/get-env-local.py\n+++ b/shared-utils/build-utils/stack-local/get-env-local.py\n@@ -19,6 +19,9 @@ def main():\n         data = json.loads(f.read())\n     except FileNotFoundError:\n       data = {}\n+    except json.JSONDecodeError as e:\n+      # print(u\"Error parsing JSON file - {}: {}\".format(filename, e))\n+      continue\n\n     envs.update(data.get('base', {}))\n     if config_name == 'local':```",
+      "time": "11:41",
+      "timestamp": "1733427661.114389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Xindi Xu Can you resync your sandbox? That will fix it",
+      "time": "11:44",
+      "timestamp": "1733427877.971239",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I synced the sandbox this morning and the ibdev was updated 2 days ago, but I'll resync again",
+      "time": "11:45",
+      "timestamp": "1733427947.136459",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Should I check \"force update base\"?",
+      "time": "11:47",
+      "timestamp": "1733428070.505529",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "No, no need for that.",
+      "time": "12:15",
+      "timestamp": "1733429741.758729",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Just hit confirm -- and then let me know if the secrets file is well-formed afterwards!",
+      "time": "12:15",
+      "timestamp": "1733429755.260909",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The secret file is generated from `env-local-crafting` properly. Thank you so much!",
+      "time": "12:26",
+      "timestamp": "1733430408.244909",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-05.json",
+    "message_count": 13,
+    "start_time": "1733423013.099509",
+    "end_time": "1733430408.244909",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "id": "ch_C06FA6A23_2022-06-03_1654263535.510719_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Josh Xie",
+    "Mohit",
+    "Kerry",
+    "Dominic Fannjiang",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "hi all, im using the doc-insights sandbox and when I use jaeger and select a service, i don't find `apps-server`. is this something that is easily configurable/fixable?",
+      "time": "06:38",
+      "timestamp": "1654263535.510719",
+      "is_reply": false
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "@Rahul Tewari @Josh Xie  would you guys happen to know?",
+      "time": "09:51",
+      "timestamp": "1654275065.304089",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "I think tracing doesn't show up in dropdown until you start populating it (and there are code to generate tracing in the APIs). Did you run `apps-server` apis yet (seem like the sandbox is newly deployed)?",
+      "time": "10:00",
+      "timestamp": "1654275647.365479",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Yea in my branch I have code in ocr.py to trace the function calls that are triggered when opening a refiner file",
+      "time": "10:04",
+      "timestamp": "1654275855.306089",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m assuming you already went through this doc? https://docs.google.com/document/d/1DMNxhIu3py_qZhuSxxOHJLet3jUg_hDkaEhjkQ0XO2c/edit#heading=h.cywwkdu31rt3",
+      "time": "10:26",
+      "timestamp": "1654277165.409889",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "interesting; Josh is right, the dropdown is populated by existing traces. do you want to check other services (like api-server-apps) to see if your api call is in there? most of the app apis are in api-server-apps",
+      "time": "10:26",
+      "timestamp": "1654277183.942149",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "apps-server is mainly used for frontend js files ithink",
+      "time": "10:26",
+      "timestamp": "1654277205.236289",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "@Dominic Fannjiang is your branch in a PR? I can take a look too. Sometimes you need to register the API first before you can start tracing it.",
+      "time": "10:28",
+      "timestamp": "1654277317.343659",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "@Serena thanks for that doc, I've never seen that before! I added a bunch of `@tracing_utils.trace_function()` lines but maybe I also need to add `@trace_inbound_request()` to the api\n@Kerry in this case, ocr.py is in `apps-server` so I thought it'd be in there in jaeger, but also i dont find it in `api-server-apps`\n @Josh Xie unfortunately i had to force-push to delete that commit from my branch, but ill try again and see if `@trace_inbound_request` helps",
+      "time": "10:34",
+      "timestamp": "1654277664.826609",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "yup you need `@trace_inbound_request()`. That should fix it.",
+      "time": "10:35",
+      "timestamp": "1654277722.931509",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Do we have some collection of links to engineering resources/docs/guides so that we can make https://docs.google.com/document/d/1DMNxhIu3py_qZhuSxxOHJLet3jUg_hDkaEhjkQ0XO2c/edit#heading=h.cywwkdu31rt3 more visible to people?",
+      "time": "10:36",
+      "timestamp": "1654277813.347129",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "+1. When I joined Instabase last year, I actually asked exactly same question :stuck_out_tongue:\nWe are trying to put everything under shared drives (https://drive.google.com/drive/shared-drives?ths=true) (google drive) with some folder structure. I think this is the current way of finding some docs besides search in google docs/slack.",
+      "time": "10:38",
+      "timestamp": "1654277919.083759",
+      "is_reply": true
+    },
+    {
+      "sender": "Josh Xie",
+      "user_id": "U02ENFDGCQ0",
+      "message": "btw I just added few team members to <#C01DJ7QDC2H|> . just realize you guys aren’t in that channel.",
+      "time": "10:46",
+      "timestamp": "1654278361.512649",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@Dominic Fannjiang please follow the steps and the example PR in this section (https://docs.google.com/document/d/1DMNxhIu3py_qZhuSxxOHJLet3jUg_hDkaEhjkQ0XO2c/edit#heading=h.eb79nvwyk0ir) that explains how to add tracing to a particular python service/API.\n\nPlease note that since apps-server is not traced already. Observability team will need to add jaeger agent (its a quick change).\n\n@sudeep @puneet\nPlease feel free to follow this document https://docs.google.com/document/d/1DMNxhIu3py_qZhuSxxOHJLet3jUg_hDkaEhjkQ0XO2c/edit#heading=h.eb79nvwyk0ir\nand update the list of services once you add jaeger agent to apps-server.\nHappy to review the PR.",
+      "time": "10:47",
+      "timestamp": "1654278457.070959",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "And yes, the service dropdown is only populated by services which have reported tracing spans. (It means that your service, apps-server in this case, has not reported any span yet.)",
+      "time": "10:48",
+      "timestamp": "1654278507.922739",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "> +1. When I joined Instabase last year, I actually asked exactly same question :stuck_out_tongue:\n> We are trying to put everything u…\n@Josh Xie fair point. The google document was created in May 2020 before we started using confluence.\nFor searchability, I have created a confluence page in the observability section with link to google document\nhttps://instabase.atlassian.net/wiki/spaces/TI/pages/1774780454/Distributed+Tracing+Developer+User+Guide\nWe can port the document fully to confluence page.\ncc: @sudeep",
+      "time": "10:53",
+      "timestamp": "1654278815.428719",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-06-03.json",
+    "message_count": 16,
+    "start_time": "1654263535.510719",
+    "end_time": "1654278815.428719",
+    "is_thread": true
+  }
+}

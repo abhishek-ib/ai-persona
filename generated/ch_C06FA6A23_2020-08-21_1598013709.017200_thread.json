@@ -1,0 +1,53 @@
+{
+  "id": "ch_C06FA6A23_2020-08-21_1598013709.017200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "abhilash",
+    "Jonathan Shih"
+  ],
+  "messages": [
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "I’m seeing very strange crash on local (works fine on dogfood). Upon running a flow, I see following in `celery-app-tasks` logs\n```[2020-08-21 18:04:01,535: ERROR/MainProcess] Process 'ForkPoolWorker-4' pid:12015 exited with 'signal 11 (SIGSEGV)'\n[2020-08-21 18:04:01,548: ERROR/MainProcess] Task handler raised error: WorkerLostError('Worker exited prematurely: signal 11 (SIGSEGV).')\nTraceback (most recent call last):\n  File \"/Users/abhilash/.pyenv/versions/3.7.3/lib/python3.7/site-packages/billiard/pool.py\", line 1267, in mark_as_worker_lost\n    human_status(exitcode)),\nbilliard.exceptions.WorkerLostError: Worker exited prematurely: signal 11 (SIGSEGV).\n[2020-08-21 18:04:01,732: INFO/ForkPoolWorker-5] Initializing Jaeger Tracer with UDP reporter```\nand then all `celery-app-tasks` workers start repeatedly crashing\n```[2020-08-21 18:04:09,878: ERROR/MainProcess] Timed out waiting for UP message from <ForkProcess(ForkPoolWorker-6, started daemon)>\n[2020-08-21 18:04:11,720: ERROR/MainProcess] Process 'ForkPoolWorker-6' pid:13234 exited with 'signal 9 (SIGKILL)'\n[2020-08-21 18:04:11,912: INFO/ForkPoolWorker-7] Initializing Jaeger Tracer with UDP reporter\n[2020-08-21 18:04:11,920: INFO/ForkPoolWorker-7] Using sampler ConstSampler(True)\n[2020-08-21 18:04:15,897: ERROR/MainProcess] Timed out waiting for UP message from <ForkProcess(ForkPoolWorker-7, started daemon)>\n[2020-08-21 18:04:15,902: ERROR/MainProcess] Process 'ForkPoolWorker-7' pid:13384 exited with 'signal 9 (SIGKILL)'```\nWith breakpoint, I see the crash happening at line `gray_img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)` in `image_filters.py:273`. Any idea what might be going on? cc @Felicia @Chetan @shaunak",
+      "time": "05:41",
+      "timestamp": "1598013709.017200",
+      "is_reply": false
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "This looks related: https://github.com/celery/celery/issues/2964 but not sure",
+      "time": "05:45",
+      "timestamp": "1598013958.017300",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "@abhilash mac opencv crashes when used in celery. try running app-tasks with docker, and it should work",
+      "time": "08:34",
+      "timestamp": "1598024041.017900",
+      "is_reply": true
+    },
+    {
+      "sender": "abhilash",
+      "user_id": "URT7Z0PEK",
+      "message": "oh. thanks! Will try!",
+      "time": "08:34",
+      "timestamp": "1598024080.018100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-08-21.json",
+    "message_count": 4,
+    "start_time": "1598013709.017200",
+    "end_time": "1598024080.018100",
+    "is_thread": true
+  }
+}

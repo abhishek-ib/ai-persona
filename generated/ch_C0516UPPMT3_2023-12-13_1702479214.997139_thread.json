@@ -1,0 +1,265 @@
+{
+  "id": "ch_C0516UPPMT3_2023-12-13_1702479214.997139_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Arjun",
+    "Lee",
+    "Rakesh",
+    "melissa.amos",
+    "Prashant Kikani"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Our main blocking issue with XTB, a customer which has been able to build a really good solution in AI Hub is where we’re not handling non-latin character sets correctly in build, but its working perfectly in converse. I’ve got FR turned on in both places but in build I cannot get the results with FR turned on. They are playing back their app to their customer next week. Is there anything we can do in the meantime to unblock them?\n\n@Kerry @Hari",
+      "time": "06:53",
+      "timestamp": "1702479214.997139",
+      "is_reply": false
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "For more context, I have looked into this issue. When I run build-reasoning in local for the same document and query, I'm getting same response as converse.\n\nAlso confirmed that, this is going to the `CustomExtractorChain` in extraction, which is as expected.\n\nAnd also confirmed with @Nikolaos Kofinas that, we don't do any post processing on the ibllm response.\n\nWhile I'm looking more on this, can someone from the build team help here?",
+      "time": "07:01",
+      "timestamp": "1702479664.615589",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Prashant Kikani it might be a bug in build that already got fixed on master , but we need to wait for 23.49 to be pushed to prod. Can you share a test doc? Or try on aihub-uat.internal, see if the results are the same between build and converse",
+      "time": "07:03",
+      "timestamp": "1702479786.403789",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "cc @Eric Han to take a look from the Build side",
+      "time": "07:03",
+      "timestamp": "1702479806.454809",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Actually, I was using `release-23.47.0-aihub` branch - on which I think prod is running.\n\nSure, let me try on UAT. Also attaching the doc which Lee is using.",
+      "time": "07:05",
+      "timestamp": "1702479918.814979",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "I was investigating this a bit more, I see why this is happening.\nWhen I look at the core digitized output - I see the non-latin characters converted to latin ones. We need to add a parameter to reader profile here.",
+      "time": "07:14",
+      "timestamp": "1702480440.273459",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Let me create a ticket and will add details in there.",
+      "time": "07:14",
+      "timestamp": "1702480457.441209",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "@Rakesh is this a flag we need to add/change to the build reader profile? Happy to make that change if you let me know",
+      "time": "07:26",
+      "timestamp": "1702481182.039069",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Yes. I added this flag detail to the ticket.",
+      "time": "07:26",
+      "timestamp": "1702481214.539379",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "And we should add this only with table detection enabled.",
+      "time": "07:27",
+      "timestamp": "1702481241.854379",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "sounds good",
+      "time": "07:27",
+      "timestamp": "1702481248.478449",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "will add and test with the above test doc",
+      "time": "07:27",
+      "timestamp": "1702481256.633539",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Happy to review PR.",
+      "time": "07:27",
+      "timestamp": "1702481259.727809",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "thank you team!",
+      "time": "07:32",
+      "timestamp": "1702481554.868139",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "if it's not too much work, let's pick it back to 23.49 given that it's a blocking issue for a customer",
+      "time": "07:33",
+      "timestamp": "1702481589.130669",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "sure will do",
+      "time": "07:33",
+      "timestamp": "1702481603.914919",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "If this could be in the release on monday that would be amazing. The customer is doing a playback to their customer wednesday, and would like to include this in the playback.",
+      "time": "07:36",
+      "timestamp": "1702481765.589889",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "yep will prioritize getting that in today, it will make it into 23.49",
+      "time": "07:58",
+      "timestamp": "1702483105.366079",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Thank you!",
+      "time": "07:59",
+      "timestamp": "1702483163.336899",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "confirming that the proposed change by @Rakesh works. cc @Lee @Kerry",
+      "time": "08:52",
+      "timestamp": "1702486327.911199",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I wonder if we should change the name from “Multipage table and checkboxes” to something else since clearly this setting is useful/used for many other instances. cc @melissa.amos",
+      "time": "08:52",
+      "timestamp": "1702486350.588799",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "although in both converse and build it doesn’t really look like the extracted characters match what’s under customer address? Granted I don’t read arabic lol",
+      "time": "08:54",
+      "timestamp": "1702486450.956429",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "for example here’s the provenance",
+      "time": "08:55",
+      "timestamp": "1702486500.841299",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "only gets half of what I presume is the actual address",
+      "time": "08:55",
+      "timestamp": "1702486519.778329",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Yes, I dont know Arabic either - even with queries on these documents earlier could not figure if answer was correct via LLM as wlel.",
+      "time": "08:58",
+      "timestamp": "1702486732.075949",
+      "is_reply": true
+    },
+    {
+      "sender": "melissa.amos",
+      "user_id": "U046XKHS8VA",
+      "message": "It seems reasonable that we might want to rename the multipage table etc. option, given that we're using it as shorthand for FR. I'm not sure I understand how FR impacts this non-Latin text use case though... And I'd want to consider other cases--besides multipage tables and checkboxes--where FR is useful. I'm not aware of any ATM.",
+      "time": "08:59",
+      "timestamp": "1702486764.233199",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "https://github.com/instabase/instabase/pull/51092 @Rakesh here’s the PR",
+      "time": "09:03",
+      "timestamp": "1702486987.140339",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "@melissa.amos it seems like in this case form recognizer is necessary for non-latin characters to be detected",
+      "time": "09:04",
+      "timestamp": "1702487047.692099",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "@Lee just so you can communicate this to the customer when this does get deployed to prod — they will have to turn off and turn back on FR",
+      "time": "09:36",
+      "timestamp": "1702488973.007919",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "ie the changes won’t be picked up immediately by default",
+      "time": "09:36",
+      "timestamp": "1702488992.103629",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-12-13.json",
+    "message_count": 30,
+    "start_time": "1702479214.997139",
+    "end_time": "1702488992.103629",
+    "is_thread": true
+  }
+}

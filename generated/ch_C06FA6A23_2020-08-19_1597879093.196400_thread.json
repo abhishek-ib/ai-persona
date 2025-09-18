@@ -1,0 +1,176 @@
+{
+  "id": "ch_C06FA6A23_2020-08-19_1597879093.196400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Chetan",
+    "naveen",
+    "arun",
+    "Justin",
+    "Jesika Haria"
+  ],
+  "messages": [
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Is it possible for an app to take something other than an image as input? Say, a JSON object?",
+      "time": "16:18",
+      "timestamp": "1597879093.196400",
+      "is_reply": false
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Further explanation: I want to build an app that takes a JSON object as input. My idea was to artificially create an IBDOC that had \"refined_phrases\" containing the data inside of the JSON object, then use that as \"input\" to an \"apply_udf\" step. But it looks like IBDOCs are serialized using protobufs (https://developers.google.com/protocol-buffers), so unless I serialize it in the same way, iB cannot understand the IBDOC. Any ideas?",
+      "time": "16:18",
+      "timestamp": "1597879100.196500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "change extension to `.txt` and you can read it @naveen",
+      "time": "16:19",
+      "timestamp": "1597879183.196800",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "whats the use case? asking for flow v3 research",
+      "time": "16:23",
+      "timestamp": "1597879427.197100",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "there's also a Fetcher if you want to replace process files with anything that calls an API or pulls web content! could be totally adjacent to your use case but just fyi :)",
+      "time": "17:09",
+      "timestamp": "1597882164.197700",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "@Chetan @Justin My use case isn't so much that I want to just read the text on iB, I also want to be able to open the IBDOC in Refiner, for example. Or run it in a flow. But there seems to be a parsing error on iB when I try to run/read it, even when I `.encode('utf-8')`\n\n@arun this might actually be a super useful work around for me. Would I be able to use Fetcher to call the IB Filesystem API to read a JSON and use it as input to a flow?",
+      "time": "17:19",
+      "timestamp": "1597882765.197900",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "you can definitely use a .txt in a flow, but i think you wont be able to open in Ref5 @Jesika Haria",
+      "time": "17:20",
+      "timestamp": "1597882821.198100",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "I can work around not using Ref5. Does the `.txt` need to be shaped like an IBDOC (list of dicts)? Or can I choose the structure?",
+      "time": "17:21",
+      "timestamp": "1597882898.198300",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "idk about calling the IB API (could be some trickery if you want to avoid leaking your keys) but the main benefit would really be if you need to download the JSON from somewhere before putting it on ib, and automating that",
+      "time": "17:22",
+      "timestamp": "1597882948.198600",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "I feel like the same problem exists if you use Fetcher, which is how do you pack the JSON into the ibdoc",
+      "time": "17:22",
+      "timestamp": "1597882972.198800",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "i hope im understanding correctly, but the txt can be the input file just like a pdf. Make sure to choose the right process files setting",
+      "time": "17:26",
+      "timestamp": "1597883179.199000",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "Reading through this, I wouldn’t recommend Fetch Files if you want to read files already on the Instabase platform.",
+      "time": "17:27",
+      "timestamp": "1597883267.199200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "the `.txt` can be anything @naveen",
+      "time": "17:28",
+      "timestamp": "1597883311.199400",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "If you have txt files, you should be able to ingest them via Process Files, and pipe the output to Refiner 5, or any other downstream step (we should auto-convert txt to ibdoc?)",
+      "time": "17:28",
+      "timestamp": "1597883313.199600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "it can actually be JSON",
+      "time": "17:28",
+      "timestamp": "1597883314.199800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "what @Jesika Haria says _should_ work or you can have an apply_udf step as step 1 and just read say `my_udf(INPUT_COL)` and `my_udf` will be called with the contents of your JSON/text file @naveen",
+      "time": "17:29",
+      "timestamp": "1597883380.200100",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "Lol, yeah. We don’t have a ton of JSON manipulation fns in Refiner 5 so the only advantage I can think of is that you can iterate on your UDFs quickly without having to re-run the flow. But if you develop them outside, then plugging it in either place works!",
+      "time": "17:31",
+      "timestamp": "1597883494.200400",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "(that + the UDF docs panel just makes it a better place to re-visit the logic or for multiple folks to collab)",
+      "time": "17:32",
+      "timestamp": "1597883548.200700",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "This is helpful guidance, thanks everyone! I'll report back with my process and results :slightly_smiling_face:",
+      "time": "21:24",
+      "timestamp": "1597897480.000200",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-08-19.json",
+    "message_count": 19,
+    "start_time": "1597879093.196400",
+    "end_time": "1597897480.000200",
+    "is_thread": true
+  }
+}

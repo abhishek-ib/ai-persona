@@ -1,0 +1,70 @@
+{
+  "id": "ch_C06FA6A23_2023-12-14_1702557373.837609_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "HH",
+    "abhitaker",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "HH",
+      "user_id": "U03S42PSK5M",
+      "message": "`<service>/deployment/kubernetes` files are used by this command `spec-dep-dogfood-uat-gc` during CI pipeline, is there any relevance of this command anymore or could be changed? Specially I was trying this for weaviate clean up.",
+      "time": "04:36",
+      "timestamp": "1702557373.837609",
+      "is_reply": false
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "Here's a JIRA where we are tracking konmari tasks for legacy config cleanup - https://instabase.atlassian.net/browse/INFRA-2669 (https://instabase.atlassian.net/browse/INFRA-2669)",
+      "time": "04:44",
+      "timestamp": "1702557883.909859",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "> `<service>/deployment/kubernetes` files are used by this command `spec-dep-dogfood-uat-gc` during CI pipeline, is there any relevance of this command anymore or could be changed? Specially I was trying this for weaviate clean up.\n@HH afaict we do not use this target but we may have to confirm with rel-eng on it. that's a good call out",
+      "time": "04:46",
+      "timestamp": "1702557978.741639",
+      "is_reply": true
+    },
+    {
+      "sender": "HH",
+      "user_id": "U03S42PSK5M",
+      "message": "As per CI pipeline, it is heavily using this target across services: https://jenkins.instabase.com/job/instabase/job/PR-51155/1/console",
+      "time": "04:50",
+      "timestamp": "1702558224.312479",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "> As per CI pipeline, it is heavily using this target across services\nI tried to delve a little deeper into the issue\nThe main blocker to remove legacy configs for some of the services is “make run-build-tests (https://github.com/instabase/instabase/blob/master/shared-utils/test-utils/Makefile#L50)” recipe. This was introduced in the following PR 2 years back as pre-merge checks for the correctness of the deployment jinja files - https://github.com/instabase/instabase/pull/20376\n\n@Heymian Do you think we should remove this pre-merge check now? and if yes, what would be the quickest way to disable this?",
+      "time": "06:34",
+      "timestamp": "1702564486.505839",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "actually I found out there’s a skip section in services.json file where we can add skip rules for these pre-merge checks. Here’s an example for control plane - https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/services.json#L12\n\n@Heymian can we leverage this?\n\nc.c. @HH @anmol.agrawal",
+      "time": "06:39",
+      "timestamp": "1702564762.345869",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-12-14.json",
+    "message_count": 6,
+    "start_time": "1702557373.837609",
+    "end_time": "1702564762.345869",
+    "is_thread": true
+  }
+}

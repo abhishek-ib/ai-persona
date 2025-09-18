@@ -1,0 +1,88 @@
+{
+  "id": "ch_C0516UPPMT3_2024-12-10_1733824784.086449_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Hamish",
+    "Elan Sharony",
+    "Kaustubh (KD)",
+    "Serena",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Hey team, got some more info on the degradation the Deloitte team have seen since the latest Prod push. I took a recording of the session here. The clients project is here (https://aihub.instabase.com/build/01938ee6-ce10-7dc8-8ec3-c7e5f3e06a9c) - *Note: they will be demoing this solution so do not make any changes!*\n1. Validation Prompts with correct extractions are now providing fail results. \n    a. Uploading the same document with the same extractions, returns correct results as expected (instead of validation failures)\n    b. Making a slight change to the prompt and re-running the generation process updates the results to get correct results\n    c. This seems like the cache needs refreshed or something?\n2. Prompts that previously worked and had high confidence are not working\n    a. This looks like issues due to changes to the standard model backend prompting \n    b. This also confused them as uploading the same document now returns different results to before the update\n3. Can someone confirm when we plan to upgrade the standard/advanced models in the platform?\n    a. I believe we have plans to change one of them to e.g. GPT-4o mini?\n    b. I would strongly suggest we make no changes to models until we have the freeze app behaviour feature. You can see the affect on customers when we have only changed the backend prompt wrapping without altering the models\nThe Deloitte team is expecting answers back on these 3 points\n\ncc @david.lee @Darragh Byrne @hannah @Kaustubh (KD) @lydia",
+      "time": "01:59",
+      "timestamp": "1733824784.086449",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "#2\nThe freeze app behavior is in place with the push of 24.48, but it applies only to apps (as the name implies), not to Build projects. Build projects always reflects the latest. If Deloitte had published an app, that app's behavior would not have changed with this prod update. Unexpected changes in Build is feedback we've gotten from another customer as well, so we should note this for follow-on work. cc @hannah\n\nAs to the performance degradation, this unfortunately was an oversight on our part, where we pushed out a new extraction prompt that worked well in our benchmarks, but we benchmarked with gpt-4o-mini a long while back, thinking we would have upgraded to gpt-4o-mini by the time the prompt went out. Currently, Build is still on gpt-3.5-turbo, which I suspect performs less well with this prompt. cc @Nikolaos Kofinas\n\n@Hamish you mentioned not changing the demo - was the Deloitte team able to tweak their prompt so that the value was extracted again? Looking at their project, had they made any changes yet? It looks like it's just the one Service Provider field that changed? I want to understand the extent of the impact, to help us decide on next steps.\n\n#3\nWe were originally planning to upgrade to gpt-4o-mini for all default models in 24.50, but I'm now wondering if we should release it in internal preview first to get more feedback - so we may push it to 25.02 instead. One takeaway from this prompt change is that having internal users try it out helps us surface issues earlier.",
+      "time": "06:12",
+      "timestamp": "1733839961.035809",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "#1\nFor the validations prompt issue, I think that should be a separate issue. cc @andy @Elan Sharony if any changes were made to validation prompts in 24.48",
+      "time": "06:13",
+      "timestamp": "1733839996.663899",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Hamish looking more closely at your specific example of Service Provider with Harbour View Dental Clinic, based on the description, the correct value is \"No value found\", so while I'm sure the changing behavior is disconcerting, in this case, the answer is actually better.",
+      "time": "06:38",
+      "timestamp": "1733841517.220759",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "The validations issue is perplexing because the generated code looks identical before and after a trivial change to the validation prompt. Yet, the result for Tax Invoice 5 (Duplicate) \"Laura Robinson\" hit an error initially and then succeeded upon code re-generation\n\nGoing to dig into this more- on first glance it seems like the arguments that are being passed into the custom function were malformed or missing for that one Tax Invoice 5 (Duplicate) \"Laura Robinson\" run",
+      "time": "08:59",
+      "timestamp": "1733849961.757329",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @danny.lan in case we need to dig deeper into the arguments passed into the validation prompt’s custom function",
+      "time": "09:28",
+      "timestamp": "1733851703.802289",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "@lydia do we think the new extraction prompt has led to the observed inconsistency across the same document?\n\n@Elan Sharony thanks for digging here. Would love to understand the diagnosis when we get there",
+      "time": "09:31",
+      "timestamp": "1733851919.025019",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Thanks @lydia - I wasn't aware of the new feature so I'll find some time this week to take a look at it.\n\nMy understanding is this session was after the fixes were made, ensuring better consistency. In his words it took someone most of the day to fix everything so it sounds like it probably affected quite a bit.",
+      "time": "09:41",
+      "timestamp": "1733852512.586459",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-12-10.json",
+    "message_count": 8,
+    "start_time": "1733824784.086449",
+    "end_time": "1733852512.586459",
+    "is_thread": true
+  }
+}

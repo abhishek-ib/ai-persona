@@ -1,0 +1,85 @@
+{
+  "id": "ch_C05L87V014J_2025-08-05_1754423231.432829_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Jet"
+  ],
+  "messages": [
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "could this be related?\nhttps://instabase.slack.com/archives/C05L87V014J/p1754423167699209",
+      "time": "12:47",
+      "timestamp": "1754423231.432829",
+      "is_reply": false
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "The traffic didn't route to the Nginx pod. :thinking_face:\n\n\n`docker run --name instabase-server-nginx \\`\n`--env-file localsettings.env \\`\n`-p 80:8081 --rm -i instabase/server-nginx`",
+      "time": "13:03",
+      "timestamp": "1754424200.674099",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Jet restart all your services, especially nginx, and resync your sandbox. The correct command has `-p 8080:8080` now.",
+      "time": "13:08",
+      "timestamp": "1754424505.536529",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "i restarted, and resync too, let me do that again",
+      "time": "13:09",
+      "timestamp": "1754424542.602089",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Double-check your port mappings match after the services start:\n\n```cs/mfichman❯ docker ps --format='table {{.Image}}\\t{{.Ports}}'\nIMAGE                             PORTS\ninstabase/grpc-file-service       0.0.0.0:9600->9600/tcp, [::]:9600->9600/tcp\ninstabase/license-service         0.0.0.0:9006->9006/tcp, [::]:9006->9006/tcp\ninstabase/control-plane           0.0.0.0:9500->9500/tcp, [::]:9500->9500/tcp\ninstabase/ocr-service             0.0.0.0:7068->7068/tcp, [::]:7068->7068/tcp, 0.0.0.0:7090->7090/tcp, [::]:7090->7090/tcp\ninstabase/weaviate                0.0.0.0:5082->5082/tcp, [::]:5082->5082/tcp\ninstabase/core-platform-service   0.0.0.0:8600-8610->8600-8610/tcp, [::]:8600-8610->8600-8610/tcp\ninstabase/job-service             0.0.0.0:9800->9800/tcp, [::]:9800->9800/tcp\ninstabase/search-tservice         0.0.0.0:7600->7600/tcp, [::]:7600->7600/tcp\ninstabase/celery-app-tasks        \ninstabase/api-server              0.0.0.0:5555->5555/tcp, [::]:5555->5555/tcp\ninstabase/webapp                  0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp\ninstabase/server-nginx            0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp\ninstabase/model-service           0.0.0.0:7800->7800/tcp, [::]:7800->7800/tcp\ninstabase/table-tservice          0.0.0.0:9091->9091/tcp, [::]:9091->9091/tcp\ninstabase/webpack                 0.0.0.0:8081->8081/tcp, [::]:8081->8081/tcp\ninstabase/conversion-service      0.0.0.0:7979->7979/tcp, [::]:7979->7979/tcp\ninstabase/weaviate-titan          8080/tcp, 0.0.0.0:5083->8888/tcp, [::]:5083->8888/tcp```",
+      "time": "13:12",
+      "timestamp": "1754424772.373289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In particular, nginx should be 8080->8080 now",
+      "time": "13:13",
+      "timestamp": "1754424786.992709",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "it's working now! thank you.",
+      "time": "13:21",
+      "timestamp": "1754425298.548989",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "NP!",
+      "time": "13:32",
+      "timestamp": "1754425931.220119",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-08-05.json",
+    "message_count": 8,
+    "start_time": "1754423231.432829",
+    "end_time": "1754425931.220119",
+    "is_thread": true
+  }
+}

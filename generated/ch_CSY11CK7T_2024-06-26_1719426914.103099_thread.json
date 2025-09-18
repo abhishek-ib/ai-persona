@@ -1,0 +1,111 @@
+{
+  "id": "ch_CSY11CK7T_2024-06-26_1719426914.103099_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "CJ",
+    "Weiming Wu",
+    "Jessica",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@CJ I had aihub-classification fail on all 3 retries in this run because of the classification job failing: https://cloud.cypress.io/projects/cfhedy/runs/11722/overview/d48b73a6-f54f-4de4-932c-[…]att=3&roarHideRunsWithDiffGroupsAndTags=1&ts=1719425841346.8 (https://cloud.cypress.io/projects/cfhedy/runs/11722/overview/d48b73a6-f54f-4de4-932c-609c0bd47d2a/replay?att=3&roarHideRunsWithDiffGroupsAndTags=1&ts=1719425841346.8). There's unfortunately no details in the API response about why it failed.",
+      "time": "11:35",
+      "timestamp": "1719426914.103099",
+      "is_reply": false
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "<!subteam^S07855GV3GV> wait oops that's me!!",
+      "time": "11:35",
+      "timestamp": "1719426938.451049",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I don't think it was because of a deployment because 113 other tests passed in the run",
+      "time": "11:35",
+      "timestamp": "1719426938.979359",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "let me look at the trace",
+      "time": "11:37",
+      "timestamp": "1719427045.620229",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "here's the trace (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22mad%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22query%22:%2203ad85954765f7b5%22,%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)\n\n• there's a metronome Integration for cypress-user-59142_instabase.com (http://cypress-user-59142_instabase.com) not found, which is sus to me but probably not the cause\n• the retry reason says `\"Retry in 30s: TypeError(\"'str' object does not support item assignment\")\"`, traceback:\n```\"Traceback (most recent call last):\n  File \"/home/ibuser/.local/lib/python3.9/site-packages/celery/app/autoretry.py\", line 38, in run\n    return task._orig_run(*args, **kwargs)\n  File \"/instabase/workers/celery-app-tasks/py/instabase/tracing/utils.py\", line 311, in wrapped\n    raise error\n  File \"/instabase/workers/celery-app-tasks/py/instabase/tracing/utils.py\", line 306, in wrapped\n    r = func(*args, **kwargs)\n  File \"/instabase/workers/celery-app-tasks/py/instabase/tasks/apps/aihub/tasks.py\", line 1318, in classify_documents\n    class_name, classification_confidence, err = classify_future.result()\n  File \"/pyenv/versions/3.9.17/lib/python3.9/concurrent/futures/_base.py\", line 439, in result\n    return self.__get_result()\n  File \"/pyenv/versions/3.9.17/lib/python3.9/concurrent/futures/_base.py\", line 391, in __get_result\n    raise self._exception\n  File \"/pyenv/versions/3.9.17/lib/python3.9/concurrent/futures/thread.py\", line 58, in run\n    result = self.fn(*self.args, **self.kwargs)\n  File \"/instabase/work\"```\ndo you know what could be happening here @Sayd",
+      "time": "11:41",
+      "timestamp": "1719427289.331899",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "@Sayd i'm seeing this again on several other tests, eg 11723 (https://cloud.cypress.io/projects/cfhedy/runs/11723/overview/fee5527e-1cf1-434a-b112-99429d81c0d1?roarHideRunsWithDiffGroupsAndTags=1) with example trace (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22mad%22%3A%7B%22datasource%22%3A%22jaeger%22%2C%22queries%22%3A%5B%7B%22query%22%3A%2203ad85954765f7b5%22%2C%22refId%22%3A%22A%22%2C%22datasource%22%3A%7B%22type%22%3A%22jaeger%22%2C%22uid%22%3A%22jaeger%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1) and 11722 (https://cloud.cypress.io/projects/cfhedy/runs/11722/overview/d48b73a6-f54f-4de4-932c-609c0bd47d2a?roarHideRunsWithDiffGroupsAndTags=1), 11721 (https://cloud.cypress.io/projects/cfhedy/runs/11721/overview?roarHideRunsWithDiffGroupsAndTags=1), 11719 (https://cloud.cypress.io/projects/cfhedy/runs/11719/overview?roarHideRunsWithDiffGroupsAndTags=1). this time it's for aihub-redigitization, and aihub-classification passes",
+      "time": "12:56",
+      "timestamp": "1719431764.120099",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "@Weiming Wu if it's blocking, we should skip both this and aihub-classification in ci, at least for now? i'll follow-up with sayd to investigate",
+      "time": "13:37",
+      "timestamp": "1719434277.203399",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "I'm just requesting a force merge from Andy for my PR. If it becomes a bigger problem, I guess we can skip it in CI",
+      "time": "13:38",
+      "timestamp": "1719434339.341559",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Or I guess, since it's already affecting multiple, we should just skip it, yea",
+      "time": "13:39",
+      "timestamp": "1719434357.013479",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "i've also reproduced this on a live project, on https://crafting-aihub.test.instabase.com/build/01905654-286a-7099-b462-e0ab7022c7d3; login with the \"Crafting Shared Commercial Accounts\" accounts on 1password\n\naaaaand it's happening on aihub-sandbox as well with the same error: https://aihub-sandbox.internal.instabase.com/build/01905668-2365-7beb-8a68-6aac11f1a499 with the shared org (trace (https://aihub-sandbox.internal.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22nqs%22%3A%7B%22datasource%22%3A%22jaeger%22%2C%22queries%22%3A%5B%7B%22query%22%3A%228cc5e6cbd0a72f28%22%2C%22refId%22%3A%22A%22%2C%22datasource%22%3A%7B%22type%22%3A%22jaeger%22%2C%22uid%22%3A%22jaeger%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%221719437956624%22%2C%22to%22%3A%221719438101100%22%7D%7D%7D&orgId=1))",
+      "time": "14:06",
+      "timestamp": "1719435987.753449",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "btw, community users don't have metronome accounts so this is expected",
+      "time": "14:55",
+      "timestamp": "1719438922.129999",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-06-26.json",
+    "message_count": 11,
+    "start_time": "1719426914.103099",
+    "end_time": "1719438922.129999",
+    "is_thread": true
+  }
+}

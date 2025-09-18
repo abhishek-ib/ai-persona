@@ -1,0 +1,93 @@
+{
+  "id": "ch_C05L87V014J_2025-06-11_1749710369.488199_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Vasu"
+  ],
+  "messages": [
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "@Victor Zeng The changes made in this (https://github.com/instabase/instabase/pull/71309) PR are causing api-server to fail to run with the below error:\n```mkdir -p /home/owner/instabase/webserver/api-server/tmp/hotconfig && touch /home/owner/instabase/webserver/api-server/tmp/hotconfig/base-hot-config.yml\nCONFIG_NAME=docker-local \\\npython /home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/stack-local/get-env-local.py \\\n/home/owner/instabase/webserver/api-server/deployment/env/deployment-config.json \\\n/home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/env-local.json /home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/env-local-secrets.json /home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/env-local-crafting.json /home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/env-local-feature-flags.json /home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/env-local-overrides.json > /home/owner/instabase/webserver/api-server/tmp/docker_env_local.list\ndocker run  -v /home/owner/instabase/webserver/api-server/tmp/hotconfig:/config \\\n--name instabase-api-server --env-file /home/owner/instabase/webserver/api-server/tmp/docker_env_local.list \\\n--rm -p 5555:5555 -i instabase/api-server\nstart.sh: line 75: exec: -m: invalid option\nexec: usage: exec [-cl] [-a name] [command [argument ...]] [redirection ...]\nmake: *** [Makefile:309: run-docker] Error 2\nmake: Leaving directory '/home/owner/instabase/webserver/api-server'```\nThis is happening because of the final command to run coming out to either be `python -m debugpy --listen 0.0.0.0:5678 -m gunicorn ...` or `-m gunicorn ...` because of the -m always being there.",
+      "time": "23:39",
+      "timestamp": "1749710369.488199",
+      "is_reply": false
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Here's PR to attempt to fix it - https://github.com/instabase/instabase/pull/71361",
+      "time": "23:39",
+      "timestamp": "1749710378.701999",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Can you add the -m to line 16 before merging?",
+      "time": "23:41",
+      "timestamp": "1749710476.847889",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Line 16 already has it",
+      "time": "23:41",
+      "timestamp": "1749710511.988859",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "`python -m debugpy --listen 0.0.0.0:5678`",
+      "time": "23:42",
+      "timestamp": "1749710523.317669",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "It needs a second -m at the end",
+      "time": "23:44",
+      "timestamp": "1749710656.908919",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "python -m debugpy --listen 0.0.0.0:5678 -m",
+      "time": "23:44",
+      "timestamp": "1749710668.485479",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Okay, I'll add it and test it out",
+      "time": "23:45",
+      "timestamp": "1749710700.417319",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Merged!",
+      "time": "23:59",
+      "timestamp": "1749711552.668189",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-06-11.json",
+    "message_count": 9,
+    "start_time": "1749710369.488199",
+    "end_time": "1749711552.668189",
+    "is_thread": true
+  }
+}

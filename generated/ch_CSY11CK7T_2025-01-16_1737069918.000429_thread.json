@@ -1,0 +1,85 @@
+{
+  "id": "ch_CSY11CK7T_2025-01-16_1737069918.000429_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Jessica",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Quick Cypress status:\n• upstream-integrations is failing because of our outlook mailbox subscription expired, working on getting this fixed\n• advanced-apps was failing because a component was remounting, I have a fix coming for this (but there's another bug, see below that will also prevent it from succeeding)\n• @Victor Zeng payment is failing (https://cloud.cypress.io/projects/cfhedy/runs/16797/overview/dcea53e7-7f1e-4501-b98c-da46303100bd/replay?att=1&roarHideRunsWithDiffGroupsAndTags=1) for migrated user test with the error `Error: no auth mechanism defined`\n• Several extraction tests are failing with extraction errors: `\"msg\": \"Error during refiner extraction: model result is empty due to an error in model service\\n\\n METADATA:\\n\\n\\n{\\\"extraction_result\\\": null}\"`. Backend issue maybe? @Serena @danny.lan. Affected tests are aihub-custom-function-field, aihub-data-types, aihub-derived-field, aihub-extraction, aihub-quick-clean-refinement, aihub-redigitization, aihub-refinement, aihub-split-by-page, aihub-split-classification, build-billing (so like all the build ones)\n• I see one for aihub-templates that failed on the first try then didn't clean up correctly so failed on the next two tries - I'll look into fixing that @Serena \n• Digitization is failing in converse-app, I believe it's the same issue as for build (it says \"failed to create index\")\n• Looking into a new downstream-integrations failure for custom functions\n• search-app is failing but it looks like it's been failing for a really long time. @Subash do you want to just skip this test if it's not in use?\n• run-app, run-public-app, review-manager-dashboard, review-reviewer-dashboard are failing because the actual runs are failing - I'm wondering if this is related to the build errors but I can look into this a little deeper to double check @Serena \n• documents-grid, advanced-apps, field-editor, file-list, nested-field-editor, and results-table are all failing because files aren't uploading to be able to run them, probably the same indexing error",
+      "time": "15:25",
+      "timestamp": "1737069918.000429",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Sounds like all the model related ones are a known issue related to the langchain upgrade",
+      "time": "15:36",
+      "timestamp": "1737070592.828899",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> Sounds like all the model related ones are a known issue related to the langchain upgrade\nis there another thread where you already see this being discussed?",
+      "time": "15:38",
+      "timestamp": "1737070722.163839",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah nvm i see https://instabase.slack.com/archives/C05EQQJGN7L/p1737070495436699?thread_ts=1737070050.590249&cid=C05EQQJGN7L",
+      "time": "15:39",
+      "timestamp": "1737070754.020819",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw thanks for looking into `aihub-templates` ! it seems that the second `it` block actually depends on the first `it` block and can’t be run independently",
+      "time": "15:58",
+      "timestamp": "1737071938.573769",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw i took a quick peek at why `run-app` failed, and it’s running into a protobuf error when running the classification step\n\ni assume run-public-app, review-manager-dashboard, review-reviewer-dashboard are also failing for the same reason (i haven’t verified yet though)\n\nthis protobuf error should be fixed by https://github.com/instabase/instabase/pull/67076, which has already been merged\n\nso :crossed_fingers: that a lot of these failures will disappear after the next aihub-sandbox deployment!",
+      "time": "16:03",
+      "timestamp": "1737072213.598299",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yay! I'll do another pass tomorrow after this fix and the langchain fix (whatever it is) have been deployed",
+      "time": "16:06",
+      "timestamp": "1737072388.654109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yeah i’m not sure if there are more langchain fixes pending besides the one i linked above :disappointed:",
+      "time": "16:08",
+      "timestamp": "1737072523.646819",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-01-16.json",
+    "message_count": 8,
+    "start_time": "1737069918.000429",
+    "end_time": "1737072523.646819",
+    "is_thread": true
+  }
+}

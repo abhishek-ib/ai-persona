@@ -1,0 +1,149 @@
+{
+  "id": "ch_C05L87V014J_2024-11-14_1731624674.481769_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Serena",
+    "danny.lan"
+  ],
+  "messages": [
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "Trying to run aihub with crafting ppy, wondering if anyone has seen this? my extraction call never completes and then model-service times out with this error about a missing file (which indeed does not exist), although I’m not sure if its a model service/docreader/file service error\n\nother jobs for digitization or field suggestion just run forever\n```level=ERROR time=2024-11-14 22:35:00,326 msg=\"Unable to read file with error Error reading file animal-kingdom/danny.lan.animalkingdom_instabase.com/fs/Instabase Drive/aihub/01909999-22c0-743a-b0fd-1d42a666df86/documents/out/original/ibdoc_shards/2d58d61c-3a91-4f0b-ba30-2b6c76fcf90d__fake_adp_4.png_1d72ce62-336e-4b08-ab05-9fcba711b6ad.ibdocshard Error: \"Failed to read file: Could not connect to path: aihub/01909999-22c0-743a-b0fd-1d42a666df86/documents/out/original/ibdoc_shards/2d58d61c-3a91-4f0b-ba30-2b6c76fcf90d__fake_adp_4.png_1d72ce62-336e-4b08-ab05-9fcba711b6ad.ibdocshard. Repo_owner animal-kingdom. Repo_name danny.lan.animalkingdom_instabase.com (http://danny.lan.animalkingdom_instabase.com). Mount_point Instabase Drive. Reason: Error occurred executing GRPC method: Request /file_service.FileService/Connect failed. Error code=DEADLINE_EXCEEDED, Error=(4, 'deadline exceeded'), Message: Deadline Exceeded. Retries left 0\"\"  path=\"/model-service/py/instabase/ocr/client/libs/ibdoc_utils/ibdoc_v2.py:1127\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-16_0\" trace_id=\"63568343e7c4f58a\"\nlevel=ERROR time=2024-11-14 22:35:00,327 msg=\"Skipping loading of shard - animal-kingdom/danny.lan.animalkingdom_instabase.com/fs/Instabase Drive/aihub/01909999-22c0-743a-b0fd-1d42a666df86/documents/out/original/ibdoc_shards/2d58d61c-3a91-4f0b-ba30-2b6c76fcf90d__fake_adp_4.png_1d72ce62-336e-4b08-ab05-9fcba711b6ad.ibdocshard , as read failed with exception.Error reading file animal-kingdom/danny.lan.animalkingdom_instabase.com/fs/Instabase Drive/aihub/01909999-22c0-743a-b0fd-1d42a666df86/documents/out/original/ibdoc_shards/2d58d61c-3a91-4f0b-ba30-2b6c76fcf90d__fake_adp_4.png_1d72ce62-336e-4b08-ab05-9fcba711b6ad.ibdocshard Error: \"Failed to read file: Could not connect to path: aihub/01909999-22c0-743a-b0fd-1d42a666df86/documents/out/original/ibdoc_shards/2d58d61c-3a91-4f0b-ba30-2b6c76fcf90d__fake_adp_4.png_1d72ce62-336e-4b08-ab05-9fcba711b6ad.ibdocshard. Repo_owner animal-kingdom. Repo_name danny.lan.animalkingdom_instabase.com (http://danny.lan.animalkingdom_instabase.com). Mount_point Instabase Drive. Reason: Error occurred executing GRPC method: Request /file_service.FileService/Connect failed. Error code=DEADLINE_EXCEEDED, Error=(4, 'deadline exceeded'), Message: Deadline Exceeded. Retries left 0\"\"  path=\"/model-service/py/instabase/ocr/client/libs/ibdoc_utils/ibdoc_v2.py:549\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-16_0\" trace_id=\"63568343e7c4f58a\"```",
+      "time": "14:51",
+      "timestamp": "1731624674.481769",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "can you open `data-services/model-services/model-service/tmp/docker_env_local.list` and check the value for `GRPC_SERVICE_FILE_HOST`?",
+      "time": "15:10",
+      "timestamp": "1731625846.968039",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "its `host.docker.internal`",
+      "time": "15:23",
+      "timestamp": "1731626594.224179",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "what about `GRPC_SERVICE_FILE_PORT`?",
+      "time": "15:23",
+      "timestamp": "1731626610.288729",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw matt had a PR yesterday that removed a bunch of ports, and the PR was reverted https://github.com/instabase/instabase/pull/65094\n\nmaybe you haven’t pulled master since the revert? we can confirm by checking `GRPC_SERVICE_FILE_PORT`",
+      "time": "15:24",
+      "timestamp": "1731626680.845489",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "hmm its not defined in that file",
+      "time": "15:24",
+      "timestamp": "1731626686.988999",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "okay ill try repulling",
+      "time": "15:25",
+      "timestamp": "1731626736.880639",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah yes `GRPC_SERVICE_FILE_PORT` needs to be defined",
+      "time": "15:25",
+      "timestamp": "1731626750.378549",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "actually wait, it’s not defined in my `data-services/model-services/model-service/tmp/docker_env_local.list` either",
+      "time": "15:26",
+      "timestamp": "1731626792.355169",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "do you see any error logs in `grpc-file-service`?",
+      "time": "15:32",
+      "timestamp": "1731627128.665429",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "i wasn’t seeing this before but now I see\n\n```2024/11/14 23:45:26 ERROR fileservice/handler/acl.go:52 -- [INTERNAL]: Failed to initialize Principal (Err: User (84d145db-09bf-474b-9cad-8fffa92fc2b6) not found)\n2024/11/14 23:45:26 ERROR fileservice/handler/file.go:321 -- [ERROR][list_dir] Username: 84d145db-09bf-474b-9cad-8fffa92fc2b6, Path: xindixu1033/my-repo/fs/Instabase Drive, Err: rpc error: code = Internal desc = Failed to initialize Principal, Time: 22ms, Size: 0Bytes\n2024/11/14 23:45:26 ERROR fileservice/handler/acl.go:52 -- [INTERNAL]: Failed to initialize Principal (Err: User (84d145db-09bf-474b-9cad-8fffa92fc2b6) not found)\n2024/11/14 23:45:26 ERROR fileservice/handler/file.go:321 -- [ERROR][list_dir] Username: 84d145db-09bf-474b-9cad-8fffa92fc2b6, Path: goldens-tester/system-test-repo-81fb8320-5/fs/Instabase Drive, Err: rpc error: code = Internal desc = Failed to initialize Principal, Time: 23ms, Size: 0Bytes```",
+      "time": "15:46",
+      "timestamp": "1731627984.771639",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "do you see any errors in `core-platform-service` logs then? since file-service should be calling core-platform-service to get user permissions",
+      "time": "15:50",
+      "timestamp": "1731628201.679479",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "I only see this error\n```ERROR coreplatformservice/repo/handler/marketplace.go:36 -- Fail: User does not have site admin privileges```",
+      "time": "15:54",
+      "timestamp": "1731628480.359069",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "huh extraction worked after restarting my services again :lolcry:",
+      "time": "15:55",
+      "timestamp": "1731628525.671159",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": ":lolcry:",
+      "time": "15:55",
+      "timestamp": "1731628538.369079",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m sorry but i guess congrats???",
+      "time": "15:55",
+      "timestamp": "1731628544.043889",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-11-14.json",
+    "message_count": 16,
+    "start_time": "1731624674.481769",
+    "end_time": "1731628544.043889",
+    "is_thread": true
+  }
+}

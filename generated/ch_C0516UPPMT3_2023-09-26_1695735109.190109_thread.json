@@ -1,0 +1,160 @@
+{
+  "id": "ch_C0516UPPMT3_2023-09-26_1695735109.190109_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Ashwin",
+    "Eric Han",
+    "shaunak",
+    "dg",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "dg",
+      "user_id": "U028XL59K9T",
+      "message": "Hi Team, We see below error in the CASS SaaS UAT env while calling LLM model via refiner. The functions called is `call_model_converse` . We checked the license in Admin->License and we could see the license is present(please confirm if this is correct - SS attached).  Can someone please advise on this.(Please redirect if this is not the right channel).\nticket: https://instabase.zendesk.com/agent/tickets/6211\n```        \"log\": \"record=40051767220.pdf.ibmsg column=__validate_all_field_prompt_json text=Error: Exception Incorrect API key provided: sk-Miro9***************************************40ls. You can find your API key at https://platform.openai.com/account/api-keys.\"```",
+      "time": "06:31",
+      "timestamp": "1695735109.190109",
+      "is_reply": false
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "this might be an open ai api key issue. can someone from <!subteam^S05BKGLP267> help out?",
+      "time": "08:28",
+      "timestamp": "1695742086.770509",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Aaron Tami @Ashwin can you look at this please?\n\n@dg did this just start to fail?",
+      "time": "08:32",
+      "timestamp": "1695742328.085869",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Do we keep track of expected keys -> environment anywhere? The possible scenarios are 1) key was changed in the environment, 2) OpenAI deactivated this key because we were seeing a similar error message in that case, or 3) it was deactivated by someone else",
+      "time": "08:34",
+      "timestamp": "1695742483.834719",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Also just for my own understanding, do these environments send requests to AIHub which proxies to openAI or do they go direct to OpenAI",
+      "time": "08:35",
+      "timestamp": "1695742545.086179",
+      "is_reply": true
+    },
+    {
+      "sender": "dg",
+      "user_id": "U028XL59K9T",
+      "message": "@shaunak yes I think. As confirmed by @chatur this was working in CASS Dev env.",
+      "time": "08:48",
+      "timestamp": "1695743330.817349",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Let me check if dev and UAT use the same key",
+      "time": "08:56",
+      "timestamp": "1695743765.780819",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this API key is one of the keys that was deleted during IBHack a few months ago, so this UAT env definitely needs a new key",
+      "time": "09:39",
+      "timestamp": "1695746363.700799",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "how do we manage open ai api keys across saas environments?",
+      "time": "09:40",
+      "timestamp": "1695746403.500729",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Do we want to generate a new key for this env or is it fine to share the same one as dev?",
+      "time": "09:41",
+      "timestamp": "1695746496.794919",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "see this thread for more info https://instabase.slack.com/archives/C053W8B06EL/p1694613376236419?thread_ts=1694543942.072889&cid=C053W8B06EL\n\njtau and fernando would be the most familiar with the new process",
+      "time": "09:41",
+      "timestamp": "1695746504.216449",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> Do we want to generate a new key for this env or is it fine to share the same one as dev?\nidk - i assume we should ask @jtau / @fernando?",
+      "time": "09:41",
+      "timestamp": "1695746519.357369",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "The new process only works for environments > 23.07, we’ll have to update the key manually here",
+      "time": "09:42",
+      "timestamp": "1695746536.479339",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "confirmed dev and uat use different keys",
+      "time": "10:55",
+      "timestamp": "1695750950.783889",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Ashwin should we reset the keys here?",
+      "time": "12:22",
+      "timestamp": "1695756153.315139",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Sorry should have replied in this thread, I updated the key for UAT to match dev at 2:19 PM EST, however I didnt restart model service bc i wasnt sure if that was allowed",
+      "time": "12:43",
+      "timestamp": "1695757434.624719",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Thanks for resetting the keys.  Given this is a UAT environment, please restart the model service pods as well.",
+      "time": "12:44",
+      "timestamp": "1695757488.184739",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-09-26.json",
+    "message_count": 17,
+    "start_time": "1695735109.190109",
+    "end_time": "1695757488.184739",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "id": "ch_C06FA6A23_2022-04-05_1649179453.778559_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "lenny",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "late to the game, but are we assuming the `// Do some things` and `// Do some other things` might have an error that doesn’t return an err? Isn’t that an issue with Go-style error handling?",
+      "time": "10:24",
+      "timestamp": "1649179453.778559",
+      "is_reply": false
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "The issue surfaces if anything in the function throws a panic. I think in Go we generally don't use panics for error propagation, which is good — however they can still creep in with a nil dereference, out of bounds array access, etc. So a panic is ~always a bug, but in this case it will also trigger some unexpected behavior that might leave the database in a bad state, because it violates the all-or-nothing behavior we expect from transactions.",
+      "time": "10:30",
+      "timestamp": "1649179822.866779",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Maybe I’m not understanding Go, but it seems bad that panics are something kind of outside normal error checking? like shouldn’t a panic also be an error?",
+      "time": "10:32",
+      "timestamp": "1649179929.667079",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "or maybe panics shouldn’t run defer blocks? or there should be a defer_panic block type?",
+      "time": "10:32",
+      "timestamp": "1649179972.272899",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I agree, it's a weird design decision on Go's part :slightly_smiling_face: the reason that panics still execute deferred blocks is because you can technically still recover from them to stop the program from crashing (using recover() (https://go.dev/blog/defer-panic-and-recover)). But this means Go panics end up as kind of a weird tradeoff, not really useful for error propagation in the way that C++-style exceptions are, but also not quite as final as something like Rust-style panics (which terminate the program outright)",
+      "time": "10:40",
+      "timestamp": "1649180433.170109",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "but the behavior of recover() is also super weird. for example:\n1. there is no way to check if you are in a panic without recovering from it (short of weird runtime hackery)\n2. recover() only works directly within a defer {} block, if your defer block calls another function, you can't use recover() there (it'll let you, but it just won't work)\n3. recover() gives you back the error that was passed to panic(), which is how you know that you are actually mid-panic. But if you had called `panic(nil)`, recover() will return nil, and so it's impossible to disambiguate between the case when you recovered from a `panic(nil)`  and the case where you weren't in a panic to begin with",
+      "time": "10:44",
+      "timestamp": "1649180669.816179",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-04-05.json",
+    "message_count": 6,
+    "start_time": "1649179453.778559",
+    "end_time": "1649180669.816179",
+    "is_thread": true
+  }
+}

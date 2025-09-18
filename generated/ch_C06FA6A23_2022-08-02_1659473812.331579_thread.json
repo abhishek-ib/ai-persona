@@ -1,0 +1,209 @@
+{
+  "id": "ch_C06FA6A23_2022-08-02_1659473812.331579_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Yuqi Tang",
+    "shiqi",
+    "Eric Han",
+    "Elan Sharony",
+    "Dominic Fannjiang"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "has anyone run into this issue of jenkins builds on a PR getting aborted? I'm facing this with https://github.com/instabase/instabase/pull/29255 and they've been aborted twice in a row now",
+      "time": "13:56",
+      "timestamp": "1659473812.331579",
+      "is_reply": false
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "it seems to finish all the tests but then at the very end of the logs, there is\n```[/instabase_dir/shared-utils/build-utils/shared/../../../shared-utils/build-utils/shared/build-common.mk:41: test-changes] Terminated```",
+      "time": "13:59",
+      "timestamp": "1659473957.629289",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Looks like `make` has an error code `143` which apparently means it received a SIGTERM signal (aka killed). Looks like the step itself took nearly exactly 2 hours :exploding_head:",
+      "time": "14:07",
+      "timestamp": "1659474441.902309",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "@Elan Sharony had a similar issue before with some PRs",
+      "time": "14:10",
+      "timestamp": "1659474600.503649",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "yeah I had a similar issue with this PR: https://github.com/instabase/instabase/pull/28979\n\nThe build was consistently hitting the 2 hour limit and then terminated. I eventually retried at night which sped up the build to ~1 hr 45 min but haven't gotten to the root cause of why it's lagging so much",
+      "time": "14:16",
+      "timestamp": "1659474980.017389",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "@Yuqi Tang ^",
+      "time": "14:37",
+      "timestamp": "1659476256.468299",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "<!subteam^S02FJA6A7U5>",
+      "time": "14:37",
+      "timestamp": "1659476267.925229",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "Nothing on Jenkins side look suspicious, the jobs were not queued, so it is likely the code",
+      "time": "14:38",
+      "timestamp": "1659476317.586589",
+      "is_reply": true
+    },
+    {
+      "sender": "Yuqi Tang",
+      "user_id": "U03JT46R5UM",
+      "message": "Has anyone solved it?",
+      "time": "14:41",
+      "timestamp": "1659476470.783279",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Not quite. for some more context, on my PR, yesterday I had a build (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-29255/2/pipeline/)  that took 1h 18min and passed. Since then, I made one commit that deleted some unused code here (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-29255/2/pipeline/) , and then the build (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-29255/4/pipeline/)  on this commit took 2hrs and got aborted. I guess this could be due to new code in master between these 2 times, or perhaps something else",
+      "time": "14:47",
+      "timestamp": "1659476854.664489",
+      "is_reply": true
+    },
+    {
+      "sender": "Yuqi Tang",
+      "user_id": "U03JT46R5UM",
+      "message": "I also started to have this problem today",
+      "time": "14:49",
+      "timestamp": "1659476965.569319",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "its definitely sprouting from my PR so I'll revert it and you guys should be unblocked. but still unclear to me what about my PR is causing the build to take so long",
+      "time": "14:51",
+      "timestamp": "1659477111.996499",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "here's the revert PR: https://github.com/instabase/instabase/pull/29319\n\n@Dominic Fannjiang do you mind giving the approval?",
+      "time": "14:57",
+      "timestamp": "1659477475.206239",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "done. curious though whats the underlying problem though... I did some analysis on those 2 builds above.\n\ntop 10 test suites that were slower by %\n```  [\n    \"apps/user-notebook/nb-reaper\",\n    \"slower build took 8.09x longer than the faster build\",\n    \"slower build took 3.15min longer than the faster build\"\n  ],\n  [\n    \"apps/user-notebook/standalone-notebook\",\n    \"slower build took 7.58x longer than the faster build\",\n    \"slower build took 2.62min longer than the faster build\"\n  ],\n  [\n    \"data-services/doc-services/docops-service\",\n    \"slower build took 5.38x longer than the faster build\",\n    \"slower build took 2.08min longer than the faster build\"\n  ],\n  [\n    \"distributed-tasks/celery/model-training-tasks/service-gpu\",\n    \"slower build took 5.32x longer than the faster build\",\n    \"slower build took 2.15min longer than the faster build\"\n  ],\n  [\n    \"tools/onprem/mktplaceupdate\",\n    \"slower build took 5.22x longer than the faster build\",\n    \"slower build took 2.47min longer than the faster build\"\n  ],\n  [\n    \"distributed-tasks/celery/model-training-tasks/service-cpu\",\n    \"slower build took 5.06x longer than the faster build\",\n    \"slower build took 2.03min longer than the faster build\"\n  ],\n  [\n    \"webserver/shared-apps\",\n    \"slower build took 4.33x longer than the faster build\",\n    \"slower build took 1.05min longer than the faster build\"\n  ],\n  [\n    \"core-services/runner-service\",\n    \"slower build took 4.02x longer than the faster build\",\n    \"slower build took 2.18min longer than the faster build\"\n  ],\n  [\n    \"distributed-tasks/celery/model-training-tasks/shared\",\n    \"slower build took 3.94x longer than the faster build\",\n    \"slower build took 2.14min longer than the faster build\"\n  ],\n  [\n    \"shared-utils/py-utils/flow-dag-utils\",\n    \"slower build took 3.88x longer than the faster build\",\n    \"slower build took 1.08min longer than the faster build\"\n  ]```\ntop 10 test suites slower by total time taken\n```  [\n    \"apps/user-notebook/nb-reaper\",\n    \"slower build took 8.09x longer than the faster build\",\n    \"slower build took 3.15min longer than the faster build\"\n  ],\n  [\n    \"webserver/apps-server\",\n    \"slower build took 1.95x longer than the faster build\",\n    \"slower build took 2.7min longer than the faster build\"\n  ],\n  [\n    \"apps/user-notebook/standalone-notebook\",\n    \"slower build took 7.58x longer than the faster build\",\n    \"slower build took 2.62min longer than the faster build\"\n  ],\n  [\n    \"tools/onprem/mktplaceupdate\",\n    \"slower build took 5.22x longer than the faster build\",\n    \"slower build took 2.47min longer than the faster build\"\n  ],\n  [\n    \"core-services/runner-service\",\n    \"slower build took 4.02x longer than the faster build\",\n    \"slower build took 2.18min longer than the faster build\"\n  ],\n  [\n    \"distributed-tasks/celery/core-tasks\",\n    \"slower build took 3.51x longer than the faster build\",\n    \"slower build took 2.16min longer than the faster build\"\n  ],\n  [\n    \"distributed-tasks/celery/model-training-tasks/service-gpu\",\n    \"slower build took 5.32x longer than the faster build\",\n    \"slower build took 2.15min longer than the faster build\"\n  ],\n  [\n    \"distributed-tasks/celery/model-training-tasks/shared\",\n    \"slower build took 3.94x longer than the faster build\",\n    \"slower build took 2.14min longer than the faster build\"\n  ],\n  [\n    \"webserver/api-server\",\n    \"slower build took 2.82x longer than the faster build\",\n    \"slower build took 2.14min longer than the faster build\"\n  ],\n  [\n    \"core-services/file-tservice/thrift-file-service\",\n    \"slower build took 2.04x longer than the faster build\",\n    \"slower build took 2.14min longer than the faster build\"\n  ]```\nalot of these top offenders don't seem related to your pr? but also not sure how much variation we have in our jenkins build runtimes",
+      "time": "15:16",
+      "timestamp": "1659478606.219549",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "@shiqi where can we find the change detection logic for the jenkins pipeline? Somehow Elan’s commit caused everyone’s builds to test all modules?",
+      "time": "15:19",
+      "timestamp": "1659478785.552499",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "hm im not sure if Elan's commit is the cause. the commits after his have jenkins build runs that take ~1h, and they dont all test all modules",
+      "time": "15:28",
+      "timestamp": "1659479324.123839",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "@Eric Han I can’t recall, Cheryl did some analysis before on that code. I can dig out the thread. It is on my backlog to look into",
+      "time": "15:30",
+      "timestamp": "1659479431.155919",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "@Elan Sharony I am confused, you also have #29278 (https://github.com/instabase/instabase/pull/29278) as follow up of #28979, now if we revert #28979 does it mean we should revert #29278 as well?",
+      "time": "15:55",
+      "timestamp": "1659480918.802449",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "#29278 is just adding a new python dep to apps-server so its not necessary to revert",
+      "time": "15:57",
+      "timestamp": "1659481050.465039",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "is that dep also being used by other code? if not we should remove it",
+      "time": "15:58",
+      "timestamp": "1659481133.847029",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "I can revert that too but based on @Dominic Fannjiang’s message above, I'm not sure that my PR is the root cause of the issue",
+      "time": "16:00",
+      "timestamp": "1659481206.967169",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "I started this thread in <#C02FSR83JMQ|> to figure out what's causing the build to queue all test suites: https://instabase.slack.com/archives/C02FSR83JMQ/p1659480955749449",
+      "time": "16:00",
+      "timestamp": "1659481255.078669",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "ok I will put #29282 on hold at this point, if the original PR is not going to 22.08 then we have no need to merge that one",
+      "time": "16:05",
+      "timestamp": "1659481557.750179",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-08-02.json",
+    "message_count": 23,
+    "start_time": "1659473812.331579",
+    "end_time": "1659481557.750179",
+    "is_thread": true
+  }
+}

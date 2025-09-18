@@ -1,0 +1,157 @@
+{
+  "id": "ch_C05L87V014J_2024-12-12_1734035460.961219_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Weiming Wu",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "I've been trying to spin up a sandbox for a bug bash later today, but it keeps getting stuck at the Build:instabase step. I'm guessing it's due to the same thing as https://instabase.slack.com/archives/C05L87V014J/p1733944489110439 ?",
+      "time": "12:31",
+      "timestamp": "1734035460.961219",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "don't think it's the same as the issue you linked, but I did see a `cs k8s intercept` command in the output of `ps` on your terminal -- that combined with the build:instabase logs indicating something was hanging made me think interception was stuck",
+      "time": "12:36",
+      "timestamp": "1734035784.717929",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I killed the process and now we see the following logs\n```========================================================================================================================================\n| Output of '/opt/sandboxd/bin/cs k8s intercept start --namespace intes-use2-crafting-aihub-instabase --infra crafting-aihub --remote-forward deployment/intes-use2-crafting-aihub-instabase/deployment-apps-server/apps-server:dev:6001:6001+9990:9991 --mirror deployment/intes-use2-crafting-aihub-instabase/deployment-apps-server/apps-server:dev'\n-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\nUpdated! Name: app-ux-bug-bash Version: 18108662eb867f98 ID: ctdk05ulcp6cjme8espg\nTraffic will be intercepted with ANY of the following headers:\nHEADER     VALUE                                \nbaggage    crafting-sandbox=ctdk05ulcp6cjme8espg\ntracestate crafting-sandbox=ctdk05ulcp6cjme8espg\nWaiting until interception is ready (Ctrl-C to stop waiting at anytime) ...\nWORKLOAD FEATURE         TARGET                                                                  STATUS  \ndev      Cluster Network crafting-aihub                                                          ✓ Active\n         Intercept Cond. Deployment/intes-use2-crafting-aihub-instabase/deployment-webapp/webapp ✓ Active\n         Env Mirror      Deployment/intes-use2-crafting-aihub-instabase/deployment-webapp/webapp ✓ Active\n         Volume Mirror   Deployment/intes-use2-crafting-aihub-instabase/deployment-webapp/webapp ✓ Active\nWORKLOAD FEATURE         TARGET                                                                            STATUS                         \ndev      Cluster Network crafting-aihub                                                                    ✓ Active                       \n         Intercept Cond. Deployment/intes-use2-crafting-aihub-instabase/deployment-webapp/webapp           ✓ Active                       \n         Env Mirror      Deployment/intes-use2-crafting-aihub-instabase/deployment-webapp/webapp           ✓ Active                       \n         Volume Mirror   Deployment/intes-use2-crafting-aihub-instabase/deployment-webapp/webapp           ✓ Active                       \n         Intercept Cond. Deployment/intes-use2-crafting-aihub-instabase/deployment-apps-server/apps-server » Pending                      \n                                                                                                             i No Pods matching the target\n         Env Mirror      Deployment/intes-use2-crafting-aihub-instabase/deployment-apps-server/apps-server » Pending                      \n                                                                                                             i No Pods matching the target\n         Volume Mirror   Deployment/intes-use2-crafting-aihub-instabase/deployment-apps-server/apps-server » Pending                      \n                                                                                                             i No Pods matching the target\n         Intercept Cond. Deployment/intes-use2-crafting-aihub-instabase/deployment-apps-server/apps-server » Pending                      \n                                                                                                             i No Pods matching the target\n         Env Mirror      Deployment/intes-use2-crafting-aihub-instabase/deployment-apps-server/apps-server » Pending                      \n                                                                                                             i No Pods matching the target\n         Volume Mirror   Deployment/intes-use2-crafting-aihub-instabase/deployment-apps-server/apps-server » Pending                      \n                                                                                                             i No Pods matching the target\n         Intercept Cond. Deployment/intes-use2-crafting-aihub-instabase/deployment-webapp/webapp           ✓ Active              \n\n...```",
+      "time": "12:36",
+      "timestamp": "1734035813.842769",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "so, fwict, apps server interception was enabled at the time this sandbox was turned up",
+      "time": "12:37",
+      "timestamp": "1734035851.459319",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Yea, I tried running\n```cs sandbox update -D 'dev/env[API_SERVER_LITE_ENABLED]=0' -D 'dev/env[APPS_SERVER_ENABLED]=0' && cs down apps-server```\nafter I created the sandbox",
+      "time": "12:38",
+      "timestamp": "1734035883.686299",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ah, you're using that frontend template, that would explain it :slightly_smiling_face: let me update the template quickly to remove apps server as a default-enabled service",
+      "time": "12:38",
+      "timestamp": "1734035895.067769",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "but it was also in the process of building",
+      "time": "12:38",
+      "timestamp": "1734035897.546049",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "It looks like the sandbox is functioning except for api-server, so is there a way to salvage it?",
+      "time": "12:38",
+      "timestamp": "1734035925.210459",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah the \"build\" is really == \"the stage that runs whenever a sandbox turns on\" -- give me a couple minutes to mess with some stuff, I believe we should be able to get this into a good state :slightly_smiling_face:",
+      "time": "12:39",
+      "timestamp": "1734035947.929579",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "actually @Weiming Wu it might be faster to create a new one now that the template's updated -- do you have anything on this sandbox that you'd like to preserve?",
+      "time": "12:41",
+      "timestamp": "1734036118.500359",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "No, I can create a new one",
+      "time": "12:42",
+      "timestamp": "1734036132.254589",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "sweet, let's go that route then, something's off with this sandbox's state and crafting isn't recognizing that it's fully turned down",
+      "time": "12:42",
+      "timestamp": "1734036175.501349",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "dammit",
+      "time": "12:43",
+      "timestamp": "1734036189.670469",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "right as I say that it starts to come back up",
+      "time": "12:43",
+      "timestamp": "1734036195.717079",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "I just deleted and created a new one",
+      "time": "12:43",
+      "timestamp": "1734036205.930319",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "With the same name",
+      "time": "12:43",
+      "timestamp": "1734036210.977289",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "oh sweet, that makes way more sense haha",
+      "time": "12:43",
+      "timestamp": "1734036229.996429",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-12.json",
+    "message_count": 17,
+    "start_time": "1734035460.961219",
+    "end_time": "1734036229.996429",
+    "is_thread": true
+  }
+}

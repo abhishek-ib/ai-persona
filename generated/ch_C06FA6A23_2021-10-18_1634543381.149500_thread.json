@@ -1,0 +1,129 @@
+{
+  "id": "ch_C06FA6A23_2021-10-18_1634543381.149500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Mohit",
+    "Anil",
+    "abhitaker",
+    "Shubham Oli",
+    "Xi Cheng",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi all, I made some progress in understanding the slowness issue we encountered during the weekend. Please find a brief summary below:\n\n*1. What happened?* \nAround 12:45pm PST, Oct 16, we experienced unexpected slowness when just trying to load pages on prod. This slowness impacted the demo and had lasted for ~15 mins.\n\nWe observed the following things from grafana during this period of time:\n\na. The 99-percentile response time for write_file is > 30s. Later I have confirmed with Anant that this came from a big write request for a 400MB+ file.\nb. Nginx throws upstream connection time out error, especially for connections from webapp\nc. Loading from webpage returns Gateway timeout error\nd. The grpc-file-services (so the server side) appear to be healthy and normal as both CPU and memory usages appear stable during the time.\n\n*2. What is the root cause?* \n\nThis all very much aligned with the 504 error we've experienced during Aug. (see detailed report here (https://docs.google.com/document/d/1KWm1NdS9p38xYSc0QcMyhSLOPS_CoGyGEtiZZmK52qU/edit#)). In Saturday's particular instance, there is one webapp pod that runs on nearly 95% of the request CPU, and the hypothesis is that the connection timeout error came from requests that were handled from this pod. I have quarantined this pod, and its CPU usage remains high even after quarantine. I was able to obtain the a profile results of the server process using the z-pages API:\n```ibuser@deployment-webapp-6cd5c948bc-4jsvc:/instabase-server/py$ curl http://10.48.29.71:5000/procz?t=120\n{\"status\": \"OK\", \"stats\": [\"\\nClock type: CPU\\n\nOrdered by: totaltime, desc\\n\\n\nname                                  ncall  tsub      ttot      tavg      \\n\n...7/threading.py:264 Condition.wait  431..  13.36348  58.22897  0.000135  \\n\n..vent/thread.py:99 LockType.acquire  129..  8.587672  23.72339  0.000018  \\n\n..timeout.py:264 _start_new_or_dummy  431..  1.675092  12.96224  0.000030  \\n\n..es/gevent/timeout.py:243 start_new  431..  3.901842  11.28714  0.000026  \\n\n..eout.py:239 Timeout._on_expiration  431..  7.372144  10.29861  0.000024  \\n\n../threading.py:198 _RLock._is_owned  431..  1.641479  5.228048  0.000012  \\n\n..event/timeout.py:219 Timeout.start  431..  2.928060  4.366268  0.000010  \\n\n..ing.py:184 _RLock._acquire_restore  431..  2.119345  3.726039  0.000009  \\n\n..ages/gevent/thread.py:72 get_ident  431..  2.214066  3.586569  0.000008  \\n\n..nt/timeout.py:349 Timeout.__exit__  431..  1.706794  2.919393  0.000007  \\n\n..nt/timeout.py:199 Timeout.__init__  431..  2.303345  2.303345  0.000005  \\n\n..t/timeout.py:341 Timeout.__enter__  431..  1.448954  2.175591  0.000005  \\n\n..ges/grpc/_common.py:105 _wait_once  431..  0.000000  1.912457  0.000004  \\n\n..pc/_channel.py:788 _response_ready  431..  1.890402  1.890402  0.000004  \\n\n..ent/timeout.py:285 Timeout.pending  863..  1.515134  1.515134  0.000002  \\n\n..eading.py:188 _RLock._release_save  431..  1.252627  1.252627  0.000003  \\n\n..event/timeout.py:302 Timeout.close  431..  1.212599  1.212599  0.000003  \\n\n...py:32 _handle_and_close_when_done  74     0.005177  0.892694  0.012063  \\n\n..t/pywsgi.py:1569 WSGIServer.handle  74     0.001332  0.878205  0.011868  \\n\n..t/pywsgi.py:450 WSGIHandler.handle  74     0.003656  0.869355  0.01174   \\n\n..613 WSGIHandler.handle_one_request  74     0.003283  0.859918  0.011621  \\n\n..80 WSGIHandler.handle_one_response  74     0.002273  0.729725  0.009861  \\n\n..py:942 WSGIHandler.run_application  74     0.002416  0.720675  0.009739  \\n```\nSo the results above indicate that the process is either busy-waiting or dead-locked.\n\nThe issue here has to do with the on-going issues in grpc framework when gevent is turned on. We have contacted the grpc team about this, and got confirmations from them that there are serious issues when we use grpc with gevent turned on. In our previous investigations, we had thought that this type of issue happened only with streaming grpc call in python, but it apparently happens even with unary this can happen.\n\n*3. What is the path forward?* \n\nI have briefly discussed this with Heymian. The long term solution is that the grpc team needs to fix the framework with gevent (we are also moving toward Gunicorm, where we may ultimately move away from gevent).\n\nShort term wise, I am working on a workaround solution that brings the grpc file client to the thrift file service and disasble gevent in the thrift file service. In recent JPMC escalations, we've already learned that gevent can cause serious stability issues and we have built confidence with gevent disabled in the thrift file service. No client code would be impacted by this patch. Of cause, this needs to be battle tested.\n\nTo add a side note, the 504 issue is not easy to reproduce and seems to only happen when we place a resource limit on pod's CPU. So our load tests with dogfood/uat doesn't capture this as no resource limits have been given.\n\nI am also sending out a PR that disables FsV2 on prod to avoid stability issues.",
+      "time": "00:49",
+      "timestamp": "1634543381.149500",
+      "is_reply": false
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "This is great summary @Xi Cheng, thanks for the detailed report.\n\nOn the point of moving from gevent to gunicorn. We have enabled stats in our webservers [*which are only enabled in dogfood*] , assuming single threaded model (because gevent spawns greenlet, which are user spaced light weight threads).\nWith the gunicorn change, it seem we have to enable the sidecar stats-collector for capturing the stats from multiple process running in single pod. This is similar to what we do in Celery app tasks.\nPlease loop us in when you decide to make these changes, so that we can do proper setup for collecting stats in webservers :slightly_smiling_face:\nc.c @sudeep @Shubham Oli",
+      "time": "01:34",
+      "timestamp": "1634546051.149800",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "@Xi Cheng @abhitaker  I'm already working on migrating python services to gunicorn.\n\n@abhitaker I'll need your help to understand stats collection with gunicorn. I'll connect to you probably today evening.",
+      "time": "01:37",
+      "timestamp": "1634546250.150300",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@Xi Cheng thanks for writing this up :smile:\nWhen you have time, can you share the communication with GRPC team or if it is on a github issue, the link to it?\nAlso trying to understand why this happens only with file service? We make a significant number of requests to job service, some of which take many s and which we overload during load tests as it is a singleton. Still have never seen it have this issue.",
+      "time": "07:20",
+      "timestamp": "1634566805.152400",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Shubham Oli Yes that sounds great, can you confirm that we are moving away from gevent using gunicorn? I think this'll be a significant step forward, and let's make sure we do sufficient testing with it.",
+      "time": "07:24",
+      "timestamp": "1634567053.152600",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Anil, yes absolutely. @Nidhi had taken the lead to ask the GRPC team about this, and she can share more details about it. Are the services you were referring to using gevent? If I remember @Nidhi’s finding about this correctly, this bug only happens when we have a tight CPU limit and when we are under high load.",
+      "time": "07:27",
+      "timestamp": "1634567248.152800",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@abhitaker Thanks for letting me know the context. The change I am making would only impact the file-tservice, making it from using gevent to kernel thread. So I don't think our current way of collecting stats in webserver. And yes, once we move to gunicorm, which seems to use a multi-process approach, stats collector may need to changed.",
+      "time": "07:36",
+      "timestamp": "1634567801.153000",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "+1 to Anil's question-- would like to understand why it only happens with grpc file client. @Nidhi @Xi Cheng\n\nre gunicorn: \n@Shubham Oli please keep @Naveen and I in the loop as well. afaik Jaeger uses the ioloop provided by gevent to report traces. They were planning to move away from this model few months ago. :crossed_fingers:We would need to test the tracing framework with gunicorn.",
+      "time": "08:27",
+      "timestamp": "1634570824.157800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "The grpc ticket is here https://github.com/grpc/grpc/issues/27340",
+      "time": "10:55",
+      "timestamp": "1634579758.160700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "is job-service mostly heavily called within app-tasks? app-tasks should be fine, even for file-tservice because it doesn’t enable gevent.",
+      "time": "10:56",
+      "timestamp": "1634579792.161000",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "api-server-apps makes a lot of calls too (also apps-server)",
+      "time": "12:23",
+      "timestamp": "1634584983.161700",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "and api-server-apps uses gevent (apps-server too)",
+      "time": "12:23",
+      "timestamp": "1634585003.161900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "One other thing we suspect (we’re still testing) is related to the payload size. For example, when we load tested this with Stat() we didn’t trigger this error, but for read/writes it does.",
+      "time": "12:56",
+      "timestamp": "1634587019.162400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-10-18.json",
+    "message_count": 13,
+    "start_time": "1634543381.149500",
+    "end_time": "1634587019.162400",
+    "is_thread": true
+  }
+}

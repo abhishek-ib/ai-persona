@@ -1,0 +1,105 @@
+{
+  "id": "ch_CSY11CK7T_2024-07-12_1720811867.043189_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "danny.lan",
+    "pauline.comising",
+    "Arjun",
+    "Elan Sharony",
+    "Weiming Wu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "@Serena / <!subteam^S07855GV3GV> seeing `aihub-validation-udf` failing with this error in the `POST /udfs/run` api:\n```{\n  \"message\": \"An unexpected error has occured: Field missing. 'docs'\"\n}```\nhttps://cloud.cypress.io/projects/cfhedy/runs/12183/overview/9fee3dc1-b7e1-4474-9ce3-1e50e3c00400?roarHideRunsWithDiffGroupsAndTags=1",
+      "time": "12:17",
+      "timestamp": "1720811867.043189",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "I’m afk for the next hour, so I’ll look into this later",
+      "time": "12:36",
+      "timestamp": "1720812996.401179",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "no problem, I re-ran ci and it passed — found it interesting that the failure was due to missing api request params tho",
+      "time": "12:41",
+      "timestamp": "1720813276.557789",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "It's very strange - the `/udfs/run` endpoint gets called multiple times with:\n```{\"udf_id\":\"7456\",\"doc_args\":{\"56013\":{\"Name\":\"Joe Sample\"}}}```\nAnd sometimes it doesn't return an error and sometimes it does. I think it fails when there are of the same call at the same time - the second one will fail.\nWhat's more, usually there are subsequent `/udf/run` calls that overwrite that failure, which I think is contributing to it not consistently failing",
+      "time": "12:43",
+      "timestamp": "1720813388.037679",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "hmm, I could be completely wrong but @danny.lan I feel like I recall you saying something about this before?",
+      "time": "12:43",
+      "timestamp": "1720813432.265779",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Yep, I'm pretty sure that it's not something that we can easily fix within the test file (I added some `cy.wait()`  and it didn't avoid failing `/udfs/run` calls)\nDuring one of these local test runs, it failed 1 out of ~5, showing that it's flakey and will fail if the UI decides that the result that it wants to keep is the failing call",
+      "time": "12:51",
+      "timestamp": "1720813911.659479",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "> will fail if the UI decides that the result that it wants to keep is the failing call\nhmm — will wait for Danny’s response and also could be helpful to get @pauline.comising or @Elan Sharony to look into this, but it also seems that maybe we need to update the frontend logic to not have the behavior mentioned above",
+      "time": "12:53",
+      "timestamp": "1720813999.641739",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "> found it interesting that the failure was due to missing api request params tho\noo, is it true that this is what the `Field missing. 'docs'` message is referring to? From looking at the api and some util code, I suspect this is referring to this (https://github.com/instabase/instabase/blob/master/shared-utils/py-utils/aihub-utils/src/py/instabase/build_utils/udf_utils/udf.py#L72) `docs` key that is being read (https://github.com/instabase/instabase/blob/master/shared-utils/py-utils/aihub-utils/src/py/instabase/build_utils/udf_utils/udf.py#L374) in a functions called by `POST /udfs/run`- though I don't see how this field could be missing, if @Elan Sharony you had any intuition on how multiple `POST udfs/run` calls might bring the global `most_recent_results` variable to have results without `docs`?",
+      "time": "13:51",
+      "timestamp": "1720817467.698859",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Thanks @pauline.comising! I think I see that issue on the backend. On the frontend, we should still try to limit the number of simultaneous /run calls for a given UDF, but additionally there's some buggy code on the backend which is causing the missing 'docs' failure.\n\nIn order to retain results for UDFs, we use a JSON storage approach where each UDF has its own <udf_id>-most_recent_results.json. Unfortunately, this means we are susceptible to flaky and unexpected behavior when the same UDF is run simultaneously. For example, the second /run call will attempt to read from/write to the same JSON file that the first /run call is working on.\n\nBecause of this simultaneous read/write issue, some logic was added recently which intended to protect us from failures in such a scenario. Now, if the second /run call detects that the existing most recent results file isn't valid JSON, it will just \"forget\" those old results and start afresh. This logic was added here (https://github.com/instabase/instabase/blob/afff140e44348edbe7da4709276c71345cbe97d4/shared-utils/py-utils/aihub-utils/src/py/instabase/build_utils/udf_utils/udf.py#L394C9-L396C35).\n\nThe 'docs' bug lies in the immediate following line (https://github.com/instabase/instabase/blob/afff140e44348edbe7da4709276c71345cbe97d4/shared-utils/py-utils/aihub-utils/src/py/instabase/build_utils/udf_utils/udf.py#L397) where we attempt to access a 'docs' key from a potentially empty dictionary. I'll create a ticket and fix this ASAP!",
+      "time": "14:20",
+      "timestamp": "1720819259.684699",
+      "is_reply": true
+    },
+    {
+      "sender": "danny.lan",
+      "user_id": "U03R26W3CDU",
+      "message": "Hmm I’ve definitely seen the multiple udfs/run calls before, I’ll look a little into it on the frontend",
+      "time": "14:48",
+      "timestamp": "1720820922.382069",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-07-12.json",
+    "message_count": 10,
+    "start_time": "1720811867.043189",
+    "end_time": "1720820922.382069",
+    "is_thread": true
+  }
+}

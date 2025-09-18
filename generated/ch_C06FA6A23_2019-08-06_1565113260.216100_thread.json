@@ -1,0 +1,206 @@
+{
+  "id": "ch_C06FA6A23_2019-08-06_1565113260.216100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Handsome Dave",
+    "lydia",
+    "will"
+  ],
+  "messages": [
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Is there a single command to pull down all instabase docker images to your local machine? If I wanted to get the “latest release”, for instance, w/out having to compile All The Things?",
+      "time": "10:41",
+      "timestamp": "1565113260.216100",
+      "is_reply": false
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Alternatively, is there interest in adding such a command, either to `provisioner.py` or the top-level `Makefile`?",
+      "time": "10:59",
+      "timestamp": "1565114360.216300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Are you thinking something like `gcloud compute images list` that would filter for `base`?",
+      "time": "11:00",
+      "timestamp": "1565114438.216500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "`for each in $(gcloud container images list --repository gcr.io/instabase-build (http://gcr.io/instabase-build) --filter 'container'); do docker pull $each;done`",
+      "time": "11:05",
+      "timestamp": "1565114724.216700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Warning: many GB will be pulled :smile:",
+      "time": "11:05",
+      "timestamp": "1565114747.216900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Updated with filter.",
+      "time": "11:07",
+      "timestamp": "1565114848.217200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Though actually looking at it, the repo that you are asking about is probably `instabase` instead of `instabase-build`?",
+      "time": "11:09",
+      "timestamp": "1565114942.217400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "```for each in $(gcloud container images list --repository gcr.io/instabase-main (http://gcr.io/instabase-main)); do docker pull $each;done```",
+      "time": "11:12",
+      "timestamp": "1565115174.219600",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "I was mostly looking for \"I want to run instabase locally using docker, but I don't want to compile anything. How do I get everything I'd need?\" And your command will do nicely. Thank you!",
+      "time": "11:30",
+      "timestamp": "1565116231.219900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "You are welcome:D",
+      "time": "11:30",
+      "timestamp": "1565116254.220400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hey! would be aswesome if we added this to provisioner. do you know if we push these images on every master merge? i.e. can we get the latest?",
+      "time": "13:33",
+      "timestamp": "1565123611.222400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "if we do that and also add the ability to mount code directly into the docker, i can never build docker files in dev again... i think",
+      "time": "13:34",
+      "timestamp": "1565123650.222600",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Those are very good questions, to which I do not know the answer. But I can find out!",
+      "time": "13:41",
+      "timestamp": "1565124066.222800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "As far as I know these images are just updated around release time or when people build them ad hoc",
+      "time": "13:41",
+      "timestamp": "1565124107.223000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "It’s on the docket to make them part of CI/CD though :slightly_smiling_face:",
+      "time": "13:42",
+      "timestamp": "1565124122.223200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "@lydia what do you think about a `pull` operation? If the service names all match I could add that pretty easily",
+      "time": "13:47",
+      "timestamp": "1565124434.223400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "it’s not a one to one relationship, but it could be a start",
+      "time": "13:50",
+      "timestamp": "1565124601.223700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yea that sounds good! and could we then update `run` to fall back to that image or take a flag",
+      "time": "13:52",
+      "timestamp": "1565124732.223900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i wouldn't mind if it only worked for certain services (hopefully the python ones which take forever to build)",
+      "time": "13:52",
+      "timestamp": "1565124763.224100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i added these commands to image-tasks Makefile to build/run with code mapped into docker (so i didn't have to rebuild the docker) https://github.com/instabase/instabase/blob/master/distributed-tasks/celery/image-tasks/Makefile#L116",
+      "time": "13:54",
+      "timestamp": "1565124852.224300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "the only annoying thing is we manually copy in the start worker script in a separate docker command, so if you just map in the `build` dir, it's not in the right place. so I had to make build-reload to manually copy it to the right place in the `build` dir",
+      "time": "13:54",
+      "timestamp": "1565124893.224600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "other annoying thing is we don't copy our code to the same location in Docker across our services, so I had to manually set the target (`target=/instabase/workers/celery-image-tasks`) in mount option",
+      "time": "13:55",
+      "timestamp": "1565124937.224800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "but that gets us almost there in terms of fewer things to restart! now just need to get auto code updating and server reload... :stuck_out_tongue:",
+      "time": "13:56",
+      "timestamp": "1565124989.225000",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-08-06.json",
+    "message_count": 23,
+    "start_time": "1565113260.216100",
+    "end_time": "1565124989.225000",
+    "is_thread": true
+  }
+}

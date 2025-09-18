@@ -1,0 +1,63 @@
+{
+  "id": "ch_C06FA6A23_2023-05-16_1684269511.830409_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "upendra",
+    "Heymian",
+    "andy"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This is a basic question, but here goes: Does anyone know how to load an IBDoc from Python? I tried `IBDoc.load_from_file`, but got a type error:\n\n```  File \"/Users/Matt/Code/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/ocr/client/libs/ibdoc_utils/ibdoc.py\", line 120, in load_from_file\n    fs_params['username']), None\n  File \"/Users/Matt/Code/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/ocr/client/libs/ibdoc_utils/ibdoc.py\", line 91, in __init__\n    username=username)\n  File \"/Users/Matt/Code/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/ocr/client/libs/ibdoc_utils/ibdoc_v2.py\", line 507, in from_document_proto\n    document = IBDocV2(document_proto.id)```\nSeems just totally broken, since document_proto is actually a `bytes` loaded on line 115 of ibdoc.py.",
+      "time": "13:38",
+      "timestamp": "1684269511.830409",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Apparently...it is  completely broken. This fixed it:\n\n```diff --git a/shared-utils/py-utils/ocr-client-lib/src/py/instabase/ocr/client/libs/ibdoc_utils/ibdoc.py b/shared-utils/py-utils/ocr-client-lib/src/py/instabase/ocr/client/libs/ibdoc_utils/ibdoc.py\nindex 9bed824e64..eeb71e2aff 100644\n--- a/shared-utils/py-utils/ocr-client-lib/src/py/instabase/ocr/client/libs/ibdoc_utils/ibdoc.py\n+++ b/shared-utils/py-utils/ocr-client-lib/src/py/instabase/ocr/client/libs/ibdoc_utils/ibdoc.py\n@@ -114,9 +114,11 @@ class IBDoc(object):\n\n     content, err = ibfile.read_file(file_path, fs_params['username'],\n                                     fs_params['file_client'])\n+    proto: ibdoc_pb2.IBDoc = ibdoc_pb2.IBDoc()\n+    proto.ParseFromString(content)\n     if err:\n       return None, \"Failed to read master ibdoc with error: {}\".format(err)\n-    return IBDoc(content, master_only, fs_params['file_client'],\n+    return IBDoc(proto, master_only, fs_params['file_client'],\n                  fs_params['username']), None```",
+      "time": "13:42",
+      "timestamp": "1684269761.994859",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "Is this related to recent IBDoc v2 changes? CC: @upendra",
+      "time": "14:26",
+      "timestamp": "1684272417.219649",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I thought we had tests around ibdoc loading, are those tests failing?",
+      "time": "15:35",
+      "timestamp": "1684276542.873429",
+      "is_reply": true
+    },
+    {
+      "sender": "upendra",
+      "user_id": "U02SL9NJ31S",
+      "message": "@mfichman this is a new library we have introduced for `IBDOC V2` & this is still a work in progress. This seems to be a bug for this method  ( this is not used anywhere so far) . We should still be using the original libraries like `ParsedIBOCR, ParsedIBOCRBuilder` to manipulate with IBDocs.  We will deprecate the older libraries once this new library can fully support all IBDoc operations (planned this quarter)\n\nIn your case, something like `ParsedIBOCR.load_from_str()` is the way to load & manipulate IBDocs.",
+      "time": "21:01",
+      "timestamp": "1684296100.709889",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-05-16.json",
+    "message_count": 5,
+    "start_time": "1684269511.830409",
+    "end_time": "1684296100.709889",
+    "is_thread": true
+  }
+}

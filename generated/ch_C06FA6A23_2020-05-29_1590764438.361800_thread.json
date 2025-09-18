@@ -1,0 +1,286 @@
+{
+  "id": "ch_C06FA6A23_2020-05-29_1590764438.361800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "sudeep",
+    "will",
+    "abhitaker"
+  ],
+  "messages": [
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Did we test the fix on sandbox too? It looks like there might be a similar problem on prod but I want to make sure it is not a red herring",
+      "time": "08:00",
+      "timestamp": "1590764438.361800",
+      "is_reply": false
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "and staging",
+      "time": "08:00",
+      "timestamp": "1590764446.362000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "It looks like deployments have been unschedulable since the 19th",
+      "time": "08:02",
+      "timestamp": "1590764547.362200",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "Hey will, The resource limit for monitoring containers exists by default, so no fix was applied at that time.\nalthough we have components like influxdb who are hungry for resources,",
+      "time": "08:02",
+      "timestamp": "1590764552.362400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "How much effort is involved in putting it back if I scale it down to 0 like I did in sandbox?",
+      "time": "08:03",
+      "timestamp": "1590764596.362600",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "it was a conscious decision to leave the influxdb deployment as it is. so that we can conclude that influxdb should not be further explored as an option.",
+      "time": "08:03",
+      "timestamp": "1590764626.362800",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "feel free to scale it down.",
+      "time": "08:04",
+      "timestamp": "1590764647.363000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Ok I will try it, thank you!",
+      "time": "08:04",
+      "timestamp": "1590764659.363200",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "let me know if there’s some issue. i can try to fix it from my side.",
+      "time": "08:05",
+      "timestamp": "1590764744.363400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Will do! Part of me is hoping it is just a red herring/coincidence :stuck_out_tongue:",
+      "time": "08:06",
+      "timestamp": "1590764791.363600",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Well… more things are successfully deployed but still not all of them. So I am going with red herring :disappointed:",
+      "time": "08:17",
+      "timestamp": "1590765477.364300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I am not sure how trading 40 daemonsets using ~10MB each allows 55 more app-tasks deployments at ~600MB a pop.",
+      "time": "08:26",
+      "timestamp": "1590766000.364600",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "which environment is this?",
+      "time": "08:27",
+      "timestamp": "1590766076.364800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "production",
+      "time": "08:28",
+      "timestamp": "1590766083.365000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "staging is also having the issue but I am not as concerned with it atm",
+      "time": "08:28",
+      "timestamp": "1590766093.365200",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "(i haven’t scaled down daemonset in staging)",
+      "time": "08:28",
+      "timestamp": "1590766113.365400",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "i’ll take a look and try to find the source of problem.\nis there any specific reason you feel daemonset is the problem?",
+      "time": "08:33",
+      "timestamp": "1590766386.366300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I am not convinced it is THE problem.",
+      "time": "08:39",
+      "timestamp": "1590766754.370400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "When it happened in sandbox with similar symptoms, removing those pods alleviated more memory pressure than it should have.",
+      "time": "08:40",
+      "timestamp": "1590766802.372000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Which also happened here, but I don't think it is the only problem.",
+      "time": "08:40",
+      "timestamp": "1590766818.372700",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Trying to catch up here - what are the errors/events for app task pods when it could not get scheduled. Can we check the results of ‘kubectl top pods’ and ‘kubectl top nodes’ when the pods are unschedulable.",
+      "time": "08:40",
+      "timestamp": "1590766821.373000",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "@will which sandbox are we talking about?",
+      "time": "08:41",
+      "timestamp": "1590766862.373300",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "i deployed the new monitoring deployment only in staging, dogfood and prod.",
+      "time": "08:41",
+      "timestamp": "1590766900.374400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I am not sure which is the new one",
+      "time": "08:41",
+      "timestamp": "1590766918.375500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "But it is not in dogfood",
+      "time": "08:42",
+      "timestamp": "1590766924.375900",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "> When it happened in sandbox with similar symptoms, removing those pods alleviated more memory pressure than it should have. \n\nCurious, how did we check the memory pressure alleviated? Also do you happen to have the memory usage stats from then ?",
+      "time": "08:42",
+      "timestamp": "1590766924.376100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I think maybe it was deployed on sandbox, staging, and prod. :slightly_smiling_face:",
+      "time": "08:42",
+      "timestamp": "1590766959.376300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "oops, paste fail",
+      "time": "08:43",
+      "timestamp": "1590767013.377100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I do not have the output anymore from sandbox",
+      "time": "08:44",
+      "timestamp": "1590767062.377500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "and I have already scaled it down in prod. I think it is an additive issue.",
+      "time": "08:44",
+      "timestamp": "1590767082.377700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "These app-tasks workers are ENORMOUS",
+      "time": "08:45",
+      "timestamp": "1590767106.377900",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Yeah do we know why there are so many of those getting spawned ?",
+      "time": "08:57",
+      "timestamp": "1590767844.382800",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I am leaning toward autoscaler gone amok but trying to get additional context :slightly_smiling_face:",
+      "time": "08:58",
+      "timestamp": "1590767882.383200",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-05-29.json",
+    "message_count": 33,
+    "start_time": "1590764438.361800",
+    "end_time": "1590767882.383200",
+    "is_thread": true
+  }
+}

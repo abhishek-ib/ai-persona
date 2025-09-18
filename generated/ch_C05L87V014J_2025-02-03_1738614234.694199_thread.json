@@ -1,0 +1,109 @@
+{
+  "id": "ch_C05L87V014J_2025-02-03_1738614234.694199_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "sean.donohoe",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Our CI sandboxes are failing to start right now, here's an example: https://instabase.sandboxes.site/sandboxes/pr-67592-cypress?cw=dev\n\nIt's saying that this is the error in the nginx-ready probe: `HTTP GET /static/output/ibapp_aihub.bundle.js`",
+      "time": "12:23",
+      "timestamp": "1738614234.694199",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "that's just the startup probe indicating webpack isn't ready yet, which appears to be happening because we're failing to connect to `crafting-cyp`",
+      "time": "12:24",
+      "timestamp": "1738614297.005739",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Ahh okay, let me check out that sandbox",
+      "time": "12:25",
+      "timestamp": "1738614324.025299",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "weirdly, it looks like some of the cypress sandboxes are coming up though :thonk:",
+      "time": "12:25",
+      "timestamp": "1738614335.731369",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "we could try deleting one of the stuck ones, retrigger the cypress test action, and check whether that comes up ok?",
+      "time": "12:26",
+      "timestamp": "1738614371.807279",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I just force merged my PR, let me double check it wasn't an issue with that one. Although it is happening for some other PRs too",
+      "time": "12:26",
+      "timestamp": "1738614386.010099",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "In my PR it was stuck, I had deleted it and retried the aciton to no avail, same issue",
+      "time": "12:26",
+      "timestamp": "1738614408.648879",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah I see that as well, I'm checking whether this is happening to other templates too",
+      "time": "12:27",
+      "timestamp": "1738614424.044639",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Running from my own sandbox seems to have worked :thonk:",
+      "time": "12:30",
+      "timestamp": "1738614606.105679",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I also force-killed the `cs k8s connect` process that was stuck on https://instabase.sandboxes.site/sandboxes/pr-67687-cypress?cw=dev -- when it retried after the command succeeded. @Jessica I think this may have been a transient issue with starting interception -- I'll look into cleaning up any others that appear stuck and whether we can set an upper bound on how long we wait for a connection to be established",
+      "time": "12:31",
+      "timestamp": "1738614701.097859",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Yeah no idea why we started to see a bunch of them hang -- if you see this happen again before I have an answer on setting a timeout, you can run the following to unblock the sandbox\n\n```cs ssh -W SANDBOX_NAME/dev -- pkill --echo cs```",
+      "time": "12:43",
+      "timestamp": "1738615430.706119",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-02-03.json",
+    "message_count": 11,
+    "start_time": "1738614234.694199",
+    "end_time": "1738615430.706119",
+    "is_thread": true
+  }
+}

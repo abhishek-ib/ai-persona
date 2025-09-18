@@ -1,0 +1,95 @@
+{
+  "id": "ch_C06FA6A23_2023-02-27_1677527021.422049_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "Chuba",
+    "Austin Viveiros",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "Austin Viveiros",
+      "user_id": "U04HH4T9LA0",
+      "message": "Hello!  bofa has reported seeing PII in Splunk.   https://instabase.zendesk.com/agent/tickets/4935.  Im seeing a few offending services (job-service, celery-app-tasks) from the logs.  I believe they are sending logs to Splunk via the grpc-file-service, and might be doing so via a UDF within their flows after they've been processed.  I know we had previously ruled out PII in UDFs though here (https://instabase.slack.com/archives/C01N7DV1137/p1623682828480300?thread_ts=1623091067.370500&cid=C01N7DV1137).  And the docops-service that was the previous offender in https://instabase.zendesk.com/agent/tickets/3723 has been deprecated.  Anyone have any ideas or more information to gather?  It looks like the logs are coming from https://github.com/instabase/instabase/blob/ba40a4af08ffd716dc42cf1f0876ad1c39c8d1[…]utils/go-utils/src/instabase/utils/taskqueue/rabbitmq_worker.go (https://github.com/instabase/instabase/blob/ba40a4af08ffd716dc42cf1f0876ad1c39c8d127/shared-utils/go-utils/src/instabase/utils/taskqueue/rabbitmq_worker.go).",
+      "time": "11:43",
+      "timestamp": "1677527021.422049",
+      "is_reply": false
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "I think @Xi Cheng added this log line while debugging something about 10 months ago, so this would be the first time BofA is seeing this code in their system.",
+      "time": "11:44",
+      "timestamp": "1677527087.142789",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Chuba Thanks for tagging. I think this is the line that you are referring to? https://github.com/instabase/instabase/blob/ba40a4af08ffd716dc42cf1f0876ad1c39c8d1[…]utils/go-utils/src/instabase/utils/taskqueue/rabbitmq_worker.go (https://github.com/instabase/instabase/blob/ba40a4af08ffd716dc42cf1f0876ad1c39c8d127/shared-utils/go-utils/src/instabase/utils/taskqueue/rabbitmq_worker.go#L326)\n\nThis is for the rabbit-mq worker to dump info for debugging purpose, and would only be emitted if the service is set on a DEBUG log-level. Do you know if the customer's expectation is to not show PII at all even when debug enabled? It is a tough call to completely remove this as it reduces our debug capacity, but can be done.",
+      "time": "11:51",
+      "timestamp": "1677527464.368189",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "Yes I was thinking the same, I’ve already suggested that we drop their log level back to info at least for the time being to keep the data out of logs. I know BofA very often just leaves their log levels on debug -_-",
+      "time": "11:52",
+      "timestamp": "1677527527.211799",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Sounds good, let me know if there's any further requests coming in. :+1:",
+      "time": "11:52",
+      "timestamp": "1677527571.271569",
+      "is_reply": true
+    },
+    {
+      "sender": "Austin Viveiros",
+      "user_id": "U04HH4T9LA0",
+      "message": "Thank you Xi!",
+      "time": "11:53",
+      "timestamp": "1677527593.051069",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Just looked at the log more closely - this looks like flow log being logged by jobservice in the module taskqueue/rabbitmq_worker.go.\n\nAgree with the INFO decision above. Some questions though - \n[1] Based on this the source of the log is still a flow step, or a UDF that dumped this info in the flow logs, and we should probably track that down and remove it. (Lmk if that does not sound right)\n[2] Should we also move this type of detailed logger behind a special flag? given that it can be sensitive information, and also very noisy just in case we are using debug mode for platform debugging.",
+      "time": "12:43",
+      "timestamp": "1677530593.543149",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "On point 1, agree, we're currently asking for any udf scripts involved in the solution to try to further trace the root logging source",
+      "time": "12:48",
+      "timestamp": "1677530892.859619",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Yeah sounds good! Do we know if there is a way to disable UDF logs altogether?",
+      "time": "18:25",
+      "timestamp": "1677551156.531629",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-02-27.json",
+    "message_count": 9,
+    "start_time": "1677527021.422049",
+    "end_time": "1677551156.531629",
+    "is_thread": true
+  }
+}

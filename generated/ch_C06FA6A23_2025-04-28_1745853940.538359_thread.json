@@ -1,0 +1,135 @@
+{
+  "id": "ch_C06FA6A23_2025-04-28_1745853940.538359_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "William Helmrath",
+    "Heymian",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "hey team - we are seeing quite a few pre-merge CI unit-test failures related to DB test suites. Is someone looking into those? Currently few PRs are blocked (due for 24.18) on these failures.",
+      "time": "08:25",
+      "timestamp": "1745853940.538359",
+      "is_reply": false
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "cc @jayapandian.ponraj @abhishekk",
+      "time": "08:25",
+      "timestamp": "1745853952.314059",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "cc @mfichman",
+      "time": "08:26",
+      "timestamp": "1745853960.278479",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "related message\nhttps://instabase.slack.com/archives/C027EPGM2UQ/p1745829447839829",
+      "time": "08:26",
+      "timestamp": "1745853989.997949",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "another related thread\nhttps://instabase.slack.com/archives/C01N7DV1137/p1745527938537629",
+      "time": "08:29",
+      "timestamp": "1745854197.403789",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "This looks like it has to do with the go upgrade. @William Helmrath do we need to add the GODEBUG flag in the CI pipeline somewhere?",
+      "time": "08:46",
+      "timestamp": "1745855197.864409",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Hmm yeah we saw this error while running unit tests for the go upgrade but they went away on their own so we never added the GODEBUG flag. Let me look into this more",
+      "time": "09:03",
+      "timestamp": "1745856187.729199",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Do we know where the tls cert that’s used for these DB tests is stored? Or where it’s generated? Wondering if we can just force it to use a non-negative serial number\n```[2025-04-28T08:13:36.222Z] FAIL: shared-utils/go-utils/src/instabase/utils/db/tools/archive_test.go:44: DBArchiveTestSuite.SetUpSuite\n[2025-04-28T08:13:36.222Z] \n[2025-04-28T08:13:36.222Z] shared-utils/go-utils/src/instabase/utils/db/tools/archive_test.go:46:\n[2025-04-28T08:13:36.222Z]     s.testDB = accessor.NewTestDB(c, accessor.TestConfig{Dialect: s.dialect})\n[2025-04-28T08:13:36.222Z] shared-utils/go-utils/src/instabase/utils/db/session/testsession.go:97:\n[2025-04-28T08:13:36.222Z]     c.Assert(err, IsNil)\n[2025-04-28T08:13:36.222Z] ... value *errors.errorString = &errors.errorString{s:\"TLS Handshake failed: tls: failed to parse certificate from server: x509: negative serial number\"} (\"TLS Handshake failed: tls: failed to parse certificate from server: x509: negative serial number\")```",
+      "time": "09:06",
+      "timestamp": "1745856363.720539",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Looks like the CI database has failed?",
+      "time": "09:16",
+      "timestamp": "1745857019.385679",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This is something @sean would have handled previously (not me)",
+      "time": "09:17",
+      "timestamp": "1745857055.285939",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think if you need to add the flag for Jenkins, you probably need to add it to the Go jenkins image used for CI. @Cody Boggs should be able to point you at that?",
+      "time": "09:22",
+      "timestamp": "1745857349.279239",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "It looks like @Cody Boggs is out sick, @William Helmrath are you able to take a look and unblock here. \n\n@mfichman the DB errors did stick out as a suspect. However they are only in some runs, not all.",
+      "time": "19:07",
+      "timestamp": "1745892460.183329",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I put up a fix here https://github.com/instabase/instabase/pull/70187",
+      "time": "21:19",
+      "timestamp": "1745900386.065089",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Hey all, if anyone is blocked on CI errors:\n```[2025-04-28T08:13:36.222Z] ... value *errors.errorString = &errors.errorString{s:\"TLS Handshake failed: tls: failed to parse certificate from server: x509: negative serial number\"} (\"TLS Handshake failed: tls: failed to parse certificate from server: x509: negative serial number\")```\nPlease pull latest master and rebase. A fix was just merged in.",
+      "time": "21:20",
+      "timestamp": "1745900434.547749",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-04-28.json",
+    "message_count": 14,
+    "start_time": "1745853940.538359",
+    "end_time": "1745900434.547749",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,257 @@
+{
+  "id": "ch_CSY11CK7T_2024-05-07_1715107357.725299_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "CJ",
+    "Arjun",
+    "sean.donohoe",
+    "Serena",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "What's the process for approving force-merging given cypress test failures? As mentioned in the above (https://instabase.slack.com/archives/CSY11CK7T/p1715104987995219) thread, Cypress tests can fail even if the code is correct. For example, the PR updates both the backend and frontend but only the frontend changes are picked up by Cypress.",
+      "time": "11:42",
+      "timestamp": "1715107357.725299",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "all managers have repo admin permissions and are able to force-merge PRs",
+      "time": "11:45",
+      "timestamp": "1715107539.200939",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ideally we should separate backend changes and frontend changes into different PRs so that the Cypress CI run can check the frontend changes\n\nhowever, if the FE/BE changes are pretty small, i think it’s ok to combine into 1 PR and have an eng manager merge",
+      "time": "11:46",
+      "timestamp": "1715107606.573559",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Even if we split into 2 PRs, we have to wait 4 hrs until crafting backend deploys, right? :sweat:",
+      "time": "11:49",
+      "timestamp": "1715107744.057479",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm that’s a good point\n\nwhat are the services that you usually modify in your PRs that affect both frontend and backend?\n• core-platform-service\n• api-server\n• apps-server\n• webapp\n• anything else?\n`api-server` , `apps-server`, and `webapp` are already included in the `frontend` crafting template - does the crafting CI deployment update these services? @CJ",
+      "time": "12:02",
+      "timestamp": "1715108572.311999",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yep, mostly these + server-nginx template + license-service",
+      "time": "12:03",
+      "timestamp": "1715108609.447179",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "wait @Xindi Xu are you saying that for backend changes we need to wait for a crafting backend deployment? We don’t currently run the cypress tests on backend PRs",
+      "time": "12:03",
+      "timestamp": "1715108633.854839",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "correct me if my understanding of your statement is incorrect though",
+      "time": "12:04",
+      "timestamp": "1715108641.248329",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Arjun if we modify both frontend and backend in the same PR, Crafting cypress tests will run with my frontend changes but not my backend changes so tests are likely to fail. If we split in 2 PRs, I need to wait for 4 hrs until the backend PR deploys",
+      "time": "12:05",
+      "timestamp": "1715108701.525849",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "ah i see what you mean",
+      "time": "12:05",
+      "timestamp": "1715108719.816859",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "the crafting CI deployment uses webpack and nothing else: you can view the template at https://instabase.sandboxes.site/templates/cypress-ci and click \"view yaml\"",
+      "time": "12:05",
+      "timestamp": "1715108751.615229",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "@sean.donohoe would have the most context about crafting setup here",
+      "time": "12:09",
+      "timestamp": "1715108969.820029",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think we should at least redeploy api-server, apps-server, webapp. It's quite common to commit changes make to these services and frontend in a single PR:\n• Updating API params\n• Updating routes\nif possible, we should also run cypress tests on PRs that make changes to api-server, apps-server, webapp even if frontend is unchanged, as they will break cypress test as well",
+      "time": "12:10",
+      "timestamp": "1715109029.625649",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "i think this is possible—it'd take a bit of effort to change the sandbox definition, the github action, and the file that gets changed cypress tests. my main concern would then be how long it takes to spin up the sandbox, and how much it'd cost, i have no idea in that case.",
+      "time": "12:13",
+      "timestamp": "1715109188.333819",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey there -- we can definitely build those services in the PR sandboxes, however @CJ is right that this will add significant latency with the current implementation. @Cody Boggs has been adding a ton of optimizations around docker layer caching, however, so it might be worth our time to see if he can help us add that to the cypress template once he's back",
+      "time": "12:15",
+      "timestamp": "1715109303.804909",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Xindi Xu is it possible to split your PR into backend changes that merge first, then frontend changes?",
+      "time": "15:01",
+      "timestamp": "1715119310.734519",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "• we need to wait for 4 hours until the backend deploys\n• it might mean that aihub-sandbox will be broken until I merge in my frontend changes. might not be a concern but I feel like this is not a good practice.",
+      "time": "15:03",
+      "timestamp": "1715119382.251659",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "The reason I'm trying to find workarounds is that, some of these ideal deployment solutions take time to build, and in the meantime, we find that Cypress tests are catching actual bugs, but we miss them because we don't do a good job of keeping the tests green.",
+      "time": "15:04",
+      "timestamp": "1715119449.334979",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I think waiting 4 hours seems reasonable, since many PR reviews typically take more than 4 hours for a response.\n\nI don't think we should merge code that breaks aihub-sandbox, so not suggesting that. What I mean is, oftentimes, code changes can be sequenced so that the backend changes go out first (and might be unused), and then the frontend changes can get pushed later that start using the new backend APIs. This would also allow rolling deployments to go smoothly. In your PR's case, is it possible to split it this way? e.g. add the new endpoints and keep the old routes (especially since they redirect to the new endpoints anyways?) I thought maybe this would allow the frontend to still keep using the old endpoints",
+      "time": "15:07",
+      "timestamp": "1715119626.516399",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I have a sample PR (https://github.com/instabase/instabase/pull/57009) that changes the routes in the apps-server and frontend. It's possible to split it into 2 PRs but it'd be a lot of work: I need to do 2 rounds of tests and one of them isn't even valuable (new backend + old frontend) since we'll only stay in this state for a couple hours or days. I think the best way would be implement all my changes, test them, and then split into 2 PRs. Bascially, the \"splitting into 2 PRs\" will be extra work introduced by this limitation",
+      "time": "15:10",
+      "timestamp": "1715119812.078879",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I think in your case, you can also discuss with your manager on what's a more time-efficient way to merge this PR, since managers can always override the PR merge blockers. For example, if it's too much work to split into 2 PRs, you can run the Cypress tests locally and confirm they are passing.",
+      "time": "15:15",
+      "timestamp": "1715120157.984059",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The problem is that my local is not set up to run a lot of build/converse tests :sweat_smile: .",
+      "time": "15:18",
+      "timestamp": "1715120282.680119",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Understood, force-merging is always an option",
+      "time": "15:18",
+      "timestamp": "1715120304.213489",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Another issue is that, if backend PR breaks the cypress test (which we won't know since we don't run cypress test on these PRs), all the PRs come after the PR will be blocked",
+      "time": "15:20",
+      "timestamp": "1715120431.231479",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I actually see this ^ as an improvement to the current state, where we wouldn’t necessarily know at all (because the Cypress tests aren’t forced to be green to begin with). ideally we’d be able to run cypress tests on backend PR’s as well, though, I agree",
+      "time": "15:21",
+      "timestamp": "1715120509.895509",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I think I remember some discussion around it not being feasible at the moment (@CJ can likely correct me), but what's the blocker around setting up @Xindi Xu’s crafting workspace to intercept apps-server/api-server/etc traffic and manually start cypress tests against it? (apologies for my lack of knowledge too, I'm mostly referring to https://github.com/instabase/instabase/blob/master/.github/workflows/cypress.yml :sweat_smile: )",
+      "time": "15:24",
+      "timestamp": "1715120687.394459",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "fwiw if it's just that we don't want to use webpack with the tests (and we'd rather use a prod-built image for server-nginx) I'd be happy to go over how to do that individually :slightly_smiling_face:",
+      "time": "15:26",
+      "timestamp": "1715120776.126209",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@sean.donohoe I got cypress tests to run on crafting properly but the Cypress debugger won't show up because of the port forwarding issues (separate concern). If I need the debugger, I have to do it locally, but my local env is not set up to run all cypress tests.",
+      "time": "15:30",
+      "timestamp": "1715121025.072589",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Ahh gotcha :confused: Totally get it if you just need this unblocked for now, but I'd be happy to investigate what we need to update in the crafting environment to get your debugger working if you have time later :slightly_smiling_face:",
+      "time": "15:32",
+      "timestamp": "1715121130.016339",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-05-07.json",
+    "message_count": 29,
+    "start_time": "1715107357.725299",
+    "end_time": "1715121130.016339",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "id": "ch_C06FA6A23_2021-10-19_1634679412.020100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Heymian",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Does it look right that there are some standalone webapp pods not under the webapp deployment? If I try looking at those pods’ container logs, google cloud completely glitches out too (just an infinite redirect loop)",
+      "time": "14:36",
+      "timestamp": "1634679412.020100",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "this might be quarantined pods for investigating the 504 errors with flask + grpc + file-service v2.",
+      "time": "14:39",
+      "timestamp": "1634679541.020700",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Gotcha. Is it possible nginx is trying to route about 1/3 of the traffic to these 2/6 pods? Sounds like there’s something going on here that you have a separate fix for. Just noticed the similarity in the proportion of hanging requests.",
+      "time": "14:41",
+      "timestamp": "1634679685.021400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrm, no there shouldn’t be traffic going to these pods if they’re quarantined",
+      "time": "14:41",
+      "timestamp": "1634679717.021800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "likely what you’re seeing is the long updates from Xi on the webapp or api server pods getting deadlocked and unusable. So with 1/4 borked pods, all the traffic that gets routed there will end up timing out. we need to flip off file service v2 in flask/gevent services to resolve this",
+      "time": "14:54",
+      "timestamp": "1634680455.024500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Xi Cheng",
+      "time": "14:54",
+      "timestamp": "1634680461.024800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-10-19.json",
+    "message_count": 6,
+    "start_time": "1634679412.020100",
+    "end_time": "1634680461.024800",
+    "is_thread": true
+  }
+}

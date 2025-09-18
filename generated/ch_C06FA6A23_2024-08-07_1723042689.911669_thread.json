@@ -1,0 +1,44 @@
+{
+  "id": "ch_C06FA6A23_2024-08-07_1723042689.911669_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi all -- trying to run `make update-requirements` in 22.10 to fix a vulnerability, but am unable to do so. Has anyone else run into this? Seems to be a problem with cython and/or numpy. I tried a few workarounds, but no dice (https://github.com/numpy/numpy/issues/24377). This is in `webserver/api-server-apps`.",
+      "time": "07:58",
+      "timestamp": "1723042689.911669",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Seems like this problem has been lingering in 22.10 for a while; I only ran into it b/c I tried to update an unrelated dependency.",
+      "time": "08:01",
+      "timestamp": "1723042871.102409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "this fixed it:\n\n```diff --git a/webserver/api-server-apps/requirements.in b/webserver/api-server-apps/requirements.in\nindex fa510b9bc64..9e64c688593 100644\n--- a/webserver/api-server-apps/requirements.in\n+++ b/webserver/api-server-apps/requirements.in\n@@ -23,7 +23,7 @@ protobuf==3.20.3\n pika==1.3.0\n boto3==1.16.18\n botocore==1.19.63\n-sqlparse==0.4.4\n+sqlparse~=0.5\n parsimonious==0.8.0\n beautifulsoup4==4.6.0\n pycryptodomex==3.20.0\n@@ -80,7 +80,7 @@ oauthlib==3.2.2\n\n # Pin requirements (to fix vulnerability)\n joblib==1.2.0\n-numpy==1.19.0\n+numpy~=1.19.4\n\n pillow==9.3.0\n skl2onnx==1.14.1\n@@ -92,3 +92,4 @@ certifi==2024.7.4\n pysftp==0.2.9\n usaddress==0.5.10\n zipcodes==1.2.0\n+cython~=0.29.36```",
+      "time": "08:08",
+      "timestamp": "1723043280.796419",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-08-07.json",
+    "message_count": 3,
+    "start_time": "1723042689.911669",
+    "end_time": "1723043280.796419",
+    "is_thread": true
+  }
+}

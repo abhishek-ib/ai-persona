@@ -1,0 +1,174 @@
+{
+  "id": "ch_C06FA6A23_2020-01-08_1578499195.003400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "Aaron Vontell",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Thanks! In addition to that, anyone see this type of error before with logging in locally? @Heymian",
+      "time": "07:59",
+      "timestamp": "1578499195.003400",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I have not, but after upgrading thrift, I would also try to delete your redis cache and restart all your services",
+      "time": "08:38",
+      "timestamp": "1578501486.003800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Still the same issue :confused: why does this always happen to me XD",
+      "time": "11:29",
+      "timestamp": "1578511741.007200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "you’re running this locally? Can you go see which service is spitting out this error message?",
+      "time": "11:30",
+      "timestamp": "1578511833.007400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yup I’ll take a look. Also get the following error when trying to recompile the docker image for account service:\n```go: error loading module requirements\nmv: cannot stat '/go/src/instabase/core-services/account-tservice/src/go/src/instabase/accountservice/main': No such file or directory\nmake: *** [build-docker] Error 1\nERROR - Error compiling service=account-tservice error=None\nERROR -  Compilation output --- None```",
+      "time": "11:56",
+      "timestamp": "1578513369.007800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Might be a 2FA thing again…\n```\"POST /account/login HTTP/1.1\" 302 620 0.412967\n[2020-01-08 20:03:32,470] {/instabase-server/py/instabase/handler/views/_account/two_factor_views.py:111} ERROR - b\"<?xml version='1.0' encoding='UTF-8'?>\\n<TwilioResponse><RestException><Code>20404</Code><Message>The requested resource /2010-04-01/Accounts//Messages was not found</Message><MoreInfo>https://www.twilio.com/docs/errors/20404</MoreInfo><Status>404</Status></RestException></TwilioResponse>\"\n172.17.0.1 - - [2020-01-08 20:03:32] \"GET /account/verify_mfa_step?session_token=6c60376e-e5d6-4660-adee-e05381462e5f&next=%2F HTTP/1.1\" 200 3736 0.140759```",
+      "time": "12:04",
+      "timestamp": "1578513888.008000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "maybe try disabling 2fa on prod?",
+      "time": "12:06",
+      "timestamp": "1578513966.008700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "that explains the cryptic error message. that’s not an error that’s generated in our codebase.",
+      "time": "12:06",
+      "timestamp": "1578514009.009800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I think the issue is here in two_factor_views.py:\n```def _send_sms(app_config, to_number, body):\n  # type: (BaseConfig, Text, Text) -> Tuple[bool, Text]\n  account_sid = app_config.TWILIO_ACCOUNT_SID\n  password = app_config.TWILIO_AUTH_TOKEN\n  from_ = app_config.TWILIO_FROM_NUMBER\n  base_url = u'https://api.twilio.com/2010-04-01/Accounts/{}/Messages'.format(\n      account_sid)```",
+      "time": "12:08",
+      "timestamp": "1578514087.010000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Looks like TWILIO_ACCOUNT_SID is the empty string",
+      "time": "12:08",
+      "timestamp": "1578514102.010200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "It ends up being `/2010-04-01/Accounts//Messages`",
+      "time": "12:08",
+      "timestamp": "1578514113.010400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Oh interesting. Hrm I’m not actually familiar with what the correct values of these env vars are, or why they got unset. @dlluncor Any ideas here?",
+      "time": "12:14",
+      "timestamp": "1578514444.010600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "yes we send out text messages using the Twilio API. If you look in webserver/webapp/deployment/env/deployment-config.json, you’ll see that TWILIO_ACCOUNT_SID is set in “base”. This should mean that this value is always set. Perhaps something went wrong with the environment variable being set due to the deployment config? — that would be my only guess",
+      "time": "13:28",
+      "timestamp": "1578518916.010900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "or something changed with the way that our local env variables might be getting set?",
+      "time": "13:29",
+      "timestamp": "1578518970.011100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yeah any changes to that? In my config I can see that the variable has been set… but maybe it’s never actually reaching webapp",
+      "time": "13:43",
+      "timestamp": "1578519821.012600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "im getting my local dev setup again — so will be able to see if i run into the same problem or not — will let you know once i’ve got all that setup",
+      "time": "13:44",
+      "timestamp": "1578519860.012800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "just setup my local — two factor worked fine for me (note i’m not using docker-local, i’m using make build runlocal — so could be some kind of issue with docker-local). You might have to ask Lydia or Karthik about that",
+      "time": "15:10",
+      "timestamp": "1578525035.014800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Aaron Vontell Has this ever worked for you?\n\n#til (unless I’m going crazy), but it looks like docker-local doesn’t respect env vars inside each service’s deployment.json file. So even though it’s in webapp’s “base” config section, all those values actually get ignored.",
+      "time": "15:26",
+      "timestamp": "1578525982.015200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Want to try out a fix for me? @Aaron Vontell\n```diff --git a/shared-utils/build-utils/shared/build-stack.mk b/shared-utils/build-utils/shared/build-stack.mk\nindex f6253a6276..a2e28264c1 100644\n--- a/shared-utils/build-utils/shared/build-stack.mk\n+++ b/shared-utils/build-utils/shared/build-stack.mk\n@@ -507,7 +507,7 @@ build-env-db-local-go: build-env-db-local\n build-env-docker:\n        mkdir -p $(current_dir)/tmp\n        CONFIG_NAME=docker-local \\\n-       python $(project_dir)/shared-utils/build-utils/stack-local/get-env-local.py $(project_dir)/shared-utils/build-utils/shared/env-local.json $(current_dir)/deployment/local/docker-env.json > $(current_dir)/tmp/docker_env_local.list\n+       python $(project_dir)/shared-utils/build-utils/stack-local/get-env-local.py $(current_dir)/deployment/env/deployment-config.json $(project_dir)/shared-utils/build-utils/shared/env-local.json $(current_dir)/deployment/local/docker-env.json > $(current_dir)/tmp/docker_env_local.list```\nOnly change is adding `$(current_dir)/deployment/env/deployment-config.json` to the line.",
+      "time": "15:31",
+      "timestamp": "1578526262.015400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-01-08.json",
+    "message_count": 19,
+    "start_time": "1578499195.003400",
+    "end_time": "1578526262.015400",
+    "is_thread": true
+  }
+}

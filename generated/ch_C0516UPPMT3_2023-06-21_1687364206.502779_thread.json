@@ -1,0 +1,79 @@
+{
+  "id": "ch_C0516UPPMT3_2023-06-21_1687364206.502779_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Vishnu Nair",
+    "Serena",
+    "lydia",
+    "Lalit"
+  ],
+  "messages": [
+    {
+      "sender": "Vishnu Nair",
+      "user_id": "U03KKPTSN8Y",
+      "message": "Hi team we have been testing this prompt via a refiner and this is one of the last missing pieces to solve for the largest use case at AXA UK using AI-Hub. Is there a good approach for extracting from long tables using AI-Hub without having it cut out (I realise it's to do with the context window size, is this something we are likely to solve in time for 23.07)?\n\n```@register_fn(provenance=False)\ndef table_field_prompt(primary_key, *labels, default_value={}, **kwargs):\n  example_output = \"[[\\\"column1\\\", \\\"column2\\\", ....], [\\\"val1\\\", \\\"val2\\\", ...], [\\\"val1\\\", \\\"val2\\\" ...] ...]\"\n  prompt = f\"Create a table with these columns : {','.join(labels)}. Any missing value must be filled with 'N/A'. Respond ONLY with the table\"\n  prompt += f\"The output should follow the format. Column headers should be lower case : {example_output}\"\n  try:\n    res = call_model(prompt, **kwargs)\n    logging.info (http://logging.info)(type(res))\n    if res != 'N/A':\n      return res\n  except Exception as e:\n    logging.error(f'Exception calling model : {e}')\n  return default_value```\nrefiner func :\n```table_field_prompt('claims date of loss','claims date of loss','incurred loss amount', 'paid amount', 'outstanding amount', 'type of peril', 'description of incident')```",
+      "time": "09:16",
+      "timestamp": "1687364206.502779",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @Kathy Wu @Wilson",
+      "time": "09:19",
+      "timestamp": "1687364380.566679",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu Nair",
+      "user_id": "U03KKPTSN8Y",
+      "message": "That example doc is shorter than usual fyi, can be 200 rows + in production. Here is a longer doc that fails every time as well.",
+      "time": "09:40",
+      "timestamp": "1687365657.183109",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "cc @Rafal @Lalit",
+      "time": "12:41",
+      "timestamp": "1687376501.027949",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Are the docs already spreadsheets? Do we need LLM table extraction then?",
+      "time": "12:42",
+      "timestamp": "1687376547.002889",
+      "is_reply": true
+    },
+    {
+      "sender": "Lalit",
+      "user_id": "U038G74CGTA",
+      "message": "@Vishnu Nair Is your prompt for this excel file or a general example?",
+      "time": "22:10",
+      "timestamp": "1687410630.338769",
+      "is_reply": true
+    },
+    {
+      "sender": "Lalit",
+      "user_id": "U038G74CGTA",
+      "message": "These are indeed spreadsheets. We should be able to work with them directly, since its machine readable.",
+      "time": "22:11",
+      "timestamp": "1687410691.612479",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-06-21.json",
+    "message_count": 7,
+    "start_time": "1687364206.502779",
+    "end_time": "1687410691.612479",
+    "is_thread": true
+  }
+}

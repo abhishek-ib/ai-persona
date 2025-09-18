@@ -1,0 +1,71 @@
+{
+  "id": "ch_C08L4K42H9C_2025-08-26_1756242632.414829_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "jack.robbins",
+    "Serena",
+    "jaden",
+    "prateek.tenkale"
+  ],
+  "messages": [
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "hi @jack.robbins so to summarize the UI for the move pages by position design  (https://instabase.atlassian.net/browse/EPD-4459)will be ready by the end of this quarter. However, for the \"Apply x changes\" design (screenshot) we found out that there has to be a significant BE change to support it properly. After talking with @Serena and @prateek.tenkale, we came up with two options and was wondering your thoughts :pray:\n\n1. Develop the UI first and release _*without*_ the new \"Apply x changes\" design so it would keep the existing behavior (save on every action). Then once the BE is ready to support the new design, we add it back in and release. This way is less risk and provides little confusion to users as the saving history process will replicate current prod behavior, however, the timeline for the overall feature will be pushed back.\n2. Release the full UI _*with*_ \"Apply x changes\" feature as is and put it behind a feature flag (so we can turn it off whenever we want). The risk here will be there are edge cases where the history won't be recorded properly if a user makes multiple actions on the *same* record before applying the changes, which could cause confusion to users. This is because the BE can currently only take one action *per* record. So if a user makes 3 changes to one record, we can only record it as a single change. Eg) `move p1r1 -> reorder p3r1 -> delete p2r1` will be recorded as `moved p1, p3, p2 in r1`. The priority for which action overwrites the other is `move -> reorder -> delete` \nLet us know if you wanna discuss this in a call~",
+      "time": "14:10",
+      "timestamp": "1756242632.414829",
+      "is_reply": false
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "To clarify my understanding of option 2 - the constraint is that we can only record 1 _type_ of change per record (aka document), but would record changes to multiple pages as long as they're the same type of change? So if you deleted all 3 of p1r1, p3r1, and p2r1, it would record that action, but if you deleted those 3 pages _and_ moved one of them, it would only record that you moved 1 page & miss the deletions?",
+      "time": "14:50",
+      "timestamp": "1756245039.203509",
+      "is_reply": true
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "correct - and for that case we would have to discuss what we really want to display but it won't be possible to record as 2 actions (delete 3 pages and move 1 page). And same goes for reorder, but reorder is similar to move so it wouldn't be as confusing. One more edge case is if a user create a record with 1 page then move 2 pages to that new record, it would be recorded as created record with 3 pages instead of create -> move 2 pages.",
+      "time": "14:57",
+      "timestamp": "1756245469.103619",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "I see - and we think we'll have bandwidth this quarter to do the BE work? What's the LoE for that?",
+      "time": "15:00",
+      "timestamp": "1756245612.151689",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "BE effort is 1 sprint. We can do it but could push out task-based human review for a bit (since it's roughly going to take a quarter)",
+      "time": "15:06",
+      "timestamp": "1756245986.052009",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "discussed with Jack\n\nit seems we're all aligned on option 1\n• @jaden implement the FE without the \"Apply changes\" button\n    ◦ keep behind feature flag until BE refactor :arrow_down: \n• @prateek.tenkale try to implement the BE refactor of record re-mapping modification events by end of Q3\n    ◦ TBD on feasibility of this until we finalize the task-based human review implementation timeline",
+      "time": "15:40",
+      "timestamp": "1756248056.594399",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-08-26.json",
+    "message_count": 6,
+    "start_time": "1756242632.414829",
+    "end_time": "1756248056.594399",
+    "is_thread": true
+  }
+}

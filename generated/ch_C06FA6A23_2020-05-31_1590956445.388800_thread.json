@@ -1,0 +1,446 @@
+{
+  "id": "ch_C06FA6A23_2020-05-31_1590956445.388800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Justin",
+    "Heymian",
+    "Matt"
+  ],
+  "messages": [
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Been just digging around and found some hidden gems:",
+      "time": "13:20",
+      "timestamp": "1590956445.388800",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Yup. that’s a feature we’ve always supported. Not really used much. We host a database and allow people to create tables and execute sql statements against it. There’s also a config option to disable mounting/creating of databases for customers who don’t want to enable this.",
+      "time": "13:37",
+      "timestamp": "1590957467.391700",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Interesting, I’m just thinking because we have no guardrails around it…. is it possible to query any of our existing databases using the sql interface? Lije the one that keeps track of users?",
+      "time": "13:40",
+      "timestamp": "1590957631.394400",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Could I access core Instabase databases and table via this interface?",
+      "time": "13:40",
+      "timestamp": "1590957658.394600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "nope, it’s a separate instance",
+      "time": "13:44",
+      "timestamp": "1590957840.398500",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Interesting, so its creating a new instance of a mysql database for me, or is one already created where I can make infinite things happen?",
+      "time": "13:44",
+      "timestamp": "1590957876.398900",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Like if you and I both created a database are they isolated or on the same instance",
+      "time": "13:45",
+      "timestamp": "1590957903.399100",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "is it two instances of mysql running or one running ?",
+      "time": "13:45",
+      "timestamp": "1590957937.399500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "So the db we use for all the Instabase state (users, orgs, repos) is completely separate.",
+      "time": "13:46",
+      "timestamp": "1590957987.400800",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "I guess is it that it creates a user for myself on the instance that I then am isolated to my username and its activity? Or what is the architecutre",
+      "time": "13:46",
+      "timestamp": "1590957990.401100",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "So core instabase is isolated",
+      "time": "13:46",
+      "timestamp": "1590958010.401700",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "but what about each users activity",
+      "time": "13:46",
+      "timestamp": "1590958019.402100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Everything we create on this database page connects to another instance. So if you create a new db1 and i create db2, both are created in another instance.",
+      "time": "13:47",
+      "timestamp": "1590958067.403500",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "so they are self isolated?",
+      "time": "13:48",
+      "timestamp": "1590958085.403800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah i can’t go mess in your newly created database",
+      "time": "13:48",
+      "timestamp": "1590958101.404500",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "So if I were to create 100 new databases what would happen",
+      "time": "13:48",
+      "timestamp": "1590958105.404800",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "would there be 100 instanaces of mysql”",
+      "time": "13:48",
+      "timestamp": "1590958132.405800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "nope, all of these are just databases in the same hosted instabase instance",
+      "time": "13:49",
+      "timestamp": "1590958154.406500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "and your sql queries will be targeted at one specific database because the name of the database is in the connection details.",
+      "time": "13:49",
+      "timestamp": "1590958199.407800",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "gotcha, how can the kubenetes pod handle holding 100 mysql databases active?",
+      "time": "13:50",
+      "timestamp": "1590958234.408600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrm not sure this is a k8s restriction. it’s just mysql, so we’re capped by how many that can support",
+      "time": "13:51",
+      "timestamp": "1590958265.409400",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "if i just went on a rampage and created a ton of them",
+      "time": "13:51",
+      "timestamp": "1590958265.409600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "like if you ran mysql locally",
+      "time": "13:51",
+      "timestamp": "1590958272.410000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "you can start creating databases",
+      "time": "13:51",
+      "timestamp": "1590958285.410500",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "so the server doesnt care how many instances of the DB;s its like a 1 to many?",
+      "time": "13:51",
+      "timestamp": "1590958307.410700",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "1 mysql servicd and tons of databases",
+      "time": "13:52",
+      "timestamp": "1590958324.410900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "im sure there’s a limit (i don’t know it off the top of my head)",
+      "time": "13:52",
+      "timestamp": "1590958337.411500",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "interesting. There is a lot of potential in this interface",
+      "time": "13:53",
+      "timestamp": "1590958402.412600",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "thanks for describing to me how it works",
+      "time": "13:53",
+      "timestamp": "1590958418.412800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "according to their docs here https://dev.mysql.com/doc/refman/8.0/en/database-count-limit.html (https://dev.mysql.com/doc/refman/8.0/en/database-count-limit.html)",
+      "time": "13:53",
+      "timestamp": "1590958438.413300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "MySQL has no limit on the number of databases. The underlying file system may have a limit on the number of directories.",
+      "time": "13:54",
+      "timestamp": "1590958460.413900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "so there’s always going to be some limit",
+      "time": "13:54",
+      "timestamp": "1590958468.414300",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "yeah was just curious on early days instabase architectire because this was created years ago…. with no updates",
+      "time": "13:55",
+      "timestamp": "1590958504.415400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah slight tangent, we did have some related work there recently, @achao added support for storing arbitrary data in db’s from UDF’s",
+      "time": "13:55",
+      "timestamp": "1590958546.416300",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Its like blowing the dust off an old book what I just did hasn’t probably been triggered in like 2  years",
+      "time": "13:55",
+      "timestamp": "1590958547.416500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "so you could either host a random db via us and store data in it from udf’s or you could point to any random db as well.",
+      "time": "13:56",
+      "timestamp": "1590958595.417800",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "interesting… and my guess is ACL’s don’t expand to DB’s",
+      "time": "13:56",
+      "timestamp": "1590958619.418100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "these are just db connections, so if you write code to talk to any database, we can’t prevent that in a udf",
+      "time": "13:57",
+      "timestamp": "1590958665.419200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "but if you want to talk to one of the db’s that you create thru us, then acl’s do apply",
+      "time": "13:58",
+      "timestamp": "1590958692.420100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "you would pass in repo owner/names in the connection details and we validate that it’s allowed",
+      "time": "13:58",
+      "timestamp": "1590958707.420800",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Yeah my concern seeing my ability to create a database, create a table, etc meant there is a lot of power",
+      "time": "13:58",
+      "timestamp": "1590958717.421300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah but we don’t expose the connection details of our created db’s (they don’t know the password, username, or the uuid we assigned this db). so you have to go theough our api’s to do it, which allows us to enforce acl’s at the repo level.",
+      "time": "14:00",
+      "timestamp": "1590958807.423300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "but yeah it is powerful, hence why it’s disabled at some customer’s",
+      "time": "14:00",
+      "timestamp": "1590958829.423900",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "lol",
+      "time": "14:04",
+      "timestamp": "1590959065.424100",
+      "is_reply": true
+    },
+    {
+      "sender": "Justin",
+      "user_id": "ULE9A7AHE",
+      "message": "i believe there is a world where custom ib hosted databases can be used to enhance flows with appropriate adapter clients exposed",
+      "time": "14:05",
+      "timestamp": "1590959134.424300",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Yeah, just for fun",
+      "time": "14:18",
+      "timestamp": "1590959929.424600",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "",
+      "time": "14:19",
+      "timestamp": "1590959950.424800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "lol #hacker-matt",
+      "time": "14:19",
+      "timestamp": "1590959973.425200",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "",
+      "time": "14:19",
+      "timestamp": "1590959979.425400",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "",
+      "time": "14:20",
+      "timestamp": "1590960002.425800",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "",
+      "time": "14:20",
+      "timestamp": "1590960022.426200",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Just saying things can get messy fast with the interface exposed the way we do",
+      "time": "14:20",
+      "timestamp": "1590960045.426600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah. that’s fair. Probably need to add more restrictions on the queries that are valid to be run. i thought we limited it in some ways, but needs a be reaudited",
+      "time": "14:28",
+      "timestamp": "1590960528.428100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-05-31.json",
+    "message_count": 53,
+    "start_time": "1590956445.388800",
+    "end_time": "1590960528.428100",
+    "is_thread": true
+  }
+}

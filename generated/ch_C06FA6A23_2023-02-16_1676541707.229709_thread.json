@@ -1,0 +1,28 @@
+{
+  "id": "ch_C06FA6A23_2023-02-16_1676541707.229709_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "puneet"
+  ],
+  "messages": [
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "I think there are 2 scenarios which might cause this -\n1. Jaeger is deployed in in-memory mode which only stores upto 1000 traces after which it will start discarding the older traces or if jaeger services is restarted all the traces would be lost.\n2. If jaeger is deployed using elasticsearch then the storage time is configured using\n    a.  `ES_JAEGER_MAX_AGE`  which controls the lifespan of the indices in elasticsearch\n    b. `ES_MAX_SPAN_AGE` which is the jaeger configuration for a spans lifetime.\nThe two configs above are set to 7 days by default. I suspect that jaeger is using in-memory storage here which is causing the traces to go away after a certain time.\nWill you be able to share the jaeger deployment file which I can check and confirm for in-memory storage? If this is the case then we can simply apply a patch using DM to use ES storage.",
+      "time": "02:01",
+      "timestamp": "1676541707.229709",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-02-16.json",
+    "message_count": 1,
+    "start_time": "1676541707.229709",
+    "end_time": "1676541707.229709",
+    "is_thread": true
+  }
+}

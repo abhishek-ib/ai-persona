@@ -1,0 +1,256 @@
+{
+  "id": "ch_C06FA6A23_2021-03-16_1615898608.000900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Anil",
+    "sudeep",
+    "kunal",
+    "Lee",
+    "Aimé"
+  ],
+  "messages": [
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Hi - NatWest just trying to run a binary as a performance test and are getting this error:\n```Started: 03-16-21 12:31:31\nEnded: 03-16-21 12:33:24\nDuration: 113 secs\nFlow Type: single_flow\nCurrent Message: All records had a runtime exception. Last error observed was: local variable 'analyze_resp' referenced before assignment. Image: admin/nat-west-initial-test/fs/Instabase Drive/AR01/AR01/out/s1_process_files/images/AR01-5.pdf_p0.jpg.\nInput Folder: admin/nat-west-initial-test/fs/Instabase Drive/AR01/AR01/input\nOutput Folder: admin/nat-west-initial-test/fs/Instabase Drive/AR01/AR01/out\nSource Flow: AR01/workflow-2021-03-10-12_51_43.ibflowbin```\nAny idea what’s going on",
+      "time": "05:43",
+      "timestamp": "1615898608.000900",
+      "is_reply": false
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Extra context here, this is a binary that I made and is tested working on prod (inc Aime running it). But when its moved to Natwest’s deployment the above error occurs.",
+      "time": "05:44",
+      "timestamp": "1615898673.001100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "we’ve just removed all files and doing it again from scratch",
+      "time": "05:45",
+      "timestamp": "1615898738.001300",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "cc @Aaron Tami - looks like msft ocr is the only place where this variable is used",
+      "time": "05:46",
+      "timestamp": "1615898793.001500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Got a different error this time Started: 03-16-21 12:45:09\nEnded: 03-16-21 12:46:57\nDuration: 109 secs\nFlow Type: single_flow\nCurrent Message: All records had a runtime exception. Last error observed was: Could not read file=admin/test-two/fs/Instabase Drive/input/AR01/Test. Reason=Cannot open a directory! Path input/AR01/Test.\nInput Folder: admin/test-two/fs/Instabase Drive/input/AR01\nOutput Folder: admin/test-two/fs/Instabase Drive/input/out\nSource Flow: Instabase Drive/workflow-2021-03-10-12_51_43.ibflowbin",
+      "time": "05:49",
+      "timestamp": "1615898941.001700",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "admin/test-two/fs/Instabase Drive/input/AR01/ - looks like this directory has input files and directories",
+      "time": "05:53",
+      "timestamp": "1615899180.001900",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "can you move the directories out ? (I encountered this same issue the last time where you had 5 files (the actual files) and 2 directories (which shouldn't have been there))",
+      "time": "05:53",
+      "timestamp": "1615899226.002100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "so, i did the same (with the directories) on instabase.com (http://instabase.com) and it ran. Is there a reason it wouldn’t be able to run on NatWest’s deployment?",
+      "time": "05:57",
+      "timestamp": "1615899472.002300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Ok ran again with directories deleted and got previous “analyze resp” error",
+      "time": "05:59",
+      "timestamp": "1615899564.002500",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "instabase.com (http://instabase.com) runs on feb release, natwest is on Jan - \"analyze_resp\" issue looks fixed by feb :confused: I looked at the error and it basically means ocr request to msft_ocr failed",
+      "time": "06:01",
+      "timestamp": "1615899705.002700",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "let me see if I can get somebody from deployments involved here",
+      "time": "06:02",
+      "timestamp": "1615899740.002900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Ok thanks.",
+      "time": "06:02",
+      "timestamp": "1615899748.003100",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "@sudeep to the rescue :slightly_smiling_face:",
+      "time": "06:05",
+      "timestamp": "1615899905.003300",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "So executions seem to work when not using Marx.",
+      "time": "06:09",
+      "timestamp": "1615900142.003500",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Natwest have asked if they have the right deployment descriptor for the disconnected container.",
+      "time": "06:09",
+      "timestamp": "1615900163.003700",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Looking in the logs for the msft-ocr container, it doesn’t look like its being called.",
+      "time": "06:10",
+      "timestamp": "1615900225.003900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Tim has used the same descriptor as was given to him with the first msft image. Should he have a different descriptor, for the decontainerised image? And could that be the issue?",
+      "time": "06:13",
+      "timestamp": "1615900423.004300",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "Does flow work with abbyy?",
+      "time": "06:13",
+      "timestamp": "1615900435.004700",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "@Aimé  let me double check :)",
+      "time": "06:14",
+      "timestamp": "1615900445.005200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "yes abby worked",
+      "time": "06:16",
+      "timestamp": "1615900609.005400",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "do we have access to their deployment?",
+      "time": "06:20",
+      "timestamp": "1615900842.005600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Nope",
+      "time": "06:21",
+      "timestamp": "1615900892.005800",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "This was because when we shipped them the disconnected container, we didn't also update the endpoint for msft in app-tasks",
+      "time": "06:21",
+      "timestamp": "1615900897.006000",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "So once they make that change, we'll be good",
+      "time": "06:21",
+      "timestamp": "1615900904.006200",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "hey @kunal - would it be this one that we need to set -\n```            - name: MSFT_OCR_ENDPOINT\n              value: \"\"```",
+      "time": "06:23",
+      "timestamp": "1615901024.006400",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "yes, I just sent over these instructions",
+      "time": "06:24",
+      "timestamp": "1615901042.006600",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "so we should be all good here!",
+      "time": "06:24",
+      "timestamp": "1615901060.006800",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "great thanks, wanted to confirm for my info",
+      "time": "06:24",
+      "timestamp": "1615901061.007000",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "awesome! thanks @kunal!",
+      "time": "06:24",
+      "timestamp": "1615901068.007200",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-03-16.json",
+    "message_count": 29,
+    "start_time": "1615898608.000900",
+    "end_time": "1615901068.007200",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "id": "ch_C0516UPPMT3_2023-08-15_1692115965.192419_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Kerry",
+    "Kathy Wu",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "> let’s make sure we investigate this before GA 23.07 AI Hub. cc @shaunak please wait for GA on this.\n• We have a fix coming for the discrepancy between output in build mode vs. compiled app (had to do with the bug Rafal pointed out). Should be done by EOD\n• We separately also found an issue with the thread pooling sometimes returning the same response for some or all the fields (see Rafal’s message above). This is something that we have not figured out. Anecdotally, adding the sleep seems to reduce the incidence of errors. We can ship that patch for now, or we can wait on the fix, until we understand it better.\ncc @Kerry",
+      "time": "09:12",
+      "timestamp": "1692115965.192419",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "thank you @lydia.  Once these are checked in, please let me and @fernando know.  We’ll have to re-certify and push to preprod instance.",
+      "time": "09:14",
+      "timestamp": "1692116041.430659",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Does anyone know what the current version of ibllm on aihub.instabase.com (http://aihub.instabase.com) is?",
+      "time": "10:56",
+      "timestamp": "1692122200.440549",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "1.1.17",
+      "time": "11:00",
+      "timestamp": "1692122432.875769",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@shaunak @Kerry another update here. I suspect the provenance issue is a regression (because I have previous app runs on aihub.instabase.com (http://aihub.instabase.com) that don’t have this issue). We need more time to investigate this further, because the current proposed change is changing the Refiner logic (which hasn’t changed since we launched), so I’d rather figure out the root cause instead of blindly making a change.\n\nAnother issue that is really slowing down debugging is that I don’t have any credits on aihub to test this, or see into file system files (flow, refiner, etc) to see the content there.",
+      "time": "11:24",
+      "timestamp": "1692123841.587599",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hmm it's hard on aihub.com (http://aihub.com), can you use aihub uat env",
+      "time": "13:04",
+      "timestamp": "1692129898.747619",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "any update on this? if we need to wait another day",
+      "time": "15:36",
+      "timestamp": "1692139001.815499",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Update on the two issues:\n1. the provenance issue is already happening on aihub, so not a GA blocker. @Kathy Wu is working on a fix, but it will also require some frontend changes. Maybe we should wait until 23.08 to deploy this?\n2. on the threading issue - I see that happening a lot more frequently on aihub.uat than aihub prod (though I did see an example there as well). @Kathy Wu, let’s merge in the sleep fix for this, and then we can ship 23.07",
+      "time": "15:53",
+      "timestamp": "1692139985.042759",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "On <#C05LLRV7VK3|>, the reason we are seeing it more often recently is because more field results are being provenance tracked. The behavior is, if there is no provenance found, or if the provenance is an exact match, then the model result is shown in its entirety. If provenance is found for only part of the string, that results in the behavior Lee/Avi reported. A couple of months ago, this case was just a lot less frequent than it is now with the more recent versions of ibllm",
+      "time": "15:54",
+      "timestamp": "1692140092.893459",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": ":+1: makes sense, let's do this:\nmerge 2 and ship 23.07 to aihub prod\naddress 1 this week, pick it back to 23.08 and 23.07 (for onprem customer) as soon as its ready, aihub prod will update in the next push",
+      "time": "15:56",
+      "timestamp": "1692140203.799139",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "For (2) is that an ibllm change?",
+      "time": "15:57",
+      "timestamp": "1692140262.666869",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "We don’t know what is causing (2) yet, but there hasn’t been any changes to the Refiner script, so the change is likely in ib_intelligence (model-service interface), model-service or ibllm",
+      "time": "15:58",
+      "timestamp": "1692140289.028409",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i edited my description a bit -- 1 needs to be picked back to 23.07 also so onprem customer gets the fix.",
+      "time": "15:58",
+      "timestamp": "1692140333.403199",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "2 is tricky -- @lydia pull in some model service folks to debug?",
+      "time": "15:59",
+      "timestamp": "1692140373.167879",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I ran ibllm 1.1.9 and 1.1.14 on aihub.uat and also observed (2), so leaning towards an issue in the stack between Refiner script and ibllm. This is all assuming that seeing `(No value found)` is only caused by this threading issue",
+      "time": "16:02",
+      "timestamp": "1692140552.445869",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "@lydia here's the PR (https://github.com/instabase/instabase/pull/45260) for the sleep fix",
+      "time": "16:30",
+      "timestamp": "1692142233.511849",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-08-15.json",
+    "message_count": 16,
+    "start_time": "1692115965.192419",
+    "end_time": "1692142233.511849",
+    "is_thread": true
+  }
+}

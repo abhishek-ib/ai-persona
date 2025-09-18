@@ -1,0 +1,36 @@
+{
+  "id": "ch_C0516UPPMT3_2024-12-10_1733858763.594389_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "jack.robbins"
+  ],
+  "messages": [
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "The best I've seen is checking for 'instabase' in a username- most internal users use their @instabase.com email. It's not 100% but it removes most internal users:\n\n```SELECT\n  ds.name,\n  DATE_FORMAT(FROM_UNIXTIME(j.completion_time / 1000000000), '%Y-%m') AS completion_year_month,  -- Combine year and month\n  COUNT(*) AS usage_count  -- Count the number of records for each name and month\nFROM\n  instabase.deployed_solution_jobs dsj\nJOIN\n  instabase.jobs (http://instabase.jobs) j ON dsj.job_id = j.id\nJOIN\n  instabase.deployed_solutions ds ON dsj.deployed_solution_id = ds.id\nJOIN\n  instabase.accounts a ON j.account_id = a.id  -- Join accounts table\nWHERE\n  ds.visibility = 'PUBLIC'  -- Filter to include only records where visibility is PUBLIC\n  AND a.public_id NOT LIKE '%instabase%'  -- Exclude users with 'instabase' in their public_id\nGROUP BY\n  ds.name, completion_year_month\nORDER BY\n  completion_year_month DESC,  -- Sort by the combined year-month column for chronological order\n  usage_count DESC;  -- Then sort by usage count for ranking```",
+      "time": "11:26",
+      "timestamp": "1733858763.594389",
+      "is_reply": false
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "You can adjust the query by adding/editing the 'AND a.public_id NOT LIKE '%instabase%'  -- Exclude users with 'instabase' in their public_id' row\n\n*AND a.public_id LIKE '%instabase%'* would be just users with instabase in their username",
+      "time": "11:28",
+      "timestamp": "1733858884.886809",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-12-10.json",
+    "message_count": 2,
+    "start_time": "1733858763.594389",
+    "end_time": "1733858884.886809",
+    "is_thread": true
+  }
+}

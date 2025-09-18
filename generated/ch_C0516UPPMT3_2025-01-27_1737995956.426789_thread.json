@@ -1,0 +1,95 @@
+{
+  "id": "ch_C0516UPPMT3_2025-01-27_1737995956.426789_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "david.lee",
+    "hannah",
+    "Jessica",
+    "Hamish"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Hey, here is my initial feedback on Secrets/Custom keys:\n1. Despite adding a Secret in Settings, it doesn't appear in my project (either validations or custom fields). \n    a. Is this a bug?\n2. I tried to add JSON as a custom key, but it was consistently invalidated. \n    a. Is this a bug? \n    b. If not, we should provide some placeholder text to help users understand the required format. \n3. I feel that there should be a confirmation button or something when I add a secret/key. \n    a. Once you have added the value, there is no confirm or add button which makes me uncertain as to if its ready to use or not.\n4. What if I want to run an app with both Secrets and Custom Keys? \n    a. (I can't actually test this atm due to Secrets bug). \n    b. There are many instances when both are required so having an either-or option in the UX is not a good idea (I don't know if this is just UI or if its genuinely either-or). \n5. The hardest bit with using runtime data is knowing how to pull it in via API. We should have the auto-generated API code update to help with this when the user selects to use Secrets/Custom Keys.\ncc @Jessica @hannah",
+      "time": "08:39",
+      "timestamp": "1737995956.426789",
+      "is_reply": false
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Thanks for playing around with this! A few initial thoughts:\n1. To use the secret in your project, you need to first press \"Add secret key\" to add it to your custom function. This allows you to specify which secret you want to add to your custom function. You will create a name for this variable and specify a test value. This is the same process as adding a runtime config. It seems like based on this that \"Add secret key\" might not have been obvious? cc: @Natasha \n2. I'd need @Jessica to take a look at this one\n3. We are trying to leverage similar \"auto save\" functionality as the field editor, but @Natasha wonder if we could look at this\n4. You can absolutely add both - it looks like you never added the secret key in the first step. \n5. Completely agree on this - @Jessica that would be cool to add to the auto-generated code",
+      "time": "08:52",
+      "timestamp": "1737996722.058689",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "@Hamish would you mind trying again by adding the secret key in the first step and see if you're able to leverage both",
+      "time": "08:52",
+      "timestamp": "1737996766.032549",
+      "is_reply": true
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "@hannah It wasn't very clear to me either that I had to add a new secret key to be able to select from the org secret keys I've already added.\nI also find the explanation around \"Test value\" and \"Runtime configurations\" confusing. I understand it now but it took me a while to wrap my head around it as an experienced AI Hub user. At first glance, it seems cumbersome to have to add the secret key once in the org settings, once in the Build project, and then another time in the Deployment configs - is there a way to simplify this flow?",
+      "time": "08:59",
+      "timestamp": "1737997158.709039",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "1. Would love to hear more about the issues using this after you see Hannah's explanation\n2. The issue with the JSON is that you are using single quotes for the values instead of double quotes - this is standard format for JSON, anytime you use JSON it won't let you use single quotes. We could consider having a placeholder with the correct format?\n5. Can definitely add it there good call! And then we're also adding it to the docs of course. There is no info out there on how to use it in the API yet so not surprised this was hard",
+      "time": "09:06",
+      "timestamp": "1737997568.174489",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "One thing we've done is to make add a link from your build project to secrets configuration so you can add a key if you want. That said, I don't think there's a good way to simplify that flow (@hannah @Natasha wonder if you think differently). The secrets have to be added at the org level for permissioning, and I think changing that model would actually make it more complex and confusing. If you're using secret keys, you probably wouldn't want it to be saved with the app/deployment - which secret you're using is dependent of the workspace you choose to run your app/deployment in.",
+      "time": "09:08",
+      "timestamp": "1737997738.980159",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Thanks guys! See my thoughts below:\n1. Ah yes this wasn't clear. What I don't understand is why all the secrets I have access to don't automatically appear here -  that was the confusion. I've already made a secret (or someone else has), why do I have to effectively re-make this by adding a new name and value that corresponds to an existing secret? \n    a. As far as I can think, there is no downside to all secrets that that project has access to being available in the UDF\n2. This is an issue we should solve for. Afaik most code editors (including our own validation functions) allow for both single and double quotes. This will be a very common mistake\n3. .\n4. Great, this is just a UI thing then. I feel it would make more sense for custom keys and secrets to be stacked vertically rather than only displaying one at a time (this is where my confusion comes from)\n5. :slightly_smiling_face: Perfect",
+      "time": "09:32",
+      "timestamp": "1737999179.794179",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "1. Yeah I understand why this is confusing - you basically end up having to create two keys, one to map to the value of the secret, and then one to map to that key. This is necessary to getting the functionality we want though. Let's say your intention is to use two different secrets, one while you're testing in dev and one in production. You need to have a key that's for example MY_SECRET and then that can map to either MY_DEV_SECRET or MY_PROD_SECRET.\n2. We're actually using the built in JSON.parse functionality. You're right that in python for example you can use single quotes, but not in JSON. If you create a new json file in VSCode and try to use single quotes, you'll see errors in your IDE. See here for more info: https://stackoverflow.com/questions/36038454/parsing-string-as-json-with-single-quotes\n4. Hmmm I kind of like this idea.... we could add \"Secret\" as a type you could select on the right alongside the others, and then stop differentiating between secret and custom keys. We could even stack the system keys on top. @Natasha @hannah curious to hear what you all think",
+      "time": "09:40",
+      "timestamp": "1737999619.814279",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "This is great convo! I think based on this - a few thoughts:\n• I think we need to make the empty states more informative. When we say \"No Keys to display\" it makes it look like a bug vs. we could use that space to say \"Create a key to leverage secrets in your custom functions. Secrets need to be added first through the settings app.\" or something like that. And then ideally a CTA that says \"Create secret key\" so a user knows they need to take action. We should do the same for runtime configs. @Natasha let's sync on the add secret key placement as well as having it below the table is easy to miss. \n    ◦ I understand this flow can be confusing, but creating a \"placeholder\" for the secret in the custom function is the only way that we can have different values for different deployments (which is critical for dev deployments and prod deployments). Let's wait on additional feedback here before doing anything further and making it more clear on why you need to add a secret key.\n• Given this is JSON.parse I think this is probably fine, but wondering if we could add helper text or warning here to assist with resolution\n• I'm hesitant to radically change the UI before GA. I think having empty states with better CTA to add keys for both will help make it easier to make it clear that you can add both. But this is definitely something that we can keep monitoring and iterate in the future.\n@Natasha @Jessica let's sync on some of this feedback and see what changes we might make!",
+      "time": "10:15",
+      "timestamp": "1738001712.274219",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-01-27.json",
+    "message_count": 9,
+    "start_time": "1737995956.426789",
+    "end_time": "1738001712.274219",
+    "is_thread": true
+  }
+}

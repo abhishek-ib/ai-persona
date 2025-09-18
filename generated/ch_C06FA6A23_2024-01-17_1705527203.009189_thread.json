@@ -1,0 +1,111 @@
+{
+  "id": "ch_C06FA6A23_2024-01-17_1705527203.009189_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "gurkirat",
+    "sudeep",
+    "Travis",
+    "Gauti"
+  ],
+  "messages": [
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "having an issue with RabbitMQ locally\n```> [16/17] RUN rabbitmq-plugins enable --offline rabbitmq_management:\n1.132 qemu: uncaught target signal 11 (Segmentation fault) - core dumped\n1.139 Segmentation fault\n------\nDockerfile:64\n--------------------\n  62 |     ENV RABBITMQ_FEATURE_FLAGS=stream_single_active_consumer,feature_flags_v2,listener_records_in_ets,stream_sac_coordinator_unblock_group,tracking_records_in_ets,direct_exchange_routing_v2\n  63 |     \n  64 | >>> RUN rabbitmq-plugins enable --offline rabbitmq_management\n  65 |     RUN rabbitmq-plugins enable --offline rabbitmq_prometheus\n  66 |     \n--------------------\nERROR: failed to solve: process \"/bin/sh -c rabbitmq-plugins enable --offline rabbitmq_management\" did not complete successfully: exit code: 139\nmake: *** [build-docker] Error 1```",
+      "time": "13:33",
+      "timestamp": "1705527203.009189",
+      "is_reply": false
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "@gurkirat could this PR(https://github.com/instabase/instabase/pull/52033) be the root cause of this issue?\nWe are blocked on local testing due to this.\nCC: @sudeep @Balaram",
+      "time": "20:20",
+      "timestamp": "1705551613.365789",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Latest error message from my local terminal:-\n``` => ERROR [ 7/17] RUN apt-get update -y && apt-get install rabbitmq-server=3.11.27-1 -y --fix-missing                                                                                                                                          10.8s\n------\n > [ 7/17] RUN apt-get update -y && apt-get install rabbitmq-server=3.11.27-1 -y --fix-missing:\n1.277 Hit:1 http://security.ubuntu.com/ubuntu lunar-security InRelease\n1.278 Hit:2 http://archive.ubuntu.com/ubuntu lunar InRelease\n1.484 Get:3 https://ppa1.novemberain.com/rabbitmq/rabbitmq-erlang/deb/ubuntu lunar InRelease [5,047 B]\n1.808 Hit:4 http://archive.ubuntu.com/ubuntu lunar-updates InRelease\n1.863 Get:5 https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu lunar InRelease [5,152 B]\n2.388 Hit:6 http://archive.ubuntu.com/ubuntu lunar-backports InRelease\n5.655 Err:5 https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu lunar InRelease\n5.655   The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 9F4587F226208342\n6.710 Reading package lists...\n10.74 W: GPG error: https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu lunar InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 9F4587F226208342\n10.75 E: The repository 'https://ppa1.novemberain.com/rabbitmq/rabbitmq-server/deb/ubuntu lunar InRelease' is not signed.\n------\nDockerfile:25\n--------------------\n  23 |     COPY rabbitmq-repos.list /etc/apt/sources.list.d/rabbitmq.list\n  24 |\n  25 | >>> RUN apt-get update -y && apt-get install rabbitmq-server=$RABBITMQ_VERSION -y --fix-missing\n  26 |\n  27 |     # change ibuser userid to something else (freeup 9999 for rabbitmq user)\n--------------------\nERROR: failed to solve: process \"/bin/sh -c apt-get update -y && apt-get install rabbitmq-server=$RABBITMQ_VERSION -y --fix-missing\" did not complete successfully: exit code: 100```",
+      "time": "20:21",
+      "timestamp": "1705551708.683689",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "yes, rabbitmq-3.11 does not builds locally due to m1 incompatibility. But jenkins builds work. Is there a specific requirement to build rabbitmq locally?",
+      "time": "20:22",
+      "timestamp": "1705551751.118439",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "I know about the qemu issue, Gautam did you change anything ?",
+      "time": "20:24",
+      "timestamp": "1705551841.300069",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "No, I haven't changed anything in rabbitmq",
+      "time": "20:25",
+      "timestamp": "1705551930.065629",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Is there any other recommended way to build rabbitmq locally? AFAIK, we need rabbitmq running locally to load the platform and test E2E. LMK if my understanding is outdated.",
+      "time": "20:26",
+      "timestamp": "1705551994.005969",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "Oh ohk, My bad, I didn’t realise we build rabbitmq locally also. Looking into it right now",
+      "time": "21:24",
+      "timestamp": "1705555444.233909",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "To unblock for now @Gauti, can you use remote builds via crafting?",
+      "time": "21:56",
+      "timestamp": "1705557405.093429",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Another alternative to unblock will be to use one of the recent certified images to run locally in the meantime as we fix",
+      "time": "21:57",
+      "timestamp": "1705557435.061829",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "For now, I am using rabbitmq from my previous branch and the rest of the services from the latest branch.",
+      "time": "21:57",
+      "timestamp": "1705557478.619399",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-01-17.json",
+    "message_count": 11,
+    "start_time": "1705527203.009189",
+    "end_time": "1705557478.619399",
+    "is_thread": true
+  }
+}

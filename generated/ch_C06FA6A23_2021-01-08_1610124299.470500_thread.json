@@ -1,0 +1,128 @@
+{
+  "id": "ch_C06FA6A23_2021-01-08_1610124299.470500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "abhitaker",
+    "sudeep",
+    "Naveen",
+    "Shubham Oli",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Hi,\n@puneet and me were trying to create sandbox for Puneet, we triggered the build through jenkins, deployments were created but the pods for all of the deployments were not being created. The error that was shown was : `pods \"deployment-api-server-apps-6cd949cbcd-\" is forbidden: unable to validate against any pod security policy: []` .\nEverything was deployed successfully when we deployed it to another cluster though. Any suggestions? Is there any extra step that we need to perform on images to deploy in `instabase-dev-001` ?",
+      "time": "08:44",
+      "timestamp": "1610124299.470500",
+      "is_reply": false
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Looking at other namespace in `instabase-dev-001`, looks like this has happened to other sanboxes as well that were recently deployed :https://console.cloud.google.com/kubernetes/workload?project=instabase-dev&pageState=(%22[…],%22n%22:%5B%22rpuneet%22,%22licensing%22,%22oli%22%5D)) (https://console.cloud.google.com/kubernetes/workload?project=instabase-dev&pageState=(%22savedViews%22:(%22i%22:%225855be56a41141d9bb470d26eb6f6070%22,%22c%22:%5B%22gke%2Fus-central1-b%2Finstabase-dev-001%22%5D,%22n%22:%5B%22rpuneet%22,%22licensing%22,%22oli%22%5D)))",
+      "time": "08:47",
+      "timestamp": "1610124470.470700",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "did anyone enable PodSecurityPolicy admission controller on this cluster?\n\nEnabling this controller without defining Security Policies will not allow pods to be created.",
+      "time": "08:52",
+      "timestamp": "1610124756.472500",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "@sudeep did we make any changes to PSP on this cluster?",
+      "time": "08:54",
+      "timestamp": "1610124889.472900",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "We have pod security policy admission controllers activated by default on all clusters/namespaces. It ensures that all containers run with non-root privileges only.",
+      "time": "08:56",
+      "timestamp": "1610125018.473200",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "does this mean that we have to add PSP sections in our deployment files or something?",
+      "time": "08:59",
+      "timestamp": "1610125162.473600",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "There are make targets that help you set them up once you have created your namespace (examples below for sandbox) -\n1. Create service accounts `make create-sa-sandbox-gc`\n2. Create the PSP, clusterrole, clusterrole bindings  `make create-restricted-policy-and-roles-sandbox-gc`\n3. Activate PSP admission controllers using `make activate-restricted-policy-sandbox-gc`",
+      "time": "09:01",
+      "timestamp": "1610125297.474000",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "I had added this on our clusters in 2018, so they have been around for a while. :slightly_smiling_face: Afaik they were also on sandbox setup doc, but it seems that section has been removed.",
+      "time": "09:03",
+      "timestamp": "1610125430.474200",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Adding them back into the doc, and also happen to be on call with @puneet to help him run tkhis.",
+      "time": "09:04",
+      "timestamp": "1610125467.474500",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "> does this mean that we have to add PSP sections in our deployment files or something?\nNo, we just have to run the make targets above.",
+      "time": "09:05",
+      "timestamp": "1610125529.474700",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "This is a security measure to ensure nothing runs as root. The reason we also apply it across envs (incl sandbox), is to make sure developers are aware of this when building their services.",
+      "time": "09:06",
+      "timestamp": "1610125605.475100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ah, so I removed it because when I brought up a completely new sandbox I thought I got it to work without creating the restricted policy.",
+      "time": "10:30",
+      "timestamp": "1610130633.479200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Thanks for adding it back!",
+      "time": "10:30",
+      "timestamp": "1610130650.479400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-01-08.json",
+    "message_count": 13,
+    "start_time": "1610124299.470500",
+    "end_time": "1610130650.479400",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "id": "ch_C06FA6A23_2025-01-23_1737655686.411049_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Jessica",
+    "Heymian",
+    "Sayan"
+  ],
+  "messages": [
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Is this just UAT, or a customer env? If it’s UAT, then go for it. However we need to be very careful when directly manipulating data in customer databases, especially with direct mysql queries. If you absolutely must do so to resolve this bug, can you make sure every query you run, you also paste into a corresponding Jira ticket for tracking and auditing purposes? If you accidentally delete/change more data, we need to know what you did. \n\nSeparately, how did this bad row get into the database? can we make our code resilient to this bad form of data so it doesn’t require direct manipulation especially if it made it into a customer db already.",
+      "time": "10:08",
+      "timestamp": "1737655686.411049",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@andy if TPAM needs to get raised for customer DB access, can you help provide an extra set of eyes to double check each mutating SQL query that’s run. \n\nForgot to mention, log the query and also the output of every mutation query.",
+      "time": "10:11",
+      "timestamp": "1737655895.419989",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I followed up here for the resolution (I ended up logging into the UAT env and using APIs to delete the row instead of deleting rows in the DB manually): https://instabase.slack.com/archives/C05BJCNKZAM/p1737568676284969\n\nthe tl;dr for the original issue is that a row was added to our database before a migration (to encrypt / decrypt data) was added, thus the data was stale and couldn't be decrypted properly.\n\nOriginal PR: https://github.com/instabase/instabase/commit/aa765360b90302042b008cc567f12aef5f19f485#diff-851ad8a26e692f62c2555d00[…]6c286d2a0826a50d526ceaf28R166 (https://github.com/instabase/instabase/commit/aa765360b90302042b008cc567f12aef5f19f485#diff-851ad8a26e692f62c2555d00daf989534bee41f6c286d2a0826a50d526ceaf28R166)\n\nSubsequent PRs:\nhttps://github.com/instabase/instabase/pull/66816\nhttps://github.com/instabase/instabase/pull/67054\nhttps://github.com/instabase/instabase/pull/67092",
+      "time": "10:15",
+      "timestamp": "1737656143.744409",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ah awesome, using API’s is a much better option. So you don’t need to do the same to the Cass UAT env?",
+      "time": "10:16",
+      "timestamp": "1737656200.154419",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Yeah we will not need to manipulate any data in the database manually.",
+      "time": "10:19",
+      "timestamp": "1737656385.873319",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Also, this should not make it into any customer databases. @Jessica do you know if any customers (including IBers to test) on prod have the runtime config feature turned on?",
+      "time": "10:23",
+      "timestamp": "1737656580.667939",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "No, 25.04 is not being used by any customers",
+      "time": "10:23",
+      "timestamp": "1737656637.225329",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-01-23.json",
+    "message_count": 7,
+    "start_time": "1737655686.411049",
+    "end_time": "1737656637.225329",
+    "is_thread": true
+  }
+}

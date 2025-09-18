@@ -1,0 +1,119 @@
+{
+  "id": "ch_C0516UPPMT3_2025-03-28_1743165014.257259_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Jason",
+    "alex.morris",
+    "Filippo",
+    "Hamish"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Hey team, not sure on the best channel for this question, but I received these questions from UOB. We are running an Enterprise POC with them at the moment, and at the start of the deal (before I was fully involved) it was discussed that we could use InstaLLM to meet their requirements - sounds like we will need to revisit this topic with them. I want to make sure I have the right information on what we can do before responding back.\n\n1. Can the platform work with a UOB hosted instance of Llama 3.3? Based on earlier discussions, our understanding was there was no hard dependencies on Azure or Google services and the platform can work with bank hosted LLM only\n    a. My understanding is no we cannot use self-hosted Llama (cancelled)\n    b. What we can offer is connection to OAI/Azure or Claude endpoint in Singapore, optionally UOB's own endpoints. \n    c. Can Claude be accessed via their AWS instance and somehow locally hosted, or does it also have to be an external endpoint?\n2. Based on the documentation here (https://docs.instabase.com/overview/languages), it seems the platform uses Azure AI vision and Google vision API. Is there a hard dependency on these services for the platform to operate?\n    a. My assumption is yes we need Google or Microsoft OCR\n    b. Are these service \"external\" or do we somehow access them from within the ST instance in production?\n3. Could you please list all external dependencies or services that are required for the platform to operate. Also, when using UOB's hosted LLM models what are the pre-requisites.\n    a. Can someone help here?\n    b. From the architecture deck it looks like identity provider IdP (optional), LLM provider, Metronome, some external database for metadata? UOB hosted storage\ncc @Jasper @bharath.raj @Filippo @alex.morris @Jason",
+      "time": "05:30",
+      "timestamp": "1743165014.257259",
+      "is_reply": false
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "1. Correct on no self-hosted or Llama*. \n    a. Options: OpenAI directly, Azure OpenAI, AWS Bedrock Anthropic Claude Sonnet (not direct to Anthropic)\n2. We ship Microsoft OCR and ask that the billing endpoint be opened where all the document data stays local to the deployment and every 15 minutes or so, the microsoft container sends usage information to an Azure endpoint we have set up. Google is not required.\n3. Is this a SaaS effort? If so, we would set up the LLM models for them, but with Claude we can keep that all within the single tenant VPC we set up for them. If not, this needs to have an exception approved by our LT.\n    a. Egress requirements to: Metronome (unit usage data), Azure (OCR usage data), OpenAI or Azure OpenAI (if not using Claude)\n    b. Everything else is set up within the Single Tenant VPC deployment\n@Hamish we should chat about this in <#C04Q3QSQJQY|> and with the LT if we are talking non-SaaS.",
+      "time": "07:26",
+      "timestamp": "1743172019.180379",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Thanks @Jason. ~Yes this is SaaS~.\n\nIn the case of Claude - it sounds like VPC is used to run AI Hub and then there is a direct channel to AWS Claude hosted in the region so data never has to leave their VPC (I realise this is not technically accurate but is that the gist)? Sounds like a different model to when a customer is using OAI in that case where we have to send data outside the cloud env to an external provider?",
+      "time": "07:52",
+      "timestamp": "1743173578.485059",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "Great on SaaS. In that case, UOB does not set up their own endpoints and LLM traffic stays inside AWS. We manage the egress to Metronome and Microsoft for billing. Correct on \"never leaving the VPC\". AWS hosts the models in certain regions and if we have to access from other places, makes the service available through cross-region interfaces. Bedrock does not retain any processed data, all data is encrypted, and local to the region staying inside the AWS network.",
+      "time": "08:07",
+      "timestamp": "1743174473.464279",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "OpenAI is different where we have to ride public internet (still encrypted and no data retention) to get to the model.",
+      "time": "08:08",
+      "timestamp": "1743174525.471659",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.morris",
+      "user_id": "U06KJGCPPL4",
+      "message": "Hi all- important to add here that we have led with SaaS, but we have not finalised this yet and I foresee UOB coming back and wanting VPC (as otherwise we will miss out on some use cases where they refuse for their data to be processed on SaaS).",
+      "time": "08:24",
+      "timestamp": "1743175448.210089",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "Thanks, @alex.morris. @Ed from my team will be engaging. Hopefully we can keep them SaaS.",
+      "time": "08:25",
+      "timestamp": "1743175515.776789",
+      "is_reply": true
+    },
+    {
+      "sender": "Filippo",
+      "user_id": "U07NHLFSAGP",
+      "message": "Thanks everyone. They are definitely still considering VPC. Because of local regulation, even a SaaS delivery of AIHub would need to be connected to their on-prem storage or on UOB-AWS VPC",
+      "time": "08:33",
+      "timestamp": "1743176006.607769",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Thanks for the confirmation guys!",
+      "time": "08:36",
+      "timestamp": "1743176201.836739",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "I'll put a prep session in before anything customer facing to make sure we are all aligned on their current position and potential objections",
+      "time": "08:37",
+      "timestamp": "1743176252.298159",
+      "is_reply": true
+    },
+    {
+      "sender": "Filippo",
+      "user_id": "U07NHLFSAGP",
+      "message": "thanks. worth including Jasper in that as he was part of the initial engagement (basically before we flew out to SG)",
+      "time": "08:38",
+      "timestamp": "1743176297.321109",
+      "is_reply": true
+    },
+    {
+      "sender": "Jason",
+      "user_id": "U02JRG6MNBS",
+      "message": "@Filippo we do not support on-prem storage and only work with object store. Mounting UOB AWS S3 buckets is not a problem.",
+      "time": "08:55",
+      "timestamp": "1743177329.701689",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-03-28.json",
+    "message_count": 12,
+    "start_time": "1743165014.257259",
+    "end_time": "1743177329.701689",
+    "is_thread": true
+  }
+}

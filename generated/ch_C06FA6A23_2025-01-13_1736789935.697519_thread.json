@@ -1,0 +1,166 @@
+{
+  "id": "ch_C06FA6A23_2025-01-13_1736789935.697519_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Serena",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think I've brought this up before, but what is our convention for \"internal\" API endpoints? These are API endpoints that our frontend uses, but that we don't want to expose to the customer and/or support via external documentation and the like. If we don't have a convention, I'd like to make this simple suggestion:\n\n```# public endpoints\n/api/v1/...\n/api/v2/...\n/api/v3/...\n\n# internal endpoints (no version needed, b/c deployed in lockstep with our UI)\n/api/internal/...```\nI figure we can also promote internal endpoints to public endpoints when needed, and after all docs and additional testing are done to bulletproof them for the customer.",
+      "time": "09:38",
+      "timestamp": "1736789935.697519",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "On a similar tack, we should start removing all legacy endpoints from `/api/v1` and `/api/v2` that are not public/not documented in the AI Hub documentation.",
+      "time": "09:42",
+      "timestamp": "1736790125.151859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "cc @Heymian",
+      "time": "09:42",
+      "timestamp": "1736790136.702669",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "The internal endpoints are ones that are not exposed to nginx.\nThese APIs cannot be used in the frontend.",
+      "time": "09:57",
+      "timestamp": "1736791044.113369",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "There are three internal APIs used by job-service to perform celery actions. One of which launches a task cc @Abhishek Adupa",
+      "time": "09:59",
+      "timestamp": "1736791141.882969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "So, it sounds like we need a different convention for internal endpoints that the frontend can access, right?",
+      "time": "10:00",
+      "timestamp": "1736791230.252479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "IIRC we've been putting a lot of these things under `webapp`, but that seems like the wrong place.",
+      "time": "10:00",
+      "timestamp": "1736791247.731359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "How about:\n\n```# public endpoints\n/api/v1/...\n/api/v2/...\n/api/v3/...\n\n# private endpoints (available to frontend)\n/api/private/...\n\n# internal endpoints (not available to frontend)\n/api/internal/...```\nI don't like the fact that private/internal are so similar, but I'm struggling to think of a better name at the moment.",
+      "time": "10:09",
+      "timestamp": "1736791740.866619",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "why not just put them in v2?\nnot sure what v3 is for\n\nwhat is the difference between v2 and private? My guess is this is  for organization?\n\nthere are a lot of APIs in v2, most are not in the docs / SDK - so external users will not use them",
+      "time": "10:13",
+      "timestamp": "1736792023.965449",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If it's under v2, I worry that customers and/or soleng will treat them as public at some point, even if not documented. However, if our official line is \"If not documented, then internal. Internal endpoints are not supported\" I suppose that's fine. Would be more explicit and self-documenting to keep the versioned public endpoints separate.",
+      "time": "10:57",
+      "timestamp": "1736794642.264549",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ">  there are a lot of APIs in v2, most are not in the docs / SDK\nYes, it's a problem! How does one know (from looking at the source code, which should be the ultimate source of truth) if a given endpoint is public or not? If my proposal here is accepted, we'd clean those up.",
+      "time": "10:58",
+      "timestamp": "1736794728.365399",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "(v3 is just to illustrate the pattern for public endpoint versioning)",
+      "time": "11:12",
+      "timestamp": "1736795552.490819",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> On a similar tack, we should start removing all legacy endpoints from `/api/v1` and `/api/v2` that are not public/not documented in the AI Hub documentation.\nbtw some of these endpoints can be removed, but not all\n\na lot of endpoints are still necessary for solution engineers to go into single-tenant AI Hub environments to build advanced apps",
+      "time": "14:00",
+      "timestamp": "1736805608.045449",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "That's good to know. These are like...quasi-public I suppose?",
+      "time": "14:03",
+      "timestamp": "1736805793.970159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Is there a way to scan soleng solutions to figure out what endpoints they use? I'm curious.",
+      "time": "14:06",
+      "timestamp": "1736805973.724399",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "solution engineers will be using the platform UI (ex: Solution Builder, Flow, ML Studio, etc), so for the most part, they’ll be using these endpoints via the UI and won’t be calling these endpoints directly\n\nhowever, some flows do use UDFs that directly call some IB endpoints",
+      "time": "14:21",
+      "timestamp": "1736806912.589899",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "no, i don’t think there’s a way to scan an ibflowbin to figure out what endpoints it uses",
+      "time": "14:22",
+      "timestamp": "1736806932.972209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, that's a real bummer. We have no idea what's out there that we need to support/not change forever w/o causing more incidents :confused:",
+      "time": "14:25",
+      "timestamp": "1736807104.816529",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-01-13.json",
+    "message_count": 18,
+    "start_time": "1736789935.697519",
+    "end_time": "1736807104.816529",
+    "is_thread": true
+  }
+}

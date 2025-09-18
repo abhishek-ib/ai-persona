@@ -1,0 +1,138 @@
+{
+  "id": "ch_C06FA6A23_2024-04-12_1712933517.659169_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "Ashwin",
+    "pauline.comising",
+    "William Helmrath",
+    "Heymian",
+    "puneet",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@Heymian can you help chase this one down? Or at least point the right folks to this thread? :slightly_smiling_face:\n\n23.10 remains uncertified this week, and tests are still failing unfortunately :disappointed:",
+      "time": "07:51",
+      "timestamp": "1712933517.659169",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Sure looks like @lydia for all those test failures",
+      "time": "08:14",
+      "timestamp": "1712934843.929569",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@pauline.comising can you take a look at these system tests? (dom is out today)",
+      "time": "09:26",
+      "timestamp": "1712939205.450979",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@William Helmrath did we merge the Helm fix to 24.01?  Or did I misremember my own stuff from this morning? :sweat_smile:\n```failed: UpgradeWorker.runAnyTaskForCurrentStage failed: TurnupTask.Process Failed: KubernetesHelper.syncAllConfigsAndWaitForReadiness Failed: SyncConfigsToK8s: ApplyK8sConfigs: not all configs were successfully applied: {\"pdb-api-server\":\"poddisruptionbudgets.policy \\\"pdb-api-server\\\" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update\",\"pdb-apps-server\":\"poddisruptionbudgets.policy \\\"pdb-apps-server\\\" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update\",\"pdb-core-platform-service\":\"poddisruptionbudgets.policy \\\"pdb-core-platform-service\\\" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update\",\"pdb-file-tservice\":\"poddisruptionbudgets.policy \\\"pdb-file-tservice\\\" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update\",\"pdb-server-nginx\":\"poddisruptionbudgets.policy \\\"pdb-server-nginx\\\" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update\",\"pdb-webapp\":\"poddisruptionbudgets.policy \\\"pdb-webapp\\\" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update\"}```",
+      "time": "13:12",
+      "timestamp": "1712952748.633249",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Hmm yeah it was merged",
+      "time": "13:13",
+      "timestamp": "1712952789.640879",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":face_with_monocle: weird",
+      "time": "13:16",
+      "timestamp": "1712952962.298009",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "this looks like a different error actually, but related",
+      "time": "13:16",
+      "timestamp": "1712952973.884079",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "cc @puneet this seems related to some incorrect pdb configurations, looks like its missing `metadata.resourceVersion` ?",
+      "time": "13:22",
+      "timestamp": "1712953333.024109",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "@William Helmrath I did encounter this error while testing and it was fixed, we might be missing the back port - https://instabase.slack.com/archives/C027EPGM2UQ/p1706019459290329?thread_ts=1704460165.892119&channel=C027EPGM2UQ&message_ts=1706019459.290329 (https://instabase.slack.com/archives/C027EPGM2UQ/p1706019459290329?thread_ts=1704460165.892119&channel=C027EPGM2UQ&message_ts=1706019459.290329)\n@Ashwin was the fix backported to 24.01?",
+      "time": "13:28",
+      "timestamp": "1712953725.068409",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "No we didnt backport the changes to 24.01",
+      "time": "13:30",
+      "timestamp": "1712953832.525079",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Let me put up a PR",
+      "time": "13:30",
+      "timestamp": "1712953836.961739",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Will put up the PR in a little bit sorry",
+      "time": "13:35",
+      "timestamp": "1712954133.766249",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "For the system tests, I tried manually running a training jobs, and they never seem to get past `Starting Training Job`, meaning they're never executed off the queue. Though, after starting a job and refreshing, the UI says there are `0 jobs in queue`. I saw job service logs for starting the job, then in ray-head logs I saw `Submitting job with RAY_ADDRESS = 10.170.10.182:6380`, but ray worker logs didn't seem to show anything to indicate the job was picked up. Could we get ray eyes on this problem?",
+      "time": "13:40",
+      "timestamp": "1712954454.733789",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "okay so the backport is more involved than I thought, we need to upgrade the `client-go` by a few versions, leading to breaking changes in the code which I need time to test, are we comfortable undoing the PDB backports for now, to unblock the certify and then re-merge next week?",
+      "time": "15:13",
+      "timestamp": "1712960037.087739",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-04-12.json",
+    "message_count": 14,
+    "start_time": "1712933517.659169",
+    "end_time": "1712960037.087739",
+    "is_thread": true
+  }
+}

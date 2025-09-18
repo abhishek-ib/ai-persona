@@ -1,0 +1,77 @@
+{
+  "id": "ch_C06FA6A23_2025-03-03_1741032843.658779_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "astpierre",
+    "mfichman"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hey all -- does anyone know how I can figure out what the *oldest* deployed AI Hub version is? (_not_ IB Classic; only AI Hub)",
+      "time": "12:14",
+      "timestamp": "1741032843.658779",
+      "is_reply": false
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "for SaaS those versions are defined in the terraform-artifacts repo\nhttps://github.com/instabase/terraform-artifacts/tree/main/automation/saas/stacks",
+      "time": "12:17",
+      "timestamp": "1741033069.818189",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For posterity, here are all the deployed versions:\n\n```cs/mfichman❯ find . -print0 -type f -name '*.json' | xargs -n1 -0 jq '.release_version' | sort | uniq\nparse error: Invalid numeric literal at line 1, column 8\nparse error: Invalid numeric literal at line 1, column 2\n\"23.04.14\"\n\"23.04.16\"\n\"23.04.1-aihub\"\n\"24.07.latest\"\n\"24.10.latest\"\n\"25.01.latest\"\nnull\n\"release-aihub-MT\"\n\"release-aihub-ST\"\n\"release-aihub-test\"```",
+      "time": "12:27",
+      "timestamp": "1741033620.694309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```AI Hub/dev_aihub-dev.json:  \"release_version\": \"23.04.1-aihub\",\nAI Hub/dev_aihub-dev.json:  \"branch\": \"release-23.04.1-aihub.0\",\nAI Hub/dev_aihub-dev.json:    \"PATCH_BRANCH\": \"release-23.04.0\",\nAI Hub/dev_aihub-dev.json:  \"last_updated_timestamp\": \"2023-04-27T16:10:39Z\",\nAI Hub/dev_aihub1-dev.json:  \"release_version\": \"23.04.1-aihub\",\nAI Hub/dev_aihub1-dev.json:    \"PATCH_BRANCH\": \"release-23.04.0\"\nAI Hub/dev_aihub1-dev.json:  \"last_updated_timestamp\": \"2023-04-28T16:02:21Z\",\nCustomer PoVs/pov_garanti-pov.json:  \"release_version\": \"23.04.14\",\nCustomer PoVs/pov_garanti-pov.json:  \"branch\": \"release-23.04.14.0\",\nCustomer PoVs/pov_sonic-pov.json:  \"release_version\": \"23.04.16\",\nCustomer PoVs/pov_sonic-pov.json:  \"branch\": \"release-23.04.16.0\",\nCustomer PoVs/pov_sonic-pov.json:    \"INSTABASE_BRANCH\": \"release-23.04.16\",```\nSome old sandboxes are on 23.04; we probably don't care about those?\n\nThe rest are on IB Classic (24.07, 24.10, 25.01), right? I don't see many SaaS deploys with -aihub",
+      "time": "12:28",
+      "timestamp": "1741033687.734059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mfichman❯ git grep \"release-aihub-ST\"\nAXA UK/prod_axauk-aihub.json:    \"release_version\": \"release-aihub-ST\",\nCass Information Systems/prod_cass-aihub.json:    \"release_version\": \"release-aihub-ST\",\nDatafabricx/prod_dfx-aihub.json:    \"release_version\": \"release-aihub-ST\",\nGusto/prod_gusto-aihub.json:    \"release_version\": \"release-aihub-ST\",\nIntact Insurance/prod_intact-aihub.json:  \"release_version\": \"release-aihub-ST\",\nMunichRe/prod_munichre-aihub.json:    \"release_version\": \"release-aihub-ST\",\nNatWest/prod_natwest-aihub.json:    \"release_version\": \"release-aihub-ST\",\nNationwide/prod_natwide-aihub.json:  \"release_version\": \"release-aihub-ST\",\nProcter & Gamble/prod_pg-aihub.json:    \"release_version\": \"release-aihub-ST\",\nRSA/prod_rsa-aihub.json:    \"release_version\": \"release-aihub-ST\",\nRenRe/prod_renre-aihub.json:    \"release_version\": \"release-aihub-ST\",\nSonic Automotive/prod_sonic-aihub.json:    \"release_version\": \"release-aihub-ST\",\nVRSF/prod_vrsf-aihub.json:    \"release_version\": \"release-aihub-ST\",```\nI guess this means...these envs are on the latest ST version?",
+      "time": "12:30",
+      "timestamp": "1741033821.710529",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "correct, yeah. I think those PoV items are stale and should be cleaned up",
+      "time": "12:31",
+      "timestamp": "1741033871.757859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":ack:",
+      "time": "13:00",
+      "timestamp": "1741035643.134509",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-03-03.json",
+    "message_count": 7,
+    "start_time": "1741032843.658779",
+    "end_time": "1741035643.134509",
+    "is_thread": true
+  }
+}

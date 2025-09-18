@@ -1,0 +1,254 @@
+{
+  "id": "ch_C06FA6A23_2023-08-29_1693331609.657039_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe",
+    "Dominic Fannjiang"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Hi team, do we have some problem with our sqlserver instance for Jenkins CI? My PR (https://github.com/instabase/instabase/pull/45765) keeps failing (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-45765/10/pipeline) with\n```FAIL: rollback_test.go:119: DBRollbackTestSuite.TestRollbackToCheckpoint\n\n[2023-08-29T17:28:02.621Z] \n\n[2023-08-29T17:28:02.621Z] rollback_test.go:121:\n\n[2023-08-29T17:28:02.621Z]     s.setupTest(c, d)\n\n[2023-08-29T17:28:02.621Z] /instabase_dir/shared-utils/go-utils/src/instabase/utils/db/session/testsession.go:91:\n\n[2023-08-29T17:28:02.621Z]     c.Assert(err, IsNil)\n\n[2023-08-29T17:28:02.621Z] ... value *errors.errorString = &errors.errorString{s:\"unable to open tcp connection with host 'test-sqlserver.instabase.internal:1433': dial tcp 10.200.142.85:1433: connect: connection refused\"} (\"unable to open tcp connection with host 'test-sqlserver.instabase.internal:1433': dial tcp 10.200.142.85:1433: connect: connection refused\")```\ncc @mfichman @youngmok.cho",
+      "time": "10:53",
+      "timestamp": "1693331609.657039",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "cc @sean.donohoe",
+      "time": "10:54",
+      "timestamp": "1693331658.025839",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":arrow_up: Sean recently moved the test databases off of the builder hosts and onto a dedicated set of hosts. Looks like something might be broken there.",
+      "time": "10:54",
+      "timestamp": "1693331693.437959",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I did indeed, taking a look",
+      "time": "10:55",
+      "timestamp": "1693331705.433909",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@mfichman it's super minimal at the moment, but if you want to take a look too https://ci-grafana.aws.sandbox.instabase.com/d/d862603d-b142-4e33-9ccd-e1dfe39f565c/test-databases?orgId=1&refresh=30s\n\nuser: admin\npw: rjTlocZF1NaA",
+      "time": "10:56",
+      "timestamp": "1693331773.880149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "port 1433 => sqlserver, so that's where we should start",
+      "time": "10:56",
+      "timestamp": "1693331798.059559",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "^current setup is using an NLB that's receiving traffic on 1433",
+      "time": "10:57",
+      "timestamp": "1693331852.752469",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Judging by the error, the host is up but the database process is down",
+      "time": "10:57",
+      "timestamp": "1693331859.625909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Er rather, the NLB is down (?)",
+      "time": "10:57",
+      "timestamp": "1693331869.046359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This chart is super nice though!",
+      "time": "10:58",
+      "timestamp": "1693331886.941349",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "nah it definitely looks like the host -- fwiw I'm deploying a single statefulset pod for it right now (didn't want to muck around with setting up write replicas off the bat), so it might be getting overloaded",
+      "time": "10:58",
+      "timestamp": "1693331916.574959",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I wonder if there are too many connections for the NLB to handle. That would also cause ECONNREFUSED",
+      "time": "10:58",
+      "timestamp": "1693331922.381479",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "haha that would be crazy, but I'll check -- if you're following along on your own, the cluster is deployed under instabase-dev EKS, called ib-ci-services",
+      "time": "10:59",
+      "timestamp": "1693331969.341429",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Each test run should really only open about 10 connections. Probably less.",
+      "time": "10:59",
+      "timestamp": "1693331982.943109",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "NLB is k8s-testserv-sqlserve-040e2172ee-438ad12c631a903c.elb.us-east-2.amazonaws.com (http://k8s-testserv-sqlserve-040e2172ee-438ad12c631a903c.elb.us-east-2.amazonaws.com)",
+      "time": "10:59",
+      "timestamp": "1693331984.985319",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Yeah, and NLB should be able to handle a ton of connections",
+      "time": "11:00",
+      "timestamp": "1693332003.932799",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yep",
+      "time": "11:00",
+      "timestamp": "1693332010.094999",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Also no CPU limits on any of the pods, so any CPU throttling hypothetically should come down to host resource exhaustion, which also seems unlikely since we have 8 vcpus",
+      "time": "11:00",
+      "timestamp": "1693332057.307839",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, I don't think that's it",
+      "time": "11:01",
+      "timestamp": "1693332072.445099",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "sqlserver is also failing readiness checks though",
+      "time": "11:01",
+      "timestamp": "1693332099.462189",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@mfichman have you seen anything like this error pop up before in your prior testing?\n\n```Error: 17300, Severity: 16, State: 1. (Params:). The error is printed in terse mode because there was error during formatting. Tracing, ETW, notifications etc are skipped.\nFailed to start system task System Task```",
+      "time": "11:02",
+      "timestamp": "1693332157.037039",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "the pod should have cap_ptrace, so I wouldn't expect that to be an issue",
+      "time": "11:02",
+      "timestamp": "1693332174.739259",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "oop looks like it might be sqlserver preventing OOMs",
+      "time": "11:05",
+      "timestamp": "1693332301.055129",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "even weirder, looks like there are a bunch of processes starting and then just going to sleep",
+      "time": "11:25",
+      "timestamp": "1693333511.257379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, I'm back (had to do school pickup).",
+      "time": "12:04",
+      "timestamp": "1693335899.903899",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "haha no sweat, mostly rubber ducking",
+      "time": "12:05",
+      "timestamp": "1693335917.875389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The sleeping processes might be normal",
+      "time": "12:05",
+      "timestamp": "1693335920.097489",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I had to reboot the pod to get a sql connection (was refusing even on localhost), and bumped memory to 8Gi",
+      "time": "12:05",
+      "timestamp": "1693335944.342679",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "afaict it should be due to either insufficient memory (unlikely since we had 4Gi previously, which was well over the reported usage), or we're exhausting our connection count",
+      "time": "12:06",
+      "timestamp": "1693335988.623969",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-08-29.json",
+    "message_count": 29,
+    "start_time": "1693331609.657039",
+    "end_time": "1693335988.623969",
+    "is_thread": true
+  }
+}

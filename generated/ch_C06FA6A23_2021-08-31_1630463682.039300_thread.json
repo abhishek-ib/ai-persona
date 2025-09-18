@@ -1,0 +1,238 @@
+{
+  "id": "ch_C06FA6A23_2021-08-31_1630463682.039300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Aaron Vontell",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Aaron Vontell and @lydia",
+      "time": "19:34",
+      "timestamp": "1630463682.039300",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "this is a deadlock issue that I had reported long time ago",
+      "time": "19:34",
+      "timestamp": "1630463696.039500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "we could have potentially hit this?",
+      "time": "19:35",
+      "timestamp": "1630463706.039700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "which is why we don’t actually process any requests?",
+      "time": "19:35",
+      "timestamp": "1630463715.039900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh interesting!",
+      "time": "19:35",
+      "timestamp": "1630463752.040100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "would this happen in all the pods over time?",
+      "time": "19:35",
+      "timestamp": "1630463757.040300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I think it happened in many pods except for may be 3-4 which were the ones that were successfully processing requests",
+      "time": "19:36",
+      "timestamp": "1630463786.040500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "the other ones could have had the request just sit in the queue and as a result we never saw any logs",
+      "time": "19:36",
+      "timestamp": "1630463803.040900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "but, this is a very very wild conjecture",
+      "time": "19:37",
+      "timestamp": "1630463825.041300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@shaunak you mentioned using a context but I don’t think that solves the issue because every exception handler hear also makes sure to release the lock. Usually this doesn’t seem to be a locking issue but rather that it just takes a very very long time for file service to finish.",
+      "time": "19:37",
+      "timestamp": "1630463867.042800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "kk Aaron also says there are no logs for model runs, just for model loads, so I think if all the models are loaded into memory, there would be no logs.",
+      "time": "19:37",
+      "timestamp": "1630463879.043200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "How much memory does each pod have?",
+      "time": "19:38",
+      "timestamp": "1630463885.043400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "(Re my message I will still look into whether it is a locking issue)",
+      "time": "19:38",
+      "timestamp": "1630463902.044100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "got it — but why were there only 3 pods processing the requests",
+      "time": "19:39",
+      "timestamp": "1630463997.044300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh were there? how do you know?",
+      "time": "19:40",
+      "timestamp": "1630464012.044500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I did not see any other pods actually process the reqest",
+      "time": "19:40",
+      "timestamp": "1630464012.044700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "is there a per pod view you can see in GCP? i’m wondering how you get all these pod stats!",
+      "time": "19:40",
+      "timestamp": "1630464027.044900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "yeah — I was clicking on each of the individual pods",
+      "time": "19:40",
+      "timestamp": "1630464047.045100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "to see whether there were any spikes in CPU usage",
+      "time": "19:40",
+      "timestamp": "1630464058.045300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "lol so manual",
+      "time": "19:42",
+      "timestamp": "1630464138.045500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "lol, trying to find out a simpler way to do this :joy:",
+      "time": "19:48",
+      "timestamp": "1630464491.045700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "if you look at this graph (https://instabase.com/grafana/d/a164a7f0339f99e89cea5cb47e9be617/kubernetes-compute-resources-workload?orgId=1&refresh=10s&var-datasource=1.+Victoriametrics&var-cluster=&var-namespace=instabase-prod&var-workload=deployment-model-service&var-type=deployment&from=now-6h&to=now-1h)",
+      "time": "19:49",
+      "timestamp": "1630464546.045900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "it shows that there were at least 4 pods that were not processing any requests",
+      "time": "19:49",
+      "timestamp": "1630464558.046100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "you can click on the pod name to just focus on the pod",
+      "time": "19:49",
+      "timestamp": "1630464589.046300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "how do you tell that?",
+      "time": "19:50",
+      "timestamp": "1630464608.046500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "from cpu usage?",
+      "time": "19:50",
+      "timestamp": "1630464626.046700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "yeah — the CPU usage spikes up when requests are received by the pods",
+      "time": "19:50",
+      "timestamp": "1630464657.046900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-08-31.json",
+    "message_count": 27,
+    "start_time": "1630463682.039300",
+    "end_time": "1630464657.046900",
+    "is_thread": true
+  }
+}

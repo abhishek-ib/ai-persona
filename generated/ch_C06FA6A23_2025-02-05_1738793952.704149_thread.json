@@ -1,0 +1,471 @@
+{
+  "id": "ch_C06FA6A23_2025-02-05_1738793952.704149_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "jtau",
+    "Cody Boggs",
+    "Jet",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "@jtau I’m trying to download my data from dogfood.instabase.com (http://dogfood.instabase.com) but failed. Is there a way to convert Dogfood IB S3 into a standard S3 so we can mount it to another environment?",
+      "time": "14:19",
+      "timestamp": "1738793952.704149",
+      "is_reply": false
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "@Cody Boggs you mentioned we can leave the cloud storage buckets in place for dogfood right?",
+      "time": "14:20",
+      "timestamp": "1738794059.692139",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I believe so, as long as they're not tied to K8s PVs or something like that",
+      "time": "14:21",
+      "timestamp": "1738794095.995359",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "I think they’re just s3 bucket  with different prefix",
+      "time": "14:22",
+      "timestamp": "1738794126.951579",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "",
+      "time": "14:23",
+      "timestamp": "1738794210.648309",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah, you'll never be able to zip the gigantic bucket from our Zip API. :joy:",
+      "time": "14:24",
+      "timestamp": "1738794252.294389",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Can we just remount this bucket in aihub sandbox?",
+      "time": "14:24",
+      "timestamp": "1738794278.449679",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "i think either we can mount it or have access directly  in AWS, i think i don't have this access yet.",
+      "time": "14:24",
+      "timestamp": "1738794279.378389",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "@Cody Boggs do you know this bucket is in which AWS account?",
+      "time": "14:31",
+      "timestamp": "1738794662.328089",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Looks like `instabase / 083423824311`",
+      "time": "14:33",
+      "timestamp": "1738794783.803669",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(ie: root account for our AWS org)",
+      "time": "14:33",
+      "timestamp": "1738794797.295509",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "btw i think this bucket has KMS enabled also? we need to also consider this when remount",
+      "time": "14:33",
+      "timestamp": "1738794812.579299",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "yeah i don't have access to the root account.",
+      "time": "14:33",
+      "timestamp": "1738794829.763009",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea not many do :grimacing:",
+      "time": "14:33",
+      "timestamp": "1738794836.852879",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I think I can add a bucket policy to allow for a transfer of data to an `instabase-dev` bucket if you have one ready",
+      "time": "14:36",
+      "timestamp": "1738794970.961979",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Fortunately the AWS CLI allows for cross-bucket syncing without it having to sit in any intermediate location",
+      "time": "14:36",
+      "timestamp": "1738794996.734369",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "i don't have a  `instabase-dev` bucket:sweat_smile: and i  have limited read access , No write access to the instabase-dev",
+      "time": "14:37",
+      "timestamp": "1738795045.504749",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Sorry I should clarify lol\nI mean if there is already a bucket mounted to the 24.07 sandbox we're using to replace dogfood-uat, we can use that",
+      "time": "14:38",
+      "timestamp": "1738795096.181749",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh wait - I missed the comment about it being a shared bucket with distinct prefixes",
+      "time": "14:39",
+      "timestamp": "1738795147.955499",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Lemme see if I can find where to move from/to and if it's the same bucket, that should be easy enough",
+      "time": "14:39",
+      "timestamp": "1738795161.582679",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@Jet can you paste the prefix string in here?\nJust so I don't have to typo it 174718 times. :smile:",
+      "time": "14:39",
+      "timestamp": "1738795189.341469",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "2545e868-323c-49e9-a719-e75c691c5de1",
+      "time": "14:40",
+      "timestamp": "1738795249.302889",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "is it very complex task? i believe other people will wanted to do the same things.",
+      "time": "14:41",
+      "timestamp": "1738795279.923169",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Shouldn't be complex, just likely slow - but I need to check where everything lives first.\nI also don't actually know how s3 mounts in our product work - I'm assuming it's something a bit more sophisticated than \"I found a prefix, so I showed it\" :joy:",
+      "time": "14:53",
+      "timestamp": "1738796026.477969",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh shoot you said they're encrypted too\nYea that'll be a trickier proposition, I suspect",
+      "time": "14:55",
+      "timestamp": "1738796107.493749",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@Jet do you know how we partition this data up in S3? ie: is a single prefix mapped to an entire installation? Or is it a single user? One flow? etc.",
+      "time": "14:55",
+      "timestamp": "1738796152.612709",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "I think it’s a single prefix per repo. So, if each user has three repo, they probably have three prefixes.",
+      "time": "14:57",
+      "timestamp": "1738796220.769769",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "",
+      "time": "14:57",
+      "timestamp": "1738796234.114759",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "another drive but different prefix",
+      "time": "14:57",
+      "timestamp": "1738796239.138849",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ok\nAnd in this case \"repo\" is just an abitrary organizational object in our product yea?\n\n(only because we have 'git repos', 'ecr repos', etc. :joy:)",
+      "time": "14:57",
+      "timestamp": "1738796278.436859",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "",
+      "time": "14:58",
+      "timestamp": "1738796316.064439",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "repo is subspaces",
+      "time": "14:58",
+      "timestamp": "1738796338.539209",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Gotcha\nOk, sooooo if I were to manually copy a file into the prefix for one of your repos on the release-24-07 sandbox, it should show up in the file explorer in IB yea/",
+      "time": "14:59",
+      "timestamp": "1738796364.619639",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "that's correct, it's just a copy operation from another s3 to another s3.",
+      "time": "15:00",
+      "timestamp": "1738796401.687479",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "you can add drives(s3) too",
+      "time": "15:00",
+      "timestamp": "1738796429.888579",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "24-07 sandbox will be deprecate in the future though:sweat_smile:",
+      "time": "15:01",
+      "timestamp": "1738796491.987669",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "are you able to copy everything into another s3 bucket ,  so people can mount it using the  Access key & secret access key",
+      "time": "15:02",
+      "timestamp": "1738796568.855979",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Jet do you have stuff specifically in dogfood + UAT that you need? Would you data happen to be in prod?",
+      "time": "15:05",
+      "timestamp": "1738796748.955069",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "Not all of them. For example, when I troubleshoot a ticket, I save the data in Dogfood so engineers can easily reproduce the issue and test new fixes(new code). since dogfood pull the  latest code from master every 2 hour.",
+      "time": "15:07",
+      "timestamp": "1738796867.299049",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "and datas can help troubleshoot new tickets when they come in. I started building the data a year ago, and it has been pretty helpful for troubleshooting.:sweat_smile:",
+      "time": "15:11",
+      "timestamp": "1738797101.034839",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "The sandbox should stick around, actually, which I'll explain at the bottom of this post just so I don't muddy the waters - but assume it's going to stick around for a whiiiile. :smile:\n\nThat said, I would very much prefer that we get the data moved out of the org owner account and over to `instabase-dev` instead, or perhaps `instabase-sandbox` if we think that's more appropriate. It would relieve some concerns and issues:\n1. Devs would be able to access it, even if only in a read-only fashion\n2. Reduces cross-account pollution and increases data segregation posture\n3. Reduces our touch-points on the Organization Owner account in AWS - `instabase` - which is understandably an account we shouldn't tinker with if we can help it. :joy:\nThat said, this bucket currently holds some ~72 TB, so a migration will be... slow. :upside_down_face:\n\n---\nSo as for the sandbox's life span, going forward we'll end up with a branch `ibplatform` that will hold all of the legacy bits for the enterprise branches we have today. 24.01 and 24.04 enterprise are going to roll off the support schedule as usual, but 24.07 will be the basis for the new `ibplatform` branch.\n\nSo the sandbox itself might need to be re-launched at some point with a more accurate name, but it's not a huge deal if it just stays `release-24-07` in ICC since we can just update the branch it builds and deploys from. :+1: Tribal knowledge will be minimal, as it'll be the only one with a wonky name, and if it really causes us grief we can create a new one and do this migration of tests and such again later. :slightly_smiling_face:",
+      "time": "15:22",
+      "timestamp": "1738797759.343139",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "For now - @Jet, can you clarify for me which prefix you want data _from_, and which prefix you want it moved _to_?\n\nOr rather can you give me:\n• Source Prefix\n    ◦ subdirectories/prefixes you want included\n• Destination Prefix",
+      "time": "15:25",
+      "timestamp": "1738797925.086609",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "1.\tThere is no need to migrate to different prefix as long as we can read and download the file directly from the AWS S3 console.\n2.\t`instabase-sandbox` would be good. I have AWS `ReadOnlyAccess` to this AWS account, *but I have a question: If you only have read access, you can’t download the file, right? That would be the most important one.*",
+      "time": "15:27",
+      "timestamp": "1738798075.802769",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "This XML file does not appear to have any style information associated with it. The document tree is shown below.\n<Error>\n<Code>AccessDenied</Code>\n<Message>User: arn:aws:sts::591759939757:assumed-role/AWSReservedSSO_aws-readOnlyAccess_5bf89a1dd13d52c5/<mailto:jet.zhuang@instabase.com|jet.zhuang@instabase.com> is not authorized to perform: kms:Decrypt on resource: arn:aws:kms:us-east-2:591759939757:key/mrk-a0029f1cd2dd412eb0a3a4fb214ab9c7 because no identity-based policy allows the kms:Decrypt action</Message>\n<RequestId>KX6T39B3HEV47KQ6</RequestId>\n<HostId>AzawYOhQ7bS1RiF7UxxSufYCS2UKx1O/HGNX6Zc9jHWolBLXQMdVpWP05ocjSit8oB2G1UkJXc4=</HostId>\n</Error>",
+      "time": "15:30",
+      "timestamp": "1738798207.742789",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "S3 access is indeed chopped up into a whole load of different permissions, so yea 'read-only' isn't quite descriptive :grimacing:\n\nAs far as reading from the AWS console, I can't do much there, as you'd need to get some elevated privileges from IT to even see the buckets there, let alone dig into this one and get data from it - which seems like a headache for you, and also the access will be time-limited so if you need it to be ongoing that won't work out",
+      "time": "15:30",
+      "timestamp": "1738798221.138889",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "i got this error in instabase-sandbox when i try to download a file from a random s3 bucket.",
+      "time": "15:30",
+      "timestamp": "1738798228.046829",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea that makes sense",
+      "time": "15:30",
+      "timestamp": "1738798246.795109",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I think it will just be easiest (and get you unblocked fastest) if I can just shuffle the data from your dogfood-uat repos to the appropriate prefix(es) for matching repos in release-24-07 sandbox",
+      "time": "15:31",
+      "timestamp": "1738798297.884099",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": ":pensive:Yeah, getting permission is the hardest part. I only recently got read access. Let me create an account on 24.07 and provide you with the prefix.",
+      "time": "15:35",
+      "timestamp": "1738798528.368119",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": ":sweat_smile: need to wait 10 min",
+      "time": "15:38",
+      "timestamp": "1738798723.932819",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":joy: Been there",
+      "time": "15:51",
+      "timestamp": "1738799487.662239",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "1 sec",
+      "time": "15:51",
+      "timestamp": "1738799494.100929",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "somehow it's more than 10 min, so i resetted the password",
+      "time": "15:51",
+      "timestamp": "1738799516.373139",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "platform.dogfood.instabase.com (http://platform.dogfood.instabase.com) ( Not UAT)\n\nBucket Name: hosted-files-non-prod\n\nPrefix: 2545e868-323c-49e9-a719-e75c691c5de1\n\n\n\nTo\n\n\nrelease-24-07.internal.instabase.com (http://release-24-07.internal.instabase.com)\n\n\nBucket Name: insan-release-24-07-s3-bucket-charmed-scorpion\n\nPrefix: 1e2b5e32-80a7-4df2-a884-e66bad37dbb0",
+      "time": "15:52",
+      "timestamp": "1738799540.033969",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Excellent, I’ll get that started in the morning when I log back in. Had to head out for a school event for my son this evening :+1:",
+      "time": "18:02",
+      "timestamp": "1738807364.267079",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "no rush, thank you!",
+      "time": "18:03",
+      "timestamp": "1738807409.764489",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-02-05.json",
+    "message_count": 56,
+    "start_time": "1738793952.704149",
+    "end_time": "1738807409.764489",
+    "is_thread": true
+  }
+}

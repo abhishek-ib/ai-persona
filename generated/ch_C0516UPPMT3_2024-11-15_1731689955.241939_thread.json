@@ -1,0 +1,191 @@
+{
+  "id": "ch_C0516UPPMT3_2024-11-15_1731689955.241939_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Weiming Wu",
+    "Venkatesh",
+    "Jessica",
+    "Elan Sharony"
+  ],
+  "messages": [
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "Hey Team,\n\nIs there someone who can help me debug validations quickly. I get the error specified in the screenshot for one of the documents but the other two documents, the code works fine.\nI have a `try except` block to catch any errors in the code. I check the console, it says Internal server error. Not sure what's going on.\n\nneed this for a demo to a potential client later today.\n\ncc: @Aditi",
+      "time": "08:59",
+      "timestamp": "1731689955.241939",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@Elan Sharony @Weiming Wu?",
+      "time": "09:01",
+      "timestamp": "1731690082.332189",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Hi Venkatesh, can you provide a link to your project? Also, can you check what the response looks like from the POST `/udfs/run` network request?",
+      "time": "09:03",
+      "timestamp": "1731690217.271359",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "This one:\nhttps://aihub.instabase.com/build/01932dd6-9e80-7a08-8e85-52c4334789a2",
+      "time": "09:04",
+      "timestamp": "1731690242.950939",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "Let me check the response",
+      "time": "09:04",
+      "timestamp": "1731690248.702179",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "`udfs/runs`, I get a 200\n\n`{`\n    `\"udfs\": [`\n        `[`\n            `{`\n                `\"udf_id\": \"4506\",`\n                `\"type\": \"VALIDATIONS\",`\n                `\"name\": \"check_total_assets\",`\n                `\"docs\": [`\n                    `{`\n                        `\"doc_id\": 381736,`\n                        `\"results\": {`\n                            `\"is_valid\": false,`\n                            `\"message\": \"Error: Traceback (most recent call last):\\n  File \\\"/tmp/udf_code/default_executor.py\\\", line 34, in check_total_assets\\n    total_assets_from_crm = re.findall('\\\\d+', total_assets_from_crm)\\n  File \\\"/var/lang/lib/python3.9/re.py\\\", line 241, in findall\\n    return _compile(pattern, flags).findall(string)\\nTypeError: expected string or bytes-like object\\n\",`\n                            `\"alert_level\": \"FAILURE\"`\n                        `},`\n                        `\"log_text\": \"amazoncominc\\nhttps://67377908aafa2ef22233f0ff.mockapi.io/api/v1/get_total_assets/amazoncominc\\n/var/runtime/urllib3/connectionpool.py:1061: InsecureRequestWarning: Unverified HTTPS request is being made to host '67377908aafa2ef22233f0ff.mockapi.io (http://67377908aafa2ef22233f0ff.mockapi.io)'. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/1.26.x/advanced-usage.html#ssl-warnings\\n  warnings.warn(\\nb'[{\\\"total_assets\\\":61128}]'\\nTraceback (most recent call last):\\n  File \\\"/tmp/udf_code/default_executor.py\\\", line 34, in check_total_assets\\n    total_assets_from_crm = re.findall('\\\\d+', total_assets_from_crm)\\n  File \\\"/var/lang/lib/python3.9/re.py\\\", line 241, in findall\\n    return _compile(pattern, flags).findall(string)\\nTypeError: expected string or bytes-like object\\n\\n\",`\n                        `\"stack_trace\": null,`\n                        `\"timestamp\": 1731690304`\n                    `}`\n                `]`\n            `}`\n        `]`\n    `]`\n`}`\n\n`validations/run` I get a 500\n\n`{\"message\": \"Failed to write result: Could not write validaiton result\"}`",
+      "time": "09:06",
+      "timestamp": "1731690362.423419",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "awesome thanks. Do you mind also DM'ing the code you're using for your validations function `check_total_assets` . Just have to set up 1pass on my new computer, so will be quicker to debug this way",
+      "time": "09:08",
+      "timestamp": "1731690524.683999",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "I'm seeing this log in core-platform-service which seems like the returned validation message > 255 chars. Is that accurate?\n\n```2024-11-15T17:05:08.579772802Z stdout F 2024/11/15 17:05:08 ERROR coreplatformservice/aihub/handler.go:2556 -- [INTERNAL]: Could not write validaiton result (Err: Error 1406 (22001): Data too long for column 'message' at row 1)```",
+      "time": "09:11",
+      "timestamp": "1731690678.083399",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "ah ok. yeah I am returning the entire traceback",
+      "time": "09:14",
+      "timestamp": "1731690875.554039",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "Let me shorten that",
+      "time": "09:14",
+      "timestamp": "1731690878.948759",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "yeah works now",
+      "time": "09:15",
+      "timestamp": "1731690910.211969",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Cool yeah that should remove the failures, and then the traceback is likely coming from trying to use the regex module on a bytes string",
+      "time": "09:15",
+      "timestamp": "1731690921.468819",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "However the core problem here is, this did not surface on the logs. If it did, that would have been helpful",
+      "time": "09:15",
+      "timestamp": "1731690930.287419",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Yeah definitely, will create a ticket to give a more clear message that the return value shouldn’t be greater than 255 chars",
+      "time": "09:16",
+      "timestamp": "1731690967.820029",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "Thank you",
+      "time": "09:17",
+      "timestamp": "1731691047.784359",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "@Elan Sharony Would it also be worth it to change the code so that we only keep the first 255 characters for the returned message when we run the UDF? We can include info messages in the UI and documentation, but some people won't notice them and still put in longer messages, and then their app will break.",
+      "time": "09:21",
+      "timestamp": "1731691273.861009",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "@Weiming Wu Suggestion: If we do that, someone in the future will raise an issue saying my message isn't populating entirely :slightly_smiling_face:\n\nI think it's better either to have a restriction on the character limit and call it out explicitly or not have a restriction at all.",
+      "time": "09:23",
+      "timestamp": "1731691389.118179",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "I think it's fine to have issues where people are confused by why the message is too short, because then it shows a limitation, rather than if their app breaks, which implies bugginess",
+      "time": "09:25",
+      "timestamp": "1731691548.024029",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "If we’re able to give them a clear error message for this issue when testing in their build project (before an app is even generated), I think that would be ideal. This issue is happening due to a DB column requirement on the `validation_results` table which is only used in Build, not app runs",
+      "time": "09:30",
+      "timestamp": "1731691833.544939",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "So technically, the UDF should run fine if you went ahead and generated an app",
+      "time": "09:31",
+      "timestamp": "1731691861.366639",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "I still think we should enforce this limit on message length though, since there’s no real benefit to having a validation message > 255 characters",
+      "time": "09:31",
+      "timestamp": "1731691906.023419",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-11-15.json",
+    "message_count": 21,
+    "start_time": "1731689955.241939",
+    "end_time": "1731691906.023419",
+    "is_thread": true
+  }
+}

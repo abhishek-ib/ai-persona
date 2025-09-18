@@ -1,0 +1,238 @@
+{
+  "id": "ch_C08L4K42H9C_2025-05-01_1746126632.845259_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "Sayan",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "following up on the human review bug i saw when working on combine pr, i'm getting it on master as well, i added a new app version + new run and any time i try to edit a human review field or change classification and reextract i get this error, could this be something to do with the migration to ibdoc @prateek.tenkale?",
+      "time": "12:10",
+      "timestamp": "1746126632.845259",
+      "is_reply": false
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "api response:\n```{\n    \"status\": \"ERROR\",\n    \"msg\": \"Manually reviewed status not found.\",\n    \"ib_error\": {\n        \"msg\": \"Manually reviewed status not found.\",\n        \"strace\": \"Traceback (most recent call last)\\nFile \\\"/usr/local/lib/python3.9/site-packages/flask/views.py\\\", line 109, in view\\n\\treturn current_app.ensure_sync(self.dispatch_request)(**kwargs)\\nFile \\\"/usr/local/lib/python3.9/site-packages/flask/views.py\\\", line 190, in dispatch_request\\n\\treturn current_app.ensure_sync(meth)(**kwargs)\\nFile \\\"/instabase-api-server/py/instabase/utils/web/handler_util.py\\\", line 183, in inner_func\\n\\treturn f(*args, **kwargs)\\nFile \\\"/instabase-api-server/py/instabase/utils/oauth2/oauth2.py\\\", line 286, in wrapped_f\\n\\treturn f(*args, **kwargs)\\nFile \\\"/instabase-api-server/py/instabase/api_server_apps/handler/api/v1/flow_correction.py\\\", line 132, in put\\n\\tibocr_builder, _, record_review_payload_by_record, ib_err = correct_results.correct_results(\\nFile \\\"/instabase-api-server/py/instabase/tracing/utils.py\\\", line 321, in wrapped\\n\\tr = func(*args, **kwargs)\\nFile \\\"/instabase-api-server/py/instabase/flow_correction/correct_results.py\\\", line 273, in correct_results\\n\\tibocr_builder, task, record_review_payload_by_record, ib_err = correct_records(\\nFile \\\"/instabase-api-server/py/instabase/tracing/utils.py\\\", line 321, in wrapped\\n\\tr = func(*args, **kwargs)\\nFile \\\"/instabase-api-server/py/instabase/flow_correction/correct_results.py\\\", line 116, in correct_records\\n\\tibdoc, ib_err = modification.modify_ibocr(modification_event,\\nFile \\\"/instabase-api-server/py/instabase/flow_correction/correction_types.py\\\", line 520, in modify_ibocr\\n\\treturn None, ib_error.IBError.create_from_msg(err)\",\n        \"details\": null,\n        \"sys_info\": {\n            \"err\": \"None\",\n            \"strace\": null\n        }\n    }\n}```",
+      "time": "12:10",
+      "timestamp": "1746126644.975519",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Ah okay, that looks like a different error",
+      "time": "12:17",
+      "timestamp": "1746127042.299659",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Gonna eat lunch but will take a look soon",
+      "time": "12:18",
+      "timestamp": "1746127085.298479",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I worked on flow correction, ill also take a look",
+      "time": "12:18",
+      "timestamp": "1746127115.370309",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "It seems the errors are unrelated with my pr (https://github.com/instabase/instabase/pull/69945/files#diff-1bb3a0dd6a187234ad7397df3bcf664ffd7cdb848d1f3fae8a2caffe20454bd8) but feel free to loop me into discussions as well",
+      "time": "12:22",
+      "timestamp": "1746127348.837189",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Yeah this is def related to ibdoc migration",
+      "time": "12:28",
+      "timestamp": "1746127692.741969",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "confirmed bug is on aihub-sandbox as well if u wanted to use that for debugging",
+      "time": "12:28",
+      "timestamp": "1746127727.124229",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Interesting, I haven't been able to reproduce on my projects on aihub-sandbox",
+      "time": "13:18",
+      "timestamp": "1746130716.216479",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Let me try with a more complex project",
+      "time": "13:18",
+      "timestamp": "1746130729.670089",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I'm having trouble reproducing, could you send a link to the project that you're reproducing this on aihub-sandbox?",
+      "time": "13:30",
+      "timestamp": "1746131458.780069",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "I think I was able to find why the bug is happening, will put a PR out to fix soon",
+      "time": "13:34",
+      "timestamp": "1746131662.189989",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "oh sorry i didn't see this before, glad u were able to figure it out!",
+      "time": "14:01",
+      "timestamp": "1746133273.447219",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "@ayesha.ali Can you try rebasing / cherry picking https://github.com/instabase/instabase/pull/70287?",
+      "time": "14:55",
+      "timestamp": "1746136503.954819",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "working for me in general on apps that weren't working before, will try w/ my combine step, but looks good!",
+      "time": "15:23",
+      "timestamp": "1746138226.600149",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Great!",
+      "time": "15:25",
+      "timestamp": "1746138343.237239",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "this might be a separate issue, but i've found that when i re-extract (for example, change a record's class to Other and then back to the original class) i can no longer see provenance?",
+      "time": "15:25",
+      "timestamp": "1746138346.102819",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Hmm that one is interesting, most likely a separate issue?",
+      "time": "15:26",
+      "timestamp": "1746138379.162599",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "But could be related to the ibdoc migration",
+      "time": "15:26",
+      "timestamp": "1746138383.959989",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "yeah i imagine it's probably separate, but wanted to highlight, can make a bug ticket for it if u think it's a bug",
+      "time": "15:26",
+      "timestamp": "1746138408.223589",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Sure, I guess we would need to figure out if 1) this is expected behavior 2) this was caused by the ibdoc migration",
+      "time": "15:28",
+      "timestamp": "1746138485.744719",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Would it be easy for you to checkout this commit and try real quick `465b976f8c2` ?",
+      "time": "15:28",
+      "timestamp": "1746138500.797769",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "This is the commit on master right before I merged the ibdoc migration stuff",
+      "time": "15:28",
+      "timestamp": "1746138527.678739",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "tried it out and yeah not seeing proevnance either so not an ibdoc migration issue",
+      "time": "15:39",
+      "timestamp": "1746139151.448799",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "we can start another thread w/ serena and andy and see what they say",
+      "time": "15:39",
+      "timestamp": "1746139165.679169",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Yeah let’s tag Jack also",
+      "time": "15:39",
+      "timestamp": "1746139198.509459",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Good find though, thanks for checking it",
+      "time": "15:40",
+      "timestamp": "1746139219.202019",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-05-01.json",
+    "message_count": 27,
+    "start_time": "1746126632.845259",
+    "end_time": "1746139219.202019",
+    "is_thread": true
+  }
+}

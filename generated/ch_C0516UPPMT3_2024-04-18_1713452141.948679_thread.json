@@ -1,0 +1,360 @@
+{
+  "id": "ch_C0516UPPMT3_2024-04-18_1713452141.948679_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "joshbronko",
+    "Rakesh",
+    "Vikas Mehta",
+    "Abhishek",
+    "Aayush"
+  ],
+  "messages": [
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Could one help me with a converse object detect digitization that is failing\n\"31fe081b-5b35-4290-a653-f49a89ca618f\"\n\n582d294e1161c06e",
+      "time": "07:55",
+      "timestamp": "1713452141.948679",
+      "is_reply": false
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "cc @Abhishek",
+      "time": "07:59",
+      "timestamp": "1713452353.038389",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "form recognizer was hitting CB in envoy",
+      "time": "07:59",
+      "timestamp": "1713452385.249799",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "im resending the files that failed",
+      "time": "07:59",
+      "timestamp": "1713452395.028909",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "The other set worked however i feel FR is not fixed for autoscaling fast enough",
+      "time": "08:04",
+      "timestamp": "1713452697.119299",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Hi Josh\nHow many files and net pages did you drop ? With 24.14, we have more buffer to allow for auto scaling.",
+      "time": "08:05",
+      "timestamp": "1713452702.048079",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "5 files each around 500 pages",
+      "time": "08:05",
+      "timestamp": "1713452714.193749",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Let me see how much did FR scale up.",
+      "time": "08:08",
+      "timestamp": "1713452926.251799",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "So, I see we maxed out already on FR auto scaling and it scaled up all the way here.\n\n@Vikas Mehta @donagh\nNow that we have deadline baesd retries for FR pushed into Prod with 24.14, we still hit OCR errors for FR for this job.\nhttps://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%228J4%22:%7B%22d[…]%22from%22:%22now-6h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1 (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%228J4%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22celery-app-tasks%5C%22%7D%20%7C%3D%20%6031fe081b-5b35-4290-a653-f49a89ca618f%60%20%7C%3D%20%60timed%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%22now-6h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)\n\nUnlike earlier scenarios I do see that FR pods auto scaled all the way to 128 (max FR HPA limit) this time, so its good.\nDo we need to relook at App tasks to FR pods ratio here?\ncc: @Abhishek",
+      "time": "08:26",
+      "timestamp": "1713453981.149339",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "aihub branch has lower minReplicas (16), we had bumped this to 24 earlier (https://github.com/instabase/instabase/blob/master/deployment-configs/environment-patches/saas-advanced-patches/saas-hierarchial-patches/tenant/aihub-prd/autoscaling/autoscaler-ocr-msft-form-recognizer-layout.yml) and got reverted on 4/16 (https://aihub.instabase.com/deployment-manager/configs?targetObject=autoscaler-ocr-msft-form-recognizer-layout&patch=1713329244131). I bumped it up to 24 again.",
+      "time": "17:26",
+      "timestamp": "1713486361.278709",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "backport PR was created, but not merged: https://github.com/instabase/instabase/pull/55905\n\ncc: @Yash Aggarwal",
+      "time": "17:28",
+      "timestamp": "1713486502.898449",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Hi @Vikas Mehta \nI will get the backport merged today. Can I apply temp patch in meantime to get it scaled min to 24 replicas again ?",
+      "time": "19:57",
+      "timestamp": "1713495421.397609",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Let me know when you want me to test again",
+      "time": "19:57",
+      "timestamp": "1713495477.951329",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "@joshbronko please run it again when you get a chance.",
+      "time": "21:02",
+      "timestamp": "1713499361.190769",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "https://aihub.instabase.com/hub/converse/f32aac81-9a13-41c7-bf1c-c6a74b40c93a",
+      "time": "21:04",
+      "timestamp": "1713499444.393019",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "1. \"552398f2-e618-4511-a621-177685478b77\"",
+      "time": "21:04",
+      "timestamp": "1713499462.519779",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Failed on 3 again",
+      "time": "21:12",
+      "timestamp": "1713499936.788019",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "",
+      "time": "21:18",
+      "timestamp": "1713500317.942339",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "tried another project after pods were all spun up",
+      "time": "21:25",
+      "timestamp": "1713500733.330359",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "2 failed",
+      "time": "21:25",
+      "timestamp": "1713500738.329219",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "https://aihub.instabase.com/hub/converse/75ef0baa-4971-4574-955c-12bb51cfc36c",
+      "time": "21:25",
+      "timestamp": "1713500755.529019",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "some context, most pages FR is able to process in <10s, but some requests are taking minutes and in some cases also causing FR container to crash\n\nFR processing time: https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22H97%22:%7B%22d[…]3499300000%22,%22to%22:%221713499904000%22%7D%7D%7D&orgId=1 (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22H97%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22quantile_over_time%281.0,%20%5Cn%20%20%20%20%7Bservice%3D%5C%22ocr-msft-form-recognizer-layout%5C%22,%20container%3D%5C%22envoy-proxy%5C%22%7D%20%5Cn%20%20%20%20%20%20%20%20%7C%3D%20%60syncAnalyze%60%20%5Cn%20%20%20%20%20%20%20%20%7C%20pattern%20%60%3C_%3EHTTP%2F1.1%5C%22%20%3Cstatus%3E%20%3C_%3E%20%3C_%3E%20%3C_%3E%20%3Cduration_ms%3E%20%3C_%3E%60%20%5Cn%20%20%20%20%20%20%20%20%7C%20unwrap%20duration_ms%20%5B$__auto%5D%29%20by%20%28status%29%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22code%22,%22hide%22:false%7D%5D,%22range%22:%7B%22from%22:%221713499300000%22,%22to%22:%221713499904000%22%7D%7D%7D&orgId=1)\n\nFR container restarts: https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22EYt%22:%7B%22d[…]%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1 (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22EYt%22:%7B%22datasource%22:%22victoriametrics%22,%22queries%22:%5B%7B%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22victoriametrics%22%7D,%22exemplar%22:true,%22expr%22:%22sum%20by%20%28pod,%20container%29%20%28increase%28kube_pod_container_status_restarts_total%7Btenant_id%3D%5C%22%5C%22,%20pod%3D~%5C%22.%2Aocr-msft-form-recognizer-layout.%2A%5C%22,%20container%3D~%5C%22ocr-msft-form-recognizer-layout%5C%22%7D%29%5B$__interval%5D%29%20%3E%200%22,%22hide%22:false,%22interval%22:%22%22,%22legendFormat%22:%22Container%20Restarts:%20pod%3D%7B%7Bpod%7D%7D,%20container%3D%7B%7Bcontainer%7D%7D%22,%22refId%22:%22A%22,%22editorMode%22:%22code%22,%22range%22:true,%22instant%22:true%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)",
+      "time": "21:58",
+      "timestamp": "1713502719.340589",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Vikas\nI was looking at Top N dashboard and for the duration I see 100% of CPU cores used across some nodes - does that point to node level throttling ?\nhttps://aihub.instabase.com/grafana/d/E3JLUrynk/top-n?orgId=1&from=1713499492211&to=1713499795448",
+      "time": "21:59",
+      "timestamp": "1713502765.640969",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "Yes, but it shouldn't cause container crash for FR.. also 3m+ processing time is likely due to input",
+      "time": "22:00",
+      "timestamp": "1713502823.766369",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "@Rakesh Do we have any dynamic logic to decide between v3 vs FR? Or are we using FR by default?",
+      "time": "22:26",
+      "timestamp": "1713504399.405539",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "3m+ is a large outlier for 1 request, @Abhishek can you take a look at this to see if a specific page gets high.",
+      "time": "22:30",
+      "timestamp": "1713504621.806219",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "So, if the object detection is enabled, we will use FR - there is some dynamic logic now that if there is only text in the page (no text columns, images or tables in the page) we will natively process that page. Else we will send it to FR.",
+      "time": "22:31",
+      "timestamp": "1713504676.176209",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "@Vikas Mehta\nWhat is difference between latency in Envoy for upstream vs downstream  sections?",
+      "time": "22:31",
+      "timestamp": "1713504697.098829",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "upstream is latency measured for request from envoy-proxy to the endpoint it sends the request to. ignore downstream :slightly_smiling_face:",
+      "time": "22:34",
+      "timestamp": "1713504863.390269",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "for FR server side, envoy's upstream is FR container",
+      "time": "22:34",
+      "timestamp": "1713504899.897079",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Hmm,, so in the envoy upstream I dont see the 3 mins latency but more in downstream log only.\nhttps://aihub.instabase.com/grafana/d/cQZ60C3nz/envoy?orgId=1&refresh=30s&from=now-2h&[…]er-layout&var-pod=All&var-cluster=All&var-short_service=All (https://aihub.instabase.com/grafana/d/cQZ60C3nz/envoy?orgId=1&refresh=30s&from=now-2h&to=now-30m&var-datasource=default&var-label_name=tenant_id&var-label_value=&var-service=service-ocr-msft-form-recognizer-layout&var-pod=All&var-cluster=All&var-short_service=All)",
+      "time": "22:35",
+      "timestamp": "1713504926.651449",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "in upstream section, we only plot avg, downstream has p95",
+      "time": "22:38",
+      "timestamp": "1713505095.933729",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "access logs I used above for processing time is much more accurate and you can see lot more details about the request and the pod that processed that request",
+      "time": "22:39",
+      "timestamp": "1713505184.373559",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": ">  So, if the object detection is enabled, we will use FR - there is some dynamic logic now that if there is only text in the page (no text columns, images or tables in the page) we will natively process that page. Else we will send it to FR.\nI just created a new project under converse app and uploaded 5 files that Josh shared, in my run, FR seems to have gotten far fewer requests",
+      "time": "22:41",
+      "timestamp": "1713505269.780249",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "https://aihub.instabase.com/grafana/d/alJY6yWYy/autoscaling-horizontal-pod-autoscaler-[…]ll&var-model_training_queue=celery-model-training-tasks-gpu (https://aihub.instabase.com/grafana/d/alJY6yWYy/autoscaling-horizontal-pod-autoscaler-temp?from=1713503771123&to=1713504266455&var-datasource=default&var-label_name=tenant_id&orgId=1&var-label_value=&var-namespace=insaprd-use2-aihub-prd-instabase&var-hpa=autoscaler-celery-app-tasks&var-hpa=autoscaler-ocr-msft-form-recognizer-layout&var-hpa=autoscaler-ocr-msft-v3&var-service=service-ocr-msft-form-recognizer-layout&var-service=service-celery-app-tasks&var-service=service-ocr-msft-v3&var-deployment=deployment-ocr-msft-form-recognizer-layout&var-deployment=deployment-celery-app-tasks&var-deployment=deployment-ocr-msft-v3&var-node=All&var-service_base_name=&var-node_pool=All&var-model_training_queue=celery-model-training-tasks-gpu) (v3 got lot more requests).\n\nI tried to do it in my project to see if I can find the pages that failed and see if there is anything interesting about them that is causing high processing time.",
+      "time": "22:43",
+      "timestamp": "1713505393.069279",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Hi Vikas\nDid you enable object detection for your project ?",
+      "time": "22:43",
+      "timestamp": "1713505424.960539",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "was just checking settings.. and I didn't have it on :slightly_smiling_face:",
+      "time": "22:44",
+      "timestamp": "1713505443.706289",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "re-running",
+      "time": "22:44",
+      "timestamp": "1713505446.397829",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": ">  [2024-04-19 04:11:42,121] [ForkPoolWorker-72/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/flow/v3/tasks.py:54} ERROR - [trace_id=7d924ae76d6bf8ba] - job-id=552398f2-e618-4511-a621-177685478b77 task-id=552398f2-e618-4511-a621-177685478b77-Stage2-2-process_files-m-271-281 username=josh.bronikowski.aihubprod2_instabase.com (http://aihubprod2_instabase.com) stage-id=Stage2 Error from execute_step:process_files, error:OCR on image timed out after 300 seconds. Path: ib-internal/josh.bronikowski.aihubprod2_instabase.com/fs/Instabase (http://aihubprod2_instabase.com/fs/Instabase) Drive/aihub/f32aac81-9a13-41c7-bf1c-c6a74b40c93a/documents/out/original/tmp/Guide 2_eJxzL81MSVUw0itISQMAFi4DqQ==_pg271_pg281.pdf\n@Rakesh from this error message, pg271_pg281 means, it was a 10 page pdf?",
+      "time": "22:58",
+      "timestamp": "1713506310.429919",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "looks like we have a multi-page table.. does this mean we can send arbitrary length docs to FR in one request?",
+      "time": "23:01",
+      "timestamp": "1713506468.179509",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek",
+      "user_id": "U01T5NS31NE",
+      "message": "Hey, no we send data to FR at per page image level",
+      "time": "23:02",
+      "timestamp": "1713506534.922549",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "So the error is happening with one of pages with the 10 page chunk there. So each PDF is split into 10 page PDF chunks which run in each task in celery-app-tasks.",
+      "time": "23:19",
+      "timestamp": "1713507589.942059",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-04-18.json",
+    "message_count": 42,
+    "start_time": "1713452141.948679",
+    "end_time": "1713507589.942059",
+    "is_thread": true
+  }
+}

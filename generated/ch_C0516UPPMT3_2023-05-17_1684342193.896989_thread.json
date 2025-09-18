@@ -1,0 +1,142 @@
+{
+  "id": "ch_C0516UPPMT3_2023-05-17_1684342193.896989_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "Weiming Wu",
+    "Elan Sharony"
+  ],
+  "messages": [
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Hi team. I noticed that if you edit a suggested field's prompt, the original suggested field will appear again in the \"Suggested Fields\" dropdown (see image below). Is this expected? For context, we are designing a new way to store the project structure for enterprise build and the answer to this question will help guide how we store fields and whether we keep suggested fields as a separate entity in chats.json/DB",
+      "time": "09:49",
+      "timestamp": "1684342193.896989",
+      "is_reply": false
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "when you edit, are you changing the field name too?",
+      "time": "09:54",
+      "timestamp": "1684342487.002249",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "I kept the label the same but changed the prompt by adding an extra letter. In doing so, \"Previous Address\" now appears in my fields list and suggested fields dropdown",
+      "time": "09:56",
+      "timestamp": "1684342596.197959",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "I can see why it behaves like this because technically the \"suggested\" prompt for Previous Address is no longer used. But just wanted to make sure it's intended",
+      "time": "09:57",
+      "timestamp": "1684342634.078839",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "@Arjun @Weiming Wu can you help confirm the behavior here and make a ticket if needed?",
+      "time": "10:16",
+      "timestamp": "1684343783.502979",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "It's intended. We're only matching suggested fields based on the field name, and we don't remove a field from the stored suggested fields list when the user creates a field with it.",
+      "time": "10:33",
+      "timestamp": "1684344802.104769",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "what happens when someone clicks on the suggested field again? do we detect for duplicate?",
+      "time": "10:35",
+      "timestamp": "1684344910.653329",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Yeah if I attempt to pull in Previous Address again it says the label already exists:",
+      "time": "10:37",
+      "timestamp": "1684345050.003529",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Oh I made a small error in the last comment. We match on prompts. I think we detect duplicates for both prompts and field names",
+      "time": "10:37",
+      "timestamp": "1684345051.505769",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "Makes sense",
+      "time": "10:37",
+      "timestamp": "1684345065.780839",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "We were debating moving all fields into a DB table with a column \"suggested\" that would be enabled for those starter fields. The main blocker for this approach would be our inability to repopulate the original suggested prompt if a user makes an edit",
+      "time": "10:38",
+      "timestamp": "1684345133.862429",
+      "is_reply": true
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "So given this is intended functionality (which makes sense), I think it's best to keep suggested fields stored separately",
+      "time": "10:39",
+      "timestamp": "1684345152.542739",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "I can say that I originally made the behavior like this because of these reasons:\n1. We could suggest fields to keep the suggested fields list constantly filled with good suggestions, but...\n2. We don't want to get field suggestions too often, because it's both costly and often unnecessary\n3. We could try to suggest fields whenever we find that the suggested fields list is getting small (<5 items remaining), but...\n4. Then in the case where it's a very simple documents where there are only 6 fields, when we suggest and autopopulate 5 fields, the suggested fields list will have 1 field left, which triggers a call to suggest fields every time we look at something in the class\n5. Also I worried about if we called fields_suggest too often, we end up with essentially duplicate fields. In Elan's example, if \"Email\" is already a field, we might get \"Email Address\" in future suggestions, which isn't helpful either\nWhich is why we ended up with the \"one fields_suggest call on first upload and use that list forever\" behavior that we have now",
+      "time": "10:46",
+      "timestamp": "1684345578.285969",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "as a quick fix, can we just remove duplicated suggested fields if that field name already exists?",
+      "time": "10:47",
+      "timestamp": "1684345635.440199",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Yea that should be very easy",
+      "time": "10:48",
+      "timestamp": "1684345686.698769",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-05-17.json",
+    "message_count": 15,
+    "start_time": "1684342193.896989",
+    "end_time": "1684345686.698769",
+    "is_thread": true
+  }
+}

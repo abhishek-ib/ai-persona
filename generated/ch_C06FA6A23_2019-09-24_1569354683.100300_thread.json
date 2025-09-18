@@ -1,0 +1,175 @@
+{
+  "id": "ch_C06FA6A23_2019-09-24_1569354683.100300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "Aaron Vontell",
+    "dlluncor",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Is there a way to force build a specific proto? The git diff approach consistently fails for me :confused: (always saying there are no changes when a `git diff` clearly shows changes in that file)",
+      "time": "12:51",
+      "timestamp": "1569354683.100300",
+      "is_reply": false
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "use `FAST=false` @Aaron Vontell",
+      "time": "12:52",
+      "timestamp": "1569354725.100400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "and just use the general command. it rebuilds everything.",
+      "time": "12:52",
+      "timestamp": "1569354734.100600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I do that but then it makes my PR have changes for all protos because of a grpc change",
+      "time": "12:53",
+      "timestamp": "1569354807.100800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I suppose I will just skip checking in those files though",
+      "time": "12:53",
+      "timestamp": "1569354822.101000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yea. or use `git checkout` to revert those files.",
+      "time": "12:54",
+      "timestamp": "1569354879.101200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "albeit i’d be curious as to why the git diff approach fails.",
+      "time": "12:54",
+      "timestamp": "1569354895.101400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "happy to help debug if you want.",
+      "time": "12:55",
+      "timestamp": "1569354910.101600",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "@dlluncor might have context here too",
+      "time": "12:56",
+      "timestamp": "1569354985.101800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "@Chetan could you help with the git diff change, it uses this code: https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/src/py/helpers/paths.py#L60",
+      "time": "12:56",
+      "timestamp": "1569354992.102000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "and that’s called by build_protos.py: https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/src/py/build_protos.py#L148",
+      "time": "12:57",
+      "timestamp": "1569355048.102200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i wonder if the master… change resulted in the build_protos not working as expected @Chetan: https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/src/py/helpers/paths.py#L65",
+      "time": "12:58",
+      "timestamp": "1569355095.102400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "aaah didn’t realize that code used this.",
+      "time": "12:58",
+      "timestamp": "1569355115.102600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "in that case you need to `git add` the proto changes for them to be picked up @Aaron Vontell @dlluncor",
+      "time": "12:58",
+      "timestamp": "1569355128.102800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "any chance we can make it so we don’t need the “git add”?",
+      "time": "12:59",
+      "timestamp": "1569355166.103500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i think it will trip people up to have to do that — that’s not part of my normal workflow either. Usually I diff the files, then run “make build-protos” and then will do git commit -a -m",
+      "time": "12:59",
+      "timestamp": "1569355190.104100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yea — i can create a PR reverting that. i’ll separate that function for build_protos vs test-changes.",
+      "time": "12:59",
+      "timestamp": "1569355196.104400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "correction: it needs to be commited actually for `git diff master...` to pick it up",
+      "time": "13:36",
+      "timestamp": "1569357364.110100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "sent you a PR @dlluncor",
+      "time": "13:36",
+      "timestamp": "1569357370.110300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-09-24.json",
+    "message_count": 19,
+    "start_time": "1569354683.100300",
+    "end_time": "1569357370.110300",
+    "is_thread": true
+  }
+}

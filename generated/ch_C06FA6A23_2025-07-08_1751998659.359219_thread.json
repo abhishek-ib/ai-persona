@@ -1,0 +1,54 @@
+{
+  "id": "ch_C06FA6A23_2025-07-08_1751998659.359219_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "astpierre",
+    "mfichman",
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "<!channel> *Request for Critical Information*\n\nI would like to know what our *critical* Jenkins pipelines are on the *build/deploy/release* path (not unit tests, pre-merge tests, or the like), and where they are defined in our codebase. These are pipelines used by SaaS to build/deploy/release our software. If you know or are familiar with these pipelines, please reach out to me directly. I have my own list, but I want to cross-check it. Thank you!\n\ncc @Ashish / @Anant",
+      "time": "11:17",
+      "timestamp": "1751998659.359219",
+      "is_reply": false
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "will reach out!",
+      "time": "11:23",
+      "timestamp": "1751999026.602889",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Entry point for stack deployment:\nhttps://prod.jenkins.instabase.com/job/deploy-saas-aws\nPipeline script: `tools/releasetools/jenkins/pipelines/provision-saas-v0.groovy`\n\nFrom a recent run, can click View pipeline with Grafana (https://grafana.infra.instabase.com/explore?orgId=1&left=%7B%22datasource%22:%22tempo%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22tempo%22,%22uid%22:%22tempo%22%7D,%22queryType%22:%22traceql%22,%22query%22:%22cdf7974bd1d26b7c565d4b1ed8e61bd0%22%7D%5D,%22range%22:%7B%22from%22:%221751944027243%22,%22to%22:%221751945227243%22%7D%7D) and you can see the full trace for that run, including child jobs / parallel stage executions / etc.\n\nAlso here's a hack query that at least gives the distinct list of span names that look like they are build stages of one sort or another, though the dimensionality is much less (by necessity):\nhttps://grafana.infra.instabase.com/explore?schemaVersion=1&panes=%7B%22l8a%22:%7B%22datas[…]752007694199%22,%22from%22:%221751834894199%22%7D%7D%7D (https://grafana.infra.instabase.com/explore?schemaVersion=1&panes=%7B%22l8a%22:%7B%22datasource%22:%22prometheus%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22sum%20by%20%28span_name%29%20%28%5Cn%20%20last_over_time%28%5Cn%20%20%20%20traces_spanmetrics_calls_total%7B%5Cn%20%20%20%20%20%20ib_stack_tenant_id%20%3D%20%5C%22aihub-eu-df%5C%22,%5Cn%20%20%20%20%20%20span_name%20%3D~%20%5C%22.%2A%5BbB%5Duild.%2B%5C%22%5Cn%20%20%20%20%7D%5B$__range%5D%5Cn%20%20%29%5Cn%29%22,%22range%22:false,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22prometheus%22%7D,%22editorMode%22:%22code%22,%22legendFormat%22:%22__auto%22,%22format%22:%22table%22,%22exemplar%22:false%7D%5D,%22range%22:%7B%22to%22:%221752007694199%22,%22from%22:%221751834894199%22%7D%7D%7D)",
+      "time": "13:50",
+      "timestamp": "1752007847.716719",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "(not likely an exhaustive list in either case, but the trace should be pretty all-encompassing. Metrics are trickier to keep correlated to a single run, but easier to query)",
+      "time": "13:51",
+      "timestamp": "1752007886.052279",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-07-08.json",
+    "message_count": 4,
+    "start_time": "1751998659.359219",
+    "end_time": "1752007886.052279",
+    "is_thread": true
+  }
+}

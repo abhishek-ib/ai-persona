@@ -1,0 +1,158 @@
+{
+  "id": "ch_C06FA6A23_2020-01-15_1579119194.087000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Aaron Vontell",
+    "dlluncor",
+    "john"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "UDF’s last step it to make a call to this functions, meaning that any UDF that does not return a string (in this case of this bug it was a dict), it will throw an error for text.encode",
+      "time": "12:13",
+      "timestamp": "1579119194.087000",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Granted it is more of a user error that a string is not being returned since a bytes(dict) is not a great return object, but in this case it was a gen-doc type approach, so the result was never used",
+      "time": "12:13",
+      "timestamp": "1579119233.087200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "hey @Aaron Vontell — not sure if I understand. In both cases only Text or bytes should be allowed, for PY2 and PY3 ya?",
+      "time": "12:17",
+      "timestamp": "1579119448.087400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "That would be preferred, but also dangerous, I have no idea how many call sites allow something other than a text to get passed into that function",
+      "time": "12:18",
+      "timestamp": "1579119504.087600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "It’s more of our question of what our philosophy is around “we should restrict things to be what we want while breaking customer UDFs” vs “let’s be impose less restrictions for the purpose of backwards compatability”",
+      "time": "12:19",
+      "timestamp": "1579119575.087800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "hm — not sure if I understand. My understanding is that you can pass in a string (Text) or bytes. What other valid input type is there?",
+      "time": "12:19",
+      "timestamp": "1579119585.088000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Oh in py2 if you passed in a dictionary, it would reach bytes(dict), which is a valid call",
+      "time": "12:20",
+      "timestamp": "1579119601.088200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "does or PY2 implementation support any other types?",
+      "time": "12:20",
+      "timestamp": "1579119604.088400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "But if you pass a dict into this function in py3, it reaches .encode(), which fails",
+      "time": "12:20",
+      "timestamp": "1579119622.088700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "oh fascinating — i never intended for a dict to work",
+      "time": "12:20",
+      "timestamp": "1579119637.089000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "That’s what I suspected XD",
+      "time": "12:20",
+      "timestamp": "1579119650.089200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "hence the type Union[Text, bytes] :slightly_smiling_face:",
+      "time": "12:21",
+      "timestamp": "1579119664.089400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "if we really need to we can create that escape hatch — but it’s not ideal really since any object should be converted to string or bytes before being passed to this fn",
+      "time": "12:23",
+      "timestamp": "1579119783.089700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "yeah - I suppose we will just need to mention the user error if we see this in the wild",
+      "time": "12:23",
+      "timestamp": "1579119802.089900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "sounds good — will keep it noted fyi @john to take note as well if it pops up as a Support Request for people who upgrade to PY3",
+      "time": "12:36",
+      "timestamp": "1579120600.090200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@john the error will surface as something along the lines of `type does not have method 'encode'` and will happen when Flow UDFs are involved",
+      "time": "12:52",
+      "timestamp": "1579121561.090400",
+      "is_reply": true
+    },
+    {
+      "sender": "john",
+      "user_id": "UGJ1TQ1JM",
+      "message": "interesting - I'll have to find a good place to note this! Thanks for the FYI @dlluncor @Aaron Vontell",
+      "time": "13:13",
+      "timestamp": "1579122805.090600",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-01-15.json",
+    "message_count": 17,
+    "start_time": "1579119194.087000",
+    "end_time": "1579122805.090600",
+    "is_thread": true
+  }
+}

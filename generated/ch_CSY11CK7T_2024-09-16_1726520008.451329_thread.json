@@ -1,0 +1,318 @@
+{
+  "id": "ch_CSY11CK7T_2024-09-16_1726520008.451329_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "commercial org creation in my PR failed (https://github.com/instabase/instabase/actions/runs/10857886023/job/30217942036?pr=62605) because of a Metronome error (see error message in thread)\n\n@Xindi Xu should we fail the CI run and not run the Cypress tests in this case?",
+      "time": "13:53",
+      "timestamp": "1726520008.451329",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "```\"Uncaught exception in webserver while handling request: Error=(409, '{\"message\":\"One or more ingest aliases conflict with existing customers.\",\"conflicting_id\":\"a2195db6-e9f7-4617-944a-7215b79e7bf6\",\"conflicting_value\":\"33933494-3efa-484b-9b1e-bff27a39a79c\"}'). Traceback=Traceback (most recent call last):;File \"/instabase-api-server/py/instabase/utils/web/handler_util_v2.py\", line 410, in inner_func;return f(*args, **kwargs);File \"/instabase-api-server/py/instabase/utils/oauth2/oauth2.py\", line 307, in wrapped_f;return f(*args, **kwargs);File \"/instabase-api-server/py/instabase/api_server/handler/api/v2/org.py\", line 527, in post;resp = self._setup_after_org_creation(;File \"/instabase-api-server/py/instabase/api_server/handler/api/v2/org.py\", line 396, in _setup_after_org_creation;_, err_resp = self._setup_metronome(org_info, start_trial);File \"/instabase-api-server/py/instabase/api_server/handler/api/v2/org.py\", line 323, in _setup_metronome;metronome_customer = external_customer_utils.create_metronome_customer(;File \"/instabase-api-server/py/instabase/billing_utils/customer.py\", line 79, in create_metronome_customer;metronome_customer = metronome_client.create_customer(;File \"/instabase-api-server/py/instabase/tracing/utils.py\", line 323, in wrapped;raise error;File \"/instabase-api-server/py/instabase/tracing/utils.py\", line 318, in wrapped;r = func(*args, **kwargs);File \"/instabase-api-server/py/instabase/metronome/client.py\", line 207, in create_customer;raise MetronomeException(resp.status_code, resp.text);instabase.metronome.client.MetronomeException: (409, '{\"message\":\"One or more ingest aliases conflict with existing customers.\",\"conflicting_id\":\"a2195db6-e9f7-4617-944a-7215b79e7bf6\",\"conflicting_value\":\"33933494-3efa-484b-9b1e-bff27a39a79c\"}');\"```",
+      "time": "13:53",
+      "timestamp": "1726520020.090109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "trace id: `8bf2742326c5c8f2` in crafting-cyp.test.instabase.com (http://crafting-cyp.test.instabase.com)",
+      "time": "13:53",
+      "timestamp": "1726520030.255649",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, agreed that we should abort running Cypress completely",
+      "time": "13:56",
+      "timestamp": "1726520211.854799",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @Victor Zeng on the metronome error ^",
+      "time": "13:59",
+      "timestamp": "1726520353.390979",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Looks like a customer already exists for that org? https://app.metronome.com/sandbox/customers/a2195db6-e9f7-4617-944a-7215b79e7bf6/invoices/fcede144-d0f8-51a8-bd2d-19e1195d30ea",
+      "time": "14:00",
+      "timestamp": "1726520418.337379",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Victor Zeng do you know why we had this conflict? I see 2 customers with the same name but different customer ID:\nhttps://app.metronome.com/sandbox/overview?q=a2195db6-e9f7-4617-944a-7215b79e7bf6\nhttps://app.metronome.com/sandbox/overview?q=33933494-3efa-484b-9b1e-bff27a39a79c",
+      "time": "14:00",
+      "timestamp": "1726520422.037579",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Let me connect to the crafting cluster and see what's up.",
+      "time": "14:02",
+      "timestamp": "1726520553.487599",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "i'll look into aborting the action when this setting up user and org failed",
+      "time": "14:03",
+      "timestamp": "1726520628.205759",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Uuuugh. The crafting-cyp cluster is in a different AWS account from all the other sandboxes...",
+      "time": "14:35",
+      "timestamp": "1726522523.623369",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "@sean.donohoe How do I point a sandbox to the crafting-cyp sandbox?",
+      "time": "14:38",
+      "timestamp": "1726522737.472369",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "NVM figgured it out.",
+      "time": "14:39",
+      "timestamp": "1726522787.801259",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Looks like the crafting cypress org is connected to this customer: https://app.metronome.com/sandbox/customers/a2195db6-e9f7-4617-944a-7215b79e7bf6/invoices/fcede144-d0f8-51a8-bd2d-19e1195d30ea",
+      "time": "15:07",
+      "timestamp": "1726524433.790289",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Looks like metronome accidentally created 2 customers for the same org around the same time?",
+      "time": "15:09",
+      "timestamp": "1726524569.795419",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Was there a race trying to create this org?",
+      "time": "15:09",
+      "timestamp": "1726524591.335429",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The first run (https://github.com/instabase/instabase/actions/runs/10857886023/job/30135071801?pr=62605) in github successfully created the org on Sept 13 (which is when this happened). I thought that the endpoint will use an idempotency key to mitigate the race condition :thinking_face:",
+      "time": "15:15",
+      "timestamp": "1726524946.592309",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Gotcha.",
+      "time": "15:16",
+      "timestamp": "1726524963.402599",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I seee what happened.",
+      "time": "15:16",
+      "timestamp": "1726524978.083169",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Idempotency keys only last for about 24 hours or so.",
+      "time": "15:16",
+      "timestamp": "1726524999.236869",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "We just need to archive the old customer from Sep 13.",
+      "time": "15:16",
+      "timestamp": "1726525015.396719",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Both customers were created on Sept 13 tho.",
+      "time": "15:17",
+      "timestamp": "1726525058.392409",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "There's only one customer. Both link to the customer https://app.metronome.com/sandbox/customers/a2195db6-e9f7-4617-944a-7215b79e7bf6",
+      "time": "15:19",
+      "timestamp": "1726525179.972999",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ah, so the create org endpoint will try to setup metronome even if the org existed before this call (so that we can retry if previous call failed). Should we check the account integration table before creating another customer?",
+      "time": "15:20",
+      "timestamp": "1726525222.971909",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Yes.",
+      "time": "15:20",
+      "timestamp": "1726525239.251299",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "That would be ideal.",
+      "time": "15:20",
+      "timestamp": "1726525243.073099",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Do you mean that this customer in Metronome is not linked to the Cypress org in our DB?\nhttps://app.metronome.com/sandbox/customers/a2195db6-e9f7-4617-944a-7215b79e7bf6/invoices/fcede144-d0f8-51a8-bd2d-19e1195d30ea",
+      "time": "15:22",
+      "timestamp": "1726525356.938999",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "That customer is the only customer in Metronome for the org, and it is already linked to the Cypress org in the DB.",
+      "time": "15:23",
+      "timestamp": "1726525414.395379",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "```GET /api/v2/account/cypress-org-62605/account_integrations\n\n{\n    \"stripe\": {\n        \"external_id\": \"cus_QqQo5tA8hY0vnr\",\n        \"name\": \"cypress-org-62605\",\n        \"url\": \"https://dashboard.stripe.com/test/customers/cus_QqQo5tA8hY0vnr\"\n    },\n    \"metronome\": {\n        \"external_id\": \"a2195db6-e9f7-4617-944a-7215b79e7bf6\",\n        \"name\": \"cypress-org-62605\",\n        \"url\": \"https://app.metronome.com/sandbox/customers/a2195db6-e9f7-4617-944a-7215b79e7bf6\"\n    }\n}```",
+      "time": "15:24",
+      "timestamp": "1726525466.467109",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "So the issue is around ingest aliases, which are set to the org id and the account id?",
+      "time": "15:36",
+      "timestamp": "1726526214.396189",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "TLDR,\n\n• Org creation endpoint does not check for an existing metronome customer, instead relying on idempotency keys to avoid duplicate customers. \n• Metronome's idempotency cache has a TTL of 1 day. \n• A customer was created for the org on Sep 14. \n• When we call the create-org endpoint on Sep 16, we try to re-create the metronome customer for the org, resulting in an ingest alias conflict.",
+      "time": "15:40",
+      "timestamp": "1726526410.838499",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Got it!\nThe org and the license are set up correctly. I can create projects without issues.",
+      "time": "15:40",
+      "timestamp": "1726526448.372799",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "This should fix the underlying issue: https://github.com/instabase/instabase/pull/62655",
+      "time": "15:43",
+      "timestamp": "1726526620.869499",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Just need to write tests for it.",
+      "time": "15:43",
+      "timestamp": "1726526624.562029",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Serena Currently, failure to create orgs won't block Cypress tests from running. The org is actually set up correctly. We just need to rerun the tests",
+      "time": "15:43",
+      "timestamp": "1726526627.262849",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ok thanks! is it still useful to not run the Cypress tests if there is a failure to create orgs?",
+      "time": "15:44",
+      "timestamp": "1726526683.943579",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I have a PR (https://github.com/instabase/instabase/pull/62648) to abort Cypress when set up org errors, but it should only be merged with Victor's PR is deployed",
+      "time": "15:45",
+      "timestamp": "1726526711.826009",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "My pr is merged!",
+      "time": "16:52",
+      "timestamp": "1726530759.006969",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-09-16.json",
+    "message_count": 37,
+    "start_time": "1726520008.451329",
+    "end_time": "1726530759.006969",
+    "is_thread": true
+  }
+}

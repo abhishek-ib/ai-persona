@@ -1,0 +1,71 @@
+{
+  "id": "ch_C06FA6A23_2019-10-01_1569962092.181700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Handsome Dave",
+    "dlluncor",
+    "Heymian",
+    "achao"
+  ],
+  "messages": [
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Good morning, y’all! I’m looking for some help with an issue with the Instabase API that SC is having. Apparently when they try to `amend` a file, instead they get a “new” file. This is the code snippet that they thought was applicable:\n```\n#NP2\nAPI_TOKEN = '<xxx>'\nAPI_ROOT = 'https://instabase.apps.edm-hk-np2.ocp.standardchartered.com/api/v1/drives'\n \nWRITE_AUDIT_HEADERS = {\n    'Instabase-API-Args': '{\"type\" : \"file\", \"if_exists\" : \"modify\", \"cursor\":\"-1\",\"mime_type\":\"txt\"}',\n    'Authorization': 'Bearer {0}'.format(API_TOKEN),\n}\n \ndef write_audit_file(write_path, data):\n    resp =  requests.post (http://requests.post)(API_ROOT + write_path, data=data, headers=WRITE_AUDIT_HEADERS, verify=False)\n```\nIt certainly seems to match up with what I can see at https://www.instabase.com/docs/content/apis/filesystem-apis.html#write-content-to-a-file, other than the fact that they’re writing their headers by hand vs. using `json.dumps` like the example code. Any ideas what the issue could be?",
+      "time": "13:34",
+      "timestamp": "1569962092.181700",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Change the cursor from “cursor” = “-1\" to just “cursor” = -1. The int vs string things seems to cause problems.",
+      "time": "13:45",
+      "timestamp": "1569962731.183300",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Do you think that’s worth me opening up a bug in JIRA for our API to either generate an error when passed the wrong data type (my preferred solution), or try to coerce the data passed in to be the correct type (less preferred, leads to weird/confusing bugs down the line)?",
+      "time": "13:48",
+      "timestamp": "1569962933.184000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "validating the data type here makes sense to me — as opposed to giving unexpected behavior. @achao maybe you can do this check here in drive.py?",
+      "time": "14:05",
+      "timestamp": "1569963935.185100",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "yeah sounds good, I can do this now",
+      "time": "14:09",
+      "timestamp": "1569964154.185400",
+      "is_reply": true
+    },
+    {
+      "sender": "Handsome Dave",
+      "user_id": "UKMAJ158V",
+      "message": "Awesome. Thanks to you all.",
+      "time": "14:12",
+      "timestamp": "1569964376.186300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-10-01.json",
+    "message_count": 6,
+    "start_time": "1569962092.181700",
+    "end_time": "1569964376.186300",
+    "is_thread": true
+  }
+}

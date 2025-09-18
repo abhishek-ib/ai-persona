@@ -1,0 +1,225 @@
+{
+  "id": "ch_C0516UPPMT3_2024-11-21_1732206892.547029_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "david.lee",
+    "ayesha.ali",
+    "hannah",
+    "pauline.comising",
+    "Matt Vielkind",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Matt Vielkind",
+      "user_id": "U04HBN6BZRB",
+      "message": "I'm having the same experience as David with Ground Truth values. I recorded a walkthrough of what I'm seeing. In general:\n\n1. Generate Ground Truths for a build project.\n2. Add a field to the build project and deploy a new version.\n3. I can still run evaluations against the old Ground Truth set, but if I want to evaluate the new field I need to update the ground truth values for that field.\n4. The Ground Truth data is labeled as outdated.\n5. After updating the Ground Truth dataset for the version with the new field the Ground Truth values I previously defined are overwritten.\nMaybe I'm not following the right pattern or I'm misinterpreting something?\n\nhttps://instabase.zoom.us/clips/share/A2F3MRZaSUVqWENpbFI0R09MaU01TkUxcFh3AQ",
+      "time": "08:34",
+      "timestamp": "1732206892.547029",
+      "is_reply": false
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "@Serena It seems like it was rerun using v0.1.0. I made some other tweaks in the schema like field names and definitions. I think whatever we can do to preserve continuity in the ground truth dataset and make it resistant to small changes would be ideal - it takes a lot of time & effort to create the initial ground truth dataset which can only be justified if you can use it many times (or at least have it be the base for the following version).",
+      "time": "08:45",
+      "timestamp": "1732207552.589979",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@pauline.comising @ayesha.ali is the logic for preserving field values conditional on something?",
+      "time": "09:17",
+      "timestamp": "1732209447.898059",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@david.lee @Matt Vielkind the intended functionality is to preserve values in the ground truth dataset\n\nwe are aware that it takes a lot of time and effort to create a ground truth set, so this work needs to be preserved and not repeated\n\nso this is a bug that we need to investigate!",
+      "time": "09:57",
+      "timestamp": "1732211834.795109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i see `username=matt.vielkind.aihubprod_instabase.com (http://aihubprod_instabase.com) stage-id=Stage7 step=write_summary_results Previous ground truth run is not completed or reviewed, skip preserving old ground truth values`in the logs (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22sgq%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22celery-app-tasks%5C%22%7D%20%7C%3D%20%60ground%20truth%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%221732194000000%22,%22to%22:%221732207199000%22%7D%7D%7D&orgId=1)!\n\nso this implies that the original ground truth run was not marked as reviewed -> we only preserve your changes if the entire original run was marked as reviewed\n\nclicking “Finish review” or clicking “Mark document as reviewed” for every document should achieve this\n\n@Matt Vielkind in your screen recording, i see that you clicked “Finish review” for the first version of the ground truth set, but the recording doesn’t show the updated status of the ground truth set in the table -> can you confirm whether the first version had a “Ready to use” status after you clicked “Finish review”?",
+      "time": "10:04",
+      "timestamp": "1732212267.701879",
+      "is_reply": true
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "Could you check the same for me @Serena? I marked all documents as well as the dataset itself as reviewed I believee",
+      "time": "10:17",
+      "timestamp": "1732213032.346229",
+      "is_reply": true
+    },
+    {
+      "sender": "Matt Vielkind",
+      "user_id": "U04HBN6BZRB",
+      "message": "@Serena yes, it says \"Ready to Use\". I've tried marking the documents as reviewed before clicking \"Finish Review\". The \"Ground Truth Datasets\" page has the \"Ready to Use\" label next to the dataset. If I change the schema and update the dataset the manual edits I made still get overwritten.",
+      "time": "10:29",
+      "timestamp": "1732213761.245809",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Thank you both for reporting this! As @Serena mentioned this a bug. We know that users spend a lot of time investing in modifying GT edits and they need them to be preserved. We'll get to the root cause of this.",
+      "time": "10:31",
+      "timestamp": "1732213899.278419",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@david.lee i see that your ground truth rerun finished at around 2:55pm PT in the logs (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22sgq%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22celery-app-tasks%5C%22%7D%20%7C%3D%20%60%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%221732125600000%22,%22to%22:%221732143419000%22%7D%7D%7D&orgId=1), but i don’t see the same `Previous ground truth run is not completed or reviewed` message, so your case seems slightly different",
+      "time": "10:36",
+      "timestamp": "1732214202.163889",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "for david's case, the logs (https://aihub.instabase.com/grafana/goto/5oF-UOnHg?orgId=1) show that the edits were correctly retrieved from the original ground truth set, but i'm guessing failed at the correction step, but don't see any failure msgs there, need to investigate more",
+      "time": "10:39",
+      "timestamp": "1732214397.641089",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@ayesha.ali @pauline.comising i made you into org admins on prod, so you should be able to see Matthew’s ground truth datasets (https://aihub.instabase.com/hub/apps/0fedbf07-b579-44d5-bb69-1ef594c29d69/ground-truths) and David’s ground truth datasets (https://aihub.instabase.com/hub/apps/0b9d91c6-c527-431c-9aab-565ed23f41f3/ground-truths)",
+      "time": "10:45",
+      "timestamp": "1732214700.819979",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "> I made some other tweaks in the schema like field names and definitions\n@Serena when you were able to successfully preserve fields, did u tweak field names? I need to verify how the logic determines a field is the same, because if it's by name and serena you didn't change field names but david did, that would explain the different behavior",
+      "time": "10:46",
+      "timestamp": "1732214813.712999",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ahh i just added a field and didn’t change the name of any existing field :disappointed:\n\n@david.lee since your ground truth set is a lot larger, when you have time, can you also make a screen recording of the edits you made that weren’t preserved after rerunning?",
+      "time": "10:55",
+      "timestamp": "1732215313.475969",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "these seem like 2 separate bugs, so i created two tickets and assigned 1 to @pauline.comising, 1 to @ayesha.ali - feel free to switch the two if you’d like!",
+      "time": "11:00",
+      "timestamp": "1732215655.448899",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Thanks, we'll coordinate",
+      "time": "11:01",
+      "timestamp": "1732215690.913269",
+      "is_reply": true
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "@Serena I didn't check the other class names to see if they were too long (from this thread (https://instabase.slack.com/archives/C059K24M35E/p1732140301855059)) :sweat_smile: and have to change another class name. This should be a good experiment to see if the ground truth values are preserved. Would you say that the expected behavior when updating ground truth values is:\n1. Classes with changed names - nothing is saved from the previous ground truth file. All new from the new app run\n2. Classes with unchanged names - all values are saved from the previous ground truth file.\n    a. What happens to fields with name changes?\n    b. What happens to fields with description changes?",
+      "time": "12:32",
+      "timestamp": "1732221145.604969",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Yep, 1 is true in that if a document is now classified with a new name, the field values won't be persisted. And for 2, good q, if the field name is changed, the previous values are not persisted. If the name stays the same but other things such as description or clean lines etc change, the value should be persisted",
+      "time": "12:36",
+      "timestamp": "1732221397.813979",
+      "is_reply": true
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "Okay good to know. I'll record the whole thing and try to point out what has changed between versions (if I can remember all of them lol)",
+      "time": "12:37",
+      "timestamp": "1732221452.292829",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Thanks, that'd be super helpful! similar to serena, I've also reproduced same field name = persisted, but \"same\" field with a tweak to the name = not saved. This is because we use only use field and class name to determine equality.\n\nAnd unfortunately, off the top of my head, I can't think of a way to more intelligently determine whether two fields from two different apps share the same `field_id` from its source build project. I don't know of any `field_id` concept in apps/app runs, so we just use names as identifiers. Classes have this same issue- aka this diff behavior seems hard to implement. To verify, @david.lee is this build project field equality kind of what you were expecting?",
+      "time": "12:44",
+      "timestamp": "1732221888.830479",
+      "is_reply": true
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "I think overall, it behaved as expected this time. I saw that many of the updated values persisted through this update. I think it's still a bit confusing why some field values' history is preserved vs. not, but I think it makes sense.\n\nIf the new version's outputted value was different from the confirmed ground truth value from the last run, then the ground truth value overwrote the new outputted value as the correct value. If the extracted from the previous run and the current run are different from each other and from the confirmed ground truth value, the \"Original Output\" value from the history changed to the most recent run's outputted value.\n\nIf the new version's outputted value was the same as the confirmed ground truth value from the last run, then the correct value was obviously preserved, but the history of the change was gone (i.e. FL -> Florida example).\n\nSo I think the behavior makes sense. I'm not sure if it was a bug when I first reported this or just that I had changed lots of field names.",
+      "time": "13:18",
+      "timestamp": "1732223929.228339",
+      "is_reply": true
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "@pauline.comising To answer your question, yes I think that some sort of persistent IDs for fields & classes would be massively helpful. Typos, standardization, and other reasons to tweak field names/class names happen all the time and it would be unfortunate if the user had to recreate ground truth values every time",
+      "time": "13:20",
+      "timestamp": "1732224027.248709",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah thanks for going through all that again, I'll take a look at the videos. And ah those common use cases for updating field name make sensee. @Serena since \"some sort of persistent IDs for fields & classes\" would be an extension of current, expected behavior (and we're not observing bugs for same name cases), did you or @hannah have thoughts on this improvement and its priority?",
+      "time": "13:33",
+      "timestamp": "1732224791.954019",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Oo the observed \"persisted\" history across runs is helpful too, and this is also expected :,) When we re-run the ground truth set, we don't persist the history, thus the edits you see are just\n1. the new version's output and \n2. the old value over-writing the new one if it's new. \nSo another way to look at it is each run, new output files are being created and edited once with old values, rather than the same files going through each run and accumulating history.\n\nI know thats a lot of tech implementation context heh, On the user side, would you say history is less important to users, in comparison to pure output?",
+      "time": "13:52",
+      "timestamp": "1732225936.855779",
+      "is_reply": true
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "I would say that for ground truth datasets, output values (so validated ground truth values) are the most important part as long as the user can be sure that the values there have either been validated before and haven't changed, or they can tell the records are newly generated (as a result of new classes, new fields, etc.) I was just using history to check if anything had changed",
+      "time": "14:19",
+      "timestamp": "1732227557.109689",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@pauline.comising agreed that David’s case is a feature request, not a bug!\n\nhowever, i’m concerned whether our current logic for preserving values based on class name and field name will be helpful enough in most cases\n\ni’ll create the ticket, and we can prioritize with Hannah and Lydia",
+      "time": "14:45",
+      "timestamp": "1732229133.095749",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-11-21.json",
+    "message_count": 25,
+    "start_time": "1732206892.547029",
+    "end_time": "1732229133.095749",
+    "is_thread": true
+  }
+}

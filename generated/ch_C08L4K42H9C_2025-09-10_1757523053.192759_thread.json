@@ -1,0 +1,503 @@
+{
+  "id": "ch_C08L4K42H9C_2025-09-10_1757523053.192759_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "jack.robbins",
+    "prateek.tenkale",
+    "demetr.starshov",
+    "Sayan"
+  ],
+  "messages": [
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "got stopped by several meetings at home, will continue working from there. Going to check if we can do some quick patching for velocity human review issues",
+      "time": "09:50",
+      "timestamp": "1757523053.192759",
+      "is_reply": false
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "Trying to repro that issue, got hit by another issue..\n\nCan only rerun the apply checkpoint step. Step s16 is of type <class 'instabase.flow_steps.combine.combine_step.CombineStep'>.",
+      "time": "11:04",
+      "timestamp": "1757527458.043189",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "Can't reproduce the error on crafting, since we use other API endpoints already",
+      "time": "11:04",
+      "timestamp": "1757527494.958589",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "For this, can we check out the branch that velocity is on and see if we can repro it that way?",
+      "time": "11:06",
+      "timestamp": "1757527564.101119",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "They are testing on PROD right now, so I'd assume they have the next release there soon",
+      "time": "11:11",
+      "timestamp": "1757527892.440349",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "@demetr.starshov Are you looking into the record remapping issues or was this something separate?",
+      "time": "11:30",
+      "timestamp": "1757529038.898559",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "The Field Missing issue should be easy to reproduce I can help out with that if needed",
+      "time": "11:30",
+      "timestamp": "1757529056.165309",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "I'm getting different set of errors from ~same actions on PROD, uat, crafting.\nCrafting is the most stable one - it just error out (because of case fields?) but do the thing",
+      "time": "11:31",
+      "timestamp": "1757529075.866409",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "> The Field Missing issue should be easy to reproduce I can help out with that if needed\nplease",
+      "time": "11:31",
+      "timestamp": "1757529104.244739",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Do you have a deployment / app run?",
+      "time": "11:32",
+      "timestamp": "1757529127.082559",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "https://https--demetr-sand8-instabase.instabase.site.sandboxes.run/deployments/019934d4-4e4c-70f0-9bb7-cc9f613ae3c0/runs",
+      "time": "11:34",
+      "timestamp": "1757529241.866699",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Basically these should be easy steps to reproduce:\n1. With a multipage record of 4+ pages, open record remapping screen\n2. Create document from page 2\n3. Move page 3 in document from record 0 to record 1\n4. At this point, the record / page configurations should look like this: `[1, 4, ...]` and `[2, 3]`\n5. Move page 2 back to record 0",
+      "time": "11:34",
+      "timestamp": "1757529266.566659",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Can't log in to crafting but maybe we can sync on zoom",
+      "time": "11:34",
+      "timestamp": "1757529293.057929",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "https://instabase.zoom.us/j/94084875176?jst=3",
+      "time": "11:35",
+      "timestamp": "1757529302.057789",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "New errors:\n> Error: parsed.slice(...).map is not a function. Auto-save is disabled after 3 failed attempts to save. ...\nit's on FE side\n> \n>  \n> A non-serializable value was detected in an action, in the path: `payload`. Value: TypeError: parsed.slice(...).map is not a function\n>     at convertTableToObjectList (\n> )\n>     at eval (\n> )\n>     at Array.map (<anonymous>)\n>     at applyRecordEdits (\n> )\n>     at eval (\n> )\n>     at Array.map (<anonymous>)\n>     at eval (\n> )\n>  \n> 1. Take a look at the logic that dispatched this action:  _{type: '@FLOW_REVIEW/SAVE_CORRECTIONS/rejected', payload: TypeError: parsed.slice(...).map is not a function_\n> 2.     _at convertTableToObjectList (webpack-interna…, meta: {…}, error: {…}}_\n> 3. *error*\n> 4. : \n>     a. {name: 'RejectWithValue', message: 'Rejected'}\n> 5. *meta*\n> 6. : \n>     a. {arg: {…}, requestId: 'oSliS4F85u0TdMUeQNiLv', rejectedWithValue: true, requestStatus: 'rejected', aborted: false, …}\n> 7. *payload*\n> 8. : \n>     a. TypeError: parsed.slice(...).map is not a function at convertTableToObjectList (webpack-internal:///./apps/src/aihub/store/review/resultsSlice/helpers/validationHelpers.ts:161:26) at eval (webpack-internal:///./apps/src/aihub/store/review/resultsSlice/helpers/helpers.ts:216:107) at Array.map (<anonymous>) at applyRecordEdits (webpack-internal:///./apps/src/aihub/store/review/resultsSlice/helpers/helpers.ts:209:27) at eval (webpack-internal:///./apps/src/aihub/store/review/resultsSlice/saveCorrections/actions.ts:68:81) at Array.map (<anonymous>) at eval (webpack-internal:///./apps/src/aihub/store/review/resultsSlice/saveCorrections/actions.ts:63:14) at tryCatch (webpack-internal:///./node_modules/@babel/runtime/helpers/regeneratorRuntime.js:45:16) at Generator.eval (webpack-internal:///./node_modules/@babel/runtime/helpers/regeneratorRuntime.js:133:17) at Generator.eval [as next] (webpack-internal:///./node_modules/@babel/runtime/helpers/regeneratorRuntime.js:74:21)\n> 9. *type*\n> 10. : \n>     a. \"@FLOW_REVIEW/SAVE_CORRECTIONS/rejected\"\n> 11. [[Prototype]]\n> 12. : \n>     a. Object\n>  \n> (See \n> ) \n> (To allow non-serializable values see: \n)",
+      "time": "13:39",
+      "timestamp": "1757536754.834519",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "is creating a new crafting and will point it to UAT branch",
+      "time": "13:39",
+      "timestamp": "1757536783.775809",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "still not reproducible on my working crafting",
+      "time": "13:40",
+      "timestamp": "1757536808.477349",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Wonder if there’s another feature flag enabled which could actually fix these issues",
+      "time": "13:41",
+      "timestamp": "1757536917.519729",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Basically the bug happens in the ibdoc logic somewhere",
+      "time": "13:42",
+      "timestamp": "1757536929.770569",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "But there could be some ibdoc enhancement feature that’s enabled with one of the flags which fixes it by default",
+      "time": "13:42",
+      "timestamp": "1757536947.734559",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "Can you try to update to the very latest master and do cs down; cs up?",
+      "time": "13:42",
+      "timestamp": "1757536948.857769",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Need to eat lunch now but will try in 30 mins",
+      "time": "13:42",
+      "timestamp": "1757536966.742819",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "But I pulled master yesterday days so doubt it but I can try after",
+      "time": "13:43",
+      "timestamp": "1757536985.042329",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "maybe your service is still running an old code",
+      "time": "13:43",
+      "timestamp": "1757537017.946449",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "if it hasn't been restarted, etc",
+      "time": "13:43",
+      "timestamp": "1757537037.911889",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "It was restarted when I pulled master",
+      "time": "13:45",
+      "timestamp": "1757537102.749839",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "It suspends automatically and when I start the sandbox again it will start all fresh services",
+      "time": "13:45",
+      "timestamp": "1757537130.300219",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "But I’ll pull and try again",
+      "time": "13:45",
+      "timestamp": "1757537142.577579",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "Thanks",
+      "time": "13:45",
+      "timestamp": "1757537147.016179",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "New env: not repro\nOld env, release-25.34.0-aihub - not repro\nUAT - easy",
+      "time": "14:22",
+      "timestamp": "1757539332.530879",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "UPD",
+      "time": "15:06",
+      "timestamp": "1757541989.155539",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "We tried to do it with Serena and finally figured out what was the difference there",
+      "time": "15:07",
+      "timestamp": "1757542020.317289",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "it was digitization settings, which cause legacy ocr model to produce extra data we try to merge (during the API call on api-server :cold_face:)",
+      "time": "15:08",
+      "timestamp": "1757542085.964719",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "Can we move velocity to DocAI and forget about that part of code? (just kidding)",
+      "time": "15:11",
+      "timestamp": "1757542261.292289",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Oh nice",
+      "time": "15:25",
+      "timestamp": "1757543124.154429",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Honestly I think that's a viable option",
+      "time": "15:25",
+      "timestamp": "1757543134.972959",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "DocAI is generally better anyways",
+      "time": "15:25",
+      "timestamp": "1757543151.657189",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "But were you able to reproduce after switching back?",
+      "time": "15:26",
+      "timestamp": "1757543167.831929",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "Yep",
+      "time": "15:27",
+      "timestamp": "1757543234.429939",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "It's some cryptic merge algorithm in /ocr/ package",
+      "time": "15:28",
+      "timestamp": "1757543289.961599",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "I traced a similar issue before, we have several different ways we can fail (and I am not even sure we use this data for something useful)",
+      "time": "15:30",
+      "timestamp": "1757543409.657169",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Hm okay. This is honestly great to know though cause if using DocAI will fix this record remapping issue cause it's been a huge pain point. Can you start a thread in that channel summarizing the findings and tag @jack.robbins as well?",
+      "time": "15:44",
+      "timestamp": "1757544241.267959",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "Sure. For docai it's not like we don't have bugs there, we just haven't tested it",
+      "time": "15:52",
+      "timestamp": "1757544753.650249",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "We still have ui bugs btw",
+      "time": "15:52",
+      "timestamp": "1757544778.818379",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Yeah, but this is one of the biggest backend bugs with record remapping which has significantly affected the user experience",
+      "time": "15:55",
+      "timestamp": "1757544915.919669",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Do you know where the branching happens between the legacy digitization ocr code vs doc ai in the human review code?",
+      "time": "15:56",
+      "timestamp": "1757544981.966859",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "Enabling table extraction",
+      "time": "15:56",
+      "timestamp": "1757545010.921289",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "It produces additional data we try to merge",
+      "time": "15:57",
+      "timestamp": "1757545029.227329",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "No data - no issues",
+      "time": "15:57",
+      "timestamp": "1757545038.366419",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "I love hearing when new features fix other bugs unexpectedly :heart:",
+      "time": "15:57",
+      "timestamp": "1757545066.027579",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "@demetr.starshov Can you send a reference to line in the code where that branching happens if you have it? Just curious because I'm not able to find it",
+      "time": "16:22",
+      "timestamp": "1757546530.824719",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "I have a fix :slightly_smiling_face:",
+      "time": "16:55",
+      "timestamp": "1757548519.286109",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "https://github.com/instabase/instabase/pull/74539",
+      "time": "17:03",
+      "timestamp": "1757548993.947409",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "I'd appreciate if you can checkout this branch and confirm it fixes it for you as well",
+      "time": "17:04",
+      "timestamp": "1757549048.051379",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "but branching point is there",
+      "time": "17:04",
+      "timestamp": "1757549059.637489",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "line 489: elif flow_record_reader.is_fr_digitized():",
+      "time": "17:04",
+      "timestamp": "1757549096.098069",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Doing a backport right now but will take a look",
+      "time": "17:11",
+      "timestamp": "1757549486.912109",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "Thanks",
+      "time": "17:12",
+      "timestamp": "1757549524.274039",
+      "is_reply": true
+    },
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "if it works, it is the safest way to close it",
+      "time": "17:13",
+      "timestamp": "1757549585.947939",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Approved! This is great let's backport to 25.34 adn 25.36",
+      "time": "17:46",
+      "timestamp": "1757551573.168019",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-09-10.json",
+    "message_count": 60,
+    "start_time": "1757523053.192759",
+    "end_time": "1757551573.168019",
+    "is_thread": true
+  }
+}

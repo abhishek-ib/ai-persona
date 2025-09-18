@@ -1,0 +1,142 @@
+{
+  "id": "ch_C05L87V014J_2024-12-06_1733508867.068379_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "sean.donohoe",
+    "Serena",
+    "pauline.comising"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Heyo, anyone else experiencing really long app run times? I've resynced sandbox and ppy recompiled services off my `ibdev` template sandbox, and I have runs that go on for 1 or 2 hours. Most still extract values correctly but I'm not sure exactly where the slowness is coming from. Model-service and celery-app-tasks all have their `rabbit_mq_url` env var set to `rabbitmq` and model-service shows successful connection, but no new app run logs show up when a new one's kicked off. Also, when I restart the rabbitmq depenency model-service logs show a disconnect and reconnect, but celery-app-tasks do not. any tips to resolve this?",
+      "time": "10:14",
+      "timestamp": "1733508867.068379",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I personally have not changed anything recently, however I've noticed this morning that new sandbox creation with the ibdev template is _extremely_ slow compared to what it's been in the past",
+      "time": "10:15",
+      "timestamp": "1733508926.070049",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "if things are running but eventually succeeding, it sounds like `redis` isn’t being used properly?",
+      "time": "12:02",
+      "timestamp": "1733515346.294999",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "do you see any relevant logs in `celery-app-tasks` for failing to connect to redis?",
+      "time": "12:02",
+      "timestamp": "1733515360.293009",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "can you double check that `cache_host` is set to `\"redis\"` ?",
+      "time": "12:03",
+      "timestamp": "1733515398.171779",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Yep that was my suspicion as well, so forgot to mention that cache_host is correct for api-server, celery-app-tasks, and model-service",
+      "time": "12:13",
+      "timestamp": "1733515997.135109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Maybe look at celery-app-tasks logs or the app run logs?",
+      "time": "12:20",
+      "timestamp": "1733516446.824499",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Which sandbox are you using btw? I can also try to take a look",
+      "time": "12:31",
+      "timestamp": "1733517086.118529",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah ya let me take a deeper look at the logs, and I'm using this one (https://ppy-server-nginx--paulinecomising5-instabase.instabase.site.sandboxes.run/)",
+      "time": "12:38",
+      "timestamp": "1733517492.544779",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Most of the logs are `ConnectionResetError: [Errno 104] Connection reset by peer` and `amqp.exceptions.RecoverableConnectionError: Socket was disconnected` let me see if there's anything else in CAT and check model-service",
+      "time": "12:52",
+      "timestamp": "1733518324.095159",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Between the connection errors, there is a `class_suggest` task here that I started a day or two ago that never completes and hasn't been cleared from getting sent to celery-app-tasks. I've tried cancelling the job via API and restarting the rabbitmq dependency to clear this, but its either ERRORed (`access denied`) or not done anything, are there other ways of cancelling build classification jobs?",
+      "time": "13:12",
+      "timestamp": "1733519574.352959",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "ah ok for the classify task I'm seeing\n```[2024-12-06 21:13:07,583] [MainProcess/ThreadPoolExecutor-4_1] {/home/owner/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/license_utils/model_usage.py:923} ERROR - [trace_id=7ee8801edfc141df] - job-id=9c1e84f6-b463-4f4d-8435-33b6dac37a8f task-id=9c1e84f6-b463-4f4d-8435-33b6dac37a8f-aihub-build-classify-documents Model failed; not recording license usage metrics: Exception Error while reading file path from request: Failed to read file: Could not connect to path: aihub/01939785-73af-704f-ab72-c4497fb1c58a/documents/out/afc2aece-1948-4726-b1f1-fd3b26ff0003__Screenshot 2024-12-05 at 10.28.37 AM.png.ibdoc. Repo_owner animal-kingdom. Repo_name support-testing.aihubuat-orgadmin_instabase.com. Mount_point Instabase Drive. Reason: Error occurred executing GRPC method: Request /file_service.FileService/Connect failed. Error code=DEADLINE_EXCEEDED, Error=(4, 'deadline exceeded'), Message: Deadline Exceeded. Retries left 0\n\ntasks/build/py/instabase/rate_limiting_utils/model_rate_limiting.py:137} ERROR - [trace_id=7ee8801edfc141df] - job-id=9c1e84f6-b463-4f4d-8435-33b6dac37a8f task-id=9c1e84f6-b463-4f4d-8435-33b6dac37a8f-aihub-build-classify-documents User: support-testing.aihubuat-orgadmin_instabase.com. Model error: Exception Error while reading file path from request: Failed to read file: Could not connect to path: aihub/01939785-73af-704f-ab72-c4497fb1c58a/documents/out/afc2aece-1948-4726-b1f1-fd3b26ff0003__Screenshot 2024-12-05 at 10.28.37 AM.png.ibdoc. Repo_owner animal-kingdom. Repo_name support-testing.aihubuat-orgadmin_instabase.com. Mount_point Instabase Drive. Reason: Error occurred executing GRPC method: Request /file_service.FileService/Connect failed. Error code=DEADLINE_EXCEEDED, Error=(4, 'deadline exceeded'), Message: Deadline Exceeded. Retries left 0\n\n[2024-12-06 21:13:08,905] [MainProcess/ThreadPoolExecutor-2_0] {/home/owner/.cache/pypoetry/virtualenvs/celery-app-tasks-EhTOE89x-py3.9/lib/python3.9/site-packages/pika/adapters/utils/io_services_utils.py:1109} ERROR - [trace_id=] - job-id=9c1e84f6-b463-4f4d-8435-33b6dac37a8f task-id=9c1e84f6-b463-4f4d-8435-33b6dac37a8f-aihub-build-classify-documents _AsyncBaseTransport._produce() failed, aborting connection: error=ConnectionResetError(104, 'Connection reset by peer'); sock=<socket.socket fd=25, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('169.254.16.1', 40376)>; Caller's stack:\nTraceback (most recent call last):\n...\nConnectionResetError: [Errno 104] Connection reset by peer```\nAnd file-service logs show that files for this project aren't found, and when I successfully checked file system (so file-service works), the files are indeed missing, soo I still think successfully deleting the job would help - does deleting a project cancel its ongoing tasks (from FE)? I don't want to delete while the job still goes on and lose access to UI that helps me see job_id",
+      "time": "13:21",
+      "timestamp": "1733520116.198369",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> I don’t want to delete while the job still goes on and lose access to UI that helps me see job_id\ni’m confused - i thought we don’t care about this job since the files don’t exist?",
+      "time": "13:30",
+      "timestamp": "1733520610.456749",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "in any case, it seems that you’re running into similar issues (https://instabase.slack.com/archives/C05L87V014J/p1733241160575429?thread_ts=1733168646.033669&cid=C05L87V014J) as Jordy/Ligao earlier this week\n\nsomehow your sandbox got into a bad state and keeps on trying to run invalid tasks or tasks that will error out -> deleting the problematic Build project / clearing the rabbitmq cache should be helpful",
+      "time": "13:50",
+      "timestamp": "1733521801.668519",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "> i’m confused - i thought we don’t care about this job since the files don’t exist?\nYep, we don't care about it completing, but navigating to the project is the way I find the job_id via network tab, but ah thanks for the link, let me see if this project deletion job succeeds",
+      "time": "14:02",
+      "timestamp": "1733522557.015599",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-06.json",
+    "message_count": 15,
+    "start_time": "1733508867.068379",
+    "end_time": "1733522557.015599",
+    "is_thread": true
+  }
+}

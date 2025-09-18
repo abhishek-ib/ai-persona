@@ -1,0 +1,125 @@
+{
+  "id": "ch_C06FA6A23_2019-01-29_1548791509.324200_conversation",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "conversation",
+  "participants": [
+    "Jesika Haria",
+    "Ted"
+  ],
+  "messages": [
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Wanted to summarize a conversation with Hari about language encodings:\n\nThe world isn’t all unicode — there are other ways to encode non-western languages: PDF’s that contain:\n1) Alternative encoding formats that were in popular use in the pre-unicode world (BIG5, Shift-JIS, etc)\n2) These map to embedded fonts with alternative encodings to match.. They don’t have a 1:1 mapping to standardized font mappings.\n\nThis results in the following problem:\n\n1) Our pipeline correctly identifies something is a text PDF and skips image-based OCR\n2) Extracting the text results in complete gibberish, as we interpret something that’s non-unicode as if it was unicode\n\nThere are two potential fixes for this:\n\n1) Add non-Unicode detection / handling to PDFService\n2) Add a gibberish-detector to ocr_util and, if a document is BOTH text AND gibberish, then we kick the document back to our image pipeline\n\nFor the SC Competition, a good solution is probably to:\n\n1) Pre-prepare an explanation about how these are an edge case of documents that we can engineer auto-support for later.\n2) Find a way to just force-process these as images, if possible",
+      "time": "11:51",
+      "timestamp": "1548791509.324200",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Here is an example of what I mean. This is a Japanese document using a custom embedded font called `TTE Fo 00`",
+      "time": "11:52",
+      "timestamp": "1548791535.324700",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "",
+      "time": "11:52",
+      "timestamp": "1548791548.324900",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Using Acrobat, when I change the font of this text block to a standard Unicode font, Mincho, this happens",
+      "time": "11:53",
+      "timestamp": "1548791587.325600",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "",
+      "time": "11:53",
+      "timestamp": "1548791604.325900",
+      "is_reply": false
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "Does the PDF stripper have no metadata on what the encoding of the PDF file is?",
+      "time": "11:53",
+      "timestamp": "1548791618.326500",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "So even sticking *within* Japanese font families, the encoding is completely incompatible",
+      "time": "11:53",
+      "timestamp": "1548791619.326700",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "@Jesika Haria sometimes it will, sometimes it won’t. Here’s an analogy of the worst case: imagine a font called `Adversarial-Wingdings` that has basically just flipped letter glyphs. So when you type the letter `K`, the glyph that appears on screen looks like `T`. This could all be done completely within Unicode, or even ASCII… the scrambling is contained by selecting and using this font itself",
+      "time": "11:57",
+      "timestamp": "1548791849.328600",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "So there is a fat-tail in which we could autodetect the standard formats (big5, etc)",
+      "time": "11:57",
+      "timestamp": "1548791864.329000",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "But there is a long tail in which it’s probably impossible via metadata alone",
+      "time": "11:57",
+      "timestamp": "1548791876.329400",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "I’m not sure what the distribution between fat-tail and long-tail is cause I really only know the contour of the problem, but not how it plays out in the non-english document creation world…",
+      "time": "11:58",
+      "timestamp": "1548791901.330000",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "(the english-language version of this is when people on twitter use extended unicode to mimic italics, cursive, etc)",
+      "time": "11:59",
+      "timestamp": "1548791960.331500",
+      "is_reply": false
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "Makes sense. Totally, yeah I saw some stuff online similar to https://stackoverflow.com/questions/41202353/pdfbox-return-bad-encoding-charachter and looks like in those cases our best resort is ocr (but that necessitates us building that gibberish detector to force OCR)",
+      "time": "11:59",
+      "timestamp": "1548791967.331700",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-01-29.json",
+    "message_count": 13,
+    "start_time": "1548791509.324200",
+    "end_time": "1548791967.331700",
+    "is_thread": false
+  }
+}

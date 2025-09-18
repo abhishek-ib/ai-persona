@@ -1,0 +1,167 @@
+{
+  "id": "ch_C05L87V014J_2025-02-07_1738958625.229039_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Liam Callanan",
+    "Weiming Wu",
+    "Paul H",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Hey, I’m looking to preview some changes to static assets (added/replaced some fonts (https://github.com/instabase/instabase/pull/67726) in `webserver/shared/src/py/static/fonts/`) in my crafting sandbox but I’m seeing 404s.\nIs there something nginx/webapp-related I need to configure?\n\nAlso seeing the following when I try to `make clean build-docker RELOAD=1` on `webapp`\n```fatal: cannot change to '/home/owner/instabase/webserver/webapp/build/instabase-docs': No such file or directory\nCloning into '/home/owner/instabase/webserver/webapp/build/instabase-docs'...\nFatal: rpc error: code = InvalidArgument desc = invalid: repo type unsupported.\nFatal: rpc error: code = InvalidArgument desc = invalid: repo type unsupported.\nremote: Invalid username or password.\nfatal: Authentication failed for 'https://github.com/instabase/instabase-docs.git/'\nmake: *** [Makefile:147: clone-instabase-docs] Error 128```",
+      "time": "12:03",
+      "timestamp": "1738958625.229039",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i agree you need to rebuild and restart webapp to test your changes\n\nthis thread (https://instabase.slack.com/archives/C05L87V014J/p1737652955642159) seems similar and could be helpful?",
+      "time": "12:20",
+      "timestamp": "1738959655.454549",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i don't think you need to rebuild/restart server-nginx in your crafting sandbox (this would be different in a deployed SaaS sandbox)\n\nso maybe try Paul's suggestions from that thread first, and see if your changes are reflected?",
+      "time": "12:24",
+      "timestamp": "1738959859.948899",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Thanks! Unfortunately `workspace setup` also gets stuck on the same errors shown above…",
+      "time": "12:28",
+      "timestamp": "1738960081.419069",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "so strange that there's a git auth error\n\nyou don't have a problem pulling/pushing for instabase's other git repos, right?",
+      "time": "12:29",
+      "timestamp": "1738960152.971979",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "outside of rebuilding webapp, what happens if you try to clone https://github.com/instabase/instabase-docs in your sandbox?",
+      "time": "12:30",
+      "timestamp": "1738960201.529739",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Huh, well it seems I wasn’t considered logged in when I tried to clone!\nBut even after login I’m still seeing the same invalid username/password failure as before…",
+      "time": "12:34",
+      "timestamp": "1738960496.668089",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm that's quite strange\n\ncc @Paul H in case you have any suggestions",
+      "time": "13:01",
+      "timestamp": "1738962073.759309",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i'm ssh-ing into your sandbox to take a look",
+      "time": "13:02",
+      "timestamp": "1738962160.324179",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "you already went through https://instabase.atlassian.net/wiki/spaces/TI/pages/2107736112/Setting+Up+Your+Crafting+Environment#Configuring-GitHub-Access when you first started using crafting sandboxes, right?",
+      "time": "13:11",
+      "timestamp": "1738962665.299799",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "I think so but I don’t remember, it’s been while… I’ll double check all the steps",
+      "time": "13:12",
+      "timestamp": "1738962723.509379",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Yep my key’s still there & the CLI is working",
+      "time": "13:18",
+      "timestamp": "1738963087.729759",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Hmm maybe try creating a new sandbox using ibdev-backend? Maybe it’s an issue specific to this sandbox",
+      "time": "13:25",
+      "timestamp": "1738963523.396229",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Creating a new sandbox was pretty fast for me two weeks ago",
+      "time": "13:25",
+      "timestamp": "1738963540.633839",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Double checking: Are you cloning using ssh and not with https?",
+      "time": "13:41",
+      "timestamp": "1738964473.820159",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Oh wait, it’s part of a build command. Hmm",
+      "time": "13:41",
+      "timestamp": "1738964507.998269",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "@Weiming Wu did you encounter this as part of your finangling last time?\nhttps://instabase.slack.com/archives/C05L87V014J/p1737658510117649?thread_ts=1737652955.642159&cid=C05L87V014J",
+      "time": "13:42",
+      "timestamp": "1738964574.940919",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Oh I didn't run into that at all - my errors were related to my sandbox not having the right ssh keys to access the Instabase github repo",
+      "time": "13:44",
+      "timestamp": "1738964653.147259",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-02-07.json",
+    "message_count": 18,
+    "start_time": "1738958625.229039",
+    "end_time": "1738964653.147259",
+    "is_thread": true
+  }
+}

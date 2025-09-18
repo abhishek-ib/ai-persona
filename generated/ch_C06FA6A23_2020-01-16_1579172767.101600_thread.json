@@ -1,0 +1,198 @@
+{
+  "id": "ch_C06FA6A23_2020-01-16_1579172767.101600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Aaron Vontell",
+    "Shivam"
+  ],
+  "messages": [
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "@shaunak what's your username, I'll add you to that repo. Link to the flow is https://instabase.com/apps/flow/edit/raghav_sc/CIDCDD_REPO/fs/Instabase%20Drive/cdd-adverse-news/ib-test/workflows/nlp-ocr-flow.ibflow",
+      "time": "03:06",
+      "timestamp": "1579172767.101600",
+      "is_reply": false
+    },
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "@dlluncor One thing to add, the above code snipped added by aaron is from strutils.py line no. -> 14-33\nThe flow has a udf step that return a dict and not a string, Hence it was not accepting and throwing an error.",
+      "time": "03:08",
+      "timestamp": "1579172895.101900",
+      "is_reply": true
+    },
+    {
+      "sender": "Shivam",
+      "user_id": "UK4GC2G9X",
+      "message": "@shaunak the error disappears when we uncheck \"use new flow output format\", which uses IBDOC.",
+      "time": "03:12",
+      "timestamp": "1579173145.102300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "OK, I think there are two issues:\n1. `ParsedIBOCRBuilder.load_from_str` should not fail for txt.\n2. Any particular reason why we are outputting json and txt from UDFs?  We are trying to move to a system where we will only output `IBDOC / IBOCR`  from all steps since that allows us more flexibility with Flow Orchestration",
+      "time": "07:58",
+      "timestamp": "1579190287.105300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "^ @shaunak I think there are a lot of UDFs that want to output JSON",
+      "time": "07:58",
+      "timestamp": "1579190329.105500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Example use case: I just want to write a simple data file that is then fed to downstream systems",
+      "time": "07:59",
+      "timestamp": "1579190351.105800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I think SC for instance has quite a few of these, JPMC Adverse News also has this",
+      "time": "07:59",
+      "timestamp": "1579190363.106000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Wouldn't you want to do that in a post processing step?",
+      "time": "07:59",
+      "timestamp": "1579190370.106200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I think the assumption is that the last step of the Flow is thought of as the post processing step…",
+      "time": "07:59",
+      "timestamp": "1579190386.106400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Or, why wouldn't we want to put the data into the `txt` field of the IBDOC?",
+      "time": "07:59",
+      "timestamp": "1579190399.106600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I think because the customer just wants to see JSON at the end, they don’t want to do further processing on their side",
+      "time": "08:00",
+      "timestamp": "1579190423.106800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Where would their post processing step be written?",
+      "time": "08:00",
+      "timestamp": "1579190443.107000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": ">  I think the assumption is that the last step of the Flow is thought of as the post processing step…\nGot it, we are moving to a model to support post processing (like a reducer UDF)",
+      "time": "08:00",
+      "timestamp": "1579190458.107300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Apply UDF does allow for setting the file extension, if we only want IBOCR/IBDOC we would want to remove that",
+      "time": "08:01",
+      "timestamp": "1579190475.107500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Otherwise maybe Apply UDF can be aware of that file extension when interpreting the final result? So only use IBDOC if that file extension is ibdoc?",
+      "time": "08:01",
+      "timestamp": "1579190509.107700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Yes, we are thinking about making our Flows more extensible.  Arbitrary file-extension can make it harder to handle Flow Orchestration",
+      "time": "08:02",
+      "timestamp": "1579190532.107900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "yeah definitely understandable haha",
+      "time": "08:02",
+      "timestamp": "1579190550.108100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Let me look at that code :slightly_smiling_face:",
+      "time": "08:02",
+      "timestamp": "1579190565.108500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@shaunak I believe this is mostly trouble for the gen-doc solutions, where the UDFs write to somewhere else and they just output “Success” or “Fail” text files",
+      "time": "08:03",
+      "timestamp": "1579190591.108700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Got it.",
+      "time": "08:04",
+      "timestamp": "1579190670.108900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "And also Adverse News :slightly_smiling_face: for instance, in Adverse News, to create a final report, it is simply a Flow with a single step - Apply UDF that outputs a JSON that is not IBDOC",
+      "time": "08:05",
+      "timestamp": "1579190719.109100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Yeah -- but let's say you had a post-processing step that ran at the end of the Flow, that would presumably  suffice right?",
+      "time": "08:09",
+      "timestamp": "1579190977.109500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-01-16.json",
+    "message_count": 22,
+    "start_time": "1579172767.101600",
+    "end_time": "1579190977.109500",
+    "is_thread": true
+  }
+}

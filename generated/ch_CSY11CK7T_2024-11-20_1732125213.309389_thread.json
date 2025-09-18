@@ -1,0 +1,70 @@
+{
+  "id": "ch_CSY11CK7T_2024-11-20_1732125213.309389_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Liam Callanan",
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "starting a new thread to discuss https://instabase.slack.com/archives/CGQ7BD72A/p1732121656942289?thread_ts=1732034809.642439&cid=CGQ7BD72A!\n\n`UnitsRequired*` call `useAIHubUsageSummary`, which calls `useAIHubUsageSummaryCommunity` or `useAIHubUsageSummaryCommercial`\n\nboth hooks have a query with `refetchOnMount` set to `'always'` - i think this is intentional since we do want to refetch usage metrics in case the user has used more credits\n\nhowever, `refetchOnMount` introduces performance issues when we mount and unmount fields in our virtualized list :cry: (see gif for how we call `/billing-plan` whenever we scroll in the virtualized list)\n\nmaybe we can refetch usage metrics in a better way? should we call `useAIHubUsageSummary` in one place and set the return value in a context? to still refetch usage metrics periodically, we could set a `refetchInterval`?\n\n@Liam Callanan @Xindi Xu",
+      "time": "09:53",
+      "timestamp": "1732125213.309389",
+      "is_reply": false
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "What if instead of `refetchOnMount` we just use a lower `staleTime`?",
+      "time": "09:56",
+      "timestamp": "1732125374.624139",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm pro to not re-fetching it on mount. I don't think this is necessary. We don't need to change how we call it. Simply removing the `refetchOnMount` should stop this. The callers can still get the result from react query cache.",
+      "time": "09:57",
+      "timestamp": "1732125433.858189",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Liam Callanan do you have time to try this out today? do you think we should try to include this before deploying to prod this evening?",
+      "time": "10:07",
+      "timestamp": "1732126044.581259",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Worth a shot, it’s a quick change so we can revert/backport pretty easily",
+      "time": "10:08",
+      "timestamp": "1732126101.425379",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "https://github.com/instabase/instabase/pull/65374",
+      "time": "10:44",
+      "timestamp": "1732128245.764839",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-11-20.json",
+    "message_count": 6,
+    "start_time": "1732125213.309389",
+    "end_time": "1732128245.764839",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "id": "ch_CSY11CK7T_2025-05-15_1747350347.997239_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "Serena",
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Hi all, just curious, have we every considered incorporating storybook test-runner in our CI as a replacement for Visual regression and interaction testing? cc @Xindi Xu @Serena\nhttps://github.com/storybookjs/test-runner\nhttps://storybook.js.org/docs/writing-tests/visual-testing\nhttps://storybook.js.org/blog/interaction-testing-with-storybook/",
+      "time": "16:05",
+      "timestamp": "1747350347.997239",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "That's pretty cool! We can definitely explore this!\nWe have a couple of integration tests that uses `msw` to mock the network requests. Storybook testing seems to achieve a similar result, but offers much better visualization",
+      "time": "16:11",
+      "timestamp": "1747350703.010969",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Yeah I worked with it a bit in my previous company. Essentially you mock the props for a UI component you want to test, generate a screenshot of the component with the mocked props using this framework, and in CI it will do the same and do a diff comparison of the screenshots. Much better than jest component tests imo",
+      "time": "16:15",
+      "timestamp": "1747350920.137059",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Don't know too much about interaction testing though but I imagine it's also a pretty seamless experience",
+      "time": "16:16",
+      "timestamp": "1747350984.155659",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "What does \"diff comparison of the screenshot\" mean exactly?",
+      "time": "16:16",
+      "timestamp": "1747350996.421179",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Basically just see which pixels differ",
+      "time": "16:16",
+      "timestamp": "1747351005.804269",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ohh interesting!",
+      "time": "16:16",
+      "timestamp": "1747351018.711699",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "So if you do `diff` in the terminal for two photos with imagemagick if you've ever used that before",
+      "time": "16:17",
+      "timestamp": "1747351031.048669",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "This was how it worked 2 years ago. Who knows they may have integrated AI to analyze the differences instead now :laughing:",
+      "time": "16:18",
+      "timestamp": "1747351081.963189",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "did you have thoughts on what new categories of bugs this would catch?\n\n1. my general opinion of visual diffing is that i don't think it's helpful for catching the kinds of behavior bugs that we care about\n    a. minor visual differences are usually ok\n2. for testing interactions, i think that jest is sufficient, especially since AI is already so good at writing jest tests and setting things up for you\n    a. i agree it's hard to visualize jest tests, but i've found that i don't need a visualization if i look at `screen.debug()` and use AI",
+      "time": "16:22",
+      "timestamp": "1747351357.674539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, to add on to Serena's 2nd point:\nAayush added jest-preview to our code base for visualizing and debugging component unit tests previously\nhttps://www.jest-preview.com/docs/getting-started/intro",
+      "time": "16:25",
+      "timestamp": "1747351501.965969",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Fair yeah, there's also other types of tests that are supported which we can look into: https://storybook.js.org/blog/component-testing/\n\nRe the visual tests I generally found it easier to maintain and add tests for all the different cases than jest, cause you just generate a new screenshot when making changes instead of modifying the test logic. There were a lot of times where I would change the div structure for some small enhancements / simplifications, and even though the component itself looked mostly the same I would have to go through and change the expected result which felt more cumbersome than it needed to be.  But I suppose with AI this is significantly easier now.",
+      "time": "16:31",
+      "timestamp": "1747351909.425669",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Jest unit tests also don't catch any styling regressions due to css changes afaik",
+      "time": "16:31",
+      "timestamp": "1747351912.676159",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yes, we historically have seen a few styling regressions, but not a ton\n\nthey're usually very apparent as soon as someone looks at the UI manually -> so styling regressions are generally easier to catch and fix",
+      "time": "16:34",
+      "timestamp": "1747352074.015069",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, we used to have some snapshot tests that check if the HTML matches the expected ones, but i don't think they are useful in the main codebase.",
+      "time": "16:38",
+      "timestamp": "1747352328.533199",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-05-15.json",
+    "message_count": 15,
+    "start_time": "1747350347.997239",
+    "end_time": "1747352328.533199",
+    "is_thread": true
+  }
+}

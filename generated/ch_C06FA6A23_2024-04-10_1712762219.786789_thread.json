@@ -1,0 +1,468 @@
+{
+  "id": "ch_C06FA6A23_2024-04-10_1712762219.786789_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Cody Boggs",
+    "Ashwin",
+    "Kerr Yoo",
+    "Aaron Tami",
+    "Arek",
+    "William Helmrath",
+    "jtau",
+    "donagh"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "<!channel>\n:red_circle: :red_circle: :red_circle: *Release Blockers*\n\nThe following release certifications are *BLOCKED* on failing sandbox deployments, and the failures need to be picked up and addressed by appropriate teams / engineers ASAP:\n1. `23.07.0` : Timing out (https://instabase.slack.com/archives/C035SLYCJ9X/p1712754356603819) after spending *~1 hour* attempting to upload and validate configs, and nearly another hour \"writing\" them after they've validated. JTau provided some feedback in the linked thread as to why this might be happening, but executing / implementing the actual fix is not in my wheelhouse.\n2. `23.10.0-enterprise` : Timing out (https://jenkins.instabase.com/job/SAAS-AWS/job/saas-pipelines/job/install-ib-platform/7217/consoleFull) after spending ~*25 minutes* uploading and validating, and nearly *1.5 hours* writing configs.\n3. `24.01.0-enterprise` : Timing out (https://instabase.slack.com/archives/C035SLYCJ9X/p1712755761652599) after spending *nearly 2 hours* writing configs after validation. Seems that upload/validation itself is taking only ~5 minutes, but then we spin.",
+      "time": "08:16",
+      "timestamp": "1712762219.786789",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "@jtau @Ashwin is there any config cleanup we can do on these environments to make these updates faster? We could increase timeouts but it seems like that’s just kicking the can down the road",
+      "time": "08:22",
+      "timestamp": "1712762534.585969",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea, I'm not really on board with just cleaning up configs and such to band-aid things, because it's not an actual fix as I understand it. The trouble seems to be in the actual processing of configs and such, which is going to keep happening as things accumulate",
+      "time": "08:23",
+      "timestamp": "1712762624.291409",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "We are working on the long term fix with the changing our config management to not use this DM model anymore",
+      "time": "08:24",
+      "timestamp": "1712762670.214029",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "The code fix isn't going to be ready until EOM w/ DM's single patch mode; so in the interim we need to unblock these by truncating the database",
+      "time": "08:29",
+      "timestamp": "1712762974.336259",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "So am I understanding correctly that if a customer were to run into this situation, we'd have to drop their entire installation and all DBMS data therein to get them upgraded?",
+      "time": "08:30",
+      "timestamp": "1712763049.656279",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Not that extreme, there's a script we use that will truncate parts of the DM tables. And customers will not run into this nearly as fast as we do since we have a pipeline deploying these way more regularly, with a bunch of custom patches every time, so our DB will grow way faster than theirs",
+      "time": "08:32",
+      "timestamp": "1712763154.901079",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ah, ok. The term \"truncating the database\" is an immediate \"*nope*\", hence my resistance. :slightly_smiling_face:\n\nGlad there's a fix inbound. Let me know when the cleanup is done and I'll redeploy.\n\nI'm not game to bump timeouts because 2 hours is already too long for an empty environment deployment :smile:\n\n(Plus, those nodes are expensive to keep running idle)",
+      "time": "08:34",
+      "timestamp": "1712763276.787029",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "> I'm not game to bump timeouts because 2 hours is already too long for an empty environment deployment\nWhat do you mean by empty environment deployment?",
+      "time": "08:35",
+      "timestamp": "1712763312.735789",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ah, yea - translation is \"Cody not word guud\" :joy:\n\n\"Empty\" is inaccurate. Just meant that the release sandboxes are 'sterile' in a sense, or at least are _supposed_ to be, and thus should be among the shortest deployment times anywhere.",
+      "time": "08:40",
+      "timestamp": "1712763648.459749",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":yellow_circle: :yellow_circle: :yellow_circle:\n*Update*\nThere's a stop-gap fix available to unblock these environments, being actively addressed.\n\nThe affected releases will remain blocked from certification until the fix is done and a successful deployment has rolled out for each.\n\n(Thank you @jtau for helping and educating me!)",
+      "time": "08:42",
+      "timestamp": "1712763731.333229",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "We will clean up some of the DM tables on these environments today and report here w/ the progress cc @Ashwin",
+      "time": "08:43",
+      "timestamp": "1712763827.879039",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":dancing-penguin: Thanks so much!",
+      "time": "08:44",
+      "timestamp": "1712763843.740359",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Some updates:\n\n• 23.07 has been cleaned up, we kept the last 2 releases in the history and deleted ~202k configs from both the materialized configs and base configs table. We should be able to upgrade it now\n• @William Helmrath is working on cleaning up 23.10\n• @donagh is working on cleaning up 24.01",
+      "time": "11:01",
+      "timestamp": "1712772074.272029",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "@Cody Boggs can you help kick off 23.07 to verify the clean up worked as intended",
+      "time": "11:02",
+      "timestamp": "1712772122.587519",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "There are currently 32k remaining entries in the `deployment_configs` table and 1.1k in the `deployment_base_configs` table",
+      "time": "11:02",
+      "timestamp": "1712772142.999019",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "On it!",
+      "time": "11:06",
+      "timestamp": "1712772380.881949",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Actually - one sec",
+      "time": "11:07",
+      "timestamp": "1712772421.693969",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "@Ashwin can we verify how big the patches table is and whether that needs a truncation ?",
+      "time": "11:07",
+      "timestamp": "1712772437.075279",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oop - aborted, it wasn't quite kicked off yet entirely :+1:",
+      "time": "11:07",
+      "timestamp": "1712772452.227019",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Ya thats a good callout, checking if thats the bottleneck. There are ~240k patches in the DB",
+      "time": "11:07",
+      "timestamp": "1712772462.833019",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "One interesting find: @donagh mentioned 24.01 only has ~15k configs and around the same number of patches in the DB, which shouldn’t lead to a timeout on its own. I have a theory that since all of our release sandboxes are on the same DB host, and all the updates are running concurrently, we might be overloading the DB node",
+      "time": "11:11",
+      "timestamp": "1712772702.249459",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Oh, that's an interesting theory; what's the concurrent write limit ? cc @mfichman",
+      "time": "11:12",
+      "timestamp": "1712772776.830849",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Okay so another note: 234k out of 239k are internal empty patches for 23.07… What I’m going to do for now is just delete all internal patches",
+      "time": "11:24",
+      "timestamp": "1712773490.018259",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Then we should try another update",
+      "time": "11:24",
+      "timestamp": "1712773498.710229",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "If it doesn’t work or runs into other issues, I’ll reset the DB to the backup taken before any of the cleanup",
+      "time": "11:25",
+      "timestamp": "1712773513.427269",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Hi folks, @donagh @William Helmrath and I will be doing some maintenance work on the patch tables for the 23.07, 23.10, and 24.01 sandboxes to fix the deployment, and unblock the certify. There shouldn’t be any disruptions, but if there are (ie incorrect configs / images being pushed to k8s) we will revert as soon as we can",
+      "time": "11:27",
+      "timestamp": "1712773633.017959",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "@Cody Boggs can you kick off an update for 23.07?",
+      "time": "11:28",
+      "timestamp": "1712773712.792559",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "@Arek @Kerr Yoo will this cause any issues with the fetch all active patches logic in the upgrade flow?",
+      "time": "11:29",
+      "timestamp": "1712773791.394789",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Interesting… so after cleaning up the patch table by deleting all non-empty patches, leaving ~5k entries remaining in that table, uploading a single base config still took 90 seconds",
+      "time": "11:35",
+      "timestamp": "1712774128.967039",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Kicking off a deploy now for 23.07 :+1:",
+      "time": "11:40",
+      "timestamp": "1712774407.585889",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@Ashwin just to double-check, is it fine that DM upgrade status is thus (https://release-23-07.internal.instabase.com/deployment-manager/upgrade)?",
+      "time": "11:40",
+      "timestamp": "1712774438.884489",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Im not sure but I just clicked abandon",
+      "time": "11:41",
+      "timestamp": "1712774461.088669",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "cc @Kerr Yoo for confirmation",
+      "time": "11:41",
+      "timestamp": "1712774466.341999",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Sweet",
+      "time": "11:41",
+      "timestamp": "1712774514.315549",
+      "is_reply": true
+    },
+    {
+      "sender": "donagh",
+      "user_id": "U036AEB3AF9",
+      "message": "old deployment configs and all cp \"internal use patches\" have been deleted from 24.01",
+      "time": "11:41",
+      "timestamp": "1712774514.479229",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Deploying 23.07 (https://jenkins.instabase.com/job/SAAS-AWS/job/deploy-saas-aws-preprod/12432/)",
+      "time": "11:43",
+      "timestamp": "1712774586.370509",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "Abandoning the upgrade is fine, I think @Arek would be the best reference for the empty internal patches",
+      "time": "11:54",
+      "timestamp": "1712775293.001049",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "The upgrade rebases the exact same way upload base configs does",
+      "time": "11:55",
+      "timestamp": "1712775341.819829",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "So if one works, the other should too",
+      "time": "11:55",
+      "timestamp": "1712775351.643329",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "I’ll abandon the 23.10 sandbox upgrade as well",
+      "time": "12:01",
+      "timestamp": "1712775696.738529",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "actually it looks like the 23.10 sandbox got past writing configs and failed at the undo turn down step (waiting on ray-head and ray-model-training worker)",
+      "time": "12:04",
+      "timestamp": "1712775860.313969",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "@Yash Botadra this looks like another cert issue: `E0410 .232469985 8 ssl_transport_security.cc:1421] (http://ssl_transport_security.cc:1421]) Handshake failed with fatal error SSL_ERROR_SSL: error:1000007d:SSL routines:OPENSSL_internal:CERTIFICATE_VERIFY_FAILED.`",
+      "time": "12:06",
+      "timestamp": "1712775960.564919",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Yup, it’s still not resolved. I need someone who has knowledge about how secrets work during updates to debug this. The secret has been checked in to the code and updates to the sandbox don’t seem to be updating the secret.\nhttps://instabase.slack.com/archives/CCY413CSU/p1712690927802799?thread_ts=1712331681.128859&cid=CCY413CSU",
+      "time": "12:08",
+      "timestamp": "1712776110.022839",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "23.07 hasn't technically failed... yet\nBut it's not encouraging:\nhttps://jenkins.instabase.com/job/SAAS-AWS/job/saas-pipelines/job/install-ib-platform/7252/console",
+      "time": "13:23",
+      "timestamp": "1712780637.784019",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Its at the run actions stage this time (whereas it timed out during the write configs stage last time) so thats progress",
+      "time": "13:24",
+      "timestamp": "1712780666.668359",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Also undo turn down succeeded so all the deployments were able to come up",
+      "time": "13:24",
+      "timestamp": "1712780688.734219",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Write new configs stage only took ~28~ CORRECTION: 18 minutes this time",
+      "time": "13:25",
+      "timestamp": "1712780720.304879",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh yup sure enough, I thought I saw undo turndown all the way down the log, but I scanned too quick. :+1: Thanks!",
+      "time": "13:26",
+      "timestamp": "1712780802.228799",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "It's within 20 minutes of timing out, but it should at least be quicker next round I suspect",
+      "time": "13:26",
+      "timestamp": "1712780817.355489",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Woohoo! @Ashwin it passed :slightly_smiling_face:",
+      "time": "13:56",
+      "timestamp": "1712782577.169459",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Still running system tests yes but the install and upgrade worked :muscle::skin-tone-3:",
+      "time": "13:57",
+      "timestamp": "1712782656.917839",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@Ashwin am I clear to rebuild 23.10 and 24.01 sandboxes? Or do I need to hold off still?",
+      "time": "14:46",
+      "timestamp": "1712785580.825489",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "24.01 we are clear to retry",
+      "time": "16:31",
+      "timestamp": "1712791861.042069",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "23.10 I think we need to follow up on the cert issue",
+      "time": "16:31",
+      "timestamp": "1712791874.878439",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-04-10.json",
+    "message_count": 55,
+    "start_time": "1712762219.786789",
+    "end_time": "1712791874.878439",
+    "is_thread": true
+  }
+}

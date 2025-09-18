@@ -1,0 +1,133 @@
+{
+  "id": "ch_CSY11CK7T_2025-08-11_1754927581.293639_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "William Helmrath"
+  ],
+  "messages": [
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Hi team - trying to test out the new MT SSO feature in aihub-uat and I’m running into an error where the CSP prevents a post request to a webapp endpoint with\n```Refused to send form data to 'https://aihub-uat.internal.instabase.com/account/sso/oidc/019899b0-a569-72a1-b2e6-b5aff9f9085d/login' because it violates the following Content Security Policy directive: \"form-action 'self' https://accounts.google.com https://auth.atlassian.com\".```\nAm I misunderstanding how CSP works, or shouldn’t `form-action 'self'` permit this request?",
+      "time": "08:53",
+      "timestamp": "1754927581.293639",
+      "is_reply": false
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "I’m on this URL btw: `https://aihub-uat.internal.instabase.com/account/main?screen=login`",
+      "time": "09:00",
+      "timestamp": "1754928012.468039",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "turns out this is getting triggered by the SSO redirect url, not the aihub-uat url: https://instabase.slack.com/archives/C06PCEJ4Q00/p1754928681054089",
+      "time": "09:14",
+      "timestamp": "1754928858.962219",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Could you share a link to the source code of the login button? ST SSO log in works. I wonder what the differences are :thinking_face:",
+      "time": "09:43",
+      "timestamp": "1754930636.571899",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Yep - it’s here (https://github.com/instabase/instabase/blob/fix-csp/webserver/shared/src/js/webpacked/lib/src/IBAccount/MtSsoLogin/AuthButtons.tsx#L10-L32)",
+      "time": "10:06",
+      "timestamp": "1754931970.937769",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "It looks like the SSO login buttons make a GET request instead of a POST?",
+      "time": "10:07",
+      "timestamp": "1754932046.864369",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, i think GET makes sense because it only initiates a redirect and we are not sending any sensitive data",
+      "time": "10:11",
+      "timestamp": "1754932290.217469",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Actually it looks like `ENABLE_CSP` is set to false for ST environments so I’m not sure if the ST SSO buttons have been tested with a CSP",
+      "time": "10:21",
+      "timestamp": "1754932903.061209",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It's set to true in this env, where I've tested saml in\nhttps://aihub-eu-df.internal.instabase.com/deployment-manager/configs?targetObject=deployment-webapp",
+      "time": "10:23",
+      "timestamp": "1754932991.858559",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It's odd because the frontend lives in `https://aihub-uat.internal.instabase.com`, which should be covered by `form-action 'self'`",
+      "time": "10:24",
+      "timestamp": "1754933045.431249",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Right - did you look at the thread I sent earlier? I found people saying that Chrome also compares the redirect url to the CSP",
+      "time": "10:25",
+      "timestamp": "1754933108.166189",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Are you able to see where the CSP warning comes from? Is it from our site or from IDP?",
+      "time": "10:26",
+      "timestamp": "1754933162.078809",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "I’m testing a change to disable form-action CSP for our SSO login endpoints, but I agree that we should probably change our endpoint to GET from POST",
+      "time": "10:26",
+      "timestamp": "1754933175.509129",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "No, the warning just specifies the initial login URL: `Refused to send form data to 'https://aihub-uat.internal.instabase.com/account/sso/oidc/019899b0-a569-72a1-b2e6-b5aff9f9085d/login'`",
+      "time": "10:26",
+      "timestamp": "1754933196.615189",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-08-11.json",
+    "message_count": 14,
+    "start_time": "1754927581.293639",
+    "end_time": "1754933196.615189",
+    "is_thread": true
+  }
+}

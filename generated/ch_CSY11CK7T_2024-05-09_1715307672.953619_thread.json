@@ -1,0 +1,85 @@
+{
+  "id": "ch_CSY11CK7T_2024-05-09_1715307672.953619_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Throwing out an idea on Cypress test isolation: we could create x number of orgs and 4 accounts in each org, where x = number of tests we ran in CI concurrently. Looking at the test runs today (https://cloud.cypress.io/projects/cfhedy/runs?branches=%5B%5D&committers=%5B%5D&flaky=%5B%5D&page=1&status=%5B%5D&tags=%5B%7B%22disabled%22%3Afalse%2C%22label%22%3A%22ci%22%2C%22labelProperties%22%3A%7B%22color%22%3A%22%23dadade%22%7D%2C%22suggested%22%3Afalse%2C%22value%22%3A%22ci%22%7D%5D&tagsMatch=ANY&timeRange=%7B%22startDate%22%3A%222024-05-10%22%2C%22endDate%22%3A%222024-05-10%22%7D), we have at most 14 test runs within an hour (and not all are run concurrently). If I understand what \"typical concurrency\" correctly here (https://cloud.cypress.io/projects/cfhedy/analytics/run-duration?branches=%5B%5D&browsers=%5B%5D&chartRangeMostCommonErrors=%5B%5D&chartRangeSlowestTests=%5B%5D&chartRangeTopFailures=%5B%5D&committers=%5B%5D&cypressVersions=%5B%5D&flaky=%5B%5D&operatingSystems=%5B%5D&runGroups=%5B%5D&specFiles=%5B%5D&status=%5B%7B%22label%22%3A%22Passed%22%2C%22value%22%3A%22PASSED%22%7D%2C%7B%22label%22%3A%22Failed%22%2C%22value%22%3A%22FAILED%22%7D%5D&tags=%5B%5D&tagsMatch=ANY&timeInterval=WEEK&timeRange=%7B%22startDate%22%3A%222024-05-03%22%2C%22endDate%22%3A%222024-05-10%22%7D&viewBy=TEST_CASE), we might only need 3-5 orgs. We'll have to pass in the Cypress run id or PR number to the cypress test code as an env var and pick an org to run tests based on that.",
+      "time": "19:21",
+      "timestamp": "1715307672.953619",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Rough implementation plan: in `tools/releasetools/jenkins/pipelines/regression-tests/regression-cypress-v2.jenkinsfile`\n1. Pick an org based on the PR number/Cypress run number (if we can get that)\n2. Update the user email and password env vars based on the picked org.\n3. No need to change the Cypress test code as it'll simply log in using the credentials passed in by `regression-cypress-v2.jenkinsfile`",
+      "time": "19:38",
+      "timestamp": "1715308701.537699",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "2 Q:\n1. Do we know or can we configure number of concurrent test runs?\n2. How much effort is needed to set up an org for all the Cypress tests we currently run in CI\n    a. Creating org & license and creating users should be pretty quick now but i don't know how much setup is needed for Converse/Build/Run app tests.",
+      "time": "19:39",
+      "timestamp": "1715308763.551709",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for 2, i think the Converse and Build tests handle creating projects if the project doesn’t exist\n\nbut most of the ViewApp / Human Review tests rely on some apps published by the user\n\nhowever, creating the apps for these tests shouldn’t take too long though",
+      "time": "21:34",
+      "timestamp": "1715315694.734559",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for 1, i don’t think there’s an easy way to do this, but @CJ can confirm tomorrow\n\nit seems that we’re already using concurrency groups for the Cypress Github action (see .github/workflows/cypress.yml), but Github only allows 1 pending job and 1 in-progress job per concurrency group at any point https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency\n\nhowever, we want pending jobs to just be queued in order",
+      "time": "21:44",
+      "timestamp": "1715316260.305949",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "From the docs: it seems like `concurrency` in ensures that each PR can have at most 1 cypress run. However different PRs can still have cypress run in parallel, which is the problem we are trying to solve now? CJ - could you confirm my understanding?\n> Use `concurrency` to ensure that only a single job or workflow using the same concurrency group will run at a time.\n```concurrency:\n  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}```",
+      "time": "21:50",
+      "timestamp": "1715316630.312369",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the conconcurrency group key could be configured differently - ex: we always use the last digit of the pull request, instead of the entire pull request number, so that there are max 10 PRs with a Cypress CI job in progress\n\nbut Github actions doesn’t handle queueing of pending jobs, so this won’t work",
+      "time": "21:53",
+      "timestamp": "1715316823.242279",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ohh i see what you meant now!\n>  but Github actions doesn’t handle queueing of pending jobs, so this won’t work\nIs this the reason why we have concurrent test runs now? Because if I understand it correctly, there should be only 1 cypress test run since we use `pull_request.number` in the concurrency group key",
+      "time": "22:02",
+      "timestamp": "1715317326.694749",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-05-09.json",
+    "message_count": 8,
+    "start_time": "1715307672.953619",
+    "end_time": "1715317326.694749",
+    "is_thread": true
+  }
+}

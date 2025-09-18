@@ -1,0 +1,109 @@
+{
+  "id": "ch_C06FA6A23_2021-05-12_1620803880.051600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Gunjan"
+  ],
+  "messages": [
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "What is the best practice to determine the base url when using api in UDFs inside the flow? For example, when we want to use rest api to trigger flow, or access database, what is the best practice for determining the url for the same?\n\n• Is there a variable that we can use to get the value in UDF? \n• Do we make calls to localhost at some port number?\n• Do we ask customer to pass fqdn & workspace url in runtime config?\n• Something else?",
+      "time": "00:18",
+      "timestamp": "1620803880.051600",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Hi Gunjan, good question:\n1. There is currently no easy way to get the hostname of the Instabase URI.  In the past, we have asked customers to send the url as part of the runtime_config.  \n2. There is no concept of `localhost` as Instabase actually runs a collection of micro-services.  \n3. There are some nuances while making API calls to Instabase from the UDF (for example, don’t run a blocking Flow from a UDF).  We already have internal clients for most of the APIs.",
+      "time": "08:34",
+      "timestamp": "1620833688.052900",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "@shaunak When you said clients, does that mean something like clients.ibfile where we don't have to provide the hostnames? Is there someplace I can check all of the available clients?",
+      "time": "08:45",
+      "timestamp": "1620834359.053100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Correct.  https://instabase.com/docs/reference/udfs/ should have most of the context",
+      "time": "08:47",
+      "timestamp": "1620834442.053300",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "Any clients for running flow or communicating with database?",
+      "time": "09:21",
+      "timestamp": "1620836508.056400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "No, running flows from inside UDF is a big no-no.   It has the potential to cause deadlocks (which we encountered at BofA)",
+      "time": "11:28",
+      "timestamp": "1620844104.065500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "for databases, can you let us know what you are trying to do?  There should be documentation for table-service in the docs.",
+      "time": "11:28",
+      "timestamp": "1620844128.065700",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "Running some select queries to get data out of the database and storing it them in json files. Then fetching some zip files from disk and extracting them to a directory and then calling another flow to process extracted files",
+      "time": "11:30",
+      "timestamp": "1620844221.065900",
+      "is_reply": true
+    },
+    {
+      "sender": "Gunjan",
+      "user_id": "U01V29NME2Y",
+      "message": "Regarding deadlock, if I remember it correctly that was due to the parent flow monitoring the status of child flow to determine whether it was finished or not, while the triggering flow was executed multiple times. Is it ok to trigger child flows when we are not monitoring their status? Also what if we limit the parent flow to run only once, with something like batch size of 1 or creating a flag file somewhere to check another of that is not running or something like that?",
+      "time": "11:34",
+      "timestamp": "1620844466.066100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Hi Gunjan, yes that is absolutely correct.  If you have a fire-and-forget Flow that should work (this was our workaround).  Since we don’t control how many Flows are executed by the Customers in parallel, setting a batch size doesn’t really help here.",
+      "time": "19:23",
+      "timestamp": "1620872612.075100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Re: Database, is it an external database that you are trying to use?  Or, do you need access to the ones that Instabase has?  You can definitely use Table Service.  The APIs should be documented in our references.  cc <!subteam^S01DXHX6FPT> for table-service and in general DB accessor related queries.",
+      "time": "19:24",
+      "timestamp": "1620872682.075300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-05-12.json",
+    "message_count": 11,
+    "start_time": "1620803880.051600",
+    "end_time": "1620872682.075300",
+    "is_thread": true
+  }
+}

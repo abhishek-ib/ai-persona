@@ -1,0 +1,191 @@
+{
+  "id": "ch_C06FA6A23_2022-05-04_1651698103.322549_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "Will",
+    "joshbronko",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "Given the issues with the filesystem and now it appears that there are issues with training models - does anyone think there would be an issue pushing to 22.05? Any known big issues in that?\n\nAs a note: we are trying to push out of the previous version (22.02) because of the ocr issues we were having",
+      "time": "14:01",
+      "timestamp": "1651698103.322549",
+      "is_reply": false
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "cc @joshbronko",
+      "time": "14:02",
+      "timestamp": "1651698127.103899",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "can you clarify the concerns about the upcoming release? 22.05 release isn’t ready yet. It was cut on monday, and we’re just starting UAT on it today. It’ll have another 2.5 weeks before we will have gone through testing and baking to see if there are big issues.",
+      "time": "14:49",
+      "timestamp": "1651700959.819069",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "There are three issues I see right now:\n• the file system issue from above - can’t move files, copy files or do anything\n• model training doesn’t seem to be working, it seems stuck on training \n• I can’t delete a dataset from a model, might be related to the file system issue\nThis is what I have run into today. Wondering if we should roll back to 22.02 with @Xi Cheng file system fixes or if there is another build that might work but has the ocr enhancements for marx",
+      "time": "15:38",
+      "timestamp": "1651703887.976379",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "which release/environment did you find these on?",
+      "time": "15:40",
+      "timestamp": "1651704036.383949",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "22.04 (https://jenkins.instabase.com/blue/organizations/jenkins/sandbox-azure-provisioner/detail/sandbox-azure-provisioner/971/pipeline/)",
+      "time": "15:41",
+      "timestamp": "1651704073.933549",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "mtb sandbox",
+      "time": "15:41",
+      "timestamp": "1651704081.194429",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Will 22.04 is a minor release and it can miss quite some important patches and improvement. For instance, I don't think many of my patches went in to that, instead they are in 22.01. Any particular reason you want to bump up to 22.04? I agree that you want to roll back to a stable env.",
+      "time": "15:42",
+      "timestamp": "1651704170.888839",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "there were some ocr enhancements that were in 22.04",
+      "time": "15:43",
+      "timestamp": "1651704195.476839",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Got it, if those are must-haves, then we have to bring major patches to 22.04, or cherry-pick them back to 22.01 IMO.",
+      "time": "15:44",
+      "timestamp": "1651704242.899559",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "we were on 22.02 previously, before upgrading to 22.04",
+      "time": "15:44",
+      "timestamp": "1651704269.834909",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "22.02 plus your file system fixes",
+      "time": "15:44",
+      "timestamp": "1651704279.171529",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Oh got it",
+      "time": "15:45",
+      "timestamp": "1651704302.149599",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Will I think I would consider rolling back to 22.02 if that was working for you and if the ocr changes aren’t blockers. The 22.05 is a major release that we will include more patches on it for longer term support and that release should be GA by last week of May. It will tentatively hit prod on May 11 and solution-eng and demo env’s May 12-13.",
+      "time": "15:46",
+      "timestamp": "1651704379.133849",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "makes sense, @Xi Cheng, do you remember which patches you put on there? Can you help roll back to 22.02 that includes your fixes?",
+      "time": "15:47",
+      "timestamp": "1651704423.048599",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Will Yes, I can help you with that. This may take a bit of time as I am taking care of a C1 issue. Would it be too late if I get this rolled for you by EOD tomorrow? The first step would be doing a full deployment off 22.02, can you get that kicked off?",
+      "time": "15:50",
+      "timestamp": "1651704645.188509",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "I’ll kick that off, yes. EOD tomorrow might be a bit late but whenever you are able to will be great",
+      "time": "15:51",
+      "timestamp": "1651704711.304549",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Sounds good, I will keep you updated, and as what we've done before, I may need your help on verifying things :+1:",
+      "time": "15:52",
+      "timestamp": "1651704762.591539",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "sure, I have kicked it off. Pretty much every build over the last couple days has failed in some way shape or form but will let you know",
+      "time": "15:55",
+      "timestamp": "1651704947.108419",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "We can't go back to 22.01 as the ocr setting button isn't there unfortunately and will confuse the customer",
+      "time": "18:12",
+      "timestamp": "1651713129.689229",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Got it, understood :slightly_smiling_face:",
+      "time": "18:18",
+      "timestamp": "1651713515.081989",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-05-04.json",
+    "message_count": 21,
+    "start_time": "1651698103.322549",
+    "end_time": "1651713515.081989",
+    "is_thread": true
+  }
+}

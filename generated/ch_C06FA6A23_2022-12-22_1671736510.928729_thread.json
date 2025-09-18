@@ -1,0 +1,133 @@
+{
+  "id": "ch_C06FA6A23_2022-12-22_1671736510.928729_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "lenny",
+    "Dominic Fannjiang"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Hello, could someone help me understand how our celery tasks become marked as \"Done\" in the job status table? E.g. where does this actually happen, because celery task functions seem to not always explicitly have code to mark the job as done. Asking because I'm experiencing an issue locally where I trigger a job from the UI, and results are returned to the UI as i expect, but the job status api never returns DONE for the job state. There is a particular job where I experience this (running a refiner program), and it is not an issue on any of the environments, only locally. And other jobs that I trigger locally don't have this problem.",
+      "time": "11:15",
+      "timestamp": "1671736510.928729",
+      "is_reply": false
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I think you’re conflating tasks and jobs in this question, so can you clarify if you’re asking about task status in the task table of job status in the job table?",
+      "time": "11:36",
+      "timestamp": "1671737777.524169",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "if you’re asking about job status, task scheduler will automatically mark a job as done after its last task’s status is updated to done",
+      "time": "11:37",
+      "timestamp": "1671737862.931219",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Hm i see. Well it seems like the job status is not being set to done, which means the task's status is not being updated to done perhaps? So i guess my question is, where is a task's status set to done?",
+      "time": "11:39",
+      "timestamp": "1671737972.312259",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "IIRC if you look at the implementation of ManagedTask you should see this logic",
+      "time": "11:40",
+      "timestamp": "1671738005.784479",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "if you look at the schedule state (/api/v1/jobs/view_scheduler_state), do you see your job there? do you see any tasks associated with that job still running?",
+      "time": "11:41",
+      "timestamp": "1671738082.738769",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "I actually dont see my job there at all :open_mouth: it seems like there are some other pending jobs in the queue",
+      "time": "11:46",
+      "timestamp": "1671738363.353579",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "is your job type listed in task scheduler as a supported job type?",
+      "time": "11:46",
+      "timestamp": "1671738392.595799",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Where do I find the list of supported job types?",
+      "time": "11:47",
+      "timestamp": "1671738466.063239",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "see GetTrackedJobTypes() in task_scheduler.go",
+      "time": "11:49",
+      "timestamp": "1671738560.556919",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "if it’s not there, tasks will be piped through to celery directly and you’ll need to manage job status yourself",
+      "time": "11:52",
+      "timestamp": "1671738744.247339",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Yea it is not in GetTrackedJobTypes. Guess I'll need to figure out how this specific task is currently managing the job status",
+      "time": "11:56",
+      "timestamp": "1671738986.403969",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "thanks for explaining those details! was very helpful",
+      "time": "11:57",
+      "timestamp": "1671739064.031639",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Ok turns out the job that runs refiner programs seems to be the only job that does a celery chord. the 2nd task in the chord was never getting started. When I deployed api-server-apps through docker though, it worked, so I believe the issue is that my local pyenv is missing some packages that are needed to run chords correctly.",
+      "time": "13:09",
+      "timestamp": "1671743356.658499",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-12-22.json",
+    "message_count": 14,
+    "start_time": "1671736510.928729",
+    "end_time": "1671743356.658499",
+    "is_thread": true
+  }
+}

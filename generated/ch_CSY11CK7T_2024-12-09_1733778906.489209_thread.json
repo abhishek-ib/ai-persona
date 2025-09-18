@@ -1,0 +1,133 @@
+{
+  "id": "ch_CSY11CK7T_2024-12-09_1733778906.489209_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Jessica",
+    "Jeff"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Checking back on this before I make any changes - @Jeff do you think loading drives for individual workspaces would be better here? Worst case is loading 20 at once but that's pretty unlikely",
+      "time": "13:15",
+      "timestamp": "1733778906.489209",
+      "is_reply": false
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Which endpoint would that be? I am assuming that endpoint wouldn’t querying things related to search, and if so, it would be better in this case.",
+      "time": "13:26",
+      "timestamp": "1733779604.822529",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I can either use api/v2/mounts/list still and provide a repo_owner, or I can use api/v1/drives. If I use the mounts one it will still return indexing info though",
+      "time": "13:30",
+      "timestamp": "1733779818.372079",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "For the api/v1/drives, do you need to provide both repo_owner and a repo_name?",
+      "time": "13:35",
+      "timestamp": "1733780124.163369",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yup, both are required",
+      "time": "13:39",
+      "timestamp": "1733780347.210289",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I would recommend using api/v1/drives. Even though you provide a repo_owner, the api/v2/mounts/list endpoint still tries to get all the org drives and site mount points, and then loop through each mounts to get the indexing status info that you probably wouldn’t need.",
+      "time": "13:41",
+      "timestamp": "1733780475.524409",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Oops sorry I meant providing a repo_name to the api/v2/mounts/list endpoint, it seems it will return drives just for a single workspace in that case",
+      "time": "13:45",
+      "timestamp": "1733780722.663259",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I see. `api/v2/mounts/list` endpoint would still try to retrieve org accessible mount points, though there may not be any.",
+      "time": "13:48",
+      "timestamp": "1733780921.066299",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Ah okay... I do need those too, so I think I'm going to have to use that endpoint. What if we added a flag to be able to that endpoint to omit indexing information?",
+      "time": "14:03",
+      "timestamp": "1733781821.086419",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I see. It wouldn’t help much by adding a flag to omit indexing item info as they are retrieved in the same db call. Hopefully you wouldn’t encounter performance bottleneck. And if so, we could probably add a more simplified endpoint.",
+      "time": "14:43",
+      "timestamp": "1733784187.381009",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "But it would still be better to make multiple requests for the different repos than to use the one that gets the drives for all repos in the org?",
+      "time": "14:43",
+      "timestamp": "1733784230.608689",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "One other option - I could use api/v1/drives + /api/v2/organizations/${orgId}/global-drives",
+      "time": "14:46",
+      "timestamp": "1733784378.148749",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "If repo name is not provided, it make a extra call to `GetAllAIHubOrgRepos` which returns all shared workspaces and the user’s personal workspace in the org. There shouldn’t be much difference.",
+      "time": "14:48",
+      "timestamp": "1733784534.526869",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I don't need to get a list of workspaces. I think I'm going to try api/v1/drives + /api/v2/organizations/${orgId}/global-drives",
+      "time": "14:50",
+      "timestamp": "1733784644.555719",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-12-09.json",
+    "message_count": 14,
+    "start_time": "1733778906.489209",
+    "end_time": "1733784644.555719",
+    "is_thread": true
+  }
+}

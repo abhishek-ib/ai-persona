@@ -1,0 +1,326 @@
+{
+  "id": "ch_C05L87V014J_2025-03-12_1741785855.183549_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe",
+    "Goto Tools Go Links"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@sean.donohoe regarding the missing `python` issue -- when I create a fresh sandbox, `python` is missing. When I force-update the sandbox base image, then `python` magically re-appears. Possible race condition in sandbox setup? Not sure what's going on here, but we need to fix it. Seems like a base image problem, since the sandbox template hasn't changed.\n\nI also have issues w/ other commands missing -- `aws`, `go`, `node`.\n\n```/home/owner/instabase/.sandbox/ibdev-backend/scripts/ecr-login: line 8: aws: command not found\nError: Cannot perform an interactive login from a non TTY device\nWARNING: Your config file at [/home/owner/.docker/config.json] contains these credential helper entries:\n\n{\n  \"credHelpers\": {\n    \"gcr.io\": \"gcloud\"\n  }\n}\nAdding credentials for: gcr.io\ngcloud credential helpers already registered correctly.```",
+      "time": "06:24",
+      "timestamp": "1741785855.183549",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@sean.donohoe FYI -- the services are run as follows:\n\n```sudo -iu owner make -C ... build-docker run-docker```\nThe `sudu -iu owner` is b/c crafting runs services as `root` by default, which causes problems.\n\nHowever, I noticed that Python doesn't get added to the path anymore with `sudo -iu`:\n\n```sudo -iu owner which python\n<nothing>```\nI think this may be the root cause for people's sandbox startup problems.",
+      "time": "07:17",
+      "timestamp": "1741789079.822519",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'm not sure why `sudo -iu` isn't picking up the right PATH settings :\n```echo $PATH\n/home/owner/.ibbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/sandboxd/bin:/usr/games:/usr/local/games:/snap/bin:/Applications/MacVim.app/Contents/bin:/home/owner/.bin```\nvs:\n```/usr/local/thrift/bin:/usr/local/tfenv/bin:/usr/local/pyenv/shims:/usr/local/pyenv/bin:/usr/local/protoc/bin:/usr/local/poetry/bin:/usr/local/nodenv/shims:/usr/local/nodenv/bin:/usr/local/nodenv/shims:/usr/local/oracle/bin:/usr/local/go/current/bin:/usr/local/go/workspace/bin:/usr/local/aws-cli/v2/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/sandboxd/bin:/usr/games:/usr/local/games:/snap/bin```",
+      "time": "07:20",
+      "timestamp": "1741789214.145689",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/current/bin:/usr/local/go/workspace/bin:/usr/local/aws-cli/v2/current/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/sandboxd/bin:/usr/games:/usr/local/games:/snap/bin```",
+      "time": "07:20",
+      "timestamp": "1741789216.245969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I guess it's b/c `sudo -iu`  does _not_ load `.bashrc`",
+      "time": "07:22",
+      "timestamp": "1741789367.314049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If I do:\n\n```sudo -iu owner \nsource .bashrc```\nThen `which python` works:\n```wner@dev:~$ which python\n/usr/local/pyenv/shims/python```",
+      "time": "07:23",
+      "timestamp": "1741789412.955089",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Maybe this is specific to my setup, since I do have a .bash_profile",
+      "time": "07:24",
+      "timestamp": "1741789461.427229",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Maybe also we should be using `sudo -u owner` instead of `-iu`",
+      "time": "07:25",
+      "timestamp": "1741789544.008669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I had to use `sudo` b/c unfortunately https://docs.sandboxes.cloud/docs/repo-manifest#run-schema doesn't let you set the user to use for daemons",
+      "time": "07:29",
+      "timestamp": "1741789780.959259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmm still not working unfortunately\n\n```owner@dev:~/instabase$ sudo -iu owner make build-docker run-docker -C \"$IB_HOME/webserver/api-server\"\nmake: Entering directory '/home/owner/instabase/webserver/api-server'\nmkdir -p /home/owner/instabase/webserver/api-server/build/py\nrm -f /home/owner/instabase/webserver/api-server/build/pydeps.txt\nrm -f /home/owner/instabase/webserver/api-server/build/pythriftdeps.txt\nrm -f /home/owner/instabase/webserver/api-server/build/protodeps.txt\nmake -s list-deps >> /home/owner/instabase/webserver/api-server/build/pydeps.txt\nmake[1]: python: No such file or directory\nmake[1]: *** [/home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/build-python.mk:85: list-deps] Error 127\nmake: *** [/home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/build-python.mk:113: copy-py-deps] Error 2\nmake: Leaving directory '/home/owner/instabase/webserver/api-server'\nowner@dev:~/instabase$```",
+      "time": "07:31",
+      "timestamp": "1741789872.841379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also tried:\n```owner@dev:~/instabase$ sudo -E -u owner make build-docker run-docker -C \"$IB_HOME/webserver/api-server\"\nmake: Entering directory '/home/owner/instabase/webserver/api-server'\nmkdir -p /home/owner/instabase/webserver/api-server/build/py\nrm -f /home/owner/instabase/webserver/api-server/build/pydeps.txt\nrm -f /home/owner/instabase/webserver/api-server/build/pythriftdeps.txt\nrm -f /home/owner/instabase/webserver/api-server/build/protodeps.txt\nmake -s list-deps >> /home/owner/instabase/webserver/api-server/build/pydeps.txt\nmake[1]: python: No such file or directory\nmake[1]: *** [/home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/build-python.mk:85: list-deps] Error 127\nmake: *** [/home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/build-python.mk:113: copy-py-deps] Error 2\nmake: Leaving directory '/home/owner/instabase/webserver/api-server'```",
+      "time": "07:32",
+      "timestamp": "1741789926.590149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@sean.donohoe I think the BASH_ENV  (https://github.com/instabase/instabase/blob/master/.sandbox/ibdev-backend/manifest.yaml#L2)thing is not working as intended",
+      "time": "07:32",
+      "timestamp": "1741789967.786209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```owner@dev:~/instabase$ sudo --non-interactive -u owner make build-docker run-docker -C \"$IB_HOME/webserver/api-server\"\nmake: Entering directory '/home/owner/instabase/webserver/api-server'\nmkdir -p /home/owner/instabase/webserver/api-server/build/py\nrm -f /home/owner/instabase/webserver/api-server/build/pydeps.txt\nrm -f /home/owner/instabase/webserver/api-server/build/pythriftdeps.txt\nrm -f /home/owner/instabase/webserver/api-server/build/protodeps.txt\nmake -s list-deps >> /home/owner/instabase/webserver/api-server/build/pydeps.txt\nmake[1]: python: No such file or directory\nmake[1]: *** [/home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/build-python.mk:85: list-deps] Error 127\nmake: *** [/home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/build-python.mk:113: copy-py-deps] Error 2\nmake: Leaving directory '/home/owner/instabase/webserver/api-server'```\nStill no dice",
+      "time": "07:33",
+      "timestamp": "1741790027.072589",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```owner@dev:~/instabase$ BASH_ENV=/etc/sandbox.d/bash_env sudo -Enu owner make build-docker run-docker -C \"$IB_HOME/webserver/api-server\"\nmake: Entering directory '/home/owner/instabase/webserver/api-server'\nmkdir -p /home/owner/instabase/webserver/api-server/build/py\nrm -f /home/owner/instabase/webserver/api-server/build/pydeps.txt\nrm -f /home/owner/instabase/webserver/api-server/build/pythriftdeps.txt\nrm -f /home/owner/instabase/webserver/api-server/build/protodeps.txt\nmake -s list-deps >> /home/owner/instabase/webserver/api-server/build/pydeps.txt\nmake[1]: python: No such file or directory\nmake[1]: *** [/home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/build-python.mk:85: list-deps] Error 127\nmake: *** [/home/owner/instabase/webserver/api-server/../../shared-utils/build-utils/shared/build-python.mk:113: copy-py-deps] Error 2\nmake: Leaving directory '/home/owner/instabase/webserver/api-server'```",
+      "time": "07:36",
+      "timestamp": "1741790188.718259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "this worked!\n\n```sudo -su owner BASH_ENV=/etc/sandbox.d/bash_env make build-docker run-docker -C \"$IB_HOME/webserver/api-server\"```",
+      "time": "07:37",
+      "timestamp": "1741790267.953639",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "IDK why it's not picking up BASH_ENV if I use -E",
+      "time": "07:37",
+      "timestamp": "1741790276.857479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Maybe BASH_ENV is a special case, since it's an env var read by bash itself",
+      "time": "07:39",
+      "timestamp": "1741790344.345309",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, this works too:\n```BASH_ENV=/etc/sandbox.d/bash_env sudo --preserve-env=BASH_ENV -iu owner make build-docker run-docker -C \"$IB_HOME/webserver/api-server\"```",
+      "time": "07:40",
+      "timestamp": "1741790425.541189",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/68797",
+      "time": "07:53",
+      "timestamp": "1741791225.936899",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Darn, still seems to have failed to boot a sandbox:\n\n```++ cat /home/owner/instabase/webserver/shared/src/js/webpacked/.node-version\n+ nodenv install -s 18.16.1\n/home/owner/instabase/.sandbox/ibdev-backend/hooks/post-checkout: line 8: nodenv: command not found```",
+      "time": "08:34",
+      "timestamp": "1741793693.605989",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey there, I'm not sure what is up with your environment but I've confirmed this does work as expected in a handful of other configurations -- the environment configuration is set by sourcing a bunch of 'setuprc' files under `/etc/sandbox.d`, which I implemented by having `/etc/sandbox.d/setup` write a source snippet into `~/.bashrc`, `~/.zshrc`, etc (as annoying as this is, it's necessary because the crafting platform initialization steps effectively nuke any configuration we set in the image itself)",
+      "time": "08:38",
+      "timestamp": "1741793923.598199",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I used a fresh sandbox w/ no personal snapshot turned on",
+      "time": "08:39",
+      "timestamp": "1741793945.046299",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Anyway, my PR above fixes it!",
+      "time": "08:39",
+      "timestamp": "1741793959.083109",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "that's very odd, I did the same a handful of times with no issue :thinking_face:",
+      "time": "08:39",
+      "timestamp": "1741793969.951869",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Did you verify that all the services came up? The initial build works, but the services are broken.",
+      "time": "08:39",
+      "timestamp": "1741793992.003339",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I did indeed, along with sanity checking `BASH_ENV=/etc/sandbox.d/bash_env sudo -iu owner printenv`  yielded the expected environment variable values",
+      "time": "08:40",
+      "timestamp": "1741794050.957989",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "regardless, :approved: your PR!",
+      "time": "08:41",
+      "timestamp": "1741794071.001289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, thanks! I ran printenv as well -- still didn't have the right PATH.\n```BASH_ENV=/etc/sandbox.d/bash_env sudo -iu owner printenv | grep PATH\nAPP_REGISTRY_PATH=/home/owner/instabase/shared-utils/build-utils/shared/apps.json\nPATH=/home/owner/.ibbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/sandboxd/bin:/usr/games:/usr/local/games:/snap/bin:/Applications/MacVim.app/Contents/bin:/home/owner/.bin\nowner@dev:~$ ```",
+      "time": "09:09",
+      "timestamp": "1741795755.398439",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "is this in a sandbox where you have a .bash_profile defined, though? if so, `BASH_ENV` isn't used as it's treated as a fallback when `~/.bash_profile` isn't found in non-login shells",
+      "time": "09:13",
+      "timestamp": "1741795986.038379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ohhhhhh",
+      "time": "09:17",
+      "timestamp": "1741796231.887459",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I see. Just tested: Yeah, removing `.bash_profile` works. Adding `source ~/.bashrc` to `.bash_profile` doesn't work",
+      "time": "09:17",
+      "timestamp": "1741796264.752029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Anyway, this PR guarantees it will work regardless",
+      "time": "09:17",
+      "timestamp": "1741796277.153579",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah `.bashrc` has some early bail check in case it detects bash is being invoked as non-login (I had to work around that myself for some tools like pyenv: https://github.com/instabase/instabase/blob/master/platform/crafting/docker/sandbox.d/pyenv.setuprc#L4) -- thank you very much for the fix, sorry for the annoying churn!",
+      "time": "09:19",
+      "timestamp": "1741796365.085599",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah OK, gotcha. Yep, glad we got this sorted :sweat_smile:",
+      "time": "09:20",
+      "timestamp": "1741796429.953609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I wish we didn't have to use an interactive login shell at all to run those commands...but if I remove the `-i`, then pulls from GCR stop working.",
+      "time": "09:20",
+      "timestamp": "1741796458.198539",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "same x1000, I would much rather set these up as defaults in the docker image but the crafting platform injects this snippet into `/etc/bash.bashrc`, which effectively nukes any environment we set beforehand\n```# Cloud Sandbox Env START\n\neval \"$(/opt/sandboxd/sbin/wsenv env bash)\"\nif [ -f /opt/sandboxd/etc/bashrc ]; then\n  . /opt/sandboxd/etc/bashrc\nfi\n# Cloud Sandbox Env END```",
+      "time": "09:22",
+      "timestamp": "1741796564.651839",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "(along with some other environment clearing before then, which screws over the daemons :upside_down_face: )",
+      "time": "09:23",
+      "timestamp": "1741796611.602469",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah yeah OK",
+      "time": "09:25",
+      "timestamp": "1741796744.582779",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-12.json",
+    "message_count": 38,
+    "start_time": "1741785855.183549",
+    "end_time": "1741796744.582779",
+    "is_thread": true
+  }
+}

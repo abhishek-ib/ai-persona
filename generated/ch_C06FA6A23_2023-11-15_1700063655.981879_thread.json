@@ -1,0 +1,145 @@
+{
+  "id": "ch_C06FA6A23_2023-11-15_1700063655.981879_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Venkatesh",
+    "Vishnu",
+    "Sahil",
+    "Piyush",
+    "joshbronko",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Sahil",
+      "user_id": "U05QXAB1YF6",
+      "message": "Hi Team,\n\nI was wondering if there is a good way to update the input records inside FnContext class object ?\n\nThe reason we are doing this is because we are trying to implement a classifier using the AIHub LLM.  We know this is possible for our use case because we used it succesfully in a POV by calling the `model-service/run_sync` API, but since it is deprecated now, we are trying to use the ib_llm_tools package to make this happen.\n\nThe way we are planning to do is via updating the fn_context key and passing it into the ib_llm_tools UDF (https://github.com/instabase/appengrepo/blob/bd54eadf055710191b05880832fc8e022f5c1977/packages/ib_aihubhelper/src/ai_hub.py) like `call_model_converse(self.classification_prompt, _FN_CONTEXT_KEY=fn_context)` . Currently the FnContext (https://github.com/instabase/instabase/blob/master/shared-utils/py-utils/data-api-utils/parser-utils/src/py/instabase/_sheet/parser_lib/fns_common.py) object that we have does not have any input records, and it is giving us errors down the line when passing it into the method. Usually this is passed automatically since this method is generally called inside a refiner or a refiner script, but this time as we are accessing it through a classifier, we are running into issues.\n\nWould greatly appreciate any kind of feedback or ideas as it would be very helpful if we are able to use LLMs as classifiers in future projects as well.\n\nThis is a snippet of the classifier script that we are working with (https://privatebin.net/?7c0c71add9ecfc17#6AnV7PX1ScwcsbnBCy81hJWQszw3n78jGtFy1boHFFmH)\n\ncc @Venkatesh @Murali @Badri",
+      "time": "07:54",
+      "timestamp": "1700063655.981879",
+      "is_reply": false
+    },
+    {
+      "sender": "Piyush",
+      "user_id": "U024EALC0UF",
+      "message": "@Kerry FYI - this is impacting the RSA project (SaaS)",
+      "time": "09:03",
+      "timestamp": "1700067784.197799",
+      "is_reply": true
+    },
+    {
+      "sender": "Piyush",
+      "user_id": "U024EALC0UF",
+      "message": "@Sahil Please raise a ticket asap",
+      "time": "09:03",
+      "timestamp": "1700067794.406579",
+      "is_reply": true
+    },
+    {
+      "sender": "Sahil",
+      "user_id": "U05QXAB1YF6",
+      "message": "Have raised a ticket, https://instabase.zendesk.com/agent/tickets/6488",
+      "time": "09:19",
+      "timestamp": "1700068764.042389",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "cc @pauline.comising @lydia",
+      "time": "09:38",
+      "timestamp": "1700069933.918219",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "setting `fn_context._name_to_col_val[\"INPUT_IBOCR_RECORD\"]` to the ibocr record might work as a quick hack. would we want to consider allowing users to pass in the ibocr records directly into the `call_model*` functions to enable usage from scripts outside refiner @pauline.comising?",
+      "time": "09:45",
+      "timestamp": "1700070320.130189",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ib_llm_tools udfs are not meant to be run outside of Refiner. We would need to investigate how to do this. I know @joshbronko has been trying to use classification for Bofa - did you find a workaround for this using custom classifiers?",
+      "time": "09:52",
+      "timestamp": "1700070727.959629",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "I have not started development on it quite yet for Bofa. Waiting for paper atm",
+      "time": "09:52",
+      "timestamp": "1700070769.120119",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "hey @Sahil. We may want to call ibllm using intelligence_sdk. That would be an alternate approach. Whichever tasks call_model_converse uses, we can pass that as a param. I can help you with that",
+      "time": "09:54",
+      "timestamp": "1700070847.409349",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yea, I think you should either try calling ibllm directly like what we do inside ib_llm_tools (https://github.com/instabase/appengrepo/blob/master/packages/ib_aihubhelper/src/ai_hub.py), or copy and modify the classifier model connector (https://github.com/instabase/instabase/blob/master/shared-utils/py-utils/model-utils/src/py/instabase/model_utils/classifier_connectors.py) (which might fit better with running in classifier)",
+      "time": "09:55",
+      "timestamp": "1700070934.684309",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "oh yeah that's another option as well. Thanks for that @lydia :slightly_smiling_face: I think that's a better approach for the classifier",
+      "time": "09:56",
+      "timestamp": "1700071000.997149",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "actually, I realized - it's probably better to directly grab the auto-generated classifier from aihub and modify it. I've included the snippet here as well:\n```import logging\nfrom typing import Dict, List, Optional, Tuple, Union, Text\n\nfrom google.protobuf import struct_pb2\nfrom google.protobuf import json_format\nfrom instabase.model_utils.classifier import (\n    ClassifierInput,\n    DocumentSplitResult,\n)\nfrom instabase.ocr.client.libs.ibocr import ParsedIBOCR\nfrom instabase.protos.model_service import model_service_pb2\nfrom instabase.utils.path import ibpath\nfrom instabase.model_utils.classifier_connectors import (\n    ClassifierModelServiceConnector,\n    make_register_classifiers_fn,\n)\nfrom instabase.metrics_utils.metric_constants import UNKNOWN_ATTRIBUTE_VALUE, APP_SOURCE_TYPE\n\n\ndef _ibocr_to_text(\n    ibocr: ParsedIBOCR\n) -> Tuple[Optional[Text], Optional[Text]]:  # extract text from an IBOCR\n  '''\n  Transform an IBOCR file in Python representation into a string containing\n  the concatenation of each page.\n  '''\n  page_texts = []\n  for i in range(ibocr.get_num_records()):\n    cur_txt, err = ibocr.get_text_at_record(i)\n    if err:\n      return None, err\n    page_texts.append(cur_txt)\n\n  return '\\\\n'.join(page_texts), None\n\n\nclass ModelWrapper(ClassifierModelServiceConnector):\n  model_name = 'ibllm'\n  model_version = '2.0.0'\n  use_parsed_ibocr = False\n\n  def inner_predict(\n      self, datapoint: ParsedIBOCR\n  ) -> Tuple[Optional[DocumentSplitResult], Optional[str]]:\n    return None, None\n\n  def get_text(self, datapoint: ClassifierInput) -> Optional[str]:\n    text = datapoint.get_text()\n    if text:\n      return text\n    if datapoint.get_ibocr():\n      text_content, ibocr_error = _ibocr_to_text(datapoint.get_ibocr())\n      if not ibocr_error:\n        return text_content\n      raise ValueError(\"Could not get text from the document\")\n    return None\n\n  def _make_ms_request(\n      self, classifier_type: str, datapoint: ClassifierInput\n  ) -> Union[Tuple[bytes, str], Tuple[bytes, Optional[str], str]]:\n    '''Forwards the input filepath to the corresponding Model Service model.\n    Return a tuple of three elements, when the model inference result\n    contains a type indicating the class score is also returned\n    '''\n    try:\n      from instabase.model_service.sdk import ModelService, get_model_client  # type: ignore\n    except ImportError:\n      return b'', 'Model Service SDK unavailable.'\n\n    fn_ctx = datapoint.get_fn_ctx()\n    if fn_ctx is None:\n      return b'', 'datapoint fn_ctx is None'\n\n    clients, err = fn_ctx.get_by_col_name('CLIENTS')\n    username = (clients.ibfile._get_username()\n                )  # hacky way to get username since fn_ctx has no client\n\n    root_output_folder, err = fn_ctx.get_by_col_name('ROOT_OUTPUT_FOLDER')\n    if err:\n      return b'', 'No root output folder filepath for associated fn_ctx'\n\n    runtime_config, err = fn_ctx.get_by_col_name(\"CONFIG\")\n    if err:\n      raise KeyError(err)\n    app_id = runtime_config.get('app_id', UNKNOWN_ATTRIBUTE_VALUE)\n    # Making sure result cache folder is root directory.\n    result_cache_folder = root_output_folder\n    # Since root_output_folder is path to step output folder for classifiers and\n    # we need root folder to store cache in model-service.So change cache folder\n    # to out_dir only if root_output_folder is not None and is a step_folder.\n    if root_output_folder:\n      out_dir, _ = ibpath.split_file(root_output_folder)\n      if out_dir:\n        result_cache_folder = out_dir\n\n    custom_request = struct_pb2.Struct()\n    # flake8: noqa\n    custom_request.update({\n        'classifier_type': classifier_type,\n        'classes': ['401k Plan Overview', 'Other'],  # type: ignore\n        'task': 'classification',\n        'source_type': APP_SOURCE_TYPE,\n        'source_id': app_id\n    })\n\n    job_id, err = fn_ctx.get_by_col_name('JOB_ID')\n    if err:\n      logging.warning('JOB_ID not found. Sending None value to Model Service.')\n\n    ms = ModelService(\n        username=username,\n        model_client=get_model_client(use_model_service_lite=True))\n\n    # Project model compatible classifier module has model information\n    # written in the .ibclassifier and set in fn_ctx. Attempt to\n    # read the model information from fx_ctx first.\n    is_project_model: bool = False\n    model_fs_path: Optional[str] = None\n    model_version = self._model_version or None\n    model_name = self._model_name\n\n    req = model_service_pb2.RunModelRequest(\n        context=ms._get_context(),\n        result_cache_folder=result_cache_folder,\n        model_service_context=model_service_pb2.ModelServiceContext(\n            model_paths=[self._model_path] if self._model_path else None, ),\n        input_string=self.get_text(datapoint),\n        model_name=model_name,\n        model_version=model_version,\n        model_fs_path=model_fs_path,\n        is_project_model=is_project_model,\n        model_payload=model_service_pb2.ModelPayload(\n            custom_request=custom_request, ),\n        job_id=job_id,\n    )\n\n    result = ms.run(req)\n\n    if not result.HasField('model_result'):\n      return b'', 'Expected model_result in RunModelResponse.'\n\n    json_result = json_format.MessageToDict(result)\n\n    if \"customResult\" in json_result[\"modelResult\"]:\n      custom_result = json_result[\"modelResult\"][\"customResult\"]\n      error = custom_result[\"error\"]\n      if error:\n        return b'', error\n      return custom_result[\"class_name\"].encode(\"utf-8\"), ''\n\n    if not result.model_result.HasField('raw_data'):\n      return b'', 'Expected raw_data in ModelResult.'\n\n    if not result.model_result.raw_data.HasField('data'):\n      return b'', 'Expected data in RawData message.'\n\n    if result.model_result.raw_data.HasField(\n        'type') and result.model_result.raw_data.type == 'json':\n      # Return an additional element only when the `raw_data.type` is json.\n      # This is a case where a classifier outputs confidence score beside\n      # class label in its prediction. We do not change the return format\n      # for other cases for backward compatibility reasons. Certain legacy\n      # classifiers/split classifiers in production have defined\n      # methods to make direct calls to this method and are unable to process\n      # the results if the return format of this method changes.\n      return result.model_result.raw_data.data, result.model_result.raw_data.type, ''\n    else:\n      return result.model_result.raw_data.data, ''\n\n\nregister_classifiers = make_register_classifiers_fn(ModelWrapper)```",
+      "time": "09:57",
+      "timestamp": "1700071038.521449",
+      "is_reply": true
+    },
+    {
+      "sender": "Venkatesh",
+      "user_id": "U0134C9PPEF",
+      "message": "@Sahil we can connect tomorrow reg the implementation",
+      "time": "09:57",
+      "timestamp": "1700071038.524789",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I think you just need to modify the \"classes\" line in custom request",
+      "time": "09:58",
+      "timestamp": "1700071127.395359",
+      "is_reply": true
+    },
+    {
+      "sender": "Piyush",
+      "user_id": "U024EALC0UF",
+      "message": "Thank you @lydia for the help!!",
+      "time": "16:57",
+      "timestamp": "1700096220.774879",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-11-15.json",
+    "message_count": 15,
+    "start_time": "1700063655.981879",
+    "end_time": "1700096220.774879",
+    "is_thread": true
+  }
+}

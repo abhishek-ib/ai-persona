@@ -1,0 +1,37 @@
+{
+  "id": "ch_C08L4K42H9C_2025-09-11_1757608740.179739_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "demetr.starshov",
+    "jaden"
+  ],
+  "messages": [
+    {
+      "sender": "demetr.starshov",
+      "user_id": "U08SXGHP4R5",
+      "message": "@jaden\nCould you look at 2 FE human review related bugs?\n\n1. NoneType error in the attached screenshot. \n> *Prateek Tenkale*  [12:06 PM]\n> Steps to reproduce Nonetype _use ibdoc error:\n> \n> With multiple_paystubs more.pdf:\n> 1. We have { records 0 | page nums [1, 2, 3] } { record 1 | page nums [4, 5, 6] }\n> 2. Select pages 1 and 2, and click create document\n> 3. When re-extracting fields for the new document it will throw an error `/change-classification-label`\n> 4. Payload `record_index=-1`\n2. Error: parsed.slice(...).map is not a function. Auto-save is disabled after 3 failed attempts to save. ...\nIt's FE only, happens when we try to reorder pages a lot. Here is what console said:\n> A non-serializable value was detected in an action, in the path: `payload`. Value: TypeError: parsed.slice(...).map is not a function\n>     at convertTableToObjectList ()\n>     at eval ()\n>     at Array.map (<anonymous>)\n>     at applyRecordEdits ()\n>     at eval ()\n>     at Array.map (<anonymous>)\n>     at eval ()\n>  \n> Take a look at the logic that dispatched this action:  {type: '@FLOW_REVIEW/SAVE_CORRECTIONS/rejected', payload: TypeError: parsed.slice(...).map is not a function\n>     at convertTableToObjectList (webpack-interna…, meta: {…}, error: {…}}\n> error:\n> {name: 'RejectWithValue', message: 'Rejected'}\n> meta:\n> {arg: {…}, requestId: 'oSliS4F85u0TdMUeQNiLv', rejectedWithValue: true, requestStatus: 'rejected', aborted: false, …}\n> payload:\n> TypeError: parsed.slice(...).map is not a function at convertTableToObjectList (webpack-internal:///./apps/src/aihub/store/review/resultsSlice/helpers/validationHelpers.ts:161:26) at eval (webpack-internal:///./apps/src/aihub/store/review/resultsSlice/helpers/helpers.ts:216:107) at Array.map (<anonymous>) at applyRecordEdits (webpack-internal:///./apps/src/aihub/store/review/resultsSlice/helpers/helpers.ts:209:27) at eval (webpack-internal:///./apps/src/aihub/store/review/resultsSlice/saveCorrections/actions.ts:68:81) at Array.map (<anonymous>) at eval (webpack-internal:///./apps/src/aihub/store/review/resultsSlice/saveCorrections/actions.ts:63:14) at tryCatch (webpack-internal:///./node_modules/@babel/runtime/helpers/regeneratorRuntime.js:45:16) at Generator.eval (webpack-internal:///./node_modules/@babel/runtime/helpers/regeneratorRuntime.js:133:17) at Generator.eval [as next] (webpack-internal:///./node_modules/@babel/runtime/helpers/regeneratorRuntime.js:74:21)\n> type\n> :\n> \"@FLOW_REVIEW/SAVE_CORRECTIONS/rejected\"\n> [[Prototype]]:Object\n>  \n> (See)\n> (To allow non-serializable values see:)\nBoth errors seems to be a race condition. I can silence the first one on BE side (just skip instead of erroring out), but we'd better wait and trigger /change-classification-lable with an updated index",
+      "time": "09:39",
+      "timestamp": "1757608740.179739",
+      "is_reply": false
+    },
+    {
+      "sender": "jaden",
+      "user_id": "U0968P53AQ4",
+      "message": "Second one I have a PR up for it yesterday just waiting for review https://github.com/instabase/instabase/pull/74543",
+      "time": "09:42",
+      "timestamp": "1757608952.028849",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-09-11.json",
+    "message_count": 2,
+    "start_time": "1757608740.179739",
+    "end_time": "1757608952.028849",
+    "is_thread": true
+  }
+}

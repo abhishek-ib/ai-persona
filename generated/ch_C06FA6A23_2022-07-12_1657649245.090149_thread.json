@@ -1,0 +1,127 @@
+{
+  "id": "ch_C06FA6A23_2022-07-12_1657649245.090149_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "Rahul Tewari",
+    "Ashley Sun",
+    "cj"
+  ],
+  "messages": [
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "Has anyone seen this 401 Unauthorized error when running services that depend on docker? Does it have to do with docker login or anything ? I see this for *nginx*, *ocr*, *model*, *doc* and *celery webdriver* and *celery* *app tasks*\n``` => ERROR [internal] load metadata for gcr.io/instabase-build/container-base-py37:22.06.21.05.20.38 (http://gcr.io/instabase-build/container-base-py37:22.06.21.05.20.38)                                                                     0.9s\n------\n > [internal] load metadata for gcr.io/instabase-build/container-base-py37:22.06.21.05.20.38 (http://gcr.io/instabase-build/container-base-py37:22.06.21.05.20.38):\n------\nfailed to solve with frontend dockerfile.v0: failed to create LLB definition: unexpected status code [manifests 22.06.21.05.20.38]: 401 Unauthorized\nmake: *** [build-docker-py-default] Error 1```\nAnd for *pdf services* and *table* I see :\n```Error response from daemon: unauthorized: You don't have the needed permissions to perform this operation, and you may have invalid credentials. To authenticate your request, follow the steps in: https://cloud.google.com/container-registry/docs/advanced-authentication\nmake: *** [build-docker] Error 1```",
+      "time": "11:07",
+      "timestamp": "1657649245.090149",
+      "is_reply": false
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "do you have registry credentials?",
+      "time": "11:11",
+      "timestamp": "1657649506.969259",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "like did you perform docker login at any point?",
+      "time": "11:13",
+      "timestamp": "1657649613.050869",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "yes i think so, when i run docker login i see\n```docker login\nAuthenticating with existing credentials...\nLogin Succeeded```",
+      "time": "11:18",
+      "timestamp": "1657649906.840889",
+      "is_reply": true
+    },
+    {
+      "sender": "cj",
+      "user_id": "U03G46LRWSU",
+      "message": "go to the folder proper and try building there",
+      "time": "11:20",
+      "timestamp": "1657650041.406649",
+      "is_reply": true
+    },
+    {
+      "sender": "cj",
+      "user_id": "U03G46LRWSU",
+      "message": "like, `make build-docker` or something in `instabase/webserver/server-nginx`",
+      "time": "11:21",
+      "timestamp": "1657650076.057529",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "@cj hm i think thats what i am currently doing",
+      "time": "11:28",
+      "timestamp": "1657650481.278699",
+      "is_reply": true
+    },
+    {
+      "sender": "cj",
+      "user_id": "U03G46LRWSU",
+      "message": "Yikes",
+      "time": "11:28",
+      "timestamp": "1657650490.918949",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "@Ashley Sun do you have the gcloud cli installed? Try `gcloud auth list`\n\nif you don’t see the instabase google account in that list. Use this to log in: https://cloud.google.com/container-registry/docs/advanced-authentication#gcloud-helper",
+      "time": "11:38",
+      "timestamp": "1657651111.190529",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "@Eric Han i see the instabase account yes:\n```     Credentialed Accounts\nACTIVE  ACCOUNT\n*       <mailto:ashley.sun@instabase.com|ashley.sun@instabase.com>```",
+      "time": "11:43",
+      "timestamp": "1657651380.150279",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "What is in your `~/.docker/config.json`?",
+      "time": "11:44",
+      "timestamp": "1657651467.354029",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "```{\n\t\"auths\": {\n\t\t\"https://index.docker.io/v1/\": {}\n\t},\n\t\"credsStore\": \"desktop\"\n}%                                 ```",
+      "time": "11:44",
+      "timestamp": "1657651476.466129",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "```gcloud auth configure-docker```\nyou need to run this",
+      "time": "11:45",
+      "timestamp": "1657651514.990629",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-07-12.json",
+    "message_count": 13,
+    "start_time": "1657649245.090149",
+    "end_time": "1657651514.990629",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "id": "ch_C0516UPPMT3_2024-11-15_1731670742.729949_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "vineeth",
+    "margaret.tomaszczuk",
+    "Rakesh"
+  ],
+  "messages": [
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Hey so following up on the issue, we found that this doc (https://docs.google.com/document/d/1WgeDtCPLyeQWn2G76d5tss_ly1e_7F4akUIc43LVWzg/edit?tab=t.0#heading=h.46a4e21uhg7n) which talks about exhaustive search is not on the prod mounted Eng drive. We checked the DB for that doc and did not find it. Thats mostly the reason there is no correct response for the same.\n\nDB query:\n`select count(id) from index_items where mount_point_id = 506 and data_source_url like 'https://docs.google.com/document/d/1WgeDtCPLyeQWn2G76d5tss_ly1e_7F4akUIc43LVWzg%'`\n\nDB response:",
+      "time": "03:39",
+      "timestamp": "1731670742.729949",
+      "is_reply": false
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "@margaret.tomaszczuk can you confirm which environment you had run earlier that gave the correct response?",
+      "time": "03:39",
+      "timestamp": "1731670772.286579",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "On @Hamish’s issue on variablility we are still investigating the cause",
+      "time": "03:40",
+      "timestamp": "1731670816.975099",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Also following up with connector team on the doc updates not being ingested via the crawler.\nhttps://instabase.slack.com/archives/C074LF2AH35/p1731670684858069",
+      "time": "03:40",
+      "timestamp": "1731670836.830909",
+      "is_reply": true
+    },
+    {
+      "sender": "margaret.tomaszczuk",
+      "user_id": "U07NY7CAUSW",
+      "message": "Hey @vineeth! I have been testing in prod this whole time.",
+      "time": "06:14",
+      "timestamp": "1731680076.461459",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Hi @margaret.tomaszczuk\nThanks for confirming - so on further digging we found the reason why you were seeing this before and this week you are not seeing this doc /result anymore.\nSo basically last week when debugging queries and issues reported from Hamish - found a user had mounted entire GDrive with personal +shared drives  - that was polluting the index space (same drives essentially mounted multiple times). So we removed that from indexing.\n\nThat one had some of the newer docs indexed including this one. (workspace was `clemens-demo` and that mount is only included for all org admins as they are all part of every workspace automatically).\nhttps://instabase.slack.com/archives/C0516UPPMT3/p1731412119881069?thread_ts=1731338918.137959&cid=C0516UPPMT3\n\nNow, since I cleaned that up last week, some of documents that were indexed there are no longer appearing in search result as we disabled that mount from indexing.\nWe were able to confirm this by searching the specific doc URL and tracing to this workspace mount that we disabled.",
+      "time": "08:31",
+      "timestamp": "1731688273.322049",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-11-15.json",
+    "message_count": 6,
+    "start_time": "1731670742.729949",
+    "end_time": "1731688273.322049",
+    "is_thread": true
+  }
+}

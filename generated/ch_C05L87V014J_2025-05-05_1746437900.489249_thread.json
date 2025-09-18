@@ -1,0 +1,86 @@
+{
+  "id": "ch_C05L87V014J_2025-05-05_1746437900.489249_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "jemin.jain",
+    "mfichman",
+    "Vasu"
+  ],
+  "messages": [
+    {
+      "sender": "jemin.jain",
+      "user_id": "U085JC8GY0M",
+      "message": "Hi team,\nFacing an issue for access denied when trying to add a test table and apply the migrations in my crafting environment\ncrafting: https://instabase.sandboxes.site/sandboxes/jeminjain\nError:  FATAL utils/db/tools/dbmigrate/main.go:59 -- Error 1045 (28000): Access denied for user ''@'172.18.0.1' (using password: NO)\n\nSteps done:\ncd $IB_HOME/shared-utils/go-utils/src/instabase/utils/db\nbazel run tools/dbschema genmigration create_books_table\n\nedited the newly generated file, and then\ncd $IB_HOME/shared-utils/go-utils/src/instabase/utils/db\nbazel run tools/dbschema migrate\n\nand then running this\ncd $IB_HOME/shared-utils/go-utils/src/instabase/utils/db\nexport INSTABASE_BACKEND_DB_PARAMS=...\nbazel run tools/dbmigrate\n\nLogs:\n```owner@dev:~/instabase/shared-utils/go-utils/src/instabase/utils/db$ bazel run tools/dbmigrate\nINFO: Analyzed target //shared-utils/go-utils/src/instabase/utils/db/tools/dbmigrate:dbmigrate (1 packages loaded, 332 targets configured).\nINFO: Found 1 target...\nINFO: From Action shared-utils/go-utils/src/instabase/utils/db/accessor/mock_Accessor.go:\n05 May 25 09:01 UTC INF Starting mockery dry-run=false version=v0.0.0-dev\n05 May 25 09:01 UTC INF Using config:  dry-run=false version=v0.0.0-dev\n05 May 25 09:01 UTC INF Walking dry-run=false version=v0.0.0-dev\n05 May 25 09:01 UTC INF Generating mock dry-run=false interface=Accessor qualified-name=instabase/utils/db/accessor version=v0.0.0-dev\n05 May 25 09:01 UTC INF writing mock to file dry-run=false interface=Accessor qualified-name=instabase/utils/db/accessor version=v0.0.0-dev\n05 May 25 09:01 UTC WRN DEPRECATION: use of the packages config will be the only way to generate mocks in v3. Please migrate your config to use the packages feature. deprecation-name=packages migration=https://vektra.github.io/mockery/v0.0/migrating_to_packages/ url=https://vektra.github.io/mockery/v0.0/features/#packages-configuration version=v0.0.0-dev\n05 May 25 09:01 UTC WRN DEPRECATION: issue-845-fix must be set to True to remove this warning. Visit the link for more details. deprecation-name=issue-845-fix url=https://vektra.github.io/mockery/v0.0/deprecations/#issue-845-fix version=v0.0.0-dev\nAspect //third-party/bazel/py/rules_mypy:mypy.bzl%mypy_aspect of //shared-utils/go-utils/src/instabase/utils/db/tools/dbmigrate:dbmigrate up-to-date (nothing to build)\nINFO: Elapsed time: 11.060s, Critical Path: 10.16s\nINFO: 6 processes: 2 internal, 4 processwrapper-sandbox.\nINFO: Build completed successfully, 6 total actions\nINFO: Running command line: bazel-bin/shared-utils/go-utils/src/instabase/utils/db/tools/dbmigrate/dbmigrate_/dbmigrate\n2025/05/05 09:02:00 INFO utils/db/tools/dbmigrate/main.go:47 -- Migrate database schema to version latest\n2025/05/05 09:02:00 INFO utils/db/session/params.go:383 -- Starting dbSession with dialect mysql\n2025/05/05 09:02:00 INFO utils/db/session/dbsession.go:249 -- DB Connection Pool: MaxIdle=1, MaxOpen=10, ConnMaxLifetime=7h0m0s, ConnMaxIdleTime=7h0m0s, VerboseLog=false\n2025/05/05 09:02:00 INFO utils/stats/stats_constants.go:1938 -- Intialising the stats\n2025/05/05 09:02:00 INFO utils/db/tools/dbmigrate/main.go:57 -- Updating database schema\n2025/05/05 09:02:00 level=ERROR path=utils/db/session/dbsession.go:626 msg=\"SQL DB: Error 1045 (28000): Access denied for user ''@'172.18.0.1' (using password: NO)\" operation=db/session/DBSessionImpl.Query query=\"SELECT COUNT(*) AS `count` FROM `information_schema`.`tables` WHERE ((`table_schema` = database()) AND (`table_name` = ?))\" query_type=select table=information_schema\n2025/05/05 09:02:00 FATAL utils/db/tools/dbmigrate/main.go:59 -- Error 1045 (28000): Access denied for user ''@'172.18.0.1' (using password: NO)```",
+      "time": "02:38",
+      "timestamp": "1746437900.489249",
+      "is_reply": false
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Hey, you need to set `INSTABASE_BACKEND_DB_PARAMS=\"--dialect=mysql --port=3306 --hostname=mysql --username=root --database=ibdb\"`",
+      "time": "03:09",
+      "timestamp": "1746439750.263659",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Just ran the migrations in your sandbox! They went through successfully",
+      "time": "03:10",
+      "timestamp": "1746439822.548749",
+      "is_reply": true
+    },
+    {
+      "sender": "jemin.jain",
+      "user_id": "U085JC8GY0M",
+      "message": "updated it in the env-local-overrides.json and restarted ?",
+      "time": "03:10",
+      "timestamp": "1746439841.943039",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Nope, just set it in the terminal session from where I was running the migrations.",
+      "time": "03:11",
+      "timestamp": "1746439881.359789",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "```export INSTABASE_BACKEND_DB_PARAMS=\"--dialect=mysql --port=3306 --hostname=mysql --username=root --database=ibdb\"```",
+      "time": "03:11",
+      "timestamp": "1746439899.332049",
+      "is_reply": true
+    },
+    {
+      "sender": "jemin.jain",
+      "user_id": "U085JC8GY0M",
+      "message": "okay got it, thanks!",
+      "time": "03:11",
+      "timestamp": "1746439909.729239",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "A quicker way to do this is to run\n\n```make -C shared-utils/go-utils/src/instabase/db dev-dbinit```\nThis will run migations and/or create the database if it doesn't exist. You don't have to set the env vars manually if you use this target.\n\nThere is also\n\n```make -C shared-utils/go-utils/src/instabase/db dev-dbrollback\nmake -C shared-utils/go-utils/src/instabase/db dev-dbmigrate```\nWhich do as you might expect, but `dev-dbinit` is a superset of `dbmigrate` ; so that's the one I use.",
+      "time": "06:44",
+      "timestamp": "1746452649.547379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-05-05.json",
+    "message_count": 8,
+    "start_time": "1746437900.489249",
+    "end_time": "1746452649.547379",
+    "is_thread": true
+  }
+}

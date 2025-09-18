@@ -1,0 +1,78 @@
+{
+  "id": "ch_C0516UPPMT3_2023-05-02_1683047856.827729_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "Kerry",
+    "Rakesh"
+  ],
+  "messages": [
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi team, cross-posting here for an issue that I encountered on both dev and uat envs for aihub:\nhttps://instabase.slack.com/archives/C04TSMWLPAS/p1683046914976949",
+      "time": "10:17",
+      "timestamp": "1683047856.827729",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "cc @Rakesh @Siddhant tracing should be very useful here. let's remember to trace the open ai call block so we know if the slowness is due to open ai response time, or due to our logic or infra",
+      "time": "10:38",
+      "timestamp": "1683049086.574889",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Yes, we will add more spans and info to current traces generated.",
+      "time": "11:07",
+      "timestamp": "1683050828.606019",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "And try this doc in the build app @Kerry@Rakesh, I got\n```{\"start_time\": 1683051900.0, \"end_time\": 1683051900.0, \"model_result\": {\"custom_result\": {\"error\": \"Exception This model's maximum context length is 4097 tokens, however you requested 6526 tokens (5526 in your prompt; 1000 for the completion). Please reduce your prompt; or completion length.\\nTraceback: Traceback (most recent call last):\\n  File \\\"/home/ibuser/models/system/global/fs/Instabase Drive/Applications/Marketplace/All/ibllm/1.1.0/2023-05-02T16:24:28Z/model/model.py\\\", line 103, in _run_util\\n    field_results = run(\\n  File \\\"/home/ibuser/models/system/global/fs/Instabase Drive/Applications/Marketplace/All/ibllm/1.1.0/2023-05-02T16:24:28Z/code_labs/runner.py\\\", line 46, in run\\n    return chain.run(**kwargs)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/chains/base.py\\\", line 216, in run\\n    return self(kwargs)[self.output_keys[0]]\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/chains/base.py\\\", line 116, in __call__\\n    raise e\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/chains/base.py\\\", line 113, in __call__\\n    outputs = self._call(inputs)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/chains/sequential.py\\\", line 92, in _call\\n    outputs = chain(known_values, return_only_outputs=True)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/chains/base.py\\\", line 116, in __call__\\n    raise e\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/chains/base.py\\\", line 113, in __call__\\n    outputs = self._call(inputs)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/chains/llm.py\\\", line 57, in _call\\n    return self.apply([inputs])[0]\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/chains/llm.py\\\", line 118, in apply\\n    response = self.generate(input_list)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/chains/llm.py\\\", line 62, in generate\\n    return self.llm.generate_prompt(prompts, stop)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/llms/base.py\\\", line 107, in generate_prompt\\n    return self.generate(prompt_strings, stop=stop)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/llms/base.py\\\", line 140, in generate\\n    raise e\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/llms/base.py\\\", line 137, in generate\\n    output = self._generate(prompts, stop=stop)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/llms/openai.py\\\", line 281, in _generate\\n    response = completion_with_retry(self, prompt=_prompts, **params)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/llms/openai.py\\\", line 99, in completion_with_retry\\n    return _completion_with_retry(**kwargs)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/tenacity/__init__.py\\\", line 289, in wrapped_f\\n    return self(f, *args, **kw)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/tenacity/__init__.py\\\", line 379, in __call__\\n    do = self.iter(retry_state=retry_state)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/tenacity/__init__.py\\\", line 314, in iter\\n    return fut.result()\\n  File \\\"/opt/python-3.9.15/lib/python3.9/concurrent/futures/_base.py\\\", line 439, in result\\n    return self.__get_result()\\n  File \\\"/opt/python-3.9.15/lib/python3.9/concurrent/futures/_base.py\\\", line 391, in __get_result\\n    raise self._exception\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/tenacity/__init__.py\\\", line 382, in __call__\\n    result = fn(*args, **kwargs)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/langchain/llms/openai.py\\\", line 97, in _completion_with_retry\\n    return llm.client.create(**kwargs)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/openai/api_resources/completion.py\\\", line 25, in create\\n    return super().create(*args, **kwargs)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/openai/api_resources/abstract/engine_api_resource.py\\\", line 153, in create\\n    response, _, api_key = requestor.request(\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/openai/api_requestor.py\\\", line 226, in request\\n    resp, got_stream = self._interpret_response(result, stream)\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/openai/api_requestor.py\\\", line 619, in _interpret_response\\n    self._interpret_response_line(\\n  File \\\"/home/.venv-default/lib/python3.9/site-packages/openai/api_requestor.py\\\", line 682, in _interpret_response_line\\n    raise self.handle_error_response(\\nopenai.error.InvalidRequestError: This model's maximum context length is 4097 tokens, however you requested 6526 tokens (5526 in your prompt; 1000 for the completion). Please reduce your prompt; or completion length.\\n\", \"suggested_fields\": {}, \"token_usage_stats\": []}}}```",
+      "time": "11:25",
+      "timestamp": "1683051953.675729",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "And here is another issue that seems to be flaky. I tried to upload a doc and after digitization the fields are extracted by the UI complains about not seeing the file. Trying this process again resolves the problem.",
+      "time": "11:28",
+      "timestamp": "1683052136.708769",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "And again, creating an app fails:\n```{\"status\": \"OK\", \"msg\": \"\", \"state\": \"DONE\", \"is_waiting_for_resources\": false, \"job_id\": \"75022942-6659-4f8b-9838-371e708eb689\", \"results\": [{\"status\": \"ERROR\", \"msg\": \"Failed to create the app. Error: Error deploying solution to the filesystem. Rollback from database was successful: [File_service_v2 Enabled] Error occurred executing GRPC method: Request /file_service.FileService/Mkdir failed. Error code=INTERNAL, Error=(13, 'internal'), Message: . Non-retriable error..\"}], \"cur_status\": \"{\\\"msg\\\": \\\"Creating required directories\\\"}\", \"completed_count\": 1, \"finish_timestamp\": null, \"binary_mode\": false}```",
+      "time": "11:36",
+      "timestamp": "1683052562.361539",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Yeah the token issue is being addressed right now. It's a known issue -- we haven't extend chunking to the build mode, so if a doc exceeds 4000 tokens it'll fail. chunking / long doc support is coming this week",
+      "time": "11:56",
+      "timestamp": "1683053761.693959",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-05-02.json",
+    "message_count": 7,
+    "start_time": "1683047856.827729",
+    "end_time": "1683053761.693959",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "id": "ch_C05L87V014J_2025-03-24_1742838841.210839_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Jeff"
+  ],
+  "messages": [
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Hey Team, I am experiencing 502 (https://https--jianweigong-instabase.instabase.site.sandboxes.run/) error with my crafting sandbox (https://instabase.sandboxes.site/sandboxes/jianweigong?cw=dev), though every service is up. Does anyone know the reason? Thanks a lot!",
+      "time": "10:54",
+      "timestamp": "1742838841.210839",
+      "is_reply": false
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I also tried to clean up the cache and open the link through incognito window, but that also did not work.",
+      "time": "10:55",
+      "timestamp": "1742838911.250089",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Same for me. Looks like api-server and webapp failed to start",
+      "time": "11:14",
+      "timestamp": "1742840086.576709",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Looks like both webapp and api-service have some problem with `setuptools`.\n```owner@dev:~$ pip install opentracing==2.4.0\nCollecting opentracing==2.4.0\n  Downloading opentracing-2.4.0.tar.gz (46 kB)\n     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 46.2/46.2 kB 2.0 MB/s eta 0:00:00\n  Preparing metadata (setup.py) ... error\n  error: subprocess-exited-with-error\n  \n  × python setup.py egg_info did not run successfully.\n  │ exit code: 1\n  ╰─> [16 lines of output]\n      Traceback (most recent call last):\n        File \"<string>\", line 2, in <module>\n        File \"<pip-setuptools-caller>\", line 34, in <module>\n        File \"/tmp/pip-install-vjjlffsd/opentracing_e52d6a5f1e844299a6ab8472cb7dfabb/setup.py\", line 4, in <module>\n          setup(\n        File \"/usr/local/pyenv/versions/3.9.17/lib/python3.9/site-packages/setuptools/__init__.py\", line 116, in setup\n          _install_setup_requires(attrs)\n        File \"/usr/local/pyenv/versions/3.9.17/lib/python3.9/site-packages/setuptools/__init__.py\", line 87, in _install_setup_requires\n          dist.parse_config_files(ignore_option_errors=True)\n        File \"/usr/local/pyenv/versions/3.9.17/lib/python3.9/site-packages/setuptools/dist.py\", line 730, in parse_config_files\n          self._parse_config_files(filenames=inifiles)\n        File \"/usr/local/pyenv/versions/3.9.17/lib/python3.9/site-packages/setuptools/dist.py\", line 599, in _parse_config_files\n          opt = self._enforce_underscore(opt, section)\n        File \"/usr/local/pyenv/versions/3.9.17/lib/python3.9/site-packages/setuptools/dist.py\", line 629, in _enforce_underscore\n          raise InvalidConfigError(\n      setuptools.errors.InvalidConfigError: Invalid dash-separated key 'description-file' in 'metadata' (setup.cfg), please use the underscore name 'description_file' instead.\n      [end of output]```",
+      "time": "11:55",
+      "timestamp": "1742842547.537439",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Looks like it's related to this issue report?\nhttps://github.com/pypa/setuptools/issues/4910",
+      "time": "12:03",
+      "timestamp": "1742843014.189649",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Webapp and api-server uses 78.0.1\n`Successfully installed setuptools-78.0.1 wheel-0.45.1`",
+      "time": "12:03",
+      "timestamp": "1742843036.669589",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Yep",
+      "time": "12:04",
+      "timestamp": "1742843051.737519",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Version 77.0.3 works for me\n```diff --git a/webserver/api-server/Dockerfile b/webserver/api-server/Dockerfile\nindex bcf53a5978c..54456d03d24 100644\n--- a/webserver/api-server/Dockerfile\n+++ b/webserver/api-server/Dockerfile\n@@ -13,7 +13,7 @@ COPY build/patch-ray-deps.sh /tmp/patch-ray-deps.sh\n RUN apk add --no-cache \\\n         build-base \\\n         git \\\n-    && pip install --no-cache-dir --upgrade pip setuptools wheel \\\n+    && pip install --no-cache-dir --upgrade pip setuptools==77.0.3 wheel \\\n     && pip install --no-cache-dir -r /tmp/requirements.txt \\\n     && bash /tmp/patch-ray-deps.sh /tmp/requirements.txt \\\n     && apk del --no-cache --purge --rdepends \\```",
+      "time": "12:06",
+      "timestamp": "1742843213.096989",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Thank you, Xindi!",
+      "time": "12:07",
+      "timestamp": "1742843255.027269",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The latest version 78.0.2 works. No need to patch our docker file now",
+      "time": "15:34",
+      "timestamp": "1742855640.052379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-24.json",
+    "message_count": 10,
+    "start_time": "1742838841.210839",
+    "end_time": "1742855640.052379",
+    "is_thread": true
+  }
+}

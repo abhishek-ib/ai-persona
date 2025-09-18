@@ -1,0 +1,215 @@
+{
+  "id": "ch_CSY11CK7T_2024-06-24_1719250007.427249_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "CJ",
+    "mfichman",
+    "youngmok.cho",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi all, does `make create-self-signed-cert` not work anymore? First I got:\n```cs❯ make create-self-signed-cert\nMakefile:238: warning: overriding recipe for target 'publish-svc-prod-gc'\n/home/owner/instabase/webserver/server-nginx/../../shared-utils/build-utils/shared/deploy.mk:950: warning: ignoring old recipe for target 'publish-svc-prod-gc'\n./certificates/local_certs.sh\nCan't open file certificates/passphrase\nError getting password\n804B48A4867F0000:error:80000002:system library:BIO_new_file:No such file or directory:../crypto/bio/bss_file.c:67:calling fopen(certificates/passphrase, r)\n804B48A4867F0000:error:10000080:BIO routines:BIO_new_file:no such file:../crypto/bio/bss_file.c:75:\nmake: *** [Makefile:69: create-self-signed-cert] Error 1```\nThen I created the missing `passphrase` file, and I got:\n\n```cs❯ make create-self-signed-cert\nMakefile:238: warning: overriding recipe for target 'publish-svc-prod-gc'\n/home/owner/instabase/webserver/server-nginx/../../shared-utils/build-utils/shared/deploy.mk:950: warning: ignoring old recipe for target 'publish-svc-prod-gc'\n./certificates/local_certs.sh\nCertificate request self-signature ok\nsubject=C = US, ST = CA, L = San Francisco, O = Instabase, OU = Local dev, CN = localhost, emailAddress = noreply@instabase.com\nCould not open file or uri for loading CA certificate from /home/owner/.ssl/IBCA.pem\n80BB491FE37F0000:error:16000069:STORE routines:ossl_store_get0_loader_int:unregistered scheme:../crypto/store/store_register.c:237:scheme=file\n80BB491FE37F0000:error:80000002:system library:file_open:No such file or directory:../providers/implementations/storemgmt/file_store.c:267:calling stat(/home/owner/.ssl/IBCA.pem)\nUnable to load CA certificate\nmake: *** [Makefile:69: create-self-signed-cert] Error 1```",
+      "time": "10:26",
+      "timestamp": "1719250007.427249",
+      "is_reply": false
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "i have never heard of this make target",
+      "time": "10:27",
+      "timestamp": "1719250047.882309",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "https://docs.google.com/document/d/1c6KaxyYMSpK2-p4vGwiO8OZoKBwJtkQFnhHS9NCMROY/edit#heading=h.v9y6smfeawjw should be correct",
+      "time": "10:27",
+      "timestamp": "1719250055.574879",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Can we add a script for this....?",
+      "time": "10:28",
+      "timestamp": "1719250094.219999",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I used to use the target above, but it no longer works as of today.",
+      "time": "10:28",
+      "timestamp": "1719250108.844379",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "we could probably fix the makefile? :shrug:",
+      "time": "10:28",
+      "timestamp": "1719250117.235619",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@mfichman just to double check, are you getting this in your crafting env? if so @Victor Zeng pushed a change to take care of this automatically with the `workspace` cli in https://github.com/instabase/instabase/pull/56259 -- you may need to update your environment with `workspace update` to pick it up, though",
+      "time": "10:32",
+      "timestamp": "1719250359.657589",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "1 => yes, 2 => OK, thanks -- will do that",
+      "time": "10:37",
+      "timestamp": "1719250620.306369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "womp :slightly_smiling_face:\n```Updating files: 100% (6286/6286), done.\n2024-06-24T17:38:14Z    INFO    Stopping all service daemons before updating\n2024-06-24T17:38:15Z    INFO    Applying ansible configs from sparse checkout\n[WARNING]: No inventory was parsed, only implicit localhost is available\n[WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'\n\nPLAY [Configure Crafting Base Image] *****************************************************************************************************************************************************************************************************************************************\n\nTASK [Gathering Facts] *******************************************************************************************************************************************************************************************************************************************************\nok: [localhost]\n\nTASK [base : Install Base Packages] ******************************************************************************************************************************************************************************************************************************************\nfatal: [localhost]: FAILED! => {\"changed\": false, \"msg\": \"Failed to update apt cache: unknown reason\"}\n\nPLAY RECAP *******************************************************************************************************************************************************************************************************************************************************************\nlocalhost                  : ok=1    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0```\n@sean.donohoe -- you can poke around in my sandbox if you want",
+      "time": "11:00",
+      "timestamp": "1719252011.216479",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ah heck yeah sorry, there was one update a while back that required upgrading through a weird path -- I'll run that for you now, shouldn't touch any of your local WIP :slightly_smiling_face:",
+      "time": "11:01",
+      "timestamp": "1719252083.756919",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@mfichman just finished the upgrade, lmk if you're still having issues getting nginx to start :slightly_smiling_face:",
+      "time": "11:06",
+      "timestamp": "1719252407.916459",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Thanks!! Will do!",
+      "time": "11:38",
+      "timestamp": "1719254293.903679",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@sean.donohoe [super minor] after the upgrade, `poetry` was missing",
+      "time": "11:42",
+      "timestamp": "1719254543.814589",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "whoa that's a weird one, that definitely shouldn't be deleted (https://github.com/instabase/instabase/blob/master/third-party/crafting/snapshot/roles/python/tasks/main.yaml#L87) -- maybe try `pyenv global 3.7.3 && pyenv rehash`? either way making a note, that should be something completely handled by the upgrade logic, thanks for raising!",
+      "time": "11:44",
+      "timestamp": "1719254660.817569",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah yeah, I have my pyenv set to 3.9.x for some reason (I think to do security tickets?)",
+      "time": "11:49",
+      "timestamp": "1719254992.124639",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "That's probably it",
+      "time": "11:49",
+      "timestamp": "1719254995.264129",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah it's so freaking annoying that we continue to have this dependency on 3.7.3, I think I'm going to just install poetry using all the pyenv versions in the ansible spec :lolcry:",
+      "time": "11:51",
+      "timestamp": "1719255069.723009",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "What's the reason for keeping 3.7 again? Old CI pipelines...?",
+      "time": "11:54",
+      "timestamp": "1719255292.911999",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Last time I checked (which could mean this is an out of date statement now) it was due to the modules we depend on in https://github.com/instabase/instabase/blob/master/tools/devtools/code-dependencies/python/requirements_py37.txt, along with `pre-commit` having a dependency on some module that only works with 3.7.3 :melting_face:",
+      "time": "11:56",
+      "timestamp": "1719255413.393859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "If we get all services onto poetry (we should be close?) then we can nuke code-dependencies/python anyway. So I wouldn't worry about that so much.\n\nre: pre-commit, maybe we can upgrade it?",
+      "time": "11:58",
+      "timestamp": "1719255486.681619",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yep! also the py-utils bazel migration @youngmok.cho has been working on is almost complete, which is the vast majority of the code not on poetry",
+      "time": "11:59",
+      "timestamp": "1719255540.393349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/blob/master/tools/devtools/code-dependencies/python/requirements_py37.txt is a hack anyway -- it's a combination of all the different service requirements.txt from the old days so that we could sort of get services working within a single python install. In my experience, it rarely worked right.",
+      "time": "11:59",
+      "timestamp": "1719255541.470859",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "haha yeah for sure -- deprecating that file has been something brought up multiple times in the past but no one ever seems to have time/want to fix it up :melting_face:",
+      "time": "11:59",
+      "timestamp": "1719255599.829409",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": "Yes, I’d say let’s leave it as is. With the Bazel migration “nearly” complete, we won’t need to rely on `requirements_py37.txt` anymore :fist:",
+      "time": "12:04",
+      "timestamp": "1719255853.161489",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-06-24.json",
+    "message_count": 24,
+    "start_time": "1719250007.427249",
+    "end_time": "1719255853.161489",
+    "is_thread": true
+  }
+}

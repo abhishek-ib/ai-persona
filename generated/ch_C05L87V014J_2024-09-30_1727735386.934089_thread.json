@@ -1,0 +1,125 @@
+{
+  "id": "ch_C05L87V014J_2024-09-30_1727735386.934089_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "My crafting sandbox has been pretty slow lately. Not a lot going on, but the load avg is very high:\n\n```cs❯ uptime\n 22:28:48 up 3 days,  9:22,  0 users,  load average: 131.90, 78.58, 50.01```\n```top - 22:29:33 up 3 days,  9:23,  0 users,  load average: 63.91, 68.04, 47.80\nTasks: 209 total,   1 running, 197 sleeping,   1 stopped,  10 zombie\n%Cpu(s):  5.0 us,  1.7 sy,  0.0 ni, 90.6 id,  2.3 wa,  0.0 hi,  0.4 si,  0.0 st\nMiB Mem : 126773.6 total,   1807.3 free,  98982.6 used,  25983.6 buff/cache\nMiB Swap: 1811981.+total, 1253634.+free, 558346.5 used.  26548.4 avail Mem\n\n    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND\n 194058 root      20   0  601.8g  52.2g      0 S  27.2  42.2  74:07.88 pt_main_thread\n 255905 root      20   0 6842472  84132      0 S   0.7   0.1   5:26.43 weaviate\n   9265 999       20   0 5127968   4320      0 S   0.3   0.0   1:00.96 mysqld\n 189009 9999      20   0  358068   1448      0 S   0.3   0.0   0:22.49 redis-serve```",
+      "time": "15:29",
+      "timestamp": "1727735386.934089",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "good heavens, that's certainly running hotter than I'd expect :sweat_smile:\n\nMy laptop forced an upgrade on me as I was typing this out, so I can’t take a look just yet — do you happen to know the parent process of pt_main_thread? I’m assuming it’s from one of the containers running in your environment?",
+      "time": "15:34",
+      "timestamp": "1727735662.269229",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "pt_main_thread appears to be containerd, yes",
+      "time": "16:04",
+      "timestamp": "1727737446.395089",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Just interesting that `top` doesn't show much usage, but the load avg is pretty nuts",
+      "time": "16:04",
+      "timestamp": "1727737471.358819",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah seriously :thonk:  I'd normally jump to saying there's likely some bursty workload that isn't captured by top's polling period, but those averages are crazy high for that to be the case",
+      "time": "16:06",
+      "timestamp": "1727737585.692089",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "also job-service looks like it's sitting around 100% utilization, is that normal for it ...?",
+      "time": "16:08",
+      "timestamp": "1727737683.976209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "That is a problem, but if I kill job-service the performance is still low. The `uptime` I took when job-service was stopped.",
+      "time": "16:08",
+      "timestamp": "1727737737.302389",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "in fact the top two are job-service (lolwut)",
+      "time": "16:09",
+      "timestamp": "1727737747.229119",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, I just killed all the services I had running just now.",
+      "time": "16:09",
+      "timestamp": "1727737750.375369",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "_the plot thickens_\n\npt_main_thread now looks like a zombie process that's somehow eating up CPU?",
+      "time": "16:10",
+      "timestamp": "1727737826.381829",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, I noticed that as well at one point",
+      "time": "16:10",
+      "timestamp": "1727737845.825139",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "that is super strange :neutral_face: I'll try to spot check your env over the next hour in case I can catch the behavior again -- I wouldn't be shocked if there's some rogue bazel build processes doing some unexpected things",
+      "time": "16:12",
+      "timestamp": "1727737956.759929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, haven't had trouble til recently",
+      "time": "16:13",
+      "timestamp": "1727737984.955339",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-09-30.json",
+    "message_count": 13,
+    "start_time": "1727735386.934089",
+    "end_time": "1727737984.955339",
+    "is_thread": true
+  }
+}

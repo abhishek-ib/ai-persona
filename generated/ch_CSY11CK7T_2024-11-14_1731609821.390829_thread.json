@@ -1,0 +1,343 @@
+{
+  "id": "ch_CSY11CK7T_2024-11-14_1731609821.390829_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Xindi Xu",
+    "Serena",
+    "Arek"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`license-service` keeps on exiting and restarting on crafting-cyp (https://crafting-cyp.test.instabase.com/deployment-manager/dashboard/deployments), and it seems to be the only unhealthy service\n\nany suggestions? @Arek since you most recently updated the crafting-cyp update schedule?",
+      "time": "10:43",
+      "timestamp": "1731609821.390829",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think this happened on tuesday too https://instabase.slack.com/archives/CSY11CK7T/p1731463099164009?thread_ts=1731441411.840949&cid=CSY11CK7T",
+      "time": "10:44",
+      "timestamp": "1731609883.736699",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Hmm, my only change was to skip one update in order to fix the platform being down",
+      "time": "10:45",
+      "timestamp": "1731609915.477779",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we didn’t want to deploy from master? i thought we already merged the revert to fix the ports issue?",
+      "time": "10:46",
+      "timestamp": "1731609970.984529",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "No we do, but the deployment of the revert was blocked because the pipeline wouldnt run without the platform being up already",
+      "time": "10:46",
+      "timestamp": "1731610006.161309",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "I didnt see any relevant changes recently https://github.com/instabase/instabase/commits/master/core-services/license-service and its weird that this happened on tuesday,\nWho is the owner of this service? Someone more familiar should look into\n```13:47:43 info 2024/11/14 18:47:43 INFO licenseservice/metering/license_meter.go:32 -- Initializing License Meter\n13:47:50 info Exiting```",
+      "time": "10:50",
+      "timestamp": "1731610217.018019",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Victor Zeng Are you familiar with the license service?",
+      "time": "10:50",
+      "timestamp": "1731610251.754379",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`license-service` seems up now somehow?",
+      "time": "10:51",
+      "timestamp": "1731610283.163269",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "maybe it’s a k8s scheduling issue? can we look at the kubectl logs to see why the container kept on exiting?",
+      "time": "10:52",
+      "timestamp": "1731610378.857149",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Would this be the issue? `Error monitoring usage metrics on Redis - cache is not a RedisCache`",
+      "time": "10:53",
+      "timestamp": "1731610402.349619",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://crafting-cyp.test.instabase.com/grafana/goto/hmFfUUGHg?orgId=1",
+      "time": "10:53",
+      "timestamp": "1731610415.539759",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ok maybe not. Seeing the same error appearing before this week",
+      "time": "10:55",
+      "timestamp": "1731610529.480699",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "wait did someone do something? a bunch of services are restarting, and i don’t see any recent action in cloud console",
+      "time": "11:00",
+      "timestamp": "1731610802.729259",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah `deployment-node-overprovisioning` started coming up just now",
+      "time": "11:00",
+      "timestamp": "1731610859.983799",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Arek would you be the right person to help us look into the resourcing for this environment? it seems that we might not have enough nodes/resources available?",
+      "time": "11:02",
+      "timestamp": "1731610975.171269",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Is this related? https://instabase.slack.com/archives/C06FA6A23/p1731597012717009",
+      "time": "11:05",
+      "timestamp": "1731611104.878959",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "It should not be related (that issue has been fixed) although theres always a chance of some kind of downstream effects but I dont expect anything - knowing what happened",
+      "time": "11:05",
+      "timestamp": "1731611145.568599",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "i think wed see constant resource events from k8s if it were a problem",
+      "time": "11:05",
+      "timestamp": "1731611157.313299",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "I can take a look at this env for a little bit of time",
+      "time": "11:06",
+      "timestamp": "1731611199.773009",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "but for now the infra side seems to be okay? Is anyone experiencing problems",
+      "time": "11:06",
+      "timestamp": "1731611210.307249",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "license-service is exiting and restarting again",
+      "time": "11:07",
+      "timestamp": "1731611222.750189",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "ah of course",
+      "time": "11:07",
+      "timestamp": "1731611243.526519",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Heres a hint potentially\n```Liveness probe failed: panic: runtime error: invalid memory address or nil pointer dereference [signal SIGSEGV: segmentation violation code=0x1 addr=0x18 pc=0xafaf53] goroutine 1 [running]: instabase/utils/ha/impl.(*configImpl).GetLeaseExpirySafetyBufferMS(0xc0007bfb00?) shared-utils/go-utils/src/instabase/utils/ha/impl/config.go:54 +0x13 instabase/utils/ha/impl.(*FileSystemBasedStateManager).GetState(0xc0007d3f20) shared-utils/go-utils/src/instabase/utils/ha/impl/fs_state_mgr.go:174 +0xad instabase/utils/ha/cli/commands.glob..func1(0xc00012f800?, {0xdfcd29?, 0x4?, 0xdfcd2d?}) shared-utils/go-utils/src/instabase/utils/ha/cli/commands/health_check.go:57 +0x1de github.com/spf13/cobra.(*Command).execute(0x153dee0 (http://github.com/spf13/cobra.(*Command).execute(0x153dee0), {0xc0007c2be0, 0x2, 0x2}) external/com_github_spf13_cobra/command.go:983 +0xabc github.com/spf13/cobra.(*Command).ExecuteC(0x153dc00) (http://github.com/spf13/cobra.(*Command).ExecuteC(0x153dc00)) external/com_github_spf13_cobra/command.go:1115 +0x3ff github.com/spf13/cobra.(*Command).Execute(...) (http://github.com/spf13/cobra.(*Command).Execute(...)) external/com_github_spf13_cobra/command.go:1039 instabase/utils/ha/cli/commands.Execute(0xc0007d6870?) shared-utils/go-utils/src/instabase/utils/ha/cli/commands/root.go:26 +0x46 main.main() shared-utils/go-utils/src/instabase/utils/ha/cli/main.go:28 +0x16f```",
+      "time": "11:10",
+      "timestamp": "1731611410.611619",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "finally a more informative error",
+      "time": "11:10",
+      "timestamp": "1731611414.099129",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Ill look at resourcing give me a sec",
+      "time": "11:10",
+      "timestamp": "1731611454.968629",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "apparently this crashlooping happened exactly with this error on prod last year, and the fix was to increase resourcing https://instabase.slack.com/archives/C064VQJ6XL2/p1699466756967359",
+      "time": "11:23",
+      "timestamp": "1731612232.190629",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Yeah i bumped it already but still seeing crashloop",
+      "time": "11:24",
+      "timestamp": "1731612249.957559",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "ill do an extreme increase and see what happens",
+      "time": "11:24",
+      "timestamp": "1731612277.675279",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Ok the extreme requests seem to work (i removed limits and put in absurd requests)",
+      "time": "11:31",
+      "timestamp": "1731612689.007099",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "someone familiar with the codebase should look into this though because im not sure how sustainable it is",
+      "time": "11:31",
+      "timestamp": "1731612701.741659",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "I lowered it to large (for this kind of environment) but more reasonable levels and well see how long this lasts",
+      "time": "11:35",
+      "timestamp": "1731612931.718649",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "thanks for the help @Serena you got the resourcing part right away haha",
+      "time": "11:35",
+      "timestamp": "1731612957.343319",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Aaron Tami it seems you have context from <#C064VQJ6XL2|>? can you help us decide whether we need to keep this patch (https://crafting-cyp.test.instabase.com/deployment-manager/configs?patch=1731612993962)?\n\n(in case it’s not obvious, `crafting-cyp` is used to run Cypress CI for all AI Hub frontend PRs)",
+      "time": "11:39",
+      "timestamp": "1731613144.994139",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I can go in and clean up some old licenses. They aren't needed anyone with the move to metronome.",
+      "time": "11:57",
+      "timestamp": "1731614233.536619",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Victor Zeng do you think that would resolve the OOM issue? maybe we’re running into OOM since we have a lot of licenses for auto-created users in this environment?",
+      "time": "11:58",
+      "timestamp": "1731614306.102209",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "It certainly should help.",
+      "time": "11:58",
+      "timestamp": "1731614322.240649",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "What licenses still depend on license-service after we migrated everyone to metronome?",
+      "time": "11:58",
+      "timestamp": "1731614323.891299",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "License service keeps a copy of all licenses in memory.",
+      "time": "11:58",
+      "timestamp": "1731614334.417909",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Payment Methods and Invoice GRPCs go to license-service.",
+      "time": "16:43",
+      "timestamp": "1731631437.746639",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "We should move them to core-platform-service",
+      "time": "16:44",
+      "timestamp": "1731631444.950029",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-11-14.json",
+    "message_count": 40,
+    "start_time": "1731609821.390829",
+    "end_time": "1731631444.950029",
+    "is_thread": true
+  }
+}

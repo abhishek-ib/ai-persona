@@ -1,0 +1,361 @@
+{
+  "id": "ch_C05L87V014J_2024-12-02_1733168646.033669_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Anil",
+    "ayesha.ali",
+    "ligao.zhang",
+    "jordy.vlan",
+    "sean.donohoe",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "starting a new thread for this error (https://instabase.slack.com/archives/C05L87V014J/p1733158292343149?thread_ts=1732813869.642209&cid=C05L87V014J) in @ligao.zhang’s sandbox (https://instabase.sandboxes.site/sandboxes/ligaozhang1)\n\nI confirmed with Ligao that he set `rabbit_mq_url` and `cache_host` according to the Confluence docs (https://instabase.atlassian.net/wiki/spaces/TI/pages/2213183494/Use+PPY+on+Crafting#Q%3A-How-do-I-get-rid-of-connection-refused%2Ffailed-error-logs-when-connecting-to-rabbitmq-and%2For-redis%3F), but for some reason `api-server` is not able to handle requests to various `/api/v1/celery-handler` endpoints\n\n@Anil @Abhishek Adupa do you have any suggestions?",
+      "time": "11:44",
+      "timestamp": "1733168646.033669",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we also tried running `api-server` in Docker in Ligao’s sandbox, but all `api/v1/celery-handler` endpoints still return 500\n\nwe printed the celery config (see `broker_url` in the screenshot), and everything seems correct for an `api-server` instance running in Docker\n\n@sean.donohoe have you seen this issue before where `api-server` can’t connect with the celery backend?",
+      "time": "12:50",
+      "timestamp": "1733172624.083429",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Can you compare the settings on this vs a working sandbox",
+      "time": "12:57",
+      "timestamp": "1733173069.574669",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Check in both api-server and in job-service",
+      "time": "12:57",
+      "timestamp": "1733173076.117989",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@ayesha.ali are you using crafting? is your env currently working?",
+      "time": "12:58",
+      "timestamp": "1733173114.185899",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "i'm currently using my localhost, but i can check my crafting env",
+      "time": "13:01",
+      "timestamp": "1733173275.771169",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "is it possible to see ibdev change log? I find there is a update 13 days ago",
+      "time": "13:07",
+      "timestamp": "1733173677.967539",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@ayesha.ali for your crafting env, can you copy-paste the contents of `webserver/api-server/tmp/docker_env_local.list` and `webserver/api-server/tmp/env_local`?",
+      "time": "13:25",
+      "timestamp": "1733174735.938579",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "For the ibdev change log, @sean.donohoe do you know?",
+      "time": "13:28",
+      "timestamp": "1733174914.156739",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey there! You can view the commit history for the base image at https://github.com/instabase/instabase/tree/master/third-party/crafting/snapshot, but we unfortunately don't have a changelog for the template available to us yet :upside_down_face:",
+      "time": "13:31",
+      "timestamp": "1733175101.507329",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I also have not seen this issue before, however it does not look like any interception is enabled on Ligao's sandbox?",
+      "time": "13:32",
+      "timestamp": "1733175162.095779",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "The broker_url and result_backend vars still seem to point to docker.host.internal; is that correct? :thonk:",
+      "time": "13:37",
+      "timestamp": "1733175444.788679",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "definitely seems incorrect haha :slightly_smiling_face:",
+      "time": "13:38",
+      "timestamp": "1733175516.167779",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "we tried running `api-server` in Docker to see if it works in Docker, so set points to docker.host.internal,",
+      "time": "13:38",
+      "timestamp": "1733175528.664869",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "same issue with running in local mode",
+      "time": "13:39",
+      "timestamp": "1733175549.071449",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "when you say you ran it in docker, do you mean you used `ppy` to run it in docker, or you used `workspace` to run it in docker?",
+      "time": "13:39",
+      "timestamp": "1733175598.713999",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "`ppy compile api-server --as-docker` and `ppy start api-server --as-docker`",
+      "time": "13:40",
+      "timestamp": "1733175634.949439",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "alright, you cannot use `docker.host.internal` for any of the rabbitmq variables -- every crafting sandbox has a rabbitmq container deployed with it, which is addressed via the `rabbitmq` hostname (so you would replace `docker.host.internal` with `rabbitmq`)",
+      "time": "13:42",
+      "timestamp": "1733175754.565299",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I'm not familiar with the `result_backend` variable, though -- do we know which service is supposed to handle those requests?",
+      "time": "13:43",
+      "timestamp": "1733175787.424539",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "result_backend is supposed to go to redis",
+      "time": "13:44",
+      "timestamp": "1733175868.487579",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "nice! that should be set to `redis` then :slightly_smiling_face:",
+      "time": "13:44",
+      "timestamp": "1733175889.021339",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "(same deal for redis as rabbitmq)",
+      "time": "13:44",
+      "timestamp": "1733175897.409669",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "",
+      "time": "13:46",
+      "timestamp": "1733175972.828609",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "same issue with running in local",
+      "time": "13:46",
+      "timestamp": "1733175992.448599",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "nice, seems like the issue isn't related to establishing a connection with rabbitmq/redis then :slightly_smiling_face:",
+      "time": "13:46",
+      "timestamp": "1733176010.101529",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I do see an empty `redis_host` in those logs -- maybe someone updated to that from `cache_host`?",
+      "time": "13:47",
+      "timestamp": "1733176064.912189",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Anil since Sean confirmed the correct settings for the celery config, is there anything else we should check?",
+      "time": "13:48",
+      "timestamp": "1733176084.454639",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> I also have not seen this issue before, however it does not look like any interception is enabled on Ligao's sandbox?\n@sean.donohoe do we expect interception to occur in sandboxes using the ibdev template?",
+      "time": "13:48",
+      "timestamp": "1733176129.994469",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Ah no sorry, I didn't realize this was being run under `ppy`!",
+      "time": "13:49",
+      "timestamp": "1733176166.221729",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "if it's still useful, here's what my `webserver/api-server/tmp/env_local` looks like",
+      "time": "13:57",
+      "timestamp": "1733176656.100169",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Can you do a diff of this to a working crafting env. It looks like it is unable to connect to RabbitMQ.",
+      "time": "14:00",
+      "timestamp": "1733176859.298989",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "@ayesha.ali, is your sandbox env works? there is no difference between your file and mine",
+      "time": "14:01",
+      "timestamp": "1733176918.195019",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "mine is working, i can upload files",
+      "time": "14:02",
+      "timestamp": "1733176928.440709",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "@ayesha.ali when was your sandbox created? @jordy.vlan mentioned his crafting running perfectly before last week, I am wondering if there are any changes made last week introduced this issue.",
+      "time": "14:05",
+      "timestamp": "1733177123.185699",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "ooh yeah this was from 20 days ago, i can try to make a new sandbox and see",
+      "time": "14:06",
+      "timestamp": "1733177171.590789",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "i started a new sandbox here https://instabase.sandboxes.site/sandboxes/ayeshaali1?cw=dev and i am able to upload documents. my changes to env local include adding this to\n```{\n    \"base\": {\n        \"msft_ocr_layout_endpoint\": \"https://form-recognizer-aihub-prod.cognitiveservices.azure.com\",\n        \"msft_fr_provider\": \"ocr-form-rec-async\",\n        \"rabbit_mq_url\": \"rabbitmq\",\n        \"cache_host\": \"redis\"\n    }\n} ```\n`env-local-overrides.json` and also following all of the faq points here (https://instabase.atlassian.net/wiki/spaces/TI/pages/2213183494/Use+PPY+on+Crafting#FAQ) except for lambda execution (tho that is necessary for running uds). Additionally once u do the first fix from the faq, u need to create a new project so that the changed reader profile will be used",
+      "time": "19:48",
+      "timestamp": "1733197733.794539",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "I am able to upload files now! thanks @ayesha.ali so much!",
+      "time": "20:32",
+      "timestamp": "1733200352.001389",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "cc @jordy.vlan",
+      "time": "20:32",
+      "timestamp": "1733200363.719519",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@ligao.zhang did you create a new sandbox as well? Or is ligaozhang1 now working?",
+      "time": "20:41",
+      "timestamp": "1733200880.130489",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "I am using the sandbox created this morning, yes ligaozhang1",
+      "time": "20:41",
+      "timestamp": "1733200917.079739",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "What was the change though? I’m confused why the changes Ayesha mentioned solved your celery connection issue",
+      "time": "20:42",
+      "timestamp": "1733200975.690469",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "I think this maybe the key step: https://instabase.atlassian.net/wiki/spaces/TI/pages/2213183494/Use+PPY+on+Crafting#Q%3A-How-do-I-get-Build-document-upload-to-work-(with-the-default-digitization-profile)%3F-Uploading-documents-to-my-build-project-takes-a-while-then-fails%2C-and-the-celery-app-tasks-logs-hang-with-ASYNC-CALL-TO-MARX-V3%3A-https%3A%2F%2Finstabaseinternalocr.cognitiveservices.azure.com%2Fvision%2Fv3.2%2Fread%2Fanalyze-as-the-final-log.\nI didn't change the constants before.\n\n• `BUILD_READER_PROFILE_NO_FORM_RECOGNIZER.readSettings.ocr_page_type: OCRModelTypes.DEFAULT`\n• `BUILD_READER_PROFILE_NO_FORM_RECOGNIZER.readSettings.entity_models: []`\n• `BUILD_READER_PROFILE_FORM_RECOGNIZER.readSettings.force_image_ocr: false`",
+      "time": "20:42",
+      "timestamp": "1733200977.251829",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-02.json",
+    "message_count": 42,
+    "start_time": "1733168646.033669",
+    "end_time": "1733200977.251829",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "id": "ch_C05L87V014J_2024-10-02_1727907297.058859_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@sean.donohoe My crafting sandbox (https://instabase.sandboxes.site/sandboxes/xindixu-v2?cw=dev) memory and storage are almost always at 90%+ even after I just ran `docker system prune -a` which frees up 10 GB). Is there anything else I can do to free up spaces? Can I get more memory and storage space?",
+      "time": "15:14",
+      "timestamp": "1727907297.058859",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I'll take a peek at your sandbox now, but some things I usually check on my own workspace to help debug these cases:\n• `ncdu --exclude-kernfs /` -- gives you a nice menu-style breakdown of how much storage is being used by different parts of the filesystem\n• `htop` -- gives you a detailed, live overview of cpu/memory usage",
+      "time": "15:17",
+      "timestamp": "1727907435.284729",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Also the counters on every sandbox overview page are pretty janky -- they usually lag behind your actual sandbox state by up to a couple minutes :upside_down_face: I tend to just use those as general indicators and then rely on command line tools to see the actual resource consumption state",
+      "time": "15:18",
+      "timestamp": "1727907535.077099",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I don't see anything particularly unusual with cpu consumption, however there appear to be a _ton_ of bazel processes that are eating up memory (seems to be related to vscode)",
+      "time": "15:23",
+      "timestamp": "1727907816.530509",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you for the tips!",
+      "time": "15:25",
+      "timestamp": "1727907944.925649",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "for sure :smile: I'm thinking the memory counter on the overview page is also incorrectly set up -- looks like it's including reclaimable memory (so file cache), which isn't really \"consumed memory\"",
+      "time": "15:27",
+      "timestamp": "1727908053.350059",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea... I guess I should close my remove vscode when I'm not working on the backend",
+      "time": "15:27",
+      "timestamp": "1727908054.346149",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "eh, we definitely need to figure out a better environment configuration to make sure bazel/vscode aren't doing crazy things, you definitely shouldn't *have* to close vscode for your environment to work correctly :melting_face:",
+      "time": "15:28",
+      "timestamp": "1727908105.607869",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "wow, found a giant log file..",
+      "time": "15:29",
+      "timestamp": "1727908183.464909",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "holy crap no way! I saw this on someone else's sandbox as well recently and thought it was some random fluke :surprised-pikachu:",
+      "time": "15:30",
+      "timestamp": "1727908220.493019",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah this happened on Sayd's sandbox (https://instabase.slack.com/archives/C05L87V014J/p1726684705313079?thread_ts=1726587279.654679&cid=C05L87V014J) as well, also the log file for file service -- I'm not sure what is being logged so much, but I would bet setting the log level to something like `info` or higher would help :thonk:",
+      "time": "15:33",
+      "timestamp": "1727908421.309469",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yep! Will do! I changed it to `error` once. I thought we would delete the log file when we restart the file service :thinking_face:",
+      "time": "15:35",
+      "timestamp": "1727908548.637449",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you, Sean! I'll look into deleting more stuff. It feels faster already!",
+      "time": "15:39",
+      "timestamp": "1727908746.956029",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Any time! Thanks for raising and going through it with me :smile:",
+      "time": "15:39",
+      "timestamp": "1727908774.673869",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-10-02.json",
+    "message_count": 14,
+    "start_time": "1727907297.058859",
+    "end_time": "1727908774.673869",
+    "is_thread": true
+  }
+}

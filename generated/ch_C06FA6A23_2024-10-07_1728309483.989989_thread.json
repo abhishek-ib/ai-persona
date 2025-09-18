@@ -1,0 +1,69 @@
+{
+  "id": "ch_C06FA6A23_2024-10-07_1728309483.989989_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "Kerry"
+  ],
+  "messages": [
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hey team, master deployment has been broken over the weekend. please prioritize today keeping master healthy. if you are not sure what the fix is, revert the PR first. thank you.\n\nrelease sandbox deployment remains healthy",
+      "time": "06:58",
+      "timestamp": "1728309483.989989",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "With dogfood being a non-prod environment, it's ok for it to be broken after-hours :slightly_smiling_face:\n\nIt's been prioritized this morning already",
+      "time": "06:59",
+      "timestamp": "1728309599.394129",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "It is not ok for dogfood / aihub-sandbox to be broken for an extended period of time (or during someone's after hours).\n\nRationale: These are important shared engineering development sandboxes that are used day-to-day by fellow engineers. We are a very distributed company, and one team's after-hours is another team's work hours. You never know what the other team's schedule is -- maybe there's a bug bash that a team planned to do on dogfood that needs to be rescheduled because what they merged on Friday didn't / couldn't get deploy at all. Looking at the commit history, lots of people merged a PR since the deployment started failing noon EST last Friday. Maybe there are more errors in these PRs, and now it will take more time to catch these bugs. We've seen this many times -- an error didn't get addressed, more error piled on making it harder to debug.\n\nOf course, master will get broken from time to time. It's not ok doesn't mean it will not happen. And yes compared to prod broken, it is less urgent.\n\nBut the right attitude towards this is to always think about your fellow colleagues in a different timezone, and aiming for master stability first == revert a problematic PR or operation. If something can't be revert, plan this ahead -- don't do it as the last thing of the day before going offline (especially the last thing of a Friday); do it as the first thing so if something goes wrong at least you are around during the day to troubleshoot.",
+      "time": "07:22",
+      "timestamp": "1728310940.586359",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Hmm.. I'm in agreement with the spirit of this, but there are a number of things here that warrant considerable discussion and imply a major engineering effort to remediate.\n\nFor a quick clarification on this particular breakage - it was indeed the result of a change (base image was switched to chainguard, and ECR permissions caused our exceptionally old builder nodes to fail to pull that base image), and it boils down to a P0 effort's change tipping our tech-debt-laden build infra into an unstable place. It's been remedied now. :+1:\n\nI have more thoughts and questions, but need to construct them intelligibly first.",
+      "time": "09:48",
+      "timestamp": "1728319739.833929",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I certainly understand that my business hours != IST business hours, and we were trying to fix it prior to the end of the US workday, we just didn't get it figured out before then. I also understand that this left Dogfood deployments broken until IST's Monday had already passed when I fixed it first thing morning (~07:00 MDT).\n\nThat said, given your comments above I have a few questions:\n1. Is there an expectation that Dogfood is owned solely by the US contingent of platform engineering?\n2. Does fixing Dogfood - a dev environment - take priority over planned P0 project work?\n3. Are there historical and/or technical reasons that a broken Dogfood deployment is not a blocker for merges to `master`?\n4. If Dogfood is expected to be treated as a production environment, when should I plan the work to make it conform to proper production standards?",
+      "time": "10:10",
+      "timestamp": "1728321014.017409",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": ":slightly_smiling_face: before i reply to the questions, i want to further clarify -- my original message is on \"master deployment\" and in general the health of any shared dev sandboxes that are deployed from master. so, in our current context, there are dogfood, aihub-sandbox, aihub-eu-df and various crafting sandboxes. it is not specific to dogfood.instabase.com (http://dogfood.instabase.com). To answer the questions:\n\n1. No -- keeping master / shared sandboxes deployed from master as healthy as possible is for all engineering, not engineering in a specific timezone or a specific team. Everyone needs to keep in mind that if they break something without fixing or reverting before their end of day, they might impact the productivity of their colleagues in a different timezone. Master can be broken for various reasons -- for example, I pinged the other team the other day on another PR https://instabase.slack.com/archives/CCY413CSU/p1727922804084219?thread_ts=1727920437.419709&cid=CCY413CSU\n2. Yes -- because it might impact other people's P0 work. Just note that \"fixing\" is not always forward fix, it can also be reverting. Also, again my original message is on the health of the master branch. I don't think anyone can effectively execute their P0 work if master is not healthy \n3. No -- I think we just don't have time to work on this properly. In an ideal scenario, we add have enough pre-merge tests so if someone's PR breaks deployment they don't even get to merge the PR. I am hoping that after the chainguard work we can start to things like building and spinning up an image to pre-merge. Overall I really want to invest in stricter pre-merge to capture things early. Anyone has any ideas I would love to prioritize people's time to do it in Q4. Simply block a PR when a sandbox deployment fail is probably not going to work -- for example, if master deployment fail and we block master PR merge, how do we even get the fix in -- the whole process needs to be more thought through. \n4. Again I would love to see anything that help the stability of master (and the sandboxes deployed from master) get prioritized; we can however only do one or two things at a time so among all the improvements we can do on this stream of work, need to prioritize the highest impact first (for example, this quarter we prioritize chainguard which helps with vuln management and image build) . I'm happy to help with prioritization / tradeoffs in Q4 if the team needs my input. \nMy message didn't ask us to \"treat dogfood as a production environment\"; my message is asking us to treat the health of the master branch seriously & with urgency, trying our best not to leave master in a broken state for an extended period of time. In the majority of cases, breakage is introduced by a PR or an operation we initiated; fixing something can be just reverting a PR. For things that are not easily revertible, plan a bit head of time and leave yourself some time to investigate if it goes wrong.",
+      "time": "12:27",
+      "timestamp": "1728329230.694039",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-07.json",
+    "message_count": 6,
+    "start_time": "1728309483.989989",
+    "end_time": "1728329230.694039",
+    "is_thread": true
+  }
+}

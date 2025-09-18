@@ -1,0 +1,142 @@
+{
+  "id": "ch_C06FA6A23_2023-08-08_1691536590.372479_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Heymian",
+    "Cheryl Zhou"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm seeing this build failing: https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-44949/1/pipeline\nDoes anyone know how to fix it?",
+      "time": "16:16",
+      "timestamp": "1691536590.372479",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "```\n[2023-08-08T22:48:59.830Z] Validating documentation for 646 env vars...\n\n[2023-08-08T22:48:59.830Z] [WARN]    Outdated documentation for AUTH_INTERNAL_ONLY\n\n[2023-08-08T22:48:59.830Z] Missing documentation for 0 vars, 1 vars are outdated\n\n[2023-08-08T22:48:59.830Z] Failed to compile documentation. Err: Validation failed, see log output for details\n\n[2023-08-08T22:48:59.830Z] make[2]: Leaving directory '/instabase_dir/shared-utils/build-utils/envdocs'\n\n[2023-08-08T22:48:59.830Z] \n\n[2023-08-08T22:48:59.830Z] STDERR: exit status 1\n\n[2023-08-08T22:48:59.830Z] make[2]: *** [Makefile:16: build] Error 1```",
+      "time": "16:16",
+      "timestamp": "1691536595.050079",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I don't understand why the env doc for this env var is outdates since I just added this env var in my PR. This env var is only used in aihub. Removing the newly added doc makes it build without errors, but I wonder if that's expected. My code:\n```    \"AUTH_INTERNAL_ONLY\": {\n        \"description\": \"If set to true, users can only sign up with @instabase.com emails\",\n        \"tags\": [\n            \"authentication\",\n            \"aihub\"\n        ]\n    },```",
+      "time": "16:21",
+      "timestamp": "1691536878.249569",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Never personally had this issue but I remember there was a similar thread (https://instabase.slack.com/archives/C011FHLBN8N/p1680133051120599). Is this helpful? :eyes:",
+      "time": "16:36",
+      "timestamp": "1691537789.426869",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Can you share your PR?",
+      "time": "16:56",
+      "timestamp": "1691538963.191619",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "this probably means that it got removed from a base config somewhere but the documentation is there there.",
+      "time": "16:56",
+      "timestamp": "1691538985.404999",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://github.com/instabase/instabase/pull/44949",
+      "time": "16:56",
+      "timestamp": "1691538988.192909",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I read the threads shared by @Cheryl Zhou. One of them mentioned that we don't need to add internal-only env vars to the env doc. Is that still true?",
+      "time": "17:00",
+      "timestamp": "1691539227.332019",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "So the env doc script will materialize the configs using dogfood’s configs (base configs + dogfood patches). And any env vars that show up there need to be documented. If they are not in there, they should be removed.",
+      "time": "17:04",
+      "timestamp": "1691539474.473389",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ah, ok. Since this new env var is not used in base config or dogfood patches, we don't need to add it to the env doc.",
+      "time": "17:06",
+      "timestamp": "1691539561.610419",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you :blob_excited:",
+      "time": "17:06",
+      "timestamp": "1691539597.863149",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Do we have another place to document env vars that are not used in dogfood?",
+      "time": "17:07",
+      "timestamp": "1691539643.516349",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Nope, just remove it from env docs. I didn’t see you add it in your PR though, so I’m a bit confused where the error is coming from. This is a new env var right?",
+      "time": "17:11",
+      "timestamp": "1691539908.123199",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I added the env doc in the 1st commit of my PR and env doc failed to build. I then removed the env doc and now it passes.\nYea, it is a new env var",
+      "time": "17:13",
+      "timestamp": "1691539985.031259",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ahhh I missed that, yes removing should fix",
+      "time": "17:14",
+      "timestamp": "1691540053.214259",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-08-08.json",
+    "message_count": 15,
+    "start_time": "1691536590.372479",
+    "end_time": "1691540053.214259",
+    "is_thread": true
+  }
+}

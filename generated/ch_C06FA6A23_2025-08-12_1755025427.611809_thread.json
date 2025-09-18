@@ -1,0 +1,93 @@
+{
+  "id": "ch_C06FA6A23_2025-08-12_1755025427.611809_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I ran into this today too. I have a patch on my branch that fixes this for both webapp and weaviate-titan.",
+      "time": "12:03",
+      "timestamp": "1755025427.611809",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```--- a/third-party/docker/weaviate-titan/Dockerfile\n+++ b/third-party/docker/weaviate-titan/Dockerfile\n@@ -21,13 +21,12 @@ RUN GOOS=linux GOARCH=amd64 go build \\\n   -o /weaviate-server ./cmd/weaviate-server\n\n # Final image\n-FROM alpine\n-RUN apk add --no-cache --upgrade bc ca-certificates openssl \\\n-    libc6-compat # <--- Added this for glibc compatibility\n+FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/chainguard/wolfi-base:latest (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/chainguard/wolfi-base:latest)\n+RUN apk add --no-cache --upgrade bc ca-certificates openssl\n\n COPY --from=builder /weaviate-server /bin/weaviate\n\n USER 9999\n EXPOSE 8080\n ENTRYPOINT [\"/bin/weaviate\"]\n-CMD [ \"--host\", \"0.0.0.0\", \"--port\", \"8888\", \"--scheme\", \"http\"]\n\\ No newline at end of file\n+CMD [\"--host\", \"0.0.0.0\", \"--port\", \"8888\", \"--scheme\", \"http\"]```",
+      "time": "12:04",
+      "timestamp": "1755025449.932649",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Er sorry, it was nginx",
+      "time": "12:04",
+      "timestamp": "1755025467.328069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```--- a/webserver/server-nginx/Dockerfile\n+++ b/webserver/server-nginx/Dockerfile\n@@ -1,11 +1,11 @@\n-FROM jekyll/jekyll:4.2.2 AS webroot\n+FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/jekyll/jekyll:4.2.2 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/jekyll/jekyll:4.2.2) AS webroot\n RUN gem install public_suffix -v 4.0.7 \\\n     && gem install addressable -v 2.8.0\n\n COPY build/webroot/static /webroot/static\n COPY build/fern-docs/src/static /webroot/static/docs/aihub\n\n-FROM cgr.dev/chainguard/wolfi-base:latest AS nginx_modules\n+FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/chainguard/wolfi-base:latest (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/chainguard/wolfi-base:latest) AS nginx_modules\n RUN apk add --no-cache \\\n         build-base \\\n         pcre2-dev \\\n@@ -26,7 +26,7 @@ WORKDIR /nginx_modules\n RUN mv /tmp/nginx/objs/ngx_http_vhost_traffic_status_module.so /nginx_modules\n\n\n-FROM cgr.dev/chainguard/wolfi-base:latest\n+FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/chainguard/wolfi-base:latest (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/chainguard/wolfi-base:latest)\n LABEL maintainer=\"Instabase, Inc.\"\n RUN apk add --no-cache \\\n         bash \\```",
+      "time": "12:04",
+      "timestamp": "1755025469.035009",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Will merge it in a sec",
+      "time": "12:04",
+      "timestamp": "1755025476.636349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Cody Boggs wonder if we can DNS block `hub.docker.com (http://hub.docker.com)` from CI to prevent this stuff from leaking in",
+      "time": "12:06",
+      "timestamp": "1755025565.446879",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/73614",
+      "time": "12:07",
+      "timestamp": "1755025670.526629",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "DNS blocking would be very prone to unexpected and hard-to-diagnose errors in who-knows-what, but I think a small PR check in GH would do the trick",
+      "time": "13:03",
+      "timestamp": "1755028993.792379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Works for me :slightly_smiling_face:",
+      "time": "14:34",
+      "timestamp": "1755034470.086239",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-08-12.json",
+    "message_count": 9,
+    "start_time": "1755025427.611809",
+    "end_time": "1755034470.086239",
+    "is_thread": true
+  }
+}

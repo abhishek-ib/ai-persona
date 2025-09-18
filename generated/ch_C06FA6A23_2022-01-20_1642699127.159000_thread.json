@@ -1,0 +1,119 @@
+{
+  "id": "ch_C06FA6A23_2022-01-20_1642699127.159000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "Kerry",
+    "Heymian",
+    "Sabyasachi Roy"
+  ],
+  "messages": [
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "I’m having some trouble starting my local environment after the consolidation of core services. How can i start webapp with the correct set of env variables?? I tried both `make clean build runlocal` and `make build-docker run-docker` for webapp and core-platform-service but i’m getting this error on core-platform-service. <!subteam^S01DXHX6FPT>\n```2022/01/20 17:17:57 ERROR utils/status/status.go:146 -- [NOT_FOUND]: Key ENV/CONFIG/SITE/DISALLOW_USER_OWNED_REPOS not found```",
+      "time": "09:18",
+      "timestamp": "1642699127.159000",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "try pulling master again, @Sabyasachi Roy should have fixed this already?",
+      "time": "09:19",
+      "timestamp": "1642699189.159200",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "i’m on latest master with last change 7hrs ago and it doesnt seem to work. Is there any other services I need to restart?",
+      "time": "09:21",
+      "timestamp": "1642699316.159400",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "1s. So basically core-platform-service is not working with runlocal?",
+      "time": "09:35",
+      "timestamp": "1642700131.159600",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "@Eric Han both these started up on my local setup. Did you see that error on issuing something on webapp?",
+      "time": "09:37",
+      "timestamp": "1642700245.159800",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "@Heymian: The stack trace corresponding to the error looks like as below. It seems to be looking for something in the DB. So it seems more about data than code. Any idea what it is. If something changed there recently? I tried running with with separate ARM services and get the same issue so core-platform merging isnt the cause it seems\n\n```goroutine 53 [running]:\nruntime/debug.Stack(0xc00019da00, 0x40e5b51, 0x55b2060)\n\t/Users/sabyasachiroy/.goenv/versions/1.15.2/src/runtime/debug/stack.go:24 +0x9f\nruntime/debug.PrintStack()\n\t/Users/sabyasachiroy/.goenv/versions/1.15.2/src/runtime/debug/stack.go:16 +0x25\ninstabase/utils/status.Error(0x2, 0xc0005c6340, 0x37, 0x1, 0x1)\n\t/Users/sabyasachiroy/work/development/instabase/shared-utils/go-utils/src/instabase/utils/status/status.go:148 +0x26\ninstabase/utils/db/accessor.(*dbAccessor).GetKeyValue(0xc0001f0240, 0xc000038600, 0x29, 0xc000038600, 0x29, 0x8, 0x8, 0xc0000d0b08, 0x5987800)\n\t/Users/sabyasachiroy/work/development/instabase/shared-utils/go-utils/src/instabase/utils/db/accessor/keyvalue_accessor.go:61 +0x569\ninstabase/utils/env.(*Env).Get(0xc0004a6fa0, 0x4dcd81f, 0x19, 0x19)\n\t/Users/sabyasachiroy/work/development/instabase/shared-utils/go-utils/src/instabase/utils/env/env.go:46 +0x72\ninstabase/accountservice/handler.(*AccountServiceHandler).GetEnv(0xc0004d4dc0, 0x4f07f60, 0xc0000d4008, 0xc0000d0b00, 0x0, 0x40190dd, 0x4db9e12)\n\t/Users/sabyasachiroy/work/development/instabase/core-services/account-tservice/src/go/src/instabase/accountservice/handler/env.go:47 +0x105\ninstabase/account.(*accountServiceProcessorGetEnv).Process(0xc0002fdf40, 0x4f07f60, 0xc0000d4008, 0x0, 0x4f19740, 0xc000590070, 0x4f19740, 0xc0005900e0, 0x4337a01, 0x0, ...)\n\t/Users/sabyasachiroy/work/development/instabase/core-services/account-tservice/build/go/src/instabase/account/account.go:39361 +0x2c5\ninstabase/account.(*AccountServiceProcessor).Process(0xc0004a6fc0, 0x4f07f60, 0xc0000d4008, 0x4f19740, 0xc000590070, 0x4f19740, 0xc0005900e0, 0x1, 0x0, 0x0)\n\t/Users/sabyasachiroy/work/development/instabase/core-services/account-tservice/build/go/src/instabase/account/account.go:35680 +0x34d\ngithub.com/apache/thrift/lib/go/thrift.(*TSimpleServer).processRequests(0xc0001be240 (http://github.com/apache/thrift/lib/go/thrift.(*TSimpleServer).processRequests(0xc0001be240), 0x4f10940, 0xc0004b0480, 0x0, 0x0)\n\t/Users/sabyasachiroy/work/development/instabase/core-services/account-tservice/src/go/pkg/mod/github.com/apache/thrift@v0.13.0/lib/go/thrift/simple_server.go:264 +0x23b\ngithub.com/apache/thrift/lib/go/thrift.(*TSimpleServer).innerAccept.func1(0xc0001be240 (http://github.com/apache/thrift/lib/go/thrift.(*TSimpleServer).innerAccept.func1(0xc0001be240), 0x4f10940, 0xc0004b0480)\n\t/Users/sabyasachiroy/work/development/instabase/core-services/account-tservice/src/go/pkg/mod/github.com/apache/thrift@v0.13.0/lib/go/thrift/simple_server.go:166 +0x6f\ncreated by github.com/apache/thrift/lib/go/thrift.(*TSimpleServer).innerAccept (http://github.com/apache/thrift/lib/go/thrift.(*TSimpleServer).innerAccept)\n\t/Users/sabyasachiroy/work/development/instabase/core-services/account-tservice/src/go/pkg/mod/github.com/apache/thrift@v0.13.0/lib/go/thrift/simple_server.go:164 +0x14d\n2022/01/20 23:52:08 ERROR utils/status/status.go:149 -- [NOT_FOUND]: Key ENV/CONFIG/SITE/DISALLOW_USER_OWNED_REPOS not found```",
+      "time": "10:28",
+      "timestamp": "1642703300.160200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrm, this is potentially me then. i made a change to an error code yesterday. let me look shortly, if not there may be two PR’s to revert.",
+      "time": "10:32",
+      "timestamp": "1642703546.160500",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Eric Han maybe pull the jan release and work from there first to unblock you",
+      "time": "10:33",
+      "timestamp": "1642703589.160700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "weird, @Eric Han are you hitting any error in the UI or is the error just printing? I think we just need to supress the error log since i started surfacing the type of error from the DB module, but a NotFound is not actually an error",
+      "time": "11:51",
+      "timestamp": "1642708273.161100",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "I’m just seeing the error printing but it prints a bunch of times followed by ui rendering this:",
+      "time": "14:34",
+      "timestamp": "1642718061.161700",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "i resolved this btw, I was too focused on looking at teh connection to mount service, but I had to restart both file services to get this working locally",
+      "time": "15:27",
+      "timestamp": "1642721241.162100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "ahh okay cool. i’ll make sure to hide the erorr",
+      "time": "15:49",
+      "timestamp": "1642722559.162300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-01-20.json",
+    "message_count": 12,
+    "start_time": "1642699127.159000",
+    "end_time": "1642722559.162300",
+    "is_thread": true
+  }
+}

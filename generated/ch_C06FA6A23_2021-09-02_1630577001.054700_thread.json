@@ -1,0 +1,349 @@
+{
+  "id": "ch_C06FA6A23_2021-09-02_1630577001.054700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Will",
+    "Dale DeLoy",
+    "Kerry",
+    "sudeep",
+    "Naveen",
+    "Pritam Roy",
+    "Rakesh",
+    "Pramod Munemanik",
+    "lydia",
+    "Dan H"
+  ],
+  "messages": [
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "Seems that dogfood can’t load this line in a script any more, “register_all(name_to_fn)“. Is there a new command to load all the functions?",
+      "time": "03:03",
+      "timestamp": "1630577001.054700",
+      "is_reply": false
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "the script is here though I’m guessing it exists in a lot of places: https://dogfood.instabase.com/apps/text-editor/julia.marcondes/Citi-POV/fs/Instabase%20Drive/Commercial%20Registers/scripts/custom_refiner_udf.py",
+      "time": "03:04",
+      "timestamp": "1630577041.054800",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "that statement is used to register functions brought in from dev exchange",
+      "time": "03:05",
+      "timestamp": "1630577119.055000",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "so it shouldn’t be called on dogfood?",
+      "time": "03:07",
+      "timestamp": "1630577223.055200",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "No - it should be used and is used in a large number of scripts to import dev exchange functions",
+      "time": "03:08",
+      "timestamp": "1630577292.055400",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "My point is that it is used extensively and can have a major impact",
+      "time": "03:08",
+      "timestamp": "1630577333.055600",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "ok, so for dogfood am I supposed to import each individual function: https://instabase.com/apps/developer-exchange/?app=ibtools&version=0.3.2 that I want to use",
+      "time": "03:09",
+      "timestamp": "1630577345.055800",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "No - you should be able to use the register_all",
+      "time": "03:09",
+      "timestamp": "1630577392.056000",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "If this is broken many many many things are impacted",
+      "time": "03:10",
+      "timestamp": "1630577419.056200",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "cc @Rakesh @Naveen in case they have more info on this",
+      "time": "03:50",
+      "timestamp": "1630579823.057800",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "@Dale DeLoy, looked into this, this looks like an error while loading the udf-docs for the refiner functions… Although this shouldn’t happen, but it shouldn’t block any refiner execution calls as well, can you try running the refiner, does that work?\ncc: @Will @sudeep",
+      "time": "04:05",
+      "timestamp": "1630580704.058100",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "@Naveen I can run refiner calls for functions that already existed but I cannot write a new python function and have it register.  Seems like the new registration of a functions fails when the reload fails.",
+      "time": "04:35",
+      "timestamp": "1630582515.058400",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Hi Dale,\nCan we meet up quick to look at your issue?",
+      "time": "05:14",
+      "timestamp": "1630584856.058900",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "@Dale DeLoy @Will, we copied the refiner and scripts, and tried registering a new function in the custom refiner udf (https://dogfood.instabase.com/julia.marcondes/Citi-POV/fs/Instabase%20Drive/Commercial%20Registers/scripts2/custom_refiner_udf.py), it seems to be working for the new refiner (https://dogfood.instabase.com/julia.marcondes/Citi-POV/fs/Instabase%20Drive/Commercial%20Registers/prog%20(1)/refiner.ibrefiner), we are getting udf-docs error but we are able to execute the refiner… Can we hop on a quick call to look at the issue you are facing and trying to reproduce the same?",
+      "time": "05:42",
+      "timestamp": "1630586562.059100",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "I am also able to execute the refiner but the new function added does not show up as available to the refiner",
+      "time": "05:53",
+      "timestamp": "1630587212.059300",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Oh, do you mean function doesn’t appear in the suggestion list? but once you type the function manually, it works?",
+      "time": "05:57",
+      "timestamp": "1630587464.059500",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "that is exactly correct - the function can be executed but does not show up with any documentation",
+      "time": "06:29",
+      "timestamp": "1630589387.059900",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "cc: <!subteam^SPYBRCK6X> team since they might have more context related to the same… We are getting errors in get udf docs (None is passed as a function in udf_util, attached a trace for the same)…",
+      "time": "06:56",
+      "timestamp": "1630590962.060100",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "cc @lydia",
+      "time": "08:28",
+      "timestamp": "1630596527.063100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "how urgent is this issue? I don’t have time to look at it until later today (around 5pm EDT). Is it happening everywhere or just for certain scripts?",
+      "time": "08:57",
+      "timestamp": "1630598245.063300",
+      "is_reply": true
+    },
+    {
+      "sender": "Dale DeLoy",
+      "user_id": "U01T2LEP1FF",
+      "message": "It is happening everywhere but there is a workaround as the calls to functions still work, so resolution can wait in my opinion",
+      "time": "08:59",
+      "timestamp": "1630598383.063500",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "@Dan H",
+      "time": "12:08",
+      "timestamp": "1630609692.066600",
+      "is_reply": true
+    },
+    {
+      "sender": "Will",
+      "user_id": "U02BWP2DXGT",
+      "message": "Could this be affecting the issue I am having with calling get_best_match? When I call get_best_match, I get “Function provided is None for: get_best_match”",
+      "time": "12:26",
+      "timestamp": "1630610778.067800",
+      "is_reply": true
+    },
+    {
+      "sender": "Dan H",
+      "user_id": "U020E9AS9P0",
+      "message": "It looks like this is related to 0.3.2 of ibtools.  @Will and I just upgraded demo.instabase.com (http://demo.instabase.com) in order to try and leverage the `Model Service Helper Functions` there.  We had no errors before loading in 0.3.2 (on 0.3.1).  After we uploaded the model, we are no longer able to sync scripts.  This becoming a roadblock for a PO",
+      "time": "12:34",
+      "timestamp": "1630611286.068600",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Dan H that sounds abound right. do you need to use 0.3.2? looks like something is wrong in the new version of ibtool, you can avoid this by using 0.3.1",
+      "time": "13:50",
+      "timestamp": "1630615833.069300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hey, is there still an issue with udf docs? I tested it with another refiner program on dogfood and it seems to work fine.",
+      "time": "14:42",
+      "timestamp": "1630618924.069500",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@lydia might be good to look at why 0.3.2 crashes the udf docs API",
+      "time": "14:44",
+      "timestamp": "1630619067.069800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ah ok seems like the issue is that one of the registered udfs is not callable",
+      "time": "15:02",
+      "timestamp": "1630620171.070000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "could it be because https://github.com/instabase/appengrepo/pull/673/files registered ‘fn_v’ as a string? i think it should not register anything for fn_v if it doesn’t exist. cc @Pramod Munemanik",
+      "time": "15:07",
+      "timestamp": "1630620420.070200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh actually I think it was https://github.com/instabase/appengrepo/pull/662/files registering None for ‘fn’ cc @Pritam Roy",
+      "time": "15:10",
+      "timestamp": "1630620644.070400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I will also submit a PR for udf docs to avoid returning an error when this happens.",
+      "time": "15:17",
+      "timestamp": "1630621076.070600",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Thank you!",
+      "time": "16:06",
+      "timestamp": "1630623972.071000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "https://github.com/instabase/instabase/pull/21494",
+      "time": "18:15",
+      "timestamp": "1630631748.071200",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "Thanks @lydia.\n@Dan H I will also update the ibtools package to not to use 'None' for 'fn' for now.",
+      "time": "20:59",
+      "timestamp": "1630641593.071500",
+      "is_reply": true
+    },
+    {
+      "sender": "Pritam Roy",
+      "user_id": "UKLRTHLP2",
+      "message": "@Pramod Munemanik Do you think we should roll back to the previous version of ibtools for now?",
+      "time": "21:07",
+      "timestamp": "1630642039.071700",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "No.. Just need to remove `None` for `fn` and it will work.",
+      "time": "21:08",
+      "timestamp": "1630642094.071900",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "Published a latest ibtools package after removing '`None`' for `fn` .\nthanks @Pritam Roy",
+      "time": "21:38",
+      "timestamp": "1630643919.072100",
+      "is_reply": true
+    },
+    {
+      "sender": "Pritam Roy",
+      "user_id": "UKLRTHLP2",
+      "message": "Thanks a lot @Pramod Munemanik !!",
+      "time": "21:39",
+      "timestamp": "1630643970.072400",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "@Dan H Can you test again and let us know if there is any issue ?",
+      "time": "21:47",
+      "timestamp": "1630644460.072600",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "@Pramod Munemanik, it seems to be working, fine now, i tried loading the same refiner, it doesn’t throw any udf-docs error and suggestions works now!",
+      "time": "23:21",
+      "timestamp": "1630650095.000100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-09-02.json",
+    "message_count": 40,
+    "start_time": "1630577001.054700",
+    "end_time": "1630650095.000100",
+    "is_thread": true
+  }
+}

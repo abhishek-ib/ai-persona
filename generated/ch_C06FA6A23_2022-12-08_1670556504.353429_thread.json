@@ -1,0 +1,409 @@
+{
+  "id": "ch_C06FA6A23_2022-12-08_1670556504.353429_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "aristo",
+    "Xi Cheng",
+    "Vikas Mehta",
+    "Heymian",
+    "Pridhvi Vegesna",
+    "Kai"
+  ],
+  "messages": [
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi team, we noted that dogfood is (basically) down and are working on troubleshooting.\n@Pridhvi Vegesna <!subteam^S02FJA6A7U5>",
+      "time": "19:28",
+      "timestamp": "1670556504.353429",
+      "is_reply": false
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "some prior discussion here (https://instabase.slack.com/archives/C01E4D91VK5/p1670553526908599) and here (https://instabase.slack.com/archives/C029Z1XRKGR/p1670547975671719)",
+      "time": "19:40",
+      "timestamp": "1670557243.956819",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "There also appears to be a high volumes of DB errors:\nhttps://dogfood.instabase.com/grafana/d/anTj9iEMz/database-operation?orgId=1&refresh=5s",
+      "time": "19:44",
+      "timestamp": "1670557445.942659",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Some file service logs say:\n```ERROR fileservice/handler/acl.go:45 -- [INTERNAL]: Failed to initialize Resource (Err: Mount-point (Test Drive) not found)\n2022-12-08 19:38:11.116 PST\n\ngrpc-file-service\n2022/12/09 03:38:11 ERROR utils/db/session/dbsession.go:323 -- SQL DB: Query failed: context canceled```",
+      "time": "19:44",
+      "timestamp": "1670557470.113239",
+      "is_reply": true
+    },
+    {
+      "sender": "aristo",
+      "user_id": "U021XPFU8AZ",
+      "message": "You're probably aware, but also noticed that instabase.com (https://instabase.com/) is down",
+      "time": "19:56",
+      "timestamp": "1670558218.000169",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": ":grimacing:",
+      "time": "19:59",
+      "timestamp": "1670558378.535339",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "being tracked in <#C04EUFVPZ4H|>",
+      "time": "20:00",
+      "timestamp": "1670558404.525129",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "instabase.com (http://instabase.com) should be back up",
+      "time": "20:20",
+      "timestamp": "1670559608.439929",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "@mfichman could high db failure rates be related to any recent changes? Seeing a bunch of db failures in core-platform-service as well",
+      "time": "20:47",
+      "timestamp": "1670561231.994569",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "<!subteam^S02FJA6A7U5> to also take a look",
+      "time": "20:59",
+      "timestamp": "1670561981.033609",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "regarding dogfood, webapp throwing up errors:\n```[2022-12-09 05:44:21,420] [MainProcess/ThreadPoolExecutor-0_37] {/instabase-server/py/instabase/utils/grpc/retry_interceptor.py:189} ERROR - [16d11c4f67ddf79e] - Retrying /account_service.AccountService/GetUserProfile request in 19.149293028422388s due to StatusCode           DEADLINE_EXCEEDED, Error (4, 'deadline exceeded'), Message Deadline Exceeded. Retries left 1\n10.142.0.144 - - [09/Dec/2022:05:44:24 +0000] \"GET /static/alive.txt HTTP/1.1\" 200 0 \"-\" \"kube-probe/1.22\"\n10.142.0.117 - - [09/Dec/2022:05:44:24 +0000] \"GET /static/alive.txt HTTP/1.1\" 200 0 \"-\" \"kube-probe/1.22\"\n127.0.0.1 - - [09/Dec/2022:05:44:25 +0000] \"GET /health_checker/webapp/1670564665676 HTTP/1.1\" 200 11 \"-\" \"curl/7.81.0\"\n127.0.0.1 - - [09/Dec/2022:05:44:25 +0000] \"GET /account/login HTTP/1.1\" 200 3704 \"-\" \"GoogleStackdriverMonitoring-UptimeChecks(https://cloud.google.com/monitoring)\"\n127.0.0.1 - - [09/Dec/2022:05:44:25 +0000] \"GET /health_checker/webapp/1670564665710 HTTP/1.1\" 200 11 \"-\" \"curl/7.81.0\"\n127.0.0.1 - - [09/Dec/2022:05:44:27 +0000] \"GET /tservice/table/echo HTTP/1.1\" 200 16 \"-\" \"GoogleStackdriverMonitoring-UptimeChecks(https://cloud.google.com/monitoring)\"\n10.142.0.113 - - [09/Dec/2022:05:44:28 +0000] \"GET /static/alive.txt HTTP/1.1\" 200 0 \"-\" \"kube-probe/1.22\"\n127.0.0.1 - - [09/Dec/2022:05:44:29 +0000] \"GET /health_checker/webapp/1670564669533 HTTP/1.1\" 200 11 \"-\" \"curl/7.81.0\"\n10.142.0.144 - - [09/Dec/2022:05:44:34 +0000] \"GET /static/alive.txt HTTP/1.1\" 200 0 \"-\" \"kube-probe/1.22\"\n10.142.0.117 - - [09/Dec/2022:05:44:34 +0000] \"GET /static/alive.txt HTTP/1.1\" 200 0 \"-\" \"kube-probe/1.22\"\n127.0.0.1 - - [09/Dec/2022:05:44:35 +0000] \"GET /health_checker/webapp/1670564675748 HTTP/1.1\" 200 11 \"-\" \"curl/7.81.0\"\n127.0.0.1 - - [09/Dec/2022:05:44:35 +0000] \"GET /health_checker/webapp/1670564675629 HTTP/1.1\" 200 11 \"-\" \"curl/7.81.0\"\n10.142.0.113 - - [09/Dec/2022:05:44:38 +0000] \"GET /static/alive.txt HTTP/1.1\" 200 0 \"-\" \"kube-probe/1.22\"\n127.0.0.1 - - [09/Dec/2022:05:44:39 +0000] \"GET /health_checker/webapp/1670564679528 HTTP/1.1\" 200 11 \"-\" \"curl/7.81.0\"\n[2022-12-09 05:44:43,814] [MainProcess/ThreadPoolExecutor-0_21] {/home/ibuser/.local/lib/python3.7/site-packages/thrift/transport/TSocket.py:142} INFO - Could not connect to ('10.23.242.6', 9900)\nTraceback (most recent call last):\n  File \"/instabase-server/py/instabase/utils/rpc/pool.py\", line 113, in get_client\n    client = self._clients.get(block=False)\n  File \"/opt/python-3.7.7/lib/python3.7/queue.py\", line 167, in get\n    raise Empty\n_queue.Empty\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/thrift/transport/TSocket.py\", line 137, in open\n    handle.connect(sockaddr)\nsocket.timeout: timed out\n[2022-12-09 05:44:43,814] [MainProcess/ThreadPoolExecutor-0_21] {/home/ibuser/.local/lib/python3.7/site-packages/thrift/transport/TSocket.py:145} ERROR - Could not connect to any of [('10.23.242.6', 9900)]\n[2022-12-09 05:44:43,815] [MainProcess/ThreadPoolExecutor-0_21] {/instabase-server/py/instabase/utils/rpc/pool.py:86} ERROR - Error creating thrift client Could not connect to any of [('10.23.242.6', 9900)]\n[2022-12-09 05:44:43,816] [MainProcess/ThreadPoolExecutor-0_21] {/instabase-server/py/instabase/utils/rpc/pool.py:87} ERROR - Traceback (most recent call last):\n  File \"/instabase-server/py/instabase/utils/rpc/pool.py\", line 113, in get_client\n    client = self._clients.get(block=False)\n  File \"/opt/python-3.7.7/lib/python3.7/queue.py\", line 167, in get\n    raise Empty\n_queue.Empty\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/instabase-server/py/instabase/utils/rpc/pool.py\", line 83, in _create_thrift_client\n    transport.open()\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/thrift/transport/TTransport.py\", line 155, in open\n    return self.__trans.open()\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/thrift/transport/TSocket.py\", line 146, in open\n    raise TTransportException(type=TTransportException.NOT_OPEN, message=msg)\nthrift.transport.TTransport.TTransportException: Could not connect to any of [('10.23.242.6', 9900)]```\nI don't understand who is calling the old thrift calls, and it looks like it is on the thrift-file-service that's no longer existing",
+      "time": "21:45",
+      "timestamp": "1670564744.219229",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "```[2022-12-09 05:44:43,816] [MainProcess/ThreadPoolExecutor-0_21] {/instabase-server/py/instabase/utils/rpc/client.py:193} ERROR - Retrying again on FileService\n10.142.0.117 - - [09/Dec/2022:05:44:44 +0000] \"GET /static/alive.txt HTTP/1.1\" 200 0 \"-\" \"kube-probe/1.22\"\n10.142.0.144 - - [09/Dec/2022:05:44:44 +0000] \"GET /static/alive.txt HTTP/1.1\" 200 0 \"-\" \"kube-probe/1.22\"\n127.0.0.1 - - [09/Dec/2022:05:44:45 +0000] \"GET /health_checker/webapp/1670564685635 HTTP/1.1\" 200 11 \"-\" \"curl/7.81.0\"\n127.0.0.1 - - [09/Dec/2022:05:44:45 +0000] \"GET /health_checker/webapp/1670564685744 HTTP/1.1\" 200 11 \"-\" \"curl/7.81.0\"\n10.142.0.113 - - [09/Dec/2022:05:44:48 +0000] \"GET /static/alive.txt HTTP/1.1\" 200 0 \"-\" \"kube-probe/1.22\"\n^C\nxicheng@c02dv9t6md6r webapp % kubectl -n instabase-dogfood logs -f -l app=webapp -c webapp\nunable to retrieve container logs for <docker://e770b3f73de43fb151406677da90d8facbaaa52d11104d7e2a97d93ad8a02a7>0    transport.open()\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/thrift/transport/TTransport.py\", line 155, in open\n    return self.__trans.open()\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/thrift/transport/TSocket.py\", line 146, in open\n    raise TTransportException(type=TTransportException.NOT_OPEN, message=msg)\nthrift.transport.TTransport.TTransportException: Could not connect to any of [('10.23.242.6', 9900)]\n\n[2022-12-09 05:45:56,868] [MainProcess/ThreadPoolExecutor-0_44] {/instabase-server/py/instabase/utils/rpc/client.py:193} ERROR - Retrying again on FileService\n10.142.0.113 - - [09/Dec/2022:05:45:58 +0000] \"GET /static/alive.txt HTTP/1.1\" 200 0 \"-\" \"kube-probe/1.22\"\n127.0.0.1 - - [09/Dec/2022:05:45:59 +0000] \"GET /health_checker/webapp/1670564759602 HTTP/1.1\" 200 11 \"-\" \"curl/7.81.0\"\n    return self.__trans.open()\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/thrift/transport/TSocket.py\", line 146, in open\n    raise TTransportException(type=TTransportException.NOT_OPEN, message=msg)\nthrift.transport.TTransport.TTransportException: Could not connect to any of [('10.23.242.6', 9900)]\n\n[2022-12-09 05:45:43,565] [MainProcess/ThreadPoolExecutor-0_41] {/instabase-server/py/instabase/utils/rpc/client.py:193} ERROR - Retrying again on FileService\n10.142.0.144 - - [09/Dec/2022:05:45:44 +0000] \"GET /static/alive.txt HTTP/1.1\" 200 0 \"-\" \"kube-probe/1.22\"\n127.0.0.1 - - [09/Dec/2022:05:45:45 +0000] \"GET /health_checker/webapp/1670564745624 HTTP/1.1\" 200 11 \"-\" \"curl/7.81.0\"\n10.142.0.144 - - [09/Dec/2022:05:45:54 +0000] \"GET /static/alive.txt HTTP/1.1\" 200 0 \"-\" \"kube-probe/1.22\"\n127.0.0.1 - - [09/Dec/2022:05:45:55 +0000] \"GET /health_checker/webapp/1670564755627 HTTP/1.1\" 200 11 \"-\" \"curl/7.81.0\"\nTraceback (most recent call last):\n  File \"/instabase-server/py/instabase/utils/rpc/pool.py\", line 83, in _create_thrift_client\n    transport.open()\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/thrift/transport/TTransport.py\", line 155, in open\n    return self.__trans.open()\n  File \"/home/ibuser/.local/lib/python3.7/site-packages/thrift/transport/TSocket.py\", line 146, in open\n    raise TTransportException(type=TTransportException.NOT_OPEN, message=msg)\nthrift.transport.TTransport.TTransportException: Could not connect to any of [('10.23.242.6', 9900)]```",
+      "time": "21:46",
+      "timestamp": "1670564800.543299",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "```  File \"/home/ibuser/.local/lib/python3.7/site-packages/grpc/_channel.py\", line 826, in _end_unary_response_blocking\n    raise _InactiveRpcError(state)\ngrpc._channel._InactiveRpcError: <_InactiveRpcError of RPC that terminated with:\n\tstatus = StatusCode.DEADLINE_EXCEEDED\n\tdetails = \"Deadline Exceeded\"\n\tdebug_error_string = \"{\"created\":\"@1670565243.900686738\",\"description\":\"Error received from peer ipv4:10.20.25.28:28600\",\"file\":\"src/core/lib/surface/call.cc\",\"file_line\":1067,\"grpc_message\":\"Deadline Exceeded\",\"grpc_status\":4}\"```",
+      "time": "21:54",
+      "timestamp": "1670565259.805549",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Pridhvi Vegesna Do you have permission to do a push to dogfood? The last one failed due to a rollout timeout",
+      "time": "21:57",
+      "timestamp": "1670565432.505919",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "via Jenkins?",
+      "time": "21:57",
+      "timestamp": "1670565476.744669",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "yes",
+      "time": "21:58",
+      "timestamp": "1670565484.802189",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "I think so, but am curious how pushing again will resolve any issues?",
+      "time": "21:59",
+      "timestamp": "1670565549.585319",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "ah it looks like the network policies are still pointing to the new redis ports, I think they should have been reverted to 6379",
+      "time": "22:02",
+      "timestamp": "1670565739.290279",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "We reverted the Redis changes and did not update the deployment due to the latest failure",
+      "time": "22:02",
+      "timestamp": "1670565758.455889",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "I don't know if this will really help, cause it looks like something else was going on",
+      "time": "22:02",
+      "timestamp": "1670565777.112879",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Ah I assumed the other deployments still rolled out even though `deployment-dynamic-proxy` got stuck, let's see what happens on the next deployment. I don't have permissions on jenkins, I think we'll have to wait",
+      "time": "22:06",
+      "timestamp": "1670565979.054379",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "can you check with kubectl, I don't think other services got rolled out based on the number of hours I saw at the end of each pod",
+      "time": "22:09",
+      "timestamp": "1670566194.580879",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "agreed, doesn't look like they got rolled out from kubectl timings",
+      "time": "22:10",
+      "timestamp": "1670566227.331359",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i can push, do you need another dogfood redeployment?",
+      "time": "22:14",
+      "timestamp": "1670566453.340789",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "sorry haven't read the whole thread yet",
+      "time": "22:14",
+      "timestamp": "1670566458.837819",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "also are these related to envoy changes?",
+      "time": "22:14",
+      "timestamp": "1670566489.322609",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "yes please",
+      "time": "22:14",
+      "timestamp": "1670566490.211229",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "yes, thanks! We haven't figured what's going on, but there are some latest changes that we want to move in",
+      "time": "22:14",
+      "timestamp": "1670566493.166749",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I thought I saw a revert PR",
+      "time": "22:14",
+      "timestamp": "1670566495.193589",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "correct",
+      "time": "22:14",
+      "timestamp": "1670566499.909779",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "the deployment failed due to a rollout timeout lately, and other services did not get deployed",
+      "time": "22:15",
+      "timestamp": "1670566516.211869",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "got it, let me go to comp. give me a min",
+      "time": "22:15",
+      "timestamp": "1670566531.762239",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "redeploying",
+      "time": "22:17",
+      "timestamp": "1670566638.862729",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "catching up here. i think the redis issue was that redis isn’t being redeployed by default https://prod.jenkins.instabase.com/job/deployments/job/deploy-dogfood/job/master/324/parameters/\nwe have to manually set it when deploying",
+      "time": "23:00",
+      "timestamp": "1670569216.845689",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Kai do you know if network policies get applied after deployments rollout?",
+      "time": "23:00",
+      "timestamp": "1670569256.530949",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "i think they get applied at the same time",
+      "time": "23:01",
+      "timestamp": "1670569313.791789",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "hrm, after reverting the mesh manager redis PR, do we expect these values in egress?",
+      "time": "23:03",
+      "timestamp": "1670569411.466689",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "from what i see from jenkins, we hadn’t redeployed to dogfood after the revert PR. it was blocked by *Deploy dynamic-proxy*",
+      "time": "23:05",
+      "timestamp": "1670569528.277389",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "ah, so does one deployment rollout failure block other deployments?",
+      "time": "23:05",
+      "timestamp": "1670569559.167089",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "https://prod.jenkins.instabase.com/job/deployments/job/deploy-dogfood/job/master/\ni think any stage before `deploy services via control plane` would block the deployment",
+      "time": "23:08",
+      "timestamp": "1670569683.934609",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I didn’t redeploy redis the first time. I just triggered another deploy with Redis. Let’s see if this fixes it",
+      "time": "23:08",
+      "timestamp": "1670569726.633029",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "if this fixes it, could we revert the revert and redeploy redis? this can be a tmr/next week thing since it’s late",
+      "time": "23:13",
+      "timestamp": "1670570003.314089",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Let’s hold off on that until next week. Just spoke to Vikas about this and we need to make sure Envoy folks are around to take on debugging these issues after merging. Let’s just keep dogfood green through the weekend so we don’t cause more churn for on-call over the long weekend.",
+      "time": "23:15",
+      "timestamp": "1670570132.642229",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Also, it is getting late. Thank you @Xi Cheng @Pridhvi Vegesna for taking this on that this hour. If the re-deploy doesn’t fix it, Let’s start up an incident and hand this off to the India on-call folks to handle through the night.",
+      "time": "23:16",
+      "timestamp": "1670570176.173349",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "And deploy just failed :sob:",
+      "time": "23:35",
+      "timestamp": "1670571356.556699",
+      "is_reply": true
+    },
+    {
+      "sender": "Vikas Mehta",
+      "user_id": "U02S1NKHE2G",
+      "message": "dynamic proxy is one failure.. looking at what else failed..",
+      "time": "23:36",
+      "timestamp": "1670571403.051859",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Let's start the incident?",
+      "time": "23:37",
+      "timestamp": "1670571426.268559",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "<#C04EGDFSW7M|>",
+      "time": "23:37",
+      "timestamp": "1670571440.991589",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-12-08.json",
+    "message_count": 48,
+    "start_time": "1670556504.353429",
+    "end_time": "1670571440.991589",
+    "is_thread": true
+  }
+}

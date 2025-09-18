@@ -1,0 +1,95 @@
+{
+  "id": "ch_CSY11CK7T_2025-06-24_1750777197.681079_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "vp",
+    "Rohit Jain",
+    "Serena",
+    "pauline.comising"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "This breaking API change is expected\n\nHowever, the too long request error is not expected :(\n\nBtw the same issue should appear in the “App Runs” tab of the App page? Can you confirm?",
+      "time": "07:59",
+      "timestamp": "1750777197.681079",
+      "is_reply": false
+    },
+    {
+      "sender": "vp",
+      "user_id": "U02ENFDJHC0",
+      "message": "@Rohit Jain can you please confirm this real quick :point_up_2:",
+      "time": "08:05",
+      "timestamp": "1750777509.003549",
+      "is_reply": true
+    },
+    {
+      "sender": "Rohit Jain",
+      "user_id": "U02P2NDKQGJ",
+      "message": "No , it's not happen on app run tab",
+      "time": "08:06",
+      "timestamp": "1750777596.365869",
+      "is_reply": true
+    },
+    {
+      "sender": "vp",
+      "user_id": "U02ENFDJHC0",
+      "message": "incidentally, I am being reported one from Kerring as well just now and that seems to be failing with same situation on the page you expect.",
+      "time": "09:17",
+      "timestamp": "1750781873.920669",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "• the same issue occurs for both pages (\"App runs\" and \"Accuracy tests\") for slightly different reasons\n    ◦ for \"App runs\", the issue is the number of workspaces that a user has access to (see the number of `output_repo`s in ss1)\n    ◦ for \"Accuracy tests\", the issue is the number of app versions (see the number of `app_ids` in ss2)\n• if we want a quick hacky fix\n    ◦ for Kering, we could login as a user with access to only a subset of workspaces -> the request URI will be shorter and won't run into this issue\n    ◦ for PG, we could delete unnecessary older app versions\n• regardless, we do need to actually fix this issue\n    ◦ for these API calls on both pages, we cannot store all of the request data as query parameters\n    ◦ tagging @ayesha.ali here too since Pauline will be OOO tomorrow",
+      "time": "10:25",
+      "timestamp": "1750785919.595669",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@vp @Rohit Jain what is the urgency of these 2 issues for PG and Kering?",
+      "time": "10:26",
+      "timestamp": "1750786002.063499",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah for context on the change to app_id away from app_name and app_owner - since source_ctx was inferred by `request.current_context_name` (as seen in the PR), if a user wasn't viewing a public app in the same workspace it was created in, the incorrect source_ctx would be used to query the table for runs and come up empty since it doesn't match whats in the DB. Off the top of my head, a potential solution is to use app_name and owner like before for non-public apps and only using app id with public apps, if we can guarantee their versions are more finite which seems more in our control? ie maintain them by deleting outdated versions, but maybe I'm wrong",
+      "time": "10:40",
+      "timestamp": "1750786803.881259",
+      "is_reply": true
+    },
+    {
+      "sender": "Rohit Jain",
+      "user_id": "U02P2NDKQGJ",
+      "message": "How to delete the old version as I can not see any delete button on UI ?",
+      "time": "22:28",
+      "timestamp": "1750829325.693309",
+      "is_reply": true
+    },
+    {
+      "sender": "Rohit Jain",
+      "user_id": "U02P2NDKQGJ",
+      "message": "CC @Raushan Kumar Pandey @madison.c",
+      "time": "22:32",
+      "timestamp": "1750829575.580739",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-06-24.json",
+    "message_count": 9,
+    "start_time": "1750777197.681079",
+    "end_time": "1750829575.580739",
+    "is_thread": true
+  }
+}

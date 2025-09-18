@@ -1,0 +1,103 @@
+{
+  "id": "ch_C06FA6A23_2022-05-16_1652712469.990719_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "Xi Cheng",
+    "lenny",
+    "kunal"
+  ],
+  "messages": [
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": ":wave:  happy monday — wanted to share an interesting python memory leak we found last week that we should be aware of when dynamically loading/unloading modules. the gist of the leak is that some of `typing`'s generic types (eg `Union[...]`, `Tuple[...]`, etc) maintain a global cache of type specializations. when you write `typing.Union[A, B]`, it creates a new union type under the hood, and then it caches that type, so the next time you do `typing.Union[A, B]` it will fetch that union type from the cache instead of re-creating it every time. unfortunately, this cache maintains a reference to all of the type parameters, which means that if you ever unload those types (or the module containing them), _this cache will prevent the types from being removed from memory_. while type objects are usually pretty small, in our case, they also end up holding onto the module they are in. this module also held a function that captured a big binary blob, so we end up leaking something much bigger. here's a gist that demonstrates this behavior, and shows how to reach into `typing`'s caches and clear them out: https://gist.github.com/LK/7045be2610e6e3e52509ad8684c8f77c\n\nwill add a few python memory leak tracing tips in :thread:",
+      "time": "07:47",
+      "timestamp": "1652712469.990719",
+      "is_reply": false
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "this is the memory graph demonstrating the leak: the `BytesWrapper` object in the bottom left is the leaked binary blob, and it gets traced back to the `AddressFeatureVector` type that we use in a `typing.Tuple[...]` somewhere in a solution-specific module. when we try to unload the module from celery-app-tasks, this reference hangs around, so we can never clean up the blob",
+      "time": "07:49",
+      "timestamp": "1652712572.618869",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "is this the memory leak issue in flow that you were talking about at the last Menglo?",
+      "time": "07:51",
+      "timestamp": "1652712713.525079",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "useful tools for python memory leak debugging:\n• tracemalloc (https://docs.python.org/3/library/tracemalloc.html) to find allocations that aren't cleaned up when you expect them to be\n• gc (https://docs.python.org/3/library/gc.html) to search through the gc heap, trigger gc collection, and understand who's holding onto references\n• objgraph (https://mg.pov.lt/objgraph/) to make convenient graphs (like above) using gc information\nsomething else I didn't know about: python's atomic types (int, str, bytes, etc) are not tracked by the gc! this is because they have no outbound memory references, so they cannot cause a reference cycle. but that makes it quite challenging to understand why these objects are not being released. an easy fix for this is to make a new type, eg `class BytesWrapper(bytes)`, and wrap the leaked objects in this type at allocation time. you can still pass them around and use them as if they are a regular bytes object, but now the gc will track the object and you can use the tools above to understand why the leak is happening.",
+      "time": "07:53",
+      "timestamp": "1652712828.778999",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "@Eric Han one of them :slightly_smiling_face:",
+      "time": "07:54",
+      "timestamp": "1652712840.708939",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@lenny wow, this is amazing. Could you document this practice in a designated doc/blog somewhere? Memory leak is one of the nastiest bugs in the world and it is worthwhile educating folks about how to deal with them. A couple questions from me - was the leak visible from prod env that motivates this debugging, and if so, do you see any gaps in our tooling to catch it quickly? The reason I am asking is we do have go-profiler in go services to catch memory leak like this while keeping the services running, and I wonder if we have something similar for python. If not, then we should have some built-in tools to run tracemalooc, gc and objgraph at service's runtime",
+      "time": "09:11",
+      "timestamp": "1652717507.012029",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "@Xi Cheng we have tracemalloc and cpu profiling in the webservers: https://github.com/instabase/instabase/tree/master/shared-utils/py-utils/z-pages-utils.",
+      "time": "10:37",
+      "timestamp": "1652722625.510629",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@kunal Yes for sure, I wonder if they are sufficient to catch the things that Lenny had encountered here. I recall that z-pages are only available in web-services, is this true? If the memory leak happens in UDF/celery-app-tasks, do we some easy way to tackle? I had tried the z-pages APIs, and I think we want to improve the usability of it as it can be difficult to navigate the outputs. If we could have some tools that can easily dump the Obj graph as shown above for running services that'd be amazing",
+      "time": "10:39",
+      "timestamp": "1652722776.489379",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "yeah — 100% agree, these were a quick hack, but investing in some real tooling will be great! They’re only available on the web-services.",
+      "time": "10:43",
+      "timestamp": "1652723037.166479",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "@Xi Cheng to answer your questions: celery-app-tasks leaks have been around for a while, we've been dealing with them by recycling workers between every task (https://github.com/instabase/instabase/pull/19836). this solves the memory leak but adds a few extra seconds of latency on every task, because it takes a while to spin up a new worker.\n\nI think it's a bit tricky to expose tracemalloc+gc+objgraph in our services directly, because the process of using them is pretty manual (tracemalloc only gives you a stack trace for where the leaked allocation happens; then it's your responsibility to go and search the gc heap for these objects, and then ask objgraph to draw a specific subgraph of the whole memory graph for you). will think more about what the right way to expose this might be, I'm sure there are other tools out there that help\n\ni found this doc on friday from 2019 that explains some earlier attempts at reducing celery-app-tasks memory usage https://docs.google.com/document/d/1EfNYKJ7s50efO13w8Xtu_TMYNOJNnBwaVpyq7G5izWA/edit. I think this was more about reducing peak utilization than finding memory leaks, but a lot of similar tools in play",
+      "time": "11:02",
+      "timestamp": "1652724156.613679",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-05-16.json",
+    "message_count": 10,
+    "start_time": "1652712469.990719",
+    "end_time": "1652724156.613679",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "id": "ch_CSY11CK7T_2024-02-05_1707169970.832699_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Jessica",
+    "Arjun"
+  ],
+  "messages": [
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "_*~Daily~ Weekly Testing Tips + Tricks*_!!! :blob-dab: Week 4!\n\nHave you ever needed to test that an async thunk action is getting dispatched correctly in a unit test? It’s a pretty common practice to mock the dispatch function and for synchronous redux actions we can usually get away with something like:\n```    expect(dispatchSpy).toHaveBeenCalledWith({\n      type: SET_DOCUMENT_VIEW_MODE,\n      payload: DocumentViewMode.SINGLE,\n    });```\nhowever this isn’t as straight-forward for thunks. Most of the time in our unit tests to get around this we just check that the `dispatchSpy` was called and don’t actually check that the correct action/payload was sent.\n\nThis week’s tip comes as a courtesy of @CJ who gave us the excellent helper function, `expectCalledWithThunk` in `Lib/IBUtils/lib/testing/redux`. An example of how this can be used can be found in `ModelConfidence.test.tsx` where we do the following:\n```fireEvent.click(screen.getByText(/configure threshold/i));\nexpect(dispatchSpy).toHaveBeenCalled();\nawait expectCalledWithThunk(dispatchSpy, ADD_VALIDATION_RULE, {\n  rule: MOCK_RULE_BASE,\n});```\nI don’t think this helper is very widely known/used yet so wanted to call it out! Hooray for internal testing libraries!",
+      "time": "13:52",
+      "timestamp": "1707169970.832699",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "This is a perfect tip/trick, calling attention to a helper function!!",
+      "time": "14:04",
+      "timestamp": "1707170674.464609",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-02-05.json",
+    "message_count": 2,
+    "start_time": "1707169970.832699",
+    "end_time": "1707170674.464609",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "id": "ch_C05L87V014J_2025-02-05_1738785467.753099_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "prateek.tenkale",
+    "Serena",
+    "Sayan"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "just in case others encounter this issue - when i restart `file-service`with different aws credentials, i see the new environment variable values reflected in `core-services/file-service/tmp/docker_env_local.list` but somehow they're not getting used in `file-service` immediately\n\nfor some reason, i need to restart `file-service` several times (over 2 hours) for the new environment variables ot be used - maybe the results for the aws s3 calls are getting cached in `redis`? next time i'll try to restart `redis` as well to see if that solves the issue",
+      "time": "11:57",
+      "timestamp": "1738785467.753099",
+      "is_reply": false
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "@Sayan was this issue you said you had to fully kill file-service for?",
+      "time": "12:30",
+      "timestamp": "1738787429.552069",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "potentially, I have found that doing `pkill -f file-service` and restarting it solves `file-service` issues most times",
+      "time": "12:31",
+      "timestamp": "1738787503.196949",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm `pkill -f file-service` should only be helpful if you're running file-service locally (not in Docker) on your laptop though",
+      "time": "12:50",
+      "timestamp": "1738788602.856939",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i just figured out the correct sequence of actions to fix this!\n• `cs stop file-service`\n• `cs stop core-platform`\n• flushall in redis (https://instabase.slack.com/archives/C05L87V014J/p1733345534501089?thread_ts=1733242246.041289&cid=C05L87V014J)\n• `cs start file-service`\n• `cs start core-platform`",
+      "time": "22:44",
+      "timestamp": "1738824273.405559",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-02-05.json",
+    "message_count": 5,
+    "start_time": "1738785467.753099",
+    "end_time": "1738824273.405559",
+    "is_thread": true
+  }
+}

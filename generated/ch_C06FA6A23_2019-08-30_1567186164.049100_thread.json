@@ -1,0 +1,142 @@
+{
+  "id": "ch_C06FA6A23_2019-08-30_1567186164.049100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Chetan",
+    "Erick",
+    "Jonathan Shih"
+  ],
+  "messages": [
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "<!here> is this a known test failure? https://travis-ci.com/instabase/instabase/jobs/229487001\n```ERROR: test_align_and_refine_page (instabase_unit_tests.instabase.computer_vision.redactor.test_redactor.TestRedactor)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/instabase_repo/distributed-tasks/celery/image-tasks/build/test/py/instabase_unit_tests/instabase/computer_vision/redactor/test_redactor.py\", line 58, in test_align_and_refine_page\n    self.record_in_memory.ibml_record)\n  File \"/instabase_repo/distributed-tasks/celery/image-tasks/build/test/py/instabase/visual_refiner/redactor.py\", line 129, in align_and_redact_page\n    redact_page(aligned_image, input_page.ibocr_record, ibml_record)\n  File \"/instabase_repo/distributed-tasks/celery/image-tasks/build/test/py/instabase/visual_refiner/redactor.py\", line 149, in redact_page\n    redact_page_annotation(image, ibocr_record, annotation)\n  File \"/instabase_repo/distributed-tasks/celery/image-tasks/build/test/py/instabase/visual_refiner/redactor.py\", line 177, in redact_page_annotation\n    point_transform_fn=point_transform_fn)\n  File \"/instabase_repo/distributed-tasks/celery/image-tasks/build/test/py/instabase/visual_refiner/redactor.py\", line 261, in redact_page_annotation_find\n    img, result_annotation, replacement_text=replacement_text)\n  File \"/instabase_repo/distributed-tasks/celery/image-tasks/build/test/py/instabase/visual_refiner/redactor.py\", line 321, in redact_page_annotation_absolute\n    img[y1:y2, x1:x2], replacement_text, font_color=(text_color, ))\n  File \"/instabase_repo/distributed-tasks/celery/image-tasks/build/test/py/instabase/image_utils/text.py\", line 102, in overlay_text\n    text_img = resize_image(text_img, resize_factor)\n  File \"/instabase_repo/distributed-tasks/celery/image-tasks/build/test/py/instabase/image_utils/sizing.py\", line 93, in resize_image\n    return image.resize((new_width, new_height), resample=Image.BICUBIC)\n  File \"/pyenv/versions/3.6.8/lib/python3.6/site-packages/PIL/Image.py\", line 1814, in resize\n    im = im.resize(size, resample, box)\n  File \"/pyenv/versions/3.6.8/lib/python3.6/site-packages/PIL/Image.py\", line 1819, in resize\n    return self._new(self.im.resize(size, resample, box))\nValueError: height and width must be > 0```",
+      "time": "10:29",
+      "timestamp": "1567186164.049100",
+      "is_reply": false
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "That’s me — let me check it out",
+      "time": "10:30",
+      "timestamp": "1567186217.049200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "this is weird… master is passing (we’d expect master to be broken if this was actually broken). Your changes don’t correspond to anything w.r.t. these tests though…",
+      "time": "10:34",
+      "timestamp": "1567186487.049400",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Hmm",
+      "time": "10:35",
+      "timestamp": "1567186527.049600",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Could this be related to the strange 0-dimension annotation that was causing problems before? I feel like it’s not, just because this is a very specific test that is getting a preset file",
+      "time": "10:36",
+      "timestamp": "1567186567.049800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "why did it only crash on PY3 if it’s a real failure is the other question. I’m restarting to run to make sure it’s consistent @Erick @Jonathan Shih",
+      "time": "10:37",
+      "timestamp": "1567186665.050000",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "@Erick @Chetan it just failed with an error again",
+      "time": "11:06",
+      "timestamp": "1567188419.050500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "looking into it again…",
+      "time": "12:48",
+      "timestamp": "1567194529.051200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "created a different PR off of a different branc,h going to check if it reproduces here: https://travis-ci.com/instabase/instabase/builds/125283212",
+      "time": "13:13",
+      "timestamp": "1567196025.051800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i can’t reproduce this locally `ci-in-docker` inside `image-tasks` _should_ be an identical reproduction (with `USE_PY3=true` and `USE_PY3_IN_TEST_ENVIRONMENT=true`), I have no idea why.",
+      "time": "13:14",
+      "timestamp": "1567196056.052000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "if this was a real code/behavior problem, it should be broken on master and all the other recently-rebased-branches, but it’s not….",
+      "time": "13:14",
+      "timestamp": "1567196092.052300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "@Jonathan Shih https://travis-ci.com/instabase/instabase/builds/125283212 identical branch, didn’t crash 28 minutes in in the python3 job.",
+      "time": "13:28",
+      "timestamp": "1567196919.052500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i restarted yours one more time. if it’s still crashing, merge my replica.",
+      "time": "13:30",
+      "timestamp": "1567197034.052700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "no idea what would be different between the two PRs.",
+      "time": "13:30",
+      "timestamp": "1567197039.052900",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "looks like it was fixed by pulling latest master",
+      "time": "15:22",
+      "timestamp": "1567203726.053100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-08-30.json",
+    "message_count": 15,
+    "start_time": "1567186164.049100",
+    "end_time": "1567203726.053100",
+    "is_thread": true
+  }
+}

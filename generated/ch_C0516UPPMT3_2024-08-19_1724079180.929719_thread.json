@@ -1,0 +1,120 @@
+{
+  "id": "ch_C0516UPPMT3_2024-08-19_1724079180.929719_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Hamish",
+    "avi",
+    "Rosie",
+    "Tom",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Hey team, now that we automatically select the model used in Converse, I can imagine us getting pushback from customers around pricing. Are we considering:\n1. Charging differently for queries (advanced/multistep being charged the same)?\n2. Providing greater transparency around price implications of a query (e.g. showing which model is used for the current query once auto-selected)?\n3. Providing greater controls for customers to limit spend or usage?\nI assume this was considered when bringing this change, so keen to understand how to approach this potential objection with customers:saluting_face:\n\ncc @Tom @Jasper",
+      "time": "07:53",
+      "timestamp": "1724079180.929719",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the pricing implications will be described in the 24.32 docs (https://instabase-preview-df9395d7-e0b4-4054-9ac9-3fd8f9d64388.docs.buildwithfern.com/policies/24-32-pricing-policy) and release notes (https://instabase-preview-df9395d7-e0b4-4054-9ac9-3fd8f9d64388.docs.buildwithfern.com#administration)\n\ncc @avi @Rosie",
+      "time": "08:01",
+      "timestamp": "1724079682.757709",
+      "is_reply": true
+    },
+    {
+      "sender": "Tom",
+      "user_id": "UUEDM4T9R",
+      "message": "Yeah good call @Hamish I do expect customers to push back here in terms of control. Lets collate feedback as we go, but perhaps a way to mitigate this could be to more visibly inform the customer that the model has changed automatically and there might bea pricing implication",
+      "time": "08:02",
+      "timestamp": "1724079760.946139",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "`\"Single document queries use the Advanced model and multiple document queries use the Multistep model\"`  - @Serena does this mean _auto-selection_ of models is actually just _auto-switching_ of models? I.e. as soon as you add a second document, you can only use MS. If you go back to one doc you can only use advanced (except with research mode)?\n\nIf so, that is significantly more predictable in terms of pricing than the alternative",
+      "time": "08:07",
+      "timestamp": "1724080028.310209",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "In that case, I would expect pricing to be conveyed in terms of queries that are: single doc, multi-doc, research mode (rather than types of model used). Not sure if this is already happening?",
+      "time": "08:07",
+      "timestamp": "1724080076.229359",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "what you described makes sense! i’m not familiar beyond what’s described in the docs, so ’d defer to @avi to answer",
+      "time": "08:20",
+      "timestamp": "1724080854.391269",
+      "is_reply": true
+    },
+    {
+      "sender": "Rosie",
+      "user_id": "U03EBULMVK3",
+      "message": "> I would expect pricing to be conveyed in terms of queries that are: single doc, multi-doc, research mode\nThe updated pricing policy that will go live in 24.32 (and was posted in 24.28 (https://docs.instabase.com/policies/pricing-policy-updates) so users could familiarize themselves ahead of time) does explicitly state that Converse uses advanced for single-document queries and multistep for multiple-document queries and additionally explains what happens when you enable research mode. There are supporting examples as well that follow what you suggested: explaining it in terms of number of documents being queried and what happens if you enable research mode. The updated Converse documentation will also spell this out and no longer discuss model “selection” and rather explicitly state that Converse determines which model to use. (The same applies for chatbots and their single-document vs multi-document knowledge bases).",
+      "time": "08:57",
+      "timestamp": "1724083072.605069",
+      "is_reply": true
+    },
+    {
+      "sender": "Rosie",
+      "user_id": "U03EBULMVK3",
+      "message": "You can see how this differs from the previous/pre-24.32 pricing policy which discusses examples in terms of selecting a model. We’ve gotten rid of the “If you use x model” phrasing in place of stating “Converse uses x model”.",
+      "time": "09:00",
+      "timestamp": "1724083229.817069",
+      "is_reply": true
+    },
+    {
+      "sender": "Rosie",
+      "user_id": "U03EBULMVK3",
+      "message": "(That said, if this is still unclear in the docs lmk!)",
+      "time": "09:01",
+      "timestamp": "1724083300.436969",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Thanks @Rosie this is clear and solves this! I think the misunderstanding came from communication of the product change and the implications of that",
+      "time": "09:02",
+      "timestamp": "1724083340.056539",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Will convey that to the rest of the team from now on though!",
+      "time": "09:02",
+      "timestamp": "1724083357.483109",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Seems like Rosie beat me to this, but adding few details since it's an important change.\n1. Auto model selection will help customers get the best insights from their docs. We've often seen folks try the standard (default) model and be disappointed in the past. With reductions in price we shared in 24.28 (https://docs.instabase.com/policies/pricing-policy-updates) the advanced and multistep models have become more reasonable and faster too enabling this to be a better default for most chat scenarios. \n2. We are introducing a chip on all queries that used \"research mode\" since there will be a quality difference here and multistep pricing will apply. For regular queries - a single doc query uses \"advanced\" and a multi doc query uses \"multistep\". We'll keep an eye on user feedback if they want more awareness about the model used - please flag if you hear any feedback.\n3. Re: greater admin controls, we need to look at this all up for the platform. Heard this in many forms before but it didn't make it for Q3 (tracking ticket (https://instabase.atlassian.net/browse/EPD-2116)). cc: @Kaustubh (KD) @hannah",
+      "time": "22:52",
+      "timestamp": "1724133143.189009",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-08-19.json",
+    "message_count": 12,
+    "start_time": "1724079180.929719",
+    "end_time": "1724133143.189009",
+    "is_thread": true
+  }
+}

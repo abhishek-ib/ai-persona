@@ -1,0 +1,45 @@
+{
+  "id": "ch_CSY11CK7T_2024-10-01_1727797025.147149_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Udit"
+  ],
+  "messages": [
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "We have await in loops as blocking for CI which makes sense to me. In this case though, I feel like using await in the while loop is the simplest way to do it since I do want to wait for 1 request and use the result of it to do the next request. Does anyone here prefer another way to do something like this or should I just do a ts-ignore?\n\n```// if grouped by runs, keep calling till last run has all docs fetched\n      let allDocReviews: TExpandedReviewObject[] = [];\n      let currentParams = { ...params };\n      let hasMoreDocs = true;\n\n      while (hasMoreDocs) {\n        const currResult = await ReviewDocumentsApi.listReviewDocuments(\n          currentParams\n        );\n\n        if (currResult.docReviews) {\n          allDocReviews = [...allDocReviews, ...currResult.docReviews]; // accumulate the documents\n        }\n\n        // update params for next call\n        if (\n          currResult.docsRemainingForJob &&\n          currResult.docsRemainingForJob > 0\n        ) {\n          currentParams = {\n            ...currentParams,\n            offset: currentParams.offset\n              ? currentParams.offset + PAGING_LIMIT\n              : PAGING_LIMIT,\n            limit: currResult.docsRemainingForJob,\n          };\n        } else {\n          hasMoreDocs = false;\n        }\n      }```",
+      "time": "08:37",
+      "timestamp": "1727797025.147149",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think using await in while loop makes sense here!",
+      "time": "11:31",
+      "timestamp": "1727807465.133379",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "Thanks for the reassurance!",
+      "time": "11:58",
+      "timestamp": "1727809086.686069",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-10-01.json",
+    "message_count": 3,
+    "start_time": "1727797025.147149",
+    "end_time": "1727809086.686069",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "id": "ch_C0516UPPMT3_2023-05-17_1684349134.583879_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Seth",
+    "Eric Han",
+    "Junwon Jang",
+    "Aayush"
+  ],
+  "messages": [
+    {
+      "sender": "Seth",
+      "user_id": "U02TKEG137T",
+      "message": "In Converse, sometimes the “+” next to new conversation is not clickable but then after moving your mouse around it becomes clickable. :bug:",
+      "time": "11:45",
+      "timestamp": "1684349134.583879",
+      "is_reply": false
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "It disables creating/editing a project when it fetches the license usage details. The delay here should be because of that when the app is initially opened.\nI'm wondering if there's value in exploring ways to make this faster (maybe adding this in the apps-server window context)\ncc @Xindi Xu",
+      "time": "11:48",
+      "timestamp": "1684349290.533659",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think we had a discussion on whether to include the license info in the window context or not before. We decided not to do that to save us from sending too many requests to the license services? @mfichman Now that we fetch /usage-total on mount, I think this concern is not longer valid?\ncc @Junwon Jang",
+      "time": "11:55",
+      "timestamp": "1684349702.741849",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "even if we add it to the window context, we'll still have cases where we need to refetch as a user uses the app which will cause the delay",
+      "time": "12:00",
+      "timestamp": "1684350010.427059",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea. I built something similar for the Admin Diagnostics app. We'll show a hint text next to the disabled button while we wait on API response. But, I'm not sure if this pattern would look good given that we disable so many UIs",
+      "time": "12:06",
+      "timestamp": "1684350365.119629",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "Why does the license call take so long to return? aren’t we just checking whether the user has access or not? feels like it shouldn’t take 10 seconds like it was in the video",
+      "time": "12:21",
+      "timestamp": "1684351269.013959",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "if this is on aihub.instabase, i believe licensing isn't enabled and we're doing the many many retry thing, and it doesn't yet have the changes for checking enabled license service or not",
+      "time": "12:22",
+      "timestamp": "1684351349.191239",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "Do you think it makes sense to instead of checking the usage details after every action, we only check it the first time user visits AIHub. We can keep everything enabled even if the units reaches zero in that session, and let the API request fail? The API response message can give a user friendly error which the API error handler can display",
+      "time": "12:23",
+      "timestamp": "1684351412.984929",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "but we still show the number of units on every page in the side bar menu",
+      "time": "12:25",
+      "timestamp": "1684351506.404249",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "this is only slow in the case that license isn't enabled and we never received credits in the first place. In every subsequent call (eg all calls except the first), we set `keepPreviousData` to true, and so we will not have loading states after the first one.",
+      "time": "12:26",
+      "timestamp": "1684351577.737709",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "~Ok then we can keep everything enabled on the subsequent updates (disabled for the first usage-details/ call only) and disable it only after the results are available (instead of before)? So we keep enabled by default unless we are sure the user has no units.~\n\n>  we set `keepPreviousData` to true, and so we will not have loading states after the first one.\nOh got it - so this is already being handled",
+      "time": "12:27",
+      "timestamp": "1684351628.472279",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "the current flow in the latest dev branch (not aihub.instabase) is:\n1. all actions are disabled until we get the response for how many units a user has left\n2. we refetch in the background often in the app since we have to show the number of units, but it should not block any actions until we see that the user has no units left\nthe reason it took so long in the video is because licensing isn't enabled, and the pr for handling disabled license service isn't deployed",
+      "time": "12:28",
+      "timestamp": "1684351739.297359",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "ok marking this as resolved then",
+      "time": "12:33",
+      "timestamp": "1684352007.636969",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-05-17.json",
+    "message_count": 13,
+    "start_time": "1684349134.583879",
+    "end_time": "1684352007.636969",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "id": "ch_C06FA6A23_2019-07-11_1562860937.201400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ted",
+    "dlluncor",
+    "Loc"
+  ],
+  "messages": [
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "@Ted i don’t think that has been changed. try `make clean build build-protos`",
+      "time": "09:02",
+      "timestamp": "1562860937.201400",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Thanks! Doesn't work in JS land -- it's a bit different than py-land. Pinged @dlluncor who set up the JS proto build scripts to see if he can take a look",
+      "time": "09:03",
+      "timestamp": "1562861018.202300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Sure thing. Are all the details in the task?",
+      "time": "09:40",
+      "timestamp": "1562863201.205000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Steps to reproduce are in my slack message to you",
+      "time": "09:55",
+      "timestamp": "1562864148.206900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "haven’t been able to reproduce — works for me in my environment — can you send over the error you are getting @Loc?",
+      "time": "10:22",
+      "timestamp": "1562865732.207200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "@dlluncor interesting -- I wonder if I have bad config on my machine then. Here's what I'm getting.\n\n```\n(venv-instabase) Edwards-MacBook-Pro-3:webpacked eob$ make build-protos\nrm -f /Users/eob/instabase/webserver/shared/src/js/webpacked/build/js_protodeps.txt\nrm -f /Users/eob/instabase/webserver/shared/src/js/webpacked/build/protodeps.txt\n/Library/Developer/CommandLineTools/usr/bin/make -s list-proto-deps >> /Users/eob/instabase/webserver/shared/src/js/webpacked/build/protodeps.txt\n/bin/sh: /Users/eob/instabase/webserver/shared/src/js/webpacked/build/protodeps.txt: No such file or directory\nmake: *** [build-protos] Error 1\n```\n\nGoing to make sure my python build targets work.. if they don't, my guess is it's limited to my machine",
+      "time": "10:44",
+      "timestamp": "1562867057.207400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Made a whitespace change to a proto file and regenerated protos in a python project dir; everything seemed to work fine",
+      "time": "10:45",
+      "timestamp": "1562867154.207600",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "@dlluncor you get regenerated javascript stubs when you try from `webserver/shared/src/js/webpacked`?",
+      "time": "10:46",
+      "timestamp": "1562867181.207800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "correct yes, i have to do “make build-protos FAST=false” but the JS protos do regenerate",
+      "time": "10:53",
+      "timestamp": "1562867593.208000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "from the webpacked server that is",
+      "time": "10:53",
+      "timestamp": "1562867603.208200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Ooh! I found the fix",
+      "time": "11:04",
+      "timestamp": "1562868263.208800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "I didn't have a `build` directory",
+      "time": "11:04",
+      "timestamp": "1562868267.209000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "So something was silently failing when it tried to save a file there",
+      "time": "11:04",
+      "timestamp": "1562868276.209200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "So my guess is someone has to have built the prod bundles at least once to then regen  the protobufs",
+      "time": "11:05",
+      "timestamp": "1562868305.209400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "interesting — still can’t reproduce. I did a “make clean” in my webapp (which should clear the build directrory?), then followed by “make build-protos FAST=false in the webpacked directory”\n\nLet me know which build directory I need to clear — seems the behavior is non-ideal would like to fix it but still trying to reproduce the scenario you were in",
+      "time": "11:24",
+      "timestamp": "1562869441.210200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "@dlluncor for me it happens when I first delete `webserver/shared/src/js/webpacked/build`",
+      "time": "11:25",
+      "timestamp": "1562869537.210500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "And then run make build-protos",
+      "time": "11:25",
+      "timestamp": "1562869542.210700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "got it -- sounds good, will fix that",
+      "time": "11:26",
+      "timestamp": "1562869604.210900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-07-11.json",
+    "message_count": 18,
+    "start_time": "1562860937.201400",
+    "end_time": "1562869604.210900",
+    "is_thread": true
+  }
+}

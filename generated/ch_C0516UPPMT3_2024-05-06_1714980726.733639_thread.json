@@ -1,0 +1,54 @@
+{
+  "id": "ch_C0516UPPMT3_2024-05-06_1714980726.733639_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Balaram",
+    "avi",
+    "Tom Murphy"
+  ],
+  "messages": [
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "I am looking into it, I will respond back soon",
+      "time": "00:32",
+      "timestamp": "1714980726.733639",
+      "is_reply": false
+    },
+    {
+      "sender": "Tom Murphy",
+      "user_id": "U027REZJDL3",
+      "message": "@avi, @Balaram - For context these are questions raised by Intact (same team / use case discussed last Monday).",
+      "time": "07:25",
+      "timestamp": "1715005555.969579",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "@Tom Murphy There are two set of APIs here:\n\n• Ask Prompts (sync API) exposed via SDK. Only Default and Advanced models are supported here. \n    ◦ Limitations:\n        ▪︎ multi-step model is not supported\n        ▪︎ provenance information is not available\n• Streaming (API) - UI uses this API to enable better user experience for the users.\nYou can use the below script to consume the streaming API:\n\n`import requests`\n`import json`\n`import time`\n\n`url = 'https://aihub.instabase.com/api/v2/aihub/converse/run_stream'`\n`data = '{\"model_name\":\"ibllm\",\"model_version\":\"2.1.0\",\"model_payload\":{\"custom_request\":{\"task\":\"multi_doc\",\"project_id\":\"aab4fc24-ef34-4e24-84e7-e7b4c421e9a7\",\"user_prompt\":\"extract key value information as json ```json\",\"ibdocs\":[\"ib-internal/josh.bronikowski.aihubprod2_instabase.com/fs/Instabase (http://aihubprod2_instabase.com/fs/Instabase) Drive/aihub/aab4fc24-ef34-4e24-84e7-e7b4c421e9a7/documents/out/US Passport 1_fdcc1d18d06560a01d3d64d9433edbbd43682cce08a85cb7b3c86bebfbd451ad.jpg.ibdoc\"],\"cached_index\":\"IB_AI_LABS_aab4fc24_ef34_4e24_84e7_e7b4c421e9a7\",\"model_name\":\"gpt-3.5-turbo\",\"relative_file_paths\":[\"US Passport 1.jpg\"],\"settings\":{}}}}'`\n`headers = {'Authorization' : 'Bearer 0p9wdBzDTn2RG',`\n           `'Ib-Context': 'ib-internal'}`\n\n\n\n`def stream():`\n    `start = time.time()`\n    `with requests.Session() as s:`\n        `try:`\n            `response = s.post(url, headers=headers, data=data, stream=True)`\n\n            `for chunk in response.iter_content(None):`\n                `json_data = chunk.decode('utf-8').split('\\n')[1].replace('data:', '', 1)`\n                `try:`\n                    `parsed_data = json.loads(json_data)`\n                    `if parsed_data.get('type') == 'stream_content':`\n                        `print(parsed_data.get('message'), end='', flush=True)`\n                `except json.JSONDecodeError as e:`\n                    `print(f\"Error decoding JSON: {e}\")`\n        `except requests.RequestException as e:`\n            `print(f\"Error making request: {e}\")`\n\n`stream()`",
+      "time": "23:03",
+      "timestamp": "1715061801.393989",
+      "is_reply": true
+    },
+    {
+      "sender": "avi",
+      "user_id": "U0477QPPM17",
+      "message": "Following up on the above, please keep in mind that the streaming API can be used for POCs driven by us, but it may be complicated for a customer to implement so let's not recommend yet. In case we win a POC and find a usecase here, we can definitely look into solutions to make the API/SDK for multidoc workloads simpler.",
+      "time": "23:11",
+      "timestamp": "1715062292.535729",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-05-06.json",
+    "message_count": 4,
+    "start_time": "1714980726.733639",
+    "end_time": "1715062292.535729",
+    "is_thread": true
+  }
+}

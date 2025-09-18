@@ -1,0 +1,110 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-03-18_1742320241.600389_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "mfichman",
+    "Sayan"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "For building protos, do we have any way of handling rebase merge conflicts? What I've been doing is unstaging everything, removing the non *.proto* generated files and rerunning `cd ~/instabase/webserver/api-server/ && poetry run make build-protos` to build them. However, I was wondering if the implementation for the command could just use the changed files (as compared to the base commit on the master branch) to rebuild them",
+      "time": "10:50",
+      "timestamp": "1742320241.600389",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I usually ignore all the auto-generated files. Rerunning `make build-protos` will ignore all the merge conflicts.",
+      "time": "10:52",
+      "timestamp": "1742320340.681289",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "So I do:\n1. `git rebase -i master`\n2. `git rebase --continue` until the commit where I change the proto\n3. unstage and resolve conflict in the `proto` file. Run `make build-protos`\n4. `git add . && git rebase --continue`",
+      "time": "10:53",
+      "timestamp": "1742320437.610589",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Yeah i think I was missing step 3. I was rebasing everything but the proto file and that's why the files with merge conflicts were not updated.\n\nin my case, the merge conflicts in the proto file are able to be automatically resolved so no changes were needed to those files. The solution provided makes this low priority but I was wondering if it could be automatically handled by the script",
+      "time": "10:58",
+      "timestamp": "1742320705.673529",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Oh yea, you have to manually unstage the `proto` file. This line will only get unstaged files\n\nhttps://github.com/instabase/instabase/blob/5c8885d693d761beb5d9cbfd7a69cb95f657d4ce/shared-utils/build-utils/shared/src/py/build_protos.py#L196",
+      "time": "11:00",
+      "timestamp": "1742320827.358659",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You can also do `FAST=false make build-protos` to force a rebuild",
+      "time": "11:31",
+      "timestamp": "1742322668.974699",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Let me try FAST=false next time. if it's still _fast_ enough, then i'll probably just use that command from now",
+      "time": "11:52",
+      "timestamp": "1742323977.920449",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Really we should change that so that it diffs the current branch against the upstream, and reruns proto on _that_ diff (rather than just unstaged files)",
+      "time": "12:27",
+      "timestamp": "1742326034.944749",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "That would be a big improvement if it's not that big of a lift.",
+      "time": "12:33",
+      "timestamp": "1742326393.248939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Small matter of programming...for someone :slightly_smiling_face:",
+      "time": "13:04",
+      "timestamp": "1742328250.814189",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "made a small change here - https://github.com/instabase/instabase/pull/68969 @Xindi Xu @mfichman",
+      "time": "15:50",
+      "timestamp": "1742338224.239679",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-03-18.json",
+    "message_count": 11,
+    "start_time": "1742320241.600389",
+    "end_time": "1742338224.239679",
+    "is_thread": true
+  }
+}

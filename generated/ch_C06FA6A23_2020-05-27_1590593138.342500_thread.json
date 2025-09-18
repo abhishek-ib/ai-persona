@@ -1,0 +1,159 @@
+{
+  "id": "ch_C06FA6A23_2020-05-27_1590593138.342500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "arun",
+    "Heymian",
+    "lydia",
+    "yutaka"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Chetan @Heymian i'm still seeing yapf reformatting on most files. @yutaka how did you get it to not reformat your PR? https://github.com/instabase/instabase/pull/13874 and https://github.com/instabase/instabase/pull/13922/files don't seem to fix it?\n\nYou can check out the reformatting by running `pre-commit run -v --files webserver/shared/src/py/instabase/shared/fs_util.py yapf`. Does that change the file for you?",
+      "time": "08:25",
+      "timestamp": "1590593138.342500",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i tried a bunch and gave up. Too hard to reverse engineer what all the configs were before. I’m tempted to just rerun it on the entire codebase, but that would screw over git blame.",
+      "time": "09:26",
+      "timestamp": "1590596778.345000",
+      "is_reply": true
+    },
+    {
+      "sender": "yutaka",
+      "user_id": "U0130FUND9D",
+      "message": "Hey @lydia. Sorry, I forgot to follow up on the thread with you and @arun yesterday! I actually wasn't able to get those yapf args applied even after rerunning `pre-commit install`, and because it was a 2 line change, I just used the `--no-verify` commit flag... Running your command does apply the formatting.",
+      "time": "09:28",
+      "timestamp": "1590596882.345200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oo ok haha good to know :stuck_out_tongue:",
+      "time": "09:28",
+      "timestamp": "1590596902.345400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i was like am i crazy? i am spending too long figuring out why it wasn't working just for me",
+      "time": "09:28",
+      "timestamp": "1590596916.345600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oo i see @Heymian. like you tried a bunch of yapf config settings?",
+      "time": "09:29",
+      "timestamp": "1590596988.345800",
+      "is_reply": true
+    },
+    {
+      "sender": "yutaka",
+      "user_id": "U0130FUND9D",
+      "message": "Sorry 'bout that! Going forward, should we check in the yapf changes then?",
+      "time": "09:30",
+      "timestamp": "1590597045.346000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah i’ve tried so many configs, nothing gets it all right",
+      "time": "09:31",
+      "timestamp": "1590597093.346800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "haven’t ever been able to get all the reformatting back into its old state. if you want to try, play around with the configs in the pre-commit yml",
+      "time": "09:33",
+      "timestamp": "1590597186.348600",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "i wonder if the long weekend might have been a good time to run yapf on everything haha",
+      "time": "09:33",
+      "timestamp": "1590597235.348800",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "would a workaround for the git blame issue be to change author to something like \"yapf@instabase\"?",
+      "time": "09:34",
+      "timestamp": "1590597260.349000",
+      "is_reply": true
+    },
+    {
+      "sender": "yutaka",
+      "user_id": "U0130FUND9D",
+      "message": "i've never used this, but for things like bulk formatting, there's the `--ignore-rev` flag: https://git-scm.com/docs/git-blame#Documentation/git-blame.txt---ignore-revltrevgt",
+      "time": "09:36",
+      "timestamp": "1590597361.349200",
+      "is_reply": true
+    },
+    {
+      "sender": "yutaka",
+      "user_id": "U0130FUND9D",
+      "message": "this should preserve git blame",
+      "time": "09:37",
+      "timestamp": "1590597422.349400",
+      "is_reply": true
+    },
+    {
+      "sender": "yutaka",
+      "user_id": "U0130FUND9D",
+      "message": "oh, i guess this flag is only for reading git blame, so doesn't really solve the issue : \\",
+      "time": "09:41",
+      "timestamp": "1590597660.349600",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "this blog post seems to discuss how to handle upgrading a formatter for larger codebases: https://flexport.engineering/upgrading-prettier-on-a-large-codebase-28d56c4de49e",
+      "time": "09:42",
+      "timestamp": "1590597726.349800",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "seems like they recommend\n1. Upgrading the formatter, committing its version with a message, and using a tag to identify when it happened\n2. Running the formatter. Manually reviewing/cleaning up the changes, then committing under a different author and tagging after the upgrade\n3. They also run it on all open PR branches using some github API calls, which looks super handy",
+      "time": "09:47",
+      "timestamp": "1590598023.350100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Ok, I created https://github.com/instabase/instabase/pull/14135 to update the yapf config to minimize changes.\n\nA summary of what I did:\nI ran yapf on a sample file with `pre-commit run -v --files webserver/shared/src/py/instabase/shared/fs_util.py yapf` and tested at which version reformatting changes occurred -- narrowing it down to the bump from v0.26.0 to v0.27.0. I then checked the changelog (https://github.com/google/yapf/blob/master/CHANGELOG) for 0.27.0 for relevant sounding changes, which turned out to be:\ngoogle/yapf#689 (https://github.com/google/yapf/pull/689)\ngoogle/yapf@7903f38#diff-b9d42dc9b28c90d5903a459d54afde51L44 (https://github.com/google/yapf/commit/7903f3882bd4618517becded18055660ad9ee704#diff-b9d42dc9b28c90d5903a459d54afde51L44)\n\nUnfortunately, it doesn't avoid all changes. I think because the code itself actually changed and it's not possible to recover the original behavior with config options. But it seems like some of the reformatting makes more sense anyways. We may want to do something like what Arun proposed for the remaining reformatting. But at least with this config, the changes are minimized.",
+      "time": "16:11",
+      "timestamp": "1590621083.353300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-05-27.json",
+    "message_count": 17,
+    "start_time": "1590593138.342500",
+    "end_time": "1590621083.353300",
+    "is_thread": true
+  }
+}

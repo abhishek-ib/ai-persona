@@ -1,0 +1,152 @@
+{
+  "id": "ch_C0516UPPMT3_2023-08-08_1691496178.441139_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "lydia",
+    "Lee",
+    "Varun Jain",
+    "Kathy Wu"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "4. I can’t get it to work on prod at all - this is probably the most urgent.",
+      "time": "05:02",
+      "timestamp": "1691496178.441139",
+      "is_reply": false
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "Thanks for the feedback, @Lee ! What issue are you seeing while using the package in prod? \n\nAdding @lydia to help investigate and resolve the blocker issue",
+      "time": "05:08",
+      "timestamp": "1691496536.308209",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I just get a spinner in the refiner field which never completes.",
+      "time": "06:07",
+      "timestamp": "1691500040.101289",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Can you send me a link? I don’t think we’ve tested it on prod yet and it’s possible we don’t have the right license or OpenAI key set up there",
+      "time": "06:33",
+      "timestamp": "1691501621.528349",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "https://www.instabase.com/apps/refiner/edit/lee/workspace/fs/workspace/.instabase_pro[…]sions/0cd1481f-0b85-453f-9845-efd5343a81f0/refiner.ibrefiner (https://www.instabase.com/apps/refiner/edit/lee/workspace/fs/workspace/.instabase_projects/Arondor/latest/refiners/c1bfc0c1-4347-4b16-a05a-0b8178870a48/versions/0cd1481f-0b85-453f-9845-efd5343a81f0/refiner.ibrefiner)",
+      "time": "06:36",
+      "timestamp": "1691501769.456539",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I get this error when running now, rather than a timeout",
+      "time": "06:36",
+      "timestamp": "1691501785.216029",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "can you paste me the error?",
+      "time": "06:39",
+      "timestamp": "1691501941.751769",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "",
+      "time": "06:40",
+      "timestamp": "1691502013.731779",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "that’s the same error as in red in your screenshot?",
+      "time": "06:43",
+      "timestamp": "1691502210.009969",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "actually nvm I scrolled up and found the stack trace",
+      "time": "06:44",
+      "timestamp": "1691502244.711169",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "cc @Kathy Wu looks like the same issue as reported https://instabase.slack.com/archives/C01N7DV1137/p1691186415364329?thread_ts=1690804027.071339&cid=C01N7DV1137",
+      "time": "06:46",
+      "timestamp": "1691502367.567589",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "We should BP the fix to 23.07. Also, do you know why token_usage_stats is missing in the model response?",
+      "time": "06:46",
+      "timestamp": "1691502391.018629",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Lee I’m seeing a different error than you, which is that weaviate isn’t up. Following up on that in this thread (https://instabase.slack.com/archives/C0185KKS5AR/p1691505028406899)",
+      "time": "08:02",
+      "timestamp": "1691506954.892959",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Once that is fixed, I’ll see if I get your error",
+      "time": "08:02",
+      "timestamp": "1691506966.310119",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i'll follow up with the infra team -- with 23.07 we now have 3 different deployment modes\n1. AI Hub \n2. IB Platform with LLM calling from Refiner (for SaaS or LLM supported sandboxes) \n3. IB Platform without LLM calling from Refiner (for most on-prem customers) \nib.com (http://ib.com) is probably on (3) right now; need to make this (2) or have another env for this.",
+      "time": "08:48",
+      "timestamp": "1691509731.553989",
+      "is_reply": true
+    },
+    {
+      "sender": "Kathy Wu",
+      "user_id": "U03MD12PS5C",
+      "message": "BP pr here (https://github.com/instabase/instabase/pull/44917/files)! I'm not sure about why token_usage_stats is missing. It seems like model service code removes that key (https://github.com/instabase/instabase/blob/125be7b235f3959659bfbf4c09d228b17b115322/webserver/api-server/src/py/instabase/api_server_apps/handler/api/v1/model_service.py#L440) from the model result before returning it.. I'm not if that's expected so I asked yash in the model service channel",
+      "time": "09:17",
+      "timestamp": "1691511449.882879",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-08-08.json",
+    "message_count": 16,
+    "start_time": "1691496178.441139",
+    "end_time": "1691511449.882879",
+    "is_thread": true
+  }
+}

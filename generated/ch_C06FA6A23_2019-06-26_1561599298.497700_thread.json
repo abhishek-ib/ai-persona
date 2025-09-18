@@ -1,0 +1,126 @@
+{
+  "id": "ch_C06FA6A23_2019-06-26_1561599298.497700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "Heymian",
+    "will"
+  ],
+  "messages": [
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "@dlluncor it looks like some of these already had “USE_PY3=true” set, and they were at least pretending to pass. We added the python3 dependencies on the jenkins container, and it doesn’t seem to behave any differently. Should some of these fail?",
+      "time": "18:34",
+      "timestamp": "1561599298.497700",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "If it's mypy, then technically those did not require Python 3 libs...it's a bit confusing I know",
+      "time": "18:39",
+      "timestamp": "1561599591.498300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "make build mypy USE_PY3=true doesn't require executing the actual code, since mypy is a parser",
+      "time": "18:40",
+      "timestamp": "1561599619.498500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "However make build run-test-local USE_PY3=true actually executes the code, and requires all the necessary modules to be installed for py3",
+      "time": "18:40",
+      "timestamp": "1561599659.498700",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Where would we run `make build run-test-local USE_PY3=true`?",
+      "time": "18:41",
+      "timestamp": "1561599707.498900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Oh service by service, not one big test suite?",
+      "time": "18:44",
+      "timestamp": "1561599877.499100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah all the tests are in each service or package.",
+      "time": "18:45",
+      "timestamp": "1561599903.499300",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "That's how we currently do it. If we want to separate those tests into groups somehow -- totally up for it. Let us know what are mechanisms for packaging various tests using Jenkins or Travis. Will lean on you all for that knowledge!",
+      "time": "18:47",
+      "timestamp": "1561600022.499500",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I think this is running the desired test… it looks like it is failing because of a type failure, not because of something else I got wrong? https://jenkins.instabase.com/job/py3/",
+      "time": "19:05",
+      "timestamp": "1561601107.499700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Fixed the typing issue here: https://github.com/instabase/instabase/pull/10275",
+      "time": "19:39",
+      "timestamp": "1561603194.000000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "This is not the easiest test to use out the gate — because it doesn’t pass correctly for PY3 yet.\n\nLet’s start with instabase/core-services/file-tservice\n\nSince those tests actually pass in PY3",
+      "time": "19:42",
+      "timestamp": "1561603320.000300",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Ok I think I have a couple of dep related failures to work around",
+      "time": "20:02",
+      "timestamp": "1561604578.000900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "image-tasks works now though  :slightly_smiling_face:",
+      "time": "20:04",
+      "timestamp": "1561604681.001100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-06-26.json",
+    "message_count": 13,
+    "start_time": "1561599298.497700",
+    "end_time": "1561604681.001100",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "id": "ch_C0516UPPMT3_2025-05-21_1747823788.872119_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "jordy.vlan",
+    "Kaustubh (KD)",
+    "Hamish"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Hey team, sharing this Trust Deed we received from NAB during our POC which is greater than 50MB. It doesn't look massively long or data heavy, I wonder if we can somehow lower the file size to fit out limits or increase our limits?\n\ncc @Kaustubh (KD)",
+      "time": "03:36",
+      "timestamp": "1747823788.872119",
+      "is_reply": false
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "`pdfinfo 015_Royal\\ Unit\\ Trust.pdf` \n```Title:           Royal Property Trust.pdf\nAuthor:          P792559\nProducer:        Microsoft: Print To PDF\nCreationDate:    Sat Aug 27 12:18:09 2022 CEST\nModDate:         Sat Aug 27 12:18:09 2022 CEST\nCustom Metadata: no\nMetadata Stream: no\nTagged:          no\nUserProperties:  no\nSuspects:        no\nForm:            none\nJavaScript:      no\nPages:           96\nEncrypted:       no\nPage size:       595.32 x 841.92 pts (A4)\nPage rot:        0\nFile size:       86065246 bytes\nOptimized:       no\nPDF version:     1.7```\nSeems generally normal at 96 pages, though filesize is huge.",
+      "time": "05:17",
+      "timestamp": "1747829864.812819",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Hypotheses: The PDF is likely large due to embedded *images or full fonts*.\n\n1. *embedded images* \n3.5k images in there…\n```pdfimages -list \"015_Royal Unit Trust.pdf\" > report.txt```\n2.    embedded fonts\nnot the case, empty\n```pdffonts 015_Royal\\ Unit\\ Trust.pdf \nname                                 type              encoding         emb sub uni object ID\n------------------------------------ ----------------- ---------------- --- --- --- ---------```",
+      "time": "05:44",
+      "timestamp": "1747831448.454809",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Aggressive (non-lossless) compression can get it down to 9MB :wink:\n```gs -sDEVICE=pdfwrite -dPDFSETTINGS=/screen    -dNOPAUSE -dBATCH -dQUIET    -sOutputFile=compressed.pdf \"015_Royal Unit Trust.pdf\"```",
+      "time": "05:47",
+      "timestamp": "1747831623.198899",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Unsure though if this is a strategy we want to introduce for large files, IMHO it requires some nuanced pre-checks (like do the page image sizes and number of pages correlate to the MBs?), …",
+      "time": "05:48",
+      "timestamp": "1747831729.151439",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "cc: @Anil",
+      "time": "05:49",
+      "timestamp": "1747831749.998709",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Yeah this is a good question, ChatGPT has the following limits:\n• General documents = 512mb per file\n• Spreadsheets / CSVs = 50mb per file\nAdditionally, there are usage caps:\n• Each end-user is capped at 10GB.\n• Each organization is capped at 100GB\nSo we have smaller limits than for regular files (50mb) and spreadsheets (10mb). I think we should be revisiting these. cc: @Atinder / @Balaram",
+      "time": "07:07",
+      "timestamp": "1747836476.365319",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-05-21.json",
+    "message_count": 7,
+    "start_time": "1747823788.872119",
+    "end_time": "1747836476.365319",
+    "is_thread": true
+  }
+}

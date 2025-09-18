@@ -1,0 +1,235 @@
+{
+  "id": "ch_C05L87V014J_2025-03-10_1741630492.761259_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "mfichman",
+    "alex.zhou",
+    "tony.shi",
+    "Heymian",
+    "Dave",
+    "Serena",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "<!channel> PSA: I updated the Open AI API key for crafting sandboxes. To get the key, resync your sandbox, and then restart all services:\n\n```cs sandbox update\ncs restart```\nYou can also do this from the UI if you prefer.\n\n*EDIT:* If you have any Open AI API keys in `env-local-overrides.json`, remove those :slightly_smiling_face:",
+      "time": "11:14",
+      "timestamp": "1741630492.761259",
+      "is_reply": false
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Is anyone running into issues with system configs when running `cs sandbox update`?\n\n```rpc error: code = Internal desc = internal_error: open /etc/secrets/keys/signing/token_private_key.pem: is a directory\nrpc error: code = Internal desc = internal_error: open /etc/secrets/keys/signing/token_public_key.pem: is a directory```",
+      "time": "11:22",
+      "timestamp": "1741630952.384709",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.zhou",
+      "user_id": "U083DU4JNJW",
+      "message": "Curious where is the new OpenAI API key generated from? Does IT manage to rotate it",
+      "time": "12:36",
+      "timestamp": "1741635391.955589",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.zhou",
+      "user_id": "U083DU4JNJW",
+      "message": "I ran into a openai quota issue last week, and was trying to ask IT about it. I just tried  the updated key from env-local-secrets.json, and seems to still hit the error",
+      "time": "12:39",
+      "timestamp": "1741635582.346049",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.zhou",
+      "user_id": "U083DU4JNJW",
+      "message": "`openai.RateLimitError: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}`",
+      "time": "12:40",
+      "timestamp": "1741635622.917749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Seeing the same while testing search indexing:\n```plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}\n[2025-03-10 19:43:43,853] [ForkPoolWorker-540/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/aihub_utils/search_index_util.py:75} ERROR - [trace_id=] - Exception: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}\n[2025-03-10 19:43:45,285] [ForkPoolWorker-540/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/tasks/apps/aihub/tasks.py:562} ERROR - [trace_id=] - index_search_document failed: Exception: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}\n[2025-03-10 19:43:45,288] [ForkPoolWorker-540/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/tasks/apps/aihub_builder_util.py:120} ERROR - [trace_id=] - Exception: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}\n[2025-03-10 19:43:45,288] [ForkPoolWorker-540/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/tasks/apps/aihub_builder_util.py:121} ERROR - [trace_id=] - Exception: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}\n[2025-03-10 19:44:07,766] [ForkPoolWorker-560/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/aihub_utils/search_index_util.py:74} ERROR - [trace_id=] - Exception: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}\n[2025-03-10 19:44:07,766] [ForkPoolWorker-560/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/aihub_utils/search_index_util.py:75} ERROR - [trace_id=] - Exception: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}\n[2025-03-10 19:44:09,192] [ForkPoolWorker-560/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/tasks/apps/aihub/tasks.py:562} ERROR - [trace_id=] - index_search_document failed: Exception: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}\n[2025-03-10 19:44:09,194] [ForkPoolWorker-560/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/tasks/apps/aihub_builder_util.py:120} ERROR - [trace_id=] - Exception: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}\n[2025-03-10 19:44:09,194] [ForkPoolWorker-560/MainThread] {/instabase/workers/celery-app-tasks/py/instabase/tasks/apps/aihub_builder_util.py:121} ERROR - [trace_id=] - Exception: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}```",
+      "time": "12:44",
+      "timestamp": "1741635870.699819",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.zhou",
+      "user_id": "U083DU4JNJW",
+      "message": "Where did you generate the new openai key? I tried a couple keys, none of them working now",
+      "time": "12:46",
+      "timestamp": "1741635998.997889",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.zhou",
+      "user_id": "U083DU4JNJW",
+      "message": "cc @samantha.pettley for sync context",
+      "time": "12:48",
+      "timestamp": "1741636083.199019",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "cc @Nikolaos Kofinas this why your crafting sandbox stopped working",
+      "time": "12:52",
+      "timestamp": "1741636351.482949",
+      "is_reply": true
+    },
+    {
+      "sender": "alex.zhou",
+      "user_id": "U083DU4JNJW",
+      "message": "cc @Yash Botadra",
+      "time": "12:53",
+      "timestamp": "1741636395.543469",
+      "is_reply": true
+    },
+    {
+      "sender": "Dave",
+      "user_id": "U03D9RJ7SQL",
+      "message": "@Clemens did you and OAI get this sorted last week? I had thought you had gotten in touch with them on the topic",
+      "time": "12:59",
+      "timestamp": "1741636797.614249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I asked IT to generate it! Sounds like there is a larger issue though.",
+      "time": "14:00",
+      "timestamp": "1741640406.563619",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@lydia yes @Nikolaos Kofinas was facing this issue (https://instabase.slack.com/archives/C05L87V014J/p1741385231291989?thread_ts=1741380591.581949&cid=C05L87V014J)",
+      "time": "14:36",
+      "timestamp": "1741642618.112279",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I can't seem to bring up my sandbox anymore after running these two commands;\n\n```heymian@K4FT4VT7P1-Heymian-Wong ~ % cs sandbox update\nThe installed CLI (1.7.0-g53a7617 date=2024-09-11 os=darwin arch=arm64) is out-dated! It may fail to work soon.\nPlease reinstall from https://instabase.sandboxes.site/download\n✔ select the only one - instabase\n✔ heymian1\nUpdated! Name: heymian1 Version: 182b962d3734f577 ID: ctj0slc3p09ul0tg9qtg\nTYPE WORKLOAD/RES STATE       ACTIONS\n [W] dev          Problematic ✓ Pull:snapshot:ctgbt5mlcp6cmh8ssi5g 100%\n                              ✓ Pull:us-docker.pkg.dev/crafting-dev/sandbox/shared/vscode:latest 100%\n                              ✗ SystemConfig\n                              ✓ CustomizeIDE\n                              ✓ RestoreHomeSnapshot\n                              ✓ RestorePersonalSnapshot\n                              ✓ SetupFilesInHome\n                              ✓ WaitForWorkloadsAndResources\n                              ✓ CustomizeSystem\n                              ✓ CustomizeHome\n                              ✓ StartSystem\n                              ✓ Checkout:instabase\n                              ✓ Sync:instabase\n                              ✓ PostCheckout:instabase\n                              ✓ CheckoutAll\n                              ✓ Build:instabase\n                              ✓ BuildAll\n                              ✓ PostSetup\n                              ✓ Lifecycle:RUNNING\n [D] mysql        Ready       ✓ Pull:us-docker.pkg.dev/crafting-dev/sandbox/service/mysql-8.3:latest 100%\n                              ✓ RestoreInitialSnapshot\n                              ✓ LaunchService\n [D] opensearch   Outdated    ✓ Pull:us-docker.pkg.dev/crafting-dev/sandbox/service/opensearch-2.11:latest 100%\n                              ✓ RestoreInitialSnapshot\n                              ✓ LaunchService\n [D] rabbitmq     Ready       ✓ Pull:us-docker.pkg.dev/crafting-dev/sandbox/service/rabbitmq-3.11:latest 100%\n                              ✓ RestoreInitialSnapshot\n                              » LaunchService\n [D] redis        Ready       ✓ Pull:us-docker.pkg.dev/crafting-dev/sandbox/service/redis-6.2:latest 100%\n                              ✓ RestoreInitialSnapshot\n                              ✓ LaunchService\n [R] kubernetes               ✓ RUNNING\nFatal: workload \"dev\": workload is problematic.\nheymian@K4FT4VT7P1-Heymian-Wong ~ % csrestart\nzsh: command not found: csrestart\nheymian@K4FT4VT7P1-Heymian-Wong ~ % cs restart\nThe installed CLI (1.7.0-g53a7617 date=2024-09-11 os=darwin arch=arm64) is out-dated! It may fail to work soon.\nPlease reinstall from https://instabase.sandboxes.site/download\n✔ select the only one - instabase\n✔ heymian1/dev\nFatal: rpc error: code = Unavailable desc = error reading from server: EOF.\nheymian@K4FT4VT7P1-Heymian-Wong ~ %```",
+      "time": "16:54",
+      "timestamp": "1741650883.543939",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "System Config error:\n```rpc error: code = Internal desc = internal_error: open /etc/secrets/keys/signing/token_private_key.pem: is a directory\nrpc error: code = Internal desc = internal_error: open /etc/secrets/keys/signing/token_public_key.pem: is a directory```",
+      "time": "16:55",
+      "timestamp": "1741650930.277229",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "The owner for these two files in the sandbox template is `nobody (65534)` .Shouldn’t it be `root (1000)` ?\n```       - path: /etc/secrets/keys/signing/token_private_key.pem\n          owner: 65534:65534\n          mode: \"0600\"\n          overwrite: true\n          secret:\n            name: control_plane_private_key\n        - path: /etc/secrets/keys/signing/token_public_key.pem\n          owner: 65534:65534\n          mode: \"0644\"\n          overwrite: true\n          secret:\n            name: control_plane_public_key```",
+      "time": "17:39",
+      "timestamp": "1741653582.958809",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Seems to be the same issue Tony ran into above? Which hasn’t been root caused yet (https://instabase.slack.com/archives/C05L87V014J/p1741632566930749)",
+      "time": "17:41",
+      "timestamp": "1741653671.941299",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Agreed! Would spinning up a new box be feasible @Heymian?",
+      "time": "17:42",
+      "timestamp": "1741653732.223189",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "I updated the template with owner change. Can someone update their sandbox and confirm if it fixes things?",
+      "time": "17:42",
+      "timestamp": "1741653734.571639",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Oh wait, @tony.shi, are you saying new sandboxes aren’t running into this?",
+      "time": "17:42",
+      "timestamp": "1741653772.833529",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Yeah; My newly deployed sandbox runs just fine\nhttps://https--tonybackend2-instabase.instabase.site.sandboxes.run/",
+      "time": "17:45",
+      "timestamp": "1741653934.437779",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I really don't want to bring up a new sandbox if I don't have to...",
+      "time": "17:46",
+      "timestamp": "1741653973.294479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We can fix it.",
+      "time": "17:56",
+      "timestamp": "1741654586.045859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, the tl;dr is that the owner has to be nobody b/c the control-plane container requires that...",
+      "time": "17:57",
+      "timestamp": "1741654621.616579",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Oh, in that case, please revert my change",
+      "time": "17:57",
+      "timestamp": "1741654654.452319",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Not sure how they turned into dirs though rather than files. Odd",
+      "time": "17:57",
+      "timestamp": "1741654655.389449",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-10.json",
+    "message_count": 26,
+    "start_time": "1741630492.761259",
+    "end_time": "1741654655.389449",
+    "is_thread": true
+  }
+}

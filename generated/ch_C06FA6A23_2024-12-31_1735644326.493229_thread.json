@@ -1,0 +1,136 @@
+{
+  "id": "ch_C06FA6A23_2024-12-31_1735644326.493229_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "sudeep",
+    "Varun Nandan",
+    "gurkirat",
+    "Aegis"
+  ],
+  "messages": [
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Was looking into some insights earlier, and adding a quick summary here.\n\nIn past 30d we spent about $20k on this bucket. At current rate this bucket costs almost $700 a day (and continues to grow with data/access). So we really need to prioritize fixing this asap)\n\nSplitting the past 30d spend there are some interesting insights -\n• $4k on the storage (up from $1.4k in the 30 days previously). \n• $4k on the API requests (up from $2k for the 30 days previously)\n• $11k on the `Other` category (up from $3.5k for the 30 days previously)\n    ◦ this is obviously the big contributor, and digging into it reveals the same thing that much of this is driven by `USE2-Retrieval-GIR` (mainly this one), and `USE2-Requests-Tier4` . This was mentioned by Gurkirat and Sitaram too earlier here. \n    ◦ This bucket seems to implement Intelligent Tiering (https://aws.amazon.com/s3/storage-classes/intelligent-tiering/) -- which basically moves objects across different storage tiers to optimize cost [attached the intelligent tiering policy, which shows data not accesses in last 90 days is moved to the Glacier Instant Retrieval ie GIR layer]. \n        ▪︎ Intelligent tiering charges us when data is moved from standard storage category - to a non frequent access storage type ex: archive aka glacier\n        ▪︎ when data in glacier is accessed it does not move back into a frequent access layer. Also note storing data in Glacier is much cheaper (by 60% or so compared to standard). But *accessing data from Glacier is quite expensive* $0.03/GB (compared to 0.0004/GB or so in standard).\n    ◦ *hypothesis* i have is that much of the data that was in this s3  bucket was in Glacier, and the recent access that @Varun Nandan mentioned might be accessing it causing significant uptick in charges. We should confirm this and move it to standard storage comparing the tradeoffs of data access, size, movement charges. \n    ◦ separately we should also optimize the other items here ie. storage costs, and volume. It seems quite crazy that we add 50-60TB every 2 weeks in this bucket. \ncc @Kerry @Ashish @Nithin",
+      "time": "03:25",
+      "timestamp": "1735644326.493229",
+      "is_reply": false
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "> S3 to aihub-uat.internal on Dec 19th and I have been reading files and triggering flows present in this drive from 23rd onwards.\nthanks @Varun Nandan this is a crucial insight. Can you share which files are being accessed so that we can confirm storage tiers for it.",
+      "time": "03:26",
+      "timestamp": "1735644419.297809",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Nandan",
+      "user_id": "UKLRUHCUF",
+      "message": "@sudeep Config Files are accessed from here: https://aihub-uat.internal.instabase.com/aihub-uat-internal/SolEng_workspace/fs/Soleng%20S3%2[…]20Suite/Public%20Apps%20Regression%20Test%20Configs/ (https://aihub-uat.internal.instabase.com/aihub-uat-internal/SolEng_workspace/fs/Soleng%20S3%20Drive/SolEng%20Regression%20Suite/Public%20Apps%20Regression%20Test%20Configs/)\n\nFlow are triggered from here: https://aihub-uat.internal.instabase.com/aihub-uat-internal/SolEng_workspace/fs/Soleng%20S3%20Drive/SolEng%20Regression%20Suite/flows/",
+      "time": "03:29",
+      "timestamp": "1735644548.245739",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "I’ll say as a first step we should de-mount the bucket (to stop bleeding $$) figure out a plan to move it to standard layer and connect again",
+      "time": "03:30",
+      "timestamp": "1735644647.692769",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Plus one yes we should stop the access for stopping $$ costs from incurring further",
+      "time": "03:31",
+      "timestamp": "1735644708.432489",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Nandan",
+      "user_id": "UKLRUHCUF",
+      "message": "@sudeep Can I get some help in copying this folder to the standard Instabase Drive?https://aihub-uat.internal.instabase.com/aihub-uat-internal/SolEng_workspace/fs/Soleng%20S3%20Drive/SolEng%20Regression%20Suite/",
+      "time": "03:32",
+      "timestamp": "1735644754.866039",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "let's also start an incident as there are other related conversations that will become a digression for this thread",
+      "time": "03:32",
+      "timestamp": "1735644765.871899",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Nandan",
+      "user_id": "UKLRUHCUF",
+      "message": "When I try to copy files from this S3 drive to Instabase Drive, I'm getting the following exception:\n`Fail with status code INVALID due to : ;;Code: INVALID, Message: Failed to copy from src SolEng Regression Suite/Public Apps Regression Test Configs/Bank_Statement.json to dst SolEng Regression Suite/Public Apps Regression Test Configs/Bank_Statement.json. Err: operation error S3: CopyObject, https response error StatusCode: 400, RequestID: 5TD0VPNY76DF33EP, HostID: DeNO8YaUXJ3fhExenwmVTqYb/482MI/y1mwyxgtiYlG/Z13zs0p85643/fbdze5XjzE5G3d6/ftdra0/FaPB7A==, api error KMS.NotFoun[truncated]`",
+      "time": "03:35",
+      "timestamp": "1735644915.123349",
+      "is_reply": true
+    },
+    {
+      "sender": "Aegis",
+      "user_id": "U06K3T6CTFW",
+      "message": "*Aegis has created the incident*\nIncident Channel: <#C0879S33TQ9>\nIncident: 632 (https://instabase.app.opsgenie.com/incident/detail/af9d36a0-299b-42a5-8183-5aa272c5b617)\n\nCreated by @sudeep",
+      "time": "03:37",
+      "timestamp": "1735645024.954679",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "moving discussions to this channel above ^^",
+      "time": "03:37",
+      "timestamp": "1735645040.930719",
+      "is_reply": true
+    },
+    {
+      "sender": "gurkirat",
+      "user_id": "U03FF2FSCGZ",
+      "message": "@Varun Nandan to clear things from standard layer we dont mean Instabase Drive — standard layer is a storage layer in S3. Current data in that drive is in GIR layer which is cheaper to store but expensive to read (in which this bucket is) copying from there will also incur very high cost",
+      "time": "03:37",
+      "timestamp": "1735645054.785819",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Nandan",
+      "user_id": "UKLRUHCUF",
+      "message": "Got it. Then I will go with manual uploading files to Instabase Drive. Post that we can un-mount this S3 to save costs incurring further.",
+      "time": "03:39",
+      "timestamp": "1735645187.858639",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "hey folks let's discuss in the incident channel above, there is a thread for this. let's avoid messages crossing\nhttps://instabase.slack.com/archives/C0879S33TQ9/p1735645147259999",
+      "time": "03:45",
+      "timestamp": "1735645505.326919",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea @astpierre's work on Vantage has been freaking awesome, it's a super handy tool!!!",
+      "time": "10:05",
+      "timestamp": "1735668355.266339",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-12-31.json",
+    "message_count": 14,
+    "start_time": "1735644326.493229",
+    "end_time": "1735668355.266339",
+    "is_thread": true
+  }
+}

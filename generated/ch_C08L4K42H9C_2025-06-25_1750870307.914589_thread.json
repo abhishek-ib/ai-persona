@@ -1,0 +1,93 @@
+{
+  "id": "ch_C08L4K42H9C_2025-06-25_1750870307.914589_thread",
+  "type": "channel",
+  "channel_name": "team-automate",
+  "conversation_type": "thread",
+  "participants": [
+    "Sherif",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "digging into this more, i realized that this is acc more complicated than i thought :sob:, we might need separate handling of case fields/single class fields outside of the db layer",
+      "time": "09:51",
+      "timestamp": "1750870307.914589",
+      "is_reply": false
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "i had thought we did schema udf args and actual udf args in the udf table separately but we don't, and the reason it works in extraction/flow is because we build the function signature separately w/o reading the db, given what the case program is passing in, however in the run udfs endpoint we are just reading the args from the db to create the function signature which is causing the error because \"class name.field name\" is not a valid argument name to put in the function signature",
+      "time": "09:53",
+      "timestamp": "1750870410.896599",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "i think fix should be simple hopefully",
+      "time": "09:54",
+      "timestamp": "1750870440.908839",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "so acc i think, no change needs to be made to how the POST /udfs endpoint is being called on the frontend, if there are any changes u made sherif, we can sync on that once, i figure out the fix on the backend",
+      "time": "11:01",
+      "timestamp": "1750874469.882649",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Yeah I made this change, to encompass all class fields. when POST'ing to `/udfs`\n\n```[\n    {\n        \"name\": \"class_fields\",\n        \"data_type\": \"FIELD\",\n        \"value\": \"class_fields\"\n    }\n]```",
+      "time": "11:41",
+      "timestamp": "1750876913.131519",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "i see makes sense, okay so i don't think we'll need that anymore",
+      "time": "13:10",
+      "timestamp": "1750882232.378069",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "here's my intended fix w/ the postman requests i used https://github.com/instabase/instabase/pull/71666",
+      "time": "13:10",
+      "timestamp": "1750882240.304669",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "i think everything in your pr should stay the same (in terms of using the intra class fields api and passing it to udfs/run) except that now no changes need to be made to editing the UDF through POST /udfs",
+      "time": "13:11",
+      "timestamp": "1750882281.570789",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Hmm okay that works for me..",
+      "time": "14:30",
+      "timestamp": "1750887020.170709",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C08L4K42H9C",
+    "channel_name": "team-automate",
+    "date_file": "2025-06-25.json",
+    "message_count": 9,
+    "start_time": "1750870307.914589",
+    "end_time": "1750887020.170709",
+    "is_thread": true
+  }
+}

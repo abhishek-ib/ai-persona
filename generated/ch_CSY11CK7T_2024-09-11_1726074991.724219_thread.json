@@ -1,0 +1,287 @@
+{
+  "id": "ch_CSY11CK7T_2024-09-11_1726074991.724219_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Xindi Xu",
+    "Jessica",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "a lot of tests in @Jessica’s CI run failed because of a licensing issue\n```Account cypress-org-62424 is not integrated with metronome\"```\nthere were errors (https://github.com/instabase/instabase/actions/runs/10815783218/job/30005484901?pr=62424) when creating the commercial org - in this case, should we delete the org and rerun Cypress CI? @Xindi Xu",
+      "time": "10:16",
+      "timestamp": "1726074991.724219",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hm, that's odd. The org is created but the customer doesn't exist in metronome.\n@Victor Zeng Do you know why this happened? I tried calling `api/v2/licenses/migrate` but got this error `\"The provided idempotency key has been used on a request with different parameters`",
+      "time": "10:30",
+      "timestamp": "1726075845.771349",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Serena unfortunately, we don't have a good way to delete orgs not.",
+      "time": "10:31",
+      "timestamp": "1726075871.295289",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I also tried recreating the org (this endpoint is idempotent) but i got \"An unexpected error has occured: Unknown exception\"\nhttps://crafting-cyp.test.instabase.com/grafana/goto/YMsr_a6IR?orgId=1\n\nThis is the log for the request we sent in Cypress CI\nhttps://crafting-cyp.test.instabase.com/grafana/goto/dmb4ua6Sg?orgId=1",
+      "time": "10:44",
+      "timestamp": "1726076655.247259",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Hmmm. Not sure. I wonder if it's a config issue",
+      "time": "10:54",
+      "timestamp": "1726077259.973699",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Victor Zeng is there a way to fix this? it seems like later PRs didn't run into this problem",
+      "time": "11:34",
+      "timestamp": "1726079665.744839",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Looking into it now.",
+      "time": "12:17",
+      "timestamp": "1726082234.211899",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I'm not seeing any error messages in the api-server logs :disappointed:",
+      "time": "14:49",
+      "timestamp": "1726091348.523529",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Looks like we're getting 500s from Metronome when creating customers.",
+      "time": "14:50",
+      "timestamp": "1726091433.963929",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "https://crafting-cyp.test.instabase.com/grafana/goto/j_oFDfeIR?orgId=1",
+      "time": "14:51",
+      "timestamp": "1726091471.261799",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Trace id: b5b44b4f7f3d0801",
+      "time": "14:52",
+      "timestamp": "1726091554.758519",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "OK. Gotcha. Is there a way to fix this then? Maybe we need a different idempotency key? I'm surprised that Metronome blocks this due to idempotency issue. If they failed to create the customer, they should allow retries :thinking_face:",
+      "time": "14:55",
+      "timestamp": "1726091751.791639",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I don't think the problem is with the idemopteoncy key. We're using `f'{account_id}-create-customer'`",
+      "time": "15:00",
+      "timestamp": "1726092003.917429",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "It's a bug on Metronome side.",
+      "time": "15:00",
+      "timestamp": "1726092026.432639",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Right, i meant that they should allow us to use the same idempotency key since the previous op failed",
+      "time": "15:01",
+      "timestamp": "1726092097.640879",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Right. There's likely a bug in their idempotency logic. As far as I can tell, we are using the same parameters in both the org endpoint and the migrate endpoint.",
+      "time": "15:06",
+      "timestamp": "1726092382.777009",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "That means... we are stuck here unless we use a different org. @Serena I think the resolution is to create a different PR so that the Cypress CI will try with a different org.",
+      "time": "15:21",
+      "timestamp": "1726093276.526459",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "So not even deleting the sandbox and rerunning will help here?",
+      "time": "15:22",
+      "timestamp": "1726093363.444399",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I have a thread open with Metronome to see if they can help",
+      "time": "15:24",
+      "timestamp": "1726093461.758509",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ty! I wonder if there's a way to do it via the metronome UI",
+      "time": "15:24",
+      "timestamp": "1726093485.024309",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "We could manually create the customer and associate it with the org",
+      "time": "15:25",
+      "timestamp": "1726093518.539899",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Another option is to wait until Metronome's idempotency cache to flush",
+      "time": "15:25",
+      "timestamp": "1726093532.249309",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "how can we associate the customer with an org?",
+      "time": "15:28",
+      "timestamp": "1726093681.289149",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "You would need grpc access to the cluster",
+      "time": "15:28",
+      "timestamp": "1726093702.332239",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Use the update account integration rpc",
+      "time": "15:28",
+      "timestamp": "1726093713.809739",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I started another thread with Sean on connecting to the grpc cluster: https://instabase.slack.com/archives/C05L87V014J/p1726093813615919",
+      "time": "15:57",
+      "timestamp": "1726095444.292559",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Victor Zeng do you know how to connect to a grpc cluster? I have never done that before :sweat_smile:",
+      "time": "15:57",
+      "timestamp": "1726095464.537419",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Just use kubectl port forward",
+      "time": "15:58",
+      "timestamp": "1726095505.928399",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Crafting cluster should just be another sandbox",
+      "time": "15:59",
+      "timestamp": "1726095575.609739",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ahh... i got a bunch of errors when I tried to connect :sweat:\n```An error occurred (AccessDeniedException) when calling the DescribeCluster operation: User: arn:aws:sts::591759939757:assumed-role/AWSReservedSSO_assume-sandbox-kubectl-admin_0c5ac98343b296e4/xindi.xu@instabase.com is not authorized to perform: eks:DescribeCluster on resource: arn:aws:eks:us-east-2:591759939757:cluster/intes-use2-crafting-cyp-eks-cluster```",
+      "time": "16:43",
+      "timestamp": "1726098205.783529",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "If I just recreated the PR, would we have to worry about this anymore? I'm more than happy to do that!!",
+      "time": "16:44",
+      "timestamp": "1726098261.004939",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, creating another PR would be the fastest.",
+      "time": "16:44",
+      "timestamp": "1726098284.102219",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Okay cool, let me do that. Thanks for jumping in here everyone!",
+      "time": "16:45",
+      "timestamp": "1726098342.215639",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-09-11.json",
+    "message_count": 33,
+    "start_time": "1726074991.724219",
+    "end_time": "1726098342.215639",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "id": "ch_C06FA6A23_2023-05-05_1683303382.060169_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Xindi Xu",
+    "Ashwin"
+  ],
+  "messages": [
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Is there a command to run a single python test suite locally? I am trying to run a particular handler suite in api-server (`webserver/api-server/test/unit/py/instabase/handler/api/v2/zero_shot_idp/test_inference_lite.py` ) without having to run `make test` and go through all test cases",
+      "time": "09:16",
+      "timestamp": "1683303382.060169",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```TEST_NAMES=full.python.module.path.ClassName.method_name make test```",
+      "time": "09:18",
+      "timestamp": "1683303486.828049",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "This is what I did:\n1. Add this into your `.zshrc`\n```pytest () {\n\ttest_module=\"instabase_unit_tests.instabase.$1\"\n\techo \"Will run test in $test_module\"\n\techo \"Building for testing...\"\n\tmake clean build build-test copy-unit-test\n\tpoetry env use $(pyenv root)/versions/$(grep 'python =' pyproject.toml | cut -d '\"' -f 2)/bin/python && poetry install\n\techo \"Running tests in $test_module\"\n\tcd build/test/py\n\tpoetry run python -m unittest $test_module\n\tcd ../../..\n}```\n2. Then run `pytest handler.api.v2.zero_shot_idp.test_inference_lite`",
+      "time": "09:18",
+      "timestamp": "1683303500.452059",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "That script is super handy @Xindi Xu, it may be worth adding to the dev setup guide",
+      "time": "12:08",
+      "timestamp": "1683313707.390559",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Or even better, just check it in!",
+      "time": "12:22",
+      "timestamp": "1683314544.333159",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-05-05.json",
+    "message_count": 5,
+    "start_time": "1683303382.060169",
+    "end_time": "1683314544.333159",
+    "is_thread": true
+  }
+}

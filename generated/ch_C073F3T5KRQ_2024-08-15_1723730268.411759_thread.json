@@ -1,0 +1,418 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-08-15_1723730268.411759_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Anil",
+    "Abhishek Adupa",
+    "Kerr Yoo",
+    "Rakesh",
+    "William Helmrath",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Hi Team\nWas investigating something in app tasks and I found the latest master wont build locally with error\n `Could not find a version that satisfies the requirement nltk==3.8.2`\nThis is coming for docker builds and due to requirements file for app task indicating nltk=3.8.2 - but that is invalid version per pypi. (latest version for nltk is 3.8.1 and there is no 3.8.2 )\nhttps://github.com/instabase/instabase/blob/95ae218425e2e777c96db675c71b595df5c80712/distributed-tasks/celery/app-tasks/requirements.txt#L105\n\nnltk website shows 3.8.2 version but dont see it in pypi (https://pypi.org/project/nltk/#history).\n\nTricky part for me is that dogfood was deployed successfully yesterday night and app tasks image was built too. Thinking how is that possible?",
+      "time": "06:57",
+      "timestamp": "1723730268.411759",
+      "is_reply": false
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "On digging I find that they pretty much removed 3.8.2 instead of yanking it.\nhttps://github.com/nltk/nltk/issues/3301\n\nNot sure what dependency it had - but I am thinking this will soon start breaking builds again on master ? (unless our build pipelines run a different way - or may be the local pip cache helps it still use nltk version from earlier builds ?)\nBased on above looks like this removal from pypi happened a few hours ago.\ncc: @Anil based on recent change to upgrade to nltk 3.8.2",
+      "time": "07:00",
+      "timestamp": "1723730436.506469",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "I just had this cause a sandbox built off of the release-24.07 branch to fail with `ERROR: No matching distribution found for nltk==3.8.2`",
+      "time": "07:56",
+      "timestamp": "1723733810.481159",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Are we able to revert the change to 3.8.2 for now?",
+      "time": "07:57",
+      "timestamp": "1723733827.413969",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "yeah 24.01 release just failed because of the same error",
+      "time": "08:15",
+      "timestamp": "1723734953.176369",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "~I think we should revert~ cc @Anil\nWe should probably downgrade the version to 3.8.1 instead of reverting. We’re going to have to backport this change to our other releases, it seems that nltk is set to 3.8.2 for quite a few",
+      "time": "08:21",
+      "timestamp": "1723735278.279729",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "has anyone started on Kerr’s proposed fix? this is blocking all deployments from master rn, right?",
+      "time": "09:38",
+      "timestamp": "1723739890.759369",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "Also all our deployments >= release 24.01, perhaps even older. The reason I’m not very in favor of a revert is because the PR that bumps the nltk version was not backported to the other release branches. The other release branches had a separate PR modifying the version :sob:",
+      "time": "09:44",
+      "timestamp": "1723740279.980989",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "I can try to make the change, but I’m very unfamiliar with this file / section of the code base",
+      "time": "09:45",
+      "timestamp": "1723740316.375019",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm for some reason though, build-services (https://jenkins.instabase.com/job/build-services/16085/console) for the crafting-cyp deployment i started succeeded?",
+      "time": "09:49",
+      "timestamp": "1723740584.602439",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "3.8.2 nltk definitely doesn’t exist, but it seems like that run for whatever reason didn’t try to pull the package",
+      "time": "09:57",
+      "timestamp": "1723741064.615979",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "I saw someone in the Github issue literally just set nltk to 3.8.1 from 3.8.2 (https://github.com/PrairieLearn/PrairieLearn/pull/10476) and that resolved the problem, gonna try that now",
+      "time": "10:02",
+      "timestamp": "1723741370.522699",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "i think it worked :astonished: https://jenkins.instabase.com/job/service-builder/job/build-service/121941/console",
+      "time": "10:23",
+      "timestamp": "1723742636.353129",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "what change did you do kerr?",
+      "time": "10:25",
+      "timestamp": "1723742709.645559",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "I set nltk version to be 3.8.1 instead of 3.8.2 https://github.com/instabase/instabase/pull/61452",
+      "time": "10:25",
+      "timestamp": "1723742752.726329",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "but it's not merged yet right?",
+      "time": "10:26",
+      "timestamp": "1723742772.761199",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "not yet",
+      "time": "10:26",
+      "timestamp": "1723742775.715279",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "then how did it work",
+      "time": "10:26",
+      "timestamp": "1723742780.612239",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "I deployed the branch to the tech infra team sandbox",
+      "time": "10:26",
+      "timestamp": "1723742793.367639",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i see; first of all you shouldn't edit requirements.txt directly :sweat_smile: it's generated, so don't merge that PR",
+      "time": "10:27",
+      "timestamp": "1723742825.303219",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "ai hub sandbox is deploying fine for whatever reason",
+      "time": "10:27",
+      "timestamp": "1723742858.839519",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "https://instabase.slack.com/archives/C053W8B06EL/p1723732809316769",
+      "time": "10:28",
+      "timestamp": "1723742888.888469",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "this whole thread is comical https://github.com/nltk/nltk/issues/3301 why nltk",
+      "time": "10:30",
+      "timestamp": "1723743015.310589",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "Master is deploying fine. From what I’ve seen, the reason is because building celery app tasks from master doesn’t pull the non-existent package",
+      "time": "10:30",
+      "timestamp": "1723743048.219059",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "I posted a very controversial comment in the thread :laughing:",
+      "time": "10:31",
+      "timestamp": "1723743064.100559",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "`building celery app tasks from master doesn't pull the non-existent package` how can someone do this locally?",
+      "time": "10:32",
+      "timestamp": "1723743130.652409",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "btw @Serena and Rakesh -- try this https://github.com/nltk/nltk/issues/3301#issuecomment-2291304097",
+      "time": "10:32",
+      "timestamp": "1723743163.081719",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "if our build doesn't break, try installing with a manual command like this or delete this line from requirement.txt manually just to unblock locally for now. based on the thread, looks like the plan is to republish 3.8.2 as 3.8.3 -- we shouldn't downgrade it too early for now, instead should wait for 3.8.3",
+      "time": "10:33",
+      "timestamp": "1723743235.674309",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "they are trying to fix on their end",
+      "time": "10:34",
+      "timestamp": "1723743273.139709",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "It is quite confusing why the package is being pulled locally, but not in the celery-app-tasks build-service run off master. Just a heads up, our release >= 23.10 sandboxes are failing because of this issue.",
+      "time": "10:38",
+      "timestamp": "1723743485.369769",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hmm ok",
+      "time": "10:38",
+      "timestamp": "1723743535.184679",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "let's wait on this for release sandboxes",
+      "time": "10:39",
+      "timestamp": "1723743555.851269",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "wait for a day, i'll post an announcement",
+      "time": "10:39",
+      "timestamp": "1723743561.805899",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "btw @Kerr Yoo can you post a message the release eng channel asking\n1. why pushing from master works differently than release pipeline, and see if that's expected \n2. does this impact the certified release yesterday / will our saas deployment this weekend gets affected, if we don't fix this asap",
+      "time": "10:44",
+      "timestamp": "1723743871.529669",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "sure thing",
+      "time": "10:45",
+      "timestamp": "1723743902.306789",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "just to update this thread -- i've asked @Anil to regenerate the requirements.txt file and submit a PR; in the pyproject.toml file it actually says ~3.8.1, so if we regenerated the file it should work",
+      "time": "11:07",
+      "timestamp": "1723745279.361279",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Abhishek Adupa since Anil is out can you help here? just regenerate the requirements.txt file in app tasks",
+      "time": "11:09",
+      "timestamp": "1723745397.977269",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "On it",
+      "time": "11:16",
+      "timestamp": "1723745783.765919",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "To regenerate the requirements file - you can run the following:\n```poetry lock\npoetry export -f requirements.txt --output requirements.txt --without-hashes```",
+      "time": "11:16",
+      "timestamp": "1723745795.803139",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i can help review and merge. thanks",
+      "time": "11:18",
+      "timestamp": "1723745889.546339",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "If anyone’s curious, this (https://instabase.slack.com/archives/C035SLYCJ9X/p1723745178268959?thread_ts=1723745065.580889&cid=C035SLYCJ9X) is likely the reason we didn’t see the failure on master",
+      "time": "12:59",
+      "timestamp": "1723751977.554919",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "release-23.10 (https://github.com/instabase/instabase/pull/61470)\nrelease-24.01 (https://github.com/instabase/instabase/pull/61473)\nrelease-24.04 (https://github.com/instabase/instabase/pull/61472)\nrelease-24.07 (https://github.com/instabase/instabase/pull/61471)\n\n@Kerry - I’ll ping you again once CI tests finish and is ready to merge.",
+      "time": "13:02",
+      "timestamp": "1723752130.577789",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "thank you -- also the aihub release in uat and prod",
+      "time": "13:02",
+      "timestamp": "1723752156.437359",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "i think it’ll be `release-24.30.0-aihub` and `release-24.32.0-aihub`",
+      "time": "13:04",
+      "timestamp": "1723752284.268809",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "will do",
+      "time": "13:05",
+      "timestamp": "1723752350.548739",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "~release-24.30-aihub (https://github.com/instabase/instabase/pull/61474)~\n~release-24.32.0-aihub (https://github.com/instabase/instabase/pull/61475)~",
+      "time": "13:13",
+      "timestamp": "1723752820.294669",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Handy script I used to regenerate requirements.txt, check out to a release branch, create a new branch, and push the changes.\n\nUsage:\n```./generate_requirements.sh <branch> <commit-message> <branch-suffix>```\nexample:\n```./generate_requirements.sh master \"reset nltk to 3.8.1\" \"revert-nltk-version\"```\ncc @Anil",
+      "time": "13:18",
+      "timestamp": "1723753115.443689",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "> aihub release in uat and prod\nI don’t think aihub branches are needed because the minor version changes are not in these branches it’s set to 3.8.1  (https://github.com/instabase/instabase/blob/7fe8c9782e7e6bae1cbb24c671780b1ca79703b3/distributed-tasks/celery/app-tasks/requirements.txt#L105)\nclosing aihub BP PRs",
+      "time": "13:25",
+      "timestamp": "1723753555.377459",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i merged all backports :raised_hands: :thank_you:",
+      "time": "16:20",
+      "timestamp": "1723764017.025079",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-08-15.json",
+    "message_count": 49,
+    "start_time": "1723730268.411759",
+    "end_time": "1723764017.025079",
+    "is_thread": true
+  }
+}

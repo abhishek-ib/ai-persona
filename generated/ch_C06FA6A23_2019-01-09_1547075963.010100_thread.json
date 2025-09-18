@@ -1,0 +1,77 @@
+{
+  "id": "ch_C06FA6A23_2019-01-09_1547075963.010100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "unrelated - but does api-server actually run on py3. I thought I tried it a couple days ago and got some errors about bytes/str.",
+      "time": "15:19",
+      "timestamp": "1547075963.010100",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "my api-server in Python 3 works OK. Not sure what error you were seeing there.",
+      "time": "15:20",
+      "timestamp": "1547076057.010600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Ah, ok I’ll send over a trace next time I hit the error. I just assumed it didn’t work so i didn’t save the logs.",
+      "time": "15:21",
+      "timestamp": "1547076109.010800",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Oh got it, it happens when you try to update the org settings. (Go to Default Repo Folders, add a default folder and try to save)\n```\nTraceback (most recent call last):\n  File \"/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/utils/rpc/client.py\", line 107, in __method_call__\n    result = self.__execute_method__(client, method, *args, **kwargs)\n  File \"/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/utils/rpc/client.py\", line 72, in __execute_method__\n    return getattr(client, method)(*args, **kwargs)\n  File \"/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/account/AccountService.py\", line 1868, in set_org_setting\n    self.send_set_org_setting(req)\n  File \"/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/account/AccountService.py\", line 1875, in send_set_org_setting\n    args.write(self._oprot)\n  File \"/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/account/AccountService.py\", line 9252, in write\n    self.req.write(oprot)\n  File \"/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/account/ttypes.py\", line 8583, in write\n    oprot.writeString(self.value.encode('utf-8') if sys.version_info[0] == 2 else self.value)\n  File \"/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/thrift/protocol/TProtocol.py\", line 121, in writeString\n    self.writeBinary(str_to_binary(str_val))\n  File \"/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/thrift/compat.py\", line 40, in str_to_binary\n    return bytes(str_val, 'utf8')\nTypeError: encoding without a string argument\n\n[2019-01-09 15:27:56,402] {/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/utils/rpc/client.py:116} ERROR - Retrying again on AccountService\n[2019-01-09 15:27:57,013] {/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/utils/web/handler_util.py:72} ERROR - Received exception in WEBAPP JSON request: Unknown exception executing method for service AccountService\nTraceback (most recent call last):\n  File \"/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/utils/web/handler_util.py\", line 68, in inner_func\n    return f(*args, **kwargs)\n  File \"/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/utils/oauth2/oauth2.py\", line 139, in wrapped_f\n    return f(*args, **kwargs)\n  File \"/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/handler/api/v1/org.py\", line 99, in post\n    setting_name, request.data)\n  File \"/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/shared/org_util.py\", line 207, in set_org_setting\n    res = account_client.set_org_setting(req)\n  File \"/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/utils/rpc/client.py\", line 65, in __get_proxy_method__\n    return self.__method_call__(method, *args, **kwargs)\n  File \"/Users/heymian/src/instabase/webserver/api-server/build/py/instabase/utils/rpc/client.py\", line 119, in __method_call__\n    raise IOError(err)\nOSError: Unknown exception executing method for service AccountService\n```",
+      "time": "15:28",
+      "timestamp": "1547076518.011000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Got it. Got the bottom of it and checked in a patch: https://github.com/instabase/instabase/pull/8888",
+      "time": "17:04",
+      "timestamp": "1547082267.011500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "One thing to note is that we are dogfooding Python 3 in api-server, but we actually run Python 2 in production",
+      "time": "17:04",
+      "timestamp": "1547082288.011700",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Sweet! Thanks for the quick fix!",
+      "time": "17:07",
+      "timestamp": "1547082429.011900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-01-09.json",
+    "message_count": 7,
+    "start_time": "1547075963.010100",
+    "end_time": "1547082429.011900",
+    "is_thread": true
+  }
+}

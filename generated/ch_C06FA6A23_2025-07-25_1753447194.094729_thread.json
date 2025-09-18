@@ -1,0 +1,151 @@
+{
+  "id": "ch_C06FA6A23_2025-07-25_1753447194.094729_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Serena",
+    "Gaurav Saini",
+    "Ashish"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Can we remove this PIA somehow?\n\n```post-install-action-base-model-upload```\nContext: It takes _forever_ to build and run in Crafting sandboxes.  The image is 19GB. This and `model-service` are the main reason that sandbox builds are so slow. It would be great to get rid of this, esp since @Anil is reworking stuff to remove these models (like barcode and such)\n\nPretty sure we don't need many of these models anymore? cc @Serena as well in case you know\n\n```solutions/\nsolutions/folder_5\nsolutions/folder_5/ibformers-2.1.1.ibsolution\nsolutions/folder_5/ib_qa-0.0.2.ibsolution\nsolutions/folder_5/layoutlmv3_base-0.0.1.ibsolution\nsolutions/folder_5/table_entity_model-0.0.1.ibsolution\nsolutions/folder_5/bert_base_uncased-0.0.1.ibsolution\nsolutions/folder_5/bert_small-0.0.1.ibsolution\nsolutions/folder_5/legal_bert_base_uncased-0.0.1.ibsolution\nsolutions/barcode_qrcode_detection-0.0.1.ibsolution\nsolutions/signature_model-0.0.4.ibsolution\nsolutions/folder_2\nsolutions/folder_2/ib_translate_zh_en-0.0.2.ibsolution\nsolutions/folder_2/ib_intelligence-0.0.8.ibsolution\nsolutions/folder_2/roberta_base-0.0.1.ibsolution\nsolutions/folder_2/laymqav1_base-0.0.1.ibsolution\nsolutions/folder_2/layoutlm_large_uncased-0.0.1.ibsolution\nsolutions/folder_2/layoutlm_document_qa-0.0.1.ibsolution\nsolutions/folder_2/layoutxlm_base-0.0.1.ibsolution\nsolutions/folder_4\nsolutions/folder_4/barcode_qrcode_detection-0.0.1.ibsolution\nsolutions/folder_4/selection_box_model-0.0.4.ibsolution\nsolutions/folder_4/sklearn_cls-0.0.1.ibsolution\nsolutions/folder_4/ibllm-2.1.0.ibsolution\nsolutions/folder_4/barcode_qrcode_detection-1.0.0.ibsolution\nsolutions/folder_4/installm_tokenizers-0.0.2.ibsolution\nsolutions/folder_4/installm_tokenizers-0.0.1.ibsolution\nsolutions/folder_3\nsolutions/folder_3/instalmv3-0.0.3.ibsolution\nsolutions/folder_3/ib_address_model-0.0.1.ibsolution\nsolutions/folder_3/signature_model-0.0.4.ibsolution\nsolutions/folder_3/ibformers-2.2.3.ibsolution\nsolutions/folder_3/model_util-1.1.3.ibsolution\nsolutions/folder_3/layoutlmv2_base_uncased-0.0.1.ibsolution\nsolutions/folder_3/checkbox_resnet_model-1.0.0.ibsolution\nsolutions/barcode_qrcode_detection-1.0.0.ibsolution\nsolutions/folder_1\nsolutions/folder_1/ibformers-2.3.7.ibsolution\nsolutions/folder_1/all_MiniLM_L6_v2-0.0.1.ibsolution\nsolutions/folder_1/ib_model_utils-0.0.1.ibsolution\nsolutions/folder_1/layoutlm_base_uncased-0.0.1.ibsolution\nsolutions/folder_1/table_model_draft_v2-0.0.3.ibsolution\nsolutions/folder_1/yolo5_s-0.0.1.ibsolution\nsolutions/folder_1/instalm_base_draft-0.0.1.ibsolution```",
+      "time": "05:39",
+      "timestamp": "1753447194.094729",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "• we need a lot of these if we need to run advanced apps on our dev environments\n    ◦ but i agree this is quite rare, even on the Automate team\n• @Gaurav Saini i thought we still need these models to do checkbox/signature/barcode detection?\n    ◦ the productionization of Gemini is still in progress, and i don't think we have complete data on whether Gemini can handle checkboxes/signatures/barcodes well",
+      "time": "05:49",
+      "timestamp": "1753447758.870819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Those three models are small; it's the other crazy large models I really care about. Can we go through the list and remove everything we don't need installed on `aihub`/master? We may still need them on the 24.07 branch, but that's a different problem.",
+      "time": "05:54",
+      "timestamp": "1753448062.890969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "And by \"delete\" I mean not delete from the S3 bucket, but rather filter them out in download_solutions.sh when downloading, so they don't get included in the PIA image",
+      "time": "05:55",
+      "timestamp": "1753448114.855989",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we still support advanced apps on AI Hub, so if we delete those large models\n• if something goes wrong with advanced apps on AI Hub, we'll need to deploy sandbox environments to apply debugging code and test fixes\n• this would be a lot slower than using crafting envs to debug\nso far, we haven't needed to do this though, so i think it's fine to not download these large models into crafting envs",
+      "time": "05:58",
+      "timestamp": "1753448298.906949",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, we do skip them in Crafting envs...most of the time. If someone runs `build-docker` manually, it inflates the PIA up to 19GB again :cry:",
+      "time": "06:04",
+      "timestamp": "1753448645.098949",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Probably need to look at the makefile for that PIA to improve it and avoid this",
+      "time": "06:04",
+      "timestamp": "1753448653.166959",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ohhh i see - are people running `build-docker` for `post-install-action-base-model-upload` manually?? why??",
+      "time": "06:04",
+      "timestamp": "1753448682.326929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "IDK :cry:",
+      "time": "06:12",
+      "timestamp": "1753449125.904509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Maybe just trying to get their sandboxes to work",
+      "time": "06:12",
+      "timestamp": "1753449133.329049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This may help a little:\n\nhttps://github.com/instabase/instabase/pull/72901",
+      "time": "06:27",
+      "timestamp": "1753450075.498769",
+      "is_reply": true
+    },
+    {
+      "sender": "Gaurav Saini",
+      "user_id": "U02DRKLCSSV",
+      "message": "Yeah, for digitization we only need barcode and signature detection models. For checkbox we switch to msft form-recognizer for OCR instead of using checkbox detection model.",
+      "time": "06:37",
+      "timestamp": "1753450632.886339",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "And all those other models are advanced apps only?",
+      "time": "06:38",
+      "timestamp": "1753450694.530939",
+      "is_reply": true
+    },
+    {
+      "sender": "Gaurav Saini",
+      "user_id": "U02DRKLCSSV",
+      "message": "Even for other models, I don't think we need installm related models now. Also, we are deprecating yolo models cc: @Atinder",
+      "time": "06:40",
+      "timestamp": "1753450844.766509",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "YOLO! Lol :laughing:",
+      "time": "07:44",
+      "timestamp": "1753454670.622029",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": ":eyes: ...you only look once... :upside_down_face:",
+      "time": "22:17",
+      "timestamp": "1753507071.644299",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-07-25.json",
+    "message_count": 16,
+    "start_time": "1753447194.094729",
+    "end_time": "1753507071.644299",
+    "is_thread": true
+  }
+}

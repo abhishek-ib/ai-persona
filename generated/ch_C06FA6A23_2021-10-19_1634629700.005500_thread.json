@@ -1,0 +1,53 @@
+{
+  "id": "ch_C06FA6A23_2021-10-19_1634629700.005500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "Ashish"
+  ],
+  "messages": [
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi team,\n\nWould love to provide an update on the 504 error that we observed on our platform. Today I am able to deterministically reproduce the issue in a sandbox with specific setup, and managed to gain some insights into the problem. Please see details below.\n\n*1. How to reproduce the 504 issue?* \n\nIt appears that the easiest way to reproduce is to have a lean cluster with limited CPU resource on an upstream service of file service (e.g. api-server, webapp). In my setup, I have\n\n  a. 1 file service pod\n  b. 1 api-server pod, with a CPU limit at 100ms\n\nThen I use locust to swamp the api-server with write requests. Within 15 mins, all requests start failing with 504 error, and after using the z-pages api to inspect the api-server pod, I see similar profile dump as reported yesterday, where the results indicate that the python process is stuck at a busy-waiting/dead-locked state.\n\nOne thing I'd like to stress here is that the true problem is that these upstream service pods went into a bad state that they consume nearly 100% CPU limit, and they cannot process any requests. K8s doesn't kill pods with high CPU, and somehow our alert system doesn't catch this either. This is essentially a resource leak. This problem surfaced as 504 error from the API endpoint.\n\n*2. Does gevent play a role here?* \n\nWe suspected that gevent plays a role here as grpc team confirmed that current grpc release has flaky issues when gevent is enabled (https://github.com/grpc/grpc/issues/27340). I did one more testing to confirm this. So in this experiment, I did the following changes:\n\n  a. Keep api-server to use the thrift file client\n  b. Pass through the file request from thrift service to the grpc file service, i.e. the thrift file service acting like the client side of the grpc file servicd call\n  c. Disable gevent on the thrift file service\n\nThis way, we made the grpc file service to run without gevent. With this setup, I was able to swamp the api-server for 1+ hour without hitting 504 errors. Occasionally there are transient errors, but nothing gets stuck permanently.\n\nThis serves as a strong data point to indicate that gevent contributes to the problem observed here.\n\n*3. A path forward*\n\nGiven this, a reasonable way to move forward is to\n  a) Keep services that do not use gevent using grpc file client and\n  b) Disable grpc file client for web services, which use gevent\n\nI've already had a PR (https://github.com/instabase/instabase/pull/22247) for this, and the current plan is to push this to prod around 4pm PST Oct, 19.\n\nFurthermore, as a separate effort, I plan to basically merge back the changes we made to JPMC, which turned off gevent for thrift file service and disable connection pool from file clients (@shaunak, @Ashish, @sudeep). We've learned that this is the right direction to go for scalability, and doing so may offer some additional benefits such as allowing us to pass through async file operations for V2 via thrift file service to avoid problems with gevent.",
+      "time": "00:48",
+      "timestamp": "1634629700.005500",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "@Xi Cheng please keep in mind that different customers use different file storage systems (AWS S3, proprietary-implementations of S3, NFS, etc), and different customers have different load characteristics. With a switch to kernel threads for all customers, please keep these variations in mind.\n\nThank you for this investigative work. I really enjoy reading your detailed reports. I really appreciate your work for JPMC too!",
+      "time": "08:24",
+      "timestamp": "1634657087.010600",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi Ashish, thanks for the insights. Totally agreed that we need to be very careful with making big configuration changes like this to customer's env. A relatively smaller step I think we want to take is first flipping it in our env by default and see how it goes. We are heavily using S3, so this could be different and we should test it out how it goes. I will first test thing in a sandbox with load tests (hopefully on both FS and use case levels) and report results.",
+      "time": "10:36",
+      "timestamp": "1634665011.011500",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Ashish And it is a pleasure to work with you on the JPMC issue too!",
+      "time": "10:37",
+      "timestamp": "1634665029.011700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-10-19.json",
+    "message_count": 4,
+    "start_time": "1634629700.005500",
+    "end_time": "1634665029.011700",
+    "is_thread": true
+  }
+}

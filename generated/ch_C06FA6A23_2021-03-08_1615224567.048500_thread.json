@@ -1,0 +1,144 @@
+{
+  "id": "ch_C06FA6A23_2021-03-08_1615224567.048500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Mohit",
+    "Anil",
+    "shaunak",
+    "Karthik S",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Hi backend eng,\nFYI — making a celery Async Task level change — we were using celery generated job id even when the caller has explicitly passed a root_id.\nFull context: https://instabase.atlassian.net/browse/FLOW-1143\nPR https://github.com/instabase/instabase/pull/18276\n\ncc: @Karthik S , @Erick [refiner_v4 todo (https://github.com/instabase/instabase/blob/master/webserver/api-server-apps/src/py/instabase/handler/api/v1/refiner_v5.py#L281)]\n@Anil @shaunak We should ideally do the same for run_group as well.",
+      "time": "09:29",
+      "timestamp": "1615224567.048500",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Nice!  We started doing this for individual tasks in Flow, but not for the entire chord (due to some reasons)",
+      "time": "09:31",
+      "timestamp": "1615224669.048700",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Let me know if I missed any edge case where this PR would break something. We need this for issuing intra-task updates to marketplace UI.",
+      "time": "09:32",
+      "timestamp": "1615224749.048900",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Thanks for prompt response :slightly_smiling_face:",
+      "time": "09:32",
+      "timestamp": "1615224775.049200",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Anil would be the best person to comment on this.",
+      "time": "09:33",
+      "timestamp": "1615224782.049400",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "yeah looking right now - trying to find where we set the task_id - I know we do set it :stuck_out_tongue:",
+      "time": "09:33",
+      "timestamp": "1615224802.049700",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "`run_async_task_in_context`https://github.com/instabase/instabase/pull/18276/files#diff-7232fe0b2dbebf77bb56a4c75c120d63e137d81c4a7eea2166578cd5dc3d6888R121",
+      "time": "09:33",
+      "timestamp": "1615224837.050000",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "```    for task in tasks:\n      kwargs = task.get_kwargs()\n      sig = signature(\n          task.get_name(), (),\n          kwargs,\n          options={\n              'task_id': task.get_task_id(),\n              'priority': self.flow_input.get_flow_priority()\n          })\n      flow_sigs.append(sig)```",
+      "time": "09:35",
+      "timestamp": "1615224939.050300",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Like in the above example from base_batch_lib.py (get_batch_sig) we set the task_id for each task when creating it's signature.\n\nTL;DR - flow stuff sets task-id :slightly_smiling_face:",
+      "time": "09:36",
+      "timestamp": "1615224990.050500",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "This is great. What happens when the signature is a chord (associated with multiple tasks, each of which probably have a different ID)?",
+      "time": "09:45",
+      "timestamp": "1615225533.051800",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Based on my understanding, in such a  case, task_id will set for the root task [if provided], and celery will create new ids for the subsequent subtasks.",
+      "time": "09:59",
+      "timestamp": "1615226368.052400",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "And what is the root task? The callback? Or the chord itself?\n\nThe way Refiner runs is a chord, so it has `n` `apply_refiner` tasks (one for each ibdoc), and then `1` `combine_refiner_results` task, which then returns the output\n\nWe store all the results under the `root_id` because each of these `n+1` tasks has a different job id",
+      "time": "10:27",
+      "timestamp": "1615228055.054200",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "@Erick - Might be worth experimenting. @Mohit was mentioning the scenario where a celery task generates subtask . W.r.t Chord, you'll have parallel tasks with one final callback. I think we should be good w.r.t chord scenario. But code is the absolute source of truth :slightly_smiling_face:  So we can run a couple of quick experiments to verify the hypothesis",
+      "time": "10:50",
+      "timestamp": "1615229443.054600",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "taking a look …",
+      "time": "11:07",
+      "timestamp": "1615230453.057400",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Did some experiments, and found that the provided root_id is assigned to the callback [i.e. sets the task_id for the last task of the chord signature].",
+      "time": "13:48",
+      "timestamp": "1615240118.060000",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-03-08.json",
+    "message_count": 15,
+    "start_time": "1615224567.048500",
+    "end_time": "1615240118.060000",
+    "is_thread": true
+  }
+}

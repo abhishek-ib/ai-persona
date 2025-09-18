@@ -1,0 +1,144 @@
+{
+  "id": "ch_C06FA6A23_2023-07-06_1688657877.065399_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "sudeep",
+    "Ashish",
+    "Aaron Tami",
+    "jayapandian.ponraj",
+    "jtau"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Our nginx-config has become very difficult to management, especially with the recent introduction of SaaS and AIHub. Due to the difficulty of patching ConfigMaps, we have to maintain a completely separate nginx-conf for every environment that we run.  This has lead to a number of mistakes and configs getting out of sync.\n\nTo solve this problem, we have converted our nginx-config to a Templated Config Map, leveraging the work done by the Obs team for their prometheus config maps. The server-nginx-configmap.yml (https://github.com/instabase/instabase/blob/master/deployment-configs/base/server-nginx-configmap.yml) is now templated, controlled by cfg-params (https://github.com/instabase/instabase/blob/master/deployment-configs/default-patches/cfg-params-patch.yml) that can be patched different per environment.  All nginx changes should now go into this one file.\n\nWe are rolling this our with 23.07, once this is deployed to everywhere we will start deleting the old nginx conf and all the environment specific patches.",
+      "time": "08:37",
+      "timestamp": "1688657877.065399",
+      "is_reply": false
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "deleting of the patches should happen immediately once 23.07 release cut is done. That way we dont put the patches into the freshly created stacks...\n\nWhat happens to existing stacks and the patches on them ?\n\nProbably this question applies to overall templated configmap.",
+      "time": "08:55",
+      "timestamp": "1688658934.551089",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "you cannot apply patches onto templated config maps, DM won't let you do it.  I created a new configmap called `nginx-conf-tmpl` and switched our nginx deployment to mount from that.  The old, patched config maps are still in DM for now, but are not being used.",
+      "time": "08:56",
+      "timestamp": "1688658987.930469",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "> DM won't let you do it. \nDoes that mean the pipeline will fail if we attempt to do it ?\n> The old, patched config maps are still in DM for now, but are not being used\n:+1:",
+      "time": "08:58",
+      "timestamp": "1688659084.357689",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "yeah DM has checks in place to not let you patch a templated config. Only settings aka cfg-params can be mutated/applied to templated config.",
+      "time": "08:58",
+      "timestamp": "1688659092.955749",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "@jayapandian.ponraj the pipeline won't fail, the old nginx-conf is still there and will get patched normally with the existing patches.  That configmap is just no longer being used by nginx.\n\nWe will delete it once this is rolled out everywhere",
+      "time": "08:58",
+      "timestamp": "1688659131.322169",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Also old configs can be around, and as well as their patches, but those objects will not be used by the workload. this is similar to how we are rolling out for Obs workloads as well.",
+      "time": "08:58",
+      "timestamp": "1688659137.617289",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "for Obs configs we have deleted old objects/patches from our repo in 23.07, as it was not helpful to keep a lot of those patches around. The objects and their patches however would still show up in DM as those are not cleaned up automatically",
+      "time": "09:01",
+      "timestamp": "1688659312.736129",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "If we stop sending the base-config does the new upgrade flow delete the existing base-config for the old configmap objects and does that in turn remove the patches applied on top of it ???",
+      "time": "09:03",
+      "timestamp": "1688659420.221229",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "i dont think so - but would defer to @Nathaniel Lehrer @jtau for that question",
+      "time": "09:04",
+      "timestamp": "1688659487.919349",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "> If we stop sending the base-config does the new upgrade flow delete the existing base-config for the old configmap objects and does that in turn remove the patches applied on top of it ???\nIt will delete the object if the base config doesn't get provided (marking it as deprecated) - but you can pass in the object as part of the exclusion list in the API call",
+      "time": "09:05",
+      "timestamp": "1688659542.187449",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "When the object is deleted, does the patches applied to it also get deleted ?",
+      "time": "09:06",
+      "timestamp": "1688659597.336459",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "No the patches persist. But the object will not get created w/ the patches",
+      "time": "09:07",
+      "timestamp": "1688659623.694009",
+      "is_reply": true
+    },
+    {
+      "sender": "jayapandian.ponraj",
+      "user_id": "U04A43DJT71",
+      "message": "cool.. I guess it will just be a tombstone like entry with no real purpose.",
+      "time": "09:07",
+      "timestamp": "1688659673.879369",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Great to see this change! One template for all makes a lot of sense.",
+      "time": "23:33",
+      "timestamp": "1688711616.963509",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-07-06.json",
+    "message_count": 15,
+    "start_time": "1688657877.065399",
+    "end_time": "1688711616.963509",
+    "is_thread": true
+  }
+}

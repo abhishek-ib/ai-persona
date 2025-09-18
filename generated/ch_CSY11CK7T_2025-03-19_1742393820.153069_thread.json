@@ -1,0 +1,69 @@
+{
+  "id": "ch_CSY11CK7T_2025-03-19_1742393820.153069_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Prakhar"
+  ],
+  "messages": [
+    {
+      "sender": "Prakhar",
+      "user_id": "U03EMR9SK2T",
+      "message": "Hey Team, I am trying to add a new feature flag for Chatbots using @Xindi Xu’s guide: https://docs.google.com/document/d/1XbszN-7RRfv6uSYcdGzLmcEumy1dYu5xM8Nazp1TJBs/edit?usp=sharing\nBut when I go in run `make build-protos FAST=false` in  `webserver/shared/src/js/webpacked`  folder it just skips JS protos and builds stubs for python. There is no change in `shared-utils/protos/instabase/generated/sentinels/was-config.proto-updated.sentinel` file as well. Can someone please help with this? Any leads on why this might be happening?",
+      "time": "07:17",
+      "timestamp": "1742393820.153069",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Can you check the output and see if there’s any error?",
+      "time": "08:17",
+      "timestamp": "1742397435.025759",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Oh, I misread previously and thought that you were able to update the `.sentinel` file. Looks like both js and python stubs failed to update?\nMake sure you unstage the `.proto` file before you run `make build-protos`. Or, you can pull down Sayan's changes on the latest master :smile:\nhttps://instabase.slack.com/archives/C073F3T5KRQ/p1742320241600389",
+      "time": "12:02",
+      "timestamp": "1742410969.723859",
+      "is_reply": true
+    },
+    {
+      "sender": "Prakhar",
+      "user_id": "U03EMR9SK2T",
+      "message": "No only JS stubs are failing and instead python stubs are building just fine for some reason (the proto file is unstaged). I've added flags before and it used to just work, this time it even mentions that it is skipping JS protos siince they are not changed and for some reason even the sentinel file is not updated. This is the output while running `make build-protos FAST=false`:\n```JS protos unchanged because protos did not change\nb'/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/grpc_tools/protoc.py:17: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html\\n  import pkg_resources\\nWriting mypy to instabase/protos/doc_types/doc_types_pb2.pyi\\n'\nb'/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/grpc_tools/protoc.py:17: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html\\n  import pkg_resources\\nWriting mypy to instabase/protos/ibprog/ibrefiner_prog_pb2.pyi\\n'\nb'/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/grpc_tools/protoc.py:17: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html\\n  import pkg_resources\\nWriting mypy to instabase/protos/config/config_pb2.pyi\\n'\nb'/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/grpc_tools/protoc.py:17: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html\\n  import pkg_resources\\nWriting mypy to instabase/protos/geometry_types/geometry_types_pb2.pyi\\n'\nb'/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/grpc_tools/protoc.py:17: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html\\n  import pkg_resources\\nWriting mypy to instabase/protos/flow/flow_results_pb2.pyi\\n'\nb'/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/grpc_tools/protoc.py:17: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html\\n  import pkg_resources\\nWriting mypy to instabase/protos/doc_types/pdf_types_pb2.pyi\\n'\nb'/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/grpc_tools/protoc.py:17: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html\\n  import pkg_resources\\nWriting mypy to instabase/protos/doc_types/ocr_types_pb2.pyi\\n'\nb'/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/grpc_tools/protoc.py:17: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html\\n  import pkg_resources\\nWriting mypy to instabase/protos/ibml/ibml_pb2.pyi\\n'\nb'/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/grpc_tools/protoc.py:17: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html\\n  import pkg_resources\\nWriting mypy to instabase/protos/doc_types/core_types_pb2.pyi\\n'\nb'/home/owner/.cache/pypoetry/virtualenvs/api-server-R9J_7aBi-py3.9/lib/python3.9/site-packages/grpc_tools/protoc.py:17: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html\\n  import pkg_resources\\nWriting mypy to instabase/protos/preferences/preferences_pb2.pyi\\n'\nfind /home/owner/instabase/webserver/shared/src/js/webpacked/../../../../../shared-utils/protos/instabase/generated/py/instabase -name \"__init__.py\" -delete```\nThere is this warning but I see it all the time so assuming its irrelevant and it warning anyway.",
+      "time": "21:56",
+      "timestamp": "1742446592.261569",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "interesting. Can you push up your changes and I can look into it tmr. If you are using a crafting sandbox, I can try it out in your sandbox and try to debug further",
+      "time": "23:12",
+      "timestamp": "1742451120.309189",
+      "is_reply": true
+    },
+    {
+      "sender": "Prakhar",
+      "user_id": "U03EMR9SK2T",
+      "message": "This is the sandbox I am using: https://instabase.sandboxes.site/sandboxes/prakhar-2",
+      "time": "23:39",
+      "timestamp": "1742452771.067099",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-03-19.json",
+    "message_count": 6,
+    "start_time": "1742393820.153069",
+    "end_time": "1742452771.067099",
+    "is_thread": true
+  }
+}

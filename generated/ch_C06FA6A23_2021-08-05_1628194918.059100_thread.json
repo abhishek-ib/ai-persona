@@ -1,0 +1,125 @@
+{
+  "id": "ch_C06FA6A23_2021-08-05_1628194918.059100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Anil",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Hey Sudeep - from the doc not clear what actually need to change\nJust synced with master and python provisioner.py start celery-app-tasks fails with auth failed",
+      "time": "13:21",
+      "timestamp": "1628194918.059100",
+      "is_reply": false
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "hey @Anil - after i cleaned up the deprecated rabbitmq services the doc was changed back to original commands. so if you do the same old commands these should work\n```python provisioner.py start rabbitmq\npython provisioner.py stop rabbitmq```",
+      "time": "13:25",
+      "timestamp": "1628195100.059300",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "i did not clear up stacks `all`, `backend` etc in provisioner so those might not be able to start, will fix them",
+      "time": "13:25",
+      "timestamp": "1628195139.059500",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "https://github.com/instabase/instabase/pull/21012",
+      "time": "13:28",
+      "timestamp": "1628195293.059700",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I did this. Still getting Connection setup failed due to Client was disconnected at a connection stage indicating a probable authentication error: (403, 'ACCESS_REFUSED - Login was refused using authentication mechanism PLAIN. For details see the broker logfile.')",
+      "time": "13:29",
+      "timestamp": "1628195360.060000",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "hmm and what do you see in rabbitmq logs?",
+      "time": "13:31",
+      "timestamp": "1628195486.060200",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "```2021-08-05 20:29:21.698 [info] <0.1041.0> closing AMQP connection <0.1041.0> (172.17.0.1:56728 -> 172.17.0.3:5672)\n2021-08-05 20:29:51.706 [info] <0.1078.0> accepting AMQP connection <0.1078.0> (172.17.0.1:56732 -> 172.17.0.3:5672)\n2021-08-05 20:29:51.709 [error] <0.1078.0> Error on AMQP connection <0.1078.0> (172.17.0.1:56732 -> 172.17.0.3:5672, state: starting):\nPLAIN login refused: user 'guest' can only connect via localhost```",
+      "time": "13:32",
+      "timestamp": "1628195534.060400",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "also not allowing login using guest,guest at localhost/rabbitmq",
+      "time": "13:32",
+      "timestamp": "1628195546.060600",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Seeing the same error User can only log in via localhost",
+      "time": "13:32",
+      "timestamp": "1628195560.060800",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "~got it, i may have to check further. i think this is because service is at `docker.for.mac.localhost`~",
+      "time": "13:34",
+      "timestamp": "1628195646.061000",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "btw works fine for me - i started rabbitmq using provisioner and can login at localhost:15672 using guest guest",
+      "time": "13:35",
+      "timestamp": "1628195729.061200",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "sorry my fault - hadn't recompiled rabbitmq - guess it hit rabbitmq-ib so it didn't compile :confused: thanks for all the help",
+      "time": "13:36",
+      "timestamp": "1628195805.061500",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "no worries :thumbsup:",
+      "time": "13:37",
+      "timestamp": "1628195832.061700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-08-05.json",
+    "message_count": 13,
+    "start_time": "1628194918.059100",
+    "end_time": "1628195832.061700",
+    "is_thread": true
+  }
+}

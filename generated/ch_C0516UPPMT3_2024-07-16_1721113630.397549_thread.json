@@ -1,0 +1,102 @@
+{
+  "id": "ch_C0516UPPMT3_2024-07-16_1721113630.397549_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Vishnu",
+    "Nathaniel",
+    "Rakesh"
+  ],
+  "messages": [
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "I'm facing some issues getting text extraction working reliably in Build while it seems like I'm doing everything correctly.  Please advise on what I'm missing and/or investigate why the models are struggling in what seems like should be a relatively easy, structured doc scenario.\n\nPrompt:\n> Return the amount directly underneath \"7 Social security tips\", or return an empty String \"\" if nothing is there. \n> \n> Do not output numbers that are closer to other labels (such as \"Allocated tips\" or \"Medicare wages and tips\").\nThe problem isn't unique to this field or this doc, basically anytime any doc has a missing value for Boxes 1-19, the model gets confused and grabs a value from the next closest field.  I also can't catch this scenario with validations, as you can see the model is often extremely confident about doing this.\n\nThis is in Prod, not for any specific customer, but as an in-house built app intended to be published in the marketplace.  This happens with the basic, advanced, and multi-step reasoning models.\n\nFurther, the provenance seems to bug out when I use this prompt in reasoning mode; see the 3rd screenshot where the bbox is on Apt 390, even though the returned value is still the dollar amount from box 8.\n\nhttps://aihub.instabase.com/build/be14f387-12a5-48f0-9429-2d5162d9e0ae",
+      "time": "00:07",
+      "timestamp": "1721113630.397549",
+      "is_reply": false
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "@Nathaniel can you provide the test documents. I had a quick play around and I'm able to get the correct value if I use Table detection in the OCR settings, but it always gives the wrong answer without that. cc @Rakesh for digitization related investigation",
+      "time": "02:28",
+      "timestamp": "1721122104.167909",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "@Vishnu\nAre you mentioning the extraction works well without table setting enabled OR with table enabled?",
+      "time": "02:31",
+      "timestamp": "1721122312.913519",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "sorry it works with Table enabled (and using text extraction field)",
+      "time": "02:34",
+      "timestamp": "1721122456.146809",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "ok, if we have docs we can verify how the text view looks like from digitization without table enabled.\nTable enabled - embeds LLM text with table markdown.",
+      "time": "02:35",
+      "timestamp": "1721122524.787309",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "I was able to open this build project.\nIf I look at text view (without table detection) - the layout form digitization looks good as per the image view and box text are well lined up.\nSee screenshot below.\n\nSo we will still need to investigate this from the model side on like Box6, Box7 - why it picks up Box8. @Vishnu",
+      "time": "02:46",
+      "timestamp": "1721123173.814559",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "will do further investigation once we have test docs",
+      "time": "02:50",
+      "timestamp": "1721123405.162279",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "Oh, that's quite interesting.  I would have thought that digitization would have performed similarly or worse with table extraction turned on (when there are no table fields).  I'm going to try turning that on now.\n\nThe build project has 2 sample files, but if you'd like more this folder has a bunch:\nhttps://aihub.instabase.com/ib-internal/SolEng_workspace/fs/Instabase%20Drive/aihub/be[…]7-12a5-48f0-9429-2d5162d9e0ae/project/flows/datasets/input/ (https://aihub.instabase.com/ib-internal/SolEng_workspace/fs/Instabase%20Drive/aihub/be14f387-12a5-48f0-9429-2d5162d9e0ae/project/flows/datasets/input/)",
+      "time": "07:22",
+      "timestamp": "1721139754.525269",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "Hmm, yeah.  That seems to have worked.  More testing to come.\n\nIt strikes me as odd that we only get reliable text extraction behavior with table extraction enabled.  In this case, I strongly recommend turning on table detection by default.",
+      "time": "07:49",
+      "timestamp": "1721141349.094179",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "This is not always the case and table detection can cause more harm in some cases.\ncc: @lydia w.r.t extraction benchmarks.",
+      "time": "08:03",
+      "timestamp": "1721142214.860839",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-07-16.json",
+    "message_count": 10,
+    "start_time": "1721113630.397549",
+    "end_time": "1721142214.860839",
+    "is_thread": true
+  }
+}

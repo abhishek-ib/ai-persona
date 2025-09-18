@@ -1,0 +1,71 @@
+{
+  "id": "ch_C0516UPPMT3_2025-04-30_1746045342.103709_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Chuba",
+    "Nathaniel",
+    "Kaustubh (KD)",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "A piece of feedback that has come up a few times today during our Fannie Mae onsite:\n> The Error messages that display in Build aren't very clear or helpful.\n2 examples:\n1. `Error during extraction: Error in extracting field <field_name>: Exception '<' is not supported between instances of 'NoneType' and 'int'`\n    a. This is a professional message, but it kinda obscures what the true cause of the error is; nor is it detailed enough to assist in troubleshooting where the actual problem lies.\n    b. If I'm connecting the dots correctly, I'd bet the real problem is that we're getting errors from the model (currently being fixed via an updated deployment), and there is perhaps a metadata field in the normal response that comes as an `int`, but due to the errors it's currently `None`.\n    c. Improved wording is likely a question for <#C05NKL85Y2G|>, but my initial impression is that the message should:\n        i. Include more detailed troubleshooting data (such as the name of the function that is triggering this error)\n        ii. Before that more detailed data, include a message that instructs the user to give this data to Instabase Support.\n        iii. My thinking behind this is that this message seems to be a catch-all for any uncaught exceptions, so we're already in an exceptional situation where we'd ideally have a bug ticket filed.\n2. `Cleaning returned no value.`\n    a. This is clear enough if/when there was already a value extracted prior to running the cleaning.  However, in this case, the real problem is that the extraction model is returning None for that field.  \n    b. So a message more like `Neither Extraction or Cleaning returned a value` , would be more accurate.",
+      "time": "13:35",
+      "timestamp": "1746045342.103709",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "1. i think this error indicates a bug that we should fix\n    a. so this error message shouldn't appear to the user\n    b. can we get model-service logs from around the time of this error?\n2. to clarify, you're suggesting that we should show `Extraction returned no value` in the \"Clean\" section if the \"Define\" section has \"No value found\"?\n    a. cc @Kaustubh (KD)",
+      "time": "17:03",
+      "timestamp": "1746057800.108489",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Yeah I think point 2 is true",
+      "time": "17:10",
+      "timestamp": "1746058208.535289",
+      "is_reply": true
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "1. @Chuba can you help with pulling the logs requested? This and another `NoneType` error were happening pretty consistently throughout the day today, up until y'all did that deployment; then, they all went away. \n2. The majority of the time, that would be the preferable message. However, I've encountered scenarios where the cleaning prompt includes a desirable alternative response if the extraction returns no response. \n    a. For example, \"Return value formatted as US dollars (ex $1,234.56). If no value was found, return $0.00 instead\".",
+      "time": "18:52",
+      "timestamp": "1746064329.989609",
+      "is_reply": true
+    },
+    {
+      "sender": "Chuba",
+      "user_id": "U03DZA2HUFM",
+      "message": "We have existing logs but none that are time coordinated. I can say that from previous analysis, they are likely all due to downstream model timeouts (exceeding 799 seconds messages), and this coordinates with the changes made today to eliminate those errors (were appearing due to ratelimiting). I can attach full samples in the a.m.",
+      "time": "18:54",
+      "timestamp": "1746064470.465639",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "glad we were able to eliminate these errors today!\n\nand yes, if possible, logs around the time of the error would be helpful since we shouldn't return `Exception '<' is not supported between instances of 'NoneType' and 'int'`, even if there are model timeouts",
+      "time": "21:29",
+      "timestamp": "1746073771.336129",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-04-30.json",
+    "message_count": 6,
+    "start_time": "1746045342.103709",
+    "end_time": "1746073771.336129",
+    "is_thread": true
+  }
+}

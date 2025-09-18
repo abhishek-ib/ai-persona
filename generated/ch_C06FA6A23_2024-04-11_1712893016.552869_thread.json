@@ -1,0 +1,46 @@
+{
+  "id": "ch_C06FA6A23_2024-04-11_1712893016.552869_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "puneet",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "Hey team,\nI was going through the jaeger dashboard and noticed that a lot of services are generating traces (i.e. root level spans) apart from webservers. Ideally a trace should be started by the webservices as it is the entry point in the platform. I think this is caused due to broken traces which are not connected to the parent spans.\nc.c. @sudeep",
+      "time": "20:36",
+      "timestamp": "1712893016.552869",
+      "is_reply": false
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "@Yash Botadra for model-service, @mfichman for search and license service, can we confirm if the trace root at these services is actually expected?",
+      "time": "21:55",
+      "timestamp": "1712897710.570259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "License Service has some work to do at initialization that is not triggered by the API server tier. There are also some post install actions that hit it. However, I’d think the vast majority should be tied to API server directly or via celery app tasks. We should analyze the root traces to see if they make sense.\n\nSearch Service has a fair amount of “root” work (it consumes RabbitMQ messages that don’t have a context to set up the link back to the originating API server request). \n\nNot sure about model service (EDIT: but I do remember Yash saying there was a bug in flask (?) that would break traces in models service. Maybe it’s that?)",
+      "time": "22:34",
+      "timestamp": "1712900067.774309",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-04-11.json",
+    "message_count": 3,
+    "start_time": "1712893016.552869",
+    "end_time": "1712900067.774309",
+    "is_thread": true
+  }
+}

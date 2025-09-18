@@ -1,0 +1,54 @@
+{
+  "id": "ch_C0516UPPMT3_2023-12-13_1702478172.135479_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Sławek Biel",
+    "Prashant Kikani",
+    "Lee"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Hi <!subteam^S06395ZEFSL> on a call with a customer explaining how the models we use aren’t deterministic so can’t be expected to return the same value with the same input each time. They said that with the correct temperature and other configs on the GPT models you can guarantee consistency. Is that correct? If its not correct, what is a good response to use when customers have this objection?",
+      "time": "06:36",
+      "timestamp": "1702478172.135479",
+      "is_reply": false
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "The `temperature` parameter controls the _randomness_ of the text generated and while a value of `0` ensures the *least* random or *more* deterministic responses, they will not necessarily be *exactly* the same.\n\nYou can share this message from the OpenAI team: https://community.openai.com/t/run-same-query-many-times-different-results/140588/2\n> OpenAI models are non-deterministic, meaning that identical inputs can yield different outputs. Setting temperature (https://platform.openai.com/docs/api-reference/completions/create#completions/create-temperature) to 0 will make the outputs mostly deterministic, but a small amount of variability may remain due to GPU floating point math.",
+      "time": "06:52",
+      "timestamp": "1702479125.377419",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "This is not true in practice. We do set temperature to 0 and still see quite a high variance.\nFrom my experiments the probability of different outputs increases with the length and complexity of the prompt (and since we include the document context our prompts are always long). And also the output length.\n\nThe `seed` parameter (https://platform.openai.com/docs/api-reference/chat/create#chat-create-seed) is a beta feature they only added in the newest models but even with that they say “Determinism is not guaranteed”. And from our experiments it doesn’t help much either.\n\nSo yeah, maybe you can make it fully reproducible on a small toy example but it’s not deterministic and not much we can do about it, other than hope openai will improve the `seed` feature going forward i",
+      "time": "06:52",
+      "timestamp": "1702479136.843379",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Thanks both!",
+      "time": "06:57",
+      "timestamp": "1702479457.039119",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-12-13.json",
+    "message_count": 4,
+    "start_time": "1702478172.135479",
+    "end_time": "1702479457.039119",
+    "is_thread": true
+  }
+}

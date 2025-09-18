@@ -1,0 +1,154 @@
+{
+  "id": "ch_C06FA6A23_2022-10-24_1666653969.519669_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cheryl Zhou",
+    "Kerry",
+    "Seth",
+    "Xi Cheng",
+    "Jessica",
+    "Yan Wang",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Seth",
+      "user_id": "U02TKEG137T",
+      "message": "What team owns the “upload headshot” feature? I tried to upload a pic to instabase.com (http://instabase.com) and got the following error:\n```Error: Could not connect to any of [('10.48.0.103', 8500), ('10.48.2.247', 8500), ('10.48.2.23', 8500), ('10.48.2.20', 8500), ('10.48.1.144', 8500), ('10.48.1.130', 8500), ('10.48.0.98', 8500), ('10.48.0.104', 8500), ('10.48.1.129', 8500), ('10.48.2.246', 8500)]```",
+      "time": "16:26",
+      "timestamp": "1666653969.519669",
+      "is_reply": false
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "8500 is the old thrift account service port, looking into it @Yan Wang",
+      "time": "16:46",
+      "timestamp": "1666655215.252669",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "@Seth, do you mean upload a profile pic?",
+      "time": "16:55",
+      "timestamp": "1666655709.996809",
+      "is_reply": true
+    },
+    {
+      "sender": "Seth",
+      "user_id": "U02TKEG137T",
+      "message": "Yes.",
+      "time": "16:55",
+      "timestamp": "1666655745.129579",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "I think that feature is never supported",
+      "time": "16:55",
+      "timestamp": "1666655748.211679",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "It's using file service v1, which is deprecated. @Xi Cheng may be able to provide more info about profile uploading",
+      "time": "16:56",
+      "timestamp": "1666655786.980609",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this should be supported, i see that i marked this as FAIL for 22.08 and started this thread https://instabase.slack.com/archives/C011FHLBN8N/p1659474157604059",
+      "time": "17:09",
+      "timestamp": "1666656590.647109",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems that this ticket from that thread was never addressed? https://instabase.atlassian.net/browse/CS-1796",
+      "time": "17:11",
+      "timestamp": "1666656687.757189",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "Yes, it failed started from 22.08 because it uses a very rarely used API of file service v1, which is not supported anymore in file service v2. File service v1 is deprecated and I don't think we have plan to implement that API in file service v2 in the short term.",
+      "time": "17:13",
+      "timestamp": "1666656804.956049",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "are you saying that we should remove profile pictures completely then? if we knew that this was not supported, we should have brought this up for both 22.08 and 22.10",
+      "time": "17:14",
+      "timestamp": "1666656867.744589",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "Hey @Xi Cheng, iirc, we don't have plan to implement profile pic in file service v2, right? shall we deprecate this feature?",
+      "time": "17:16",
+      "timestamp": "1666657001.120669",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Hi team, this is a known issue as we migrate off the old file service, which implements this feature using a hack that is not feasible to do in the new file service. For more context, profile pictures do not work for any customer, and have never worked because profile pics are actually supposed to be stored in a public S3/NFS drive. So no customer would ever have a public S3 bucket, and even we would never put up a public NFS drive.\n\nDuring 22.08 UAT, I have discussed this with Yan and Heymian and we decided to leave it as is since we don't have resource to do the redesign of this implementation and this component doesn't have high impact. If needed, we could consider disabling this feature.",
+      "time": "17:24",
+      "timestamp": "1666657463.181399",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "Got it, then I think we should not show the button for uploading a profile picture in the frontend\n\nThis makes a lot of places that show profile pictures in the Admin app unnecessary, but that’s ok for now. We show profile pictures in the Admin app for groups, and we’ve never implemented profile pictures for groups anyways.\n\ncc @Jessica",
+      "time": "17:32",
+      "timestamp": "1666657959.967859",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i agree here — it’s ok to not support it in the backend; but then we should hide the frontend button.",
+      "time": "19:35",
+      "timestamp": "1666665304.041339",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Got it, I will remove the ability to change it and cherry pick it in. Maybe I’ll add a letter in place of the picture, that would be easier than removing it for now",
+      "time": "21:28",
+      "timestamp": "1666672112.902539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Jessica Thank you so much!",
+      "time": "22:40",
+      "timestamp": "1666676425.866809",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-10-24.json",
+    "message_count": 16,
+    "start_time": "1666653969.519669",
+    "end_time": "1666676425.866809",
+    "is_thread": true
+  }
+}

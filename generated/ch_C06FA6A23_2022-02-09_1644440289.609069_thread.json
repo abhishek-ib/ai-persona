@@ -1,0 +1,111 @@
+{
+  "id": "ch_C06FA6A23_2022-02-09_1644440289.609069_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "kunal",
+    "jtau",
+    "Dominic Fannjiang",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Hi all, does anyone know how the jenkins image that runs tests against Github PRs is built? It seems to use different dependencies from the environment that we run goldens on.",
+      "time": "12:58",
+      "timestamp": "1644440289.609069",
+      "is_reply": false
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "https://github.com/instabase/instabase/blob/master/tools/releasetools/jenkins/Dockerfile",
+      "time": "13:00",
+      "timestamp": "1644440455.848689",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "I'm currently working on a PR that fixes some logic that uses the `regex` module. you can see the PR here https://github.com/instabase/instabase/pull/24251 . From the jenkins builds for this PR, I'm confirming that it's using python 3.7, but it seems to be using an older version of regex.\n\nSpecifically, the current `requirements_py37.txt` (which that docker file seems to be pointing to for python dependencies) uses `regex==2021.11.10`, and under this version, `regex.split('', 'abc')` returns `['', 'a', 'b', 'c', '']`.\n\nHowever, in the latest jenkins build, I'm seeing that `regex.split('', 'abc')` is returning `['abc']`, which is the behavior under `regex==2017.4.5`, which is the dependency in `requirements_py36.txt`, which was deleted in 11/2020.\n\nIs it possible that the jenkins build is somehow outdated? Do you have any explanations for this observed behavior?",
+      "time": "14:04",
+      "timestamp": "1644444264.437769",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "ssh'd onto the jenkins build machine and into the docker container, and it looks like from `pip list`, it's using `regex 2017.4.5` but the jenkins image does look like it's `21.12.06.23.53.09` which is the latest.\n\nI suspect building a new jenkins image version isn't picking up the requirements file correctly. I see some other dependencies also outdated like tensorflow",
+      "time": "14:25",
+      "timestamp": "1644445502.412629",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "this is the guide to update a jenkins image: https://instabase.atlassian.net/wiki/spaces/INFRA/pages/90144813/Jenkins+at+Instabase",
+      "time": "14:25",
+      "timestamp": "1644445524.180679",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "ah okay, so the regex version was bumped 12/23/2021 for the code-dependencies `requirements_py37.txt`, but a newer image of jenkins was never created after that, so the image version is still `21.12.06.23.53.09`\n\nI was the last to make that change, so let me bump the jenkins image and redeploy :sweat_smile:",
+      "time": "14:33",
+      "timestamp": "1644446029.427929",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "though I need to step out and won't get to it until later; so if you'd like to follow the guide and take a stab at it, feel free !",
+      "time": "14:35",
+      "timestamp": "1644446103.239169",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "got it, im building the docker image now - is there a way to confirm that the docker image created has the requirements (to make sure it actually got my changes)?\n\nalso, should i create/merge the PR for changes to requirements file before deploying to jenkins?",
+      "time": "14:55",
+      "timestamp": "1644447346.533139",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "you can probably run the image locally and exec into it and list the pip dependencies\n\nand i'm not too sure about the order but deploying and making sure it's working fine before merging sounds like the easier option in case something goes wrong",
+      "time": "15:11",
+      "timestamp": "1644448273.930369",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "hm it seems like i've run out of memory on docker.\n\nif you've done this before, maybe it'll be easier if I let you do it?",
+      "time": "15:16",
+      "timestamp": "1644448588.662239",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "> got it, im building the docker image now - is there a way to confirm that the docker image created has the requirements (to make sure it actually got my changes)?\nonce you push the updated file to your PR the tests would pass if your deps were added in",
+      "time": "19:06",
+      "timestamp": "1644462360.665249",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-02-09.json",
+    "message_count": 11,
+    "start_time": "1644440289.609069",
+    "end_time": "1644462360.665249",
+    "is_thread": true
+  }
+}

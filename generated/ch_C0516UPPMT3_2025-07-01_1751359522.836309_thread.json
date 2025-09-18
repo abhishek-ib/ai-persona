@@ -1,0 +1,128 @@
+{
+  "id": "ch_C0516UPPMT3_2025-07-01_1751359522.836309_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Hamish",
+    "Piyush",
+    "Kaustubh (KD)",
+    "Serena",
+    "Pramod Munemanik"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Hey, I'm working on a Natwest POC where we need to do a lot of signature checks. I'm noticing particularly poor performance on these (https://aihub.instabase.com/build/0197bfe2-2b88-77e3-8c0d-8072e7ffee85) tasks with the tools we have available:\n1. Reasoning - Signatures often confused with handwriting, or if text is in the doc such as \"Signature here:\" or print names e.g. \"John Doe\" this is mistaken for signature presence \n2. Visual Models - quite poor performance here. In this example the model can't identify wet signatures. The visual models also really struggle to look at more than one thing e.g. 'Are both signatures present from both parties'\n3. Confidence scores for visual models are consistently low. They don't seem to correlate to correctness as well\nThere must be some ways we can quickly improve this performance\n\ncc @jordy.vlan",
+      "time": "01:45",
+      "timestamp": "1751359522.836309",
+      "is_reply": false
+    },
+    {
+      "sender": "Piyush",
+      "user_id": "U024EALC0UF",
+      "message": "@Anshu did we build any signature models? Also didnt we try other signature and barcode libraries for VRSF? @Pramod Munemanik",
+      "time": "05:48",
+      "timestamp": "1751374116.886099",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "In the case of VRSF:\nWe used reasoning fields to improve the accuracy of signature extraction. Since your use case involves distinguishing between wet and digital signatures, a vision model makes sense. But, I’ve also observed (few months back) that vision models don’t perform very well for signature extraction.\n\nWe have model and app for signature comparison :\nhttps://instabase.atlassian.net/wiki/spaces/AE/pages/2389016655/Signature+Matching+App\ncc : @Vinay Thapa",
+      "time": "06:08",
+      "timestamp": "1751375307.217409",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "We still need to confirm whether signature comparison is necessary, I believe it is just presence or absence in these cases",
+      "time": "07:01",
+      "timestamp": "1751378474.872129",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "@Kaustubh (KD)@jack.robbins I think we should explore an independent field type for signatures. Seems like a specialist enough task that sometimes you may want to do identification, other times comparison. I also imagine customers not being clear on the best way to self-serve a signature task given you can use reasoning or visual models",
+      "time": "07:03",
+      "timestamp": "1751378618.769129",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "In this use case I'd also like to add signature present/absent to a list extraction to go along with: Name, Role, Signature present/absent - for each signee",
+      "time": "07:04",
+      "timestamp": "1751378671.614209",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "1. @Hamish can you share these examples? i'd also like to try these with gemini-2.5-pro, just curious\n2. btw i just tried this with gemini-2.5-pro, and it also thinks that the signature is handwritten :patrick-shrug:",
+      "time": "07:08",
+      "timestamp": "1751378919.864429",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Sure :slightly_smiling_face: Btw if anyone finds ways to get this working reliably we could do with that knowledge for the POC - current approach will likely be to use DL solution in parallel to handle signature fields and then combine with AI Hub app @Hannah",
+      "time": "07:10",
+      "timestamp": "1751379054.430879",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "1. actually it makes sense that reasoning fields do worse here since reasoning fields look at only the text representation of the document\n    a. based on the text representation, it's confusing to tell which `[SIGN]` corresponds to which signature box (compare ss1 vs ss2)\n    b. @Hamish i assume this problem doesn't occur for visual reasoning fields? the current `Authorised Signature` visual reasoning field seems to work",
+      "time": "07:23",
+      "timestamp": "1751379824.417389",
+      "is_reply": true
+    },
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Visual reasoning seems to be very temperamental. Across all doc types I'm seeing more mixed results and the issue is the confidence scores are meaningless so its very hard to differentiate when to trust the result or not",
+      "time": "07:31",
+      "timestamp": "1751380296.588789",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i see, i think we're aware our confidence scores for visual reasoning need improvement\n\n@jordy.vlan and @Kaustubh (KD) will know more",
+      "time": "07:37",
+      "timestamp": "1751380647.716509",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Yeah we need to revisit all our confidence scores at some point. But in someways visual reasoning might be more tested",
+      "time": "09:46",
+      "timestamp": "1751388409.910369",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "https://docs.google.com/document/d/1vo_gUinHlb3GQ8i9y6WrJj61YIn7NIl3dES96PzrS34/edit?tab=t.0#heading=h.27etdrl1wdpb",
+      "time": "16:30",
+      "timestamp": "1751412646.362729",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-07-01.json",
+    "message_count": 13,
+    "start_time": "1751359522.836309",
+    "end_time": "1751412646.362729",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,224 @@
+{
+  "id": "ch_CSY11CK7T_2024-05-16_1715889073.319519_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Udit",
+    "CJ",
+    "Arjun",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "run-app (https://cloud.cypress.io/projects/cfhedy/runs/9953/overview/d1dba7b4-f7ed-464d-8cf0-fb7b0c9731fe?roarHideRunsWithDiffGroupsAndTags=1) struggling to find the app name cc @Serena",
+      "time": "12:51",
+      "timestamp": "1715889073.319519",
+      "is_reply": false
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "it looks like this app may not exist in the sandbox?",
+      "time": "12:52",
+      "timestamp": "1715889134.269329",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "there are too many apps to load, so cypress doesn’t find `cypress-run-app` before the timeout",
+      "time": "12:54",
+      "timestamp": "1715889278.687549",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think we can use the same trick as in `Landing/view-apps.spec.ts` to try to make this less flaky\n```cy.get('span').contains('Apps created by me').click();```",
+      "time": "12:55",
+      "timestamp": "1715889343.463539",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "I can make that fix",
+      "time": "12:56",
+      "timestamp": "1715889379.742839",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "wondering if we should always do this inside `openPrivateApp`",
+      "time": "12:56",
+      "timestamp": "1715889411.121299",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "if there’s a reason not to",
+      "time": "12:56",
+      "timestamp": "1715889414.407639",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`openPrivateApp` already does this if `isAppCreatedByMe` is true",
+      "time": "12:58",
+      "timestamp": "1715889487.935599",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems that `isAppCreatedByMe` should always be true in the current places where `openPrivateApp` is used though",
+      "time": "12:58",
+      "timestamp": "1715889502.708209",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "yeah thats what i was suggesting as well",
+      "time": "12:58",
+      "timestamp": "1715889514.834959",
+      "is_reply": true
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "yeah i think we should just make that the default",
+      "time": "12:58",
+      "timestamp": "1715889529.674829",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "ok will do",
+      "time": "12:58",
+      "timestamp": "1715889536.887409",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "Oh cool, was just about to report this test failing",
+      "time": "13:34",
+      "timestamp": "1715891695.998739",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "i have a fix here (https://github.com/instabase/instabase/pull/57582)",
+      "time": "13:35",
+      "timestamp": "1715891744.939459",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "is the cypress fix the ellipsis thing or is it separate?",
+      "time": "13:36",
+      "timestamp": "1715891797.052289",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "it’s separate, just in the same pr",
+      "time": "13:37",
+      "timestamp": "1715891831.079979",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "okay cool, i'll just rebase once this is merged then",
+      "time": "13:37",
+      "timestamp": "1715891846.102509",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "given how many times the test is failing, might be a while :joy:",
+      "time": "13:37",
+      "timestamp": "1715891871.929899",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "we can also directly go to the page that loads only \"my apps\" using this link `/hub?tab=CurrentUser`",
+      "time": "13:46",
+      "timestamp": "1715892380.490409",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "thats what I do for my tests",
+      "time": "13:46",
+      "timestamp": "1715892402.844809",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "yeah I think that’s what we’re doing now within `openPrivateApp`",
+      "time": "13:46",
+      "timestamp": "1715892407.534539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ohh, yea, i just saw your PR :woman-bowing:",
+      "time": "13:47",
+      "timestamp": "1715892446.539319",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "attempt #5 to get this passing…",
+      "time": "14:17",
+      "timestamp": "1715894270.565619",
+      "is_reply": true
+    },
+    {
+      "sender": "Arjun",
+      "user_id": "U03T41QAMN1",
+      "message": "merged now",
+      "time": "14:20",
+      "timestamp": "1715894425.851649",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "its very cool to see the 1 failing test and then it gets fixed and the pr passes",
+      "time": "16:20",
+      "timestamp": "1715901641.723279",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-05-16.json",
+    "message_count": 25,
+    "start_time": "1715889073.319519",
+    "end_time": "1715901641.723279",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "ch_C06FA6A23_2022-12-02_1670007043.721769_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xi Cheng",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Update here: api-server-app unit tests are still crazy verbose with the -b change. I’m still not entirely sure why the logs get through — it seems to happen only if I run all the tests with discover, but doesn’t happen if i run only a single test, even if that test contains the verbose stuff.\n\nAnyways, I realized the reason we have all these stat errors is the FakeIOFileService is essentially designed (I don’t know if intentionally) to have a failed stat when it’s initialized. I’m creating a PR to remove the log message, since I don’t think FileNotFoundError raised by os.stat is an exception - seems like expected behavior if the file is not there. That greatly reduces the amount of error logs in api-server-apps unit tests!\n\nNow still need to figure out why all those other log messages are still coming through :thinking_face:",
+      "time": "10:50",
+      "timestamp": "1670007043.721769",
+      "is_reply": false
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Btw Lydia, the FakeIOFileService located in thrift-file-service is getting deprecated.\nThis is the new (https://github.com/instabase/instabase/blob/master/shared-utils/py-utils/test-utils/src/py/instabase_test/test_utils/fake_grpc_file_service.py#L29) one that @Victor Zeng helped create and will be gradually replacing the old one.",
+      "time": "10:53",
+      "timestamp": "1670007184.383179",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh great! hopefully that will clean up a lot of the weirdness with FakeIOFileService. Btw was just reading that tempfile.TemporaryDirectory (https://docs.python.org/3/library/tempfile.html#tempfile.TemporaryDirectory) is the high-level obj with cleanup handled, vs. using the lower-level mkdtemp()",
+      "time": "10:56",
+      "timestamp": "1670007383.355749",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-12-02.json",
+    "message_count": 3,
+    "start_time": "1670007043.721769",
+    "end_time": "1670007383.355749",
+    "is_thread": true
+  }
+}

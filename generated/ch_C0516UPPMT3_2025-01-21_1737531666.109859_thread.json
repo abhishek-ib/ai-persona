@@ -1,0 +1,36 @@
+{
+  "id": "ch_C0516UPPMT3_2025-01-21_1737531666.109859_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Nathaniel"
+  ],
+  "messages": [
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "*SDK bug/poor UX*\nI have a workaround for this, but it feels silly to make the user running the SDK do this String conversion:\nWhen calling the `client.apps.runs.delete(batch.id)` endpoint, it errors out because `batch.id` is stored as an _Int_, and the delete endpoint is expecting a _String_.\nIdeally, the SDK would be updated to attempt to typecast the batch id as a _String_ in case the user didn't think to do so.",
+      "time": "23:41",
+      "timestamp": "1737531666.109859",
+      "is_reply": false
+    },
+    {
+      "sender": "Nathaniel",
+      "user_id": "U04BGHM4AEL",
+      "message": "Full error:\n```---------------------------------------------------------------------------\nValidationError                           Traceback (most recent call last)\nCell In[6], line 1\n----> 1 resp = client.apps.runs.delete(batch.id,\n      2                                delete_db_data = False,\n      3                                delete_input = True,\n      4                                delete_output = True,\n      5                                delete_logs = False)\n      6 job_ids = [\n      7     resp.delete_input_dir_job_id,\n      8     resp.delete_output_dir_job_id,\n      9     resp.delete_log_dir_job_id\n     10 ]\n     11 # Poll for job completion\n\nFile /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/aihub/aihub.py:275, in AIHub.Runs.delete(self, run_id, delete_db_data, delete_input, delete_output, delete_logs)\n    269 def delete(self,\n    270            run_id,\n    271            delete_db_data=True,\n    272            delete_input=True,\n    273            delete_output=True,\n    274            delete_logs=True):\n--> 275   response = self.api_instance.delete_run(\n    276       run_id,\n    277       delete_db_data=delete_db_data,\n    278       delete_input=delete_input,\n    279       delete_output=delete_output,\n    280       delete_logs=delete_logs,\n    281       ib_context=self.ib_context)\n    282   return response\n\nFile /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pydantic/validate_call_decorator.py:60, in validate_call.<locals>.validate.<locals>.wrapper_function(*args, **kwargs)\n     58 @functools.wraps(function)\n     59 def wrapper_function(*args, **kwargs):\n---> 60     return validate_call_wrapper(*args, **kwargs)\n\nFile /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/pydantic/_internal/_validate_call.py:96, in ValidateCallWrapper.__call__(self, *args, **kwargs)\n     95 def __call__(self, *args: Any, **kwargs: Any) -> Any:\n---> 96     res = self.__pydantic_validator__.validate_python(pydantic_core.ArgsKwargs(args, kwargs))\n     97     if self.__return_pydantic_validator__:\n     98         return self.__return_pydantic_validator__(res)\n\nValidationError: 1 validation error for delete_run\n1\n  Input should be a valid string [type=string_type, input_value=60956, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.9/v/string_type```",
+      "time": "23:41",
+      "timestamp": "1737531690.206659",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-01-21.json",
+    "message_count": 2,
+    "start_time": "1737531666.109859",
+    "end_time": "1737531690.206659",
+    "is_thread": true
+  }
+}

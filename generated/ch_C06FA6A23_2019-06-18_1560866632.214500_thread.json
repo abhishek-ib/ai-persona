@@ -1,0 +1,119 @@
+{
+  "id": "ch_C06FA6A23_2019-06-18_1560866632.214500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ashish",
+    "Aaron Vontell",
+    "dlluncor",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "(Apologies for all these random questions) Do we have a standard for using API keys within a unit test? For instance, I would like to write unit tests for sentiment analysis which relies on a google API key, which I can only access currently by starting up a regression test",
+      "time": "07:03",
+      "timestamp": "1560866632.214500",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "We access these through an AccountClient - is it safe to bypass this and access the ENV directly for our unit tests?",
+      "time": "07:05",
+      "timestamp": "1560866749.215400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "it wouldn’t be a unit-test if you are calling out to an external API ya? You mean a regression test?",
+      "time": "07:13",
+      "timestamp": "1560867204.215600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I suppose so, I think it's mostly that it seems overkill here since this test doesn't rely on any instabase services, it's purely just a call to a Google API, which I was treating as a black box computation regardless of whether it was from a local library or an external api",
+      "time": "07:17",
+      "timestamp": "1560867433.219100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "i see, i’d suggest if it’s truly a unit test, then use a mock / fake with a canned response\nif you really want to call out to the service every single time, then we should create an integration test for it — and use a real key — perhaps that is some standard key that everyone shares and doesn’t come from the database",
+      "time": "07:26",
+      "timestamp": "1560868001.219300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "we can create a test key for google API; this key needs to be different from our production API key; also, it should not be hard coded in code and should be used via an environment variable.",
+      "time": "07:36",
+      "timestamp": "1560868611.219500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Using as env var allows us to keep track of usage of the key and makes it easier to rotate the key",
+      "time": "07:37",
+      "timestamp": "1560868642.219700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yeah maybe a set of unit-test-env api keys",
+      "time": "07:38",
+      "timestamp": "1560868698.219900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Aaron Vontell if the intent is to unit test the surrounding code, then we should just mock out the api call.",
+      "time": "07:44",
+      "timestamp": "1560869040.220100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "if the intent is to check that the api service is still available and returning the correct response, then we should probably not test that in our unit tests but in a daily regression test or something",
+      "time": "07:44",
+      "timestamp": "1560869074.220300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "that feels more like monitoring vs. testing that our code changes don't break existing functionality",
+      "time": "07:45",
+      "timestamp": "1560869112.220500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "yeah maybe I will mock it out. For context, basically there is a new NLP Pipeline interface where one of the possible layers is SentimentAnalysis, which I want to treat like a black box. But I also want to write a test where I can ensure that SentimentAnalysis actually does sentiment analysis regardless of the internal implementation. So for the pipeline tests I can use a mock, but for the SentimentAnalysis test I’ll make a regression test",
+      "time": "07:55",
+      "timestamp": "1560869754.220700",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-06-18.json",
+    "message_count": 12,
+    "start_time": "1560866632.214500",
+    "end_time": "1560869754.220700",
+    "is_thread": true
+  }
+}

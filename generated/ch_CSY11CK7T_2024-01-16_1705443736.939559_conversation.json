@@ -1,0 +1,28 @@
+{
+  "id": "ch_CSY11CK7T_2024-01-16_1705443736.939559_conversation",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "conversation",
+  "participants": [
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "It is the first day of _*Daily Testing Tips + Tricks*_!!! :blob-dab: Here is the first one, for unit testing...\n\nLet's say I have a function that is run when a file is loaded where the inputs depend on the state of the page when it's loaded. My example of this is in docs.ts (https://github.com/instabase/instabase/blob/master/webserver/shared/src/js/webpacked/lib/src/constants/docs.ts), which runs functions dependent on window.context and (soon) window.location to generate some constants.\n\nOne option to test this function would be to refactor your code to have those passed in as arguments. But let's ignore that for the purpose of this example!\n\nThe issue here is that even if you set the window object in the body of a new test case, it won't apply because the file has already been imported. So, in order to test different input values, you actually have to re-import the file in every test block. The test blocks look something like this:\n```beforeEach(() => {\n  // Reset the modules imported in each block each time\n  jest.resetModules();\n});\n\ndescribe('myFile', () => {\n  it('should behave correctly given these window values', async () => {\n    window = { /* my values here */ };\n    const RESULT = await import('.../myFile');\n    expect(RESULTS).toBe('foo');\n  })\n})```\nI thought this was interesting because we don't use dynamic importing much in our codebase!",
+      "time": "14:22",
+      "timestamp": "1705443736.939559",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-01-16.json",
+    "message_count": 1,
+    "start_time": "1705443736.939559",
+    "end_time": "1705443736.939559",
+    "is_thread": false
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "id": "ch_C05L87V014J_2025-07-24_1753379578.317779_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Anil",
+    "Abhishek Adupa",
+    "tony.shi",
+    "neerad.phansalkar"
+  ],
+  "messages": [
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "api-server and core-platform are still running into this issue on my sandbox (https://instabase.sandboxes.site/sandboxes/tonybackend3?cw=dev). Thank you!\n\nError:\n```#2 [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19)\n#2 ERROR: unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/go-db/manifests/19: 401 Unauthorized\n------\n > [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19):\n------\nDockerfile:1\n--------------------\n   1 | >>> FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19) AS base\n   2 |     LABEL maintainer=\"Instabase, Inc.\"\n   3 |     \n--------------------\nERROR: failed to build: failed to solve: 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19): failed to resolve source metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19): unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/go-db/manifests/19: 401 Unauthorized\nmake: *** [Makefile:32: build-docker] Error 1\nmake: Leaving directory '/home/owner/instabase/core-services/core-platform-service'\nmake: Entering directory '/home/owner/instabase/core-services/core-platform-service'\nHost OS is linux\nAnother command (pid=299373) is runn```\nConfigurations:\n```owner@dev:~$ cat ~/.docker/config.json\n{\n\t\"credHelpers\": {\n\t\t\"gcr.io (http://gcr.io)\": \"gcloud\",\n\t\t\"549230430157.dkr.ecr.us-east-2.amazonaws.com (http://549230430157.dkr.ecr.us-east-2.amazonaws.com)\": \"ecr-login\"\n\t}\n}\nowner@dev:~$ cat ~/.aws/config\n[profile default]\nregion = us-east-2\ncredential_process = idfed aws 519787998606 crafting-sandbox-roleowner@dev:~$ ```",
+      "time": "10:52",
+      "timestamp": "1753379578.317779",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Can you see if running ecr-login works? if it doesn’t try using your env access keys exports from aws instabase-dev, power user and try again That should fix it",
+      "time": "10:56",
+      "timestamp": "1753379819.698949",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "looks like this is resolved :?!",
+      "time": "10:58",
+      "timestamp": "1753379880.813789",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "all good",
+      "time": "10:58",
+      "timestamp": "1753379884.091669",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "@mfichman my sandbox is working. I had to add these 3 to my .docker/config.json because model-service was also pulling from 601729033846\n```    \"us.gcr.io (http://us.gcr.io)\": \"gcloud\",\n    \"549230430157.dkr.ecr.us-east-2.amazonaws.com (http://549230430157.dkr.ecr.us-east-2.amazonaws.com)\": \"ecr-login\",\n    \"601729033846.dkr.ecr.us-east-2.amazonaws.com (http://601729033846.dkr.ecr.us-east-2.amazonaws.com)\": \"ecr-login\"```",
+      "time": "11:04",
+      "timestamp": "1753380286.219419",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Huh, OK...",
+      "time": "11:34",
+      "timestamp": "1753382062.003049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let me fix the sandbox config again. Thanks Neerad!",
+      "time": "11:34",
+      "timestamp": "1753382068.969009",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Did anything happen recently? My sandbox (https://instabase.sandboxes.site/sandboxes/tonybackend3?cw=dev) was working earlier this morning but now I'm running into the ECR issue again :disappointed:\n\n```Aspect //third-party/bazel/py/rules_mypy:mypy.bzl%mypy_aspect of //shared-utils/go-utils/src/instabase/coreplatformservice:core-platform-service up-to-date (nothing to build)\nINFO: Elapsed time: 35.275s, Critical Path: 32.57s\nINFO: 224 processes: 2 internal, 222 processwrapper-sandbox.\nINFO: Build completed successfully, 224 total actions\n#0 building with \"default\" instance using docker driver\n\n#1 [internal] load build definition from Dockerfile\n#1 transferring dockerfile: 1.23kB done\n#1 DONE 0.0s\n\n#2 [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19)\n#2 ERROR: unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/go-db/manifests/19: 401 Unauthorized\n------\n > [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19):\n------\nDockerfile:1\n--------------------\n   1 | >>> FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19) AS base\n   2 |     LABEL maintainer=\"Instabase, Inc.\"\n   3 |     \n--------------------\nERROR: failed to build: failed to solve: 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19): failed to resolve source metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19): unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/go-db/manifests/19: 401 Unauthorized\nmake: *** [Makefile:32: build-docker] Error 1\nmake: Leaving directory '/home/owner/instabase/core-services/core-platform-service'\nmake: Entering directory '/home/owner/instabase/core-services/core-platform-service'\nHost OS is linux```\nAlso, this has been an issue for a while now, but crafting indicates a bunch of connection errs. cc @Anil",
+      "time": "12:35",
+      "timestamp": "1753385759.183429",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Blargh. Let me check it out @tony.shi -- it may be that we have multiple ECR registries to configure, as @neerad.phansalkar discovered.",
+      "time": "13:01",
+      "timestamp": "1753387305.133279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "So, when I tried to pull right now, I didn't get the same error as you -- instead, the pull is hanging?\n\n```\nowner@dev:~$ docker pull 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19)```",
+      "time": "13:02",
+      "timestamp": "1753387359.053909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'm going to try rebooting your docker daemon to see if that helps:\n```sudo pkill containerd && sudo pkill dockerd```",
+      "time": "13:02",
+      "timestamp": "1753387375.740079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```owner@dev:~$ docker pull 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/go-db:19)\n19: Pulling from instabase-build/go-db\nDigest: sha256:9069606a903aa553f3a9aa4cdeab27b46654c66c13a1777ae2948ee60245560c\nStatus: Downloaded newer image for 549230430157.dkr.ecr.us-east-2.amaz```\n@tony.shi is working now; please confirm!",
+      "time": "13:03",
+      "timestamp": "1753387436.416629",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "The new ECR registry was introduced in this PR (https://github.com/instabase/instabase/pull/72752/files)",
+      "time": "13:06",
+      "timestamp": "1753387583.608909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, very recent",
+      "time": "13:10",
+      "timestamp": "1753387805.076819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I just updated the templates to include that registry as well.",
+      "time": "13:10",
+      "timestamp": "1753387815.444249",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Yep! It's working. Thank you!!!",
+      "time": "13:40",
+      "timestamp": "1753389641.934449",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-24.json",
+    "message_count": 16,
+    "start_time": "1753379578.317779",
+    "end_time": "1753389641.934449",
+    "is_thread": true
+  }
+}

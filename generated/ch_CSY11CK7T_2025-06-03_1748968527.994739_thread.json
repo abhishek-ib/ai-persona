@@ -1,0 +1,77 @@
+{
+  "id": "ch_CSY11CK7T_2025-06-03_1748968527.994739_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Sherif",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Hey team! I have a question about using the `TableGrid` component from Pollen.\nI'm implementing filters in a table with a “Show more” button. The button currently shows based on the total number of rows before filtering:\n\n```const allRows = [\n  { type: 'Text', field: 'name' },\n  { type: 'Text', field: 'address' },\n  { type: 'List', field: 'items' },\n  // ... total of 15 rows\n];```\nWe show “Show more” if `allRows.length > 10`.\n\nHowever, filtering (e.g. only showing rows with `type === 'List'`) is handled internally by the `TableGrid` component. So even if the filtered result only has 3 rows, we’re still showing the “Show more” button — because we’re checking `allRows.length`, not the number of rows actually rendered.\n\nIs there a way to access the number of _currently rendered_ (i.e., filtered) rows from the `TableGrid` component so we can conditionally show the “Show more” button only when it makes sense?\n\nOr... if we are already allowing `search`, and now adding filtering. Do we need the show more button?\n\nFor this table.",
+      "time": "09:35",
+      "timestamp": "1748968527.994739",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> if we are already allowing `search`, and now adding filtering. Do we need the show more button?\nwe do need the \"Show more\" button since there could be max 100 fields in a class\n\nhowever, we want to show max 10 fields per class -> otherwise you would only see the first class and not see the later classes in this table",
+      "time": "10:08",
+      "timestamp": "1748970520.253209",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i also don't see a way to get the list of filtered rows from `TableGrid` since the filters are handled internally inside `TableGrid` via `useReactTable`, which is imported from `@tanstack/react-table`\n\nit is possible to add a prop to `TableGrid` to return the list of filtered subrows",
+      "time": "10:21",
+      "timestamp": "1748971310.725729",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "but now that i'm thinking about it, i think it's ok to not show this column filter (it currently doesn't exist for the single-class fields table)\n\nthis could be something that we add later on - feel free to create a ticket to track in our backlog",
+      "time": "10:25",
+      "timestamp": "1748971549.664959",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "Okay, it seems as if we are currently not showing 10 fields per class, just 10 fields in total (or whatever the max amount is).",
+      "time": "10:43",
+      "timestamp": "1748972629.809939",
+      "is_reply": true
+    },
+    {
+      "sender": "Sherif",
+      "user_id": "U08RAPL5P0T",
+      "message": "To show 10 fields per class, I would expect the `Show More` button to appear as a child of the Class row itself. I believe this would require some modifications to the pollen table component itself?",
+      "time": "10:45",
+      "timestamp": "1748972728.809629",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we discussed this in the case management sync with Jack\n• no need to show the \"Show more\" button on this page\n• let's not add the column filter rn\n    ◦ we can add this later after data type support",
+      "time": "11:31",
+      "timestamp": "1748975493.029679",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-06-03.json",
+    "message_count": 7,
+    "start_time": "1748968527.994739",
+    "end_time": "1748975493.029679",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,167 @@
+{
+  "id": "ch_CSY11CK7T_2025-06-18_1750266766.028659_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Serena",
+    "astpierre",
+    "Vasu"
+  ],
+  "messages": [
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Looks like the following tests are failing consistently on CI:\n```apps/src/aihub/__e2e__/BuildApp/aihub-doc-management-single-doc.spec.ts\napps/src/aihub/__e2e__/BuildApp/aihub-doc-management-grid.spec.ts```\nI can replicate the issue only on the crafting-cyp sandbox, seems like we can’t upload 2 docs at the same time.\n\nLooking into it",
+      "time": "10:12",
+      "timestamp": "1750266766.028659",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "model-service still deploying, might be the reason. lets see if there’s anyhting I can do to help it along",
+      "time": "10:20",
+      "timestamp": "1750267202.288469",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I’ll help it by restarting it :elmofire:",
+      "time": "10:22",
+      "timestamp": "1750267320.497009",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Restarted, still can replicate the issue. Looks like the pod is restart looping",
+      "time": "10:39",
+      "timestamp": "1750268341.104009",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "",
+      "time": "10:39",
+      "timestamp": "1750268355.052869",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I notice we had some deployment issues for the cluster recently. @astpierre is this model-service issue related to the deployment issues (https://instabase.slack.com/archives/CCY413CSU/p1750262949891349) this morning?",
+      "time": "10:41",
+      "timestamp": "1750268495.358079",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "should be unrelated",
+      "time": "10:43",
+      "timestamp": "1750268581.977619",
+      "is_reply": true
+    },
+    {
+      "sender": "astpierre",
+      "user_id": "U071A4KNEJV",
+      "message": "error from logs says\n```level=ERROR time=2025-06-18 17:41:46,948 msg=\"observe: cannot capture value for model_list_vm_duration_ms. metric not registered\" path=\"/model-service/py/instabase/stats/utils.py:33\" process=\"MainProcess\" thread=\"Thread-12\" trace_id=\"\"```",
+      "time": "10:46",
+      "timestamp": "1750268811.728109",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Yeah, I saw that too. Apparently, it’s a red herring and they should really be warn logs, not error. (https://instabase.slack.com/archives/C02A7TG49UP/p1727191153737679?thread_ts=1727169547.772109&cid=C02A7TG49UP)",
+      "time": "10:47",
+      "timestamp": "1750268867.324609",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "model-service is now in a healthy state after a series of restarts :it's-okay:",
+      "time": "11:04",
+      "timestamp": "1750269885.639969",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "but the issue is still appearing :thinking_face:",
+      "time": "11:05",
+      "timestamp": "1750269929.925149",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Jaeger trace (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22abm%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D,%22query%22:%22614818805cd6de19%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1) doesn’t have any good information on why the doc failed the weaviate step",
+      "time": "11:06",
+      "timestamp": "1750269975.107319",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "<!subteam^S07855GV3GV> can I hand this off to you? I got some things I need to do today :sweat_smile:",
+      "time": "11:07",
+      "timestamp": "1750270047.838579",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "oh wait, that’s pointing at me",
+      "time": "11:07",
+      "timestamp": "1750270055.724429",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "ok updated to @Serena",
+      "time": "11:08",
+      "timestamp": "1750270081.267169",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i see this error in `celery-app-tasks` logs (https://crafting-cyp.test.instabase.com/grafana/goto/sTjFVnEHR?orgId=1) when filtering by this `Screenshot 2025-06-18` file name\n```Exception Create class! Unexpected status code: 422, with response body: {'error': [{'message': 'class name \"IB_AI_LABS_0197843a_938b_716b_a9c8_a2d15bc2226e\" already exists'}]}.```",
+      "time": "14:12",
+      "timestamp": "1750281151.250579",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Vasu can you help look into this? the only recent PR that seems relevant is https://github.com/instabase/instabase/pull/71319\n\nthe issue is that when we upload documents into a Build project in crafting-cyp.test.instabase.com (http://crafting-cyp.test.instabase.com), the second document (and later documents) always fail to digitize",
+      "time": "14:18",
+      "timestamp": "1750281535.733929",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Thanks for raising this, I'll take a look at it today!",
+      "time": "21:35",
+      "timestamp": "1750307754.768399",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-06-18.json",
+    "message_count": 18,
+    "start_time": "1750266766.028659",
+    "end_time": "1750307754.768399",
+    "is_thread": true
+  }
+}

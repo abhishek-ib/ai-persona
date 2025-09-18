@@ -1,0 +1,177 @@
+{
+  "id": "ch_CSY11CK7T_2024-12-06_1733504513.658639_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "mfichman",
+    "Jessica",
+    "Jeff",
+    "Liam Callanan",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Ah thank you!! I actually didn't realize we needed one for each folder",
+      "time": "09:01",
+      "timestamp": "1733504513.658639",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yeah my understanding was that we would only run tests in folders with `dependencies.test.ts` files\n\nbut these tests did occasionally pop up in CI runs, so i’m still a little confused :sweat_smile:\n\n@Xindi Xu do you know why these tests would sometimes pop up, even if their folder didn’t have a `dependencies.test.ts` file?",
+      "time": "09:03",
+      "timestamp": "1733504580.437479",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I’m not sure about how exactly `dependencies.test.ts` works. I thought that they were used to let jest to include tests when a file is edited, but we never remove tests based on that",
+      "time": "10:56",
+      "timestamp": "1733511377.474049",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Looks like downstream-integrations & some other tests can’t find the “cancel” button which get shown only if `isDriveAccessible` is true for that item.\n\nSeems to show up on both the deployment runs table (https://cloud.cypress.io/projects/cfhedy/runs/16149/overview/500dc3c2-37a9-4e31-81f7-497c940adfae/replay?roarHideRunsWithDiffGroupsAndTags=1&ts=1733513822758&att=1) and the app runs table (https://cloud.cypress.io/projects/cfhedy/runs/16149/overview/617bc989-5be3-459c-97a1-64b55cd1ea9f/replay?roarHideRunsWithDiffGroupsAndTags=1&ts=1733514843047.291&att=1)",
+      "time": "12:44",
+      "timestamp": "1733517887.638199",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "I’ve seen that flaky failure in several CI runs, and it sometimes goes away if you rerun CI\n\nDo we need to wait for some API request before trying to look for the cancel button?",
+      "time": "12:46",
+      "timestamp": "1733517974.560599",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I just looked into this - it's because the data sources endpoint is erroring on that environment",
+      "time": "12:47",
+      "timestamp": "1733518056.219149",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "`\"message\": \"Error occurred executing GRPC method: Request /mount_service.MountService/GetAllMounts failed. Error code=INTERNAL, Error=(13, 'internal'), Message: Err retrieving repo mount points; err=Error 1040: Too many connections. Non-retriable error`",
+      "time": "12:51",
+      "timestamp": "1733518292.748369",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "We're now calling this endpoint wherever we're loading runs, so the home page, workspace runs table, app runs table, and deployment runs table. @Xindi Xu, do you think this is too much traffic for the endpoint to handle or is this some other issue?",
+      "time": "12:51",
+      "timestamp": "1733518299.861839",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "This does make me think though - if that endpoint fails maybe I should enable the run rows by default rather than disable. Better that they follow the link and find it's broken than that they're not able to get somewhere they should be",
+      "time": "12:52",
+      "timestamp": "1733518355.552199",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Maybe, but I doubt it. It doesn't seem like a lot of calls to me... there are cases where we call the same endpoint many many times for bulk actions (ex. adding users).\n\nThe error seems to come from MySQL DB (https://stackoverflow.com/questions/14331032/mysql-error-1040-too-many-connection). @mfichman /@Jeff could you help take a look?",
+      "time": "12:56",
+      "timestamp": "1733518564.496689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmmm is this the cypress cluster or...?",
+      "time": "13:00",
+      "timestamp": "1733518849.199859",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "https://crafting-cyp.test.instabase.com/workspaces/deploy/runs",
+      "time": "13:01",
+      "timestamp": "1733518874.423359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://sandbox.console.instabase.com/customer/Engineering/tenant/crafting-cyp/info ?",
+      "time": "13:01",
+      "timestamp": "1733518879.484139",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah OK, thanks!",
+      "time": "13:01",
+      "timestamp": "1733518881.770569",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Might need to scale up the DB if there's too much load on it",
+      "time": "13:01",
+      "timestamp": "1733518896.589139",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "This endpoint quite complicated, as it needs to retrieve all the repo/org/site mount points and the indexing status, etc. I think it returns too much unnecessary information for loading different type of runs. I would recommend invoking alternative endpoints if possible.",
+      "time": "13:07",
+      "timestamp": "1733519243.707999",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The reason we use this endpoint is to determine whether the drive a job was run in still exists in this workspace, because otherwise the link to the results won't work anymore. All we have to work with from the jobs endpoint is the output folder path. Even this is not fail proof because there could be a new drive but with the same name. So it would be great if we could think of a better solution.",
+      "time": "13:12",
+      "timestamp": "1733519573.965589",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "An easy alternative is to let users find out for themselves once they try to visit the results, but that's an unideal UX",
+      "time": "13:13",
+      "timestamp": "1733519597.097009",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "And the reason we have to use this endpoint rather than for a specific workspace is that in almost all of these places, the runs we're displaying maybe in different workspaces, so it makes the most sense to just load everything. We could also send requests for all the workspaces individually for the runs we are showing, since we do paginate runs.",
+      "time": "13:14",
+      "timestamp": "1733519683.904129",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-12-06.json",
+    "message_count": 19,
+    "start_time": "1733504513.658639",
+    "end_time": "1733519683.904129",
+    "is_thread": true
+  }
+}

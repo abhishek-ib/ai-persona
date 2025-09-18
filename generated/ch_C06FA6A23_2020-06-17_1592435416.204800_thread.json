@@ -1,0 +1,427 @@
+{
+  "id": "ch_C06FA6A23_2020-06-17_1592435416.204800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Mohit",
+    "Kerry",
+    "Ashish",
+    "Jonathan Shih",
+    "shaunak",
+    "Heymian",
+    "will",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "still constantly running into 504 gateways errors when polling job status. anyone else having this issue?",
+      "time": "16:10",
+      "timestamp": "1592435416.204800",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@abhilash or @shaunak? is this something related to jobs service?",
+      "time": "16:18",
+      "timestamp": "1592435880.204900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "or is it a server-nginx issue?",
+      "time": "16:18",
+      "timestamp": "1592435894.205100",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Shivam reported seeing this a few days ago, is this the same error that you’re seeing @lydia?  https://instabase.slack.com/archives/CLBGA5A7K/p1592240958464300",
+      "time": "16:19",
+      "timestamp": "1592435993.205300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hmm, i'm seeing it in Refiner 5.",
+      "time": "16:20",
+      "timestamp": "1592436037.205600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "do you know what call was causing that response for shivam? was it a call to job status?",
+      "time": "16:20",
+      "timestamp": "1592436051.205800",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "@abhilash is this related to your recent fix?",
+      "time": "16:21",
+      "timestamp": "1592436103.206200",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i believe so yes, it looks like running a flow from the flow editor",
+      "time": "16:21",
+      "timestamp": "1592436105.206500",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "tagging @shaunak and @abhilash here",
+      "time": "16:22",
+      "timestamp": "1592436129.207000",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Jonathan Shih can you link his PR?",
+      "time": "16:22",
+      "timestamp": "1592436170.207300",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "https://github.com/instabase/instabase/pull/14413",
+      "time": "16:23",
+      "timestamp": "1592436196.207500",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "we were seeing errors in golden tests because polling the job status wasn’t returning the right state, so this pr was fixing  it",
+      "time": "16:23",
+      "timestamp": "1592436233.207800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hmm that wouldn't cause a gateway 504 would it? i've seen this error before as well and really have no idea where the failure is happening (is it nginx or api-server-apps?)",
+      "time": "16:25",
+      "timestamp": "1592436320.208000",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "oh i see, the request to the job status api itself is timing out, not just the polling. yeah this is probably something else then",
+      "time": "16:26",
+      "timestamp": "1592436395.208700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ok so I'm printing the response in jobs status endpoint in api-server-apps and it never gets there, so it looks like the issue is happening somewhere between server-nginx and getting to the job status endpoint (so probably nothing to do with jobs service). Could this be related to any server nginx or tracing changes made lately? @Mohit or @will? Also have other ppl had these issues? I see them a lot",
+      "time": "16:47",
+      "timestamp": "1592437623.208900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "This looks like an nginx issue.  Is this happening locally?",
+      "time": "16:48",
+      "timestamp": "1592437700.209100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yup locally",
+      "time": "16:50",
+      "timestamp": "1592437808.209300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "hmm .. and you don’t see logs in any other service such as account-tservice?",
+      "time": "16:51",
+      "timestamp": "1592437885.209500",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "last time we had a few issues in account-tserivce which resulted in 504 errors",
+      "time": "16:51",
+      "timestamp": "1592437901.209700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "no not seeing anything in account service",
+      "time": "16:55",
+      "timestamp": "1592438106.209900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "umm ..",
+      "time": "16:56",
+      "timestamp": "1592438197.210100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ugh now it's gone away lol.",
+      "time": "16:58",
+      "timestamp": "1592438334.210300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "definitely the most frustrating local issue",
+      "time": "16:59",
+      "timestamp": "1592438362.210500",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i debugged this with shivam for a while yesterday, it just went away at some piont after rebuilding nginx a few times. We never root caused it.",
+      "time": "17:04",
+      "timestamp": "1592438652.210700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "ugh the worst. yea it's gone away now... i have no idea why. probably unrelated but i stopped/restarted jaeger?",
+      "time": "17:05",
+      "timestamp": "1592438701.210900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "and now it's back. sigh heisenbug!!",
+      "time": "17:06",
+      "timestamp": "1592438760.211100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "uff .. can we actually use jaeger?",
+      "time": "17:08",
+      "timestamp": "1592438921.211300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "haha i thought that would be good! do you know how to init it? my jaeger is blank",
+      "time": "17:09",
+      "timestamp": "1592438941.211500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i'm assuming i need to setup something?",
+      "time": "17:09",
+      "timestamp": "1592438946.211700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I do not know.  @Mohit :joy:",
+      "time": "17:09",
+      "timestamp": "1592438961.211900",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "are there any logs getting printed in nginx?",
+      "time": "17:09",
+      "timestamp": "1592438978.212100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "you could just be throttled :stuck_out_tongue:",
+      "time": "17:09",
+      "timestamp": "1592438986.212300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yea i see logs in nginx.\n```172.17.0.1 - instatrace [18/Jun/2020:00:09:19 +0000]  \"GET /api/v1/jobs/status?job_id=3371c1dc-9857-4e89-a201-ec400b232a33&type=async HTTP/1.1\" 200 471 \"https://localhost/apps/refiner-v5/edit/lydiagu/my-repo/fs/Instabase%20Drive/files/ira-dist/refiner_2.ibrefiner\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36\"\n\n172.17.0.1 - instatrace [18/Jun/2020:00:09:19 +0000]  \"GET /api/v1/jobs/status?job_id=2e450ea5-bffb-4cc2-bc6b-a1630e20bac6&type=async HTTP/1.1\" 200 471 \"https://localhost/apps/refiner-v5/edit/lydiagu/my-repo/fs/Instabase%20Drive/files/ira-dist/refiner_2.ibrefiner\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36\"\n\n2020/06/18 00:09:22 [warn] 15#15: *1225 using uninitialized \"grafana_backend\" variable, client: 172.17.0.1, server: , request: \"GET /api/v1/jobs/status?job_id=3371c1dc-9857-4e89-a201-ec400b232a33&type=async HTTP/1.1\", host: \"localhost\", referrer: \"https://localhost/apps/refiner-v5/edit/lydiagu/my-repo/fs/Instabase%20Drive/files/ira-dist/refiner_2.ibrefiner\"\n\n2020/06/18 00:09:22 [warn] 15#15: *1225 using uninitialized \"jaeger_backend\" variable, client: 172.17.0.1, server: , request: \"GET /api/v1/jobs/status?job_id=3371c1dc-9857-4e89-a201-ec400b232a33&type=async HTTP/1.1\", host: \"localhost\", referrer: \"https://localhost/apps/refiner-v5/edit/lydiagu/my-repo/fs/Instabase%20Drive/files/ira-dist/refiner_2.ibrefiner\"\n\n2020/06/18 00:09:22 [warn] 15#15: *1224 using uninitialized \"grafana_backend\" variable, client: 172.17.0.1, server: , request: \"GET /api/v1/jobs/status?job_id=2e450ea5-bffb-4cc2-bc6b-a1630e20bac6&type=async HTTP/1.1\", host: \"localhost\", referrer: \"https://localhost/apps/refiner-v5/edit/lydiagu/my-repo/fs/Instabase%20Drive/files/ira-dist/refiner_2.ibrefiner\"\n\n2020/06/18 00:09:22 [warn] 15#15: *1224 using uninitialized \"jaeger_backend\" variable, client: 172.17.0.1, server: , request: \"GET /api/v1/jobs/status?job_id=2e450ea5-bffb-4cc2-bc6b-a1630e20bac6&type=async HTTP/1.1\", host: \"localhost\", referrer: \"https://localhost/apps/refiner-v5/edit/lydiagu/my-repo/fs/Instabase%20Drive/files/ira-dist/refiner_2.ibrefiner\"\n\n172.17.0.1 - instatrace [18/Jun/2020:00:09:22 +0000]  \"GET /api/v1/jobs/status?job_id=2e450ea5-bffb-4cc2-bc6b-a1630e20bac6&type=async HTTP/1.1\" 200 1687 \"https://localhost/apps/refiner-v5/edit/lydiagu/my-repo/fs/Instabase%20Drive/files/ira-dist/refiner_2.ibrefiner\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36\"```",
+      "time": "17:10",
+      "timestamp": "1592439003.212500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "it's complaining about uniniitialized jaeger_backend",
+      "time": "17:10",
+      "timestamp": "1592439011.212700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Right, I have no idea what that is :neutral_face:",
+      "time": "17:11",
+      "timestamp": "1592439062.212900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh i have to enable it in config",
+      "time": "17:12",
+      "timestamp": "1592439141.213100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Oh i didn’t try starting up jaeger with Shivam wonder if that’s related",
+      "time": "17:12",
+      "timestamp": "1592439155.213300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "poor guy was about to nuke his machine to try to fix this. glad you didn’t @Shivam!",
+      "time": "17:13",
+      "timestamp": "1592439195.213500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "heymian do you know how to enable jaeger in nginx?",
+      "time": "17:15",
+      "timestamp": "1592439327.213700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "i changed the env variable, but not sure how it gets picked up in the docker image...",
+      "time": "17:15",
+      "timestamp": "1592439342.213900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "I am pretty sure it gets built in. :(",
+      "time": "17:15",
+      "timestamp": "1592439354.214400",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh ok, yea cause i dont' see it being passed in at runtime",
+      "time": "17:16",
+      "timestamp": "1592439379.215000",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "The template gets processed and then copied in.",
+      "time": "17:16",
+      "timestamp": "1592439379.215200",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "alright maybe we should wait for mohit to chime in here :slightly_smiling_face:",
+      "time": "17:17",
+      "timestamp": "1592439448.215400",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "Try passing it into `make build-docker`",
+      "time": "17:19",
+      "timestamp": "1592439599.216100",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "For server nginx",
+      "time": "17:20",
+      "timestamp": "1592439606.216500",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "okay, just saw this thread, this is what i understand for the questions asked above —\n1. *Should jaeger be causing this error?* jaeger should not lead to 504's, the `api/v1/jobs`  endpoint is not traced at all.\n2. *What about the warning stmt i am seeing? (*`using uninitialized \"jaeger_backend\" variable..`*)* It can be safely ignored, it is because of the way we inject env vars. Its same for grafana, as you can see in warn stmts.\n3. *Can we actually use jaeger here? I see it as blank! :* Yes, we can to see flow status, but we dont trace jobs endpoint coz of polling. @lydia i think you are running jaeger for first time today, so it will be blank the first time you open it, pl run a flow and you should start seeing traces. Also, if you havent compiled nginx,app-tasks,api-server-apps in a while pl do that.\n4. *how to enable jaeger in nginx?* jaeger is enabled in local nginx by default (https://github.com/instabase/instabase/commit/da8e26931ea0d27662bf1b016a41c7fdf380dbbb). No action needed other than starting using provisioner.\n5. *I did not try starting up jaeger..*: It does not matter if jaeger is running, flows run even if jaeger is down, i tested it. (cc: @Heymian)",
+      "time": "19:17",
+      "timestamp": "1592446667.220000",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Next time you face this, i would recommend looking at api-server-apps’s logs since the request is redirected to that (https://github.com/instabase/instabase/blob/master/webserver/server-nginx/config/nginx-config-template.jinja.yml#L527). Can it reach jobs service, are there some errors there?",
+      "time": "19:27",
+      "timestamp": "1592447231.220200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Folks, can you confirm that you don't see any requests arrive at api-server-apps?\n\nIf you don't see any requests in api-server-apps, then that will indicate that nginx is gobbling the request.\n\nA 504 error usually implies that nginx timed out while waiting for a response from an upstream server (api-server-apps or any other server beyond).\n\nhttps://developer.mozilla.org/en-US/docs/Web/HTTP/Status/504",
+      "time": "19:33",
+      "timestamp": "1592447595.220500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "@lydia do you also see a 504 error for any other HTTP request other than when polling job status?",
+      "time": "20:06",
+      "timestamp": "1592449594.220900",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-06-17.json",
+    "message_count": 50,
+    "start_time": "1592435416.204800",
+    "end_time": "1592449594.220900",
+    "is_thread": true
+  }
+}

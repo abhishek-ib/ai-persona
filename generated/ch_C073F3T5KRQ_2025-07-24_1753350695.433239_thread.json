@@ -1,0 +1,46 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-07-24_1753350695.433239_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Serena",
+    "prateek.tenkale"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "A bit of history. This is indeed the way we used to do things. There were many problems (the ones I listed above). Perhaps we didn’t do it right back then, but I think there are some fundamental struggles with storing this in the FS.\n\nFine to reevaluate, but just know what you are getting yourself into long-term by reinventing a database in the FS.",
+      "time": "02:51",
+      "timestamp": "1753350695.433239",
+      "is_reply": false
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "Got it, thanks for clarifying",
+      "time": "12:33",
+      "timestamp": "1753385630.713179",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "here's a quick summary of the challenges we faced with storing data in the file system\n\nit's way easier to introduce bugs when storing data in json files\n1. BE needs to be very strict about the schema stored in the file\n    a. there are no guarantees about the schema in the file, unlike db tables\n    b. yes you could have a single set of utils for writing the file, but you still lack the other benefits of data consistency from dbs (ex: rollback in case of an aborted write, etc)\n2. what happens if we want to change the schema?\n    a. there's no direct equivalent of db migrations, so backwards compatibility becomes quite difficult (example (https://docs.google.com/document/d/1mBa-70wxCHOe1lAekvpimNWRU1Ki718-NUWTp3c07Oc/edit?tab=t.0#heading=h.klpighbx32o5))\nit's very easy to run into performance issues\n1. as Matt mentioned below, reading/writing large JSON files is slow\n    a. the only solution is to shard your files, which is a lot more effort than db tables for storing structured data\n2. reading/writing many JSON files (ex: hundreds, thousands) is also slow",
+      "time": "13:35",
+      "timestamp": "1753389331.939119",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-07-24.json",
+    "message_count": 3,
+    "start_time": "1753350695.433239",
+    "end_time": "1753389331.939119",
+    "is_thread": true
+  }
+}

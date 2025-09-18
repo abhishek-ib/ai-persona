@@ -1,0 +1,62 @@
+{
+  "id": "ch_C05L87V014J_2024-12-05_1733401434.685559_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "ligao.zhang",
+    "jordy.vlan",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "**Since this thread (https://instabase.slack.com/archives/C05L87V014J/p1733242246041289) is becoming rather long, allow me to give a status report here:**\n\nCrafting testing use-case:\n\nFor testing if field_confidence and page_provenance of visual reasoning fields in Build are properly generated (PR: https://github.com/instabase/instabase/pull/65506) and rendered in the frontend,\nI need to have the following functional on crafting:\n1. admin account with community access that can enable internal preview flag\n2. upload a file in Build\n3. OCR the file in Build\n4. test text_extraction, document reasoning as a baseline\n5. run a visual reasoning field\n6. switch into PR branch, recompile model-service, restart model-service, run again and observe results  \n## Summary of crafting(?) issues and which [service] seems affected:\n\nRelated to (1):\na) account issues [file-service]:\n\tfile-service logs spamming “[INTERNAL]: Failed to initialize Principal (Err: User (84d145db-09bf-474b-9cad-8fffa92fc2b6) not found)”\nActions taken: After creating a new account “<mailto:jordy.instabase@gmail.com|jordy.instabase@gmail.com>” via dogfood with a token, the problem still resides\n\nRelated to (2 and 3):\nb) Azure OCR (ocr_page_type=‘marx’) is the default in Build, which due to DNS issues fails [celery-app-tasks]\n\teternal spinner when uploading a file in Build\nActions taken: diff by Matt in webserver/shared/src/js/webpacked/apps/src/aihub/store/buildApp/constants.ts (https://instabase.slack.com/archives/C05L87V014J/p1733258771015549?thread_ts=1733242246.041289&cid=C05L87V014J)\n\nc) entity models [model-service]\n\tcalls to entity models (barcode, signature) seem to stall all other jobs, unsure if anyone ever was able to run them on crafting\nActions taken:\n\teither remove entity models from ib_reader profile manually by editing them into an empty list:\nhttp://localhost/apps/text-editor/<COMMUNITY_ID><USER_ID>/fs/Instabase%20Drive/aihub/<BUILD_PROJECT_ID>/project/reader_profiles/default.ibreader\n\tor apply Matt’s diff also on the entity models variable and create a new project\t\n\nRelated to 5)\n        once I got to this point, any calls to obtain images from file-service errored out, similar to (a)\n\nOther actions taken on the sandbox:\n• resync the sandbox\n• workspace update\n• rebuild rabbitmq\n• flushall in redis \n——————————\n\nTo exclude that the issue resides in my specific sandbox, borrowing from the ibdev template; will try to now create a sandbox based on Matt’s template (in beta).",
+      "time": "04:23",
+      "timestamp": "1733401434.685559",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "For the new sandbox, just confirming you are following the instructions in https://instabase.atlassian.net/wiki/spaces/TI/pages/2213183494/Use+PPY+on+Crafting?",
+      "time": "06:19",
+      "timestamp": "1733408349.048419",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Everything is setup automatically.\nI managed to create the sandbox (https://instabase.sandboxes.site/sandboxes/jordyvlan-docker) based on @mfichman’s template quite fast and got it fully functional!",
+      "time": "12:23",
+      "timestamp": "1733430211.172079",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "was finally able to test :happy-parrot:",
+      "time": "12:27",
+      "timestamp": "1733430437.864689",
+      "is_reply": true
+    },
+    {
+      "sender": "ligao.zhang",
+      "user_id": "U080W1DHC6B",
+      "message": "is there anyway to get a ppy-nginx url (point to service started by `ppy start`) from the sandbox created with mfichman-ibdev (https://instabase.sandboxes.site/templates/mfichman-ibdev)?  I am not able to upload files in my old sandbox again :smiling_face_with_tear:, so I created a new one with template mfichman-ibdev (https://instabase.sandboxes.site/templates/mfichman-ibdev),",
+      "time": "17:15",
+      "timestamp": "1733447721.162269",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-05.json",
+    "message_count": 5,
+    "start_time": "1733401434.685559",
+    "end_time": "1733447721.162269",
+    "is_thread": true
+  }
+}

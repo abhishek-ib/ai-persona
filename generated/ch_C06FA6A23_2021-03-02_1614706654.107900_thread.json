@@ -1,0 +1,96 @@
+{
+  "id": "ch_C06FA6A23_2021-03-02_1614706654.107900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "sid",
+    "Mohit",
+    "Naveen",
+    "Shubham Oli",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Hey team, I was trying to build jenkins image (because i added a new python package in a PR), but it is failing while installing java (openjdk-8-jdk). I’m getting the following error:\n```Step 9/60 : RUN apt-get update && apt-get install -y openjdk-8-jdk     && update-alternatives --config java     && update-alternatives --config javac\n ---> Running in 6e95013158eb\nHit:1 http://security.debian.org/debian-security buster/updates InRelease\nHit:2 http://deb.debian.org/debian buster InRelease\nHit:3 http://deb.debian.org/debian buster-updates InRelease\nHit:4 https://packagecloud.io/github/git-lfs/debian buster InRelease\nReading package lists...\nReading package lists...\nBuilding dependency tree...\nReading state information...\nE: Unable to locate package openjdk-8-jdk\nThe command '/bin/sh -c apt-get update && apt-get install -y openjdk-8-jdk     && update-alternatives --config java     && update-alternatives --config javac' returned a non-zero code: 100\nmake: *** [build-docker] Error 100```\nI did some debugging and found that we are using jenkins:lts (that uses debian 10), which doesn’t have repositories for openjdk-8… ( https://www.jenkins.io/blog/2021/02/08/docker-base-os-upgrade/ )",
+      "time": "09:37",
+      "timestamp": "1614706654.107900",
+      "is_reply": false
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "cc: @Heymian @shaunak @Shubham Oli",
+      "time": "09:38",
+      "timestamp": "1614706721.108200",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "@sid do we need to revert to v2.254?\n\nand avoid `:lts` tag.",
+      "time": "09:39",
+      "timestamp": "1614706796.108400",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "As i am blocked on this, i am reverting the PR https://github.com/instabase/instabase/pull/18047 and updating the image to unblock myself. cc: @sid",
+      "time": "09:42",
+      "timestamp": "1614706922.108700",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@sid might be helpful if you put your name in your github profile, took us a while to figure out who is “slaiyer” :sweat_smile:",
+      "time": "09:48",
+      "timestamp": "1614707312.109300",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Sent a PR https://github.com/instabase/instabase/pull/18213 !",
+      "time": "09:51",
+      "timestamp": "1614707494.109600",
+      "is_reply": true
+    },
+    {
+      "sender": "sid",
+      "user_id": "U01JE7AP09E",
+      "message": "let me take a look",
+      "time": "09:53",
+      "timestamp": "1614707635.109900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "We actually shouldn’t be on jdk 8 anymore. I remember moving all our services to jdk11 over two years ago (?), might have just missed the jenkins image and it’s been around since o.O",
+      "time": "10:53",
+      "timestamp": "1614711197.114200",
+      "is_reply": true
+    },
+    {
+      "sender": "sid",
+      "user_id": "U01JE7AP09E",
+      "message": "testing with lts-jdk11 tag, using its preinstalled jdk",
+      "time": "11:18",
+      "timestamp": "1614712717.114500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-03-02.json",
+    "message_count": 9,
+    "start_time": "1614706654.107900",
+    "end_time": "1614712717.114500",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "id": "ch_C0516UPPMT3_2023-06-01_1685679358.475659_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "vineeth",
+    "Nikolaos Kofinas",
+    "Prashant Kikani"
+  ],
+  "messages": [
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "@Prashant Kikani or @Atinder could you take a look at this?",
+      "time": "21:15",
+      "timestamp": "1685679358.475659",
+      "is_reply": false
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Sure, taking a look",
+      "time": "21:17",
+      "timestamp": "1685679425.273319",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Do we support question in the basic mode? I don't think so. I think in the basic mode, the input should be the field-name, instead of the question?",
+      "time": "21:18",
+      "timestamp": "1685679511.100109",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Could you reproduce the issue if its not a question?",
+      "time": "21:19",
+      "timestamp": "1685679552.498449",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "i think it’s reasonable for someone to input a question even if we don’t support it. It’ll just be confusing for the user when random numbers show up",
+      "time": "21:21",
+      "timestamp": "1685679693.758339",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "Yup, it's provenance itself actually. @Atinder /@Rafal seems like a parsing issue here in provenance...\n[This is with `1.1.13` version]",
+      "time": "21:23",
+      "timestamp": "1685679793.057419",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "@Nikolaos Kofinas how fast can we move to json based extraction? Looks like with gpt3.5 parsing is difficult due to inconsistency in response formats returned by the model",
+      "time": "21:24",
+      "timestamp": "1685679866.183619",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "> i think it’s reasonable for someone to input a question even if we don’t support it. It’ll just be confusing for the user when random numbers show up\nYes, makes sense. Should we add :information_source: button or something for basic mode vs. advanced mode?\n\nWe're showing this message \"Complex prompt mode allows you to write full sentence prompts.\" though...",
+      "time": "21:25",
+      "timestamp": "1685679936.138419",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "After debugging - here's the model response:\n```{\n\t\"raw_output_responses\": [\n\t\t\"[Field name]=> what are some things I should think about when having a crucial conversation?\n         [Field value]=> Contributing factors/indicators: HIGH STAKES, STRONG EMOTIONS, OPPOSING POINTS OF VIEW, Is this issue a: [?] One-off?, [?] Recurring issue?, [?] Relationship-affecting problem?, Which is the most important issue to address first ?, What stories have I told myself about the other person? Where are those stories coming from? (previous similar experiences, etc), What stories may the other person be telling themselves about me and my behavior? Why might they be doing so? Hint: look to you own actions/words), If I were to approach a conversation about this issue with this person, what might I want/what might success look like: For THEM?, For ME?, For US?, What about my past attempts-or lack thereof-to address this issue might I need to acknowledge up-front so as not to derail the conversation from the start?\n         [Field value Line number in the document]=> 4, 5-8, 8-12, 13-14, 15-17, 18-22, 23-25\"\n\t]\n}```\nWe wanted to get in the format of\n```[Field name]=> [Field value]=> [Field value Line number in the document]```\nBut it returned in individual key-value pairs. I think we have to change the response format. Model does not seem to understand the above format.\n\nWhat do you guys think?\ncc: @vineeth @Atinder @Rafal",
+      "time": "22:25",
+      "timestamp": "1685683556.189609",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "we use the same format for the build mode which I have played with extensively",
+      "time": "23:54",
+      "timestamp": "1685688853.635439",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "it works most of the times but it occasionally fails",
+      "time": "23:54",
+      "timestamp": "1685688874.390709",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "I am experimenting with asking a json response",
+      "time": "23:54",
+      "timestamp": "1685688882.272479",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "but 3.5 will make errors",
+      "time": "23:54",
+      "timestamp": "1685688888.124039",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "even with more structure and simple format",
+      "time": "23:54",
+      "timestamp": "1685688895.795829",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Should we use text davinci then?",
+      "time": "23:55",
+      "timestamp": "1685688934.606189",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "I haven't experimented with that",
+      "time": "23:55",
+      "timestamp": "1685688950.462939",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "how is the performance ?",
+      "time": "23:55",
+      "timestamp": "1685688956.355019",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "If that gives better conisistency cc: @lydia @Rafal",
+      "time": "23:55",
+      "timestamp": "1685688958.370579",
+      "is_reply": true
+    },
+    {
+      "sender": "Prashant Kikani",
+      "user_id": "U03R1BW5HAM",
+      "message": "I think JSON should help - as model is familiar with that format. Format with `=>` is not comman...",
+      "time": "23:56",
+      "timestamp": "1685688970.125349",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "It used to be more consistent, that was the reason we had it before",
+      "time": "23:56",
+      "timestamp": "1685688975.450209",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "We recently changed it to gpt3.5 I think @Kathy Wu can confirm",
+      "time": "23:56",
+      "timestamp": "1685688995.653859",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "even json will fail :smiling_face_with_tear:",
+      "time": "23:56",
+      "timestamp": "1685688996.773989",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "for field support? yes but it gave 10% gain I think",
+      "time": "23:57",
+      "timestamp": "1685689023.578789",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-06-01.json",
+    "message_count": 23,
+    "start_time": "1685679358.475659",
+    "end_time": "1685689023.578789",
+    "is_thread": true
+  }
+}

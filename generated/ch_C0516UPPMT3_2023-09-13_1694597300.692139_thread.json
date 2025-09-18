@@ -1,0 +1,118 @@
+{
+  "id": "ch_C0516UPPMT3_2023-09-13_1694597300.692139_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Badri",
+    "Kerry",
+    "Ryan"
+  ],
+  "messages": [
+    {
+      "sender": "Badri",
+      "user_id": "U011B9QCHDM",
+      "message": "Hi Team, when I run a bunch of documents on a flow. I m facing this error, while the same document works fine on refiner. This is on ib_llm_tools version 0.0.8 and instabase.com (http://instabase.com). This is on 10k documents.",
+      "time": "02:28",
+      "timestamp": "1694597300.692139",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "can you share your flow job log\ncc @lydia",
+      "time": "07:38",
+      "timestamp": "1694615928.130099",
+      "is_reply": true
+    },
+    {
+      "sender": "Badri",
+      "user_id": "U011B9QCHDM",
+      "message": "Logs attached. Let me know I can give access to refiner and flow on instabase.com (http://instabase.com)",
+      "time": "07:42",
+      "timestamp": "1694616174.210869",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "I see a lot of `Refiner extraction error for formula call_model_converse`:\nThe error is `Error: Exception calling function - call_model_converse: Error running model req`\n@Ryan -- the log line is added by you -- as you can see in the job log it is logging the entire `input_raw_data` in binary format -- you can't really read it and makes the logs very big. Can we remove that? I think the actual error is buried deep and not in the logs -- I'll let you and Lydia figure out what's going on.",
+      "time": "07:59",
+      "timestamp": "1694617153.778179",
+      "is_reply": true
+    },
+    {
+      "sender": "Ryan",
+      "user_id": "U03CFQ60GPK",
+      "message": "looking into it …",
+      "time": "09:31",
+      "timestamp": "1694622679.776829",
+      "is_reply": true
+    },
+    {
+      "sender": "Ryan",
+      "user_id": "U03CFQ60GPK",
+      "message": "this error happens add_to_index, From backend log (https://instabase.com/grafana/explore?orgId=1&left=%7B%22datasource%22:%22P8E80F9AEF21F6940%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22model-service%5C%22%7D%20%7C%3D%20%60add_to_index%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22P8E80F9AEF21F6940%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%221694582888075%22,%22to%22:%221694583418380%22%7D%7D), there is a lot of OpenAI rate limiting error during that time\n\n```openai.error.RateLimitError: Rate limit reached for default-text-embedding-ada-002 in organization org-eoHyaBLx6eew3gaVIuGYa29o on tokens per min. Limit: 1000000 / min. Current: 972026 / min. Contact us through our help center at help.openai.com (http://help.openai.com) if you continue to have issues.```",
+      "time": "13:02",
+      "timestamp": "1694635372.396279",
+      "is_reply": true
+    },
+    {
+      "sender": "Ryan",
+      "user_id": "U03CFQ60GPK",
+      "message": "also removed raw request input from logs, PR: https://github.com/instabase/instabase/pull/46563\ncc @pauline.comising @lydia",
+      "time": "13:03",
+      "timestamp": "1694635421.738949",
+      "is_reply": true
+    },
+    {
+      "sender": "Ryan",
+      "user_id": "U03CFQ60GPK",
+      "message": "@Badri the issue is temperary due OpenAI rate limiting, if you retry, it should work",
+      "time": "13:05",
+      "timestamp": "1694635504.363329",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Thank you! Is there any way that we can service this error message (instead of what we see today in the log)? For example we can look for `openai.error.RateLimitError` and rephrase the error message to reflect a model rate limit error but not necessarily give out the raw message that says contact open ai blah blah\n\nBTW... this is probably a bug in open AI's code... but the limit here\n```Limit: 1000000 / min. Current: 972026 / min```\nLimit is higher than current :trollface: I'll report this to them in our shared Slack channel",
+      "time": "13:07",
+      "timestamp": "1694635665.963139",
+      "is_reply": true
+    },
+    {
+      "sender": "Ryan",
+      "user_id": "U03CFQ60GPK",
+      "message": "sure, we can translate the error message in IBLLM, already had a JIRA for the similar problem: https://instabase.atlassian.net/browse/CS-3673",
+      "time": "13:12",
+      "timestamp": "1694635939.993339",
+      "is_reply": true
+    },
+    {
+      "sender": "Badri",
+      "user_id": "U011B9QCHDM",
+      "message": "Got it, thank you for helping me out.",
+      "time": "22:07",
+      "timestamp": "1694668058.759309",
+      "is_reply": true
+    },
+    {
+      "sender": "Badri",
+      "user_id": "U011B9QCHDM",
+      "message": "I will rerun the flow and let know if it worked or not.",
+      "time": "22:08",
+      "timestamp": "1694668103.275009",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-09-13.json",
+    "message_count": 12,
+    "start_time": "1694597300.692139",
+    "end_time": "1694668103.275009",
+    "is_thread": true
+  }
+}

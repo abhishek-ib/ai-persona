@@ -1,0 +1,136 @@
+{
+  "id": "ch_C0516UPPMT3_2025-06-30_1751311602.538309_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Jacky Chen",
+    "shreya.rajput",
+    "Alex Sgueglia",
+    "Jet",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "Issue:\n\nHi team,\nIt seems like the app version have more than 70 or more will broke this API.\n\nAPI: https://nationwide.aihub.instabase.com/api/v2/aihub/deployments/?\n\nError:\n```\n<html>\n  <head>\n    <title>Bad Request</title>\n  </head>\n  <body>\n    <h1><p>Bad Request</p></h1>\n    Request Line is too large (4127 > 4094)\n  </body>\n</html>```\ncc : @Alex Sgueglia @Jacky Chen @shreya.rajput",
+      "time": "12:26",
+      "timestamp": "1751311602.538309",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "thank you for reporting!\n\nwhile we investigate the fix, is it possible to delete older app versions as a workaround? see https://instabase.slack.com/archives/CSY11CK7T/p1750864466100809?thread_ts=1750745375.616489&cid=CSY11CK7T",
+      "time": "12:48",
+      "timestamp": "1751312916.990319",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "@Alex Sgueglia is this an option? Delete old versions.\n\nyou can also go to this route for latest version\n\nhttps://nationwide.aihub.instabase.com/workspaces/deploy/deployments (https://nationwide.aihub.instabase.com/workspaces/deploy/deployments)",
+      "time": "12:51",
+      "timestamp": "1751313079.936879",
+      "is_reply": true
+    },
+    {
+      "sender": "Alex Sgueglia",
+      "user_id": "U03JT469GFP",
+      "message": "cc @shreya.rajput @Atul Grover",
+      "time": "12:52",
+      "timestamp": "1751313126.616919",
+      "is_reply": true
+    },
+    {
+      "sender": "shreya.rajput",
+      "user_id": "U0879DJ1V0W",
+      "message": "@Jet I can delete some of the older app versions. But I can keep all the deployments right?",
+      "time": "13:00",
+      "timestamp": "1751313603.516559",
+      "is_reply": true
+    },
+    {
+      "sender": "Jacky Chen",
+      "user_id": "U037KQU966S",
+      "message": "Yes, just delete a few app versions and the UI should display",
+      "time": "13:00",
+      "timestamp": "1751313647.629409",
+      "is_reply": true
+    },
+    {
+      "sender": "Jet",
+      "user_id": "U05FN1GES0J",
+      "message": "If the deployment is associated with an app version, will the deployment also get deleted?",
+      "time": "13:02",
+      "timestamp": "1751313741.299429",
+      "is_reply": true
+    },
+    {
+      "sender": "shreya.rajput",
+      "user_id": "U0879DJ1V0W",
+      "message": "@Jet @Serena It did work. But looks like it also deleted deployments and some runs attached with it.\nis it possible to revert a given run (one of the important ones got deleted)?",
+      "time": "20:20",
+      "timestamp": "1751340016.606749",
+      "is_reply": true
+    },
+    {
+      "sender": "Jacky Chen",
+      "user_id": "U037KQU966S",
+      "message": "per my understanding, the deletion should only delete the versioned APP as specified when deletion. It should not impact actual runs and deployments. (waiting Serena to confirm).\n\nHowever, from UI, the logic of displaying the jobs and deployments seems exhaustive listing (also Serena can confirm). So it's impacted by missing the corresponding Version and App ID...so it's not listed...",
+      "time": "20:48",
+      "timestamp": "1751341704.666229",
+      "is_reply": true
+    },
+    {
+      "sender": "Jacky Chen",
+      "user_id": "U037KQU966S",
+      "message": "in other words, to recover such jobs, I assume there should be a version or app id matching the missing job...\n(I am not sure if it's doable and how to recreate such app versions back though)",
+      "time": "20:49",
+      "timestamp": "1751341793.922199",
+      "is_reply": true
+    },
+    {
+      "sender": "shreya.rajput",
+      "user_id": "U0879DJ1V0W",
+      "message": "@Jacky Chen This particular run is important. I am unable to see it on UI but the link is accessible. Is it possible to retrieve it? I have also raised a Zendesk ticket for it.\n\n*Old Run:* 5a588702-c178-4792-b6d8-58bf68fd0062\n*Old Run Link:*  https://nationwide.aihub.instabase.com/review/5a588702-c178-4792-b6d8-58bf68fd0062?deploymentId=0196c59b-9821-7f63-b245-40d092a28d8b",
+      "time": "20:54",
+      "timestamp": "1751342057.436329",
+      "is_reply": true
+    },
+    {
+      "sender": "Jacky Chen",
+      "user_id": "U037KQU966S",
+      "message": "looking at this job:\nit's tied to deployed_solution_id f0cf37c7-aee3-4ea7-9ee9-9004029261fb with version 5.3.0.\n:sweat_smile: I honestly can't think of a way to recreate it . (maybe there could be some backend methods?)\nIntuitively:\n1. recreate a run with the same id and version might work\n    a. don't think we have an api to update the ID\n2. maybe we can tie this run to another version and deploy id\n    a. don't think we have an api to update these attributes either\n3. create a new run, replace the output folder with this job's output folder\n    a. this can help quickly bring the view back\n    b. however, I am unsure how would this impact the later usage of this run \n    c. (there could be location references within the folders and files to break things)\nLet's wait for @Serena’s inputs.",
+      "time": "21:10",
+      "timestamp": "1751343011.686939",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@shreya.rajput as you mentioned, the run page is accessible\n\nis that sufficient? why do we need to show this run in the \"App runs\" table?",
+      "time": "23:04",
+      "timestamp": "1751349889.198779",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> It did work. But looks like it also deleted deployments and some runs attached with it.\n@shreya.rajput can you confirm that the `Bad Request` error no longer occurs for you on the deployments page?\n\nwhat is the urgency of the original issue for this thread?",
+      "time": "23:49",
+      "timestamp": "1751352595.518379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-06-30.json",
+    "message_count": 14,
+    "start_time": "1751311602.538309",
+    "end_time": "1751352595.518379",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "id": "ch_C06FA6A23_2025-03-13_1741879484.563579_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "<!here>\n:wave: Howdy!\n\nWe'll soon be making some changes to the \"legacy\" / *IB Classic* release process!\n\n*The Situation Today*\nWhile the legacy IB Classic (Enterprise) has been effectively EOL'd and put under a pseudo-code-freeze, we still have a contractual requirement to release a \"new major version\" each quarter. To achieve this, we've just been merging the `release-24.07.0-enterprise` branch into the requisite new release branch names each week, and then certifying all of them once 24.07 is successfully certified. This is a tedious and manual process that will only become more burdensome in future quarters (next couple of years at least, it seems), and could lead to serious incidents.\n\n*Overview of Upcoming Changes*\nWe'll be consolidating the IB Classic code into a *single* branch going forward, and reworking the certification pipelines to smooth out the process.\n\n:white_check_mark: *In Scope*\n1. Consolidating down to a *single* branch: `ibclassic`\n2. \n    a. No more `release-xx.yy.0-enterprise` branches!\n    b. No more `release-xx.yy.0-enterprise` backports or cherrypicks!\n3. New certification pipeline\n    a. A single build of `ibclassic` that will be tagged and pushed under the various 'supported major release version' tags to `instabase-public` registries in both ECR and GCR\n4. Coordination with @sudeep's and @jayapandian.ponraj's teams to simplify vulnerability scanning and deployment tasks to consider only the one relevant branch / sandbox\n5. IB Classic versions will be synced on two identifiers, to mitigate mismatch incidents / ease tracing one release version back to another if needed:\n    a. *Short SHA* image tag suffix like we have today, ie: all images for a given classic / IB Platform release will share a suffix like `-abcde12345`\n    b. *Patch version*, the third component of our pseudo-semver version string, ex: all builds of a given classic release will be versioned as, say, `24.07.55`, `25.01.55`, `25.04.55`, and so on\n    c. *Example:* As we currently release three \"versions\" of IB Classic / Platform, building commit `abcde12345` would yield a set of `mesh-manager` images like:\n        ▪︎ `mesh-manager-24.07.55-abcde12345`\n        ▪︎ `mesh-manager-24.10.55-abcde12345`\n        ▪︎ `mesh-manager-25.01.55-abcde12345`\n:x: *Out of Scope*\n1. Anything to do with AIHub\n    a. This is all *exclusive* to IB Classic legacy code\n2. Changing the release-24.07 release sandbox, or creating any new release sandboxes\n    a. Renaming isn't really an option, and moving system tests / goldens is a big chore it seems\n3. Backports of anything - this is just a consolidation and simplification effort\n4. Changes to the fundamentals of deploying Enterprise, config management, etc.",
+      "time": "08:24",
+      "timestamp": "1741879484.563579",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Just some naming suggestions, can we do ibclassic (without the hyphen)? or ibclassic-main? and save the hyphen for splitting out the release version.",
+      "time": "09:05",
+      "timestamp": "1741881935.679709",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "There won't be any release versions in the branch names :slightly_smiling_face:\n\nI don't mind removing the hyphen regardless though",
+      "time": "09:06",
+      "timestamp": "1741881962.722519",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "A critical point of this change is that there will be only *one* branch for IB Classic code\n> 1. Consolidating down to a *single* branch: `ib-classic`\n>     a. No more `release-xx.yy.0-enterprise` branches!\n>     b. No more `release-xx.yy.0-enterprise` backports or cherrypicks!",
+      "time": "09:06",
+      "timestamp": "1741882004.612029",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-03-13.json",
+    "message_count": 4,
+    "start_time": "1741879484.563579",
+    "end_time": "1741882004.612029",
+    "is_thread": true
+  }
+}

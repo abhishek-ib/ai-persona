@@ -1,0 +1,110 @@
+{
+  "id": "ch_C06FA6A23_2020-07-14_1594735950.382700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Aaron Vontell",
+    "sudeep",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Does anyone here have experience setting up or thinking about reliable “performance unit tests”? Currently performance issues are really only caught in dogfood / when running ghost inspector and golden tests, and it would be great to track these sorts of things before deploying.",
+      "time": "07:12",
+      "timestamp": "1594735950.382700",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Not load tests per se, but rather (detect that this change caused X to run 20% longer)",
+      "time": "07:12",
+      "timestamp": "1594735979.382800",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "I wonder if we could have the golden tests each report their timing information, and add a grafana graph of the times just to monitor? That's how we did a bunch of things at Akamai",
+      "time": "07:14",
+      "timestamp": "1594736087.383000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "^ yeah that sort of thing would be cool",
+      "time": "07:15",
+      "timestamp": "1594736102.383200",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "I haven't dug into our grafana installation much, but we might be able to set alerts with it as well",
+      "time": "07:15",
+      "timestamp": "1594736122.383400",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "@abhitaker might be able to help a bit when it's a reasonable hour in his timezone :slightly_smiling_face:. It looks like we might be able to insert the timing information into prometheus, which dogfood.instabase.com/grafana (http://dogfood.instabase.com/grafana) can then read (and have alerts on as well)!",
+      "time": "07:19",
+      "timestamp": "1594736390.384300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "All of this considered though, this would still require running after deployed, right?",
+      "time": "07:20",
+      "timestamp": "1594736449.384500",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Correct. Were you thinking of getting timing information in unit tests, such that it would fail in travis?",
+      "time": "07:28",
+      "timestamp": "1594736883.384700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yeah, like maybe something like we  run some test multiple times, we get an average time to run, store that result in some historical airtable sheet, and then in travis we do the same and look at the last build’s time to run in the airtable and say “this test took 30% longer to run, and is therefore a failure”",
+      "time": "07:31",
+      "timestamp": "1594737070.384900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "The main reason I ask about this to see if others have seen this sort of thing is that it seems very flaky, especially depending on what machine you run it on",
+      "time": "07:31",
+      "timestamp": "1594737093.385100",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "yeah this is something on my wishlist for sometime to expose latencies from our applications and construct a set of performance tests that we can use to compare to historical numbers and raise alerts. For H1 @abhitaker’s work has helped us bring more stability to our monitoring stack, and we are in process of making the framework to record metrics from diff services / code paths.\n\nWe will have to check if we can fit into the H2 OKR bucket re perf tests.",
+      "time": "08:17",
+      "timestamp": "1594739877.385400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-07-14.json",
+    "message_count": 11,
+    "start_time": "1594735950.382700",
+    "end_time": "1594739877.385400",
+    "is_thread": true
+  }
+}

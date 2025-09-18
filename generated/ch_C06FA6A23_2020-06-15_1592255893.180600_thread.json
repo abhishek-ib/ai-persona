@@ -1,0 +1,93 @@
+{
+  "id": "ch_C06FA6A23_2020-06-15_1592255893.180600_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "arun",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "Is there a way to pickle classes defined inside a custom classifier? Trying to do that gives me an error \"Can't pickle <class 'ClassName'>: it's not found as builtins.ClassName\". It seems pickle/joblib isn't able to serialise classes defined in the interpreter at runtime, but I don't understand enough about how custom classifier code is executed to debug this",
+      "time": "14:18",
+      "timestamp": "1592255893.180600",
+      "is_reply": false
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i ran into this when initially working on the doc splitting classifier :slightly_smiling_face: https://instabase.slack.com/archives/C06FA6A23/p1575318422080900 @arun",
+      "time": "14:20",
+      "timestamp": "1592256016.180700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "there’s no workaround, you need to just figure out a way to serialize the state to a JSON format and use that instead.",
+      "time": "14:20",
+      "timestamp": "1592256032.181000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "it’s due to the way our UDF execution framework works.",
+      "time": "14:20",
+      "timestamp": "1592256036.181200",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "sweet thanks! i was afraid that would be the answer haha",
+      "time": "14:20",
+      "timestamp": "1592256043.181400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "“figure out a way” isn’t actually that hard. you can just serialize `class_instance.__dict__`  as JSON.",
+      "time": "14:22",
+      "timestamp": "1592256173.181600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "FYI (it’s in the post-discussion)",
+      "time": "14:23",
+      "timestamp": "1592256181.181800",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "oh gotcha -- then deserialising would involve setting `new_instance.__dict__` ?",
+      "time": "14:24",
+      "timestamp": "1592256276.182200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yup",
+      "time": "14:25",
+      "timestamp": "1592256352.182400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-06-15.json",
+    "message_count": 9,
+    "start_time": "1592255893.180600",
+    "end_time": "1592256352.182400",
+    "is_thread": true
+  }
+}

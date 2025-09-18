@@ -1,0 +1,85 @@
+{
+  "id": "ch_C06FA6A23_2023-10-19_1697748008.402059_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Serena",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw this is happening every few hours today, which is a lot more frequent than before",
+      "time": "13:40",
+      "timestamp": "1697748008.402059",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Can I ask you to add one log-line just locally to help us debug this?",
+      "time": "13:57",
+      "timestamp": "1697749036.451419",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "sure! what should i add?",
+      "time": "13:58",
+      "timestamp": "1697749080.107289",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "```diff --git a/shared-utils/go-utils/src/instabase/utils/filewalker/path_walker.go b/shared-utils/go-utils/src/instabase/utils/filewalker/path_walker.go\nindex c8f36ee0e1c..caa0357a4b9 100644\n--- a/shared-utils/go-utils/src/instabase/utils/filewalker/path_walker.go\n+++ b/shared-utils/go-utils/src/instabase/utils/filewalker/path_walker.go\n@@ -177,6 +177,7 @@ func (w *PathWalker) walk(ctx context.Context, task Task) *status.Status {\n                        return stErr\n                }\n\n+               log.Infof(\"ListDirInfo: %v\", listDirInfo)\n                for _, nodeInfo := range listDirInfo.Nodes {\n                        if !w.filter(nodeInfo) {\n                                continue```",
+      "time": "13:58",
+      "timestamp": "1697749085.129529",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Just want to confirm that for some reason, your ListDirInfo is null",
+      "time": "13:59",
+      "timestamp": "1697749164.288529",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Actually mind adding a few more log lines, given it takes so many hours to reproduce?\n```diff --git a/shared-utils/go-utils/src/instabase/utils/clients/grpcfileclient/grpc_file_client.go b/shared-utils/go-utils/src/instabase/utils/clients/grpcfileclient/grpc_file_client.go\nindex b3915c37b7b..d176ae1e6e7 100644\n--- a/shared-utils/go-utils/src/instabase/utils/clients/grpcfileclient/grpc_file_client.go\n+++ b/shared-utils/go-utils/src/instabase/utils/clients/grpcfileclient/grpc_file_client.go\n@@ -51,6 +51,7 @@ func fromListDirResp(listDirResp *fsvc.ListDirResp, startPageToken string, fullM\n                return nil, status.New(status.Unknown, \"listDirResp should not be nil\")\n        }\n\n+       log.Infof(\"Num nodes: %v\", len(listDirResp.GetNodes()))\n        for _, nodeInfo := range listDirResp.GetNodes() {\n                ret.Nodes = append(ret.Nodes, fromNodeInfo(nodeInfo, fullMountPath))\n        }\n@@ -104,6 +105,7 @@ func (c *grpcFileClient) ListDir(ctx context.Context, completePath string, start\n\n        ibPath, stErr := c.getIBCompletePath(completePath)\n        if !stErr.OK() {\n+               log.Infof(\"Failed to get complete path: %v\", stErr)\n                return nil, stErr\n        }\n\n@@ -114,10 +116,12 @@ func (c *grpcFileClient) ListDir(ctx context.Context, completePath string, start\n                // No need to capture the second return as the first return is always\n                // non-nil as long as err is not nil\n                stErr, _ := status.FromError(err)\n+               log.Infof(\"ListDir failed: %v\", stErr)\n                return nil, stErr\n        }\n\n        listDirInfo, stErr := fromListDirResp(listDirResp, startToken, ibPath.GetFullMountPath())\n+       log.Infof(\"ListDirInfo: %v, stErr: %v\", listDirInfo, stErr)\n        return listDirInfo, stErr\n }\n\ndiff --git a/shared-utils/go-utils/src/instabase/utils/filewalker/path_walker.go b/shared-utils/go-utils/src/instabase/utils/filewalker/path_walker.go\nindex c8f36ee0e1c..caa0357a4b9 100644\n--- a/shared-utils/go-utils/src/instabase/utils/filewalker/path_walker.go\n+++ b/shared-utils/go-utils/src/instabase/utils/filewalker/path_walker.go\n@@ -177,6 +177,7 @@ func (w *PathWalker) walk(ctx context.Context, task Task) *status.Status {\n                        return stErr\n                }\n\n+               log.Infof(\"ListDirInfo: %v\", listDirInfo)\n                for _, nodeInfo := range listDirInfo.Nodes {\n                        if !w.filter(nodeInfo) {\n                                continue```",
+      "time": "15:32",
+      "timestamp": "1697754723.569829",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "np, i’ll add both patches! i haven’t added the first patch yet",
+      "time": "15:32",
+      "timestamp": "1697754779.362129",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "thank you, the second diff contains the first patch already!",
+      "time": "15:33",
+      "timestamp": "1697754838.295229",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-10-19.json",
+    "message_count": 8,
+    "start_time": "1697748008.402059",
+    "end_time": "1697754838.295229",
+    "is_thread": true
+  }
+}

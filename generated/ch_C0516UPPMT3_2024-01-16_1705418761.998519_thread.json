@@ -1,0 +1,103 @@
+{
+  "id": "ch_C0516UPPMT3_2024-01-16_1705418761.998519_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "lydia",
+    "Rakesh",
+    "Varun Jain"
+  ],
+  "messages": [
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i think we are still using `gpt-3.5-turbo-0613`; we can definitely change it, it has some impact in rate limit (we will be sending / receiving more tokens per call) but should be small.\n\nthe table problem will be solved in the upcoming release with the table framework though. do you have any more context around \"specific downstream format\"? is it something that they should better do with a UDF instead of LLM?",
+      "time": "07:26",
+      "timestamp": "1705418761.998519",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Hari / @lydia -- let's put updating the models into one of our roadmap items in Q1, since the older models will be deprecated in June anyway.",
+      "time": "07:26",
+      "timestamp": "1705418802.756119",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "The main work here besides swapping the model and adjusting the context window (which should be lightweight) is to collab with sol eng to make sure public apps still behave properly after the model upgrade cc @avi @Shubham",
+      "time": "07:28",
+      "timestamp": "1705418885.453579",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Also for this case that @Varun Jain highlighted the context wnidow length limitation still exists since the output field requires a specific JSON schema specified by user - so it will need to use LLM.",
+      "time": "07:31",
+      "timestamp": "1705419118.762649",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "that's why i suggest this re-formatting in this case should better be done by UDF instead of LLM, since with LLM you always get limited by the context window (even if the table framework doesn't have that limitation); i want to know how complicated this downstream format looks like...",
+      "time": "07:40",
+      "timestamp": "1705419654.991919",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "@Varun Jain had the complete schema in this case, can you pls share",
+      "time": "08:38",
+      "timestamp": "1705423121.486079",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "The complete schema (and the prompt) is:\n\n`Extract all deduction tables in the following JSON format and use default currency as USD:`\n`{\"before_tax_deductions\":{`\n      `\"totals\": [`\n`{`\n          `\"ytd_pay\": {`\n            `\"amount\": ,`\n            `\"currency\":` \n          `},`\n          `\"current_pay\": {`\n            `\"amount\": ,`\n            `\"currency\":` \n          `},`\n          `\"description\": ,`\n          `\"canonical_description\":` \n        `}`\n`],`\n      `\"subtotals\": [`\n        `{`\n          `\"ytd_pay\": {`\n            `\"amount\": ,`\n            `\"currency\":` \n          `},`\n          `\"current_pay\": {`\n            `\"amount\": ,`\n            `\"currency\":` \n          `},`\n          `\"description\": ,`\n          `\"canonical_description\":` \n        `}`\n      `]`\n    `}, \"total_taxes\": {`\n      `\"totals\": [`\n`{`\n          `\"ytd_pay\": {`\n            `\"amount\": ,`\n            `\"currency\":` \n          `},`\n          `\"current_pay\": {`\n            `\"amount\": ,`\n            `\"currency\":` \n          `},`\n          `\"description\": ,`\n          `\"canonical_description\":` \n        `}`\n`],`\n      `\"subtotals\": [`\n        `{`\n          `\"ytd_pay\": {`\n            `\"amount\": ,`\n            `\"currency\":` \n          `},`\n          `\"current_pay\": {`\n            `\"amount\": ,`\n            `\"currency\":` \n          `},`\n          `\"description\": ,`\n          `\"canonical_description\":` \n        `}`\n      `]`\n    `},\"after_tax_deductions\": {`\n      `\"totals\": [`\n`{`\n          `\"ytd_pay\": {`\n            `\"amount\": ,`\n            `\"currency\":` \n          `},`\n          `\"current_pay\": {`\n            `\"amount\": ,`\n            `\"currency\":` \n          `},`\n          `\"description\": ,`\n          `\"canonical_description\":` \n        `}`\n`],`\n      `\"subtotals\": [`\n        `{`\n          `\"ytd_pay\": {`\n            `\"amount\": ,`\n            `\"currency\":` \n          `},`\n          `\"current_pay\": {`\n            `\"amount\": ,`\n            `\"currency\":` \n          `},`\n          `\"description\": ,`\n          `\"canonical_description\":` \n        `}`\n      `]`\n    `}}`",
+      "time": "08:46",
+      "timestamp": "1705423594.891939",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "I tried to get to this schema using clean prompt / UDF post table extraction. The complexity of the desired schema and presence of multiple data fields from the document makes it very difficult.",
+      "time": "08:47",
+      "timestamp": "1705423644.982159",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Varun Jain do you have a sample document? I'm curious what it looks like, and if we can recommend a better way in Build to extract this data",
+      "time": "14:36",
+      "timestamp": "1705444599.290889",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "@lydia These are fairly complex paystubs.\n\nI can’t share the customer samples. I’ve recorded (https://instabase.zoom.us/rec/share/JXdO5IqkkuPl-ObNjqWKfD-Fok_zithNO6IyyVwuivtfzLiRE31jkj6XtMhxdT6v.oEentHj7I9uHaymd) (Passcode: DG..yEX6) a walkthrough of the customer project which should give an idea of the documents and what they’re trying to achieve.\n\nLet me know if you have any ideas / follow up questions.",
+      "time": "19:49",
+      "timestamp": "1705463377.652439",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-01-16.json",
+    "message_count": 10,
+    "start_time": "1705418761.998519",
+    "end_time": "1705463377.652439",
+    "is_thread": true
+  }
+}

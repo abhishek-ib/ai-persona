@@ -1,0 +1,118 @@
+{
+  "id": "ch_CSY11CK7T_2024-12-09_1733771522.717139_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Liam Callanan",
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Also seeing `aihub-upsell.spec.ts` fail: `model-confidence-upsell-btn` isn’t found since `showCommercialUpsell` is `false` for some reason\nhttps://cloud.cypress.io/projects/cfhedy/runs/16187/overview/a8628e63-1d96-4a5f-91d2-[…]y?att=1&roarHideRunsWithDiffGroupsAndTags=1&ts=1733765275534 (https://cloud.cypress.io/projects/cfhedy/runs/16187/overview/a8628e63-1d96-4a5f-91d2-f3ccb9dab260/replay?att=1&roarHideRunsWithDiffGroupsAndTags=1&ts=1733765275534)",
+      "time": "11:12",
+      "timestamp": "1733771522.717139",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "somehow `<mailto:cypress-user-65872@instabase.com|cypress-user-65872@instabase.com>`, which is supposed to be a community user, is in the `cypress-drive-tests` org\n```{\n  \"status\": \"OK\",\n  \"repo\": {\n    \"owner\": \"cypress-drive-tests\",\n    \"name\": \"cypress-user-65872_instabase.com (http://cypress-user-65872_instabase.com)\",\n    \"description\": \"Organization repo for user cypress-user-65872_instabase.com (http://cypress-user-65872_instabase.com) in cypress-drive-tests\",\n    \"members\": {\n      \"collaborator\": [\n        {\n          \"type\": \"user\",\n          \"name\": \"cypress-user-65872_instabase.com (http://cypress-user-65872_instabase.com)\"\n        }\n      ],\n      \"accessor\": [],\n      \"admin\": []\n    },\n    \"is_admin\": false,\n    \"is_collaborator\": true,\n    \"visibility\": \"private\",\n    \"repo_type\": \"personal\",\n    \"metadata\": {\n      \"default_drive\": \"\"\n    }\n  }\n}```",
+      "time": "11:42",
+      "timestamp": "1733773379.796129",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’d recommend logging into crafting-cyp as site admin -> deleting this user -> rerun CI?\n\nunless @Xindi Xu you have a better suggestion?",
+      "time": "11:44",
+      "timestamp": "1733773441.014999",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "i think just rerunning CI could work. We create a new community user by adding it to the org and then removing it. Probably the removing step errored",
+      "time": "11:44",
+      "timestamp": "1733773483.370429",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "I think it’s using `CyUser.DEFAULT` & isn’t changing between reruns since it’s happened 3 times in a row now:\nhttps://github.com/instabase/instabase/pull/65872",
+      "time": "11:52",
+      "timestamp": "1733773936.782349",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`aihub-upsell` is logging in as <mailto:cypress-user-65872@instabase.com|cypress-user-65872@instabase.com>\n\nbut yes, i agree nothing has changed between reruns since the test failed for the same reason in the latest rerun (https://cloud.cypress.io/projects/cfhedy/runs/16194/test-results/67f2e586-bb46-4b5f-8239-2ae42f24dccd?actions=%5B%5D&browsers=%5B%5D&groups=%5B%5D&isFlaky=%5B%5D&modificationDateRange=%7B%22startDate%22:%221970-01-01%22,%22endDate%22:%222038-01-19%22%7D&orderBy=EXECUTION_ORDER&oses=%5B%5D&specs=%5B%7B%22label%22:%22apps/src/aihub/__e2e__/BuildApp/aihub-upsell.spec.ts%22,%22value%22:%22%5B%5C%22f07fe9bc-c6a0-4323-a0f9-9b2171e5ebbc%5C%22%5D%22%7D%5D&statuses=%5B%5D&testingTypesEnum=%5B%5D)",
+      "time": "11:54",
+      "timestamp": "1733774050.930949",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "`CyUser.DEFAULT` is mapping to `cypress-user-<pr number>` if it's not using the preexisting users.",
+      "time": "11:54",
+      "timestamp": "1733774083.554869",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "OK. Try removing the user from the org manually",
+      "time": "11:55",
+      "timestamp": "1733774109.790629",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "based on the code, it seems that we don’t try to re-create the user from scratch on reruns if the user exists\n\nso i think we need to manually remove this user from the `cypress-drive-tests` org",
+      "time": "11:55",
+      "timestamp": "1733774139.030539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "yep, i was wrong",
+      "time": "11:55",
+      "timestamp": "1733774149.481449",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i logged in using the “Cypress CI Drives” credentials on 1password and removed this user",
+      "time": "11:56",
+      "timestamp": "1733774210.886239",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the same error should not occur if `aihub-upsell` is rerun @Liam Callanan",
+      "time": "11:57",
+      "timestamp": "1733774223.300059",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-12-09.json",
+    "message_count": 12,
+    "start_time": "1733771522.717139",
+    "end_time": "1733774223.300059",
+    "is_thread": true
+  }
+}

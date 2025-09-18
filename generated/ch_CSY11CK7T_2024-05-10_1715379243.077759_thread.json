@@ -1,0 +1,53 @@
+{
+  "id": "ch_CSY11CK7T_2024-05-10_1715379243.077759_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yesterday, I added logic to save the license check in local storage. However, it doesn't seem to play nicely in cypress test retries :cry::\n`converse-app.spec.ts` failed on this unrelated PR (run (https://cloud.cypress.io/projects/cfhedy/runs/9666/overview/8aa39fbf-6d01-4ecf-824a-601e349afc10?roarHideRunsWithDiffGroupsAndTags=1)). Looking at the test replays for all 3 attempts:\n• the 1st attempt failed at `loadRecords` \n    ◦ It went through the `beforeAll` hook to log in in a new browser session\n• the last 2 attempts failed at wait `trialLicense` (`cy.wait() timed out waiting 5000ms for the 1st request to the route: trialLicense. No request ever occurred.` \n    ◦ It doesn't open up a new browser session so our code will skip the `trialLicense` api call. \nI think this can be fixed by moving the wait for `trialLicense` to the `before` hook and removing all the checks in the `beforeEach` hook and the test body.",
+      "time": "15:14",
+      "timestamp": "1715379243.077759",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I meant to put the `stubTrialLicenseCreation` function in the before hook everywhere, which test is the second screenshot from?",
+      "time": "15:49",
+      "timestamp": "1715381363.225029",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It's not related to `stubTrialLicenseCreation` . The problem is that we are calling `cy.wait('@trialLicense');` in test bodies or beforeEach hook that might be called multiple times within a test run. The above failed at test retries. If we call, say `openConverse`  multiple times, it will fail.\n\nI'm going to swap these wait with util function and check the localstorage first before waiting for the response",
+      "time": "15:52",
+      "timestamp": "1715381536.756279",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "PR for the fix: https://github.com/instabase/instabase/pull/57292",
+      "time": "18:38",
+      "timestamp": "1715391539.221969",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-05-10.json",
+    "message_count": 4,
+    "start_time": "1715379243.077759",
+    "end_time": "1715391539.221969",
+    "is_thread": true
+  }
+}

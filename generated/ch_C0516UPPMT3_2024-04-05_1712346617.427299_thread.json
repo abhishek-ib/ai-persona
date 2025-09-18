@@ -1,0 +1,102 @@
+{
+  "id": "ch_C0516UPPMT3_2024-04-05_1712346617.427299_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Bastiane",
+    "hannah",
+    "Kaustubh (KD)"
+  ],
+  "messages": [
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Hey! Sharing notes from a call with Velocity (one of our commercial customers). It was super informative as we watched Jessica one of their loan ops workers walk through the workflow she performs manually.\n\n• Jessica receives documents by mail corresponding to single loan case\n• She signs, stamps and scans them all into a single file\n• She emails the scanned document to herself\n• She downloads it\n• She manually splits the scanned file into individual documents based on the contents. She saves each document as a PDF. \n• She goes to salesforce (they have SF and nCino integrated)\n• She finds the corresponding \"placeholder\" for each document type in the loan case. She manually uploads each document into the appropriate placeholder.\n• She opens up the term note and verifies the note information against the information in nCino.\n• Subsequently, another person logs in and checks the documents are saved correctly and the information is correct\nVelocity is working on automating their end to end use case. The ideal state is something like:\n• Jessica emails the scanned copy to IB (note: email ingestion required)\n• IB receives the email and splits the packet into the following classes (about 50 potential classes) (note: larger scale classification required)\n• IB extracts out required information that needs to be verified for each document type\n• IB saves the split document into their salesforce under the corresponding placeholder (note: ability to access split documents without reconstructing from images - in progress @Wilson)\n• IB populates the extract data into the verification system (note: api integration required - this is done - they already have something working from IB to salesforce)\n• The secondary manual reviewer on their side verifies that the documents have been saved correctly and that the data is correct. Jessica may never need to log into salesforce.\nHere's access to the shared project as we test out split classification capabilities  (https://aihub-sandbox.internal.instabase.com/hub/build/88ff58fa-4a01-4ffa-a56c-9440c58789cb)to be able to solve this end to end if you'd like to take a look (cc: @lydia @Bastiane). Thread with questions! cc: @Andrew Sherrill",
+      "time": "12:50",
+      "timestamp": "1712346617.427299",
+      "is_reply": false
+    },
+    {
+      "sender": "Bastiane",
+      "user_id": "U046R81BMM4",
+      "message": "This is great! Thanks for sharing @hannah. Do we know more about those 50 classes? Are they all independent or have parent child relationships?",
+      "time": "12:55",
+      "timestamp": "1712346953.481689",
+      "is_reply": true
+    },
+    {
+      "sender": "Bastiane",
+      "user_id": "U046R81BMM4",
+      "message": "Regarding verifying notes against nCino, how is or will this be done? Is it currently done manually?",
+      "time": "12:57",
+      "timestamp": "1712347070.952819",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "First of all this is awesome! Great to see direct feedback! Hoping to see a ton more of this soon :slightly_smiling_face:\n\nA few questions/clarifications:\n• Why does she email the documents to herself? Is this to get past a certain security wall/system?\n• In the current flow where does she use IB? Or is this a flow for which she doesn't use IB today? \nThe ideal flow = upstream integration with email + downstream integration with SF (in this case). Interesting to see but it feels like the value add is in those integrations in addition to ofc the split classification.",
+      "time": "12:58",
+      "timestamp": "1712347136.770769",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Great questions! They are all independent classes. Here's a full (https://docs.google.com/document/d/1AhYi1vdqGkZbL4aQuPR1j6PU6oFhFxOD/edit) list. The manual verification happens in salesforce - they have a tab where they show the source data from ncino right next to the extracted data from AI Hub. This integration is already built.\n\nShe emails it to get it from the scanner to her work email address, so that she can then download the scanned document and manipulate it.\n\nRight now IB is only being used to extract values from a loan document and show them in salesforce next to the ncino documents. We don't do any of the splitting today. Our solution is not providing enough value right now.\n\nYes the integrations are what help automate end to end. I would say most of the value though is in splitting right now. Even if she could just upload the document to IB directly (without email ingestion) that would be extremely valuable to eliminate the manual work of splitting and saving. The downstream integration (just via API) is already built and needs to be extended once we have the splitting capability to save the docs in their required places.",
+      "time": "13:05",
+      "timestamp": "1712347549.748939",
+      "is_reply": true
+    },
+    {
+      "sender": "Bastiane",
+      "user_id": "U046R81BMM4",
+      "message": "That’s helpful context. We can definitely provide more value with splitting. Any part of the manual verification we can help automate, for example, through validation rules?",
+      "time": "13:14",
+      "timestamp": "1712348091.067879",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Would recommend taking a look at the project and trying to iterate on it. It's quite tedious to change classes on long documents (takes forever to load) and the splits are really sensitive, which have been leaving off pages of some of the files.\n\nI would say potentially to validation rules in the future, but that is low value right now.",
+      "time": "13:18",
+      "timestamp": "1712348293.141319",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Got the email part. I'm still not fully following where IB is in the flow today. Is it when she manually uploads each document into its placeholder?  Is there where the IB extracts values (and where IB today is integrated)? So it helps marginally when verifying the note information in Salesforce..?",
+      "time": "13:24",
+      "timestamp": "1712348660.931989",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "IB is not in a meaningful part of the flow right now - nothing is being used on their end",
+      "time": "13:28",
+      "timestamp": "1712348918.000909",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "The integration they have assumes that Jessica has manually split the scanned document, manually identified the \"term note\", saved it into the placeholder file that says \"term note\", goes to the tab called \"AI Hub\" that was built into their salesforce, initiates the flow from salesforce to extract info from the term note using IB, waits for the results to populate (high latency!!) and then compares the 8 or so fields extracted from the term note by IB to the data in ncino in their salesforce.",
+      "time": "13:29",
+      "timestamp": "1712348998.183339",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-04-05.json",
+    "message_count": 10,
+    "start_time": "1712346617.427299",
+    "end_time": "1712348998.183339",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "id": "ch_C06FA6A23_2021-07-15_1626358103.135900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Heymian",
+    "John St",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "hey everyone, sometimes I get this when trying to run `make build-docker run-docker-proxy`  in `server-nginx` .\n\n``` > [2/6] RUN apt-get update -y:\n#5 0.348 Get:1 http://security.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]\n#5 0.454 Err:1 http://security.ubuntu.com/ubuntu bionic-security InRelease\n#5 0.454   At least one invalid signature was encountered.\n#5 0.477 Get:2 http://archive.ubuntu.com/ubuntu bionic InRelease [242 kB]\n#5 0.885 Err:2 http://archive.ubuntu.com/ubuntu bionic InRelease\n#5 0.885   At least one invalid signature was encountered.\n#5 0.913 Get:3 http://archive.ubuntu.com/ubuntu bionic-updates InRelease [88.7 kB]\n#5 0.996 Err:3 http://archive.ubuntu.com/ubuntu bionic-updates InRelease\n#5 0.996   At least one invalid signature was encountered.\n#5 1.019 Get:4 http://archive.ubuntu.com/ubuntu bionic-backports InRelease [74.6 kB]\n#5 1.093 Err:4 http://archive.ubuntu.com/ubuntu bionic-backports InRelease\n#5 1.093   At least one invalid signature was encountered.\n#5 1.097 Reading package lists...\n#5 1.109 W: GPG error: http://security.ubuntu.com/ubuntu bionic-security InRelease: At least one invalid signature was encountered.\n#5 1.109 E: The repository 'http://security.ubuntu.com/ubuntu bionic-security InRelease' is not signed.\n#5 1.109 W: GPG error: http://archive.ubuntu.com/ubuntu bionic InRelease: At least one invalid signature was encountered.\n#5 1.109 E: The repository 'http://archive.ubuntu.com/ubuntu bionic InRelease' is not signed.\n#5 1.109 W: GPG error: http://archive.ubuntu.com/ubuntu bionic-updates InRelease: At least one invalid signature was encountered.\n#5 1.109 E: The repository 'http://archive.ubuntu.com/ubuntu bionic-updates InRelease' is not signed.\n#5 1.109 W: GPG error: http://archive.ubuntu.com/ubuntu bionic-backports InRelease: At least one invalid signature was encountered.\n#5 1.109 E: The repository 'http://archive.ubuntu.com/ubuntu bionic-backports InRelease' is not signed.\n------\nexecutor failed running [/bin/sh -c apt-get update -y]: exit code: 100\nmake[1]: *** [build] Error 1\nmake: *** [fetch-www-pages] Error 2```\nAny ideas why? I usually have to run `docker system prune`  then I get to spend 30 minutes rebuilding everything :upside_down_face: . Can someone help me avoid that? :thank_you:",
+      "time": "07:08",
+      "timestamp": "1626358103.135900",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "what’s the size of your docker partition? maybe try bumping that up a bunch. 100GB?",
+      "time": "07:17",
+      "timestamp": "1626358633.136800",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Dang, maybe I do need to prune since I’m using that much?",
+      "time": "07:33",
+      "timestamp": "1626359637.137000",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i have it set to 100GB, and i need to run `docker system prune` only every couple of months",
+      "time": "07:43",
+      "timestamp": "1626360201.137800",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "do you have to run prune very often?",
+      "time": "07:43",
+      "timestamp": "1626360205.138000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "how much is left after you run prune?",
+      "time": "07:57",
+      "timestamp": "1626361039.138400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i sometimes do a bunch of manual pruning as well to keep it down. If you do “docker images” and see a bunch of really old images still in there, you can do “docker rmi <docker-image-name>:<version> to manually remove it.",
+      "time": "07:58",
+      "timestamp": "1626361126.140600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "it usually blows up for me whenever new base containers are built. you can delete all docker images with old base container versions.",
+      "time": "07:59",
+      "timestamp": "1626361177.141600",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "I got it down to about 70GBs I’m doing more pruning",
+      "time": "09:29",
+      "timestamp": "1626366564.142100",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Got some old stuff in there right now",
+      "time": "09:29",
+      "timestamp": "1626366571.142300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yeah keep going, you can probably get it down to 30gb if you keep `rmi`-ing aggressively",
+      "time": "09:31",
+      "timestamp": "1626366664.142500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-07-15.json",
+    "message_count": 11,
+    "start_time": "1626358103.135900",
+    "end_time": "1626366664.142500",
+    "is_thread": true
+  }
+}

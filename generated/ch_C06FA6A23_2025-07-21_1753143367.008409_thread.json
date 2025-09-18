@@ -1,0 +1,109 @@
+{
+  "id": "ch_C06FA6A23_2025-07-21_1753143367.008409_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "neerad.phansalkar",
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "We seem to be installing poetry during builds and its leading to failures in CI (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-72632/6/pipeline/) like:\n```[2025-07-21T23:02:20.156Z] otel-cli exec --endpoint https://otelcol-jenkins-preprod.infra.instabase.com:4317 --protocol grpc --service jenkins-preprod --name \"make build-default\" --verbose --attrs makefile.include.depth=4,makefile.cwd=/instabase_dir/shared-utils/test-utils/src/runtest,gh.pr.number=72632,ci.pipeline.id=instabase/PR-72632,ci.pipeline.run.number=6 -- sh -c 'python /instabase_dir/shared-utils/py-utils/ibllm/../../../shared-utils/build-utils/shared/src/py/create_init.py --root /instabase_dir/shared-utils/py-utils/ibllm/build/py; '\n[2025-07-21T23:02:20.156Z] curl -sSL https://install.python-poetry.org | POETRY_HOME=~/poetry python3 - --version 1.4.1\n[2025-07-21T23:02:20.156Z] Retrieving Poetry metadata\n[2025-07-21T23:02:20.156Z] \n[2025-07-21T23:02:20.156Z] # Welcome to Poetry!\n[2025-07-21T23:02:20.156Z] \n[2025-07-21T23:02:20.156Z] This will download and install the latest version of Poetry,\n[2025-07-21T23:02:20.156Z] a dependency and package manager for Python.\n[2025-07-21T23:02:20.156Z] \n[2025-07-21T23:02:20.156Z] It will add the `poetry` command to Poetry's bin directory, located at:\n[2025-07-21T23:02:20.156Z] \n[2025-07-21T23:02:20.156Z] /root/poetry/bin\n[2025-07-21T23:02:20.156Z] \n[2025-07-21T23:02:20.156Z] You can uninstall at any time by executing this script with the --uninstall option,\n[2025-07-21T23:02:20.156Z] and these changes will be reverted.\n[2025-07-21T23:02:20.156Z] \n[2025-07-21T23:02:20.156Z] Installing Poetry (1.4.1)\n[2025-07-21T23:02:20.156Z] Installing Poetry (1.4.1): Saving existing environment\n[2025-07-21T23:02:20.156Z] Installing Poetry (1.4.1): Creating environment\n[2025-07-21T23:02:20.156Z] Installing Poetry (1.4.1): An error occurred. Removing partial environment.\n[2025-07-21T23:02:20.156Z] Traceback (most recent call last):\n[2025-07-21T23:02:20.156Z]   File \"<stdin>\", line 653, in make_env\n[2025-07-21T23:02:20.156Z]   File \"<stdin>\", line 366, in make\n[2025-07-21T23:02:20.156Z]   File \"<stdin>\", line 389, in pip\n[2025-07-21T23:02:20.156Z]   File \"<stdin>\", line 386, in python\n[2025-07-21T23:02:20.156Z]   File \"<stdin>\", line 379, in run\n[2025-07-21T23:02:20.156Z] __main__.PoetryInstallationError\n[2025-07-21T23:02:20.156Z] \n[2025-07-21T23:02:20.156Z] During handling of the above exception, another exception occurred:\n[2025-07-21T23:02:20.156Z] \n[2025-07-21T23:02:20.156Z] Traceback (most recent call last):\n[2025-07-21T23:02:20.156Z]   File \"<stdin>\", line 959, in <module>\n[2025-07-21T23:02:20.156Z]   File \"<stdin>\", line 937, in main\n[2025-07-21T23:02:20.156Z]   File \"<stdin>\", line 574, in run\n[2025-07-21T23:02:20.156Z]   File \"<stdin>\", line 595, in install\n[2025-07-21T23:02:20.156Z]   File \"/home/jenkins/pyenv/versions/3.9.17/lib/python3.9/contextlib.py\", line 119, in __enter__\n[2025-07-21T23:02:20.156Z]     return next(self.gen)\n[2025-07-21T23:02:20.156Z]   File \"<stdin>\", line 659, in make_env\n[2025-07-21T23:02:20.156Z]   File \"/home/jenkins/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 734, in rmtree\n[2025-07-21T23:02:20.156Z]     _rmtree_safe_fd(fd, path, onerror)\n[2025-07-21T23:02:20.156Z]   File \"/home/jenkins/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 667, in _rmtree_safe_fd\n[2025-07-21T23:02:20.156Z]     _rmtree_safe_fd(dirfd, fullname, onerror)\n[2025-07-21T23:02:20.156Z]   File \"/home/jenkins/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 667, in _rmtree_safe_fd\n[2025-07-21T23:02:20.156Z]     _rmtree_safe_fd(dirfd, fullname, onerror)\n[2025-07-21T23:02:20.156Z]   File \"/home/jenkins/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 667, in _rmtree_safe_fd\n[2025-07-21T23:02:20.156Z]     _rmtree_safe_fd(dirfd, fullname, onerror)\n[2025-07-21T23:02:20.156Z]   [Previous line repeated 1 more time]\n[2025-07-21T23:02:20.156Z]   File \"/home/jenkins/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 673, in _rmtree_safe_fd\n[2025-07-21T23:02:20.156Z]     onerror(os.rmdir, fullname, sys.exc_info())\n[2025-07-21T23:02:20.156Z]   File \"/home/jenkins/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 671, in _rmtree_safe_fd\n[2025-07-21T23:02:20.156Z]     os.rmdir(entry.name, dir_fd=topfd)\n[2025-07-21T23:02:20.156Z] OSError: [Errno 39] Directory not empty: 'seed'\n[2025-07-21T23:02:20.156Z] make[2]: *** [/instabase_dir/shared-utils/py-utils/ibllm/../../../shared-utils/build-utils/shared/build-python.mk:62: install-poetry] Error 1\n[2025-07-21T23:02:20.157Z] make[2]: Leaving directory '/instabase_dir/shared-utils/py-utils/ibllm'```\n@Cody Boggs might be related to this change (https://github.com/instabase/instabase/pull/72637) from you. Could you please take a look?",
+      "time": "17:16",
+      "timestamp": "1753143367.008409",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":eyes:",
+      "time": "17:17",
+      "timestamp": "1753143450.790639",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh, that's odd, I didn't think this would get called during pre-merge. I must have left a reference in a wrong spot, looking",
+      "time": "17:18",
+      "timestamp": "1753143492.114569",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh crap, yea I left it as a prereq for `update-python: install-poetry`\n\n:man-facepalming::skin-tone-3: Sorry! Fixing",
+      "time": "17:19",
+      "timestamp": "1753143566.978439",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "PR: https://github.com/instabase/instabase/pull/72647\n@neerad.phansalkar I also cherry-picked that commit to your PR branch to see if it's a valid fix for your case, since mine won't actually trigger the same tests :man-facepalming::skin-tone-3:",
+      "time": "17:24",
+      "timestamp": "1753143883.913859",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "Sounds good, thanks!",
+      "time": "17:25",
+      "timestamp": "1753143956.583439",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Hmm, so now api-server's tests fail though, which is _extra_ strange",
+      "time": "18:04",
+      "timestamp": "1753146266.892029",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Although all of them fail with\n```18:32:21  E     AssertionError: <HTTPStatus.INTERNAL_SERVER_ERROR: 500> != 401```\nWhich seems very \"not related to this change\" but I'm uncertain",
+      "time": "18:05",
+      "timestamp": "1753146328.165449",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Rebuild passed, so I'll assume it's transient error for now. :+1:",
+      "time": "18:18",
+      "timestamp": "1753147090.483089",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "Failures on my PR are related to flaky db tests, so the poetry issue is solved",
+      "time": "18:20",
+      "timestamp": "1753147224.553309",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Nice! Merged master, backport will merge once its pre-merge passes",
+      "time": "18:23",
+      "timestamp": "1753147394.351789",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-07-21.json",
+    "message_count": 11,
+    "start_time": "1753143367.008409",
+    "end_time": "1753147394.351789",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "id": "ch_C05L87V014J_2025-02-05_1738772872.096139_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe",
+    "pauline.comising"
+  ],
+  "messages": [
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Hey team, I created a sandbox (https://instabase.sandboxes.site/sandboxes/paulinecomising1?cw=dev) today and I'm getting `FAIL`-status probes for a couple of services with `dial tcp 169.254.16.1:9500: connect: connection refused` errors + the `pip install PyGithub` error mentioned in above threads.\n\nI've set up pyenv as recommended by this thread (https://instabase.slack.com/archives/C05L87V014J/p1736941276624519?thread_ts=1736903131.706169&cid=C05L87V014J) which was linked from this similar `connection refused` thread (https://instabase.slack.com/archives/C05L87V014J/p1737123193677119?thread_ts=1737121517.322719&cid=C05L87V014J) then ran `cs restart`, but this didn't resolve all probe failures. As for the second issue, I ran `pyenv global 3.9.17` and restarted the dev workspace, but didn't see the `PostCheckout:instabase` error resolve. Could I get some tips of other things to try to get my sandbox working and healthy?",
+      "time": "08:27",
+      "timestamp": "1738772872.096139",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hey there! Did you also do a pip install of pygithub after setting the global version to 3.9.17?",
+      "time": "09:15",
+      "timestamp": "1738775713.301599",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Ah good call haha, just ran both in the dev terminal, `cs restart`ed and restarted the workspace. I don't see any difference in the probes and setup sections, are there any other steps I need to do after the installing?",
+      "time": "09:22",
+      "timestamp": "1738776151.628569",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "mmm there shouldn't be, I'm going to hop on your sandbox terminal to see if anything is messing with the expected configs",
+      "time": "09:42",
+      "timestamp": "1738777324.751409",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "kk figured it out, I updated `~/instabase/.sandbox/ibdev-backend/hooks/post-checkout` to run `pyenv global 3.9.17` as it was setting to 3.7.3 (i.e. always overriding the version)",
+      "time": "09:53",
+      "timestamp": "1738777991.264689",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ack, I was about to say :0",
+      "time": "09:53",
+      "timestamp": "1738778024.284989",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Do we even need that pyenv global line anymore?",
+      "time": "09:54",
+      "timestamp": "1738778053.541059",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": ":saluting_face: I can put up a PR to update that on master if you haven't already!",
+      "time": "09:54",
+      "timestamp": "1738778053.890939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ditto nodenv install/nodenv global?",
+      "time": "09:54",
+      "timestamp": "1738778063.378529",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, I pulled this snippet from the ibdev template originally, so that template needs an update as well.",
+      "time": "09:54",
+      "timestamp": "1738778099.340239",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah we shouldn't need either of the globals anymore -- I think we still will want the install for nodenv since that can technically change based on the release branch that's checked out",
+      "time": "09:55",
+      "timestamp": "1738778107.007379",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hmm...I guess the same is true of Python as well, right?",
+      "time": "09:55",
+      "timestamp": "1738778142.095749",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "and yeah I updated the ibdev template to `pyenv global 3.9.17` -- that template needs a ton of TLC and I'd rather people use ibdev-backend now regardless, so I'm treating it as maintenance mode only :stuck_out_tongue:",
+      "time": "09:55",
+      "timestamp": "1738778147.325019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Well, I suppose then this post-checkout script would be different anyway",
+      "time": "09:55",
+      "timestamp": "1738778154.042289",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "and python we actually install as part of the base image because it takes so long to run a `pyenv install` -- we could include it for sandboxes which are out of date with the base snapshot, but I suspect that will lead to people being confused why their turn up steps are taking forever to complete if/when we upgrade python in the future",
+      "time": "09:56",
+      "timestamp": "1738778217.057479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://github.com/instabase/instabase/pull/67767",
+      "time": "09:57",
+      "timestamp": "1738778258.717259",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Fair!",
+      "time": "09:57",
+      "timestamp": "1738778273.478009",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "lgtm, thank you sir!",
+      "time": "09:58",
+      "timestamp": "1738778306.514389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "w/ a docker-based image, dealing with the language versions becomes a lot easier",
+      "time": "09:59",
+      "timestamp": "1738778362.371359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Just a side thought",
+      "time": "09:59",
+      "timestamp": "1738778392.553889",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "10000%, plus no more weird ansible stuff that isn't used anywhere else in our repo :stuck_out_tongue:",
+      "time": "10:00",
+      "timestamp": "1738778400.429829",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "There's a lot of things that get set up in the ansible image; it may take a while to convert it over...hmm",
+      "time": "10:00",
+      "timestamp": "1738778435.372309",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I'm in the process of working on a poc with docker bake -- I've got a basic image used for a sandbox successfully, so should be (hopefully) not too bad",
+      "time": "10:00",
+      "timestamp": "1738778448.862389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Nice!",
+      "time": "10:01",
+      "timestamp": "1738778510.568119",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "plus, if the docker bake route seems agreeable, we'll be able to do things like `docker buildx bake instabase-dev` and `docker buildx bake cypress` and things should \"just work\" :eyes:",
+      "time": "10:02",
+      "timestamp": "1738778525.370889",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Give it a shot and see how it goes!",
+      "time": "10:02",
+      "timestamp": "1738778566.332069",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-02-05.json",
+    "message_count": 26,
+    "start_time": "1738772872.096139",
+    "end_time": "1738778566.332069",
+    "is_thread": true
+  }
+}

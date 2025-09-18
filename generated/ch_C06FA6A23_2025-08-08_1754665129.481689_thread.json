@@ -1,0 +1,137 @@
+{
+  "id": "ch_C06FA6A23_2025-08-08_1754665129.481689_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Cody Boggs",
+    "Anil",
+    "Sayan",
+    "abhijnan",
+    "Victor Zeng"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hey all, noticed that api-server builds are failing --\n\n```76.13 Failed to build blis\n76.19 error: failed-wheel-build-for-install\n76.19\n76.19 × Failed to build installable wheels for some pyproject.toml based projects\n76.19 ╰─> blis\n------\nDockerfile:13\n--------------------\n  12 |     COPY requirements.txt /tmp/\n  13 | >>> RUN apk add --no-cache \\\n  14 | >>>         build-base \\\n  15 | >>>         git \\\n  16 | >>>     && pip install --no-cache-dir --upgrade pip setuptools wheel \\\n  17 | >>>     && pip install --no-cache-dir -r /tmp/requirements.txt \\\n  18 | >>>     && rm -rf /usr/local/lib/python3.9/site-packages/spacy/tests/* \\\n  19 | >>>     && apk del --no-cache --purge --rdepends \\\n  20 | >>>         build-base \\\n  21 | >>>         git \\\n  22 | >>>     && rm -rf \\\n  23 | >>>         /tmp/requirements.txt \\\n  24 | >>>     && if [ \"$USE_DEBUGPY\" = \"true\" ]; then \\\n  25 | >>>         pip install debugpy; \\\n  26 | >>>     fi```",
+      "time": "07:58",
+      "timestamp": "1754665129.481689",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Sonnet 4 Thinking is on the case",
+      "time": "08:10",
+      "timestamp": "1754665853.273789",
+      "is_reply": true
+    },
+    {
+      "sender": "abhijnan",
+      "user_id": "U056NM536PP",
+      "message": "This PR (https://github.com/instabase/instabase/pull/73485) upgrades blis and blis 1.2.1 builds from source on py3.9 which causes issues on jenkins (timeouts iirc)",
+      "time": "08:12",
+      "timestamp": "1754665949.319209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I wish `pip` gave better error messages when a package fails...",
+      "time": "08:15",
+      "timestamp": "1754666139.172979",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Do we have a fix for this? Or should we revert the PR @mfichman @Victor Zeng",
+      "time": "10:40",
+      "timestamp": "1754674826.119899",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "yup it is a 1.2.1 issue. Changing it back to 1.2.0 fixes it.",
+      "time": "10:43",
+      "timestamp": "1754675013.270629",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I ended up manually editing the requirements file to 1.2.0 to unblock",
+      "time": "10:43",
+      "timestamp": "1754675026.370049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```diff --git a/webserver/api-server/Dockerfile b/webserver/api-server/Dockerfile\nindex d575cc6bb7a..643236f1f67 100644\n--- a/webserver/api-server/Dockerfile\n+++ b/webserver/api-server/Dockerfile\n@@ -14,6 +14,9 @@ RUN apk add --no-cache \\\n         build-base \\\n         git \\\n     && pip install --no-cache-dir --upgrade pip setuptools wheel \\\n+    && pip install --no-cache-dir cython numpy \\\n+    && BLIS_ARCH=generic pip install --no-cache-dir --no-build-isolation blis==1.2.1 \\\n+    && pip install --no-cache-dir spacy-legacy spacy-loggers \\\n     && pip install --no-cache-dir -r /tmp/requirements.txt \\\n     && rm -rf /usr/local/lib/python3.9/site-packages/spacy/tests/* \\\n     && apk del --no-cache --purge --rdepends \\```\nThis fixed it too",
+      "time": "10:46",
+      "timestamp": "1754675165.940689",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ugh yea blis doesn't have wheels for 3.9.x :face_with_rolling_eyes: Has been a pain in my neck before, but I only dealt with a small set of things that use it so I didn't by any means update all of those using it transitively :sob:",
+      "time": "12:49",
+      "timestamp": "1754682588.924949",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "I'll do a partial revert.",
+      "time": "13:03",
+      "timestamp": "1754683412.478249",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "just raised a PR to pin blis to 1.2.0",
+      "time": "13:03",
+      "timestamp": "1754683424.819429",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "https://github.com/instabase/instabase/pull/73511",
+      "time": "13:03",
+      "timestamp": "1754683425.339839",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "no need to revert",
+      "time": "13:04",
+      "timestamp": "1754683443.494969",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "That works too.",
+      "time": "13:04",
+      "timestamp": "1754683447.856929",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-08-08.json",
+    "message_count": 14,
+    "start_time": "1754665129.481689",
+    "end_time": "1754683447.856929",
+    "is_thread": true
+  }
+}

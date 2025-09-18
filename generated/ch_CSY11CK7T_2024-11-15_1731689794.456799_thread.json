@@ -1,0 +1,103 @@
+{
+  "id": "ch_CSY11CK7T_2024-11-15_1731689794.456799_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Weiming Wu",
+    "Xindi Xu",
+    "tony.shi",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Hey! I seem to see some strange behaviour in a https://snp-pov.internal.instabase.com/ where navigating away from the browser causes a refresh of the login page. This does not happen on aihub prod. Can please take a look to see if this is expected? Thanks!\n\nhttps://zoom.us/clips/share/q4SGLLGMubCM6moo7gxSsVTTUAYgtuec6JRlVopMWLgjNltnNgoIiWI60okyvaZ_BI8Iv1R7.xrE6iiUSw67nzU8R\nPasscode: 4Bp$DFtM",
+      "time": "08:56",
+      "timestamp": "1731689794.456799",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @Xindi Xu",
+      "time": "10:01",
+      "timestamp": "1731693704.364659",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Should be a bug :cry: . I can reproduce it locally. I'll look into it. Thanks for reporting!",
+      "time": "10:04",
+      "timestamp": "1731693866.121329",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think this has to do with the fact that we are refetching api requests when the user focus out/in the browser window using react query.",
+      "time": "10:06",
+      "timestamp": "1731693987.983889",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I was able to fix this by disabling refetching on window focus for the get feature flags endpoint.\nThe issue is obvious on this page because we tried to mount a completely different page based on the `ENABLE_HOMEPAGE_REFRESH` state. During this unmount and remount process, the log in modal gets reset. This is even more obvious in ST aihub env where the login modal is always open.\n@Weiming Wu - are we ready to remove the feature flag `ENABLE_HOMEPAGE_REFRESH` ? I think removing the feature flag can resolve this issue completely + make ST AIHub landing page the same before/after logging in.",
+      "time": "10:13",
+      "timestamp": "1731694418.142119",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I can reproduce it on aihub-sandbox, but not aihub-uat and aihub-prod...",
+      "time": "10:19",
+      "timestamp": "1731694754.060659",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "We definitely can remove the flag lol\nWe've had it out for months now",
+      "time": "10:19",
+      "timestamp": "1731694795.973389",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Perfect! Thank you!",
+      "time": "10:20",
+      "timestamp": "1731694812.799649",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'll put up a PR to remove the flag",
+      "time": "10:24",
+      "timestamp": "1731695093.970609",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It turns out that the home page feature flag has nothing to do with this bug!\n\nPR for fixing the bug:\nhttps://github.com/instabase/instabase/pull/65145\nPR for removing the feature flag:\nhttps://github.com/instabase/instabase/pull/65144",
+      "time": "11:23",
+      "timestamp": "1731698612.971429",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-11-15.json",
+    "message_count": 10,
+    "start_time": "1731689794.456799",
+    "end_time": "1731698612.971429",
+    "is_thread": true
+  }
+}

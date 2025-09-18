@@ -1,0 +1,70 @@
+{
+  "id": "ch_C06FA6A23_2024-08-13_1723580951.340359_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "tony.shi",
+    "Jessica",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I usually run server-nginx (legacy platform) locally with `RELOAD=true && make build-docker run-docker-proxy` , but I just pulled master for the first time in a ~week and I'm now getting this error:\n``` => CANCELED [internal] load metadata for gcr.io/instabase-build/container-base:24.02.07.18.40.50 (http://gcr.io/instabase-build/container-base:24.02.07.18.40.50)                                                                                                                                          0.5s\n => ERROR [internal] load metadata for docker.io/jekyll/jekyll:4.2.2 (http://docker.io/jekyll/jekyll:4.2.2)                                                                                                                                                                       0.5s\n------\n > [internal] load metadata for docker.io/jekyll/jekyll:4.2.2 (http://docker.io/jekyll/jekyll:4.2.2):\n------\nDockerfile:11\n--------------------\n   9 |     # This will remain stuck pulling from DockerHub until this image is made compliant with new\n  10 |     # build infra requirements.\n  11 | >>> FROM jekyll/jekyll:4.2.2 AS www_builder\n  12 |     RUN gem install public_suffix -v 4.0.7\n  13 |     RUN gem install addressable -v 2.8.0\n--------------------\nERROR: failed to solve: jekyll/jekyll:4.2.2: error getting credentials - err: exit status 1, out: `````\nI also have to run it with `sudo` or I get this error: `cp: /Users/jessicacampos/dev/src/instabase/webserver/server-nginx/build/config/.htpasswd: Permission denied`\n\nHas something changed recently?",
+      "time": "13:29",
+      "timestamp": "1723580951.340359",
+      "is_reply": false
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "I think I'm having this as well! Using the ppy script:\n```INFO - Stopping service=server-nginx\nERROR - Could not start service - server-nginx. Error: b'# At the very least, you should make sure webapp is running and listening on port 5000.\\n# Run `make run-docker` will suffice in webserver/webapp/\\n# If you are a chrome user you will need to enable \"insecure\" localhost:\\n# <chrome://flags/#allow-insecure-localhost>\\n# On linux use this command instead:\\n# docker run --add-host=host.docker.internal: \\\\\\n\\t#  --name instabase-server-nginx --env-file localsettings.env \\\\\\n\\t#  -p 443:8081 -p 80:8080 --rm -t -i instabase/server-nginx\\ndocker run --detach --name instabase-server-nginx --platform linux/amd64 \\\\\\n\\t-v /Users/tonyshi/instabase/webserver/server-nginx/build/certificates:/etc/nginx/certificates \\\\\\n\\t--env-file localsettings.env \\\\\\n\\t-p 443:8081 -p 80:8080 --rm -t -i instabase/server-nginx\\n' Stdout: b\"Makefile:242: warning: overriding commands for target `publish-svc-prod-gc'\\n/Users/tonyshi/instabase/webserver/server-nginx/../../shared-utils/build-utils/shared/deploy.mk:965: warning: ignoring old commands for target `publish-svc-prod-gc'\\nUnable to find image 'instabase/server-nginx:latest' locally\\ndocker: Error response from daemon: pull access denied for instabase/server-nginx, repository does not exist or may require 'docker login': denied: requested access to the resource is denied.\\nSee 'docker run --help'.\\nmake: *** [run-docker-proxy] Error 125\\n\"```\nSeems like a credential thing? I've tried exporting the latest aws token and that hasen't worked either",
+      "time": "17:11",
+      "timestamp": "1723594271.894309",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "I've found a temporary fix! If you go back to release-24.04.0-enterprise and compile + restart server nginx before going back to master/your dev branch, the old version of server nginx still works for now",
+      "time": "17:54",
+      "timestamp": "1723596878.927289",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "could this be related to https://instabase.slack.com/archives/C0106JV0TFS/p1722534877639979?\n\nhave you guys generated a new personal access token and gone through `docker login` again as documented here (https://docs.docker.com/security/for-developers/access-tokens/?mkt_tok=NzkwLVNTQi0zNzUAAAGUrgTbeJ0rUIBMLcSE1sxkhKziRzqB6C1n96UnjNBc_1npZLTIYfB_8a16Ue7XyL8HPWuGImJunFac-hAO2M75G5Ccld8U7I9m4r3yzMIp4qM)?",
+      "time": "20:08",
+      "timestamp": "1723604894.478949",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I have not, thanks Serena!! I think the timing would be right for when it stopped working...",
+      "time": "20:11",
+      "timestamp": "1723605078.186499",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw i googled the error message and found this thread (https://forums.docker.com/t/error-failed-to-solve-error-getting-credentials-err-exit-status-1-out/136124/10), which suggests redo-ing `docker login` - hopefully that works for you!",
+      "time": "20:14",
+      "timestamp": "1723605280.161559",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-08-13.json",
+    "message_count": 6,
+    "start_time": "1723580951.340359",
+    "end_time": "1723605280.161559",
+    "is_thread": true
+  }
+}

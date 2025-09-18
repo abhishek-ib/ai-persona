@@ -1,0 +1,86 @@
+{
+  "id": "ch_C05L87V014J_2025-03-03_1741037961.004999_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "mfichman",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I noticed that in the crafting sandbox with `ib-dev-backend` template, we still need to install some python packages when generating protos stubs or running system tests. Am I missing some setup instructions? Should we include installing all Python dependencies as part of the setup script/guide?",
+      "time": "13:39",
+      "timestamp": "1741037961.004999",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "You're not missing anything! We should update this (https://github.com/instabase/instabase/blob/master/platform/crafting/docker/docker-bake.hcl#L72) with any packages that are broadly useful, and add any others to the docs :slightly_smiling_face:",
+      "time": "13:41",
+      "timestamp": "1741038115.494869",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ohh! Makes sense. Thanks for the pointer",
+      "time": "13:43",
+      "timestamp": "1741038222.500279",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "So i found that it works if I activate poetry in api-server and install the packages there\n```cd webserver/api-server\npoetry install --with dev\npoetry shell\n\n# make proto\nmake build-protos FAST=false\n\n# run system tests\ncd shared-utils/py-utils/system-tests\nmake run-system-test SYSTEM_TEST_SUITE=release-24.07.0-enterprise TEST_CONFIG_JSON_PATH=/home/owner/instabase/tools/releasetools/jenkins/system_test_config.json TEST_NAMES=test_saml```\nShould we let devs follow the same thing so that package versions are only defined in api-server's `pyproject.toml` file?",
+      "time": "13:59",
+      "timestamp": "1741039179.693849",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I was trying to figure out which dependences are needed to pull them into the file you linked, but found that there are quite a lot of them",
+      "time": "14:00",
+      "timestamp": "1741039220.419719",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I mean I personally think that is a fantastic idea, and I know people have pitched using api-server's package requirements as a good \"base\" in the past -- we could even do a `pip install`  of its exported requirements.txt if `poetry shell` is too much of a hurdle for people :slightly_smiling_face:",
+      "time": "14:01",
+      "timestamp": "1741039299.192069",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, I like that package versions are managed in 1 place. But I found it odd that the api-server is the \"base\" even if I'm trying to run stuff in shared-utils/py-utils :sweat_smile:",
+      "time": "14:03",
+      "timestamp": "1741039425.079759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For what it’s worth poetry shell is the way that I generate the protos",
+      "time": "16:12",
+      "timestamp": "1741047179.224469",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-03.json",
+    "message_count": 8,
+    "start_time": "1741037961.004999",
+    "end_time": "1741047179.224469",
+    "is_thread": true
+  }
+}

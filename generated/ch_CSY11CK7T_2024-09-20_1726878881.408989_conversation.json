@@ -1,0 +1,28 @@
+{
+  "id": "ch_CSY11CK7T_2024-09-20_1726878881.408989_conversation",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "conversation",
+  "participants": [
+    "Xindi Xu"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ":cypress-spin: *Summary for Cypress On-Call for Sept 16-20*\nTest Failures & takeaways\n• edit-account failed due to timeouts (https://instabase.slack.com/archives/CSY11CK7T/p1726505123484919) – I put 4 requests in one `cy.then()` block and the default timeout is 15s (overwritten by us). We can do this `cy.then({ timeout: 60_000 })` to increase the timeout! Or, we can use `cy.request` so that we have 30s timeout for each request and also has better debugging support in Cypress Dashboard\n• Create orgs in PRs created  (https://instabase.slack.com/archives/CSY11CK7T/p1726520008451329) 24 hours ago>: we discovered a backend bug! Metronome flushes the idempotency cache after 24 hours, so Cypress tries to create another org after 24 hours, the backend sends an invalid request to Metronome and causes create org failures. The fix was to check if the org already has a Metronome customer/plan before calling Metronome (ty Victor!)\n• review-manager-dashboard and review-reviewer-dashboard failed (https://instabase.slack.com/archives/CSY11CK7T/p1726589565474439) and fixed by Udit \n• view-home-page.spec.ts failed (https://instabase.slack.com/archives/CSY11CK7T/p1726604681860109) because we didn't clean up \"New Conversation\" projects so the project side nav takes forever to open. This is fixed by Serena\n• After the Pollen upgrade, existing crafting sandboxes will error with \"can't create styled-components\" (https://instabase.slack.com/archives/CSY11CK7T/p1726697345794819). Cypress CI pipeline will skip running `yarn install` to update pkg dependency if it's cached. One easy way to solve it is to delete the sandbox and re-run Cypress (ty Jessica)\n• workspace-settings failed because we have too many users that we failed to clean up (https://instabase.slack.com/archives/CSY11CK7T/p1726848621656219), This helped us find a backend bug: we don't clean up user's licenses if `ENABLE_LICENSING` env var is set to false. We didn't pass this env var to core-platform-service so users' licenses remained in the DB and we failed to delete the user row. I fixed the patch and confirmed that with the patch, we can force delete users.\nAction items:\n• Cypress in PRs > 7 days will fail with the \"7 days left free trial\" modal. This has happened 3 times so far and I've been manually extending the trial. We can consider setting `AIHUB_COMMERCIAL_FREE_TRIAL_DURATION` to a longer day or look into creating a paid plan for each org @Victor Zeng @Xindi Xu \n• Put back the PR to abort Cypress when org creation failed @Xindi Xu \n• Set `workspace-settings` back to non-blocking @Jessica",
+      "time": "17:34",
+      "timestamp": "1726878881.408989",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-09-20.json",
+    "message_count": 1,
+    "start_time": "1726878881.408989",
+    "end_time": "1726878881.408989",
+    "is_thread": false
+  }
+}

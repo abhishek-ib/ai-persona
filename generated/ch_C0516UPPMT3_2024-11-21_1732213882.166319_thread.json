@@ -1,0 +1,142 @@
+{
+  "id": "ch_C0516UPPMT3_2024-11-21_1732213882.166319_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Serena",
+    "Sayan",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "@upendra looked into it. @Serena do you know who would be a good POC to help look into the indexing on upload / adding to weviate on upload?\nhttps://instabase.slack.com/archives/D081RA89ZSN/p1732188156729229",
+      "time": "10:31",
+      "timestamp": "1732213882.166319",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@ayesha.ali do you know where we set the index version for the indexed doc in weaviate?",
+      "time": "10:39",
+      "timestamp": "1732214387.675759",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "we set the index version upon initial digitization here (https://github.com/instabase/instabase/blob/33050ae3ad77408fe98ff2d6f478c3e459a08d6f/shared-utils/py-utils/aihub-utils/src/py/instabase/aihub_utils/index_util.py#L194-L212), from my understanding it's possible for weaviate indexing to fail silently because we do reindex on extraction if necessary, but not sure of what the cases are when weaviate indexing does fail silently. did extraction repeatedly take a long time (i.e. trigger reindexing) or was it fine after the initial extraction",
+      "time": "11:55",
+      "timestamp": "1732218944.545299",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "one way reindexing can silently fail is upon redigitization (we ignore indexing errors and continue because extraction reindexes anyways if necessary), but this is happening just after the initial digitization step is that correct?",
+      "time": "12:04",
+      "timestamp": "1732219479.262619",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "correct, re-digitization happens after the document is already digitized for the first time",
+      "time": "12:05",
+      "timestamp": "1732219512.223859",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "yep yep, i see that's true for your case, i'm assuming the same for @Sayan?",
+      "time": "12:06",
+      "timestamp": "1732219561.332749",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "can you create a project and try uploading this file? to try to see whether/why weaviate indexing fails silently?\n\nif you run a field on that file, you should see that re-indexing is triggered",
+      "time": "12:06",
+      "timestamp": "1732219613.764839",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "oh woah, turns out we've been indexing by ibdoc path on digitization but on extraction checking index by doc_id! i've been getting the same problem with docs i've been using regularly, interesting this hasn't been called out before:sweat_smile: @upendra is there a reason we've been indexing by ibdoc_path and not doc_id? going forward though, as part of my split by page work, converse and build indexing will diverge and we'll need to index by doc_id anyways",
+      "time": "13:14",
+      "timestamp": "1732223650.565229",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "so that's why on first extraction the doc doesn't appear to have an index and it reindexes using doc_id",
+      "time": "13:15",
+      "timestamp": "1732223707.533229",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah this was described in https://docs.google.com/document/d/1acsArM24I5k9VWawUZnUwJKM9lKT5HiWHbblKIXwS8c/edit?tab=t.0#heading=h.hbqecjveml9h, but we never consolidated the index key :cry:",
+      "time": "13:17",
+      "timestamp": "1732223857.467109",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "interesting, it seems like there was a plan to check both the given doc_id and the input path if that doc_id doesn't return anything on build extraction but that's not what we do in the code, we just check for doc_id",
+      "time": "13:21",
+      "timestamp": "1732224085.908979",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "@Serena the fix is either to start checking both or to just index on doc_id, indexing on doc_id is the better solution, easier fix and better in terms of weaviate operations like deletion since we only need to check for one key",
+      "time": "13:23",
+      "timestamp": "1732224210.484689",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @Sayd @pauline.comising in case you have any historical context",
+      "time": "13:24",
+      "timestamp": "1732224280.889379",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "actually nvm about the deletion operation, we use both doc ids and ibdoc paths to do that, in general though it's easier to check for one thing then having to check for two if we reindex on doc_id anyways",
+      "time": "13:30",
+      "timestamp": "1732224630.065069",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i don’t have a strong preference for (1) checking both doc_id and input path vs (2) indexing on just doc_id, so up to you! ofc you can check with Sayd/Pauline for their opinion too\n\nunder both approaches, nothing will break for existing projects (since if the index doesn’t exist for the desired key during extraction, we’ll re-index)\n\nthe only difference between (1) and (2) is that if we check both, we can avoid re-indexing for existing projects that contain docs for which we’ve never run extraction\n\nhowever, this isn’t even a real con for (2) since we already need to re-index the first time we run extraction on a doc in an existing project :smiling_face_with_tear:",
+      "time": "14:25",
+      "timestamp": "1732227953.045269",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-11-21.json",
+    "message_count": 15,
+    "start_time": "1732213882.166319",
+    "end_time": "1732227953.045269",
+    "is_thread": true
+  }
+}

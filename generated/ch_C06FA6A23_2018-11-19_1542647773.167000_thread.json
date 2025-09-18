@@ -1,0 +1,128 @@
+{
+  "id": "ch_C06FA6A23_2018-11-19_1542647773.167000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "rlsantos",
+    "Ted",
+    "Kerry",
+    "dlluncor",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Question: thinking about running a custom image processing function as the first step of a flow (before OCR). Is there a good way to do this? `Apply UDF` won’t run if there’s no `ibocr` or `csv` files in the input folder. I can hack a workaround (like putting a `dummy.csv`) but wonder if there are better solutions.",
+      "time": "09:16",
+      "timestamp": "1542647773.167000",
+      "is_reply": false
+    },
+    {
+      "sender": "rlsantos",
+      "user_id": "UD4FN1W9Y",
+      "message": "There was an earlier thread about this https://instabase.slack.com/archives/C06FA6A23/p1542311713121900 I think it's just another one of those things that needs work to be done - it's not intended that the input is limited forever, support for other input types just haven't been implemented yet. Probably needs an asana task around it.",
+      "time": "09:30",
+      "timestamp": "1542648634.167500",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Ah thanks! I miss this earlier thread.",
+      "time": "09:35",
+      "timestamp": "1542648953.167800",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "An additional factor is that Apply UDF wasn't really meant for full-blown image transformations. Technically we could do that, but for the infra team it makes it harder to predict the type of CPU and Memory resources needed by a Apply UDF step",
+      "time": "11:52",
+      "timestamp": "1542657160.168100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "One option is having a dedicated space in Process Files for pre-image transformations, such that we make it explicit in our code where we plan to have a \"hook\" for image processing before OCR gets called",
+      "time": "11:53",
+      "timestamp": "1542657198.168300",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Makes a lot of sense to have an optional custom image processing step in Process Files. Perhaps after thanksgiving @Chetan and I can schedule a meeting with you and the infra team to help add this feature",
+      "time": "13:03",
+      "timestamp": "1542661388.168500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "I chatted with @Ted about this as well and the initial implementation design we came up with was to incorporate the rotation correction functionality within OCR itself. That’s likely how i’ll test it as well (side-stepping the need for a image UDF), albeit i’m sure this discussion will be relevant down the road.",
+      "time": "13:49",
+      "timestamp": "1542664181.168800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": ":100:",
+      "time": "14:06",
+      "timestamp": "1542665194.169300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Doing his in a general way will get the infra team involved as well since we need to be mindful of what kinds of processing happens where",
+      "time": "14:07",
+      "timestamp": "1542665225.170400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Just to add more context: another thing we’ve talked about in the past is offering an “Image Correction” app that either lets the user develop UDFs and see the result",
+      "time": "14:07",
+      "timestamp": "1542665260.171600",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Or even lets them use a config panel to configure Image Magick scripts",
+      "time": "14:07",
+      "timestamp": "1542665273.172200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "And we let the user add an “Image Correction” program to Process Files rather than ending up with 100 separate config options",
+      "time": "14:08",
+      "timestamp": "1542665311.173500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "I think, in general, there is a lot of really exciting and impactful UDF support in a bunch of areas... now we just need to figure out how to support it from the platform side of things (permissions, performance, scaling, capping resources, etc)",
+      "time": "14:09",
+      "timestamp": "1542665372.175300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2018-11-19.json",
+    "message_count": 13,
+    "start_time": "1542647773.167000",
+    "end_time": "1542665372.175300",
+    "is_thread": true
+  }
+}

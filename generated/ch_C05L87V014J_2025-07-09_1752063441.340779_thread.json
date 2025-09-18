@@ -1,0 +1,119 @@
+{
+  "id": "ch_C05L87V014J_2025-07-09_1752063441.340779_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "neerad.phansalkar",
+    "mfichman",
+    "raman.goel",
+    "Gaurav Saini"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Approved, and merged to unblock people^ @raman.goel please backport if necessary. Ty!",
+      "time": "05:17",
+      "timestamp": "1752063441.340779",
+      "is_reply": false
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "I'm still experiencing some issues with weaviate-titan, when I try to index something. I can't tell what's wrong from weaviate-titan's logs:\n```{\"build_git_commit\":\"\",\"build_go_version\":\"go1.24.4\",\"build_image_tag\":\"\",\"build_wv_version\":\"1.29.8\",\"level\":\"info\",\"msg\":\"migration from the old schema has been successfully completed\",\"time\":\"2025-07-10T00:44:30Z\"}\n{\"action\":\"bootstrap\",\"build_git_commit\":\"\",\"build_go_version\":\"go1.24.4\",\"build_image_tag\":\"\",\"build_wv_version\":\"1.29.8\",\"level\":\"info\",\"msg\":\"node reporting ready, exiting bootstrap process\",\"time\":\"2025-07-10T00:44:30Z\"}\n{\"action\":\"telemetry_push\",\"build_git_commit\":\"\",\"build_go_version\":\"go1.24.4\",\"build_image_tag\":\"\",\"build_wv_version\":\"1.29.8\",\"level\":\"info\",\"msg\":\"telemetry started\",\"payload\":\"\\u0026{MachineID:a0c7b490-7c39-47dd-a7dd-13f3d8f91ebc Type:INIT Version:1.29.8 ObjectsCount:0 OS:linux Arch:amd64 UsedModules:[] CollectionsCount:0}\",\"time\":\"2025-07-10T00:44:32Z\"}\n{\"action\":\"read_disk_use\",\"build_git_commit\":\"\",\"build_go_version\":\"go1.24.4\",\"build_image_tag\":\"\",\"build_wv_version\":\"1.29.8\",\"level\":\"warning\",\"msg\":\"disk usage currently at 84.20%, threshold set to 80.00%\",\"path\":\"/var/lib/weaviate\",\"time\":\"2025-07-10T00:44:59Z\"}\n{\"action\":\"read_disk_use\",\"build_git_commit\":\"\",\"build_go_version\":\"go1.24.4\",\"build_image_tag\":\"\",\"build_wv_version\":\"1.29.8\",\"level\":\"warning\",\"msg\":\"disk usage currently at 84.63%, threshold set to 80.00%\",\"path\":\"/var/lib/weaviate\",\"time\":\"2025-07-10T00:46:59Z\"}```\nBut model-service and celery-app-tasks both have these similar errors respectively:\n```weaviate.exceptions.WeaviateStartUpError: Weaviate did not start up in 5 seconds. Either the Weaviate URL http://host.docker.internal:5083 is wrong or Weaviate did not start up in the interval given in 'startup_period'.\"```\n```Exception Weaviate did not start up in 5 seconds. Either the Weaviate URL http://host.docker.internal:5083 is wrong or Weaviate did not start up in the interval given in 'startup_period'.```\nSandbox's dashboard also shows that weaviate-titan is down\n```dial tcp 169.254.16.1:5083: connect: connection refused```\nAny suggestions?",
+      "time": "17:54",
+      "timestamp": "1752108885.662989",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes me too",
+      "time": "18:14",
+      "timestamp": "1752110074.630349",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Weaviate is down too",
+      "time": "18:14",
+      "timestamp": "1752110084.304729",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "is the branch,you are trying, synced with master?",
+      "time": "18:24",
+      "timestamp": "1752110695.678309",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "Yes",
+      "time": "18:25",
+      "timestamp": "1752110708.760769",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "weaviate-titan is running at 8888 port, and the calls I am seeing is at 5083.",
+      "time": "18:25",
+      "timestamp": "1752110728.849099",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "something is not good here. let me check in sometime. not near my laptop right now.",
+      "time": "18:25",
+      "timestamp": "1752110752.578469",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "```   1 |     ARG BASE_GO_IMAGE_TAG\n   2 |     \n   3 | >>> FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.24.4 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.24.4) as builder\n   4 |     \n   5 |     ARG GIT_BRANCH=\"v1.29.8\"\n--------------------\nERROR: failed to solve: 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.24.4 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.24.4): failed to resolve source metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.24.4 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.24.4): unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/docker-hub/library/golang/manifests/1.24.4: 403 Forbidden```\nI am unable to build image in my crafting sandbox, with the above error.",
+      "time": "21:25",
+      "timestamp": "1752121551.604739",
+      "is_reply": true
+    },
+    {
+      "sender": "Gaurav Saini",
+      "user_id": "U02DRKLCSSV",
+      "message": "The default port is `5083` if `SERVICE_WEAVIATE_ENTSEARCH_PORT` env var is not set.",
+      "time": "22:02",
+      "timestamp": "1752123743.375559",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "Given the 403, I wonder if you need to run the ecr-login script.",
+      "time": "23:15",
+      "timestamp": "1752128116.818029",
+      "is_reply": true
+    },
+    {
+      "sender": "raman.goel",
+      "user_id": "U03T8ARCDDE",
+      "message": "Hey, I have the PR to fix this: https://github.com/instabase/instabase/pull/72236\nWe have the wrong port exposed for crafting.",
+      "time": "23:16",
+      "timestamp": "1752128160.987379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-09.json",
+    "message_count": 12,
+    "start_time": "1752063441.340779",
+    "end_time": "1752128160.987379",
+    "is_thread": true
+  }
+}

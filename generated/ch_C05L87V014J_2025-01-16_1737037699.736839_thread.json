@@ -1,0 +1,61 @@
+{
+  "id": "ch_C05L87V014J_2025-01-16_1737037699.736839_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "jordy.vlan"
+  ],
+  "messages": [
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "For model-service I get: `model-service must be run inside Docker`\nIF we run it in docker, we might need to add an interactive terminal? `-it`",
+      "time": "06:28",
+      "timestamp": "1737037699.736839",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, this is why I think a headless debugger is the way to go",
+      "time": "07:19",
+      "timestamp": "1737040776.306909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@jordy.vlan you could try adding:\n\n```import epdb\nepdb.listen()```\nTo the code, and go from there to unblock yourself",
+      "time": "07:20",
+      "timestamp": "1737040809.027269",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Yeah was adding a debug target to the Dockerfile, yet to interact with VSCode, it requires to have an extension installed (Dev containers (https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)) that I do not see in marketplace for the web IDE. Then would need a `launch.json` debugging config like:\n```{\n  \"version\": \"0.2.0\",\n  \"configurations\": [\n    {\n      \"name\": \"Python: Remote Attach\",\n      \"type\": \"python\",\n      \"request\": \"attach\",\n      \"connect\": {\n        \"host\": \"localhost\",\n        \"port\": 5678\n      },\n      \"pathMappings\": [\n        {\n          \"localRoot\": \"${workspaceFolder}\", // Local project directory\n          \"remoteRoot\": \"/model-service/py\"   // Directory inside the container\n        }\n      ]\n    }\n  ]\n}```\n; yet will give `epd`  first a try :wink:",
+      "time": "07:30",
+      "timestamp": "1737041449.369579",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Failed to get it to work with `epdb`; continued with `debugpy`, Draft PR with my attempt here: https://github.com/instabase/instabase/pull/67081 (https://github.com/instabase/instabase/pull/67081)\nWould appreciate help from some experts :wink:",
+      "time": "14:10",
+      "timestamp": "1737065429.016809",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-01-16.json",
+    "message_count": 5,
+    "start_time": "1737037699.736839",
+    "end_time": "1737065429.016809",
+    "is_thread": true
+  }
+}

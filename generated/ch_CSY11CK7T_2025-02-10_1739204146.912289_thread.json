@@ -1,0 +1,110 @@
+{
+  "id": "ch_CSY11CK7T_2025-02-10_1739204146.912289_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Jessica",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm seeing this issue when trying to run Cypress locally against Crafting :thinking_face:",
+      "time": "08:15",
+      "timestamp": "1739204146.912289",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "crafting-cyp or crafting-aihub?",
+      "time": "08:16",
+      "timestamp": "1739204202.486209",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "crafting-aihub",
+      "time": "08:18",
+      "timestamp": "1739204309.199239",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "For this particular case I can just run it against crafting-cyp because I'm only making changes to the tests, not the product code, but we'll need to make sure we can do both at the same time",
+      "time": "08:21",
+      "timestamp": "1739204479.494469",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm maybe crafting-aihub isn't using @Paul H's new webpack script (https://github.com/instabase/instabase/blob/master/third-party/crafting/snapshot/roles/workspace/files/daemons/webpack.yaml)?",
+      "time": "08:21",
+      "timestamp": "1739204502.776199",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "`crafting-aihub` doesn’t use the crafting sandbox, unless you’re running it against your own sandbox (backed by `crafting-aihub`) @Jessica?",
+      "time": "09:48",
+      "timestamp": "1739209699.435689",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yup against my own sandbox",
+      "time": "09:49",
+      "timestamp": "1739209773.458979",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I’m assuming it’s the `jessica` sandbox? Do you mind if I ssh into it to debug?",
+      "time": "09:52",
+      "timestamp": "1739209952.824919",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yup!! Thanks @Paul H",
+      "time": "09:54",
+      "timestamp": "1739210074.541119",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Okay, it’s a two fold problem:\n1. I forgot to update the base snapshot for regular (aka not cypress) sandboxes\n2. regular sandboxes do not use the IS_CYPRESS flag anyway, so nothing will change. This makes sense since we wanted hot reloading on dev environments.\nFor now @Jessica, if this is bugging you, could you add this to your `getDevServer()` in `webserver/shared/src/js/webpacked/webpack/utils.js`:\n```    client: false,\n    webSocketServer: false,```\nI’ll update the snapshot in #1 and update this thread for #2",
+      "time": "10:16",
+      "timestamp": "1739211393.034599",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Perfect thanks!!",
+      "time": "10:19",
+      "timestamp": "1739211546.947329",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-02-10.json",
+    "message_count": 11,
+    "start_time": "1739204146.912289",
+    "end_time": "1739211546.947329",
+    "is_thread": true
+  }
+}

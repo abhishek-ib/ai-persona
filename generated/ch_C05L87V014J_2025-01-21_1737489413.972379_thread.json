@@ -1,0 +1,117 @@
+{
+  "id": "ch_C05L87V014J_2025-01-21_1737489413.972379_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "mfichman"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "On my sandbox (https://instabase.sandboxes.site/sandboxes/xindixu-v4), webapp can no longer compile properly due to gcr credential issues. Does anyone knows how to fix it? Details in the :thread:",
+      "time": "11:56",
+      "timestamp": "1737489413.972379",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Logs from webapp:\n```#2 [internal] load metadata for gcr.io/instabase-build/container-base-py39:master\nWARNING: Could not open the configuration file: [/home/owner/.config/gcloud/configurations/config_default].\nWARNING: Could not open the configuration file: [/home/owner/.config/gcloud/configurations/config_default].\nWARNING: Could not open the configuration file: [/home/owner/.config/gcloud/configurations/config_default].\n#2 ERROR: error getting credentials - err: exit status 1, out: `You do not currently have an active account selected. See https://cloud.google.com/sdk/docs/authorizing for more information.`\n------\n > [internal] load metadata for gcr.io/instabase-build/container-base-py39:master:\n------\nDockerfile:3\n--------------------\n   1 |     ARG BASE_PY39_IMAGE_TAG\n   2 |\n   3 | >>> FROM gcr.io/instabase-build/container-base-py39:$BASE_PY39_IMAGE_TAG\n   4 |     MAINTAINER Instabase, Inc.\n   5 |\n--------------------\nERROR: failed to solve: gcr.io/instabase-build/container-base-py39:master: error getting credentials - err: exit status 1, out: `You do not currently have an active account selected. See https://cloud.google.com/sdk/docs/authorizing for more information.`\nmake[1]: *** [Makefile:23: compile-cpp-ibdoc-conversion] Error 1```",
+      "time": "11:57",
+      "timestamp": "1737489438.382219",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I've tried manually running the `gcr-login` script and that seems working\n```$ sudo -iu owner $IB_HOME/.sandbox/ibdev-backend/scripts/gcr-login\n\nWARNING: Your config file at [/home/owner/.docker/config.json] contains these credential helper entries:\n\n{\n  \"credHelpers\": {\n    \"gcr.io (http://gcr.io)\": \"gcloud\"\n  }\n}\nAdding credentials for: gcr.io (http://gcr.io)\ngcloud credential helpers already registered correctly.```",
+      "time": "11:58",
+      "timestamp": "1737489496.421979",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Looks like i have to log into gcloud manually. I was expecting that it would work out of the box",
+      "time": "12:27",
+      "timestamp": "1737491247.578559",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Added a section to the set up doc: https://docs.google.com/document/d/1yQOCxOISV_ukUxXdPJDoN-rERtOhdVRe7zv1swF1igw/edit?tab=t.0#heading=h.7jwosubhjl7r",
+      "time": "12:29",
+      "timestamp": "1737491391.765389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Xindi Xu you can run the `gcr-login` script",
+      "time": "12:40",
+      "timestamp": "1737492052.490299",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Or run `cs build`",
+      "time": "12:41",
+      "timestamp": "1737492065.452289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "There's a background job that's supposed to re-login automatically, but perhaps it's not working?",
+      "time": "12:41",
+      "timestamp": "1737492083.312409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Xindi Xu Also check if you have ~/.docker/config.json in your personal snapshot. That might mess with it.",
+      "time": "12:42",
+      "timestamp": "1737492121.181469",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ">  There's a background job that's supposed to re-login automatically, but perhaps it's not working?\nI think that's running, but it only adds this to `~/.docker/config.json`.\n```\t\"credHelpers\": {\n\t\t\"gcr.io (http://gcr.io)\": \"gcloud\"\n\t}```",
+      "time": "12:45",
+      "timestamp": "1737492313.813259",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "When I do `gcloud init` , it actually prompted me to log into Google and authorize",
+      "time": "12:48",
+      "timestamp": "1737492523.805909",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It works after I ran `cs build`!! Thank you!",
+      "time": "12:52",
+      "timestamp": "1737492764.036629",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-01-21.json",
+    "message_count": 12,
+    "start_time": "1737489413.972379",
+    "end_time": "1737492764.036629",
+    "is_thread": true
+  }
+}

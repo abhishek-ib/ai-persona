@@ -1,0 +1,134 @@
+{
+  "id": "ch_C0516UPPMT3_2023-10-04_1696427577.403159_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "joshbronko",
+    "Ashish",
+    "Varun Jain"
+  ],
+  "messages": [
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "This is turning a bit hard to root cause. I have observed following behavior:\n\n[1] On safari on my iphone\nWorks with a security warning [screenshot 1]\n\n[2] On chrome browser on my laptop [*non-incognito mode*]\nFails with invalid certificate message [screenshot 2]\n\n[3] On chrome browser on my laptop [*incognito mode*]\nWorks without any warnings or errors [screenshot 3]",
+      "time": "06:52",
+      "timestamp": "1696427577.403159",
+      "is_reply": false
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "I think the main issue is the cert that is associated with the button URL is for sendgrid not ib.com (http://ib.com)",
+      "time": "06:53",
+      "timestamp": "1696427634.748609",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "One suspect is the following; however I am not convinced yet. https://docs.sendgrid.com/ui/analytics-and-reporting/click-tracking-ssl",
+      "time": "06:54",
+      "timestamp": "1696427644.356789",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Not sure why some browsers just allow it thru and not catch it",
+      "time": "06:54",
+      "timestamp": "1696427647.430839",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "> I think the main issue is the cert that is associated with the button URL is for sendgrid not ib.com (http://ib.com)\n> Not sure why some browsers just allow it thru and not catch it\nsame browser (chrome) has two different behaviors on my laptop in non-incognito and incognito modes",
+      "time": "06:55",
+      "timestamp": "1696427704.159149",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "We should resolve the cert issue first and understand the proper way to share clickable buttons via sendgrid. We shouldnt be using a domain not associated with the ssl associated",
+      "time": "06:55",
+      "timestamp": "1696427749.000449",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "",
+      "time": "06:57",
+      "timestamp": "1696427836.928739",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Yes, Josh, I am aware",
+      "time": "06:57",
+      "timestamp": "1696427849.224339",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Let's hold on this option please.\n\nI am trying to understand whether we actually need https:// for a public-facing email",
+      "time": "06:58",
+      "timestamp": "1696427899.906159",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "another topic I noticed in this thread is zscaler. I do NOT think zscaler has anything to do with this.\n\nIt is specific to domains *.sendgrid.net (http://sendgrid.net) and *.instabase.com (http://instabase.com) and some combination of browser (and their modes) and devices (ios/laptop) on which those browsers are running.\n\n^ this message is a FYI",
+      "time": "07:03",
+      "timestamp": "1696428228.623349",
+      "is_reply": true
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "Thanks for the investigation, @Ashish \n\nAs we discussed, I had checked 6 test emails before before sending the mailer. \n\nFor all of them, I faced no issue, with the following configurations. \n\n[1] On safari on my iphone\nWorked without any warnings or errors \n\n[2] On chrome browser on my laptop [non incognito *mode*]\nWorked without any warnings or errors\n\nLater today, I saw the issue with following configurations: \n\n[3] On chrome browser on my laptop [different user profile, non*-incognito mode*]\nFails with invalid certificate message",
+      "time": "07:09",
+      "timestamp": "1696428566.057809",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Another observation. Not very useful in actually fixing the issue but an observation nonetheless.\n\nOn chrome browser, the HTTP request headers sent to the server (sendgrid.net (http://sendgrid.net)) were different between normal window and incognito window. As a result, the HTTP response headers were also different. And, incognito window was able to load aihub whereas normal window wasn't.\n\n*Once I cleared browser cache, both normal and incognito window are working.*\n\nWe cannot expect our users to clear cache. I am inching closer to setting up TLS for sendgrid. I'll confirm whether that's the way to go after further investigation.",
+      "time": "09:09",
+      "timestamp": "1696435758.501519",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "a good read https://sendgrid.com/blog/how-to-set-up-ssl-click-tracking/",
+      "time": "11:13",
+      "timestamp": "1696443191.976649",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "@Varun Jain let's discuss http vs https in URLs tomorrow",
+      "time": "11:13",
+      "timestamp": "1696443212.873909",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-10-04.json",
+    "message_count": 14,
+    "start_time": "1696427577.403159",
+    "end_time": "1696443212.873909",
+    "is_thread": true
+  }
+}

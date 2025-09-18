@@ -1,0 +1,45 @@
+{
+  "id": "ch_C06FA6A23_2024-07-03_1720049661.685589_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "tony.shi",
+    "Wilson"
+  ],
+  "messages": [
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Running locally with the latest branch of master and I'm having trouble with proto imports. Anyone else seeing the same?\n\n```Traceback (most recent call last):\n  File \"/Users/tonyshi/Library/Caches/pypoetry/virtualenvs/api-server-1KmXOrAM-py3.9/lib/python3.9/site-packages/gunicorn/arbiter.py\", line 609, in spawn_worker\n    worker.init_process()\n  File \"/Users/tonyshi/Library/Caches/pypoetry/virtualenvs/api-server-1KmXOrAM-py3.9/lib/python3.9/site-packages/gunicorn/workers/gthread.py\", line 95, in init_process\n    super().init_process()\n  File \"/Users/tonyshi/Library/Caches/pypoetry/virtualenvs/api-server-1KmXOrAM-py3.9/lib/python3.9/site-packages/gunicorn/workers/base.py\", line 134, in init_process\n    self.load_wsgi()\n  File \"/Users/tonyshi/Library/Caches/pypoetry/virtualenvs/api-server-1KmXOrAM-py3.9/lib/python3.9/site-packages/gunicorn/workers/base.py\", line 146, in load_wsgi\n    self.wsgi = self.app.wsgi()\n  File \"/Users/tonyshi/Library/Caches/pypoetry/virtualenvs/api-server-1KmXOrAM-py3.9/lib/python3.9/site-packages/gunicorn/app/base.py\", line 67, in wsgi\n    self.callable = self.load()\n  File \"/Users/tonyshi/Library/Caches/pypoetry/virtualenvs/api-server-1KmXOrAM-py3.9/lib/python3.9/site-packages/gunicorn/app/wsgiapp.py\", line 58, in load\n    return self.load_wsgiapp()\n  File \"/Users/tonyshi/Library/Caches/pypoetry/virtualenvs/api-server-1KmXOrAM-py3.9/lib/python3.9/site-packages/gunicorn/app/wsgiapp.py\", line 48, in load_wsgiapp\n    return util.import_app(self.app_uri)\n  File \"/Users/tonyshi/Library/Caches/pypoetry/virtualenvs/api-server-1KmXOrAM-py3.9/lib/python3.9/site-packages/gunicorn/util.py\", line 371, in import_app\n    mod = importlib.import_module(module)\n  File \"/Users/tonyshi/.pyenv/versions/3.9.17/lib/python3.9/importlib/__init__.py\", line 127, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n  File \"<frozen importlib._bootstrap>\", line 1030, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1007, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 986, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 680, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 850, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/manage_api_server.py\", line 32, in <module>\n    from instabase.api_server.server.main import ApiServer\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/api_server/server/main.py\", line 8, in <module>\n    from instabase.clients_factory_utils import clients_factory\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/clients_factory_utils/clients_factory.py\", line 19, in <module>\n    from instabase.protos.ai_hub_service import ai_hub_service_pb2_grpc\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/protos/ai_hub_service/ai_hub_service_pb2_grpc.py\", line 10, in <module>\n    from instabase.protos.ai_hub_service import ai_hub_queries_pb2 as instabase_dot_protos_dot_ai__hub__service_dot_ai__hub__queries__pb2\n  File \"/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/protos/ai_hub_service/ai_hub_queries_pb2.py\", line 17, in <module>\n    from instabase.protos.ai_hub_service import interactions_pb2 as instabase_dot_protos_dot_ai__hub__service_dot_interactions__pb2\nImportError: cannot import name 'interactions_pb2' from 'instabase.protos.ai_hub_service' (/Users/tonyshi/instabase/webserver/api-server/build/py/instabase/protos/ai_hub_service/__init__.py)```",
+      "time": "16:34",
+      "timestamp": "1720049661.685589",
+      "is_reply": false
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "Hmm, seems like `interactions.proto` isn't listed in the `PROTO_DEPS` variable in `api-server`'s `Makefile`. I think this is why it wasn't generated & copied over to the build folder.\n\nMy understanding is:  while the `ai_hub_queries_pb2.py` file contains the  statement to import`interactions_pb2`\n (which parallels the actual proto file), the actual `interactions_pb2` file didn't actually get generated unless you put it into `PROTO_DEPS`. Hence this import error you're seeing\n\nTry including it there, redo the build commands and see if it works?",
+      "time": "16:58",
+      "timestamp": "1720051131.382489",
+      "is_reply": true
+    },
+    {
+      "sender": "tony.shi",
+      "user_id": "U03R8QN7VQA",
+      "message": "Worked after adding it into PROTO_DEPS; Thank you!",
+      "time": "17:05",
+      "timestamp": "1720051559.538889",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-07-03.json",
+    "message_count": 3,
+    "start_time": "1720049661.685589",
+    "end_time": "1720051559.538889",
+    "is_thread": true
+  }
+}

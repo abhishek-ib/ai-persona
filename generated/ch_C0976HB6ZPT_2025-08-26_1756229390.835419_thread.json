@@ -1,0 +1,142 @@
+{
+  "id": "ch_C0976HB6ZPT_2025-08-26_1756229390.835419_thread",
+  "type": "channel",
+  "channel_name": "proj-agent-mode",
+  "conversation_type": "thread",
+  "participants": [
+    "pauline.comising",
+    "Weiming Wu",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "<!here> please backport your PRs - we have a list in the TODO canvas\nplease do it today/now",
+      "time": "10:29",
+      "timestamp": "1756229390.835419",
+      "is_reply": false
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "sounds good, @Weiming Wu since you're working on other stuff, maybe I can make 1 big backport PR for the build changes and test it on my sandbox (with vertex ai on + the vertex ai fix), thoughts? I'll start with 25.34",
+      "time": "10:36",
+      "timestamp": "1756229805.981779",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "I'll just be going through commit history and cherrypicking me and your build prs :woman-bowing::skin-tone-2:",
+      "time": "10:39",
+      "timestamp": "1756229940.628789",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Awesome, sounds good :slightly_smiling_face:",
+      "time": "10:39",
+      "timestamp": "1756229965.150989",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Alrighty, when I look at the prs in master not in 25.34 (https://github.com/instabase/instabase/compare/release-25.34.0-aihub...master) I just see this fe PR of yours (https://github.com/instabase/instabase/commit/cb5ec7843551e9924461d046a2b349f699399ee2), lmk if there's anything else I'm missing, otherwise, I'll be testing this backport PR (https://github.com/instabase/instabase/pull/74104) with the extraction changes, whenever you get a chance to revieww",
+      "time": "11:01",
+      "timestamp": "1756231275.888519",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Also, what do I need on crafting to get vertexai working? I matched my genai_api_key and GOOGLE_GENAI_USE_VERTEXAI env vars to sandbox to reproduce the issue, but when I do, I get `DefaultCredentialsError('File was not found.')`",
+      "time": "11:55",
+      "timestamp": "1756234554.425369",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "and then @Anil was the idea for tmrws meeting to be a small bug bash/test session? For today, I tested docai classification and extraction (see desc test plan (https://github.com/instabase/instabase/pull/74104)), and will test toggling agent mode on and off, then split class, then no class etc. Then if we do more testing tmrw, I can have my sandbox ready for that",
+      "time": "12:07",
+      "timestamp": "1756235247.025739",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "At the location where you initialize the client, just set it to\n```  # Initialize Genai client\n  if app_config.GOOGLE_GENAI_USE_VERTEXAI:\n    client = genai.Client(vertexai=True)\n  else:\n    client = genai.Client(api_key=app_config.GEMINI_API_KEY)```",
+      "time": "13:09",
+      "timestamp": "1756238963.408779",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "It is a little tricky to test this on crafting - but just doing the above is fine",
+      "time": "13:09",
+      "timestamp": "1756238980.831289",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "nothing else changes",
+      "time": "13:09",
+      "timestamp": "1756238990.839089",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "you can see in shared-utils/py-utils/utils/src/py/instabase/model_utils/unified_extractor_utils/unified_extractor.py",
+      "time": "13:09",
+      "timestamp": "1756238998.098659",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "For tomorrow, lets test it on aihub-sandbox - I want to make sure it works on aihub-sandbox before the sales team testing on tuesday",
+      "time": "13:10",
+      "timestamp": "1756239035.033579",
+      "is_reply": true
+    },
+    {
+      "sender": "pauline.comising",
+      "user_id": "U03TWMC0T24",
+      "message": "Yep yep, I removed the check for a Gemini api key and used that, but I still get the DefaultCredentialsError on crafting",
+      "time": "13:11",
+      "timestamp": "1756239072.475409",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "on crafting don’t test with vertex ai - just assume it works",
+      "time": "13:11",
+      "timestamp": "1756239096.370029",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "You need a patch like in https://aihub-sandbox.internal.instabase.com/deployment-manager/configs?targetObject=deployment-celery-app-tasks (see the patch by Jason) + a connection with GCP to test vertex ai. Or you need to embed service account json file into docker image and use it. Not trivial.",
+      "time": "13:12",
+      "timestamp": "1756239177.748959",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0976HB6ZPT",
+    "channel_name": "proj-agent-mode",
+    "date_file": "2025-08-26.json",
+    "message_count": 15,
+    "start_time": "1756229390.835419",
+    "end_time": "1756239177.748959",
+    "is_thread": true
+  }
+}

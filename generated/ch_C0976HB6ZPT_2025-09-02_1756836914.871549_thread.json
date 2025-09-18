@@ -1,0 +1,77 @@
+{
+  "id": "ch_C0976HB6ZPT_2025-09-02_1756836914.871549_thread",
+  "type": "channel",
+  "channel_name": "proj-agent-mode",
+  "conversation_type": "thread",
+  "participants": [
+    "jordy.vlan",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "My learnings so far\nI am able to reproduce the error. I am doing a simple structured extraction field: value. On line 195 I control number of entries in schema\nWith 130 entries it works. With 140 entries it fails with 400 INVALID_ARGUMENT\n\nIn the product, each field has output + page provenance + bbox - so each field ends up being multiple entries.\n\nTo run script\n```python gemini_dl_extractor.py ../datasets/US_drivers_license/test2```",
+      "time": "11:15",
+      "timestamp": "1756836914.871549",
+      "is_reply": false
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "https://ai.google.dev/gemini-api/docs/structured-output#considerations This issue is documented here rather vaguely:\n> • A complex schema can result in an `InvalidArgument: 400` error. Complexity might come from long property names, long array length limits, enums with many values, objects with lots of optional properties, or a combination of these factors.\n> • If you get this error with a valid schema, make one or more of the following changes to resolve the error:\n>     ◦ Shorten property names or enum names.\n>     ◦ Flatten nested arrays.\n>     ◦ Reduce the number of properties with constraints, such as numbers with minimum and maximum limits.\n>     ◦ Reduce the number of properties with complex constraints, such as properties with complex formats like `date-time`.\n>     ◦ Reduce the number of optional properties.\n>     ◦ Reduce the number of valid values for enums.\n>",
+      "time": "11:23",
+      "timestamp": "1756837429.739289",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "perhaps test with:\n> objects with lots of optional properties \nso set nullable=False, which makes them required",
+      "time": "11:25",
+      "timestamp": "1756837511.998639",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "yeah\nhttps://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/control-generated-output\nthe vertexai docs have the same text",
+      "time": "11:26",
+      "timestamp": "1756837561.096719",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Tested it and it worked ^^",
+      "time": "11:28",
+      "timestamp": "1756837718.288569",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "",
+      "time": "11:28",
+      "timestamp": "1756837738.724649",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "@Anil the above shows that you can still go for +140 fields if you use `nullable` more sparingly in your schema definition. Though we should check the attribute’s interaction with `required`\nIn the product in general we have always treated every field as `required` .  Consider even for OpenAI structured output that _every field has to be required_.",
+      "time": "22:58",
+      "timestamp": "1756879133.144799",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0976HB6ZPT",
+    "channel_name": "proj-agent-mode",
+    "date_file": "2025-09-02.json",
+    "message_count": 7,
+    "start_time": "1756836914.871549",
+    "end_time": "1756879133.144799",
+    "is_thread": true
+  }
+}

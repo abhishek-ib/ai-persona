@@ -1,0 +1,145 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-07-23_1753300621.758349_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "mfichman",
+    "Sayan",
+    "Ashwin",
+    "Gaurav Saini",
+    "neerad.phansalkar"
+  ],
+  "messages": [
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Hi folks, I'm getting an error related to the grpc stubs on one of my PRs (unrelated to the error) within the gotests action\n\n```Run go vet ./...\n# instabase/coreplatformservice/aihub\nError: coreplatformservice/aihub/workflow.go:25:72: undefined: aihubsvc.WorkflowNode\nError: coreplatformservice/aihub/workflow.go:46:76: undefined: aihubsvc.WorkflowNodeEdge\nError: coreplatformservice/aihub/workflow.go:66:88: undefined: aihubsvc.WorkflowNodeSnapshot\nError: coreplatformservice/aihub/workflow.go:87:78: undefined: aihubsvc.WorkflowPrompt\nError: coreplatformservice/aihub/workflow.go:101:53: undefined: aihubsvc.WorkflowNode\nError: coreplatformservice/aihub/workflow.go:116:57: undefined: aihubsvc.WorkflowPrompt\nError: coreplatformservice/aihub/workflow.go:132:16: undefined: aihubsvc.CreateWorkflowNodesReq\nError: coreplatformservice/aihub/workflow.go:132:51: undefined: aihubsvc.CreateWorkflowNodesResp\nError: coreplatformservice/aihub/workflow.go:204:16: undefined: aihubsvc.CreateWorkflowEdgesReq\nError: coreplatformservice/aihub/workflow.go:204:51: undefined: aihubsvc.CreateWorkflowEdgesResp\nError: coreplatformservice/aihub/workflow.go:204:51: too many errors\n# instabase/coreplatformservice/aihub\n# [instabase/coreplatformservice/aihub]\nError: vet: coreplatformservice/aihub/workflow.go:25:72: undefined: aihubsvc.WorkflowNode\nError: Process completed with exit code 1.```\nDoes anybody know what could be going wrong here? https://github.com/instabase/instabase/actions/runs/16479225686/job/46588812099?pr=72503",
+      "time": "12:57",
+      "timestamp": "1753300621.758349",
+      "is_reply": false
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "@Gaurav Saini can you take a look? Seems another PR's (https://github.com/instabase/instabase/actions/runs/16477618108/job/46583319983?pr=72706) go tests are failing in the same manner\ncc @Paul H",
+      "time": "13:29",
+      "timestamp": "1753302596.402219",
+      "is_reply": true
+    },
+    {
+      "sender": "Gaurav Saini",
+      "user_id": "U02DRKLCSSV",
+      "message": "Yeah will check it out tomorrow morning. Weird why build on my PR passed :face_with_monocle:",
+      "time": "13:33",
+      "timestamp": "1753302795.537879",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I think we need to build protos:\n`cd ~/instabase/webserver/api-server/ && poetry run make build-protos`",
+      "time": "13:34",
+      "timestamp": "1753302845.155229",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Go test failing on CI fix\n\nhttps://github.com/instabase/instabase/pull/72768",
+      "time": "13:40",
+      "timestamp": "1753303218.627059",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashwin",
+      "user_id": "U02R2LS2TPS",
+      "message": "Thank you @Sayan! :white_check_mark:",
+      "time": "13:44",
+      "timestamp": "1753303441.801809",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "See my memo from yesterday (email & slack)",
+      "time": "14:02",
+      "timestamp": "1753304552.124889",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "`go generate instabase/protos` & check in the changes",
+      "time": "14:02",
+      "timestamp": "1753304562.000239",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "New PR (https://github.com/instabase/instabase/pull/72771) with `go generate instabase/protos` changes",
+      "time": "14:12",
+      "timestamp": "1753305129.233599",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "> `go generate instabase/protos` & check in the changes\nDo we need to run this command and commit the changes every time we change a proto?\n\nEDIT: I ask because we have a Google doc (https://docs.google.com/document/d/1XbszN-7RRfv6uSYcdGzLmcEumy1dYu5xM8Nazp1TJBs/edit?tab=t.0#heading=h.2b90bli6r42c) and Cursor rule (https://github.com/instabase/instabase/blob/master/.cursor/rules/feature-flag-add.mdc) for feature flags we need to update if this is the case",
+      "time": "14:26",
+      "timestamp": "1753305986.116539",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "Thanks @Sayan, approved you PR!",
+      "time": "14:42",
+      "timestamp": "1753306948.154969",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "Getting this error when building model-service now:\n```ImportError: cannot import name 'ai_hub_workflows_pb2' from 'instabase.protos.ai_hub_service' (/model-service/py/instabase/protos/ai_hub_service/__init__.py)```",
+      "time": "15:45",
+      "timestamp": "1753310722.609609",
+      "is_reply": true
+    },
+    {
+      "sender": "neerad.phansalkar",
+      "user_id": "U08K6KE6R54",
+      "message": "Here's a fix: https://github.com/instabase/instabase/pull/72783",
+      "time": "16:05",
+      "timestamp": "1753311903.238719",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "And if it's mandatory to run that command after editing a proto file, shall we create a pre commit hook? Would avoid some issues we're seeing on master lately",
+      "time": "17:13",
+      "timestamp": "1753315988.501889",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yep, should be a hook. Making a note to fix this as part of the build enhancements.",
+      "time": "19:30",
+      "timestamp": "1753324233.060889",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-07-23.json",
+    "message_count": 15,
+    "start_time": "1753300621.758349",
+    "end_time": "1753324233.060889",
+    "is_thread": true
+  }
+}

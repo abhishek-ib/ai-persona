@@ -1,0 +1,184 @@
+{
+  "id": "ch_C06FA6A23_2019-06-18_1560889190.257200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "Chetan",
+    "Loc",
+    "Jonathan Shih",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "mypy doesn’t recognize of a lot of Mock() stuff for unit testing, was wondering if anyone has a better solution than `# type : ignore`",
+      "time": "13:19",
+      "timestamp": "1560889190.257200",
+      "is_reply": false
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "what’s `Mock()`?",
+      "time": "13:20",
+      "timestamp": "1560889213.257700",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "mocking for python that generates fake objects for testing",
+      "time": "13:20",
+      "timestamp": "1560889247.258200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "is it a library that you’ve pip installed?",
+      "time": "13:21",
+      "timestamp": "1560889261.258400",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "https://cpython-test-docs.readthedocs.io/en/latest/library/unittest.mock.html",
+      "time": "13:21",
+      "timestamp": "1560889279.258600",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "it’s been installed i think, I didn’t add it to requirements.txt",
+      "time": "13:21",
+      "timestamp": "1560889297.258800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "add the stubs to `shared-utils/py-utils/typing-utils/src/py/instabase/stubs/unittest/mock`",
+      "time": "13:22",
+      "timestamp": "1560889329.259000",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "no one has typed it there likely.",
+      "time": "13:22",
+      "timestamp": "1560889339.259200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "is this legacy code or new stuff? if legacy, you could probably just let the `# type: ignore` be for now.",
+      "time": "13:26",
+      "timestamp": "1560889594.259400",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "new code, enforcing unit testing for a port over to docops_lib",
+      "time": "13:27",
+      "timestamp": "1560889665.259700",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "the problem is slightly more complicated since a mock object could has a tons of attributes (in this case I’ve mocked up a record object with ibocr, ibocr_record, ibocr_path, image_path, image) etc… and it’d be strange to typed it up in typing-utils",
+      "time": "13:29",
+      "timestamp": "1560889762.259900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "hm… send the PR once you’re ready and i think we could discuss it there. I’m not super familiar with the library but seeing it used might help be see how we should type it. @lydia has used the library maybe she has immediate recommendations.",
+      "time": "13:29",
+      "timestamp": "1560889787.260100",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "okay will do",
+      "time": "13:30",
+      "timestamp": "1560889812.260300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "you could use `table_ibocr` from the `data_api_utils.test_data.table` package instead this mock object. that comes pre-typed. @Loc",
+      "time": "13:30",
+      "timestamp": "1560889834.260500",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "i basically started patching everything. you can do a patch for a class and then patches for methods within the patch, so that you’re not explicitly creating a mock object for a class",
+      "time": "13:33",
+      "timestamp": "1560890020.260700",
+      "is_reply": true
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "#patches4days",
+      "time": "13:38",
+      "timestamp": "1560890313.260900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "patch me later",
+      "time": "13:39",
+      "timestamp": "1560890397.261200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Yes seems either adding mypy stubs or doing mock patching should work",
+      "time": "13:43",
+      "timestamp": "1560890609.261400",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "i would also be curious to see if mypy allows us to cast the mocked object to the actual class, in which case, mypy would think that that mock is the actual object?",
+      "time": "13:44",
+      "timestamp": "1560890652.261600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "on another note, why do we need to mypy our tests?? seems like unncessary overhead?",
+      "time": "13:46",
+      "timestamp": "1560890771.261800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-06-18.json",
+    "message_count": 20,
+    "start_time": "1560889190.257200",
+    "end_time": "1560890771.261800",
+    "is_thread": true
+  }
+}

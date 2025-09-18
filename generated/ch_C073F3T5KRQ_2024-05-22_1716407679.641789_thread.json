@@ -1,0 +1,80 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-05-22_1716407679.641789_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Anil",
+    "Vasu",
+    "Elan Sharony",
+    "Dominic Fannjiang"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Hi Team,\n\nI am seeing the following error with Weaviate in both build and converse when I add documents.\nAny idea what the issue might be?\n```[2024-05-22 11:21:38,849] [MainProcess/ThreadPoolExecutor-85_1] {/Users/anil/dev/repos/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/aihub_utils/index_util.py:69} INFO - [trace_id=] - Weaviate Response for create_index_per_document for receipt_20b0339e-a5c5-4cad-9c6a-0b84b2586903_eJwFwcEJACAIAMCJDMmUnCbUDPpFtD-d3Yzc542KjkSaYBwMLWyChhig9+aVuyhSOXN9aGwN7g==.pdf, project_id 018ef2bf-ddaa-754a-a56d-cab0ceedbda7\n[2024-05-22 11:21:38,850] [MainProcess/ThreadPoolExecutor-85_1] {/Users/anil/dev/repos/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/aihub_utils/index_util.py:71} INFO - [trace_id=] - Response: {'start_time': 1716402000.0, 'end_time': 1716402000.0, 'model_result': {'custom_result': {'error': 'Exception RetryError[<Future at 0x7ffff3cbd0a0 state=finished raised AuthenticationError>]', 'tabular_error': 'Document type is not supported.', 'document_id': 'anils401/my-repo/fs/Instabase Drive/aihub/018ef2bf-ddaa-754a-a56d-cab0ceedbda7/documents/out/receipt_20b0339e-a5c5-4cad-9c6a-0b84b2586903_eJwFwcEJACAIAMCJDMmUnCbUDPpFtD-d3Yzc542KjkSaYBwMLWyChhig9+aVuyhSOXN9aGwN7g==.pdf.ibdoc', 'cached_index': 'IB_AI_LABS_018ef2bf_ddaa_754a_a56d_cab0ceedbda7', 'token_usage_stats': [{'prompt_tokens': 0.0, 'total_tokens': 0.0, 'model_name': 'text-embedding-ada-002', 'completion_tokens': 0.0}], 'tabular_path': None, 'tabular_traceback': None}}}\n[2024-05-22 11:21:38,850] [MainProcess/ThreadPoolExecutor-85_1] {/Users/anil/dev/repos/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/aihub_utils/index_util.py:88} ERROR - [trace_id=] - Error during create_index_per_document for receipt_20b0339e-a5c5-4cad-9c6a-0b84b2586903_eJwFwcEJACAIAMCJDMmUnCbUDPpFtD-d3Yzc542KjkSaYBwMLWyChhig9+aVuyhSOXN9aGwN7g==.pdf. Error: Exception RetryError[<Future at 0x7ffff3cbd0a0 state=finished raised AuthenticationError>]\n[2024-05-22 11:21:38,854] [MainProcess/MainThread] {/Users/anil/dev/repos/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/aihub_utils/converse_utils.py:519} ERROR - [trace_id=] - User anils401: index_in_weaviate - Error occurred while indexing file anils401/my-repo/fs/Instabase Drive/aihub/018ef2bf-ddaa-754a-a56d-cab0ceedbda7/documents/out/receipt_20b0339e-a5c5-4cad-9c6a-0b84b2586903_eJwFwcEJACAIAMCJDMmUnCbUDPpFtD-d3Yzc542KjkSaYBwMLWyChhig9+aVuyhSOXN9aGwN7g==.pdf.ibdoc in weaviate - Internal error during create_index_per_document. Check the logs for more details.```",
+      "time": "12:54",
+      "timestamp": "1716407679.641789",
+      "is_reply": false
+    },
+    {
+      "sender": "Elan Sharony",
+      "user_id": "U02ES3ELJ2Y",
+      "message": "cc @Dominic Fannjiang @Vasu if you have any context",
+      "time": "12:59",
+      "timestamp": "1716407971.783839",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "@Anil do you know what is triggering this error? looks like its something from converse app",
+      "time": "13:17",
+      "timestamp": "1716409054.237859",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "It is in converse.",
+      "time": "13:19",
+      "timestamp": "1716409194.428289",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "It is the last step `process_converse_documents`\n```[2024-05-22 11:21:12,303] [MainProcess/MainThread] {/Users/anil/dev/repos/instabase/distributed-tasks/celery/app-tasks/.venv/lib/python3.9/site-packages/celery/worker/strategy.py:161} INFO - [trace_id=] - Task instabase.registry.tasks.process_converse_documents[3d6f8486-df5a-448e-9916-91582281b083-converse-process-files] received```",
+      "time": "13:21",
+      "timestamp": "1716409289.596649",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "From your error log in your original post:\n```Exception RetryError[<Future at 0x7ffff3cbd0a0 state=finished raised AuthenticationError>```\nIs the OpenAI key properly configured?",
+      "time": "18:01",
+      "timestamp": "1716426068.688349",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Looking at the logs, it looks like the above ^. We should be able to find more details from model-service logs!",
+      "time": "20:49",
+      "timestamp": "1716436184.253769",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-05-22.json",
+    "message_count": 7,
+    "start_time": "1716407679.641789",
+    "end_time": "1716436184.253769",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "id": "ch_C06FA6A23_2023-12-13_1702489801.049589_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Anil",
+    "Rakesh",
+    "Heymian",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "As this is Konmari week, a great item to do would be to delete Thrift from the code base. As far as I know, we don’t use Thrift anywhere. We have a ton of thrift code lying around.\nAnyone have thoughts on this? cc @Heymian",
+      "time": "09:50",
+      "timestamp": "1702489801.049589",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Digging a little more into this, there are 5 thrift files remaining\nari.thrift, tesseract.thrift - these need to be migrated to proto. They are quite small - just one method each\n\npdfservice.thrift - this has been removed - code associated needs to be deleted\n\naccount.thrift, fileservice.thrift - these two can be deleted? they have been migrated to proto",
+      "time": "10:18",
+      "timestamp": "1702491480.155669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "That would be outstanding. 99% sure the answer is yes.",
+      "time": "10:18",
+      "timestamp": "1702491504.006669",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I would love too! I’ve pinged @Rakesh many times previously to help remove ari.thrift and tesseract.thrift (even see multiple Jira (https://instabase.atlassian.net/browse/DR-1417) tickets from me) but they haven’t been able to prioritize.\n\nI also just pinged @lydia yesterday to ask if she could help us clean up the last usage of account.thrift in webdriver-tasks that’s leftover from the old days of doc-insights. If she can get rid of those 6 functions then we can delete account.thrift.",
+      "time": "10:41",
+      "timestamp": "1702492868.461889",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "fileservice.thrift cannot be deleted because it’s still used for the fake file-client used in a lot (all?) py unit tests. Re-writing that would be a large-ish effort. But I pushed this into a test-only py-util, so no services should have any dependencies on fileservice.thrift already.",
+      "time": "10:42",
+      "timestamp": "1702492945.890469",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Cool :slightly_smiling_face: https://github.com/instabase/instabase/pull/51097  - created a PR to remove account.thrift. webdriver tests passed. Will take a closer look to see I didn’t break anything. Might take a stab at the tesseract and ari.",
+      "time": "10:43",
+      "timestamp": "1702493015.812479",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Can you also clean up the `account_client` in webdriver that references the account.thrift file?",
+      "time": "10:45",
+      "timestamp": "1702493136.191119",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "There are 6 functions still referencing it, I’m guessing the reason you’re not seeing failures is because we have no unit tests that touch it.\n\nMy message to lydia:\n```Webdriver is holding us up, and it's from a lot of leftover code from the Ted days of doc-insights. In tasks.py, any function that takes in an account_client is probably long dead since thrift account-service hasn't deployed in over two years. These are all functions about NLP search:\ndownload_nlp_search_data\nload_and_analyze_single_html_file\nrun_nlp_search_analysis\nnlp_realtime_analysis\nrun_nlp_pipeline\nrun_nlp_pipeline_single_input```",
+      "time": "10:46",
+      "timestamp": "1702493161.996909",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Hi @Heymian\nWe have a couple of tickets in consideration for Konmari - thrift is one of them - ari and tesseract - hoping we can get there. We have couple of old service and related code removals - we started with msft v2 code and service removals, few others to follow.",
+      "time": "19:56",
+      "timestamp": "1702526209.842349",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I probably won't get to cleaning this up until next week - if someone else wants to delete the code during Kon Mari week - go for it!",
+      "time": "20:00",
+      "timestamp": "1702526452.239719",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-12-13.json",
+    "message_count": 10,
+    "start_time": "1702489801.049589",
+    "end_time": "1702526452.239719",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "id": "ch_C06FA6A23_2021-03-22_1616398509.045300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ashish",
+    "Anant",
+    "Faisal",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "@Shubham Oli node https://console.cloud.google.com/compute/instancesDetail/zones/us-central1-a/instances/gk[…]-prod--default-pool-da200d6d-7h46?project=instabase-main (https://console.cloud.google.com/compute/instancesDetail/zones/us-central1-a/instances/gke-instabase-main-prod--default-pool-da200d6d-7h46?project=instabase-main)",
+      "time": "00:35",
+      "timestamp": "1616398509.045300",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "```(! 606)-> kubectl get events\nLAST SEEN   TYPE      REASON             OBJECT                                                     MESSAGE\n55m         Warning   NodeSysctlChange   node/gke-instabase-main-prod--default-pool-da200d6d-7h46   \n55m         Warning   NodeSysctlChange   node/gke-instabase-main-prod--default-pool-da200d6d-shfm   \n55m         Warning   NodeSysctlChange   node/gke-instabase-main-prod--default-pool-e0892143-cgtj \n\n\nEvents:\n  Type     Reason            Age                  From            Message\n  ----     ------            ----                 ----            -------\n  Warning  NodeSysctlChange  55m (x10 over 2d6h)  sysctl-monitor ```",
+      "time": "01:01",
+      "timestamp": "1616400107.045600",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "GCloud Case#: `27295664`",
+      "time": "01:20",
+      "timestamp": "1616401216.045800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Bad node: `gke-instabase-main-prod--default-pool-da200d6d-7h46`",
+      "time": "01:20",
+      "timestamp": "1616401234.046000",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Docker test container yaml\n```apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: deployment-ldap\n  namespace: instabase-prod\n  labels:\n    app: ldap\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: ldap\n  template:\n    metadata:\n      labels:\n        app: ldap\n    spec:\n      serviceAccountName: privileged\n      containers:\n        - name: ldap\n          image: \"gcr.io/instabase-main/ldap:2021-03-22.06-46-00 (http://gcr.io/instabase-main/ldap:2021-03-22.06-46-00)\"\n          imagePullPolicy: Always\n      nodeSelector:\n        kubernetes.io/hostname (http://kubernetes.io/hostname): gke-instabase-main-prod--default-pool-da200d6d-7h46```",
+      "time": "01:23",
+      "timestamp": "1616401438.046200",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Update:\nWe believe that around Friday 5pm, GCloud launched a new node in the GKE. This new node failed to connect to the kubernetes network and as a result, any pods scheduled on this node failed to connect to all services running in k8s including DNS and other Instabase services.\n\nWe have reached out to GCloud Support to investigate further to understand why this node failed to connect to the network.\n\ncc @Anant @sudeep @Shubham Oli",
+      "time": "01:26",
+      "timestamp": "1616401561.046400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "We have also isolated that node in k8s such that no new pod will be scheduled on that node. We are keeping that node alive to troubleshoot this problem further with gcloud.",
+      "time": "01:26",
+      "timestamp": "1616401608.046600",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "thanks @Ashish!",
+      "time": "03:02",
+      "timestamp": "1616407337.046800",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "@Faisal @Anant - please give this a try when you are around, and let us know if you continue to see slowness.\n\n@Ashish - i have created a logs based metric (https://console.cloud.google.com/monitoring/metrics-explorer?pageState=%7B%22xyChart%22:%7B%22dataSets%22:%5B%7B%22timeSeriesFilter%22:%7B%22filter%22:%22metric.type%3D%5C%22logging.googleapis.com%2Fuser%2Fname_resolution_failures%5C%22%20resource.type%3D%5C%22k8s_container%5C%22%22,%22minAlignmentPeriod%22:%2260s%22,%22aggregations%22:%5B%7B%22perSeriesAligner%22:%22ALIGN_RATE%22,%22crossSeriesReducer%22:%22REDUCE_NONE%22,%22groupByFields%22:%5B%5D%7D,%7B%22crossSeriesReducer%22:%22REDUCE_NONE%22%7D%5D%7D,%22targetAxis%22:%22Y1%22,%22plotType%22:%22LINE%22%7D%5D,%22options%22:%7B%22mode%22:%22COLOR%22%7D,%22constantLines%22:%5B%5D,%22timeshiftDuration%22:%220s%22,%22y1Axis%22:%7B%22label%22:%22y1Axis%22,%22scale%22:%22LINEAR%22%7D%7D,%22isAutoRefresh%22:true,%22timeSelection%22:%7B%22timeRange%22:%226h%22%7D%7D&project=instabase-main) in gke to continue monitoring this. Currently no errors after the unhealthy node was removed.",
+      "time": "03:04",
+      "timestamp": "1616407448.047000",
+      "is_reply": true
+    },
+    {
+      "sender": "Faisal",
+      "user_id": "U01NR7QB40K",
+      "message": "Just verified. The performance/responsiveness is good now. Thanks for looking into this.",
+      "time": "06:09",
+      "timestamp": "1616418546.049800",
+      "is_reply": true
+    },
+    {
+      "sender": "Anant",
+      "user_id": "U0U100MNZ",
+      "message": "Can confirm that it works now. The calls aren't any longer randomly getting stuck and erroring out with 40x. :slightly_smiling_face:",
+      "time": "07:28",
+      "timestamp": "1616423339.050300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "awesome on setting up the alert, @sudeep!",
+      "time": "09:05",
+      "timestamp": "1616429102.051400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-03-22.json",
+    "message_count": 12,
+    "start_time": "1616398509.045300",
+    "end_time": "1616429102.051400",
+    "is_thread": true
+  }
+}

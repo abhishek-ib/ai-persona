@@ -1,0 +1,28 @@
+{
+  "id": "ch_C0516UPPMT3_2023-05-31_1685599681.351709_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak"
+  ],
+  "messages": [
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Hi Folks, thank you for participating in the AI Hub Load Test today.  There were some great findings from today that we’ll be working through in short and medium term:\n\n*Request Prioritization between Converse and Build Apps (Building v/s Execution Phase):*  Owner *@Anil* \nWe have essentially levels of priorities defined for any operations that touch Flow (celery internally) with the operations being picked up in order of priority.\n• Digitization Phase: *Highest* Happens during the “Upload Phase” of Converse and Build App\n• App Execution through the UI: *Medium* Happens during the Execution phase of any App whether it is public, or private\n• App Execution through API (Not directly supported): *Lowest* when you use oauth token and call the run solutions / run binary API\nDuring the Load Test, we had 1 user that uploaded 10 projects, with 89 files, each file being 230 pages long.  This ended up creating a backlog of ~20K *Highest* priority “chunks” [each chunk being 10 pages] in our task queue.  Our current configuration involves processing 224 “chunks” concurrently.   Due to the prioritization logic of our task scheduler which first operates at the priority level, and then at each project level:\n• Any of the Medium priority work which involved running Apps was blocked until the backlog reached < 224 chunks\n• Any of the Highest priority work such as digitizing other documents continued to make steady progress\nThis means that we did not have good experience for App execution, but had a reasonable experience for digitization during Converse App, or project Building.  There are a few AIs that we are planning to fix before our launch:\n• Keep 10-20% reserved capacity for running *Medium* priority work so that all users can have good experience\n• Create an alert so that we can capture the no-of-pending-tasks metric through Flow Dashboard.  \n• Create an alert to capture the queue length in AmazonMQ\nIn the medium term, we are going to work on:\n• Instead of having a fixed reserved capacity, have a dynamic capacity for the number of “tasks” that can be run. \n• Instead of scheduling tasks based on round-robin across projects, schedule tasks in round robin across users\n*Digitation Errors:* Owner @Rakesh\nWhen 100s of large documents were digitized concurrently, we saw a significant number of them fail in the “indexing” phase.  We are still root causing this issue, but we already have a few AIs that we need to resolve before launch:\n• Change the timeout on model-service-lite to allow for more time in add_to_index phase\n• Possibly increase the number of model-service-lite replica to keep up with digitization\n*Rate Limits:* Owner @Sabyasachi Roy\nToday’s experiment show that the system is very susceptible to extremely bursty traffic, as a result we need to put proper limits.  A lot of the work is already done, but we can do with more fine tuning / add new rate limits.\n• How many documents can a user add in a project\n• How many projects can a user have\n• How many requests can a user push in a minute\n• …\nIn addition, we are also _thinking_ of disabling access from India since the App can go viral extremely quickly there and we are not in a position to handle the virility today.  [We need to think very carefully about this]\n\n*Resource Utilization & Auto Scaling:* Owner @Vikas Mehta\nLooking through our resource consumption today, we were using ~60-70 cores max at peak load.  We had `cpu.requests` set for 170 cores, and total CPU on nodes to be 236 core, which means that somewhere our allocation can be fine tuned.  In addition, we have already discovered a large scope for autoscaling our data-services such as OCR, conversion, model-service-lite etc. which we are actively working on pushing through over the next few weeks.\n\nWe have come a very long way on the stability of the aihub product!  Throughout the load-test, our system was able to sustain the load and majority of the services correctly queued up the work instead of crashing and burning.\n\nA tidbit to end the long thread: At peak, we digitized ~130K pages in an hour using the super expensive msft-v3 [which translates to ~250M pages / year with 10 hours / 200 days of work time]!!  [And that we know we can even do better!]",
+      "time": "23:08",
+      "timestamp": "1685599681.351709",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-05-31.json",
+    "message_count": 1,
+    "start_time": "1685599681.351709",
+    "end_time": "1685599681.351709",
+    "is_thread": true
+  }
+}

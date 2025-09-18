@@ -1,0 +1,85 @@
+{
+  "id": "ch_C06FA6A23_2024-10-21_1729510003.998529_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I've been thinking about how tricky it is to deploy things and keep CI pipelines stable. I think part of the problem is how many pipelines we have -- and they all do similar things in slightly different ways.\n\nIMO, there should be only 3 pipelines:\n\n1. Build -- builds all production artifacts (containers) \n2. Test -- runs tests using output of (1) as input\n3. Deploy -- only deploys artifacts, also using output of (1) as input\nThis will avoid the problem where some pipelines fail due to slight differences in the way they run. 1&2 should run at pre-merge time to prevent breakage on `master`.\n\n3 should be as simple as possible to avoid breakage, since it can't efficiently run at pre-merge. As in: it should _only_ run terraform and then initiate the push to Deployment Manager or ArgoCD.\n\nMaybe there's also a way we can run (3) in a \"nerfed\" configuration (without deploying to a real cluster) so that we can test it as well.\n\nThis would mean getting rid of nearly all the other pipelines (GoUnitTests, etc...).\n\nThoughts?",
+      "time": "04:26",
+      "timestamp": "1729510003.998529",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also: There should only be one golden production container image for every service. Right now, I think there are technically multiple in some cases, due to the multiple build pipelines.",
+      "time": "04:46",
+      "timestamp": "1729511183.061849",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "This is something I have advocated for since week 1 of joining the company :) The dedicated unit testing pipelines are just noise (they don’t block anything and ime they almost always fail due to drift from pre-merge tests, not legitimate bugs)\n\nI’ve pitched something similar for the past ~8 months but it keeps getting kicked down the road as a “wouldn’t it be nice” item:\n\n• pre-merge gets broken out into separate checks, compared to the spaghetti monolith script we have today\n• pre-merge runs tests in containers built for corresponding code (default would be running in service images, but offer the option to specify a different image)\n• unit tests and integration tests are *actually* decoupled, so no more “run an actual grpc server to test my code”-esque patterns\n• introduction of “continuous build” system — this would be essentially a cron job to continuously build service images off master, pushing them as ephemeral images to a ring buffer of tags\n• images no longer get built more than once when they receive changes — promoting through the release process turns into simply “preserving” tags for images as the progress through each testing stage\nUnfortunately this work has been viewed as not having a high enough priority to allocate OKRs toward, so nothing has been done yet :( If you have some work you’re planning to improve this, or would like to push harder on making these changes, I’m absolutely in agreement and happy to discuss further!",
+      "time": "07:52",
+      "timestamp": "1729522330.903559",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I for one think this is incredibly important for forward velocity.",
+      "time": "07:54",
+      "timestamp": "1729522450.252489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Another thing I forgot to mention: the build \"scripts\" for 1/2/3 should _not_ be coupled to Jenkins. In my mind, Jenkins is just a runner/monitor for some script that executes 1/2/3. Should be possible to run 1/2/3 without Jenkins at all:\n\n```make build\nmake test\nmake deploy```\nNot necessarily using `make` (ideally, `bazel`) but you get the idea. Same logic applies for any CI tool, including GitHub Actions.\n\nI think the special if/else stuff in the groovy/jenkins scripts for various pipelines is causing us a lot of pain. GitHub Actions are susceptible to this as well.",
+      "time": "07:54",
+      "timestamp": "1729522470.580039",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@sean.donohoe Tactically speaking, I think that making a single bash script that builds all containers, runs all tests (so, 1 & 2) would take at most a day or two, right? Plus maybe a week to disable all the old build+test pipelines. What is the hold up there?\n\nI understand that 3 (deploy) is more complicated. But just getting 1/2 right, and using the output of 1 to run 3 (instead of building from scratch) would fix a lot.",
+      "time": "07:56",
+      "timestamp": "1729522591.726319",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hypothetically yes, but doing it in a way that works with the pre-existing legacy cruft, doesn't introduce downtime, is backward compatible with supported releases, etc makes it nontrivial (like most things here :upside_down_face:) We've also been pushing *really* hard to not add more janky patches to the pile, and have thus avoided making \"quick fixes\" to put pressure on implementing proper fixes",
+      "time": "10:16",
+      "timestamp": "1729530983.225179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ">  works with the pre-existing legacy cruft\nCan we make it not work with the legacy cruft?\n\n>  backward compatible with supported\nAll the more reason to separate the CI tool (Jenkins) from the script that builds things. There's always backports! The old releases are not static. We can edit them if it makes the pipeline simpler.",
+      "time": "11:42",
+      "timestamp": "1729536158.742729",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-21.json",
+    "message_count": 8,
+    "start_time": "1729510003.998529",
+    "end_time": "1729536158.742729",
+    "is_thread": true
+  }
+}

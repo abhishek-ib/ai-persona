@@ -1,0 +1,135 @@
+{
+  "id": "ch_C0516UPPMT3_2023-12-04_1701690186.895099_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Sławek Biel",
+    "Atinder",
+    "Kerry",
+    "Lee"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Hi, i’ve increased this ticket to blocker as its currently causing issues for MUFG and they can’t progress without this fixed. I also have another document type I can show as an example if you need to see more",
+      "time": "03:43",
+      "timestamp": "1701690186.895099",
+      "is_reply": false
+    },
+    {
+      "sender": "Atinder",
+      "user_id": "U019P6NA1RN",
+      "message": "Hey Lee, I am unable to reproduce on aihub dogfood (https://aihub-sandbox.internal.instabase.com/), in which env you are testing?",
+      "time": "04:14",
+      "timestamp": "1701692098.524629",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I’m using prod.",
+      "time": "04:15",
+      "timestamp": "1701692111.594729",
+      "is_reply": true
+    },
+    {
+      "sender": "Atinder",
+      "user_id": "U019P6NA1RN",
+      "message": "Ok let me check there",
+      "time": "04:15",
+      "timestamp": "1701692125.780579",
+      "is_reply": true
+    },
+    {
+      "sender": "Atinder",
+      "user_id": "U019P6NA1RN",
+      "message": "Sorry I am unable to reproduce in prod also",
+      "time": "04:38",
+      "timestamp": "1701693492.908429",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "@Atinder I just ran the same again and I get the following in build but get the same answer as you in converse",
+      "time": "04:42",
+      "timestamp": "1701693765.687339",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I’m using a commercial account with the following feature flags",
+      "time": "04:43",
+      "timestamp": "1701693814.119299",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "@Atinder I’ve done some more testing, the difference isn’t to do with the feature flags, but is from ‘Multipage tables and checkboxes’ being enabled. When I turn that on I don’t get the result, if I have a project with it off, I do. In summary turning that on introduces differences between converse and build, and also can give worse results if the extraction isn’t for checkboxes or tables.",
+      "time": "04:58",
+      "timestamp": "1701694704.643999",
+      "is_reply": true
+    },
+    {
+      "sender": "Atinder",
+      "user_id": "U019P6NA1RN",
+      "message": "Ahan ok, then that explains the difference. cc: @Lalit Is this expected behaviour or was it reflected in our benchmark results?",
+      "time": "05:01",
+      "timestamp": "1701694871.157859",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hmm the table and checkbox mode should not introduce this difference in regular extraction query; cc @Rakesh too -- this looks almost like something is wrong with indexing",
+      "time": "07:33",
+      "timestamp": "1701704023.421249",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "It does modify the text representation of the document (multiple columns get rearranged, checkbox tokens are added, tables are reformatted as MD) This would affect how the document gets chunked and what chunks we retrieve.\nWhen we had tested it before I believe it was making the model slightly better on our benchmarks, on average. But it doesn’t mean it can’t make a specific case worse.\nStill it would be worth inspecting how this document gets rendered under FR to make sure it’s not a problem with our logic somehow",
+      "time": "07:50",
+      "timestamp": "1701705027.550909",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": ":+1:",
+      "time": "07:50",
+      "timestamp": "1701705056.290729",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Here if I ask `extract the auditor` it fails to find it with both FR on and off.\nIf the prompt `Extract the auditor company name this is in a section discussing the opinion on the consolidated financial statement`\nis a result of trying different versions it might just be overfitted to this chunks arrangement. I could as well get a prompt that works with FR after a couple of tries `Extract the name of the independent accounting firm which was the auditor`",
+      "time": "08:20",
+      "timestamp": "1701706846.979509",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Maybe @Lalit can dig it more what exactly is the difference in the content we retrieve here with FR on vs off",
+      "time": "08:25",
+      "timestamp": "1701707139.731409",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-12-04.json",
+    "message_count": 14,
+    "start_time": "1701690186.895099",
+    "end_time": "1701707139.731409",
+    "is_thread": true
+  }
+}

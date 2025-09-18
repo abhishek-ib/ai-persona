@@ -1,0 +1,537 @@
+{
+  "id": "ch_CSY11CK7T_2025-02-19_1739987146.447869_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Anil",
+    "Abhishek Adupa",
+    "sudeep",
+    "Liam Callanan",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "async tasks in `celery-app-tasks` are taking way too long in crafting-cyp and are causing CI timeouts and lots of test failures\n\ni took a quick look at Grafana (https://crafting-cyp.test.instabase.com/grafana/d/011XhhH7z/celery-service?orgId=1&from=now-3h&to=now&timezone=browser&var-datasource=default&var-service=celery-app-tasks&var-queue=celery&var-pod=$__all&var-name=$__all&var-status=$__all&var-method_name=$__all&var-service_name=$__all), and i do see quite long task runtimes, specifically for indexing documents for search\n\n@Yash Aggarwal do you know where these search tasks are coming from? i remember we were also debugging this (https://instabase.slack.com/archives/C05BJCNKZAM/p1739560982061929?thread_ts=1739476081.903389&cid=C05BJCNKZAM) for aihub-uat last week\n\ni would tag Anil, but he's OOO :sob: <!subteam^S02FJA6A7U5> can you somehow delete the source of these search indexing jobs and clear out the celery queue for crafting-cyp?\n\ncc @Jessica in case you have any thoughts since you're working on Search",
+      "time": "09:45",
+      "timestamp": "1739987146.447869",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i posted this in <#C04TSMWLPAS|> in case anyone else familiar with Search can help",
+      "time": "09:48",
+      "timestamp": "1739987318.872099",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "> clear out the celery queue for crafting-cyp?\nhey @Serena can you go to RMQ console in crafting and purge the \"celery\" queue. that's all that would be needed",
+      "time": "10:42",
+      "timestamp": "1739990578.461899",
+      "is_reply": true
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "note: crafting afaicr uses third party rmq image directly, so all you need to do is port-forward and access the mgm console",
+      "time": "10:43",
+      "timestamp": "1739990617.778609",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this is crafting-cyp.test.instabase.com (http://crafting-cyp.test.instabase.com), which is a SaaS environment and doesn't use the `ibdev-backend` template",
+      "time": "11:08",
+      "timestamp": "1739992116.608469",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "also, i'm concerned that even if we clear the queue, new search indexing jobs will get created, and we'll still have the same performance issues",
+      "time": "11:08",
+      "timestamp": "1739992138.346549",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Anil do you know how we can find where these `index_search_document` tasks are coming from?\n\nalso, how can we validate whether the search indexing jobs are responsible for clogging up `celery-app-tasks` on crafting-cyp.test.instabase.com (http://crafting-cyp.test.instabase.com)?",
+      "time": "12:01",
+      "timestamp": "1739995275.381369",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "cc @mfichman",
+      "time": "12:29",
+      "timestamp": "1739996990.399119",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "As an admin, open cancel all https://aihub-uat.internal.instabase.com/api/v1/jobs/cancel_all replace host with crafting url",
+      "time": "12:30",
+      "timestamp": "1739997036.664489",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "`webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/DataSources/workspaces-connectors-crud.spec.ts` sets indexing on to `monthly` and then sets it back to `off` right after, might be related",
+      "time": "13:24",
+      "timestamp": "1740000258.090069",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "oof that definitely seems related :cry:",
+      "time": "13:34",
+      "timestamp": "1740000856.977309",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Liam Callanan could we remove that part from `workspaces-connectors-crud`?",
+      "time": "13:34",
+      "timestamp": "1740000893.805659",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "yep",
+      "time": "13:34",
+      "timestamp": "1740000897.711459",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "crafting-cyp.test.instabase.com/api/v1/jobs/cancel_all (http://crafting-cyp.test.instabase.com/api/v1/jobs/cancel_all) is taking a while :loading: :pray:",
+      "time": "13:35",
+      "timestamp": "1740000939.530639",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`cancel_all` broke `job-service` :sweat_smile:\n```Error occurred executing GRPC method: Request /job_service.JobService/ListJobs failed. Error code=UNAVAILABLE, Error=(14, 'unavailable'), Message: no healthy upstream. Retries left 0```",
+      "time": "13:41",
+      "timestamp": "1740001313.665689",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "however, the task runtimes looks a lot better than this morning (see my original message)\n\ni guess we'll wait and see if Cypress CI gets better now on new runs?",
+      "time": "13:49",
+      "timestamp": "1740001765.689079",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "What’s strange is that this live test has been active for ~ a month now… since we set the indexing back to `off` shouldn’t the jobs never have started?",
+      "time": "14:15",
+      "timestamp": "1740003341.873859",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "maybe someone added new data sources that result in a lot of indexing jobs?\n\ni'm not familiar enough with how search works - do you know who we should ask?",
+      "time": "14:16",
+      "timestamp": "1740003387.998459",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "@Arek anything new for connectors that might be related?",
+      "time": "14:17",
+      "timestamp": "1740003460.742049",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Also for the live test https://github.com/instabase/instabase/pull/68196",
+      "time": "14:21",
+      "timestamp": "1740003711.363109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi all, I will take a look.",
+      "time": "14:26",
+      "timestamp": "1740003999.013569",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```mysql> begin; update mount_points set indexing = 'OFF';\nQuery OK, 0 rows affected (0.00 sec)\n\nQuery OK, 15 rows affected (0.00 sec)\nRows matched: 50  Changed: 15  Warnings: 0\n\nmysql> commit;\nQuery OK, 0 rows affected (0.01 sec)```",
+      "time": "14:29",
+      "timestamp": "1740004157.486649",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```mysql> begin;\nQuery OK, 0 rows affected (0.00 sec)\n\nmysql> delete from index_item_contents;\ndelete from index_itQuery OK, 27992 rows affected (2.48 sec)\n\nmysql> delete from index_items;\ncommit;\nQuery OK, 412704 rows affected (4 min 14.05 sec)\n\nmysql> commit;\nQuery OK, 0 rows affected (0.02 sec)```",
+      "time": "14:34",
+      "timestamp": "1740004458.911989",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Cleared everything. We should still hit that cancel_all endpoint to kill any jobs still running.",
+      "time": "14:34",
+      "timestamp": "1740004474.093649",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "do you know where the index jobs came from?",
+      "time": "14:34",
+      "timestamp": "1740004494.830499",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Indexing",
+      "time": "14:35",
+      "timestamp": "1740004501.761449",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":slightly_smiling_face:",
+      "time": "14:35",
+      "timestamp": "1740004504.996739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "There were 15 mount points with indexing turned on",
+      "time": "14:35",
+      "timestamp": "1740004521.350649",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah maybe `webserver/shared/src/js/webpacked/apps/src/aihub/__e2e__/DataSources/workspaces-connectors-crud.spec.ts` didn't finish running in a particular CI run, and the mount points were set to indexing `monthly`, instead of `off`? @Liam Callanan",
+      "time": "14:36",
+      "timestamp": "1740004578.831919",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "`/cancel_all` is still resulting in the same error\n```Error occurred executing GRPC method: Request /job_service.JobService/ListJobs failed. Error code=UNAVAILABLE, Error=(14, 'unavailable'), Message: no healthy upstream. Retries left 0```",
+      "time": "14:40",
+      "timestamp": "1740004800.403739",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "btw it seems that something weird started happening around 5am PT last Friday (2/14) in terms of too many jobs on crafting-cyp (i assume bc of indexing)",
+      "time": "14:53",
+      "timestamp": "1740005634.190239",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Anil how can i tell if calling `/cancel_all` is helping? in grafana (https://crafting-cyp.test.instabase.com/grafana/d/daded311-b6bd-4610-a3a3-91e01fdf6265/autoscaling-celery-app-tasks?orgId=1&from=now-6h&to=now&timezone=browser&var-datasource=victoriametrics&var-namespace=intes-use2-crafting-cyp-instabase&var-node=$__all&var-node_pool=$__all&var-rabbitmq_cluster=rabbit@deployment-rabbitmq-ha-68f7994ccc-42bq2), i don't see much change in the number of pending/running tasks or the task runtime since i started running `/cancel_all` multiple times at ~1:35pm PT (https://instabase.slack.com/archives/CSY11CK7T/p1740000939530639?thread_ts=1739987146.447869&cid=CSY11CK7T)",
+      "time": "14:57",
+      "timestamp": "1740005829.423669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We can manually delete jobs/tasks from the DB and then restart job service as well",
+      "time": "15:37",
+      "timestamp": "1740008234.653619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let me know if you’d like to execute that option",
+      "time": "15:37",
+      "timestamp": "1740008249.549619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We also have to clear rabbitmq",
+      "time": "15:38",
+      "timestamp": "1740008285.811809",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yeah i haven't had any success with `/cancel_all` :cry:\n\ni tried to ask @Abhishek Adupa to look into it, but i'm not sure if he found out why `/cancel_all` wasn't working",
+      "time": "15:40",
+      "timestamp": "1740008403.320249",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "in the trace (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%2298g%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D,%22query%22:%2244cdf01bd3ea26b2%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1) for the `/cancel_all` call, i see this error\n```rpc error: code = Aborted desc = Jobs not found. Error: Jobs not found - context canceled```",
+      "time": "15:47",
+      "timestamp": "1740008843.440159",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "it seems that there are too many jobs for `job-service` to fetch :lolcry: so i think we have to go with your suggestion (https://instabase.slack.com/archives/CSY11CK7T/p1740008234653619?thread_ts=1739987146.447869&cid=CSY11CK7T) @mfichman  - are you able to do this for this environment?",
+      "time": "15:52",
+      "timestamp": "1740009165.666809",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Is this still broken?",
+      "time": "16:39",
+      "timestamp": "1740011958.079209",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "sql access for crafting-cyp.test.instabase.com (http://crafting-cyp.test.instabase.com) requires access to the `instabase-test` profile\n\nso since @Anil has access, he will take care of this db cleanup, as Matt proposed above",
+      "time": "16:47",
+      "timestamp": "1740012475.507339",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, I can truncate the table(s). I figure there are no concerns about data loss from jobs/tasks on this environment?",
+      "time": "16:48",
+      "timestamp": "1740012480.247029",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "^^ I don’t have access.",
+      "time": "16:48",
+      "timestamp": "1740012513.856149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Anil I'll sort it out :slightly_smiling_face: you're on vacaction!",
+      "time": "16:48",
+      "timestamp": "1740012522.464899",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I am not on vacation :sweat_smile: I was just commuting to office :stuck_out_tongue:",
+      "time": "16:49",
+      "timestamp": "1740012545.892149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ohhhhhhhh OK",
+      "time": "16:49",
+      "timestamp": "1740012574.762709",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Serena I just realized that the queries I ran earlier were on crafting-aihub, not crafting-cyp. So, I'm not surprised it's still doing poorly.",
+      "time": "16:50",
+      "timestamp": "1740012622.108369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mfichman❯ aws eks update-kubeconfig --name insan-use2-crafting-cyp-eks-cluster --region us-east-2 --role-arn arn:aws:iam::519787998606:role/insan-crafting-cyp-kubectl-admin-role --alias crafting-cyp  && kubectl config use-context crafting-cyp && kubectl config set-context --current --namespace insan-use2-crafting-cyp-instabase\n\nAn error occurred (ResourceNotFoundException) when calling the DescribeCluster operation: No cluster found for name: insan-use2-crafting-cyp-eks-cluster.```\nHuh, I'm having trouble w/ this sandbox too",
+      "time": "16:51",
+      "timestamp": "1740012680.398149",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Is it not in us-east-2?",
+      "time": "16:51",
+      "timestamp": "1740012685.023559",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "based on the logs, crafting-cyp is using us-east-2\n\nare you using the right AWS credentials? from the `instabase-test` profile?",
+      "time": "16:52",
+      "timestamp": "1740012749.491069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oh, I forgot this one is in a weird account. Ty!",
+      "time": "16:52",
+      "timestamp": "1740012768.013239",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "FYI: Applied this patch to completely kill all new indexing jobs: https://crafting-cyp.test.instabase.com/deployment-manager/configs?patch=1740012799490",
+      "time": "16:55",
+      "timestamp": "1740012901.301949",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I don't have access to that account either. requested TPAM",
+      "time": "16:56",
+      "timestamp": "1740012972.130039",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "maybe this is something that should go into the platform eng google form - \"how to make it easier to access clusters for internal environments\" :pray:",
+      "time": "16:57",
+      "timestamp": "1740013039.693809",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think most engineers should have access to instabase-test w/o TPAM, like instabase-sandbox",
+      "time": "16:57",
+      "timestamp": "1740013062.913569",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Also curious why this env isn't in instabase-sandbox anyway (?)",
+      "time": "16:57",
+      "timestamp": "1740013070.895299",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I had the same exact question.",
+      "time": "16:58",
+      "timestamp": "1740013135.509289",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "started a new thread (https://instabase.slack.com/archives/C035SLYCJ9X/p1740013467490039) to ask that question!",
+      "time": "17:04",
+      "timestamp": "1740013482.879059",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "turns out you don't need TPAM access to access the db in crafting-cyp! https://instabase.slack.com/archives/C035SLYCJ9X/p1740013638798939?thread_ts=1740013467.490039&cid=C035SLYCJ9X",
+      "time": "17:11",
+      "timestamp": "1740013865.361009",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK",
+      "time": "17:14",
+      "timestamp": "1740014054.639489",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i used a random pr-*****-cypress sandbox with \"Ready\" status -> pasted in Sean's kubeconfig -> ~was able to access the db~ nvm it timed out :sweat_smile:",
+      "time": "17:16",
+      "timestamp": "1740014162.551759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Connected; working on it now",
+      "time": "17:16",
+      "timestamp": "1740014210.369519",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Might have to start with deleting `ai_hub_project_jobs`\n\nERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`instabase`.`ai_hub_project_jobs`, CONSTRAINT `ai_hub_project_jobs_job_id_fk` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`id`))",
+      "time": "17:17",
+      "timestamp": "1740014246.825069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, but use TRUNCATE TABLE to speed things up.",
+      "time": "17:22",
+      "timestamp": "1740014539.710109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```mysql> begin;\nQuery OK, 0 rows affected (0.01 sec)\n\nmysql> update mount_points set indexing = 'OFF';\nQuery OK, 8 rows affected (0.01 sec)\nRows matched: 373  Changed: 8  Warnings: 0\n\nmysql> delete from index_item_contents;\ndelete from index_items;\ncommit;\nQuery OK, 148945 rows affected (1 min 9.12 sec)\n\nmysql> delete from index_items;\nQuery OK, 1040598 rows affected (11 min 20.01 sec)\n\nmysql> commit;\nQuery OK, 0 rows affected (0.03 sec)\n\nmysql> truncate table ai_hub_project_jobs;\nQuery OK, 0 rows affected (0.16 sec)\n\nmysql> truncate table jobs;\nERROR 1701 (42000): Cannot truncate a table referenced in a foreign key constraint (`instabase`.`ai_hub_project_jobs`, CONSTRAINT `ai_hub_project_jobs_job_id_fk`)\nmysql> truncate_table aih_hub_project_jobs;\nERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'truncate_table aih_hub_project_jobs' at line 1\nmysql> truncate table aih_hub_project_jobs;\nERROR 1146 (42S02): Table 'instabase.aih_hub_project_jobs' doesn't exist\nmysql> truncate table ai_hub_project_jobs;\nQuery OK, 0 rows affected (0.15 sec)\n\nmysql> delete from jobs;```\nJob delete is running",
+      "time": "17:43",
+      "timestamp": "1740015800.613769",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-02-19.json",
+    "message_count": 64,
+    "start_time": "1739987146.447869",
+    "end_time": "1740015800.613769",
+    "is_thread": true
+  }
+}

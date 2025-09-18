@@ -1,0 +1,450 @@
+{
+  "id": "ch_C06FA6A23_2021-04-26_1619461946.378900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "kunal",
+    "achao",
+    "Jessica",
+    "Heymian",
+    "Felicia",
+    "Serena",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "my localhost is mounted on prod? it has all my original subspaces",
+      "time": "11:32",
+      "timestamp": "1619461946.378900",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "your prod subspaces could be cached?",
+      "time": "11:36",
+      "timestamp": "1619462196.379000",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Have you restarted all of your services? There's also a file I've had to delete for redis before to make it take effect... let me see if I can find what it was",
+      "time": "11:38",
+      "timestamp": "1619462304.379200",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "restarting redis should also do the trick for wiping your cache",
+      "time": "11:38",
+      "timestamp": "1619462322.379400",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "i see i can’t actually go into any of my subspaces",
+      "time": "11:38",
+      "timestamp": "1619462333.379600",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "i just recompiled and started all services with prebuilt containers before this*",
+      "time": "11:39",
+      "timestamp": "1619462346.379800",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "so you saw your original subspaces after restarting everything?",
+      "time": "11:40",
+      "timestamp": "1619462426.380100",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "The change was merged in on Friday evening, is your branch up to date otherwise it will pull the old configs?",
+      "time": "11:41",
+      "timestamp": "1619462464.380300",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "yup! i haven’t been using localhost for at least a week. compiled everything fresh just a while ago",
+      "time": "11:41",
+      "timestamp": "1619462479.380500",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "@kunal i’m using prebuilt containers, i guess those are out of date ?",
+      "time": "11:41",
+      "timestamp": "1619462493.380700",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "the database / fs connection params are in the configs, so they aren't pulled form the prebuild containers. Can you check this file on your branch: https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/env.json#L3? Is it the right database?",
+      "time": "11:42",
+      "timestamp": "1619462565.380900",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "yeah it’s the same (“`instabase_backend_db_params\": \"--dialect=oci8 <mailto:--database=dbuser/jdIicfKv54cJXSEnEJwn@instabase-non-prod-oracle.cyt8gw1zk6xv.us-east-1.rds.amazonaws.com|--database=dbuser/jdIicfKv54cJXSEnEJwn@instabase-non-prod-oracle.cyt8gw1zk6xv.us-east-1.rds.amazonaws.com>:1521/dogfood\",`)",
+      "time": "11:44",
+      "timestamp": "1619462668.381100",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "so weird.. I wonder if provisioner doesn't recompile the configs. Let me take a look.",
+      "time": "11:45",
+      "timestamp": "1619462749.381300",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "hm it does run `make clean` , how weird.",
+      "time": "11:50",
+      "timestamp": "1619463014.381500",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "do we use local volumes for the redis container?",
+      "time": "12:02",
+      "timestamp": "1619463757.381800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "hmm i’m seeing the same thing :thinking_face:",
+      "time": "13:58",
+      "timestamp": "1619470711.392300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh",
+      "time": "13:58",
+      "timestamp": "1619470732.392500",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "you need to set docker-local or something like that :disappointed:",
+      "time": "13:59",
+      "timestamp": "1619470751.392700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "lemme doublecheck",
+      "time": "13:59",
+      "timestamp": "1619470761.392900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yup ok it needed to be updated somewhere else https://github.com/instabase/instabase/pull/19180",
+      "time": "14:06",
+      "timestamp": "1619471168.395200",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "thanks, this worked!",
+      "time": "14:14",
+      "timestamp": "1619471673.397700",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "actually, no, i’m getting “Field missing. ‘repo_roles’”",
+      "time": "14:15",
+      "timestamp": "1619471734.397900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "yea i think i’m also hitting weird things",
+      "time": "14:15",
+      "timestamp": "1619471757.398100",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah when i get that, restarting redis usually solves the problem by clearing the cache",
+      "time": "14:16",
+      "timestamp": "1619471782.398300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": ":thumbsup: lemme try that. do we cache db results?",
+      "time": "14:16",
+      "timestamp": "1619471799.398500",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think file service does some caching? <!subteam^S01DXHX6FPT>",
+      "time": "14:18",
+      "timestamp": "1619471924.398700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "sorry not an urgent q core-service. just curious if any db caching happens in redis. I just changed a db setting on local and thought I saw some intermittent weirdness with permissions and subspace mgmt",
+      "time": "14:20",
+      "timestamp": "1619472004.399000",
+      "is_reply": true
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "we do cache many db entries in redis. Restarting redis should do the trick!",
+      "time": "14:35",
+      "timestamp": "1619472927.399300",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "When you restart your local to use the new db and filesystem, please do restart redis. Otherwise things will get very confused.",
+      "time": "14:40",
+      "timestamp": "1619473241.399900",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "i’m still getting “field mising ‘repo_roles’” even after restarting redis (and restarting as docker without prebuilt)",
+      "time": "17:18",
+      "timestamp": "1619482691.407100",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "you’ve restarted all services?",
+      "time": "17:19",
+      "timestamp": "1619482791.407300",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "just double checking, you’re logged into the right account and can view the same subspace on dogfood?",
+      "time": "17:20",
+      "timestamp": "1619482824.407500",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "they’ve all been up for 3 hours so they’ve already been restarted the last time i tried",
+      "time": "17:20",
+      "timestamp": "1619482829.407700",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "",
+      "time": "17:21",
+      "timestamp": "1619482870.407900",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "okay maybe it’s actually two different accounts?",
+      "time": "17:21",
+      "timestamp": "1619482908.408300",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "this is what i see when i click update profile on localhost (left) and dogfood (right). localhost doesn’t have the View profile option",
+      "time": "17:22",
+      "timestamp": "1619482940.408500",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "i used the same email and pw for prod account and non prod account",
+      "time": "17:22",
+      "timestamp": "1619482973.408900",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "try logging out and logging back in (this is the same problem as https://instabase.slack.com/archives/C06FA6A23/p1619451785362400)",
+      "time": "17:22",
+      "timestamp": "1619482977.409100",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "even though your credentials are the same, the cookie for the 2 environments are different",
+      "time": "17:23",
+      "timestamp": "1619482995.409400",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "i deleted my cookies (localhost and dogfood), logged back in to both, still seeing field missing repo_roles :disappointed:",
+      "time": "17:27",
+      "timestamp": "1619483273.409600",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i looked back at your screenshot, and it seems like you selected a different drive in local vs dogfood",
+      "time": "17:29",
+      "timestamp": "1619483384.409800",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "are you still seeing different drives in local vs dogfood after logging back in?",
+      "time": "17:30",
+      "timestamp": "1619483411.410000",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "there should be two drives in both under the main one",
+      "time": "17:33",
+      "timestamp": "1619483588.410200",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "both drives work in dogfood, and both drives giv the repo roles issue in local",
+      "time": "17:33",
+      "timestamp": "1619483600.410400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Can you check what the value of the env var: ENABLE_GROUPS is?",
+      "time": "17:33",
+      "timestamp": "1619483624.410800",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "where can I find that env var?",
+      "time": "17:34",
+      "timestamp": "1619483671.411000",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "any of the core-services (account, repo, mount) or the webserver’s like webapp or api-server for example",
+      "time": "17:35",
+      "timestamp": "1619483734.411200",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "If you have docker desktop, it shows there. Otherwise there should be a file called `docker_env_local.list` in the service directory under `tmp/`",
+      "time": "17:36",
+      "timestamp": "1619483802.411400",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "it’s set to True",
+      "time": "17:38",
+      "timestamp": "1619483917.411600",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "hrm, that’s right",
+      "time": "17:39",
+      "timestamp": "1619483988.412200",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "I switched branches earlier, putting this back in env-local.json (https://github.com/instabase/instabase/pull/19180/files)",
+      "time": "17:55",
+      "timestamp": "1619484901.412400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Did that fix the repo_roles problem?",
+      "time": "18:09",
+      "timestamp": "1619485799.412600",
+      "is_reply": true
+    },
+    {
+      "sender": "Felicia",
+      "user_id": "UN185K2CA",
+      "message": "it took some time to fight with provisioner but it worked :sweat_smile: thanks all for helping debug :slightly_smiling_face:",
+      "time": "18:50",
+      "timestamp": "1619488240.412800",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-04-26.json",
+    "message_count": 53,
+    "start_time": "1619461946.378900",
+    "end_time": "1619488240.412800",
+    "is_thread": true
+  }
+}

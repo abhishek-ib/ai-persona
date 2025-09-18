@@ -1,0 +1,159 @@
+{
+  "id": "ch_C0516UPPMT3_2025-04-03_1743694862.696949_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "hannah",
+    "Brian",
+    "Jessica",
+    "jack.robbins"
+  ],
+  "messages": [
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "I just got off the phone with Kering (they've added me to the org) and this is still an issue.\n\nI checked the app version visibility and it's shared with the org and all versions are visible. As a member of the org, I can run the app and I can see the deployment, but I can't run the deployment. This is a big blocker for them as they expect members to be able to run the deployment themselves.",
+      "time": "08:41",
+      "timestamp": "1743694862.696949",
+      "is_reply": false
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "@Jessica would you be able to look at this today or would we able to loop someone in from @andy team on this bug?",
+      "time": "08:41",
+      "timestamp": "1743694883.125429",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Here are photos from the org",
+      "time": "08:43",
+      "timestamp": "1743695019.077899",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "And bug ticket here to track https://instabase.atlassian.net/browse/EPD-4070",
+      "time": "08:44",
+      "timestamp": "1743695089.090599",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "Is @Abhishek Adupa oncall (https://instabase.slack.com/archives/C05AWMD5ER4/p1743434155953869)? Absolutely need to fix this especially if this is a new issue with the new apps UI - anyone who can perform an app run should be able to perform a deployment run.",
+      "time": "08:46",
+      "timestamp": "1743695179.375259",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "cc @andy @Weiming Wu @Paul H if this is related to the new apps UX",
+      "time": "08:48",
+      "timestamp": "1743695303.275859",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "I haver kering credentials in 1PW so can give access to whoever needs it to help debug",
+      "time": "08:57",
+      "timestamp": "1743695839.776599",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I see the issue now - in the code, we do require that the user be a workspace manager in order to run the deployment, and this is how it's been since we launched this. I'm assuming we want this to match what the docs say? I can make the fix here asap if so",
+      "time": "08:57",
+      "timestamp": "1743695850.457149",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Yes please!",
+      "time": "08:58",
+      "timestamp": "1743695938.236149",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "And ideally we can allow all members to run the deployment regardless of having permission to the underlying app - I think the paradigm should be that if a deployment is created in a workspace it's effectively giving permission to all users to run the app",
+      "time": "08:59",
+      "timestamp": "1743695988.937769",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "Thanks for looking into it so quickly!",
+      "time": "08:59",
+      "timestamp": "1743695994.493189",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Let me try to do that and make sure it's not something that's also blocked on the backend :+1:",
+      "time": "09:00",
+      "timestamp": "1743696037.875929",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "amazing thank you!",
+      "time": "09:00",
+      "timestamp": "1743696059.972549",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The fix is merged into master - I was able to make it so that workspace members can run regardless of access to the app. It will be backported to 25.14",
+      "time": "11:31",
+      "timestamp": "1743705118.950699",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "amazing thank you!",
+      "time": "11:56",
+      "timestamp": "1743706576.540469",
+      "is_reply": true
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "To reiterate:\n• BEFORE: Members of a workspace could only run associated deployments if they held `admin` or (workspace) `manager` roles\n• AFTER: All members of a workspace can run associated deployments even if they are not an `admin` or (workspace) `manager` role\nIs my understanding correct?\n\nOther questions:\n• How does this affect/will this be affected by the additional `fine-grained user roles` that are in our feature pipeline?\n• Integrating suggested SDLC patterns using workspaces & deployments involves a `prod` workspace that will also likely host human review queues. Deployment run results are stored in the workspace they're tied to. I imagine customers would want to systematically prevent, say, `reviewer` (non-admin, non-manager) personas part of a `prod` workspace from being able to run deployments -- would this still be possible given the new change (prior to fine-grained roles being launched/added)?",
+      "time": "12:42",
+      "timestamp": "1743709343.680759",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "This change is more in line with fine-grained roles - Testers through Admins will be able to perform app runs (https://docs.google.com/spreadsheets/d/1FKoupgl_zQ9RJTX6GTsyXNdlOvQkgk4Jh3vZadd-ZJw/edit?gid=0#gid=0), and Reviewers & Review Managers would not be able to perform app or deployment runs.",
+      "time": "13:11",
+      "timestamp": "1743711115.267079",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-04-03.json",
+    "message_count": 17,
+    "start_time": "1743694862.696949",
+    "end_time": "1743711115.267079",
+    "is_thread": true
+  }
+}

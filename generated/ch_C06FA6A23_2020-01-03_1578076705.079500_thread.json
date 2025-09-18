@@ -1,0 +1,46 @@
+{
+  "id": "ch_C06FA6A23_2020-01-03_1578076705.079500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Mohit",
+    "dlluncor",
+    "achao"
+  ],
+  "messages": [
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "could this be related to not doing gevent monkey patch? not familiar with what is different on sandbox cc: @Ashish",
+      "time": "10:38",
+      "timestamp": "1578076705.079500",
+      "is_reply": false
+    },
+    {
+      "sender": "achao",
+      "user_id": "UH026QKA4",
+      "message": "it seems to occur even when we do monkey patch (USE_GEVENT = true), I believe @Mohit is able to reproduce it locally as well",
+      "time": "10:45",
+      "timestamp": "1578077104.083500",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "yes, i reproduced it locally, to simplify the problem (avoiding possible interference by reverse proxy, @verify_credentials …) i also created the gist (above :point_up_2:). For the gist, i see this output (both `py2 AND py37`) :\n```\"GET / HTTP/1.1\" 200 117 5.005606\n1\n2\n::1 - - [2020-01-03 11:38:03] \"GET / HTTP/1.1\" 200 117 5.001209\n1\n2```\nwhich shows that concurrent calls to the same API are sequential for some reason, even after monkey patching.\n\ngist is inspired from this issue: https://github.com/gevent/gevent/issues/630",
+      "time": "11:39",
+      "timestamp": "1578080390.088500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-01-03.json",
+    "message_count": 3,
+    "start_time": "1578076705.079500",
+    "end_time": "1578080390.088500",
+    "is_thread": true
+  }
+}

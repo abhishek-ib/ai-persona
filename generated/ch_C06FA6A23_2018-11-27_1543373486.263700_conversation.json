@@ -1,0 +1,151 @@
+{
+  "id": "ch_C06FA6A23_2018-11-27_1543373486.263700_conversation",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "conversation",
+  "participants": [
+    "Ted",
+    "dlluncor",
+    "Loc",
+    "Matt"
+  ],
+  "messages": [
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "",
+      "time": "18:51",
+      "timestamp": "1543373486.263700",
+      "is_reply": false
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "hey everyone, I'm running instabase locally with celery and ari ocr to test a flow feature",
+      "time": "18:52",
+      "timestamp": "1543373534.264700",
+      "is_reply": false
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "ran into this error and not sure how to debug",
+      "time": "18:52",
+      "timestamp": "1543373541.265100",
+      "is_reply": false
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "i just wanted to run a pdf through ocr app to look at the ibocr",
+      "time": "18:53",
+      "timestamp": "1543373612.267000",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Have you checked the console logs? \n\nAlso we generally use Process Files in Flow to run the OCR (the necessity of which is a UI/UX bug given the existence of a stand-alone OCR app, but good to know to get unblocked",
+      "time": "18:53",
+      "timestamp": "1543373614.267200",
+      "is_reply": false
+    },
+    {
+      "sender": "Matt",
+      "user_id": "UCW8RES8H",
+      "message": "Never seen the OCR “app” used outside of an Anant demo.",
+      "time": "18:54",
+      "timestamp": "1543373667.268500",
+      "is_reply": false
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "i usually run process files through ocr too, but i saw the OCR app so wanted to run it",
+      "time": "18:54",
+      "timestamp": "1543373667.268600",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "looks like you've modified some code?",
+      "time": "18:54",
+      "timestamp": "1543373673.268700",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "have you checked to see you don't get the error before your change?",
+      "time": "18:54",
+      "timestamp": "1543373684.269200",
+      "is_reply": false
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "yup i've modified a bunch in shared-utils/py-utils",
+      "time": "18:54",
+      "timestamp": "1543373691.269600",
+      "is_reply": false
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "the process started up okay",
+      "time": "18:55",
+      "timestamp": "1543373702.270000",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "in general you can see the logs in app-tasks, the stack trace should ideally show up there",
+      "time": "18:55",
+      "timestamp": "1543373702.270100",
+      "is_reply": false
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "i'll just make a flow and run process files to see if this is still a problem",
+      "time": "18:55",
+      "timestamp": "1543373740.270700",
+      "is_reply": false
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "thanks for everyone's input!",
+      "time": "18:55",
+      "timestamp": "1543373744.270900",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "\"make build mypy\" as well. that will tell you syntax errors that are going on in your code",
+      "time": "18:59",
+      "timestamp": "1543373997.271400",
+      "is_reply": false
+    },
+    {
+      "sender": "Loc",
+      "user_id": "UCY6STB9U",
+      "message": "```[2018-11-27 21:59:11,162: INFO/MainProcess] Received task: instabase.registry.tasks.collect_and_check[b74835f1-eb3c-4eac-be00-33ab7ade7a26]\n[2018-11-27 21:59:11,179: ERROR/ForkPoolWorker-1] Task instabase.registry.tasks.collect_and_check[b74835f1-eb3c-4eac-be00-33ab7ade7a26] raised unexpected: IOError(u'No files were processed successfully in Process Files. Process File Exception for file path: loc/workspace/fs/Instabase Drive/testing/data/input/amazon-ted-turtle-1.pdf\\n__init__() takes exactly 8 arguments (6 given)',)\nTraceback (most recent call last):\n  File \"/anaconda2/envs/instabase/lib/python2.7/site-packages/celery/app/trace.py\", line 375, in trace_task\n    R = retval = fun(*args, **kwargs)\n  File \"/anaconda2/envs/instabase/lib/python2.7/site-packages/celery/app/trace.py\", line 632, in __protected_call__\n    return self.run(*args, **kwargs)\n  File \"/Users/loctrinh/Desktop/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/registry/tasks.py\", line 1975, in collect_and_check\n    err = _raise_an_error(self, flow_args, e, force=False, req_error_dict=req_error_dict)\n  File \"/Users/loctrinh/Desktop/instabase/distributed-tasks/celery/app-tasks/build/py/instabase/registry/tasks.py\", line 469, in _raise_an_error\n    raise IOError(msg)\nIOError: No files were processed successfully in Process Files. Process File Exception for file path: loc/workspace/fs/Instabase Drive/testing/data/input/amazon-ted-turtle-1.pdf\n__init__() takes exactly 8 arguments (6 given)```",
+      "time": "19:01",
+      "timestamp": "1543374082.271700",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2018-11-27.json",
+    "message_count": 16,
+    "start_time": "1543373486.263700",
+    "end_time": "1543374082.271700",
+    "is_thread": false
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "id": "ch_C05L87V014J_2025-03-07_1741378712.400759_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Weiming Wu",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "I'm trying to spin up a new Crafting sandbox (https://instabase.sandboxes.site/sandboxes/weimingwu?cw=dev) and it's stuck at\n```Connecting to Instabase cluster crafting-aihub under namespace intes-use2-crafting-aihub-instabase```\nAny fixes?",
+      "time": "12:18",
+      "timestamp": "1741378712.400759",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "hey, I see your linked sandbox is getting deleted -- do you have another one I could take a look at? this should have been resolved earlier today and I have not yet been able to replicate it on my own host :upside_down_face:",
+      "time": "12:54",
+      "timestamp": "1741380842.047559",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Yep I just created this one:\nhttps://instabase.sandboxes.site/sandboxes/weimingw?cw=dev",
+      "time": "12:57",
+      "timestamp": "1741381070.640479",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "kk I'm able to see where it's hanging\n```owner@dev:~$ sudo kill -9 $(pgrep cs)\nowner@dev:~$ cs k8s intercept start --reset --ingress-disable-auth --namespace intes-use2-crafting-aihub-instabase --infra crafting-aihub --ingress crafting-aihub:service/intes-use2-crafting-aihub-instabase/service-server-nginx:443\nFatal: rpc error: code = FailedPrecondition desc = conflict: version out-dated: 182aa0fd3bcd6059.\nowner@dev:~$ cs k8s intercept start --reset --ingress-disable-auth --namespace intes-use2-crafting-aihub-instabase --infra crafting-aihub --ingress crafting-aihub:service/intes-use2-crafting-aihub-instabase/service-server-nginx:443\nUpdated! Name: weimingw Version: 182aa0fed8d9ca1d ID: cv5lq3l3j7uc738s2dhg\nTraffic will be intercepted with ANY of the following headers:\n  HEADER     VALUE                                \n  baggage    crafting-sandbox=cv5lq3l3j7uc738s2dhg\n  tracestate crafting-sandbox=cv5lq3l3j7uc738s2dhg\nWaiting until interception is ready (Ctrl-C to stop waiting at anytime) ...\nWORKLOAD FEATURE         TARGET         STATUS   \ndev      Cluster Network crafting-aihub » Pending```\nstill figuring out why it's stuck in pending, will update as soon as I have something",
+      "time": "13:01",
+      "timestamp": "1741381310.176409",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "able to unblock it with the following, but I'm not sure whether interception is busted still\n```% rm -f /home/owner/.sandbox/setup && sudo kill -9 $(pgrep cs) $(pgrep workspace) && cs k8s intercept stop && cs k8s intercept start --reset --ingress-disable-auth --namespace intes-use2-crafting-aihub-instabase --infra crafting-aihub --ingress crafting-aihub:service/intes-use2-crafting-aihub-instabase/service-server-nginx:443```",
+      "time": "13:07",
+      "timestamp": "1741381629.754569",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "It still doesn't seem to be working - only webpack is running",
+      "time": "13:21",
+      "timestamp": "1741382512.823449",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah that's because I had to skip force it to skip past the other image builds and interception initialization",
+      "time": "13:24",
+      "timestamp": "1741382647.352119",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I'm not sure why it's having such a hard time, I can't even get it to start interception with a clean env",
+      "time": "13:24",
+      "timestamp": "1741382681.280439",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-03-07.json",
+    "message_count": 8,
+    "start_time": "1741378712.400759",
+    "end_time": "1741382681.280439",
+    "is_thread": true
+  }
+}

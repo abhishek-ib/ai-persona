@@ -1,0 +1,53 @@
+{
+  "id": "ch_C0516UPPMT3_2024-04-04_1712263773.402019_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "ChrisM"
+  ],
+  "messages": [
+    {
+      "sender": "ChrisM",
+      "user_id": "U03AB9GNNAH",
+      "message": "I uploaded this report and asked a few questions about what the report says about IDP or Intelligent Document Processing, but responses from Default and Advanced say IDP (which is found 9 times in the document) and Intelligent Document Processing (which is found once in the document, thereafter referred to by IDP) was not specifically mentioned. It says it wasn't mentioned \"in the excerpts.\" I would expect that we're reading 100% of the text of the document, correct? Any thoughts on what may be happening?",
+      "time": "13:49",
+      "timestamp": "1712263773.402019",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Yeah i think when doing a vector search the system somehow selects a chunk that doesn't contain the term \"intelligent document processing\" or IDP.  In this case, the multi-step model gets the result correctly. For this type of reasoning question (\"what does the document says about X\") multi-step gives the best performance.",
+      "time": "15:07",
+      "timestamp": "1712268451.800579",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "and for clarification, we are not reading 100% of the text (if reading means passing the text to the model) ; what we do roughly is\n\nfor default and advanced model\npick the chunk that is the most relevant to the query; this is using a mix of key word and vector (similarity) search\nthen pass that chunk and the several chunks before / after it to the model to generate the result\nyou can see how this approach is more targeted for extraction / IDP type of questions\n\nin multi-step (which is target for more reasoning type of questions), the chunk selection strategy is different plus the model has the ability to critique an answer and decides if it need to reselect the chunks based on answer quality. but still: not passing all text to the model.",
+      "time": "15:13",
+      "timestamp": "1712268781.954419",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "this is what RAG is (retrieval-augmented generation); retrieval first, the generation part is based on the retrieved content :slightly_smiling_face:",
+      "time": "15:13",
+      "timestamp": "1712268815.670949",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-04-04.json",
+    "message_count": 4,
+    "start_time": "1712263773.402019",
+    "end_time": "1712268815.670949",
+    "is_thread": true
+  }
+}

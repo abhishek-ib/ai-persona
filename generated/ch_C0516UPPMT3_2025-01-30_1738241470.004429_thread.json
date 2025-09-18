@@ -1,0 +1,55 @@
+{
+  "id": "ch_C0516UPPMT3_2025-01-30_1738241470.004429_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "andy",
+    "Kaustubh (KD)",
+    "Nikolaos Kofinas",
+    "Hamish"
+  ],
+  "messages": [
+    {
+      "sender": "Hamish",
+      "user_id": "U06G3LGDBQU",
+      "message": "Hey, I'm finding that there is a big difference between classification confidence given and what I would expect.\n\nI've attached some examples, but I rarely see confidence drop below 85% for any classification. Intuitively I'd expect that the confidence must add up to 100% e.g. 'Gambling BS' is predicted as an invoice with 99% confidence (which is the wrong class). Does our algorithm mean that the confidence of it actually being 'Other' is 1%? Or does it mean the confidence is some value less than 99% (e.g. 97% so we classify it as an invoice) i.e. the confidences don't have to add up to 100?",
+      "time": "04:51",
+      "timestamp": "1738241470.004429",
+      "is_reply": false
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "CC: @lydia is this something to investigate from a modeling point of view?",
+      "time": "11:25",
+      "timestamp": "1738265158.840349",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "cc: @jordy.vlan / @Nikolaos Kofinas for accurate interpretation of the numbers. TBH I'm also now sure how best to interpret the numbers",
+      "time": "13:19",
+      "timestamp": "1738271957.478579",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "So the confidence score for classification is going to be highly overconfident due to how the models work and how we calculate it.\nSome details:\nfor classification we ask the model to basically return only the class name and nothing else which results in ~5 tokens from the model. To calculate the confidence we get the logprobs from these 5  tokens and we pick the min (to fight overconfidence) and this is what we return as confidence.\n\nIn practice, this doesn’t work as indented because the model is only return a simple phrase and in order to return that phrase most of the times will be overconfident (this has been shown in the white paper that openai released for gpt-4o)\n\nFor other tasks, this approach works better because the model has to return a lot of text and in general tends to be less confident for some of the words.\n\nTo answer now your question:\n> 99% confidence (which is the wrong class). Does our algorithm mean that the confidence of it actually being ‘Other’ is 1%\nThis doesn’t mean that Other is 1% but arguably it is a really small number for the model to not return it.\n\nFor classification we have also tried to ask the model for each confidence (to return it in writing as part of the response) but again it was overconfident ( 90% or 95%) response for almost all the responses.",
+      "time": "14:01",
+      "timestamp": "1738274485.980539",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-01-30.json",
+    "message_count": 4,
+    "start_time": "1738241470.004429",
+    "end_time": "1738274485.980539",
+    "is_thread": true
+  }
+}

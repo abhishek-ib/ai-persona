@@ -1,0 +1,70 @@
+{
+  "id": "ch_C06FA6A23_2021-02-01_1612189669.054200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "arun",
+    "Hari"
+  ],
+  "messages": [
+    {
+      "sender": "arun",
+      "user_id": "U01HM9DEJE9",
+      "message": "Hi Team, \nSC reported this error \"All records had a runtime exception. Last error observed was: No ib error found.', when executing the flow. Timeline log shows the job completed successfully. \n\nFew observations on the above issue:\n• Failing when trying to write barcode to the output\n• Error \"byte like object is required not an image”. Same flow was working good prior to todays run. Prod is in Oct release\n• Same flow working good in their non prod. Non Prod - Dec release\nCode snippet where its failing:\ndef barcode_generator(text,clients,**kwargs):\n    try: \n        EAN = barcode.get_barcode_class('code39')\n        rv = BytesIO()\n        z = EAN(text, writer=ImageWriter(),add_checksum=False)\n        *z.write(rv,options={\"write_text\": False})*\n        return rv\n    except Exception as e:   \n        tb =traceback.format_exc()\n        return str(tb) (edited)\n\nTypeError: a bytes-like object is required, not 'Image'\nAny idea what's happening?",
+      "time": "06:27",
+      "timestamp": "1612189669.054200",
+      "is_reply": false
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "@arun Can you check the barcode package version between the 2 environments?",
+      "time": "06:37",
+      "timestamp": "1612190257.054300",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "U01HM9DEJE9",
+      "message": "@Hari - Checked both environments. Packages are same in 2 environments",
+      "time": "06:38",
+      "timestamp": "1612190316.054500",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "who’s the owner of this barcode generator function? and can you attach the batch.ibflowresult file? more error msgs should be there hopefully",
+      "time": "07:22",
+      "timestamp": "1612192955.054800",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "@Kerry It's an independent package that SC is using in a UDF! Strangely we couldn't simulate locally or in our environments.. I will take the call with the SC team tomorrow morning and update here!",
+      "time": "07:56",
+      "timestamp": "1612194970.055100",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": ":thank_you:",
+      "time": "08:38",
+      "timestamp": "1612197534.055300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-02-01.json",
+    "message_count": 6,
+    "start_time": "1612189669.054200",
+    "end_time": "1612197534.055300",
+    "is_thread": true
+  }
+}

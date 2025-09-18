@@ -1,0 +1,157 @@
+{
+  "id": "ch_CSY11CK7T_2024-09-18_1726690489.936999_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "how is `view-home-page` both blocking and non-blocking in this CI run (https://github.com/instabase/instabase/pull/62700#issuecomment-2359323416)? :confused_dog:",
+      "time": "13:14",
+      "timestamp": "1726690489.936999",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It's based on individual tests in the suite:\n`Getting started: on fresh load, you can create a chat` failed and it's blocking\n`Shows Projects and Chats sections that track most recently accessed build projects and conversations` failed and it's nonblocking",
+      "time": "13:16",
+      "timestamp": "1726690575.425829",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ohhh that makes sense, i didn’t realize we handled that!",
+      "time": "13:16",
+      "timestamp": "1726690615.999589",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think tests that create Converse projects are failing - see latest run (https://instabase.slack.com/archives/C029ZG026GZ/p1726688342746509) on aihub-sandbox",
+      "time": "13:17",
+      "timestamp": "1726690666.705719",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "i'll update to skip them",
+      "time": "13:20",
+      "timestamp": "1726690818.666709",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hm, i only see `Shows Projects and Chats sections that track most recently accessed build projects and conversations` failing in the latest sandbox run. but I do see multiple PRs failed with `Getting started: on fresh load, you can create a chat`\nhttps://cloud.cypress.io/projects/cfhedy/runs/14019/overview/6c6f4858-f1e7-41db-bbba-e3b842dded51?roarHideRunsWithDiffGroupsAndTags=1\nhttps://cloud.cypress.io/projects/cfhedy/runs/14016/overview/79775d0d-c6dd-4676-ada9-5f2bb0d6fd34?roarHideRunsWithDiffGroupsAndTags=1\nhttps://cloud.cypress.io/projects/cfhedy/runs/14010/overview?roarHideRunsWithDiffGroupsAndTags=1",
+      "time": "13:23",
+      "timestamp": "1726691008.972969",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "also, i can’t reproduce the issue on aihub-sandbox or crafting-cyp\n\nwhen i rename a Converse project, i do see a `GET /api/v2/aihub/converse/conversations?query_option=workspace&workspace=my-repo` after the `PUT /api/v2/aihub/converse/conversations/*` request",
+      "time": "13:26",
+      "timestamp": "1726691190.777879",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://github.com/instabase/instabase/pull/62736",
+      "time": "13:28",
+      "timestamp": "1726691283.779799",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think the problem is that this specific user has way too many Converse projects (304 on crafting-cyp)",
+      "time": "13:36",
+      "timestamp": "1726691800.957659",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m not sure where all of these Converse projects are coming from though",
+      "time": "13:36",
+      "timestamp": "1726691808.750729",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m going to try to delete all of these projects on crafting-cyp for <mailto:support-testing.1@instabase.com|support-testing.1@instabase.com>",
+      "time": "13:39",
+      "timestamp": "1726691982.251269",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think the “New Conversation” projects came from Cypress runs where a new Converse project failed to be renamed to the desired name\n\n(also wow that was very fast for deleting >300 projects on crafting-cyp, i was afraid i was going to cause api-server to crash or something lol)",
+      "time": "13:45",
+      "timestamp": "1726692317.098079",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea, in my PR, the test actually passed!",
+      "time": "13:49",
+      "timestamp": "1726692551.897499",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "yep, i think the test should pass after including the cleanup for “New Conversation”! i’ll create a PR to clean up “New Conversation” projects and remove the `NON_BLOCKING` tag",
+      "time": "13:49",
+      "timestamp": "1726692584.393259",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you!! I'll close my PR then",
+      "time": "13:50",
+      "timestamp": "1726692658.018079",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "kudos to @Jessica for creating the handy util for deleting Converse projects if they exist (https://github.com/instabase/instabase/pull/57115)!",
+      "time": "13:53",
+      "timestamp": "1726692794.664559",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "here’s the PR to remove the `NON_BLOCKING` tag! https://github.com/instabase/instabase/pull/62737",
+      "time": "14:05",
+      "timestamp": "1726693525.484609",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-09-18.json",
+    "message_count": 17,
+    "start_time": "1726690489.936999",
+    "end_time": "1726693525.484609",
+    "is_thread": true
+  }
+}

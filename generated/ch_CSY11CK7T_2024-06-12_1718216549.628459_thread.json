@@ -1,0 +1,37 @@
+{
+  "id": "ch_CSY11CK7T_2024-06-12_1718216549.628459_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Re: thoughts on Cypress CI merge blocking\n\n> How much time are people spending on Cypress tests?\nSimilar to Udit and Liam, I retry Cypress a couple times. If I know people are fixing tests, I rebase and try again.\nRebasing can take longer due to Cypress test failures: Because merging PR takes longer, I have branches base on top of other branches (i.e D → C → B → A → master). Rebasing the base brach (A) off master requires me to rebase all other branches (B, then, C, then D) again. Usually merge conflict isn't an issue for but managing these many branches is an headache.\n\n> How many bugs have we caught because of Cypress?\n• I don't rely on Cypress tests for testing my code, because I can't run Cypress test locally with my frontend changes. I either test them manually or rely on unit tests. \n• I understand that this can catch bugs that's outside of the area of change and thus not manually tested by the author. I do question if the benefit of this outweighs the frustration for running Cypress on CI:\n    ◦ We run test on sandbox every 4 hours. Can we wait for 4 hours to fix the bug?\n> [CJ] we've caught 3 backend bugs over the past week\n• We don't run Cypress on backend PRs. We have to rely on the Cypress test on subsequent PR after Cypress backend deploys or wait for Cypress to run on the sandbox. Why don't we wait for 4 hours until it fails on sandbox, rather than 8 hours until it failed on subsequent PR?\n> [Serena] helpful for catching race conditions and higher load\nVery true, although this can be done on sandbox: create a bunch of sandboxes and run cypress tests in parallel every time after sandbox deploys. However, this doesn't replicate the usual user behavior–do we expect a user tries to create projects, delete conversations, run an app at the same time?\n\nKudos to CJ for listing individual test failures!",
+      "time": "11:22",
+      "timestamp": "1718216549.628459",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> Usually merge conflict isn’t an issue for but managing these many branches is an headache.\nhopefully cypress tests will become more reliable, so merging PRs won’t take as long, so we won’t need intermediate branches as much!\n\n> Can we wait for 4 hours to fix the bug?\npreviously, developers didn’t know whether a Cypress test failure indicates the existence of a bug since tests could fail for many other reasons\n\nour hypothesis is that it’s worth running Cypress in CI so that we can maintain tests to always be green -> the ultimate goal is for engineers to trust Cypress failures to catch bugs\n\n> However, this doesn’t replicate the usual user behavior–do we expect a user tries to create projects, delete conversations, run an app at the same time?\nMy comment was about race conditions within a single Build project that could be triggered by our users as well. I was not talking about the concurrency issues with Cypress tests (which we’ve mostly fixed by now! :tada:)",
+      "time": "21:51",
+      "timestamp": "1718254269.668259",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-06-12.json",
+    "message_count": 2,
+    "start_time": "1718216549.628459",
+    "end_time": "1718254269.668259",
+    "is_thread": true
+  }
+}

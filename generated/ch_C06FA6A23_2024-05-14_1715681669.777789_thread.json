@@ -1,0 +1,481 @@
+{
+  "id": "ch_C06FA6A23_2024-05-14_1715681669.777789_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Xindi Xu",
+    "Kerry",
+    "mfichman",
+    "Sunny Khatri",
+    "Sławek Biel"
+  ],
+  "messages": [
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "The aihub-uat.internal.instabase.com (http://aihub-uat.internal.instabase.com) doesn’t show IBLLM logs in Grafana either. Is this the same issue?",
+      "time": "03:14",
+      "timestamp": "1715681669.777789",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "probably hmm",
+      "time": "07:08",
+      "timestamp": "1715695738.145429",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "update the thread here: (changes (https://github.com/instabase/instabase/commit/7247da00fb238c9e2ef656c96b7de9186bfdc920)) I commented out all the imports and `logging.info (http://logging.info)` works. If I add back `benchmark_classification.py` import, `logging.info (http://logging.info)` stops working. I think it's because some import brought in some changes that set the logger level incorrectly.\nI reverted (https://github.com/instabase/instabase/commit/1925ac5cf1b79c7c059690e2445f2d0d4d2321a9) my changes linked above but it still won't work.",
+      "time": "09:58",
+      "timestamp": "1715705886.352339",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "All of these 6 imports have issues. It's probably some shared lib somewhere causing this.\n```#from examples.benchmarking.benchmark_base_class import BenchmarkBaseClass\n#from examples.benchmarking.benchmark_types import (DatasetBatch,\n#                                                   BenchmarkResults)\n#from examples.benchmarking.benchmark_utils import (\n#    KEYS_TO_IGNORE_FOR_IB, ThreadPoolExecutorWithContext)\n#from examples.benchmarking.pipelines import MODEL_PIPELINES\n#from examples.benchmarking.pipelines.model_pipeline import ModelPipeline\n#from examples.benchmarking.dataset_reader import try_run_reader\n\n\nif __name__ == \"__main__\":\n  logging.basicConfig(level=logging.INFO (http://logging.INFO))\n  logger = logging.getLogger(\"\\033[96mBenchmarkClassification\\033[00m\")\n  logger.info (http://logger.info)(\"Info\")\n  logger.warning(\"Warning\")\n  logger.error(\"Error\")```",
+      "time": "10:13",
+      "timestamp": "1715706781.622329",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "These both print the same level. It appears that at some point  WARNING has been called (or we removed `INFO` from basicConfig), following which all the subsequent dependencies and services inheriting from the root logger gets these broken INFO. `basicConfig` subsequent calls doesn't work if a logger has been obtained using that.\n```logging.basicConfig(level=logging.WARNING)\nlogger = logging.getLogger(\"\\033[96mBenchmarkClassification\\033[00m\")\nprint(\"Logger level:\", logging.getLevelName(logger.getEffectiveLevel()))\n\nlogging.basicConfig(level=logging.INFO)\nlogger = logging.getLogger(\"\\033[96mBenchmarkClassification3\\033[00m\")\nprint(\"Logger level:\", logging.getLevelName(logger.getEffectiveLevel()))```",
+      "time": "10:30",
+      "timestamp": "1715707823.430109",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "@Xindi Xu - Do we know which config is being passed here ? https://github.com/instabase/instabase/blob/a59c6d6f82f001bd688546c42e54adc941ddd6[…]-utils/config-utils/src/py/instabase/config_utils/log_helper.py (https://github.com/instabase/instabase/blob/a59c6d6f82f001bd688546c42e54adc941ddd696/shared-utils/py-utils/config-utils/src/py/instabase/config_utils/log_helper.py#L127)",
+      "time": "10:39",
+      "timestamp": "1715708352.249949",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "So some observations from debugging with @mfichman :\nThe `basicConfig` https://docs.python.org/3/library/logging.html#logging.basicConfig needs to be called before any imports that makes any calls to `logging.info (http://logging.info)` / `logging.warning` etc.\nWorks:\n```if __name__ == \"__main__\":\n  logging.basicConfig(level=logging.INFO (http://logging.INFO))\n  logging.info (http://logging.info)('info xindi')\n\n  from examples.benchmarking.benchmark_classification import BenchmarkClassification\n  logging.basicConfig(level=logging.INFO (http://logging.INFO))\n  logging.info (http://logging.info)('info xindi')```\nNot working:\n\n```\nfrom examples.benchmarking.benchmark_classification import BenchmarkClassification\n\nif __name__ == \"__main__\":\n  logging.basicConfig(level=logging.INFO (http://logging.INFO))\n  logging.info (http://logging.info)('info xindi')```\nWorks:\n```from examples.benchmarking.benchmark_classification import BenchmarkClassification\n\nif __name__ == \"__main__\":\n  logging.basicConfig(level=logging.INFO (http://logging.INFO), force=True)\n  logging.info (http://logging.info)('info xindi')```\nIt should be solved by adding `force=True` to the `basicConfig`",
+      "time": "10:40",
+      "timestamp": "1715708454.419769",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "It's gonna be impossible for us to update all basicConfig usages, it's scattered all across services and modules. We just need to figure out the root level basicConfig call that has started messing things up.",
+      "time": "10:42",
+      "timestamp": "1715708564.756629",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I think we start seeing the issue after my PR because in my PR, i added `logging.info (http://logging.info)` which is imported by the module.\n>  The functions `debug()`, `info()`, `warning()`, `error()` and `critical()` will call `basicConfig()` automatically if no handlers are defined for the root logger.\n> This function does nothing if the root logger already has handlers configured, unless the keyword argument _force_ is set to `True`.",
+      "time": "10:42",
+      "timestamp": "1715708579.881539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "The problem is that, if we don't update the scripts to set the `force=True` , anything we import later that contains `logging.info (http://logging.info)` will break the script again.",
+      "time": "10:44",
+      "timestamp": "1715708649.783089",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "That's correct. But I think the whole point of `basicConfig` is to set this only once at the root level, via some configs. Modules shouldn't be setting these themselves. It's quite brittle the way we have things in place right now. Could you point to the info you think in your PR that is causing issues, if removing those helps, we should just fix that to unblock things for now for others meanwhile we figure the appropriate solution.",
+      "time": "10:46",
+      "timestamp": "1715708818.747039",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "That's correct but apparently Python doesn't implement this correctly :sweat_smile:",
+      "time": "10:52",
+      "timestamp": "1715709176.757049",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "here's the PR: https://github.com/instabase/instabase/commit/8c2144eedd505312c3b185e27411763224ca3981. I tried reverting it but that doesn't help. There could be more logging we need to comment out",
+      "time": "10:54",
+      "timestamp": "1715709284.224619",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "I'm just wondering how come things suddenly broken, even without your changes. Some changes should be there. This isn't just scripts (I was able to handle some of the benchmark scripts with explicit log level). Things should be broken for a lot of other services (model-service we know has issues).",
+      "time": "11:07",
+      "timestamp": "1715710059.874689",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Could this be the reason ? - https://github.com/instabase/instabase/blob/a59c6d6f82f001bd688546c42e54adc941ddd6[…]ils/config-utils/src/py/instabase/config_utils/feature_flags.py (https://github.com/instabase/instabase/blob/a59c6d6f82f001bd688546c42e54adc941ddd696/shared-utils/py-utils/config-utils/src/py/instabase/config_utils/feature_flags.py#L4)\nThis import was removed, and it was using `logging.info (http://logging.info)` which according to above may have called `basicConfig(INFO)` internally.",
+      "time": "11:10",
+      "timestamp": "1715710228.469709",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "It's weird we are calling `logging.info (http://logging.info)` directly and not getting a logger first.",
+      "time": "11:11",
+      "timestamp": "1715710277.084629",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "we do have lots of services directly calling `logging.info (http://logging.info)` tho :thinking_face:",
+      "time": "11:13",
+      "timestamp": "1715710438.732139",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Can we try adding that import back and see ?",
+      "time": "11:15",
+      "timestamp": "1715710506.635099",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "If this was what was causing INFO levels to be set, and now its gone, we know this was the cause.",
+      "time": "11:15",
+      "timestamp": "1715710551.980209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "logging.info (http://logging.info) calls logging.basicConfig. You can see this in the debugger.",
+      "time": "11:25",
+      "timestamp": "1715711114.849319",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "First call to basicConfig wins (https://docs.python.org/3/library/logging.html#logging.basicConfig), so the logging.info broke the other call to baseConfig that set the log level to `INFO`. Not sure what the recommendation is for this issue. Personally, I think the Python logging API is 0/10 terrible :slightly_smiling_face:",
+      "time": "11:26",
+      "timestamp": "1715711173.327129",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Of all the things you don't want to break b/c someone added a logging.info call -- logging is probably #1!",
+      "time": "11:26",
+      "timestamp": "1715711190.402869",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "> logging.basicConfig\n> ...\n> This function does nothing if the root logger already has handlers configured, unless the keyword argument _force_ is set to `True`.",
+      "time": "11:27",
+      "timestamp": "1715711271.926119",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```The functions debug(), info(), warning(), error() and critical() will call basicConfig() automatically if no handlers are defined for the root logger.```",
+      "time": "11:28",
+      "timestamp": "1715711334.833649",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Fun times :slightly_smiling_face:",
+      "time": "11:29",
+      "timestamp": "1715711340.533109",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "I think the other issue here is these inits are happening on module init which means even if we try to set levels at config level those would get broken if this import was still there ? As this import means this basicConfig is the first thing to be called ?",
+      "time": "11:29",
+      "timestamp": "1715711352.561199",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "That's correct. Every `main` should be structured like this, AFAICT:\n\n```import logging\nlogging.basicConfig(...)\n\n# other imports and code\n\nif __name__ == '__main__': ...```",
+      "time": "11:30",
+      "timestamp": "1715711403.201789",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://www.reddit.com/r/learnpython/comments/6e9ir3/why_does_logging_level_change_when_i_add_an_info/ similar issue",
+      "time": "11:30",
+      "timestamp": "1715711454.154099",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Might makes sense to get this import or some logging.info (http://logging.info) call back for now. Our prod and other environment is currently also probably missing lot of debug information due to this. I don't know how other services were setting their levels since this import means the level was always INFO.",
+      "time": "11:32",
+      "timestamp": "1715711576.238809",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It's possible we just got lucky before this...that is, no `logging.info (http://logging.info)` calls before `basicConfig` was called.",
+      "time": "11:36",
+      "timestamp": "1715711790.539489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, Python can also have per-module loggers, which have their own config. Those override the root logger AFAICT....but I'm not an expert.",
+      "time": "11:37",
+      "timestamp": "1715711827.354049",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hey reading through the thread, i agree with @Sunny Khatri -- whatever we did that we identify causing the issue, if we can let's revert that change first (even if it's not the best fix?) The goal is to bring back the logs on prod asap so we don't get stuck in any future incidents because of missing logs. @Xindi Xu @mfichman do you have a way forward?",
+      "time": "12:10",
+      "timestamp": "1715713814.444839",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I can remove the logs I added in.",
+      "time": "12:13",
+      "timestamp": "1715714038.861409",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "https://github.com/instabase/instabase/pull/57445",
+      "time": "12:21",
+      "timestamp": "1715714496.214179",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "@Xindi Xu - Let's make sure this fix is helping address the issue.",
+      "time": "12:33",
+      "timestamp": "1715715230.965469",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I can't really see the difference:\n• In webapp, even with my changes, logging with info level works\n• In the scripts you linked, even without my changes, logging doesn't work",
+      "time": "12:37",
+      "timestamp": "1715715479.026809",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "@Yash Botadra mentioned he was able to narrow down to your PR. Perhaps that was only limited to model-service where this PR was causing issue ? @Yash Botadra could you confirm ? If so, would suggest to get model-service fixed atleast by making a dumy call to `logging.info (http://logging.info)` right at service main. We don't know what other services are being impacted.",
+      "time": "12:49",
+      "timestamp": "1715716159.838249",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "@Xindi Xu - Regarding what's working or not, it would really depend on what is getting called first `logging.info (http://logging.info)` or `logging.warning` . That's why I just don't like the idea of using these, and having log levels set explicitly on logger, we need better abstractions here. otherwise these issues are hard to track.",
+      "time": "12:56",
+      "timestamp": "1715716608.503329",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I agree with you! Which is why this is hard to track down. We have many services that directly use `logging.info (http://logging.info)` without setting the logger. Would you mind pull down my changes to verify on your end since I can't run the script you provided without commenting out a lot of code.\nI reverted my changes related to logging made in my PR but again, I don't see any differences until I pass in `force=True` to `basicConfig()`",
+      "time": "13:05",
+      "timestamp": "1715717105.240569",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "I'll have a look. My concern is not the script but model-service and ibllm that is being used in model-service. We already have scripts fixed with explicit logger level.",
+      "time": "13:07",
+      "timestamp": "1715717254.129039",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Can't even verify what's happening in dogfood since even grafana seems down - https://instabase.slack.com/archives/C011FHLBN8N/p1715715994280929",
+      "time": "13:09",
+      "timestamp": "1715717363.441569",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "I reposted the problem here https://instabase.slack.com/archives/C053W8B06EL/p1715718531434629?thread_ts=1715711840.317319&cid=C053W8B06EL",
+      "time": "13:51",
+      "timestamp": "1715719866.027549",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Arek is looking into it; @mfichman you're tagged there too",
+      "time": "13:51",
+      "timestamp": "1715719877.494579",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "I'm able to narrow this down to this import - https://github.com/instabase/instabase/blob/90c5e3cc8b2a45244b36a716007423507adfe3[…]ared-utils/py-utils/stats-utils/src/py/instabase/stats/utils.py (https://github.com/instabase/instabase/blob/90c5e3cc8b2a45244b36a716007423507adfe3d6/shared-utils/py-utils/stats-utils/src/py/instabase/stats/utils.py#L7). You are able to set level to info via `basicConfig` before this import but after this it's always `WARNING`. @Xindi Xu - Would you have time to debug this further, just extremely tired of this tracking, need a break.\n\n```// Can set to Info.\nfrom instabase.config_utils.config import BaseConfig, get_config\n// Cannot set to info. It's always warning.```",
+      "time": "13:51",
+      "timestamp": "1715719913.298879",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "I pulled in Xindi’s PR (https://github.com/instabase/instabase/pull/57445/files) that removes all the logging from the feature_flags.py and can confirm that the logs from model service are back. Let’s go ahead and merge this in (and backport to 24.20).",
+      "time": "13:55",
+      "timestamp": "1715720103.824419",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Lol..Now I'm confused. Xindi said removing didn't help.",
+      "time": "13:55",
+      "timestamp": "1715720143.762109",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Maybe its helping for model service ?",
+      "time": "13:56",
+      "timestamp": "1715720177.910669",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It didn't help in the script you linked and in webapp",
+      "time": "13:57",
+      "timestamp": "1715720242.844909",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "I haven’t been running the benchmarking script all this while. Was only looking at model-service. So we should merge this in anyway. @Sunny Khatri if and when you can, can you run the benchmarking script after pulling in these fixes and see if it helps? (or wait and pull from master)",
+      "time": "13:57",
+      "timestamp": "1715720243.279869",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "Yup I'll try that.",
+      "time": "13:57",
+      "timestamp": "1715720259.069129",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Yash Botadra @Xindi Xu please also backport the fix to 24.18 -- just in case if we redeploy, we can get this change into. Always good to have logs available to you.......",
+      "time": "13:58",
+      "timestamp": "1715720295.764059",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "I'll give it a try after you merge.",
+      "time": "13:58",
+      "timestamp": "1715720305.459129",
+      "is_reply": true
+    },
+    {
+      "sender": "Sunny Khatri",
+      "user_id": "U06KR4QB6E5",
+      "message": "@Yash Botadra - Is it possible for us to setup some alerting on info message counts ? In case another such change gets introduced, this will help us catch that.",
+      "time": "14:01",
+      "timestamp": "1715720496.760349",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "For webapp, we have this init function that calls `init_logging` before most of other functions like `init_hot_config`  and registering blueprints\nhttps://github.com/instabase/instabase/blob/90c5e3cc8b2a45244b36a716007423507adfe3d6/webserver/webapp/src/py/manage_webapp.py#L65-L67\n\nIn model-service, I wonder we could do something similar?",
+      "time": "14:10",
+      "timestamp": "1715721042.810649",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "maybe we need to move the `setup_logfmt_logging` before `config.get_config()`?\nhttps://github.com/instabase/instabase/blob/90c5e3cc8b2a45244b36a716007423507adfe3d6/data-services/model-services/model-service/src/py/server.py#L9-L17",
+      "time": "14:13",
+      "timestamp": "1715721238.809859",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "For webapp, I am still not sure how things worked. It does the following:\n```from instabase.webapp.server import config\napp_config = config.get_config() # this creates a FeatureFlags object\n...\n...\n...\nwebapp = Webapp(...)\nwebapp.init_logging(). # this calls setup_logfmt_logging() with the correct log level```\nSince FeatureFlags object creation happens before log level is set, this should also have run in to the same behavior like model-service (which also basically does these things in the same order).",
+      "time": "15:19",
+      "timestamp": "1715725161.616039",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Unless webapp has code that executes in that first import that sets the logging config before you load the flags.",
+      "time": "18:06",
+      "timestamp": "1715735161.068949",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-05-14.json",
+    "message_count": 57,
+    "start_time": "1715681669.777789",
+    "end_time": "1715735161.068949",
+    "is_thread": true
+  }
+}

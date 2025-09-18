@@ -1,0 +1,70 @@
+{
+  "id": "ch_C06FA6A23_2023-09-11_1694473023.185269_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "sean.donohoe",
+    "Dominic Fannjiang"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "My PR (https://github.com/instabase/instabase/pull/46355) 's CI build has been erroring on `core-services/job-service, core-services/core-platform-service, core-services/file-service` with these kinds of errors:\n```[2023-09-11T20:32:21.750Z] //core-services/job-service/src/go/src/instabase/jobservice/config:config_test NO STATUS\n[2023-09-11T20:32:21.750Z] //core-services/job-service/src/go/src/instabase/jobservice/cronscheduler:cronscheduler_test NO STATUS\n[2023-09-11T20:32:21.750Z] //core-services/job-service/src/go/src/instabase/jobservice/flowlogger:flowlogger_test NO STATUS\n[2023-09-11T20:32:21.750Z] //core-services/job-service/src/go/src/instabase/jobservice/handler:handler_test NO STATUS\n[2023-09-11T20:32:21.750Z] //core-services/job-service/src/go/src/instabase/jobservice/modelcontroller:modelcontroller_test NO STATUS\n[2023-09-11T20:32:21.750Z] //core-services/job-service/src/go/src/instabase/jobservice/stats:stats_test NO STATUS\n[2023-09-11T20:32:21.750Z] //core-services/job-service/src/go/src/instabase/jobservice/taskscheduler:taskscheduler_test NO STATUS\n[2023-09-11T20:32:21.750Z] //core-services/job-service/src/go/src/instabase/jobservice/utils:utils_test NO STATUS```\nHas anyone else been getting this?",
+      "time": "15:57",
+      "timestamp": "1694473023.185269",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "looks like go services failed to be built, this is the error message for all go services\n```[2023-09-11T20:32:21.750Z] ERROR: /instabase_dir/shared-utils/go-utils/src/instabase/utils/acl/BUILD.bazel:3:11: GoCompilePkg shared-utils/go-utils/src/instabase/utils/acl/acl.a failed: (Exit 1): builder failed: error executing command bazel-out/k8-opt-exec-2B5CBBC6/bin/external/go_sdk/builder_reset/builder compilepkg -sdk external/go_sdk -installsuffix linux_amd64 -src shared-utils/go-utils/src/instabase/utils/acl/acl.go -src ... (remaining 87 arguments skipped)\n\n[2023-09-11T20:32:21.750Z] \n\n[2023-09-11T20:32:21.750Z] Use --sandbox_debug to see verbose messages from the sandbox and retain the sandbox build root for debugging\n\n[2023-09-11T20:32:21.750Z] compilepkg: missing strict dependencies:\n\n[2023-09-11T20:32:21.750Z] \t/root/.cache/bazel/_bazel_root/eecbca7b87c7c33fd2d8ffba03ee98a3/sandbox/processwrapper-sandbox/805/execroot/__main__/shared-utils/go-utils/src/instabase/utils/acl/user_principal.go: import of \"github.com/opentracing/opentracing-go (http://github.com/opentracing/opentracing-go)\"\n\n[2023-09-11T20:32:21.750Z] \t/root/.cache/bazel/_bazel_root/eecbca7b87c7c33fd2d8ffba03ee98a3/sandbox/processwrapper-sandbox/805/execroot/__main__/shared-utils/go-utils/src/instabase/utils/acl/user_principal.go: import of \"github.com/opentracing/opentracing-go/log (http://github.com/opentracing/opentracing-go/log)\"\n\n[2023-09-11T20:32:21.750Z] No dependencies were provided.\n\n[2023-09-11T20:32:21.750Z] Check that imports in Go sources match importpath attributes in deps.```",
+      "time": "16:18",
+      "timestamp": "1694474310.423329",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "cc our resident go expert... @Heymian any idea? :point_up:",
+      "time": "16:21",
+      "timestamp": "1694474475.379859",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "cc @sean.donohoe too; no other PRs merged in the past few hours seem to be relevant to this besides your PR on CI",
+      "time": "16:28",
+      "timestamp": "1694474921.168099",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Did someone change that user_principal.go file? The error logs are indicating it had a new import of the opentracing-go package, but the corresponding bazel configuration wasn’t updated",
+      "time": "16:43",
+      "timestamp": "1694475823.028589",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@Dominic Fannjiang you need to update the `deps` list in `shared-utils/go-utils/src/instabase/utils/acl/BUILD.bazel` with\n\n• `@com_github_opentracing_opentracing_go//:opentracing-go`\n• `@com_github_opentracing_opentracing_go//log`",
+      "time": "16:47",
+      "timestamp": "1694476048.592669",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-09-11.json",
+    "message_count": 6,
+    "start_time": "1694473023.185269",
+    "end_time": "1694476048.592669",
+    "is_thread": true
+  }
+}

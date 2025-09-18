@@ -1,0 +1,182 @@
+{
+  "id": "ch_C06FA6A23_2020-04-14_1586893225.314500_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Aaron Vontell",
+    "john",
+    "Barrie"
+  ],
+  "messages": [
+    {
+      "sender": "Barrie",
+      "user_id": "UTVP23JHF",
+      "message": "@john I just added a release note for a new option to unzip a file in the UI https://instabase.atlassian.net/browse/UX-177 if that helps (or at least now you know about that option)",
+      "time": "12:40",
+      "timestamp": "1586893225.314500",
+      "is_reply": false
+    },
+    {
+      "sender": "john",
+      "user_id": "UGJ1TQ1JM",
+      "message": "nice context - does the stuff at https://instabase.com/docs/reference/apis/filesystem/#extract-a-zip-file work in that case? It seems like no as everything I throw at that end point returns an error asking me to make sure I have a valid \"type\" key. Seems like those end points are actually hitting the post a new file end point or something.",
+      "time": "12:42",
+      "timestamp": "1586893341.314800",
+      "is_reply": true
+    },
+    {
+      "sender": "john",
+      "user_id": "UGJ1TQ1JM",
+      "message": "cc @Aaron Vontell",
+      "time": "12:42",
+      "timestamp": "1586893349.315000",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@john currently you can’t extract a zip file to a root directory",
+      "time": "12:43",
+      "timestamp": "1586893414.315200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "(i.e. something like Instabase Drive/)",
+      "time": "12:44",
+      "timestamp": "1586893442.315400",
+      "is_reply": true
+    },
+    {
+      "sender": "Barrie",
+      "user_id": "UTVP23JHF",
+      "message": "see the Release notes field in UX-177, do we need more info? or \"valid folder\" is good enough @Aaron Vontell?\n```You can now unzip a compressed file that has been uploaded to a valid folder in the Instabase file system.```",
+      "time": "12:44",
+      "timestamp": "1586893492.315600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "That may be appropriate, however we may get it into this release, not sure yet :confused: in the meantime, I can update the note!",
+      "time": "12:46",
+      "timestamp": "1586893618.315800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Any language suggestion? Basically want to say that you can unzip to any folder that is not the root directory of a mounted drive",
+      "time": "12:47",
+      "timestamp": "1586893666.316000",
+      "is_reply": true
+    },
+    {
+      "sender": "Barrie",
+      "user_id": "UTVP23JHF",
+      "message": "@Aaron Vontell we always want to identify what we do support \"a valid folder in the Instabase file system\" (_now I'm looking to see if we define valid folders somewhere_)\nI'll take a stab at adding \"not the root directory of a mounted drive\"\n\n```You can now unzip a compressed file that has been uploaded to a valid folder in the Instabase file system. Unzip to the root directory of a mounted drive is not supported.```",
+      "time": "12:51",
+      "timestamp": "1586893860.316200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yup that sounds great!",
+      "time": "12:53",
+      "timestamp": "1586893991.316400",
+      "is_reply": true
+    },
+    {
+      "sender": "john",
+      "user_id": "UGJ1TQ1JM",
+      "message": "ok, so in my case I'm not unzipping from a root directory and get this fun stuff https://gist.github.com/johnyerhot/81042f48babc194b2fe0f612dfe2f87a",
+      "time": "13:06",
+      "timestamp": "1586894802.317000",
+      "is_reply": true
+    },
+    {
+      "sender": "john",
+      "user_id": "UGJ1TQ1JM",
+      "message": "Anyways, I'll update that Jira and y'all can tell me what I'm doing wrong :smile:",
+      "time": "13:12",
+      "timestamp": "1586895176.317200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Ah, this is because like a lot of our other endpoints, we send all of our args via the header, not as a post body :disappointed:",
+      "time": "13:28",
+      "timestamp": "1586896084.317400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "But heads up this may be changing soon (like in the next day or so)",
+      "time": "13:30",
+      "timestamp": "1586896251.317600",
+      "is_reply": true
+    },
+    {
+      "sender": "john",
+      "user_id": "UGJ1TQ1JM",
+      "message": "ok. I'm mainly just bringing it up because it's in our docs and someone at metlife is running through what looks like all our API docs and hitting me with bug reports, lol. The docs make it seem like no instabase-api-args are needed. Also, adding a `type` arg + value seems to make the api think we're posting a new file/folder or something :shrug:",
+      "time": "13:32",
+      "timestamp": "1586896341.317800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Sorry I am realizing I am saying nonsense, was confused about part of the api. Looks like we don’t use the api-args here, looking at your gist, it seems like there is no `unzip`",
+      "time": "13:43",
+      "timestamp": "1586897026.318400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I would try `url = url_base + root + 'unzip'`",
+      "time": "13:44",
+      "timestamp": "1586897056.318600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I am very confused as to why that is not in the docs, it may have been an error as we moved from the old docs to the new docs",
+      "time": "13:45",
+      "timestamp": "1586897113.318800",
+      "is_reply": true
+    },
+    {
+      "sender": "Barrie",
+      "user_id": "UTVP23JHF",
+      "message": "@Aaron Vontell and @john love to know that customers are looking at docs. Our API docs have been getting a structural edit, ongoing in https://github.com/instabase/instabase-docs/pull/121\n\nlet's get the content updated",
+      "time": "13:49",
+      "timestamp": "1586897364.319000",
+      "is_reply": true
+    },
+    {
+      "sender": "john",
+      "user_id": "UGJ1TQ1JM",
+      "message": "oh snap! thanks @Aaron Vontell! totes worked",
+      "time": "14:47",
+      "timestamp": "1586900820.319400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-04-14.json",
+    "message_count": 20,
+    "start_time": "1586893225.314500",
+    "end_time": "1586900820.319400",
+    "is_thread": true
+  }
+}

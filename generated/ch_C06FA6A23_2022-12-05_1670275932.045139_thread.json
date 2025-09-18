@@ -1,0 +1,193 @@
+{
+  "id": "ch_C06FA6A23_2022-12-05_1670275932.045139_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "fernando",
+    "Rahul Tewari",
+    "Yan Wang",
+    "Pridhvi Vegesna",
+    "Serena",
+    "Kai"
+  ],
+  "messages": [
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "Hey we're seeing weird behavior on dogfood (also see similar behavior on sandboxes). Our model training jobs in the queue are not being consumed by the workers. An example of this is the CI tests for ibformers (https://dogfood.instabase.com/apps/ml-studio/models/train?modelPath=ib_annotation/data/fs/Prod%20Drive/datasets/ci-test-datasets-do-not-delete/dogfood/models/driver_licenses). I'm wondering if this is related to some change recently to model training tasks.\n\nWe see that there's a recent envoy related commit to the MTT directory (https://github.com/instabase/instabase/commit/e45ac40b6725b90b0a685d4fa14d4d92130fcc3b). Would this result in a change in behavior to rabbitmq that would prevent jobs from being consumed? @Kai @Yan Wang @fernando\n\nWe see like 200+ jobs stuck in our queue. We also see unexpected log entries that claim that MTT-GPU is not connecting to rabbitmq. See the pictures. (Also we noticed that the commit doesn't include a port change for MTT-CPU is this intentional?)\n\n@Pridhvi Vegesna @pauline.comising",
+      "time": "13:32",
+      "timestamp": "1670275932.045139",
+      "is_reply": false
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "Issue might be due to missing `RABBIT_MQ_PORT` configuration on mtt-gpu",
+      "time": "13:37",
+      "timestamp": "1670276256.704409",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "Do we know what the fix is?",
+      "time": "13:37",
+      "timestamp": "1670276279.217539",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "Probably\n```kind: Deployment\nmetadata:\n  name: deployment-model-training-tasks-gpu\nspec:\n  template:   \n    spec:\n      containers:\n        - name: model-training-tasks-gpu\n          env:\n            - name: RABBIT_MQ_PORT\n              value: \"45672\"```",
+      "time": "13:38",
+      "timestamp": "1670276339.750039",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "I'll try patching this in for now",
+      "time": "13:40",
+      "timestamp": "1670276452.208339",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "How was this port missing? What caused this issue?",
+      "time": "13:41",
+      "timestamp": "1670276493.870639",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": ">  How was this port missing?\nGood question :wink:\n> What caused this issue?\nRMQ was recently moved to be on mesh. We usually lookup the port we are moving to mesh. My guess is that since the configuration was missing (uses default), we probly missed \"updating\" it",
+      "time": "13:43",
+      "timestamp": "1670276592.649459",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "I see. What was the code change that \"moves RMQ to be on mesh\"? Can we make sure it is not missing on MTT-CPU as well?",
+      "time": "13:44",
+      "timestamp": "1670276669.942509",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "Ok - I don't see any RMQ errors so far, can you check if things are moving?",
+      "time": "13:44",
+      "timestamp": "1670276691.775339",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "It is a change to the base configs (yml). I don't know that we have configs for cpu? do we?",
+      "time": "13:46",
+      "timestamp": "1670276773.894069",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "no, I don't think so",
+      "time": "13:50",
+      "timestamp": "1670277034.007029",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "if this worked - can we make sure this is versioned in base configs and the patch is removed?",
+      "time": "13:51",
+      "timestamp": "1670277086.610919",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "thanks for debugging this @fernando! i added the rabbit mq port to the services that have the `amqp` label based on this file (https://github.com/instabase/instabase/blob/master/core-services/control-plane/src/go/src/instabase/controlplane/utils/resourcelabel/default_resource_labels.go#L25). since mtt-gpu wasn’t there so it was missed. if fernando’s patch fixed the issue, i’ll create a PR to update the base config and this file, and delete the patch afterwards",
+      "time": "13:57",
+      "timestamp": "1670277434.832409",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "let me see if any jobs are being run",
+      "time": "14:01",
+      "timestamp": "1670277670.673949",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "Ok I see jobs count going down and stuff happening in the MTT-GPU queue. This fix seems to have worked.\n\nIf a fix is going to be pushed can we also make sure that local development still works as part of testing the PR (i.e. spin up instabase + mtt-cpu locally and make sure training works).",
+      "time": "14:09",
+      "timestamp": "1670278186.849189",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "Can you share the patch you did? Is it just this to CP?\n```kind: Deployment\nmetadata:\n  name: deployment-model-training-tasks-gpu\nspec:\n  template:   \n    spec:\n      containers:\n        - name: model-training-tasks-gpu\n          env:\n            - name: RABBIT_MQ_PORT\n              value: \"45672\"```\n@Pridhvi Vegesna To unblock you you can try doing this instead of redeploying the cs sandbox?",
+      "time": "14:13",
+      "timestamp": "1670278385.428659",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Good callout, though I already redeployed with an earlier release",
+      "time": "14:22",
+      "timestamp": "1670278943.947119",
+      "is_reply": true
+    },
+    {
+      "sender": "Kai",
+      "user_id": "U01NA8CSD71",
+      "message": "fix PR https://github.com/instabase/instabase/pull/33717, https://github.com/instabase/instabase/pull/33719\n@Rahul Tewari this only affects the base configs that are being used by control plane environments and doesn’t affect local",
+      "time": "14:36",
+      "timestamp": "1670279770.608929",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "@Rahul Tewari @Josh Xie should we clear the queue? the dogfood `celery-model-training-tasks` queue still has over 100 tasks, and i think it’ll take too long to run all of them",
+      "time": "17:49",
+      "timestamp": "1670291381.756939",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "sure I am purging",
+      "time": "17:51",
+      "timestamp": "1670291480.051199",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "I think there's a job running still",
+      "time": "17:53",
+      "timestamp": "1670291610.876329",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-12-05.json",
+    "message_count": 21,
+    "start_time": "1670275932.045139",
+    "end_time": "1670291610.876329",
+    "is_thread": true
+  }
+}

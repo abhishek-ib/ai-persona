@@ -1,0 +1,191 @@
+{
+  "id": "ch_C06FA6A23_2021-06-16_1623833715.280800_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "jayasooryan",
+    "Hari",
+    "sudeep",
+    "Aimé"
+  ],
+  "messages": [
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Hi team - Not sure which channel is best for this one:  @jayasooryan was working on a sol for NatWest extracting large blocks of text from a structured form. The OCR has caused lots of weird errors such as extracting double words E.G `hello world` > `hello hello world world` and also merging words so `hello world` helloworld. Has anyone else seen this and got a workaround?",
+      "time": "01:55",
+      "timestamp": "1623833715.280800",
+      "is_reply": false
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "Cc @Hari",
+      "time": "02:05",
+      "timestamp": "1623834312.281000",
+      "is_reply": true
+    },
+    {
+      "sender": "jayasooryan",
+      "user_id": "U0162F348KB",
+      "message": "To add some context, we are using Marx OCR. This issue is observed in a section of a document where a large paragraph is present which needs to be extracted.\n\nFor the merged words, the provenance shows separate boundary for individual words, but the OCRed text shows a single merged word.",
+      "time": "02:09",
+      "timestamp": "1623834575.281200",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "@jayasooryan Can we have a quick look at it sometime today? I am free around 3.15PM IST.. does that work for you?",
+      "time": "02:15",
+      "timestamp": "1623834902.281500",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "and this is in the natwest env right?",
+      "time": "02:15",
+      "timestamp": "1623834924.281700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "yes it is",
+      "time": "02:15",
+      "timestamp": "1623834957.281900",
+      "is_reply": true
+    },
+    {
+      "sender": "jayasooryan",
+      "user_id": "U0162F348KB",
+      "message": "Sure Hari.",
+      "time": "02:16",
+      "timestamp": "1623834963.282100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Any update here>?",
+      "time": "02:51",
+      "timestamp": "1623837084.282500",
+      "is_reply": true
+    },
+    {
+      "sender": "jayasooryan",
+      "user_id": "U0162F348KB",
+      "message": "@Aimé Hari and I had a call. @Hari is going to take a look at resolving the words getting merged together. The repeating words is coming directly from the OCR output. We doubt whether we can do anything about it.",
+      "time": "03:02",
+      "timestamp": "1623837746.282700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Could we use a diff OCR ?",
+      "time": "03:05",
+      "timestamp": "1623837954.282900",
+      "is_reply": true
+    },
+    {
+      "sender": "jayasooryan",
+      "user_id": "U0162F348KB",
+      "message": "Since we are using a single flow architecture, we are doing OCR only once. So we can't have separate OCR engine for different document types.",
+      "time": "03:07",
+      "timestamp": "1623838047.283100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "ok thought so",
+      "time": "03:09",
+      "timestamp": "1623838148.283300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Can we write some logic that looks for double words and removes them?",
+      "time": "03:09",
+      "timestamp": "1623838177.283500",
+      "is_reply": true
+    },
+    {
+      "sender": "jayasooryan",
+      "user_id": "U0162F348KB",
+      "message": "Let me give it a try using the word polys of those words. Might work!",
+      "time": "03:15",
+      "timestamp": "1623838541.283700",
+      "is_reply": true
+    },
+    {
+      "sender": "jayasooryan",
+      "user_id": "U0162F348KB",
+      "message": "@Aimé @Hari I resorted to using the word polys returned by the OCR directly to overcome both the issues.\n\nThe words getting merged issue: Even though the individual words are getting merged in the text space, the word polys returned by the OCR are separate. So using these word polys directly solved the problem.\n\nThe duplicate words returned by OCR issue: By iterating through individual word polys and eliminating overlapping nearby words, the issue got resolved.\n\nThe underlying problem with OCR returning duplicate words and the merged words in the text space still exist though.",
+      "time": "07:15",
+      "timestamp": "1623852915.285600",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "Thanks for update @jayasooryan!! Will investigate the other issues..",
+      "time": "07:27",
+      "timestamp": "1623853633.286600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "stupid question… what is word polys? :joy:",
+      "time": "07:31",
+      "timestamp": "1623853909.286900",
+      "is_reply": true
+    },
+    {
+      "sender": "jayasooryan",
+      "user_id": "U0162F348KB",
+      "message": "haha.. It's the bounding box of each word in the document (2D coordinates of the word on a page). Using this information we are able to identify which all words are overlapping and remove them accordingly.",
+      "time": "07:35",
+      "timestamp": "1623854142.287100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "awesom!",
+      "time": "07:38",
+      "timestamp": "1623854291.287400",
+      "is_reply": true
+    },
+    {
+      "sender": "Aimé",
+      "user_id": "U01JWKF4AEP",
+      "message": "Just to confirm - have we now updted the binary for KYB on NatWest? Can i show Song the improvements?",
+      "time": "11:12",
+      "timestamp": "1623867135.292700",
+      "is_reply": true
+    },
+    {
+      "sender": "jayasooryan",
+      "user_id": "U0162F348KB",
+      "message": "Yes @Aimé The following issues on the KYB documents are fixed: notes missing, merged words, and double words. The other 2 issues that Song has mentioned ('-----' string missed and incomplete scan) are OCR issues where words itself are missed. The improved binary is under the latest_binaries_4 folder on NatWest. You can show it to Song.",
+      "time": "22:11",
+      "timestamp": "1623906679.293000",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-06-16.json",
+    "message_count": 21,
+    "start_time": "1623833715.280800",
+    "end_time": "1623906679.293000",
+    "is_thread": true
+  }
+}

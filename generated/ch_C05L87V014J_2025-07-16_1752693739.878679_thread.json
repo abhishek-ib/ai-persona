@@ -1,0 +1,110 @@
+{
+  "id": "ch_C05L87V014J_2025-07-16_1752693739.878679_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "mfichman",
+    "Ganan Prabaharan"
+  ],
+  "messages": [
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "Hi team,\n\nI’m getting this weaviate error on my sandbox, would someone know how to resolve this issue?\n```2025/07/16 19:17:37 ERROR utils/db/session/dbsession.go:212 -- SQL DB: Failed to parse DB params: Empty DBParam string\n2025/07/16 19:17:37 ERROR weaviate/main.go:43 -- Failed to create DBSession for HA lease backend.\n2025/07/16 19:17:37 FATAL weaviate/main.go:80 -- failed to get initlaize the db accessor: Empty DBParam string\nmake: *** [Makefile:19: run-docker] Error 1```\nSandbox link: https://instabase.sandboxes.site/sandboxes/gananprabaharan?cw=dev\nWeaviate logs: https://instabase.sandboxes.site/logviewx/instabase/gananprabaharan/dev/daemon/weaviate%40instabase\n\nCC:@anshul.padhi @Atinder",
+      "time": "12:22",
+      "timestamp": "1752693739.878679",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Have you tried resyncing your sandbox with a base refresh? I think this error occurs if you have a really old sandbox",
+      "time": "13:36",
+      "timestamp": "1752698206.952949",
+      "is_reply": true
+    },
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "Yeah I saw some threads about that, but I created this sandbox today, so assumed that wouldn’t be it. I can try it though",
+      "time": "13:40",
+      "timestamp": "1752698405.235109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Spelling mistake there :laugh-cry:",
+      "time": "14:28",
+      "timestamp": "1752701334.984289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Ganan Prabaharan taking a look",
+      "time": "14:29",
+      "timestamp": "1752701371.058869",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "`env-local-crafting.json` looks good (the db_params are in there)",
+      "time": "14:30",
+      "timestamp": "1752701432.695489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Interestingly, all your services are failing in the same way (job-service as well)",
+      "time": "14:31",
+      "timestamp": "1752701472.522419",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Ganan Prabaharan you are way behind master. rebase :slightly_smiling_face:",
+      "time": "14:31",
+      "timestamp": "1752701513.936279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```owner@dev:~/instabase/shared-utils/build-utils/shared$ git log --oneline origin/master...HEAD -n 60\n0dc9eb9fbab (origin/master) ci fix (#72494)\n6825bf3aa8a [CS-6456] Create deployment from workspaces (#72481)\n96f8a0a353e (origin/bugfix-uv-venv) [CRAFT-13] fixing duplicate directories in the debug config (#72488)\nf3b68e38463 [CINFRA-3204] Remove ENABLE_AIHUB_PUBLIC from Python files (1/N) (#72176)\n0154ffc348c update debug folders (#72484)\n9b026c9d79a [PRODENG-1801] Update Prod Jenkins and certify builders (#72482)\n377f822e7a5 [JIRA-000] Increase timeout for make-sandbox (#72430)\n68bc54b65dd [PRODENG-1802] Re-add ray images to ECR TF to unbreak certify (#72483)\n8b98f641db6 [CS-000] Various type fixes (#72409)\n8e6c8c2b9ba [CS-0000] Upgrade AWS client versions (#72471)\nd1ebd8e8936 (HEAD -> benchmarking_translators, origin/benchmarking_translators) updating model_name\n609e4139eff (master) [PRODENG-000] Drop config=ci profiling writes, as some non-CI jobs are using this config for some reason (#72476)\na7993cfe412 Revert \"[CS-0000][INC-732]: Disable buildkit farm (#72461)\" (#72470)\nf184df9329e [FLOW-11065] Add email notifications for promo requests (#72419)\nb7e8ae101fe [EPD-734] - Multistep build (#71279)\nc790910bf28 show argo link for DM tenants running in audit mode (#72415)\nf8e9f4aa56a (origin/mfichman/go-dockerfiles) [INC-732] Rollback buildkit upgrade, it's weirdly broken (#72469)\nd5d3f9a8e8c [CS-0000] Fix dynamo DB connection error (EndpointResolverV2) (#72463)\n9917822539e Revert \"[SRE1-442] Azure cognitive svcs setup SAAS (#71573)\" (#72468)\naf3ba768d4d Revert \"[SRE1-000] Enhance external secrets management by adding Azure servic<E2><80><A6>\" (#72467)\n665339b2f2b [JIRA-000] Add model select for gemini flash (#72375)\n4efc4b30468 [CS-0000][INC-732]: Disable buildkit farm (#72461)\n6f7d265a255 [SRE1-000] Enhance external secrets management by adding Azure services  (#72255)\n0fca16b8c70 [DR-5293] Added capability to clear sample prompts (#72091)\nb6ce47b3971 [AUTO-320] Add hidden_fields_settings to deployment endpoints (GET, POST, PATCH) (#72310)\n413afad6a5a [DR-5300] Defined API layer crud operation for chatbot repo (#72330)\ne8d831e04ab [SRE1-442] Azure cognitive svcs setup SAAS (#71573)\nbf75326c949 updated util layer to accomodate client type in mount point response (#72329)\nefb09f7b8ff github action fixed (#72456)\nf7a36ce002c [DR-5270]  Changes for orchestrator layer (#72401)\n4f4247b9d68 [CS-6454] DS UI: Disable indexing modal should list connected chatbots (#72369)\n9a16c58d65b Add data sources to file viewer (#72344)\n813d91cba9f [CY-0000] Fix workspaces tests (#72429)\n1ce0a821225 [AUTO-293] Case fields - passing populated input fields to API level (#72108)\ne813a6e7a81 [AUTO-333] Generate refiner with data_type enum (#72199)\na8c6a5ea193 [CS-5957] Switch fine-grain-usage to GA (#72318)\n2af1a2efad0 Fix env-docs (#72441)\n1b3116da928 Fix type error in batches API (#72438)\nbd5b9b96169 Remove deprecated extract_document_info function and add filename extraction warning in process_documents function (#72425)\nc07910c769a [CS-6455] Fixes the following bugs for fine grain usage: (#72384)\naa08dffc94a Added vision_reasoning_extraction translator\ne3b2ec2fc44 [AUTO-218] Add `workspace_id` to build classification model calls (#72371)\nc92facf1dd6 Remove mypy_extensions in webserver (#72287)\ncfc260681c0 updated (#72334)\n80486138cb1 [JIRA-000] Touch deployment on integration change (#72380)\n2f5e575cc6d [AUTO-268] add sorting and searching to cross class fields on human review (#72373)\n30e230c80bc [AUTO-330][AUTO-331] Add \"ENUM\" as a data type option for fields (#72212)\n0fbc1b66023 give CEs permission to make tpam requests (#72417)\n82954ce456a [INFRA-000] blank-helm-chart added (#72414)\n422522790dd add missing permissions for CEs and CSMs (#72412)\nc74b4cde11d [AUTO-328] introduce low code select (#72183)\n702e3b1f716 early return if groupId length = 0 (#72379)\n1773e86b6a1 [CS-0000] Remove set active org call during commercial trial creation (#71855)\n7006b710e83 [AUTO-318] Add Support for field_visibility in marshall/unmarshall, getProjectSchema, and EditProjectSchema (#72331)\n065fe65c292 [DR-5299] Added auto-generated protos for repo service changes (#72324)\n2b6f59a601e increased retry count and added rebase for non-conflicting files (#72387)\n5e3f03cc68d [DR-5245] Updated GetChatbotMountPoint to support client type in response (#72328)\n73ca6c22a3e [DR-5299] GRPC endpoint for CRUD operation of ChatbotRepo Table (#72291)\n678cf7627ec disbale db pia (#72404)\na82e32d7db1 revert 71226 (#72405)```",
+      "time": "14:32",
+      "timestamp": "1752701567.334819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "super way behind :slightly_smiling_face:",
+      "time": "14:32",
+      "timestamp": "1752701574.513629",
+      "is_reply": true
+    },
+    {
+      "sender": "Ganan Prabaharan",
+      "user_id": "U02C2P5AA92",
+      "message": "I guess I should’ve tried that from the beginning, whoops :sweat_smile: Thanks guys!",
+      "time": "14:36",
+      "timestamp": "1752701787.079739",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-07-16.json",
+    "message_count": 11,
+    "start_time": "1752693739.878679",
+    "end_time": "1752701787.079739",
+    "is_thread": true
+  }
+}

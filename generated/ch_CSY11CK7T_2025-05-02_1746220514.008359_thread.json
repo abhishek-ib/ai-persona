@@ -1,0 +1,54 @@
+{
+  "id": "ch_CSY11CK7T_2025-05-02_1746220514.008359_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ":cypress-spin:*Cypress CI Improvement Incoming*  :rocket: \nHey team! I’m working on a fix to make Cypress CI runs more efficient. PR: https://github.com/instabase/instabase/pull/70295\n\n:test_tube: *The problem:*\nE2E tests are flaky by nature — they depend on frontend/backend code, test code, ICC & Crafting sandboxes.\n\n:face_with_spiral_eyes: *What usually happens today:*\nWhen there are only a handful of tests that fail due to flakiness (ex `cy.get(), cy.request()` timeouts), we'll re-trigger a Cypress CI run, which will re-run everything, even the tests that already passed. Then, we check back in an hour and hope that Cypress CI passes.\n\n:bulb: *New improvement:*\nCypress CI will now only re-run *failed blocking tests* from the last run if the git SHA is unchanged. This can significantly reduce the run time: the 1st CI run with all 77 tests (https://cloud.cypress.io/projects/cfhedy/runs/19300/overview?roarHideRunsWithDiffGroupsAndTags=1) took *~58 mins* vs the following CI run with the only failed blocking tests (https://cloud.cypress.io/projects/cfhedy/runs/19301/overview?roarHideRunsWithDiffGroupsAndTags=1) was completed in *~2 mins*. Without this logic, the 2nd run would take 58 mins again, and previously passed tests could fail due to flakiness.\n\n:compass: *Suggested workflow:*\n1. Run Cypress tests\n2. If a few tests fail due to flakiness, go to \"Cypress Tests\" GitHub Actions → click “Re-run jobs” > \"Re-run all jobs\"\n3. Cypress Tests GH action will re-run only the previously failed tests\n4. If the git SHA has changed (ex, due to rebase/new commits), all affected tests will run as usual\n:warning: *Heads-up:*\nCypress runs with *PR frontend + ICC sandbox backend*, so they can get out of sync. If your PR is old, please *rebase before merging* to avoid test regressions.\n\nHappy to answer questions and feedback is welcome!",
+      "time": "14:15",
+      "timestamp": "1746220514.008359",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "amazing work, Xindi!!! thank you for making reruns so much more efficient! :blob_excited: :heart_eyes: :sonic-run:",
+      "time": "14:17",
+      "timestamp": "1746220646.646359",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Merged the PR! Ping me if anything breaks due to this :woman-bowing: :crossed_fingers:",
+      "time": "14:28",
+      "timestamp": "1746221321.894929",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Wooo thank you Xindi!! @Xindi Xu ++",
+      "time": "17:19",
+      "timestamp": "1746231548.690579",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-05-02.json",
+    "message_count": 4,
+    "start_time": "1746220514.008359",
+    "end_time": "1746231548.690579",
+    "is_thread": true
+  }
+}

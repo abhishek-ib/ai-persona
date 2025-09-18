@@ -1,0 +1,98 @@
+{
+  "id": "ch_CSY11CK7T_2024-10-18_1729274708.088739_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "mfichman",
+    "Anil",
+    "Abhishek Adupa",
+    "Sayd",
+    "Heymian",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "This is semi major issue\nI understand the legacy licensing. At shared-utils/py-utils/flow/server/src/py/instabase/flow/runnables/apply_classifier_fns.py : 465\n```    # Register classified pages\n    license_mgr.GetLicenseMgr().add_resource_usage(\n        resource=license_service_pb2.Resource.CLASSIFIED_PAGES,\n        usage=input_ibocr_records.get_total_num_pages_licensing())\n    # Register classified pages with document path and pages present in current record\n    # for Flow v3 compatibility\n    license_mgr.GetLicenseMgr().add_doc_page_usage(\n        document_pages_mapping=input_ibocr_records.get_document_pages_dict(\n            username),\n        resource=license_service_pb2.Resource.CLASSIFIED_PAGES)\n    return out_path, classes, None```\nLicense usage is being recorded.\nWhere is the call to metronome happening? I asked @Victor Zeng this questions - if someone else knows please chime in.",
+      "time": "11:05",
+      "timestamp": "1729274708.088739",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "After digging in, I see orgname was piped through for ApplyRefiner step\nhttps://github.com/instabase/instabase/commit/be03707dd2e0e6a3e21158f68d22e676db17d0fa#diff-b0735d73be49235e88152767[…]8ea71e97ad68684d7fa4da6116b22 (https://github.com/instabase/instabase/commit/be03707dd2e0e6a3e21158f68d22e676db17d0fa#diff-b0735d73be49235e88152767167153a83c38ea71e97ad68684d7fa4da6116b22)\n\nThink the same needs to be done for ApplyClassifier too (and any other step that needs orgname) @mfichman",
+      "time": "11:20",
+      "timestamp": "1729275613.922779",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "cc @lydia for ApplyClassifier.",
+      "time": "11:23",
+      "timestamp": "1729275821.022669",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "@Anil This is where the Metronome call is being made:\nhttps://instabase.slack.com/archives/C05L87V014J/p1729030756500469?thread_ts=1729021124.909019&cid=C05L87V014J",
+      "time": "11:28",
+      "timestamp": "1729276100.567429",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Summarizing the issue and current state —please correct me or add more details if needed:\n\nWe get an error, “Spend limit exceeded.” @Victor Zeng confirmed that the issue is due to the `orgname` not being passed through the request context during the `ApplyClassifier` step, which causes `get_license()` to throw the error.\n\nSince the trace is lost, we still can’t confirm which part of the `ApplyClassifier` step code is responsible for calling `get_license()` to identify and send the correct parameters to the method. afaik, `get_license()` is mainly used before the flow starts running and for creating and injecting the `license_context` object so it can be reused throughout the flow lifecycle for billing.\n\n@Anil identified a section of the code where `orgname` is not set in `ApplyClassifierContext` as it is in `ApplyRefinerContext`, which could be the cause of the issue.",
+      "time": "11:38",
+      "timestamp": "1729276738.795049",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think @Sayd is actively working on this from the <#C07PH5VJNJ2|> incident? Or might already have the fix.",
+      "time": "11:51",
+      "timestamp": "1729277499.387219",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Sayd is the one to ping for this, yep!",
+      "time": "11:55",
+      "timestamp": "1729277720.038369",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "@Anil can we quickly sync on this? The RSA issue was a bit different because they were on IB platform which shouldn't have had metronome",
+      "time": "12:15",
+      "timestamp": "1729278944.299159",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I'm wondering if this wasn't an issue before because we didn't charge for classification until Sayd's fix in 24.40, and this is now happening after the prod push",
+      "time": "12:16",
+      "timestamp": "1729278979.921729",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-10-18.json",
+    "message_count": 9,
+    "start_time": "1729274708.088739",
+    "end_time": "1729278979.921729",
+    "is_thread": true
+  }
+}

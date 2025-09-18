@@ -1,0 +1,181 @@
+{
+  "id": "ch_CSY11CK7T_2025-02-05_1738769478.464459_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hey all, in aihub-sandbox and aihub-uat, I get a blank page when I load the landing page in Firefox. There are also some JS type errors (see below)",
+      "time": "07:31",
+      "timestamp": "1738769478.464459",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "On the other hand, `/workspaces` loads fine; one of the two console errors is not there (still see the one about script-src)",
+      "time": "07:33",
+      "timestamp": "1738769607.597599",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Chrome loads OK, but has a different set of console errors",
+      "time": "07:33",
+      "timestamp": "1738769627.037279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "EDIT: Actually, Chrome does NOT load OK when I sign in:",
+      "time": "07:35",
+      "timestamp": "1738769752.077809",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm not able to reproduce this, so my guess is it's something in your local storage that isn't be stored/retrieved properly",
+      "time": "08:14",
+      "timestamp": "1738772083.986129",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "cc @Weiming Wu, I'll also investigate",
+      "time": "08:15",
+      "timestamp": "1738772101.328279",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Is there any chance you have a data source mounted that does not have a label in `DEFAULT_MOUNT_NAME` const in MountTypes.ts",
+      "time": "08:22",
+      "timestamp": "1738772540.686269",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "And does the page also break if you go directly to Search?",
+      "time": "08:22",
+      "timestamp": "1738772562.119619",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Actually, if you can send me the login info you're using this might be easier to debug",
+      "time": "08:23",
+      "timestamp": "1738772586.141089",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah sure -- 1 sec!",
+      "time": "08:54",
+      "timestamp": "1738774482.782179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah, it's my SSO account. Let me create another account w/ a password and reproduce it.",
+      "time": "08:55",
+      "timestamp": "1738774546.883779",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Reproduced it. Will send you login into now",
+      "time": "08:59",
+      "timestamp": "1738774760.625109",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "So I thinkkkk this is because \"confluence\" is lowercased in the client_type of one of your org drives. We're looking for \"confluence\" exactly in a dict and not finding it because we expect \"Confluence\"",
+      "time": "09:20",
+      "timestamp": "1738776042.405699",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The only place we're using these constants in this way is in the search bar, so it makes sense that it would just break on the homepage",
+      "time": "09:23",
+      "timestamp": "1738776229.024569",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Was that one added manually? I don't see anywhere in the codebase we're using \"confluence\" lowercased as a constant",
+      "time": "09:29",
+      "timestamp": "1738776597.916789",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It's probably one that was manually added way back (UAT/sandbox are pretty crufty data-wise). I can find the mount point(s) and then clean it up. Hopefully doesn't recur!\n\nLong-term, I have a proposal to fix this by using a proper database column for storing the client type/connector type w/ a check constraint, so that we don't have these kinds of runtime errors.",
+      "time": "09:45",
+      "timestamp": "1738777515.969069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "`01946070-b78d-77a8-9048-0a1769036ddf`  I think is the problem:",
+      "time": "09:47",
+      "timestamp": "1738777643.858489",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yep, that fixed it. Thanks @Jessica!",
+      "time": "09:48",
+      "timestamp": "1738777684.487979",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yup that's the one!",
+      "time": "09:48",
+      "timestamp": "1738777685.077139",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "In sandbox, there are 3-4 of these; I'll remove them all",
+      "time": "09:50",
+      "timestamp": "1738777809.299879",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-02-05.json",
+    "message_count": 20,
+    "start_time": "1738769478.464459",
+    "end_time": "1738777809.299879",
+    "is_thread": true
+  }
+}

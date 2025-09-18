@@ -1,0 +1,93 @@
+{
+  "id": "ch_C06FA6A23_2023-04-06_1680811118.619549_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Dominic Fannjiang",
+    "Abhishek Adupa"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "@Abhishek Adupa @Anil Hi, I'm trying to run instabase locally and run a flow, but seeing these logs in job-service\n```2023/04/06 19:47:00 [ERR] POST http://127.0.0.1:5555/api/v1/celery-handler/run/83bf71c2-f819-4206-bcc0-9becd28ff3c0-Stage4 request failed: Post \"http://127.0.0.1:5555/api/v1/celery-handler/run/83bf71c2-f819-4206-bcc0-9becd28ff3c0-Stage4\": dial tcp 127.0.0.1:5555: connect: connection refused```\nIs there something that I need to configure locally to fix this? I don't see any stack traces in api-server. Also happy to hop on a call to share my screen",
+      "time": "12:58",
+      "timestamp": "1680811118.619549",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Do you see an error just for this one task? because “Stage4” means you were able to run atleast few tasks before.",
+      "time": "13:01",
+      "timestamp": "1680811299.501549",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Is there a stack trace in job-service?",
+      "time": "13:01",
+      "timestamp": "1680811313.419119",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "I see this kind of error for all stages 1-4",
+      "time": "13:02",
+      "timestamp": "1680811346.904209",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "Hm I just see the following for all 4 stages",
+      "time": "13:02",
+      "timestamp": "1680811367.488829",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "```2023/04/06 19:54:57 INFO utils/multitenant/db/db_interceptor.go:65 -- TxMultiTenantInterceptor created\n2023/04/06 19:54:57 INFO jobservice/taskscheduler/task_scheduler.go:1029 -- Adding job to running set [JobID=b3318419-9f17-43c4-9991-41304fce45cf]\n2023/04/06 19:54:57 INFO jobservice/taskscheduler/task_scheduler.go:1257 -- Running task [TaskID=b3318419-9f17-43c4-9991-41304fce45cf-Stage1]\n2023/04/06 19:54:57 [DEBUG] POST http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1\n2023/04/06 19:54:57 [ERR] POST http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1 request failed: Post \"http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1\": dial tcp 127.0.0.1:5555: connect: connection refused\n2023/04/06 19:54:57 [DEBUG] POST http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1: retrying in 1s (4 left)\n2023/04/06 19:54:58 [ERR] POST http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1 request failed: Post \"http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1\": dial tcp 127.0.0.1:5555: connect: connection refused\n2023/04/06 19:54:58 [DEBUG] POST http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1: retrying in 2s (3 left)\n2023/04/06 19:55:00 [ERR] POST http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1 request failed: Post \"http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1\": dial tcp 127.0.0.1:5555: connect: connection refused\n2023/04/06 19:55:00 [DEBUG] POST http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1: retrying in 4s (2 left)\n2023/04/06 19:55:04 [ERR] POST http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1 request failed: Post \"http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1\": dial tcp 127.0.0.1:5555: connect: connection refused\n2023/04/06 19:55:04 [DEBUG] POST http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1: retrying in 8s (1 left)\n2023/04/06 19:55:12 [ERR] POST http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1 request failed: Post \"http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1\": dial tcp 127.0.0.1:5555: connect: connection refused\n2023/04/06 19:55:12 ERROR jobservice/utils/celery_handler.go:109 -- [INTERNAL]: failed to run task b3318419-9f17-43c4-9991-41304fce45cf-Stage1 (Err: POST http://127.0.0.1:5555/api/v1/celery-handler/run/b3318419-9f17-43c4-9991-41304fce45cf-Stage1 giving up after 5 attempts)```",
+      "time": "13:02",
+      "timestamp": "1680811368.788629",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "is api-server running?",
+      "time": "13:03",
+      "timestamp": "1680811426.176549",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "yup",
+      "time": "13:04",
+      "timestamp": "1680811441.007209",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Looks like an issue with api-server setup.\n\nCan you try compile and restart api-server? if it still doesn’t work, we can get on huddle.",
+      "time": "13:18",
+      "timestamp": "1680812316.896509",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-04-06.json",
+    "message_count": 9,
+    "start_time": "1680811118.619549",
+    "end_time": "1680812316.896509",
+    "is_thread": true
+  }
+}

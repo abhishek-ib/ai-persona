@@ -1,0 +1,123 @@
+{
+  "id": "ch_C06FA6A23_2024-02-14_1707927546.399289_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "youngmok.cho",
+    "Yash Aggarwal",
+    "andy",
+    "Rakesh",
+    "Vasu",
+    "Victor Zeng",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "Hi team, completely unrelated mypy errors have been failing the CI tests for a PR of mine: https://jenkins.instabase.com/job/instabase/job/PR-53392/9/consoleFull\nI noticed some other PRs having the same issue. Was there some recent jenkins change that could cause this?",
+      "time": "08:19",
+      "timestamp": "1707927546.399289",
+      "is_reply": false
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "CC <!subteam^S038TM462UX>",
+      "time": "08:19",
+      "timestamp": "1707927574.392049",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Yes this is showing up in multiple PRs now and blocked quite a few as there are just too many mypy errors across multiple modules that show up at once. Can we pls get this unblocked ?",
+      "time": "08:28",
+      "timestamp": "1707928090.755339",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "It probably is related to mypy version upgrade - https://instabase.slack.com/archives/C035SLYCJ9X/p1707864453798609?thread_ts=1707863864.788759&cid=C035SLYCJ9X",
+      "time": "08:30",
+      "timestamp": "1707928207.741719",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Yep, I made a change yesterday to the volume we use as a base for our python dependencies -- we've apparently been running on mypy 0.701 ever since we supposedly upgraded to 0.812. The correction needed to be made so we are using the correct version of mypy, which was breaking PRs like https://instabase.slack.com/archives/C035SLYCJ9X/p1707720388519359\n\nFor those who are blocked, we have two paths forward:\n1. If you are receiving type errors on PRs that are not related to python, please rebase whatever branch you are merging to, I merged some changes yesterday (https://instabase.slack.com/archives/CGQ7BD72A/p1707873969628569) which will exclude irrelevant code from being tested\n2. If you are receiving type errors for any code related to python code your PR updates, please help everyone out and push a fix to the type error! We don't have mechanisms in place for assigning the vast majority of our code to specific owners and we cannot roll back to mypy 0.701, thus the fastest way to unblock yourself is to fix what's broken :slightly_smiling_face: \nI'll be monitoring and fixing issues related to this all day today, so if you have any particular questions or concerns please reach out in <#C035SLYCJ9X|> and tag myself",
+      "time": "09:02",
+      "timestamp": "1707930164.957669",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Is there a jira epic to track the mypy failures?",
+      "time": "12:48",
+      "timestamp": "1707943737.407289",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Nothing at the moment, I'm working through fixing them on master in https://github.com/instabase/instabase/pull/53549, total list of broken modules (obtained from running all python tests in CI):\n• public-libs/file-lib-public\n• tools/testtools/ghostinspector\n• shared-utils/py-utils/dataset-utils\n• shared-utils/py-utils/flow/client/flow-binary\n• shared-utils/py-utils/rate-limiting-utils\n• shared-utils/py-utils/test-runner-utils\n• shared-utils/py-utils/data-api-utils\n• shared-utils/py-utils/apps/services/ocr\n• shared-utils/py-utils/flow-step-lib/flow-steps\n• shared-utils/py-utils/data-api-utils/types\n• shared-utils/py-utils/nlp-utils",
+      "time": "12:50",
+      "timestamp": "1707943802.401219",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "cc @Aaron Tami ^",
+      "time": "12:50",
+      "timestamp": "1707943816.045849",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ahh, this explains why my local env still has odd mypy errors (differing from CI) despite being on 0.812.",
+      "time": "13:18",
+      "timestamp": "1707945513.105809",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "<!subteam^S038TM462UX> can I get a review on https://github.com/instabase/instabase/pull/53549",
+      "time": "14:01",
+      "timestamp": "1707948063.862929",
+      "is_reply": true
+    },
+    {
+      "sender": "youngmok.cho",
+      "user_id": "U03T0BUUHTQ",
+      "message": ":white_check_mark:",
+      "time": "14:04",
+      "timestamp": "1707948245.143579",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Anyone who has PRs targeting master which are blocked by unrelated mypy type errors, https://github.com/instabase/instabase/pull/53549 resolves those and has been merged -- rebasing your failed PRs on a fresh copy of master will include the fix\n\n@youngmok.cho and I are in the process of backporting the fix to\n• 24.06.0-aihub\n• 24.01.0\n• 23.10.0\n• 23.07.0",
+      "time": "14:50",
+      "timestamp": "1707951049.866609",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-02-14.json",
+    "message_count": 12,
+    "start_time": "1707927546.399289",
+    "end_time": "1707951049.866609",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "id": "ch_C06FA6A23_2022-04-28_1651190203.906309_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Heymian",
+    "Shubham Oli",
+    "naveen"
+  ],
+  "messages": [
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Getting this when running `make push-sandbox-azure`\n```Error parsing reference: \"gcr.io/instabase-dev/onprem-dbupdate:--22.04.28-f42c487bbc (http://gcr.io/instabase-dev/onprem-dbupdate:--22.04.28-f42c487bbc)\" is not a valid repository/tag: invalid reference format```",
+      "time": "16:56",
+      "timestamp": "1651190203.906309",
+      "is_reply": false
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "It looks like there’s an extra “-” before the date/hash?",
+      "time": "16:58",
+      "timestamp": "1651190303.184629",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "@naveen I think I found the issue:\nLook at this code (https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/sandbox.mk#L158). I’m guessing `SANDBOX_NAME` and `CLUSTER_NAME` are undefined or empty strings which is why we’re seeing double dashes (`--`) in our tag.\n\nNotice in push-sandbox-aws (https://github.com/instabase/instabase/blob/master/shared-utils/build-utils/shared/sandbox.mk#L36) build command sets the `SANDBOX_NAME` but our command doesn’t. Not sure where the CLUSTER_NAME is set though",
+      "time": "17:41",
+      "timestamp": "1651192898.831099",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Ooh, good eye. Let me look into that a bit more",
+      "time": "17:42",
+      "timestamp": "1651192949.312249",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Hmm, yea I don’t know what CLUSTER_NAME is, but in the `job_v1` table I see a “cluster_id” column, I wonder if they’re related…",
+      "time": "17:46",
+      "timestamp": "1651193195.386619",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I see the `CLUSTER_NAME` env set in a whole bunch of groovy files. One in building (https://github.com/instabase/instabase/blob/master/tools/releasetools/jenkins/pipelines/build-sandbox-images.groovy#L129) the image, one in deploying (https://github.com/instabase/instabase/blob/master/tools/releasetools/jenkins/pipelines/deploy-sandbox.groovy#L128) the image, and an Azure provisioner (https://github.com/instabase/instabase/blob/master/tools/releasetools/jenkins/pipelines/sandbox-azure-provisioner.groovy#L150) one as well",
+      "time": "17:49",
+      "timestamp": "1651193385.709369",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Perhaps `CLUSTER_NAME` is set in the Jenkins pipeline?",
+      "time": "17:50",
+      "timestamp": "1651193404.041139",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "cluster name is just used to identify the environment we run in (e.g. dogfood vs uat)",
+      "time": "17:50",
+      "timestamp": "1651193437.668249",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "and yes that’s what’s translated into the clusterID column in the new Job table schema.",
+      "time": "17:50",
+      "timestamp": "1651193447.581139",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "i’m not familiar with these sandbox push commands though and how to get it to pick up the cluster name.",
+      "time": "17:51",
+      "timestamp": "1651193482.765639",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Another file (https://github.com/instabase/instabase/blob/master/tools/releasetools/jenkins/pipelines/sandbox-azure-service-deployer.groovy#L39) that suggests that CLUSTER_NAME is taken from the Jenkins pipeline. Note the directory as well",
+      "time": "17:53",
+      "timestamp": "1651193580.492139",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "That would make sense. I just tried running the first make command as such `make push-sandbox-azure SANDBOX_NAME=builder`  and the push was successful. I’m looking into the other command to see if anything might be missing. Instead of SANDBOX_NAME, I see SPEC (https://github.com/instabase/instabase/blob/fe696a07617b3aa5e3e0f5f8780679fb1a0668bb/shared-utils/build-utils/shared/sandbox.mk#L178)",
+      "time": "17:53",
+      "timestamp": "1651193582.532739",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "CLUSTER_NAME will be your sandbox endpoint (don't include .azure.sandbox.... part)",
+      "time": "17:53",
+      "timestamp": "1651193599.013719",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "SANDBOX_NAME will be owners name",
+      "time": "17:53",
+      "timestamp": "1651193599.404669",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Okay, so CLUSTER_NAME=builder and SANDBOX_NAME=naveenkashyap",
+      "time": "17:53",
+      "timestamp": "1651193631.572099",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "Yes push Make target in Sandbox.mk (http://Sandbox.mk) has the format for image tag",
+      "time": "17:54",
+      "timestamp": "1651193683.920849",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "For spec- target use the same Make args and it should work",
+      "time": "17:55",
+      "timestamp": "1651193713.559699",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "Okay, thanks I’ll try this!",
+      "time": "17:55",
+      "timestamp": "1651193726.796989",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "> Okay, so CLUSTER_NAME=builder and SANDBOX_NAME=naveenkashyap\n> \nThis is correct.",
+      "time": "17:56",
+      "timestamp": "1651193783.227839",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "@Shubham Oli `spec-dep-sandbox-azure` gives me this:\n```/bin/sh: /Users/naveen/instabase/tools/onprem/dbupdate/../../../build/dev/deployments/onprem-dbupdate.yml: No such file or directory```\nWhere should I find this yml?",
+      "time": "18:00",
+      "timestamp": "1651194014.682469",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-04-28.json",
+    "message_count": 20,
+    "start_time": "1651190203.906309",
+    "end_time": "1651194014.682469",
+    "is_thread": true
+  }
+}

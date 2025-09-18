@@ -1,0 +1,45 @@
+{
+  "id": "ch_C05L87V014J_2024-12-12_1734056626.534529_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Serena",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i’m not sure where to start this discussion, but here goes! :sweat_smile:\n\nas mentioned during Q&A for the tech talk on Monday, it’s inconvenient for product engineers to use a fresh MySQL db in their dev environment\n• setting up AI Hub for a fresh db is difficult (example (https://instabase.slack.com/archives/C05L87V014J/p1733778752131259))\n    ◦ this is currently not captured in the new eng onboarding doc (https://docs.google.com/document/d/1yQOCxOISV_ukUxXdPJDoN-rERtOhdVRe7zv1swF1igw/edit?tab=t.0#heading=h.ozg2l97f461a) btw\n• reproducing bugs will take a while if we have to reproduce every bug from scratch on our dev environment\n• the problem is even worse for indexes for AI Hub Search\nideally, product engineers can use a deployed environment’s db / indexes in their dev environment\n• we can already use dogfood.instabase.com (http://dogfood.instabase.com)’s db, which is nice since it already has the necessary users / models / etc for running AI Hub\n• however, it’d even more ideal if we could use the db from an actual AI Hub environment (ex: crafting-aihub.test.instabase.com (http://crafting-aihub.test.instabase.com))\n    ◦ this way, if a product engineer is able to reproduce a bug on crafting-aihub, they don’t need to re-create the bug scenario in their dev environment -> they can directly fix the bug and test the fix in their dev environment since they’re using the same db as crafting-aihub\ni’ve asked multiple people about this over the years, but it seems that our SaaS sandbox dbs are in a VPC that prevents external network access - however, i’m hoping we can make an exception for 1 AI Hub sandbox?\n\nthis would make eng onboarding even simpler for product engineers and would speed up debugging a lot :pray:",
+      "time": "18:23",
+      "timestamp": "1734056626.534529",
+      "is_reply": false
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I think the problem with this though is that many product eng also make changes to the db schema for various features they are building, and having in-development changes hit a shared database is also a bad idea. \n\nI think a nicer option is if there’s a way to clone the aihub dogfood database (periodically) so that you have access to real data, but you also won’t risk taking down everyone’s environment with a bad database change.",
+      "time": "19:42",
+      "timestamp": "1734061364.128749",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "If someone is making changes to the db schema, they should definitely use a local db for testing, not a shared db\n\nCloning the aihub-sandbox db would also be helpful! That would solve the first-time AI Hub setup issues and unblock most test cases",
+      "time": "19:54",
+      "timestamp": "1734062086.155889",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-12-12.json",
+    "message_count": 3,
+    "start_time": "1734056626.534529",
+    "end_time": "1734062086.155889",
+    "is_thread": true
+  }
+}

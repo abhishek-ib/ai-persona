@@ -1,0 +1,110 @@
+{
+  "id": "ch_C06FA6A23_2020-12-10_1607666343.359200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "kunal",
+    "Ashish",
+    "Aaron Tami"
+  ],
+  "messages": [
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "It seems that our `push-public-aws` command is broken.\n\nWe run this aws cli command which is now deprecated:\n`aws ecr get-login --no-include-email --registry-ids 083423824311 --region us-east-1`\n\nWe need to migrate to `aws ecr get-login-password` and pipe that result to a docker login command like so:\naws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.<region>.amazonaws.com (http://amazonaws.com)\n\nHow can i determine what our aws account id is?",
+      "time": "21:59",
+      "timestamp": "1607666343.359200",
+      "is_reply": false
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "Do you have aws access: https://us-east-1.console.aws.amazon.com/ecr/repositories?region=us-east-1#?\n\ntl;dr it's 083423824311",
+      "time": "22:02",
+      "timestamp": "1607666542.359500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "Ya i was able to find that, I am now running this command and its not working:\n\naws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 083423824311.dkr.ecr.us-east-1.amazonaws.com (http://083423824311.dkr.ecr.us-east-1.amazonaws.com)",
+      "time": "22:19",
+      "timestamp": "1607667589.359700",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "do you have the latest aws cli installed?",
+      "time": "22:35",
+      "timestamp": "1607668525.359900",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "```aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 083423824311.dkr.ecr.us-east-1.amazonaws.com (http://083423824311.dkr.ecr.us-east-1.amazonaws.com)```",
+      "time": "22:36",
+      "timestamp": "1607668561.360100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "```Note: If you receive an error using the AWS CLI, make sure that you have the latest version of the AWS CLI and Docker installed.```",
+      "time": "22:36",
+      "timestamp": "1607668574.360300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "View Push Commands at https://console.aws.amazon.com/ecr/repositories/private/083423824311/instabase-public/ocr-msft?region=us-east-1",
+      "time": "22:36",
+      "timestamp": "1607668595.360500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "i just ran `brew upgrade awscli` before running the command (which fixed the error i was seeing before this one), so i think i have the latest version",
+      "time": "22:48",
+      "timestamp": "1607669287.360700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "the aws command seems to be working for me, the docker login command is failing",
+      "time": "22:48",
+      "timestamp": "1607669315.360900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "````aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 083423824311.dkr.ecr.us-east-1.amazonaws.com (http://083423824311.dkr.ecr.us-east-1.amazonaws.com)`\nWARNING! Your password will be stored unencrypted in /Users/aarontami/.docker/config.json.\nConfigure a credential helper to remove this warning. See\nhttps://docs.docker.com/engine/reference/commandline/login/#credentials-store\n\nLogin incorrect\nlogin: ```",
+      "time": "22:49",
+      "timestamp": "1607669350.361100",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "just ran it again, and it worked",
+      "time": "23:09",
+      "timestamp": "1607670543.361300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2020-12-10.json",
+    "message_count": 11,
+    "start_time": "1607666343.359200",
+    "end_time": "1607670543.361300",
+    "is_thread": true
+  }
+}

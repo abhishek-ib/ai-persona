@@ -1,0 +1,390 @@
+{
+  "id": "ch_C06FA6A23_2022-07-12_1657657888.345679_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Mohit",
+    "Kerry",
+    "mfichman",
+    "kunal",
+    "Naveen",
+    "Franklin Chian",
+    "naveen",
+    "Xi Cheng",
+    "Yan Wang",
+    "lenny"
+  ],
+  "messages": [
+    {
+      "sender": "Franklin Chian",
+      "user_id": "U01PESF24HW",
+      "message": "how can I get more license manager credits on dogfood?",
+      "time": "13:31",
+      "timestamp": "1657657888.345679",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "huh this is interesting, @Mohit can you help?",
+      "time": "13:32",
+      "timestamp": "1657657941.897629",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "should work, the current site wide license has a lot of usage left https://dogfood.instabase.com/apps/admin/licenses/detail/Dogfood",
+      "time": "13:34",
+      "timestamp": "1657658096.329799",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@Franklin Chian how are you running the flow?",
+      "time": "13:35",
+      "timestamp": "1657658106.350179",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I'm getting the same\n\n```Error running the flow: License validation failed. Error:Credit exhausted for user=lenny for product=FLOW. Please see the logs for more details```",
+      "time": "13:35",
+      "timestamp": "1657658109.172689",
+      "is_reply": true
+    },
+    {
+      "sender": "lenny",
+      "user_id": "U02BTGKFVAR",
+      "message": "I'm running through flow editor UI",
+      "time": "13:35",
+      "timestamp": "1657658135.403379",
+      "is_reply": true
+    },
+    {
+      "sender": "Franklin Chian",
+      "user_id": "U01PESF24HW",
+      "message": "just via flow editor\nflow link: https://dogfood.instabase.com/apps/flow/edit/flow_team_flow_repo/default/fs/Instabase%2[…]ultibranch_checkpoint/workflows/Checkpoint_multiple.ibflow (https://dogfood.instabase.com/apps/flow/edit/flow_team_flow_repo/default/fs/Instabase%20Drive/flow_v3_multibranch_checkpoint/workflows/Checkpoint_multiple.ibflow)",
+      "time": "13:35",
+      "timestamp": "1657658136.005499",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Observing some infra instability in dogfood cluster cc: <!subteam^S02FJA6A7U5> Can you please take a look?\ncouple of issues —\n1. license service has two pods while its supposed to be singleton service. Not sure how we ended up here. \n2. A lot of loki errors in logs of license service . cc: <!subteam^S030TQV4RU7>",
+      "time": "13:40",
+      "timestamp": "1657658420.440009",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "latest pod was started 6 mins ago",
+      "time": "13:41",
+      "timestamp": "1657658506.344469",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "hm configs in control plane are correct: https://dogfood.instabase.com/control-plane/configs?targetObject=deployment-license-service",
+      "time": "13:42",
+      "timestamp": "1657658521.945049",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "im on with mohit, seems like one pod was stuck terminating but resolved itself.",
+      "time": "13:45",
+      "timestamp": "1657658755.016719",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "is the problem resolved after that?",
+      "time": "13:51",
+      "timestamp": "1657659107.912679",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "no doesn’t seem so",
+      "time": "13:52",
+      "timestamp": "1657659126.632379",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "Update: We are seeing errors `Info\n\n2022-07-12 13:50:04.922 PDT2022/07/12 20:50:04 ERROR licenseservice/handler/license_get.go:36 -- Error getting Usage metrics for license=24a2ec8f2d12436eb57b75e5d1be880a`\n\nand a bunch of errors related to loki\nPotential issues with DB connectivity, the logging stmt needs to be improved to log error cc: @Naveen",
+      "time": "13:52",
+      "timestamp": "1657659127.132919",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "thanks for looking into this team. is this related to <#C03PWGFBKTJ|> — i know dogfood was down this morning",
+      "time": "13:54",
+      "timestamp": "1657659254.467119",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "I ll let @kunal comment on correlation of this incident from <#C03PWGFBKTJ|>\n\n@kunal can you please edit license service deployment and set `DB_TEST_INIT_CONN`  to `true` ? This will help us rule out DB connectivity issues.",
+      "time": "14:00",
+      "timestamp": "1657659630.060909",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Total shot in the dark, but since there was a mention about db issues, just want to include @mfichman to see if PR28133 (https://github.com/instabase/instabase/pull/28133) is causing errors?",
+      "time": "14:01",
+      "timestamp": "1657659716.580709",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "It seems unrelated to incident 88, which is about webapp and repo service. I didn't see any related info in the logs",
+      "time": "14:03",
+      "timestamp": "1657659791.697739",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi folks - it seems possible that my change could have caused this -- I'll take a look.",
+      "time": "14:17",
+      "timestamp": "1657660673.170019",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "thank you @mfichman, please use this thread to post updates, you can run this flow to test if the fix works. https://dogfood.instabase.com/apps/flow/edit/flow_team_flow_repo/default/fs/Instabase%2[…]ultibranch_checkpoint/workflows/Checkpoint_multiple.ibflow (https://dogfood.instabase.com/apps/flow/edit/flow_team_flow_repo/default/fs/Instabase%20Drive/flow_v3_multibranch_checkpoint/workflows/Checkpoint_multiple.ibflow)",
+      "time": "14:18",
+      "timestamp": "1657660736.561099",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "For errors related to fluentbit https://github.com/instabase/instabase/pull/28287/files cc: @abhitaker",
+      "time": "14:19",
+      "timestamp": "1657660795.043339",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Mohit Here's the callsite that's causing the error: https://github.com/instabase/instabase/blob/master/core-services/license-service/src/go/src/instabase/licenseservice/handler/license_get.go#L33. GetLicenseUsageMetrics doesn't actually make any database queries, so I think it's actually not likely that my change caused this problem. I can't rule it out completely yet, though.",
+      "time": "14:20",
+      "timestamp": "1657660835.000999",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "So AFAIK, at the time of initialization LS loads certain base usage data in memory from DB, that is why you are not seeing any DB call here. @Naveen CMIIW",
+      "time": "14:22",
+      "timestamp": "1657660931.862529",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "are we still looking at this actively?",
+      "time": "14:48",
+      "timestamp": "1657662511.435149",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@Kerry summing up the pending items above- :loading:\n• kunal to edit a deployment and add a flag to license service\n• meanwhile matt will confirm if his PR could have cause this.",
+      "time": "14:50",
+      "timestamp": "1657662649.268389",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "if none of them help, we will need to add some more logs to license service and run license service in debugging mode to investigate further.",
+      "time": "14:52",
+      "timestamp": "1657662720.125019",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "if this is going to take a while, is there anything we can do to get dogfood back to life — for example reverting the PR and repush the env to see if it helps, or turn off licensing on dogfood if possible",
+      "time": "14:57",
+      "timestamp": "1657663060.549389",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "we can spend a few hours investigating, but at least before the west coast folks call it a day, let’s make dogfood usable :slightly_smiling_face:",
+      "time": "14:58",
+      "timestamp": "1657663112.315609",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "I dont have access to dogfood env via UI, and I cannot access via CLI as I have a process ongoing with a different k8 cluster.\nonce @kunal [infra-on-call] adds `DB_TEST_INIT_CONN` : TRUE and if it does not resolve , we can evaluate setting `ENABLE_LICENSING` = FALSE.\n\nMy understanding is that DB_TEST_INIT_CONN should surface errors [if] License service is facing in db connectivity.",
+      "time": "14:59",
+      "timestamp": "1657663148.592429",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "sorry, catching up here — you can do this via a patch to CP UI. Let me do that now.",
+      "time": "15:16",
+      "timestamp": "1657664168.138449",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "it’s done",
+      "time": "15:16",
+      "timestamp": "1657664181.731219",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "Folks this is related to db connectivity error as time of license manager initialisation as mentioned https://instabase.slack.com/archives/C06FA6A23/p1657660931862529?thread_ts=1657657888.345679&cid=C06FA6A23 (https://instabase.slack.com/archives/C06FA6A23/p1657660931862529?thread_ts=1657657888.345679&cid=C06FA6A23)",
+      "time": "15:28",
+      "timestamp": "1657664933.477959",
+      "is_reply": true
+    },
+    {
+      "sender": "Naveen",
+      "user_id": "U0163TS8GR5",
+      "message": "If there is any recent PR that changed db connectivity, that might have caused this issue, setting DB_TEST_INIT_CONNECTION to true should lead to license service pod restart in that case...",
+      "time": "15:30",
+      "timestamp": "1657665010.400319",
+      "is_reply": true
+    },
+    {
+      "sender": "Mohit",
+      "user_id": "ULPBBF8PR",
+      "message": "@kunal are you sure the change was applied? Last pod restart was 2 hours ago and i dont see the yaml updated (https://console.cloud.google.com/kubernetes/deployment/us-east1-c/instabase-main-dogfood-001/instabase-dogfood/deployment-license-service/overview?project=instabase-dogfood)",
+      "time": "15:50",
+      "timestamp": "1657666209.286549",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "Uh oh did i mess up, im afk could someone help? else ill be online in 30 mins. there are so many incidents in progress 🫠",
+      "time": "15:51",
+      "timestamp": "1657666270.498869",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "FYI @naveen",
+      "time": "16:52",
+      "timestamp": "1657669959.269879",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Folks, just FYI the issue is still around. As indicated by the latest system test: https://jenkins.instabase.com/job/system-tests/5062/consoleFull",
+      "time": "19:17",
+      "timestamp": "1657678652.229859",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hey, is anybody looking at this? you still can’t run any flows on dogfood, we should create an incident for this — this environment is broken <!subteam^S02FJA6A7U5>",
+      "time": "20:05",
+      "timestamp": "1657681559.893759",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "I am AFK at the moment. I’m not sure if the control plane patch was applied. If not, I guess that’s the first thing we should try right now.",
+      "time": "20:11",
+      "timestamp": "1657681886.202189",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i will use control plane for the first time and check this; we can do a retro when this is resolved on why i am doing this right now",
+      "time": "20:21",
+      "timestamp": "1657682516.257289",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "It’s not applied, so I will apply it now following Kunal’s screenshot",
+      "time": "20:23",
+      "timestamp": "1657682630.766499",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "Applied, let’s see",
+      "time": "20:27",
+      "timestamp": "1657682842.692539",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "So the issue persists. After some debugging with @naveen (big thanks to Naveen!), we confirmed that this PR Pipe Go context through to dbAccessor (https://github.com/instabase/instabase/pull/28133) is the culprit cc @mfichman — able to confirm this by running locally the commit before this PR and after. Reverting it is not straightforward, but Naveen thinks he is close to finding the root cause:male-detective: Naveen, before you call it a day, can you coordinate with @Mohit after his meetings — if we don’t get to fix it, let’s disable licensing to unblock people. We can turn it back on after the PR gets fixed.",
+      "time": "21:47",
+      "timestamp": "1657687656.214809",
+      "is_reply": true
+    },
+    {
+      "sender": "naveen",
+      "user_id": "U01269AT5SN",
+      "message": "I think I found the fix, this one was a doozy: https://github.com/instabase/instabase/pull/28424",
+      "time": "23:31",
+      "timestamp": "1657693895.257339",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@naveen Thanks for finding the needle in the haystack",
+      "time": "23:40",
+      "timestamp": "1657694415.990399",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-07-12.json",
+    "message_count": 45,
+    "start_time": "1657657888.345679",
+    "end_time": "1657694415.990399",
+    "is_thread": true
+  }
+}

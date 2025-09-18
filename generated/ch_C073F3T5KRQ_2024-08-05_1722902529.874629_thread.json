@@ -1,0 +1,70 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-08-05_1722902529.874629_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Cheryl Zhou",
+    "shiqi"
+  ],
+  "messages": [
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "Raman's PR only touched webserver, it doesn't strike to me why it will affect ray, which is under data-services, why do we expect the CI to run tests under there? if we do then we need to explictly claim the dependency",
+      "time": "17:02",
+      "timestamp": "1722902529.874629",
+      "is_reply": false
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "The PR (https://github.com/instabase/instabase/pull/60675/files) touched api-server which has a dependency on ray.\nApi-server uses the ray client to trigger model-training tasks.",
+      "time": "17:03",
+      "timestamp": "1722902614.933559",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "hmm I think our CI job may need some update for this, it might be ignoring those poetry updates:\nhttps://github.com/instabase/instabase/actions/runs/10203374493/job/28229574344\nI will dig a bit more to see what is going on",
+      "time": "17:08",
+      "timestamp": "1722902881.240589",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "@shiqi just to clarify in case there is any misunderstanding, ray-head or ray-model-training-worker CI shouldn't run but we do expect CI to run for api-server; if we have run api-server CI it would have caught the failure",
+      "time": "17:16",
+      "timestamp": "1722903409.156559",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "I see, thanks for the clarification, api-server is expected to run in this case, along with apps-server and web-app. we will look into why they are not included in the change detection script for CI\n\nwe do have a post-merge unit test run that could have caught this but I was updating the cluster and put it on hold\nhttps://github.com/instabase/instabase/actions/workflows/pyunit-test.yml",
+      "time": "17:52",
+      "timestamp": "1722905525.709729",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "also it seems there are a few breakage on other backend tests\nhttps://instabase.slack.com/archives/C073F3T5KRQ/p1722905612354459",
+      "time": "18:06",
+      "timestamp": "1722906374.640079",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-08-05.json",
+    "message_count": 6,
+    "start_time": "1722902529.874629",
+    "end_time": "1722906374.640079",
+    "is_thread": true
+  }
+}

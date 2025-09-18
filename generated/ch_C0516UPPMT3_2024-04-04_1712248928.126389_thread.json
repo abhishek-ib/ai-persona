@@ -1,0 +1,206 @@
+{
+  "id": "ch_C0516UPPMT3_2024-04-04_1712248928.126389_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Weiming Wu",
+    "Serena",
+    "Travis"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "when i tried to reproduce, yes the cancel button is disabled, and there’s a loading state\n\nbut the run was never cancelled",
+      "time": "09:42",
+      "timestamp": "1712248928.126389",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this bug exists on aihub-uat but not on preprod or prod :disappointed_relieved:",
+      "time": "09:45",
+      "timestamp": "1712249106.272459",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "this bug was introduced last week https://github.com/instabase/instabase/pull/55171\n\nthe issue is that we need to pass `appId` into the args for the `APP_RUNS_TABLE_COLUMNS.status` column",
+      "time": "09:59",
+      "timestamp": "1712249974.330599",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @Travis",
+      "time": "09:59",
+      "timestamp": "1712249977.904369",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the same bug occurs if you try to click on the Cancel button in the My Hub page\n\npreviously, we would not show the Cancel button on the My Hub page (see the 2nd screenshot from preprod)",
+      "time": "10:00",
+      "timestamp": "1712250029.618849",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "@Paul H should take a look I think.",
+      "time": "10:00",
+      "timestamp": "1712250046.219359",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i have the fix already (i was the original person who worked on BatchesTable and the cancel button)",
+      "time": "10:01",
+      "timestamp": "1712250075.558859",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "nice, I’m happy to review when ready.",
+      "time": "10:01",
+      "timestamp": "1712250099.007209",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "was there a particular reason to have both MyHub and ViewApp use `APP_RUNS_TABLE_COLUMNS` ?\n\ni think they were different for a reason (cc @Weiming Wu)",
+      "time": "10:01",
+      "timestamp": "1712250111.366369",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "I recently combined them.",
+      "time": "10:02",
+      "timestamp": "1712250161.898189",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "There was a lot of overlap on them",
+      "time": "10:02",
+      "timestamp": "1712250168.267469",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Yea, I signed off on it because they seemed very similar and I couldn't think of any major complications if we combined them",
+      "time": "10:03",
+      "timestamp": "1712250188.262649",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "I did blend some of the BatchesTable columns with the MyHub columns, but my testing of it all seemed copasetic.",
+      "time": "10:04",
+      "timestamp": "1712250241.642269",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ok i don’t think we should show the cancel button on the “My Hub” page, so i’ll keep the logic de-duplicated and just not show the cancel button in that case",
+      "time": "10:04",
+      "timestamp": "1712250286.600649",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "agreed, thank you!",
+      "time": "10:05",
+      "timestamp": "1712250303.879449",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "I think I originally had the status column in My Hub include cancel\nBut also that was more of my own decision than the designs (which only showed completed / failed cases) - there's nothing requiring us to keep it",
+      "time": "10:06",
+      "timestamp": "1712250400.691379",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i think we could technically show the button by relying on `deployedSolutionId` in each job\n\nbut since the Cancel button was just added last week to My Hub, i think that not showing the button will reduce possibility of bugs\n\nwe can revisit if people really want to cancel runs from My Hub / Workspaces",
+      "time": "10:10",
+      "timestamp": "1712250603.388649",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Ah I misremembered - I had it under the \"actions\" column, not status.\nThe cancel button under status is new",
+      "time": "10:12",
+      "timestamp": "1712250751.314079",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i don’t see any “Actions” column in My Hub on preprod, though?",
+      "time": "10:24",
+      "timestamp": "1712251490.964639",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "It's a hidden column on the right, if you hover over it",
+      "time": "10:28",
+      "timestamp": "1712251690.697589",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "ah i see",
+      "time": "10:29",
+      "timestamp": "1712251758.693999",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "got it, i won’t touch that then\n\nhowever, since the cancel button will show up on the right on hover, we shouldn’t show the “Cancel” button in the “Status” column as well, so i’ll just remove it from the “Status” column",
+      "time": "10:31",
+      "timestamp": "1712251879.372589",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "Yep, it's entirely unnecessary",
+      "time": "10:31",
+      "timestamp": "1712251911.396819",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-04-04.json",
+    "message_count": 23,
+    "start_time": "1712248928.126389",
+    "end_time": "1712251911.396819",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "id": "ch_C06FA6A23_2024-08-08_1723130480.530939_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "abhijnan",
+    "Arek"
+  ],
+  "messages": [
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Hey team, im trying to run search-tservice with the provisioner, but am running into this startup error\n```2024/08/08 15:10:32 ERROR utils/status/status.go:182 -- [INTERNAL]: Failure during mkdir. Could not stat Path System/tmp/IndexService Err code = INTERNAL msg = Failure during stat.\n2024/08/08 15:10:32 ERROR searchservice/index/handler/handler.go:121 -- [INTERNAL]: Failed to create storage dir (Err: rpc error: code = Internal desc = Failure during mkdir. Could not stat Path System/tmp/IndexService Err code = INTERNAL msg = Failure during stat.)\n2024/08/08 15:10:32 FATAL searchservice/main.go:600 -- Failed to initialize index handler. Err: rpc error: code = Internal desc = Failed to create storage dir```\nSeems like its having some issues checking dogfood FS?",
+      "time": "08:21",
+      "timestamp": "1723130480.530939",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Are you running locally?",
+      "time": "08:25",
+      "timestamp": "1723130744.237159",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Make sure file-service is up; if it is -- check the logs",
+      "time": "08:25",
+      "timestamp": "1723130755.744479",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Does this request/path look wrong in any way?\n```2024/08/08 15:10:32 ERROR fileservice/handler/file.go:822 -- [INTERNAL]: Failure during mkdir. Could not stat Path System/tmp/IndexService Err code = INTERNAL msg = Failure during stat.\n2024/08/08 15:10:32 ERROR fileservice/handler/file.go:321 -- [ERROR][mkdir] Username: system, Path: system/global/fs/Instabase Drive/System/tmp/IndexService, Err: rpc error: code = Internal desc = Failure during mkdir. Could not stat Path System/tmp/IndexService Err code = INTERNAL msg = Failure during stat., Time: 588ms, Size: 0Bytes```",
+      "time": "08:30",
+      "timestamp": "1723131029.230849",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Oh holdon its backed by S3, im going to take a deeper look\n```2024/08/08 15:10:32 ERROR fileservice/clients/s3_client.go:374 -- Failure during stat. Path: 37c19bc6-5b57-4ba9-a252-49eacac2e174/System/tmp/IndexService Err: operation error S3: HeadObject, https response error StatusCode: 400, RequestID: GQDPPDQ5P34PYX7V, HostID: 5MLWEU63FVIPaON/HXv2EtNt2TUnV8mIi9xIGXL3JYz5CAQ2oe/INHxb+KRtRx+mk4Od2Xt4xTw=, api error BadRequest: Bad Request```",
+      "time": "08:31",
+      "timestamp": "1723131061.495989",
+      "is_reply": true
+    },
+    {
+      "sender": "abhijnan",
+      "user_id": "U056NM536PP",
+      "message": "It's probably related to https://instabase.slack.com/archives/C06FA6A23/p1722287167536179?thread_ts=1722287077.707969&cid=C06FA6A23",
+      "time": "08:39",
+      "timestamp": "1723131574.396609",
+      "is_reply": true
+    },
+    {
+      "sender": "Arek",
+      "user_id": "U041EDT9N90",
+      "message": "Yes, thats it thanks. (idk why slack search didnt find it lol). I am trying to use the new credentials shiqi posted now, will see if more changes are required",
+      "time": "08:48",
+      "timestamp": "1723132120.298359",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-08-08.json",
+    "message_count": 7,
+    "start_time": "1723130480.530939",
+    "end_time": "1723132120.298359",
+    "is_thread": true
+  }
+}

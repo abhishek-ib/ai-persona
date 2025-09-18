@@ -1,0 +1,384 @@
+{
+  "id": "ch_C06FA6A23_2018-10-19_1539934650.000100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ted",
+    "dlluncor",
+    "Hari",
+    "Ashish",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "does anyone know anything about implementing a FUSE driver? It seems like that’s _kind_ of what we want — it theoretically allows us to “mount” our version of a filesystem in user-space. So any file operation goes to this driver, which will call out to our file-service.",
+      "time": "00:37",
+      "timestamp": "1539934650.000100",
+      "is_reply": false
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "That would be amazing!",
+      "time": "18:05",
+      "timestamp": "1539997537.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "A final alternative that doesn’t generalize would be to money patch spacy specifically to load/save from instabasefs",
+      "time": "18:18",
+      "timestamp": "1539998333.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Looks like another option is Docker Engine volumes plugins, which is capturing all the filesystem access at the docker layer.",
+      "time": "18:21",
+      "timestamp": "1539998467.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "I’ve never implemented either of these things before btw, so it would take some investigating. :stuck_out_tongue:",
+      "time": "18:21",
+      "timestamp": "1539998497.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "I’ll look into monkey patching spacy today. If it’s easy.. might be the safest route for the time being? I don’t want to further exacerbate the issues this library has already caused :face_with_thermometer:",
+      "time": "18:27",
+      "timestamp": "1539998860.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "could you describe the exact issue somewhere? Be happy to chime in don't know the exact problem going around that we are trying to solve",
+      "time": "18:33",
+      "timestamp": "1539999184.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Scroll up to the msg above. On phone so can’t copy paste easily. Spacy wants to read between 40m-1G from local disk to load custom models.",
+      "time": "18:36",
+      "timestamp": "1539999395.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "GFS is use case will need this to boost perf",
+      "time": "18:36",
+      "timestamp": "1539999414.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Also Citi use case will want to save / load custom models soon soo",
+      "time": "18:37",
+      "timestamp": "1539999438.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "David, you should also read Shaunak’s post morten on dogfood for context.",
+      "time": "18:38",
+      "timestamp": "1539999482.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "So we need to either monkey patch spacy to read/write from Instabase drive or have a strategy to sync from local disk to Instabase",
+      "time": "18:38",
+      "timestamp": "1539999483.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "yes, i read his post-mortem",
+      "time": "18:38",
+      "timestamp": "1539999498.000200",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "ah okay cool",
+      "time": "18:38",
+      "timestamp": "1539999521.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Maybe important to observe here this is distinct from the scenario that caused the blow up on dogfood",
+      "time": "18:39",
+      "timestamp": "1539999572.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "That was with built in models that are invariant is a particular customer",
+      "time": "18:39",
+      "timestamp": "1539999593.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "The motivator for this thread is a new scenario: models that are being trained and loaded inside a customer site",
+      "time": "18:40",
+      "timestamp": "1539999625.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "gotcha gotcha",
+      "time": "18:40",
+      "timestamp": "1539999655.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "This will support unstructured text extraction from, eg Invoices or SWIFT statements",
+      "time": "18:41",
+      "timestamp": "1539999667.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "seems to me like we want both 1) a spacy service to consolidate and manage memory usage",
+      "time": "18:41",
+      "timestamp": "1539999699.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "2) a way to load from Instabase Drive to reduce disk / Docker image size",
+      "time": "18:42",
+      "timestamp": "1539999724.000200",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "currently the top priority issue is loading the huge en and web_md models no that blow up memory?",
+      "time": "18:42",
+      "timestamp": "1539999760.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "And (2) enables custom models too — without it we are stuck with off the shelf",
+      "time": "18:42",
+      "timestamp": "1539999761.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "I think we can kill the _lg models",
+      "time": "18:42",
+      "timestamp": "1539999771.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "makes sense how (2) enables custom models",
+      "time": "18:42",
+      "timestamp": "1539999779.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "And we can even kill _md as long as we side-load sim vectors",
+      "time": "18:43",
+      "timestamp": "1539999791.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "I re-purposed things like Zip to work well with Instabase FS",
+      "time": "18:43",
+      "timestamp": "1539999799.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "If we go down to _sm as a quick fix, that takes the LM to 10s of MB instead of imhundreds",
+      "time": "18:43",
+      "timestamp": "1539999823.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "ZipFile* I haven't looked through spacy code but if they've refactored it appropriately, there might be a FileIO interface that we could load models through?",
+      "time": "18:43",
+      "timestamp": "1539999828.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "But for semantic similarity we still need about 500MB of data loaded",
+      "time": "18:44",
+      "timestamp": "1539999841.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "That’s the main cause of the _md size",
+      "time": "18:44",
+      "timestamp": "1539999850.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "(So stocking w _md is easier..)",
+      "time": "18:44",
+      "timestamp": "1539999860.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Sorry I should write this up instead of slack. Will do that",
+      "time": "18:44",
+      "timestamp": "1539999870.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "@dlluncor re spacy fileio yes! I think this might be easiest direct option.",
+      "time": "18:45",
+      "timestamp": "1539999908.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "From disk space point of view, 500mb is fine. How often are we going to download these models? How many models will we download? There should be some type of cap",
+      "time": "18:47",
+      "timestamp": "1540000056.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "How about I write a gdoc detailing the app perspective on usage scenarios and options?",
+      "time": "18:48",
+      "timestamp": "1540000101.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "That way there’s a reference guide from the app layer about what different combinations of things enables / prevents",
+      "time": "18:48",
+      "timestamp": "1540000125.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Because “Arbitrarily many models” is an answer to that question if user trained models are possible :dizzy_face:",
+      "time": "18:49",
+      "timestamp": "1540000167.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "Think of each one of these as a big refiner program",
+      "time": "18:49",
+      "timestamp": "1540000196.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "The user trained ones will only be like 40M though",
+      "time": "18:50",
+      "timestamp": "1540000205.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Ok! Doc sounds good. What's the timeline on this task? Is it needed in a couple of days or more?",
+      "time": "19:36",
+      "timestamp": "1540002977.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "@Ashish timeline is ~1-2 weeks probably. @Hari is probably best to answer this question since he is most familiar w the most pressing usage scenario",
+      "time": "19:40",
+      "timestamp": "1540003259.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Ok",
+      "time": "19:43",
+      "timestamp": "1540003401.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ted",
+      "user_id": "UAEM2MEGJ",
+      "message": "If Srini is willing to accept something in Jupiter such that we can hack a workaround that is specific to them, it of course relieves some of that time oresssure though. So we can prob delay if needed",
+      "time": "19:45",
+      "timestamp": "1540003523.000100",
+      "is_reply": true
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "@Ashish For SC we need it early next week but if there is a way for manual workaround we can buy a few more days",
+      "time": "20:34",
+      "timestamp": "1540006447.000100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2018-10-19.json",
+    "message_count": 45,
+    "start_time": "1539934650.000100",
+    "end_time": "1540006447.000100",
+    "is_thread": true
+  }
+}

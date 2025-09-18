@@ -1,0 +1,135 @@
+{
+  "id": "ch_C06FA6A23_2019-06-19_1560978268.318300_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Karthik S",
+    "dlluncor",
+    "Chetan",
+    "Jonathan Shih"
+  ],
+  "messages": [
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "flow code-related questions:\n - what’s the difference between a hydrated and unhydrated step? are they both needed for flow v2.5?\n - what goes in `flow-lib` vs `flow-server`?\n - I see there’s `instabase/flow/apply_refiner_lib.py`, `instabase/flow/runnables/apply_refiner_fns.py`, and `instabase/flow/v2/mappers/step/apply_refiner.py`. What’s the difference?",
+      "time": "14:04",
+      "timestamp": "1560978268.318300",
+      "is_reply": false
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "along the same line of thought, we also have like 3 different representations of a flow. it would be nice if we didn’t xD",
+      "time": "14:06",
+      "timestamp": "1560978393.318700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "@lydia has self-nominated to fix flow code org as her next asana ticket :slightly_smiling_face:",
+      "time": "14:12",
+      "timestamp": "1560978757.318900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "jk — i imagine it’ll get much better with 1/2.0 getting cut though.",
+      "time": "14:13",
+      "timestamp": "1560978784.319200",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "This confused me as well. Look at _runshared-utils/py-utils/flow/server/src/py/instabase/flow/v2/mappers/mapper_fns.py",
+      "time": "14:13",
+      "timestamp": "1560978821.319400",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "and the specific function is def _run(self, name) and follow through the code execution.",
+      "time": "14:14",
+      "timestamp": "1560978863.319600",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "CC: @dlluncor to provide some more context here",
+      "time": "14:14",
+      "timestamp": "1560978892.319800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "@Karthik S that runs `v2/mappers/step/apply_refiner.py`. So i should be safe tracing the codepath from there?",
+      "time": "14:15",
+      "timestamp": "1560978921.320000",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "Yep",
+      "time": "14:15",
+      "timestamp": "1560978937.320300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "awesome. know the answers to the other questions by any chance? #1 or #2?",
+      "time": "14:16",
+      "timestamp": "1560978960.320500",
+      "is_reply": true
+    },
+    {
+      "sender": "Karthik S",
+      "user_id": "UDQNWKX1P",
+      "message": "It was a bit tricky to understand the Hydrated / UnHydrated step. One would refer to a step with all the relevant dependent files (like scripts) read into the object.",
+      "time": "14:19",
+      "timestamp": "1560979140.320700",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "unhydrated step is a step without the file contents loaded in. For example, unhydrated Apply Refiner step literally has the Refiner file path. The hydrated Apply Refiner step has the contents of that Refiner file path loaded into it.\n\nflow-lib is a client facing library (e..g., the clients are api-server-apps, apps-server) which are meant to be lightweight\nflow-server is a heavy-weight library with dependencies like spacy,  sckit-learn, etc, which is meant for execution by the server (e.g., app-tasks)",
+      "time": "14:19",
+      "timestamp": "1560979183.320900",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "does the `unhydrated` -> `hydrated` switch happen during compilation and then the hydrated step is the one that is always running? @dlluncor @Karthik S",
+      "time": "14:24",
+      "timestamp": "1560979458.321100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "correct, the hydrated step is the only way we always have access to a step at runtime. It’s funny naming I know — that code can be simplified for sure",
+      "time": "14:36",
+      "timestamp": "1560980177.321300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-06-19.json",
+    "message_count": 14,
+    "start_time": "1560978268.318300",
+    "end_time": "1560980177.321300",
+    "is_thread": true
+  }
+}

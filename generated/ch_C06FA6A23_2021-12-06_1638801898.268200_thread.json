@@ -1,0 +1,211 @@
+{
+  "id": "ch_C06FA6A23_2021-12-06_1638801898.268200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Hari",
+    "kunal",
+    "Yash Aggarwal",
+    "Xi Cheng",
+    "shaunak",
+    "Heymian",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "Friendly ping on this — I am going to commit these patches today. They can always be updated later, but would be good to get these values reviewed asap to ensure our resourcing guidelines match service requirements and sandboxes can be stable as a result.",
+      "time": "06:44",
+      "timestamp": "1638801898.268200",
+      "is_reply": false
+    },
+    {
+      "sender": "Hari",
+      "user_id": "UCX3XL72Q",
+      "message": "cc: @Yash Aggarwal to validate it!",
+      "time": "07:03",
+      "timestamp": "1638802995.268400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "@Xi Cheng can you help take a look at the resource calculator? double check the webservices and the core-services are provisioned with enough resources for things like upload/download? Thanks!",
+      "time": "08:17",
+      "timestamp": "1638807469.268700",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "@kunal Can we increase the max-replicas for msft-v3 to 3? I am worried about ocr timing out during extremely heavy loads.\n\nAlso, we are doing some tests and might request changes to msft-v2 specs in the coming days :sweat_smile:",
+      "time": "08:36",
+      "timestamp": "1638808579.269200",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Heymian yes for sure !",
+      "time": "09:26",
+      "timestamp": "1638811600.269800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@kunal can you cc me on the PR where you commit the patches? I’m curious where they get written to",
+      "time": "13:27",
+      "timestamp": "1638826065.270400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "wow, I did some changes.  Our platform has become extremely expensive",
+      "time": "13:29",
+      "timestamp": "1638826160.270600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "how much per page",
+      "time": "13:29",
+      "timestamp": "1638826191.270800",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "is it cheaper if we sent it to amazon mechanical turk",
+      "time": "13:30",
+      "timestamp": "1638826206.271000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "haha, I think right now the platform is configured to give us ~3300 pages / hour and we are up to 64 cores",
+      "time": "13:31",
+      "timestamp": "1638826280.271200",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "our previous estimate had us doing 14K pages / hour with 48 cores",
+      "time": "13:31",
+      "timestamp": "1638826309.271400",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@shaunak It sounds like we regress in throughput? I think we need some automatic testing to serve as guard rail for this :slightly_smiling_face:",
+      "time": "13:33",
+      "timestamp": "1638826391.271700",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "@lydia they will be in here: https://github.com/instabase/instabase/tree/master/deployment-configs, there is a readme with some details too!",
+      "time": "13:34",
+      "timestamp": "1638826455.272100",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "correct — I think we have added a number of expensive services and they are all fixed sizes.  We need to invest in more streaming based services, or make our grpc service auto scale.  Otherwise, we will just become expensive over time and end up wasting resources.",
+      "time": "13:34",
+      "timestamp": "1638826493.272400",
+      "is_reply": true
+    },
+    {
+      "sender": "kunal",
+      "user_id": "U019YB70B8U",
+      "message": "@shaunak I am really concerned about this — we are using increased resources as a bandaid for underlying issues. We need to root cause and fix these issues in the long term either in the code or in the architecture to bring down the net resource utilization.",
+      "time": "13:35",
+      "timestamp": "1638826539.272600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "Yes, completely agree :slightly_smiling_face: Let’s solve this one step at a time.",
+      "time": "13:41",
+      "timestamp": "1638826897.273000",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@shaunak @kunal @Heymian Can we prioritize on conducting root cause analysis of the throughput downgrade here? If we haven't done so, I'd think we should pick a few flows as benchmarks and loadtest them against a fixed number of input documents, and go from there to understand the bottleneck. I think it won't be hard to extend the system tests to help with load testing and automating it in CI/CD. I agree with Kunal that this is a bit concerning - for example, there is an on-going investigation in Natwest to understand performance bottleneck of their use case running. It is much more difficult to do this in customer's land than in our own, and we don't want to shoot ourselves in the foot by not benchmarking in our own env.",
+      "time": "13:49",
+      "timestamp": "1638827381.273200",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Xi Cheng of course, we knew that there would be significant impact here.  For example, introducing 4model-service + 3 msft ocr  causes us to take (16 + 12)CPU and (64 + 48) GB of RAM which we could have used to provision 20 msft OCR pods, and some additional services.",
+      "time": "13:52",
+      "timestamp": "1638827559.273400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I think we know that our system is going to become expensive when we add model based infrastructure",
+      "time": "13:53",
+      "timestamp": "1638827608.273600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "so we should be prepared for this with our customers",
+      "time": "13:53",
+      "timestamp": "1638827626.273800",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@shaunak Oh thanks for the insights. Is it mainly because model service introducing the overhead? Our throughput drops quite a bit, and when we compare the throughput, are we comparing the same type of documents or not?",
+      "time": "14:26",
+      "timestamp": "1638829582.274000",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@shaunak this is a big drop in throughput hmm, do you know why? Several questions:\n1. “our previous estimate had us doing 14K pages / hour with 48 cores”: When was this / what release was it, do we have more details about the env then (using what DB - oracle or mysql, the env vars, etc)? \n2. “right now the platform is configured to give us ~3300 pages / hour”: can you share the flow that you use to get this results? i want to figure out what changed… we don’t have any test flows that use deep learning models / model service, so this must be a simple Refiner flow, or even just a process files flow? \n3. Can you share the test env you set up to run the test? \nIn the October release, flow scheduler is turned on by default and I was hoping to see an _increase_ of throughput as we should be utilizing the resources better here :thinking_face:\n\nSome other thoughts here:\nI’ll prioritize 1) benchmarking, and 2) finding out a resource configuration that can get us to a desire throughput first, even if it’s throwing money at the problem for now. We need our internal sandboxes to be usable and work reliably. We definitely need to prioritize figuring out the bottleneck going forward, but for now, a clear benchmark report will be very useful - so we can evaluate any of our future improvements. @lydia - we should get some new flows ready for load tests before the end of week next week.",
+      "time": "15:17",
+      "timestamp": "1638832649.274600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Kerry yeah, let’s try to create a benchmark.  We have the opportunity to understand what our throughput is going to be, and redefine the benchmarks.  We will not be able to get to the same throughput as before: our processing model has fundamentally changed.\n\nLet me write up something tomorrow on why things are quite different and and share it with everyone.   We can then have a deeper discussion on the document itself, and may be in a follow up meeting.   That will help us define the next steps.",
+      "time": "23:28",
+      "timestamp": "1638862118.275500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-12-06.json",
+    "message_count": 23,
+    "start_time": "1638801898.268200",
+    "end_time": "1638862118.275500",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,506 @@
+{
+  "id": "ch_C06FA6A23_2022-12-02_1670000208.596359_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "fernando",
+    "jtau",
+    "Kerr Yoo",
+    "Xi Cheng",
+    "Yan Wang",
+    "Pridhvi Vegesna",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Was this resolved? I’m still seeing this behavior on dogfood, thought it was working maybe an hour ago. could it be the errors were re-deployed in the latest deploy?",
+      "time": "08:56",
+      "timestamp": "1670000208.596359",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "",
+      "time": "08:57",
+      "timestamp": "1670000239.424979",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "@Yan Wang Something seems off here... api-server container still has named port in dogfood's materialized config",
+      "time": "09:08",
+      "timestamp": "1670000932.665389",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "but I see it's correct in master (https://github.com/instabase/instabase/blob/master/deployment-configs/base/api-server.yml#L265)",
+      "time": "09:09",
+      "timestamp": "1670000948.821009",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "hmm, let me check",
+      "time": "09:09",
+      "timestamp": "1670000982.632009",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "I have removed the name and let's see if it fix the issue.",
+      "time": "09:10",
+      "timestamp": "1670001045.977269",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "manually?",
+      "time": "09:10",
+      "timestamp": "1670001053.186919",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "yes.",
+      "time": "09:11",
+      "timestamp": "1670001060.655779",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "If it fixes the issue, then I will ask Kerr why it's not applied correctly....",
+      "time": "09:11",
+      "timestamp": "1670001076.304059",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "but it doesn't look like its related to the patch",
+      "time": "09:12",
+      "timestamp": "1670001140.003499",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "it seems more like a base config issue?",
+      "time": "09:12",
+      "timestamp": "1670001150.459809",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "maybe some patches overwrites this?",
+      "time": "09:12",
+      "timestamp": "1670001168.249829",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "Let me check recent patches",
+      "time": "09:12",
+      "timestamp": "1670001176.937349",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "Oh yeah",
+      "time": "09:13",
+      "timestamp": "1670001196.909989",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "https://dogfood.instabase.com/control-plane/configs?targetObject=deployment-api-server&patch=1665954247984",
+      "time": "09:13",
+      "timestamp": "1670001197.373589",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "not sure why those patches include the port",
+      "time": "09:13",
+      "timestamp": "1670001226.212979",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "cc @Xi Cheng ^",
+      "time": "09:13",
+      "timestamp": "1670001232.545309",
+      "is_reply": true
+    },
+    {
+      "sender": "fernando",
+      "user_id": "U03JVUWDA5R",
+      "message": "@lydia Can you check - I think it looks better now",
+      "time": "09:14",
+      "timestamp": "1670001291.598909",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "Yes, it's back to normal on my side",
+      "time": "09:15",
+      "timestamp": "1670001301.606649",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "@Xi Cheng could you please take a look? https://dogfood.instabase.com/control-plane/configs?targetObject=deployment-api-server&patch=1665954247984 hard coded the api server port name and may cause api server not available in the next deployment. Thank you!",
+      "time": "09:16",
+      "timestamp": "1670001379.954329",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Yan Wang I am not following, the patch you referred to was in there 2 months ago",
+      "time": "09:20",
+      "timestamp": "1670001612.297619",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "And that patch did not set the port, but\n```            - name: GRPC_VERBOSITY\n              value: debug\n            - name: GRPC_TRACE\n              value: channel,client_channel,connectivity_state,dns_resolver```\nThe port part was unchanged, so did not take any effect",
+      "time": "09:20",
+      "timestamp": "1670001657.820829",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "To me this looks like the same 504s we've seen on web services from a long time ago.",
+      "time": "09:21",
+      "timestamp": "1670001689.228299",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "^ the port is still declared in the patch, which overrides the new port used with envoy?",
+      "time": "09:21",
+      "timestamp": "1670001710.026229",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "yes, it also sets the ports",
+      "time": "09:22",
+      "timestamp": "1670001727.514589",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "The patch was in two months ago",
+      "time": "09:22",
+      "timestamp": "1670001728.321999",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "Right, but we just  migrate it to envoy yesterday",
+      "time": "09:22",
+      "timestamp": "1670001744.594239",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "It should be fine before, but after using envoy, the port name has to be deleted...",
+      "time": "09:22",
+      "timestamp": "1670001763.914259",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "even if it was in two months ago, we take the base config (updated with a new envoy port) and then apply all patches from the past (including this patch from two months ago) on top of the base config to generate a materialized config",
+      "time": "09:23",
+      "timestamp": "1670001781.821289",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Can you help remove this patch then?",
+      "time": "09:23",
+      "timestamp": "1670001812.689169",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "Sure. I can delete that patch. Thank you!",
+      "time": "09:23",
+      "timestamp": "1670001837.767839",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Definitely :slightly_smiling_face:, do we want to preserve the grpc_verbosity change?",
+      "time": "09:24",
+      "timestamp": "1670001853.408519",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "I think there are something missing here. How come a patch in 2 months affect what we are doing today - so in principle, you need to review all the patches while doing this envoy migration???",
+      "time": "09:24",
+      "timestamp": "1670001866.350369",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "I think so... :joy: But we are doing it optimistically and check patches only when something wrong happens... This cannot be tested on sandbox unfortunately...",
+      "time": "09:25",
+      "timestamp": "1670001918.401939",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "Normally, this error will show up soon as the service will be unavailable immediately",
+      "time": "09:26",
+      "timestamp": "1670001963.029069",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "the patches are deleted",
+      "time": "09:27",
+      "timestamp": "1670002032.550359",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "I still don't understand. When I applied this patch 2 months ago, there is no change to the *`containerPort`, so even without this patch, the containerPort would've be 5555. This is where I am getting confused. Shouldn't any patches associated with envoy override this `containerPort` field?*",
+      "time": "09:27",
+      "timestamp": "1670002052.321069",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "Only the name field matters here. We don't change the port number.",
+      "time": "09:28",
+      "timestamp": "1670002080.640869",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "The name field has to be removed as we use the same name in envoy sidecar",
+      "time": "09:28",
+      "timestamp": "1670002097.777629",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Then shouldn't any patch associated with envoy migration remove this name of interest at the first place",
+      "time": "09:28",
+      "timestamp": "1670002135.583579",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "We remove that name field in the base config. But that patch added it back...",
+      "time": "09:29",
+      "timestamp": "1670002168.134119",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Ok, got it. So this just means if you make this kind of changes in the base config, your path of config updates get disrupted, and you cannot trust \"whatever configs that work in yesterday\", because the whole history has been rewritten. This appears to just defeat the purpose of having base config and patches.\n@jtau",
+      "time": "09:31",
+      "timestamp": "1670002303.813799",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "I feel like having separate configs (no patches at all) for different envs seems to be more clear",
+      "time": "09:33",
+      "timestamp": "1670002422.114189",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "And I think one lesson here for us is when we write patches, we need to only update the fields that we meant to update. Sometimes I took shortcut like above due to copy/paste and some fields are in the patch with unchanged fields. TIL that if you make a deletion in the base config, you can be affected by this. So the best practice to write patch is to only include changed fields then, even though this still doesn't avoid problems like above completely",
+      "time": "09:34",
+      "timestamp": "1670002460.900559",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "^ I think patch professor was created to help solve this pain point :slightly_smiling_face:. Now patches have to be submitted and reviewed through github first so folks can help confirm the patches don't contain unnecessary fields",
+      "time": "09:39",
+      "timestamp": "1670002782.136849",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "Correct, I took shortcut when I did the above, as I was trying to debug the 504s.",
+      "time": "09:40",
+      "timestamp": "1670002819.485489",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "Think of the relation of base configs & patches as this analogy:\nIn a normal account console or settings page, you probably have a bunch of settings you can toggle or set values to. Base configs set the default value of those settings but if a user goes and toggles a specific setting, in this case the port name, then that setting will now override any 'default' was set, regardless of what we change the default to in the future\n\neffectively patches _remember_ any specific setting that was set over time",
+      "time": "09:41",
+      "timestamp": "1670002874.309429",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "As a separate issue, there are still many active deployments on dogfood for a given service.",
+      "time": "09:41",
+      "timestamp": "1670002891.404749",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "@Pridhvi Vegesna if it's stuck you can try manually deleting those, or scale the replicas to 0 and then back, which will bring the service down but usually unstick this situation",
+      "time": "09:42",
+      "timestamp": "1670002951.545729",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "If patches are permanent in dogfood, it will be very hard to avoid conflicts by all means. It won't be safe to modify the base config and the patches will be accumulated to some point when it's hard to manage. Feel like we need to manage the complexity of patches in dogfood (e.g. remove temporary patches or merge necessary ones to base config or etc)",
+      "time": "09:43",
+      "timestamp": "1670002984.113929",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Hrm, with manual deleting I'm not sure which deployment is the \"right\" deployment to preserve. For example, is traffic from nginx  going to all 7+ running api-server deployments. Or are there seven deployments up, but traffic is just flowing to one?\n\nI know we can scale down the pod replicas for a given deployment, but is there way to scale down the replicas of n deployments to one deployment?",
+      "time": "09:49",
+      "timestamp": "1670003352.591959",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "the individual lines you see there is 1 replica or pod; and the number 5 is how many containers is running within that pod\n\nthe traffic is likely flowing to any pod that is running",
+      "time": "09:51",
+      "timestamp": "1670003466.188259",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Haha I'm dumb :flushed:",
+      "time": "09:51",
+      "timestamp": "1670003495.981109",
+      "is_reply": true
+    },
+    {
+      "sender": "jtau",
+      "user_id": "U02F9FESZRN",
+      "message": "no worries i had the same confusion before :slightly_smiling_face:",
+      "time": "09:53",
+      "timestamp": "1670003597.990759",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "^ wait there's no issue then, we expect that many pods",
+      "time": "09:54",
+      "timestamp": "1670003696.753759",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "I don’t think the solution should be to delete patches, but make new patches to overwrite the offending values. I’m concerned that there will be a case that a deleted patch will need to be affect multiple key value pairs, some of which are still required. Suppose you have patch that changes key value pairs A, B, and C. Suppose A and B are required, but C needs to be deleted. You can’t cherry pick the key value pairs you want to preserve when you delete a patch. I believe the solution should either to be cognizant enough to include a patch to delete the offending value in the PR, or, if this case comes up again, write a new patch to delete the value through the control plane ui",
+      "time": "09:55",
+      "timestamp": "1670003703.670769",
+      "is_reply": true
+    },
+    {
+      "sender": "Xi Cheng",
+      "user_id": "U01F946DGEP",
+      "message": "@Kerr Yoo thanks, this sounds like a best practice forward:+1:",
+      "time": "10:10",
+      "timestamp": "1670004619.061389",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "It seems the port name is added back again. I will apply a patch to remove it then.",
+      "time": "11:11",
+      "timestamp": "1670008264.309359",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerr Yoo",
+      "user_id": "U03GD4N24SK",
+      "message": "Wait are you sure this is the correct config, are we supposed to have this nameless port open?",
+      "time": "11:27",
+      "timestamp": "1670009241.495059",
+      "is_reply": true
+    },
+    {
+      "sender": "Yan Wang",
+      "user_id": "U037USG30P6",
+      "message": "Yes,  the port name is moved to envoy side car. Here we just remove the name.",
+      "time": "11:28",
+      "timestamp": "1670009290.316229",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-12-02.json",
+    "message_count": 60,
+    "start_time": "1670000208.596359",
+    "end_time": "1670009290.316229",
+    "is_thread": true
+  }
+}

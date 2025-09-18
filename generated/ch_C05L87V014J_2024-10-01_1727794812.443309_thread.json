@@ -1,0 +1,198 @@
+{
+  "id": "ch_C05L87V014J_2024-10-01_1727794812.443309_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "sean.donohoe",
+    "Aaron Tami",
+    "Vasu"
+  ],
+  "messages": [
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I haven’t the foggiest idea of where to start asking for help on this :grimacing: @Aaron Tami any chance you know who could engage here to help unblock Vasu?",
+      "time": "08:00",
+      "timestamp": "1727794812.443309",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "@Vasu how are you trying to connect to these? running a service locally in your crafting sandbox?",
+      "time": "08:04",
+      "timestamp": "1727795064.536689",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "I am also seeing the timeout when I try to `curl https://instabaseinternalocr.cognitiveservices.azure.com/` from crafting, but not from my local",
+      "time": "08:06",
+      "timestamp": "1727795169.069899",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Interesting :eyes: Best guess from myself then is we’re likely restricting access to those endpoints by IP and have only allowed Banyan IPs?",
+      "time": "08:07",
+      "timestamp": "1727795232.148719",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "I don't think so, I disconnected from banyan and still am able to connect from my laptop",
+      "time": "08:08",
+      "timestamp": "1727795288.050679",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "I don't think any of our azure stuff in behind banyan",
+      "time": "08:08",
+      "timestamp": "1727795296.188749",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "this is weird tho, im not sure what could be causing this",
+      "time": "08:09",
+      "timestamp": "1727795341.678289",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "because we can connect to other external URLs from crafting just fine, like `curl google.com (http://google.com)`",
+      "time": "08:09",
+      "timestamp": "1727795362.644619",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Huh, well we definitely don’t have any sort of outbound network restrictions in crafting — maybe it’s a bad DNS entry from within AWS? Could you check whether you can directly curl the IP you see on your laptop, from crafting?",
+      "time": "08:09",
+      "timestamp": "1727795385.845249",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "(Sorry would run it myself but I’m not at my desk yet)",
+      "time": "08:10",
+      "timestamp": "1727795428.811359",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "yup",
+      "time": "08:11",
+      "timestamp": "1727795484.181689",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "seems like DNS",
+      "time": "08:11",
+      "timestamp": "1727795485.941519",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "```curl 20.232.91.180\n<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\"http://www.w3.org/TR/html4/strict.dtd\">\n<HTML><HEAD><TITLE>Not Found</TITLE>\n<META HTTP-EQUIV=\"Content-Type\" Content=\"text/html; charset=us-ascii\"></HEAD>\n<BODY><h2>Not Found</h2>\n<hr><p>HTTP Error 404. The requested resource is not found.</p>\n</BODY></HTML>```",
+      "time": "08:11",
+      "timestamp": "1727795505.532329",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Interesting! I’ll take a look at how we can update /etc/resolv.conf from the ansible specs for crafting, but in the meantime I would venture a guess that adding a ‘nameserver 8.8.8.8’ to the top of /etc/resolv.conf manually will fix things",
+      "time": "08:13",
+      "timestamp": "1727795596.800609",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Thank you very much for your help @Aaron Tami :pray:",
+      "time": "08:13",
+      "timestamp": "1727795615.121739",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "that does work!",
+      "time": "08:15",
+      "timestamp": "1727795713.433429",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Thank you @Aaron Tami @sean.donohoe :raised_hands::skin-tone-2: !",
+      "time": "08:15",
+      "timestamp": "1727795731.155009",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "For now, I'll manually make this change for now. @sean.donohoe Are we planning to add it as part of `workspace update` in the future? I have heard a lot of other people also running into this while testing the above cases atleast!",
+      "time": "08:18",
+      "timestamp": "1727795918.272969",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Yes that’s correct! I need to work on some changes for performing the update correctly, but once those are merged ‘workspace update’ will apply them :)",
+      "time": "08:22",
+      "timestamp": "1727796165.207169",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Also, if I understand it correctly, this was an issue with AWS DNS resolution? Just for my own understanding :sweat_smile:",
+      "time": "08:22",
+      "timestamp": "1727796165.791939",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Yep! I’ve seen this before with AWS for other domains — AWS provisions EC2 instances to point at an AWS-specific DNS resolver by default, and their resolver is (for lack of a better term) trash :p We can thankfully override when necessary, but it’s also out of our control for the most part and is therefore (annoyingly) difficult to track down when it comes up :upside_down_face:",
+      "time": "08:26",
+      "timestamp": "1727796364.231419",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Thanks for explaining!",
+      "time": "08:26",
+      "timestamp": "1727796419.636459",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-10-01.json",
+    "message_count": 22,
+    "start_time": "1727794812.443309",
+    "end_time": "1727796419.636459",
+    "is_thread": true
+  }
+}

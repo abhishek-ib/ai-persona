@@ -1,0 +1,192 @@
+{
+  "id": "ch_CSY11CK7T_2024-06-28_1719591003.338819_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Vishnu",
+    "jordy.vlan",
+    "Jessica",
+    "Vasu",
+    "Aayush"
+  ],
+  "messages": [
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@Subash @Aayush converse-app is failing in CI and sandbox because it's consistently timing out (40sec) after sending a query. CI example: https://cloud.cypress.io/projects/cfhedy/runs/11781/overview/54aefd14-d65b-4aa7-a7df-[…]eplay?roarHideRunsWithDiffGroupsAndTags=1&ts=1719588122494.7 (https://cloud.cypress.io/projects/cfhedy/runs/11781/overview/54aefd14-d65b-4aa7-a7df-70b4c4b26820/replay?roarHideRunsWithDiffGroupsAndTags=1&ts=1719588122494.7), sandbox example: https://cloud.cypress.io/projects/cfhedy/runs/11780/test-results/8a6de32b-eb7f-4d12-a01c-e5554ee14d51/replay. Could this be a real failure?",
+      "time": "09:10",
+      "timestamp": "1719591003.338819",
+      "is_reply": false
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Converse billing is also failing for the same reason.",
+      "time": "09:14",
+      "timestamp": "1719591297.244699",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I'm pretty sure this is a real bug, I can't send queries on sandbox or crafting but UAT and prod work fine. Posted in <#C06731WJTUP|>",
+      "time": "09:45",
+      "timestamp": "1719593137.258419",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "Hmm I can reproduce this",
+      "time": "09:57",
+      "timestamp": "1719593859.430569",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "cc <!subteam^S05BKH20B4K> - for visibility",
+      "time": "09:57",
+      "timestamp": "1719593868.478819",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Seems like this is probably a backend issue - @Aayush who's the best person (who's still online :persevere:) to get on this?",
+      "time": "10:02",
+      "timestamp": "1719594171.079229",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "I was able to run queries a few hours ago (probably last/last to last deployment).\n\n@Vasu any ideas?",
+      "time": "10:04",
+      "timestamp": "1719594291.317199",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The tests on sandbox were passing at 11:30am IST, and were failing by 2:30pm IST",
+      "time": "10:05",
+      "timestamp": "1719594356.180749",
+      "is_reply": true
+    },
+    {
+      "sender": "Aayush",
+      "user_id": "U01594ZKULX",
+      "message": "this looks like is timing out in the model service (not in api-server)",
+      "time": "10:41",
+      "timestamp": "1719596482.089499",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "I see this (https://aihub-sandbox.internal.instabase.com/grafana/goto/9ei3ybQIg?orgId=1) error coming from within ibllm. The most recent related change was this (https://github.com/instabase/instabase/commit/0b6b826b04a9083deeb4da06d66e5a749726c60d) commit, @Sławek Biel @jordy.vlan Could this be related, could you help?",
+      "time": "10:57",
+      "timestamp": "1719597452.325569",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "@lydia @mfichman I see you two were also reviewers, since it's late in other timezones can you all take a look at this? Seems like this is a real bug and it's causing our Cypress tests to fail.",
+      "time": "11:58",
+      "timestamp": "1719601082.246619",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Maybe this PR needs to be merged? https://github.com/instabase/instabase/pull/59323 @Vishnu too since you're a reviewer on this one",
+      "time": "11:59",
+      "timestamp": "1719601184.138009",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "That will solve it, except for test_reasoning_prompt_suggestions",
+      "time": "12:01",
+      "timestamp": "1719601290.331979",
+      "is_reply": true
+    },
+    {
+      "sender": "Vishnu",
+      "user_id": "U02RY7NLQMN",
+      "message": "okay, lets merge it then. i can add a separate PR for the integration test fixes. this will at least stop the CI failures.",
+      "time": "12:02",
+      "timestamp": "1719601329.233799",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "Yes",
+      "time": "12:10",
+      "timestamp": "1719601800.111699",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "There's an outage with Github CI, so the final status isn't being reported :weary: I'll keep an eye on it and merge it when the outage is over!",
+      "time": "12:11",
+      "timestamp": "1719601889.955789",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "it keeps saying I cannot squash and merge, if someone else can do it, go ahead :slightly_smiling_face:",
+      "time": "12:17",
+      "timestamp": "1719602239.818149",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Yeah it's because of the github outage. I know it's late for you all so I can merge it once we're able to!",
+      "time": "12:17",
+      "timestamp": "1719602275.980319",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Merged!",
+      "time": "12:59",
+      "timestamp": "1719604772.805119",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "awesome, thanks Jessica! :thanks-3543:",
+      "time": "13:00",
+      "timestamp": "1719604820.766249",
+      "is_reply": true
+    },
+    {
+      "sender": "jordy.vlan",
+      "user_id": "U072CDMB4N8",
+      "message": "@Vishnu Got home, fixed a separate PR for the reasoning prompt tests :wink: https://github.com/instabase/instabase/pull/59357 :wink:",
+      "time": "14:46",
+      "timestamp": "1719611176.726659",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-06-28.json",
+    "message_count": 21,
+    "start_time": "1719591003.338819",
+    "end_time": "1719611176.726659",
+    "is_thread": true
+  }
+}

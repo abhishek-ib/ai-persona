@@ -1,0 +1,85 @@
+{
+  "id": "ch_C06FA6A23_2024-11-28_1732793679.162029_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "puneet"
+  ],
+  "messages": [
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "Hey team,\nI wanted to share an update on some of the recent issues we ran into with distributed tracing / Jaeger. As this has been noticed across platforms, consolidating updates here for everyone.\n• Search by trace ID was not working in grafana, and results in a 404 Not Found error in most cases. Simultaneously we have also seen that same trace-id was used across multiple requests.\n    ◦ *Root cause:* On investigation we found that these two are related problems. This has been caused by spans not being closed when a request completes in webservers. This problem has existed for a while, and it recently got surfaced when we removed tracing from nginx. The latter was done to address vulnerabilities in the nginx opentracing plugin (which was deprecated and not maintained by upstream).\n    ◦ *Current Status:* We have shipped a temporary fix to this by ignoring any existing unclosed traces in webservers, this should allow most of the traces to be searchable now. The issue with closing spans properly still exists and needs further investigation to resolve.\n    ◦ *JIRA ticket:* https://instabase.atlassian.net/browse/OBS-1545\n• Search by service does not work with high volume of traces in grafana.\n    ◦ *Root cause:* This issue started happening after upgrading opensearch to v2.15 and is happening because jaeger is not querying opensearch properly which causes internal server errors in opensearch.\n    ◦ *Current Status:* We have opened an issue with jaeger here (https://github.com/jaegertracing/jaeger/issues/5825), and recommend people to limit the search to 20-30 traces to avoid any errors when searching.\n    ◦ *JIRA ticket:* https://instabase.atlassian.net/browse/INFRA-3773\ncc @sudeep",
+      "time": "03:34",
+      "timestamp": "1732793679.162029",
+      "is_reply": false
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "thanks, can you confirm what release is the fix for issue 1 in?",
+      "time": "09:23",
+      "timestamp": "1732814619.610799",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "I have backported till release-23.10",
+      "time": "09:25",
+      "timestamp": "1732814739.637589",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "and aihub release?",
+      "time": "09:25",
+      "timestamp": "1732814747.557069",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "24.46",
+      "time": "09:26",
+      "timestamp": "1732814776.620829",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "for your tomorrow, please check if this is the expected behavior -- it seems that trace id is gone from the api-server logs on aihub prod (24.46)\n\nwhen I checked the chrome console, there's an ib-trace-id in the header and i can found a trace in jaeger for that; but the id is not recorded in the logs (which is usually how you get the trace id...)\n\ni tried the same thing in RSA's AI Hub env (24.44), I can see the trace_id for the same api in api-server logs, but i can't search for it in jaeger (getting a 404, which is what you wrote here in 1)\n\nis the missing trace id in api-server a regression that's introduced in 24.46 through your fix?\n\nTwo examples:\n24.46\nhttps://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22e7l%22:%7B%22d[…]%22from%22:%22now-3h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1 (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22e7l%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22api-server%5C%22%7D%20%7C%3D%20%60kerry%60%20%7C%3D%20%60DELETE%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%22now-3h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)\n\n24.44\nhttps://rsa.aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22tyr%22%3A%7B[…]4752%22%2C%22to%22%3A%221732792392108%22%7D%7D%7D&orgId=1 (https://rsa.aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22tyr%22%3A%7B%22datasource%22%3A%22loki%22%2C%22queries%22%3A%5B%7B%22refId%22%3A%22A%22%2C%22expr%22%3A%22%7Bcontainer%3D%5C%22api-server%5C%22%7D+%7C%3D+%60request_path%3D%5C%22%2Fapi%2Fv2%2Faihub%2Fbuild%2Fprojects%2Fapp%5C%22+method%3D%5C%22DELETE%5C%22%60%22%2C%22queryType%22%3A%22range%22%2C%22datasource%22%3A%7B%22type%22%3A%22loki%22%2C%22uid%22%3A%22loki%22%7D%2C%22editorMode%22%3A%22builder%22%7D%5D%2C%22range%22%3A%7B%22from%22%3A%221732784024752%22%2C%22to%22%3A%221732792392108%22%7D%7D%7D&orgId=1)",
+      "time": "10:23",
+      "timestamp": "1732818213.276749",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "if this is an regression / result introduced by your fix, I would suggest revert the fix; because you can't even get the trace id anymore. in the previous case, you can't search for it in jaeger but you can at least search for the trace id in logs. obviously the best case is to have that trace id recored in api-sever & still make it searchable through jaeger",
+      "time": "10:26",
+      "timestamp": "1732818410.236899",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "happy to chat about this on monday if needed",
+      "time": "10:27",
+      "timestamp": "1732818469.949739",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-11-28.json",
+    "message_count": 8,
+    "start_time": "1732793679.162029",
+    "end_time": "1732818469.949739",
+    "is_thread": true
+  }
+}

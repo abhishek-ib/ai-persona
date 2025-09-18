@@ -1,0 +1,158 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-02-18_1739916887.532099_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Serena",
+    "Sayan"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "How do we connect to SaaS sandboxes locally? I want to be able to see the logs from api-server and core-platform.\n\nWhen copy pasting the command from the website (`aws eks update-kubeconfig ...`) into my local terminal I see `Unable to locate credentials. You can configure credentials by running \"aws configure\".` but after running `aws configure` with the `instabase-sandbox` / `assume-sandbox-kubectl-admin` role, and retrying the original command to connect to the sandbox I see the same error",
+      "time": "14:14",
+      "timestamp": "1739916887.532099",
+      "is_reply": false
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "which sandbox are you interested in? you can get the logs from `<sandbox url>/grafana/explore` or https://grafana.observability.instabase.com/",
+      "time": "14:17",
+      "timestamp": "1739917034.442589",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "So the sandbox I'm looking at is https://sandbox.console.instabase.com/customer/AI%20Hub/tenant/auditlog-sayan/info\n\nThe sandbox is giving an argo CD error but I'm not sure what to do from there: `job-post-install-action-aihub-license` seems to be failing",
+      "time": "14:22",
+      "timestamp": "1739917346.379669",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "you can see the logs for this post-install action here (https://auditlog-sayan.internal.instabase.com/deployment-manager/dashboard/jobs/batch/v1/job-post-install-action-aihub-license/job-post-install-action-aihub-license-9tdbh/logs/post-install-action-aihub-license) - see the breadcrumbs at the top of that page to see how i navigated there",
+      "time": "15:48",
+      "timestamp": "1739922505.738169",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i see this error in those logs - `Failed to run AI Hub License Action. Err: unexpected response when set up org StatusCode: 409, Body: {\"message\": \"User (admin) already belong to another organization: jk\"}`\n\nhow was the `jk` org created?",
+      "time": "15:48",
+      "timestamp": "1739922527.118409",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "also, are you not able to use your crafting sandbox for testing? why do you need to create a new saas sandbox?",
+      "time": "15:49",
+      "timestamp": "1739922546.074279",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I created the org by going through the flow of upgrading to commercial. However, I couldn't enter the credit card details since it failed before populating that screen. So instead I just started a trial.",
+      "time": "15:51",
+      "timestamp": "1739922670.130139",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Also for crafting, this (https://instabase.slack.com/archives/C073F3T5KRQ/p1739383165630559) is the issue I'm facing. Unfortunately, I cannot test that the audit logs actually show up on crafting.",
+      "time": "15:51",
+      "timestamp": "1739922715.274669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You need to use the credentials from the Instabase-sandbox AWS account, plus follow the instructions for using kubectl from cloud console (there is a “connect to sandbox” link that explains what to do)",
+      "time": "15:58",
+      "timestamp": "1739923125.680659",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "I realized the issue I was having was due to not specifying a profile in the dialog box when the \"Connect to sandbox\" button was clicked. Now terminal shows the following error. Is there a way to debug this?\n\n```An error occurred (ResourceNotFoundException) when calling the DescribeCluster operation: No cluster found for name: insan-use2-aihub-host-eks-cluster.```",
+      "time": "16:02",
+      "timestamp": "1739923334.101829",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "This is the command i'm running: `aws eks update-kubeconfig --name insan-use2-aihub-host-eks-cluster --region us-east-1 --role-arn arn:aws:iam::591759939757:role/insan-aihub-host-kubectl-admin-role --alias aihub-host --profile assume-sandbox-kubectl-admin-591759939757 && kubectl config use-context aihub-host && kubectl config set-context --current --namespace insan-use2-auditlog-sayan-instabase`",
+      "time": "16:02",
+      "timestamp": "1739923359.806099",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Also the instabase-sandbox AWS account says that the region is `us-east-1` but the cluster is in `us-east-2` . Is the correct fix to have the region in the command be `us-east-1` ?",
+      "time": "16:04",
+      "timestamp": "1739923446.153089",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Just copying whatever is in cloud console usually works for me. I usually just copy the credentials as env vars from the AWS login screen.",
+      "time": "16:56",
+      "timestamp": "1739926571.623659",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "> copy the credentials\nDo you mean as exports?",
+      "time": "16:56",
+      "timestamp": "1739926605.946569",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The profiles are annoying, so I don’t use them. I find I’m constantly having profile confusion.",
+      "time": "16:56",
+      "timestamp": "1739926609.200819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes, export AWS…=…. and so on",
+      "time": "16:57",
+      "timestamp": "1739926634.929469",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The profile credentials have a super short lifetime, so you end up having to go back to the AWS screen constantly anyway. I found it’s easier just to use the shell vars when needed",
+      "time": "16:58",
+      "timestamp": "1739926699.419549",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-02-18.json",
+    "message_count": 17,
+    "start_time": "1739916887.532099",
+    "end_time": "1739926699.419549",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "id": "ch_C06FA6A23_2022-08-15_1660587819.316409_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Wilson",
+    "Rahul Tewari",
+    "Heymian",
+    "Dave",
+    "Dominic Fannjiang",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "hi all, I just pulled latest master and trying to run `make build-docker run-docker` to build app-tasks locally but getting\n```mkdir -p /Users/dominicfannjiang/instabase/distributed-tasks/celery/app-tasks/tmp/hotconfig && touch /Users/dominicfannjiang/instabase/distributed-tasks/celery/app-tasks/tmp/hotconfig/base-hot-config.yml\nCONFIG_NAME=docker-local \\\n\tpython /Users/dominicfannjiang/instabase/distributed-tasks/celery/app-tasks/../../../shared-utils/build-utils/stack-local/get-env-local.py \\\n\t/Users/dominicfannjiang/instabase/distributed-tasks/celery/app-tasks/deployment/env/deployment-config.json \\\n\t/Users/dominicfannjiang/instabase/distributed-tasks/celery/app-tasks/../../../shared-utils/build-utils/shared/env-local.json \\\n\t/Users/dominicfannjiang/instabase/distributed-tasks/celery/app-tasks/deployment/local/docker-env.json > /Users/dominicfannjiang/instabase/distributed-tasks/celery/app-tasks/tmp/docker_env_local.list\ndocker run  --name instabase-celery-app-tasks --env-file /Users/dominicfannjiang/instabase/distributed-tasks/celery/app-tasks/tmp/docker_env_local.list \\\n\t-P --rm -t -i instabase/celery-app-tasks\n/bin/bash: start-worker.sh: Permission denied```\nany ideas on how to fix?",
+      "time": "11:23",
+      "timestamp": "1660587819.316409",
+      "is_reply": false
+    },
+    {
+      "sender": "Wilson",
+      "user_id": "U0296SSDF2Q",
+      "message": "Ive been seeing people getting this as well lately",
+      "time": "11:23",
+      "timestamp": "1660587836.221469",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "`RUN chmod -R +rx .` needs to be added before `RUN chmod +x start.sh`",
+      "time": "11:24",
+      "timestamp": "1660587857.710169",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "In the dockerfile",
+      "time": "11:24",
+      "timestamp": "1660587863.082759",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "@Serena made a thread: https://instabase.slack.com/archives/C06FA6A23/p1660072009739479",
+      "time": "11:24",
+      "timestamp": "1660587886.221509",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i still don’t know what caused this tho :sweat_smile: did any of you recently update docker desktop or the docker cli?",
+      "time": "11:26",
+      "timestamp": "1660587965.845229",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "i did as part of kandji :thinking_face:",
+      "time": "11:26",
+      "timestamp": "1660587984.669629",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "me too :open_mouth:",
+      "time": "11:26",
+      "timestamp": "1660587996.999199",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "This happened to me after kandji",
+      "time": "11:27",
+      "timestamp": "1660588041.204159",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "`RUN chmod -R +rx .` worked, thanks @Rahul Tewari! should we commit this change?",
+      "time": "11:27",
+      "timestamp": "1660588042.789499",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i didn’t commit bc i wasn’t sure how many other people would encounter this",
+      "time": "11:27",
+      "timestamp": "1660588059.749069",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "I don't think that's a good idea. It's not least privilege to set an entire directory to +rx",
+      "time": "11:27",
+      "timestamp": "1660588061.121399",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "also this is a problem for all of our Makefiles, i’ve needed to add this for any service i rebuild and restart",
+      "time": "11:28",
+      "timestamp": "1660588090.115789",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "can we at least just chmod that sh file?",
+      "time": "11:28",
+      "timestamp": "1660588090.823649",
+      "is_reply": true
+    },
+    {
+      "sender": "Rahul Tewari",
+      "user_id": "U02QTCYQPUH",
+      "message": "This affects all services I think so maybe the root cause is something else",
+      "time": "11:28",
+      "timestamp": "1660588121.625749",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hahahaha chmod’ing that sh file won’t work, i tried that",
+      "time": "11:29",
+      "timestamp": "1660588143.476449",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the user won’t have permissions to view any of the files in the `build` folder, which is necessary for the service to run",
+      "time": "11:29",
+      "timestamp": "1660588162.851119",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "fyi @Dave here as well",
+      "time": "11:47",
+      "timestamp": "1660589222.169949",
+      "is_reply": true
+    },
+    {
+      "sender": "Dave",
+      "user_id": "U03D9RJ7SQL",
+      "message": "I can confirm that like most software on a machine the docker agent will update to new versions within 2 weeks",
+      "time": "11:50",
+      "timestamp": "1660589422.415849",
+      "is_reply": true
+    },
+    {
+      "sender": "Dave",
+      "user_id": "U03D9RJ7SQL",
+      "message": "But that doesn't entirely seem to be the problem here?",
+      "time": "11:50",
+      "timestamp": "1660589430.678399",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-08-15.json",
+    "message_count": 20,
+    "start_time": "1660587819.316409",
+    "end_time": "1660589430.678399",
+    "is_thread": true
+  }
+}

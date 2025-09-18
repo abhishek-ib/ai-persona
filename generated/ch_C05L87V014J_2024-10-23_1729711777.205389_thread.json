@@ -1,0 +1,206 @@
+{
+  "id": "ch_C05L87V014J_2024-10-23_1729711777.205389_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "sean.donohoe",
+    "Jeff"
+  ],
+  "messages": [
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Hey team, the server-nginx is down in my crafting env (https://instabase.sandboxes.site/sandboxes/jianweigong?cw=dev). And I wasn’t able to see any logs. Does anyone know what could be the potential fix?",
+      "time": "12:29",
+      "timestamp": "1729711777.205389",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "is ppy or workspace the thing you're having manage nginx?",
+      "time": "12:33",
+      "timestamp": "1729711991.592569",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I use ppy",
+      "time": "12:34",
+      "timestamp": "1729712040.895309",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": ":+1: in that case I would check what's failing with `cd webserver/server-nginx && make run-docker`",
+      "time": "12:34",
+      "timestamp": "1729712082.780279",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "```➜  cd webserver/server-nginx && make run-docker\nMakefile:89: warning: overriding recipe for target 'publish-svc-prod-gc'\n/home/owner/instabase/webserver/server-nginx/../../shared-utils/build-utils/shared/deploy.mk:976: warning: ignoring old recipe for target 'publish-svc-prod-gc'\ndocker run  --name instabase-server-nginx  \\\n--env-file localsettings.env \\\n-p 80:8081 --rm -i instabase/server-nginx\n2024/10/23 19:34:59 [emerg] 16#16: cannot load certificate \"/etc/nginx/certificates/default.crt\": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/nginx/certificates/default.crt, r) error:10000080:BIO routines::no such file)\nnginx: [emerg] cannot load certificate \"/etc/nginx/certificates/default.crt\": BIO_new_file() failed (SSL: error:80000002:system library::No such file or directory:calling fopen(/etc/nginx/certificates/default.crt, r) error:10000080:BIO routines::no such file)\nmake: *** [Makefile:83: run-docker] Error 1```",
+      "time": "12:35",
+      "timestamp": "1729712129.831889",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Somehow the certificate is missing.",
+      "time": "12:36",
+      "timestamp": "1729712194.685489",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "yeah not sure -- you could try rebuilding from scratch with `make clean build-docker run-docker`",
+      "time": "12:37",
+      "timestamp": "1729712229.822969",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "nginx is now up, but while tunneling, it shows that connection refused\n```127.0.0.1:443  ==> dev:443  RUNNING       Unknown: dial tcp 169.254.16.1:443: connect: connection refused```",
+      "time": "12:47",
+      "timestamp": "1729712838.811549",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ah yeah, server-nginx was recently updated to serve on port 80",
+      "time": "12:47",
+      "timestamp": "1729712873.637769",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Is it 8080?",
+      "time": "12:49",
+      "timestamp": "1729712993.772269",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "no, should be 80 :slightly_smiling_face:",
+      "time": "12:50",
+      "timestamp": "1729713014.539529",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "```sudo sh -c \"CRAFTING_SANDBOX_SERVER_URL=https://instabase.sandboxes.site cs pf -L 80:dev:80 -L 8081:dev:8081 -W jianweigong/dev\"\nPassword:\n✔ select the only one - instabase\nFatal: invalid destination port in forward rule \"80:dev:80\": no port found in workloads.```",
+      "time": "12:50",
+      "timestamp": "1729713022.430759",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "maybe you need to update your sandbox? (@mfichman if you wouldn't mind checking me when you have a moment)",
+      "time": "12:51",
+      "timestamp": "1729713065.581389",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I am on the latest master",
+      "time": "12:51",
+      "timestamp": "1729713093.052839",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "that doesn't matter, your sandbox image and environment configuration does not depend on the checkout",
+      "time": "12:52",
+      "timestamp": "1729713122.013569",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I see. How could I update the sandbox?",
+      "time": "12:52",
+      "timestamp": "1729713143.418429",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "`workspace update` should do it for you",
+      "time": "12:53",
+      "timestamp": "1729713190.906299",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I am seeing this error\n```TASK [base : Install Base Packages] *****************************************************************************************************************************************************************************************************************************************\nfatal: [localhost]: FAILED! => {\"changed\": false, \"msg\": \"Failed to update apt cache: unknown reason\"}\n\nPLAY RECAP ******************************************************************************************************************************************************************************************************************************************************************\nlocalhost                  : ok=1    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   \n\n2024-10-23T19:54:47Z    WARN    Subprocess failed       {\"command\": \"/usr/bin/ansible-playbook -e repo_root=/tmp/instabase540758808 instabase-dev.yaml\", \"error\": \"exit status 2\"}\n2024-10-23T19:54:47Z    FATAL   Failed to apply ansible configs {\"error\": \"exit status 2\"}\ngithub.com/instabase/releng/crafting/workspace/cmd.updateWorkspace (http://github.com/instabase/releng/crafting/workspace/cmd.updateWorkspace)\n        releng/crafting/workspace/cmd/update.go:157\ngithub.com/spf13/cobra.(*Command).execute (http://github.com/spf13/cobra.(*Command).execute)\n        external/com_github_spf13_cobra/command.go:944\ngithub.com/spf13/cobra.(*Command).ExecuteC (http://github.com/spf13/cobra.(*Command).ExecuteC)\n        external/com_github_spf13_cobra/command.go:1068\ngithub.com/spf13/cobra.(*Command).Execute (http://github.com/spf13/cobra.(*Command).Execute)\n        external/com_github_spf13_cobra/command.go:992\ngithub.com/instabase/releng/crafting/workspace/cmd.Execute (http://github.com/instabase/releng/crafting/workspace/cmd.Execute)\n        releng/crafting/workspace/cmd/root.go:39\nmain.main\n        releng/crafting/workspace/main.go:9\nruntime.main\n        GOROOT/src/runtime/proc.go:250```",
+      "time": "12:55",
+      "timestamp": "1729713358.171739",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "mind if I give a go?",
+      "time": "12:57",
+      "timestamp": "1729713450.400979",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Sure",
+      "time": "12:58",
+      "timestamp": "1729713517.263719",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "sorry forgot to ping back here, your sandbox should be up to date now",
+      "time": "13:31",
+      "timestamp": "1729715473.823449",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "I am still seeing this error while forwarding ports:\n```sudo sh -c \"CRAFTING_SANDBOX_SERVER_URL=https://instabase.sandboxes.site cs pf -L 80:dev:80 -L 8081:dev:8081 -W jianweigong/dev\"\nPassword:\n✔ select the only one - instabase\nFatal: invalid destination port in forward rule \"80:dev:80\": no port found in workloads.```",
+      "time": "15:06",
+      "timestamp": "1729721174.350709",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hey Jeff, you have to hit the re-sync button to re-sync the template. It’s in the top menu bar. There are actually two re-sync buttons; you need to use the one from the very top menu bar sometimes it’s hidden by the “…”\n\nIf you’re still stuck tomorrow, give me a call!",
+      "time": "16:17",
+      "timestamp": "1729725440.137139",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-10-23.json",
+    "message_count": 23,
+    "start_time": "1729711777.205389",
+    "end_time": "1729725440.137139",
+    "is_thread": true
+  }
+}

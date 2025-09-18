@@ -1,0 +1,159 @@
+{
+  "id": "ch_CSY11CK7T_2024-05-16_1715882565.139079_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Weiming Wu",
+    "Xindi Xu",
+    "Jessica",
+    "Udit"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I have 2 PRs that start Cypress tests at exactly the same time (unfortunately... :party_crying_blood:). Here is a list of tests that might have concurrency issues (run 9937 (https://cloud.cypress.io/projects/cfhedy/runs/9937/overview/1948a731-1825-4772-b18d-148fb5201edd?roarHideRunsWithDiffGroupsAndTags=1), run 9936 (https://cloud.cypress.io/projects/cfhedy/runs/9936/overview/87231f03-1820-4ba1-b61f-95415269076b?roarHideRunsWithDiffGroupsAndTags=1)).\nI wonder if we should reconsider using different orgs/account for different cypress runs\n1. view-my-hub.spec.ts\n2. ~aihub-classification.spec.ts~\n3. ~aihub-data-types.spec.ts~\n4. ~aihub-doc-management-grid.spec.ts~\n5. ~aihub-doc-management-single-doc.spec.ts~\n6. ~aihub-extraction.spec.ts~\n7. aihub-quick-clean-refinement.spec.ts\n8. ~aihub-redigitization.spec.ts~\n9. ~aihub-refinement-udf.spec.ts~\n10. ~aihub-results-table.spec.ts~\n11. aihub-single-classification.spec.ts\n12. aihub-templates.spec.ts\n13. ~aihub-upsell.spec.ts~\n14. ~aihub-validation-udf.spec.ts~\n15. billing.spec.ts\n16. view-home-page.spec.ts (wait for button timeout)\n17. run-app.spec.ts (grpc error)\n18. run-public-app.spec.ts (grpc error)\n19. documents-grid.spec.ts (folder doesn't exist)\n20. field-editor.spec.ts (folder doesn't exist)\n21. file-list.spec.ts (folder doesn't exist)\n22. nested-field-editor.spec.ts (folder doesn't exist)\n23. results-table.spec.ts (folder doesn't exist)",
+      "time": "11:02",
+      "timestamp": "1715882565.139079",
+      "is_reply": false
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "ah, the human review ones i think get messed up with concurrency because the app runs happen and it prob doesn't click the correct one or the network calls for get-batch-request mix up I assume",
+      "time": "11:07",
+      "timestamp": "1715882874.742119",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "well in these runs it failed due to some grpc issue about a folder not existing?",
+      "time": "11:08",
+      "timestamp": "1715882928.601979",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "i'm going to spend some time to see if we can create a new org for each PR",
+      "time": "11:23",
+      "timestamp": "1715883789.191349",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "I don't think these are all due to concurrency @Xindi Xu - it looks like there also might have been something going on with the sandbox",
+      "time": "11:27",
+      "timestamp": "1715884079.299169",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "For example, aihub-classification failed with a 502 getting projects here (https://cloud.cypress.io/projects/cfhedy/runs/9937/overview/b20b7713-01de-4835-86c8-09469f7d4894/replay?roarHideRunsWithDiffGroupsAndTags=1&ts=1715881572237.6&att=1) and being unable to delete a project here (https://cloud.cypress.io/projects/cfhedy/runs/9936/overview/994a6a54-1ed2-4430-8f68-19bddaf69fbd/replay?att=1&roarHideRunsWithDiffGroupsAndTags=1&ts=1715881561696.7014). The concurrency issues with build projects should have been fixed by using uuids with project names, and we haven't seen any issues since those changes were made.",
+      "time": "11:29",
+      "timestamp": "1715884155.669619",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Maybe we can do something similar for converse/app/review runs? We should try that before we try something with different users/organizations",
+      "time": "11:29",
+      "timestamp": "1715884193.590049",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "ah yea, also seeing some grpc issue",
+      "time": "11:29",
+      "timestamp": "1715884199.886859",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I feel like it'd be less work to fix the concurrency issue once for all tests, rather than trying to hunt down which test has concurrency issues and try to fix them. jw, why do we want to try fixing them one by one?",
+      "time": "11:31",
+      "timestamp": "1715884314.263389",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "It wasn't hard to fix them one by one for build (https://github.com/instabase/instabase/pull/57238). I added some utils to handle project names and just did it for each place we were working with a constant project name.",
+      "time": "11:34",
+      "timestamp": "1715884496.563869",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "The other issue with adding extra users and orgs is the setup and maintenance required to have so many different orgs and users across three different environments.",
+      "time": "11:37",
+      "timestamp": "1715884641.606599",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I'm thinking about creating a new org for each PR so we don't need to maintain them at all. (i've been thinking about automating user registration/accept org invite UAT for a while now).",
+      "time": "11:42",
+      "timestamp": "1715884947.936579",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Another reason for using new org is to make sure each test run starts with a clean state.",
+      "time": "11:45",
+      "timestamp": "1715885126.044249",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Would we be able to clean up orgs and users after runs?",
+      "time": "11:45",
+      "timestamp": "1715885153.829129",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "no, we'll just leave them there. If needed, we can clean up the database completely every month or so.",
+      "time": "11:46",
+      "timestamp": "1715885190.896849",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "These 2 runs (9956 (https://cloud.cypress.io/projects/cfhedy/runs/9956/overview/77e1b3be-35e8-434b-9550-c262dd465bef?roarHideRunsWithDiffGroupsAndTags=1), 9957 (https://cloud.cypress.io/projects/cfhedy/runs/9957/overview/65ce2aa7-2885-4d76-8b04-5c860cee7a17?roarHideRunsWithDiffGroupsAndTags=1)) are also started around the same time but 9957 has a lot more failures",
+      "time": "13:16",
+      "timestamp": "1715890604.305789",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "I noticed that run-app.spec.ts was failing because cypress-run-app is now on a second page, so it's not able to find the app on load again :sob:\nI'm going to do the idiot-proof approach for now and add a \"scroll until you find the app\" util function for openPrivateApp\nhttps://github.com/instabase/instabase/pull/57598",
+      "time": "14:51",
+      "timestamp": "1715896278.828959",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-05-16.json",
+    "message_count": 17,
+    "start_time": "1715882565.139079",
+    "end_time": "1715896278.828959",
+    "is_thread": true
+  }
+}

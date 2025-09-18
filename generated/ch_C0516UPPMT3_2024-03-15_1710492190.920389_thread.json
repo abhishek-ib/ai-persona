@@ -1,0 +1,143 @@
+{
+  "id": "ch_C0516UPPMT3_2024-03-15_1710492190.920389_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Rakesh",
+    "Jessica",
+    "Subash",
+    "Sławek Biel"
+  ],
+  "messages": [
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "I see an issue with dragging a file into a new Converse project on aihub-uat.internal.instabase.com (http://aihub-uat.internal.instabase.com)\nIt opens up the file in a new tab instead of being added. Demonstrated in the recording",
+      "time": "01:43",
+      "timestamp": "1710492190.920389",
+      "is_reply": false
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Able to reproduce this - we need to fix this ahead of 24.10 push, is a blocker bug.\ncc: @Subash can you triage and help fix ?",
+      "time": "01:55",
+      "timestamp": "1710492907.912819",
+      "is_reply": true
+    },
+    {
+      "sender": "Subash",
+      "user_id": "U01CPRMS8LV",
+      "message": "Jessica has merged some changes (https://github.com/instabase/instabase/pull/54672) in UAT last night, which is causing this issue. @Jessica do we need this backport, since react 17 is still not in UAT and the issue that PR fixes was not in UAT, but only in sandbox",
+      "time": "02:09",
+      "timestamp": "1710493767.792609",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "No the react 17 change made it in before UAT code cut. Maybe I just messed up that PR and checked before merging that the drag events were working but not the drop events. I can take a look in the morning but @Subash it might be as easy as taking out some e.stopPropagations?",
+      "time": "03:49",
+      "timestamp": "1710499777.859909",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Actually I bet we need to remove the capture: true from the drop event",
+      "time": "04:11",
+      "timestamp": "1710501060.844139",
+      "is_reply": true
+    },
+    {
+      "sender": "Subash",
+      "user_id": "U01CPRMS8LV",
+      "message": "Let me try it out. I can raise a PR if it works",
+      "time": "04:16",
+      "timestamp": "1710501376.626749",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Btw I see the same problem in aihub-sandbox.internal",
+      "time": "04:24",
+      "timestamp": "1710501849.594389",
+      "is_reply": true
+    },
+    {
+      "sender": "Subash",
+      "user_id": "U01CPRMS8LV",
+      "message": "I checked the package.json from UAT. It still refers to react 16 - https://github.com/instabase/instabase/blob/release-24.10.0-aihub/webserver/shared/src/js/webpacked/package.json",
+      "time": "05:48",
+      "timestamp": "1710506880.502869",
+      "is_reply": true
+    },
+    {
+      "sender": "Subash",
+      "user_id": "U01CPRMS8LV",
+      "message": "Also, React upgrade code was merged to master on Mar 8 while 24.10 branch was cut on Mar 6.\nhttps://instabase.slack.com/archives/C04TSMWLPAS/p1709673291368929\n\nI will raise a revert PR for the changes that went into UAT last night. I tested this locally, it fixes the issue in UAT.",
+      "time": "05:59",
+      "timestamp": "1710507565.857259",
+      "is_reply": true
+    },
+    {
+      "sender": "Subash",
+      "user_id": "U01CPRMS8LV",
+      "message": "This still needs a proper fix on sandbox. Revert PR for UAT: https://github.com/instabase/instabase/pull/54722",
+      "time": "06:01",
+      "timestamp": "1710507679.319199",
+      "is_reply": true
+    },
+    {
+      "sender": "Subash",
+      "user_id": "U01CPRMS8LV",
+      "message": "Possible fix for the issue - https://github.com/instabase/instabase/pull/54723/files\n\n@Jessica would like to know your thoughts this approach. I have tested in converse app and build app locally and it works, not sure if there are any more corner cases we have to handle.",
+      "time": "06:39",
+      "timestamp": "1710509946.912669",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Ah I think I got confused about code cut date because of the last late GA date :facepalm: thanks for reverting that.\n\n@Subash I want to try to find a way of doing this using the document event handlers since that's what react 17 expressly fixes - I'm having trouble right now because crafting is working for me but I will get that figured out this morning",
+      "time": "08:18",
+      "timestamp": "1710515934.120279",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "Thanks for looking into this!",
+      "time": "08:19",
+      "timestamp": "1710515949.967779",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Merged revert backport - should be good for UAT/24.10",
+      "time": "08:46",
+      "timestamp": "1710517603.023029",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "PR here: https://github.com/instabase/instabase/pull/54732\n\nSorry everyone!!",
+      "time": "09:40",
+      "timestamp": "1710520829.457869",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-03-15.json",
+    "message_count": 15,
+    "start_time": "1710492190.920389",
+    "end_time": "1710520829.457869",
+    "is_thread": true
+  }
+}

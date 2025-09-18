@@ -1,0 +1,127 @@
+{
+  "id": "ch_C0516UPPMT3_2024-03-13_1710324649.363669_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Rahul Rawal",
+    "Kerry",
+    "Rakesh",
+    "Sławek Biel"
+  ],
+  "messages": [
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "@Rahul Rawal I was able to reproduce it locally and the `line_to_page` data is not correct. I’m getting\n`len(line_to_page) == 3886` but `len(text.splitlines()) == 3885` thus the two can’t be matched and that causes the error down the line.\nPlease check why this happens",
+      "time": "03:10",
+      "timestamp": "1710324649.363669",
+      "is_reply": false
+    },
+    {
+      "sender": "Rahul Rawal",
+      "user_id": "U01J0N3UV7E",
+      "message": "Can you point me where are you making this comparison?",
+      "time": "03:11",
+      "timestamp": "1710324718.640909",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Lets huddle I can share the screen",
+      "time": "03:12",
+      "timestamp": "1710324759.905659",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "I’m looking at what `extract_markdown_metadata` returns. The size of `line_to_page` is not the same as the number of lines in `markdown_text`",
+      "time": "03:20",
+      "timestamp": "1710325228.869279",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "thanks for looking into this @Rahul Rawal @Sławek Biel -- were you able to huddle to get on the same page?",
+      "time": "07:01",
+      "timestamp": "1710338464.120459",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Yes, Rahul helped me pinpoint the piece of code responsible. I’m working on a PR",
+      "time": "07:01",
+      "timestamp": "1710338503.127959",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "thank you!",
+      "time": "07:02",
+      "timestamp": "1710338522.898359",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "Here’s the PR (https://github.com/instabase/instabase/pull/54606)\n@Kerry This was broken since the beginning and only happens if all of this is true:\n• document was OCRed with Form Recognizer\n• multistep model is used\n• the document text after FR processing has a trailing endline (I think that happens when the last thing in the doc is a table)\nThat doesn’t qualify as backportable, does it?",
+      "time": "08:27",
+      "timestamp": "1710343638.369509",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": ":smile: i was about to send our a new announcement about backport guideline -- let's backport, the PR looks quite save and only improves the product quality; should be a straightforward backport too. thank you.",
+      "time": "08:33",
+      "timestamp": "1710344035.009719",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Waiting as well on backport guideline :slightly_smiling_face:",
+      "time": "08:34",
+      "timestamp": "1710344066.915469",
+      "is_reply": true
+    },
+    {
+      "sender": "Sławek Biel",
+      "user_id": "U03E1LBTKV2",
+      "message": "To both 24.10 and 24.8 or only 24.10?",
+      "time": "08:37",
+      "timestamp": "1710344242.726819",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "only 24.10",
+      "time": "08:47",
+      "timestamp": "1710344828.918389",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i reviewed and left a nit! thanks for the fix :raised_hands:",
+      "time": "08:47",
+      "timestamp": "1710344838.880779",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-03-13.json",
+    "message_count": 13,
+    "start_time": "1710324649.363669",
+    "end_time": "1710344838.880779",
+    "is_thread": true
+  }
+}

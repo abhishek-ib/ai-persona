@@ -1,0 +1,79 @@
+{
+  "id": "ch_C06FA6A23_2025-06-27_1751053588.020189_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Cody Boggs",
+    "Sayan",
+    "Victor Zeng"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "hi team, I'm having an issue with this PR (https://github.com/instabase/instabase/pull/71726) and CI\n\nfrom logs, it's not showing which test is failing but it seems that in previous CI runs on the PR, the unrelated failure was from `//shared-utils/go-utils/src/instabase/searchservice/...` failing which is unrelated with this:\n\n```[2025-06-27T04:48:18.796Z] ======================================================================\n[2025-06-27T04:48:18.796Z] FAIL: test_thread_function (test_datastore.TestDatastore)\n[2025-06-27T04:48:18.796Z] ----------------------------------------------------------------------\n[2025-06-27T04:48:18.796Z] Traceback (most recent call last):\n[2025-06-27T04:48:18.796Z]   File \"/root/.cache/bazel/_bazel_root/eecbca7b87c7c33fd2d8ffba03ee98a3/sandbox/processwrapper-sandbox/9144/execroot/__main__/bazel-out/k8-fastbuild/bin/shared-utils/py-utils/flow-datastore/test/unit/py/instabase/flow_datastore/test.runfiles/__main__/shared-utils/py-utils/flow-datastore/test/unit/py/instabase/flow_datastore/test_datastore.py\", line 369, in test_thread_function\n[2025-06-27T04:48:18.797Z]     self.assertTrue(\n[2025-06-27T04:48:18.797Z] AssertionError: False is not true : path=mohit/repo/fs/Instabase Drive/files/test_file.file buf_size=0```\nCould I get some help merging my PR and investigating this error? cc @Yash Botadra @Anil",
+      "time": "12:46",
+      "timestamp": "1751053588.020189",
+      "is_reply": false
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Yeah, we’re logging _everything_ now and it is extremely difficult to see the errors and failed tests :disappointed:\nThis one, I think, failed because of the cuda install error that I have seen a few times now.\n```[2025-06-27T17:55:32.983Z]   Command ['/shared/venvs/model-service-2TeO9zso-py3.9/bin/python', '-m', 'pip', 'uninstall', 'nvidia-nvtx-cu12', '-y'] errored with the following return code 2\n[2025-06-27T17:55:32.983Z]   \n[2025-06-27T17:55:32.983Z]   Output:\n[2025-06-27T17:55:32.983Z]   Found existing installation: nvidia-nvtx-cu12 12.1.105\n[2025-06-27T17:55:32.983Z]   Uninstalling nvidia-nvtx-cu12-12.1.105:\n[2025-06-27T17:55:32.983Z]   ERROR: Exception:\n[2025-06-27T17:55:32.983Z]   Traceback (most recent call last):\n[2025-06-27T17:55:32.983Z]     File \"/home/jenkins/pyenv/versions/3.9.17/lib/python3.9/shutil.py\", line 825, in move\n[2025-06-27T17:55:32.983Z]       os.rename(src, real_dst)\n[2025-06-27T17:55:32.983Z]   OSError: [Errno 18] Invalid cross-device link: '/shared/venvs/model-service-2TeO9zso-py3.9/lib/python3.9/site-packages/nvidia/__init__.py' -> '/tmp/pip-uninstall-80_w5icy/__init__.py'```\nI’ll force merge for now.",
+      "time": "13:14",
+      "timestamp": "1751055285.459259",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Thank you!",
+      "time": "13:16",
+      "timestamp": "1751055372.203589",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "@Cody Boggs does your instrumenting code capture the output of each test?",
+      "time": "13:28",
+      "timestamp": "1751056133.958419",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "It would be great if we could just look at a trace for the test.",
+      "time": "13:29",
+      "timestamp": "1751056187.437909",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "It does if it fails, yes, captures the exception as an event in the span :+1: \n\nThat’s only true of the code in my pr though, haven’t merged it yet",
+      "time": "14:19",
+      "timestamp": "1751059152.986819",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I’m gonna be afk shortly but @Victor Zeng if you wanna force merge it feel free!",
+      "time": "14:23",
+      "timestamp": "1751059389.264749",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-06-27.json",
+    "message_count": 7,
+    "start_time": "1751053588.020189",
+    "end_time": "1751059389.264749",
+    "is_thread": true
+  }
+}

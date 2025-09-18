@@ -1,0 +1,222 @@
+{
+  "id": "ch_C06FA6A23_2019-11-17_1574005747.030200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Ashish",
+    "dlluncor",
+    "will"
+  ],
+  "messages": [
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "We have discovered one more high security vulnerability. This was published on October 29th and is specific to thrift 0.12.0 and lower versions. https://nvd.nist.gov/vuln/detail/CVE-2019-0205\n\nInvestigations are underway on how to mitigate this vulnerability. (cc @will @dlluncor)",
+      "time": "07:49",
+      "timestamp": "1574005747.030200",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Can we bump the version on that library?",
+      "time": "08:43",
+      "timestamp": "1574009039.030300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Yes. I am also checking whether thrift compiler needs to be upgraded",
+      "time": "09:16",
+      "timestamp": "1574010995.030500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "There does not seem to be a way out of this one. PY's latest thrift ver is 0.11.0 and NodeJS's latest ver is 0.12.0 :disappointed:",
+      "time": "09:59",
+      "timestamp": "1574013555.032300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "(it is beginning to seem that we will need to have some tough conversations with our customers)",
+      "time": "09:59",
+      "timestamp": "1574013595.032500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "I tried file service with PY 0.11.0 and dynamic proxy with 0.12.0. No luck.",
+      "time": "10:00",
+      "timestamp": "1574013628.032700",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "I'll be away until evening -- @dlluncor let me know if you have any ideas. I am running out of them.",
+      "time": "10:04",
+      "timestamp": "1574013895.032900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "hey @Ashish — so would moving to 0.11.0 fix it for Python?",
+      "time": "10:06",
+      "timestamp": "1574014007.033100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "what issues are you seeing when you upgrade to 0.11.0 and 0.12.0 for dynamic-proxy?",
+      "time": "10:07",
+      "timestamp": "1574014029.033300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "The vulnerability does not go away. Our scanner still indicate that we have a high security vulnerability.",
+      "time": "10:23",
+      "timestamp": "1574015030.033500",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "| hey @Ashish — so would moving to 0.11.0 fix it for Python?\nNo. It does not remove the security vuln.",
+      "time": "10:24",
+      "timestamp": "1574015050.033700",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "```CVE-2019-0205           thrift-0.11.0                                           High              None                        https://nvd.nist.gov/vuln/detail/CVE-2019-0205```",
+      "time": "10:24",
+      "timestamp": "1574015075.033900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "oh got it — then we’re kind of stuck no?",
+      "time": "10:24",
+      "timestamp": "1574015078.034100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "```CVE-2019-0205           thrift-0.12.0                                           High              None                        https://nvd.nist.gov/vuln/detail/CVE-2019-0205 ```",
+      "time": "10:24",
+      "timestamp": "1574015087.034300",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "yeah I think so",
+      "time": "10:24",
+      "timestamp": "1574015090.034500",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "re-write all our services to grpc today? :slightly_smiling_face: jk",
+      "time": "10:24",
+      "timestamp": "1574015099.034900",
+      "is_reply": true
+    },
+    {
+      "sender": "will",
+      "user_id": "UJUJC82AG",
+      "message": "RPC here we come!",
+      "time": "10:24",
+      "timestamp": "1574015099.035100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Well gRPC needs plenty of load testing. gRPC out of the box may not work well in a kubernetes environment that auto scales up or down. (The focus is on the word: `may`)",
+      "time": "10:27",
+      "timestamp": "1574015229.035400",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "https://kubernetes.io/blog/2018/11/07/grpc-load-balancing-on-kubernetes-without-tears/",
+      "time": "10:27",
+      "timestamp": "1574015263.035600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "gotcha — the vulnerability seems pretty low though — since it’s just an inifite loop with a very specific type of data passed into it",
+      "time": "10:28",
+      "timestamp": "1574015317.035900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "looks like thriftpy2 might be an alternative here: https://github.com/Thriftpy/thriftpy2",
+      "time": "10:30",
+      "timestamp": "1574015423.036100",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "Yeah we'll chat with customers. It will possibly cause a few back and forth with some customers specifically BAML and JPMC (cc @Matt and @mmark).",
+      "time": "10:30",
+      "timestamp": "1574015443.036400",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "albeit not a quick alternative — but longer term perhaps we could try to use this library so that we don’t depend on what seems to be the no longer supported Thirft Python from FB",
+      "time": "10:30",
+      "timestamp": "1574015446.036600",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "sounds good",
+      "time": "10:31",
+      "timestamp": "1574015473.036800",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashish",
+      "user_id": "U3UJ09DJ6",
+      "message": "I'm signing off until evening",
+      "time": "10:31",
+      "timestamp": "1574015483.037000",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-11-17.json",
+    "message_count": 25,
+    "start_time": "1574005747.030200",
+    "end_time": "1574015483.037000",
+    "is_thread": true
+  }
+}

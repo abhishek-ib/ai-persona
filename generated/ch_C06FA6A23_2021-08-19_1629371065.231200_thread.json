@@ -1,0 +1,347 @@
+{
+  "id": "ch_C06FA6A23_2021-08-19_1629371065.231200_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Anil",
+    "vineeth",
+    "shaunak",
+    "Aaron Vontell",
+    "arun",
+    "Travis",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "will do :slightly_smiling_face:",
+      "time": "04:04",
+      "timestamp": "1629371065.231200",
+      "is_reply": false
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Are there still issues with classifier status endpoint? looking at it, it looks like the results just returns a status:ok, so I don’t really see why it would take forever.\n\nAs to crashing api-server-apps, classifier binaries are saved in the same ibclassifier json, and this is loaded in api-server-apps to serve the get-classifier endpoint. So this can very well crash api-server-apps if the classifier binary is large :disappointed: However, the binary part is not sent back to the frontend. The frontend only gets sent the metadata like classes, folder paths, ocr settings, etc. I’m not sure why it would be 61 mb.",
+      "time": "07:42",
+      "timestamp": "1629384137.234400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I think this is super high priority — the number of restarts in api-server-apps do contribute to the intermittent failures",
+      "time": "07:51",
+      "timestamp": "1629384689.234600",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I can have Arun and Erick work on a patch for this for classifier, but I don’t think it would be something that started happening only in the July release.",
+      "time": "07:57",
+      "timestamp": "1629385078.234800",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Travis let’s make dashboard auto-polling frequency on prod longer for now, as we debug this issue? So some context, since the August release, Flow dashboard now auto-update status of a not-complete job in the UI. It does give some additional load to api-server-apps, although imagine it’s quite similar to any UI that pulls job status when there’re running jobs.",
+      "time": "08:36",
+      "timestamp": "1629387369.235000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Kerry I don’t think it is a load issue :neutral_face: I only see 1-2 api server calls before we get into the CPU spikes.",
+      "time": "08:38",
+      "timestamp": "1629387484.235200",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "alright we’ll hold off, thanks Shaunak - was wondering if this can help isolate the problem, since it’s a change introduce in August",
+      "time": "08:40",
+      "timestamp": "1629387601.235600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "that’s completely fair.  I’m really confused why a simple operation would cause small CPU spikes.  :neutral_face:",
+      "time": "08:43",
+      "timestamp": "1629387805.236100",
+      "is_reply": true
+    },
+    {
+      "sender": "Travis",
+      "user_id": "U017E5NNKAP",
+      "message": "Ok let me know on any changes desired. The polling is at 5 seconds right now.",
+      "time": "08:57",
+      "timestamp": "1629388670.237000",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I am fairly certain this is related to classifier. Yesterday I saw two restarts, both had some classifier status request before. Today again, on pod deployment-api-server-apps-744cb86fdc-57w99\nat 11:07ET (~ 1 hour ago)\n\n10.48.12.80 - - [2021-08-19 15:07:26] \"GET /api/v1/classifier/logs/23559816-74be-4f8d-a00f-21e0f4d8849d HTTP/1.0\" 200 38391 41.565591\n10.48.9.104 - - [2021-08-19 15:07:28] \"GET /api/v1/jobs/status?job_id=cdd62abc-11de-4d9a-9f2f-a610102b9777&type=async HTTP/1.0\" 200 61426313 43.995551\n<crash and restart>\n\nboth cdd62abc-11de-4d9a-9f2f-a610102b9777 and 23559816-74be-4f8d-a00f-21e0f4d8849d are classifier jobs\nAs a first step is to figure out why result is so big, can we filter the output size of JSON, the result size is too big. cc @lydia\nWill take a look at logs endpoint of classifier. Never seen a flow logs endpoint take more than 15s. Will see if there is something different here.",
+      "time": "09:13",
+      "timestamp": "1629389580.237200",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "cc @arun :point_up:",
+      "time": "09:14",
+      "timestamp": "1629389640.237400",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "pods are crashing reasonably frequently, so this might require an urgent look :slightly_smiling_face:",
+      "time": "09:15",
+      "timestamp": "1629389731.237700",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Anil we were seeing many frequent restarts yesterday night as well without any occurances of classifier/logs API.",
+      "time": "09:24",
+      "timestamp": "1629390264.238100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "oh hm, looking at that classifier logs, it seems like someone is training a layoutLM model. @vineeth is that you?",
+      "time": "09:26",
+      "timestamp": "1629390382.238300",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "are you user `testing-jm2?`",
+      "time": "09:27",
+      "timestamp": "1629390425.238500",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Nope. I am not training any model right now.",
+      "time": "09:27",
+      "timestamp": "1629390456.238700",
+      "is_reply": true
+    },
+    {
+      "sender": "vineeth",
+      "user_id": "U0175SZ13F0",
+      "message": "Haven't trained anything on ib since two weeks.",
+      "time": "09:28",
+      "timestamp": "1629390482.238900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "do you know anyone else who might be training a layoutlm model in classifier?",
+      "time": "09:28",
+      "timestamp": "1629390534.239100",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@Anil how do you know that the second job is a classifier job? is there a way to see any additional metadata like what classifier file that job is training?",
+      "time": "09:30",
+      "timestamp": "1629390620.239300",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "catching up on this thread now! I'm not able to access status or logs for those jobs, getting access denied. I'll take a look at the app-tasks logs for those ids though, which will let us know who's training these. Surprised to see someone training layoutlm in classifier -- are we sure these are classifier jobs and not model-training-tasks? MTT also uses the classifier logs endpoint, and its job type for the status api is also async",
+      "time": "10:02",
+      "timestamp": "1629392557.240100",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "yeah it might have been model training jobs sorry",
+      "time": "10:08",
+      "timestamp": "1629392905.240300",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I guessed based on endpoint",
+      "time": "10:08",
+      "timestamp": "1629392915.240500",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "Can confirm both were model training jobs: `[2021-08-18 14:53:50,606: INFO/ForkPoolWorker-1] Task instabase.registry.tasks.run_model_train[23559816-74be-4f8d-a00f-21e0f4d8849d] succeeded in 50.973407805897295s: {'script_result': {'results': 'Finished'}, 'start_time': '2021-08-18T14:52:59.636816', 'end_time': '2021-08-18T14:53:50.603143', 'elapsed': 50.966327}` and `[2021-08-18 15:43:51,067: INFO/ForkPoolWorker-1] Task instabase.registry.tasks.run_model_train[cdd62abc-11de-4d9a-9f2f-a610102b9777] succeeded in 877.0056967849378s: {'script_result': {'results': 'Finished'}, 'start_time': '2021-08-18T15:29:14.065482', 'end_time': '2021-08-18T15:43:51.064636', 'elapsed': 876.999154}`",
+      "time": "10:13",
+      "timestamp": "1629393231.240700",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "lol ok",
+      "time": "10:23",
+      "timestamp": "1629393799.240900",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "that would explain the layoutlm model loading",
+      "time": "10:23",
+      "timestamp": "1629393817.241100",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "@Aaron Vontell would you know if it's possible for the training script to be storing ~61MB of task data in its JSON? My guess is we're finally starting to see issues with how we store intermediate results in redis",
+      "time": "10:33",
+      "timestamp": "1629394429.241300",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Yes this is definitely possible",
+      "time": "10:38",
+      "timestamp": "1629394736.241700",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "Collected some notes around this here: https://docs.google.com/document/d/1VxJmdSYsZldwEsjv2djvT6Vzlsk-mshIuyMAdNmmiAQ/edit, lmk if anyone wants edit access",
+      "time": "10:56",
+      "timestamp": "1629395808.242000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "thanks!  How do we alleviate the issue going on right now?",
+      "time": "11:01",
+      "timestamp": "1629396116.242200",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@arun @lydia I’m going to boost up the api-server-apps memory and CPU temporarily to alleviate these types of restarts.",
+      "time": "12:38",
+      "timestamp": "1629401883.244300",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "I believe the issue with jobs cdd62abc-11de-4d9a-9f2f-a610102b9777 and 23559816-74be-4f8d-a00f-21e0f4d8849d should be resolved? My guess is their cache keys will have expired and any requests for their status would no longer need to deal with a large JSON payload. Would you be able to confirm? Aaron and I are going to discuss how we might be able to avoid this in the future",
+      "time": "12:52",
+      "timestamp": "1629402735.247200",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Arun looked into this, and it seems like these two jobs were ran normally, nothing out of the ordinary for them. Their statuses are not currently available due to the expiration time, so we cannot confirm at this time if these statuses were large enough to cause these issues. Our next steps are to wait and see if this issue re-occurs, and if so, make sure to get the status quickly and evaluate 1) what annotator file created the job, and 2) why the status is so large.\n\nJust want to re-iterate that we actually *cant confirm* that this was the issue, especially after reviewing the code and not really finding any bugs that would cause such a large status.\n\nAdditionally, we notice that the status API is pretty slow for querying some of these job ids, even when they dont exist… so I wouldnt rule out an issue with the job status API itself",
+      "time": "13:44",
+      "timestamp": "1629405897.247400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@Aaron Vontell @arun is it possible for us to try this in a non prod cluster?  I have increased the resources on prod substantially enough that it is not a problem anymore.   But, I do see spikes showing up in the prod cluster still.  Another thing to note is that the event that a request has been received is recorded *after* the request completes.  So if your server crashes mid-way, you really can’t tell what the request was that caused the issue.",
+      "time": "13:51",
+      "timestamp": "1629406270.247600",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "Where can I observe the spikes? Want to do some more analysis, maybe we can figure out what annotator file this is coming from",
+      "time": "14:01",
+      "timestamp": "1629406890.247800",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I looked at the grafana console:",
+      "time": "14:07",
+      "timestamp": "1629407247.248000",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "something happened around 1:30 pm on api-server-apps",
+      "time": "14:07",
+      "timestamp": "1629407255.248400",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "and when I look at last 30 mins, I see some short spikes.",
+      "time": "14:08",
+      "timestamp": "1629407282.248600",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "You can observe similar spikes on the gcloud console as well",
+      "time": "14:08",
+      "timestamp": "1629407294.249000",
+      "is_reply": true
+    },
+    {
+      "sender": "arun",
+      "user_id": "URRCCLZSR",
+      "message": "looks like job `dac3cbf7-d7fe-4f5b-a58e-d4400b916161` is a model training job whose status queries started causing spikes around 1:30pm PDT today, investigating this",
+      "time": "14:55",
+      "timestamp": "1629410105.249200",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "OK, thank you!",
+      "time": "15:02",
+      "timestamp": "1629410574.249400",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-08-19.json",
+    "message_count": 40,
+    "start_time": "1629371065.231200",
+    "end_time": "1629410574.249400",
+    "is_thread": true
+  }
+}

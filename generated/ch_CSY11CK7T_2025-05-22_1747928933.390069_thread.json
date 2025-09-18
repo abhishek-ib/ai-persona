@@ -1,0 +1,117 @@
+{
+  "id": "ch_CSY11CK7T_2025-05-22_1747928933.390069_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "we still don't know why the org admin doesn't have permissions to get the deployment queues on aihub-uat, right?",
+      "time": "08:48",
+      "timestamp": "1747928933.390069",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Yea... I was trying to debug this locally but got some local set up issues. I can take a closer look again today",
+      "time": "10:29",
+      "timestamp": "1747934974.773709",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "```2025/05/22 19:23:55 DEBUG coreplatformservice/repo/handler/doc_management.go:2213 -- trace_id=\"00000000000000000000000000000000\" PopulateDocs {\"app_id\":\"34a4203c-3094-4637-95e3-673e7dfa360d\",\"context\":{\"username\":\"aihub_marketplace_admin\"},\"file_records\":[{\"ibocr_records\":[{\"blocked\":0,\"failure\":1,\"name\":\"4a21f8ce276610e5c3ec0ca346c5ddb0.png\",\"path\":\"xindixu-v1-org/ws1/fs/Instabase Drive/app-runs/34a4203c-3094-4637-95e3-673e7dfa360d/1747941805184/output/s4_apply_checkpoint/4a21f8ce276610e5c3ec0ca346c5ddb0.png.ibmsg\",\"record_index\":0,\"step_id\":\"s4\",\"warning\":0}],\"path\":\"xindixu-v1-org/ws1/fs/Instabase Drive/app-runs/34a4203c-3094-4637-95e3-673e7dfa360d/1747941805184/output/s4_apply_checkpoint/4a21f8ce276610e5c3ec0ca346c5ddb0.png.ibmsg\",\"step_id\":\"s4\"}],\"is_ground_truth_set\":false,\"job_id\":\"b54dfa7b-36d2-4126-9a13-d992ca3d1d73\"}```\nSharing the request to `PopulateDocs` . Didn't realize that the username is `aihub_marketplace_admin`, not the requestor....",
+      "time": "12:27",
+      "timestamp": "1747942043.874139",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Another error\n```2025/05/22 19:23:55 ERROR coreplatformservice/repo/handler/doc_management.go:2339 -- [INTERNAL]: Could not generate queue metadata (Err: No reviewers found to assign documents to)```",
+      "time": "12:28",
+      "timestamp": "1747942094.545349",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "So `aihub_marketplace_admin` in crafting-cyp, where test passed, is a site admin; in aihub-uat, where test failed, is not a site admin...",
+      "time": "12:33",
+      "timestamp": "1747942436.517089",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Deployment passed after promoting `aihub_marketplace_admin` to a site admin.",
+      "time": "12:35",
+      "timestamp": "1747942531.210439",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "job id: `70532176-0c9e-4410-a4cb-ba031faf8461`",
+      "time": "12:36",
+      "timestamp": "1747942588.213089",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I've set `aihub_marketplace_admin` in aihub-sandbox and uat to a site admin. Since deployment passed after promoting `aihub_marketplace_admin` to a site admin, we can close out this thread now.",
+      "time": "12:37",
+      "timestamp": "1747942641.999479",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Maybe... we should disallow demoting these accounts to non-admins",
+      "time": "12:40",
+      "timestamp": "1747942838.825879",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "thank you for debugging this!!\n\nyes i forgot `aihub_marketplace_admin` is used here, but this all makes sense now :raised_hands:\n\nthe action item of showing a warning for demoting system users also would be great!",
+      "time": "12:46",
+      "timestamp": "1747943173.744429",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Np! I should have looked closer at the python code that calls `PopulateDocs`  ... it was pretty clear :sweat_smile:\nhttps://github.com/instabase/instabase/blob/ab1251a65e7dad17c0ec64f8bc2e2c7cb74a12[…]tils/flow-export/src/py/instabase/flow_export/export_results.py (https://github.com/instabase/instabase/blob/ab1251a65e7dad17c0ec64f8bc2e2c7cb74a1212/shared-utils/py-utils/flow-export/src/py/instabase/flow_export/export_results.py#L1919-L1938)",
+      "time": "12:47",
+      "timestamp": "1747943258.717979",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "well all 3 of us missed it :patrick-shrug:",
+      "time": "12:48",
+      "timestamp": "1747943295.508759",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-05-22.json",
+    "message_count": 12,
+    "start_time": "1747928933.390069",
+    "end_time": "1747943295.508759",
+    "is_thread": true
+  }
+}

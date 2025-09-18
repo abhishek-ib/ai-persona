@@ -1,0 +1,101 @@
+{
+  "id": "ch_C06FA6A23_2025-03-06_1741288333.535269_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cody Boggs",
+    "Udit"
+  ],
+  "messages": [
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":yellow_circle: <!here> Hi there, looks like 25.08-aihub certification is failing (https://prod.jenkins.instabase.com/job/certify-service-v2/76405/console) to build `server-nginx`\n```06:49:22  [1m[31mERROR[39m[22m in [1m./apps/src/aihub/features/NavBar/components/SecondaryNav/ReviewNav.tsx[39m[22m [1m[32m13:0-229[39m[22m\n06:49:22  [1mModule [1m[31mnot found[39m[22m[1m: [1m[31mError[39m[22m[1m: Can't resolve '../../../../store/review/resultsSlice/selectors' in '/home/ib-build/workspace/certify-service-v2/webserver/shared/src/js/webpacked/apps/src/aihub/features/NavBar/components/SecondaryNav'[39m[22m\n06:49:22   @ ./apps/src/aihub/features/NavBar/SecondaryNav.tsx 15:0-60 52:25-34\n06:49:22   @ ./apps/src/aihub/features/NavBar/NavbarWrapper.tsx 4:0-42 12:42-63\n06:49:22   @ ./apps/src/aihub/app/index.tsx 38:0-61 128:40-53\n06:49:22   @ ./apps/src/aihub/main.tsx 3:0-34 4:50-63\n06:49:22  \n06:49:22  [1m[31mERROR[39m[22m in [1m./apps/src/aihub/features/NavBar/components/SecondaryNav/ReviewNav.tsx[39m[22m [1m[32m14:0-122[39m[22m\n06:49:22  [1mModule [1m[31mnot found[39m[22m[1m: [1m[31mError[39m[22m[1m: Can't resolve '../../../../store/review/reviewDocumentsSlice/selectors' in '/home/ib-build/workspace/certify-service-v2/webserver/shared/src/js/webpacked/apps/src/aihub/features/NavBar/components/SecondaryNav'[39m[22m\n06:49:22   @ ./apps/src/aihub/features/NavBar/SecondaryNav.tsx 15:0-60 52:25-34\n06:49:22   @ ./apps/src/aihub/features/NavBar/NavbarWrapper.tsx 4:0-42 12:42-63\n06:49:22   @ ./apps/src/aihub/app/index.tsx 38:0-61 128:40-53\n06:49:22   @ ./apps/src/aihub/main.tsx 3:0-34 4:50-63\n06:49:22  \n06:49:22  [1m[31mERROR[39m[22m in [1m./apps/src/aihub/features/NavBar/components/SecondaryNav/ReviewNav.tsx[39m[22m [1m[32m15:0-63[39m[22m\n06:49:22  [1mModule [1m[31mnot found[39m[22m[1m: [1m[31mError[39m[22m[1m: Can't resolve '../../../../store/review/types' in '/home/ib-build/workspace/certify-service-v2/webserver/shared/src/js/webpacked/apps/src/aihub/features/NavBar/components/SecondaryNav'[39m[22m\n06:49:22   @ ./apps/src/aihub/features/NavBar/SecondaryNav.tsx 15:0-60 52:25-34\n06:49:22   @ ./apps/src/aihub/features/NavBar/NavbarWrapper.tsx 4:0-42 12:42-63\n06:49:22   @ ./apps/src/aihub/app/index.tsx 38:0-61 128:40-53\n06:49:22   @ ./apps/src/aihub/main.tsx 3:0-34 4:50-63\n06:49:22  \n06:49:22  [1m[33m3 errors have detailed information that is not shown.\n06:49:22  Use 'stats.errorDetails: true' resp. '--stats-error-details' to show it.[39m[22m\n06:49:22  \n06:49:22  webpack 5.74.0 compiled with [1m[31m3 errors[39m[22m in 94765 ms\n06:49:22  error Command failed with exit code 1.\n06:49:22  info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.```",
+      "time": "11:12",
+      "timestamp": "1741288333.535269",
+      "is_reply": false
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "looks like an issue related to a backport having different imports than 25.08 did.\n\n@Cody Boggs for something like this, should we just add a PR that fixes this in release-25.08.0-aihub?\n\ncc @Paul H",
+      "time": "11:14",
+      "timestamp": "1741288476.703239",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Do you mean commit the fix directly to that branch instead of merging to master and backporting?",
+      "time": "11:15",
+      "timestamp": "1741288539.251049",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "yes because the version on master is correct, the issue is only in 25.08",
+      "time": "11:16",
+      "timestamp": "1741288563.013509",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ohh gotcha, if you have the PR that changes it on master, you can add a comment to that merged PR of `/trop run backport-to release-25.08.0-aihub` and it will open a backport PR for you",
+      "time": "11:17",
+      "timestamp": "1741288623.942159",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "this error occured because of a backport already which had updated imports not on 25.08 because the location of files changed.\n\nThe fix can't be done on master now because master is already correct.\n\nThe fix here is just changing the imports on 25.08",
+      "time": "11:18",
+      "timestamp": "1741288682.736459",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "or should I run another /trop run backport on the original PR and redo the backport correctly this time?",
+      "time": "11:18",
+      "timestamp": "1741288738.849369",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea try the trop command if you'd be so kind, and if that doesn't look correct when it generates the backport PR then we can just make it a direct PR no worries",
+      "time": "11:27",
+      "timestamp": "1741289226.825269",
+      "is_reply": true
+    },
+    {
+      "sender": "Udit",
+      "user_id": "U03M519DVKR",
+      "message": "Fix here: https://github.com/instabase/instabase/pull/68658",
+      "time": "13:41",
+      "timestamp": "1741297313.026059",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Thanks! Merged and certifying",
+      "time": "14:39",
+      "timestamp": "1741300795.875399",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-03-06.json",
+    "message_count": 10,
+    "start_time": "1741288333.535269",
+    "end_time": "1741300795.875399",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "id": "ch_C0516UPPMT3_2024-04-05_1712317857.233889_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Bastiane",
+    "Kerry",
+    "CJ",
+    "hannah",
+    "Lee",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "I’m also testing out some of the feature flags on prod, particularly the one for providing field descriptions.\n\nWhen you turn this on it seems like we then start passing the field name to the model - this is a big change in behaviour and one that IMO we should not be doing. You can see in the screenshot here that both the field name and the description is being passed to the model. And its giving me a wrong answer because its taking the field name into account. I strongly thing we should retain the capability of having a field name not passed to the model.\n\nWe have lots of customers who want the name of the field something the use internally for data mapping, and may have nothing to do with what needs to be extracted at all.\n\nWe should have the following inputs in build:\n• Field name (not passed to the model) \n• Data to be extracted (passed to model)\n• Data description (passed to model) \n@hannah @Bastiane @Kaustubh (KD)",
+      "time": "04:50",
+      "timestamp": "1712317857.233889",
+      "is_reply": false
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "@Serena has most context for this i think",
+      "time": "07:33",
+      "timestamp": "1712327608.385139",
+      "is_reply": true
+    },
+    {
+      "sender": "Bastiane",
+      "user_id": "U046R81BMM4",
+      "message": "We are changing this behavior: users will still be able to edit field name like the way they edit the project name. They will have one field where they can enter a short description like “account name” and add further description if needed cc @lydia @Natasha @melissa.amos",
+      "time": "07:46",
+      "timestamp": "1712328396.529889",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "That is true, but with the behavior change, we would still be passing the field name to the model as a key for the field. In our benchmarks and anecdotal testing, we didn't see the field name impacting results. @Lee do you have some more examples like this? In this example, what is the correct answer?\n\ncc @Nikolaos Kofinas",
+      "time": "08:20",
+      "timestamp": "1712330428.811339",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "Thanks, the behaviour like @Bastiane mentioned is the one that I think we need, in the data that goes to the model, what did we do before the recent change? Can we number the fields, or use an ID instead?\n\nFor example, the use case i’m currently working on calls the field `LE-Header` but the data i’m after is the buyer in a contract.\n\nSo i’d want the following settings:\nField Name: LE-Header (not passed to model)\nExtraction Name: Legal Entity\nExtraction Description: The full legal entity name for the buyer",
+      "time": "08:23",
+      "timestamp": "1712330624.950329",
+      "is_reply": true
+    },
+    {
+      "sender": "Lee",
+      "user_id": "U01J31371LZ",
+      "message": "In the example in the screenshot, Procter & Gamble would be the correct answer - but i put conficlting instructions in the name and description to test if they had an effect on the results.",
+      "time": "08:24",
+      "timestamp": "1712330681.064059",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Yes, I think we could explore numbering the fields or using an ID instead. I'm curious, do you get the correct answer with field name = LE-Header and Description=\"The full legal entity name for the buyer\"?",
+      "time": "08:29",
+      "timestamp": "1712330952.842709",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "Before the change, we passed the entire prompt as the key. For long prompts though, anecdotally users reported a lot of \"No value found\" behavior. @Nikolaos Kofinas we should look further into why \"No value found\" happened a lot with the previous UI (before we added description, where user might write a longer prompt)",
+      "time": "08:31",
+      "timestamp": "1712331117.609859",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "We went through this many times and discussed the pros and cons of every design balancing UX and accuracy. @hannah also has full context so Hannah and Bastiane if you can help communicate the rationale behind the design to the field that'll save some time for eng, thank you. The scenario in the screenshot where field name and description ask for completely different things is not a realistic case that we want to complicate the UX for IMO. Our test evaluated the more common scenario where field name doesn't have a strong semantic meaning; in this case the description usually balances out the meaningless name and yields the right result. In this design, field name and description are the only 2 text inputs the user will see in the UI; both will be passed to the model in a prompt format that defines \"field name\" as what \"description\" says (using Lee's realistic example, the prompt tells the model something like)\n```Please extract the following fields with the datatype\n\"LE-Header\": \"text\", \n...\nWe also provide additional information for the following fields: \n\"LE-Header\": \"The full legal entity name for the buyer\"\n....```\nIn our test, there's no significant difference compare to sending something like this\n```Please extract the following fields with the datatype\n\"Legal Entity\": \"text\", \n...\nWe also provide additional information for the following fields: \n\"Legal Entity\": \"The full legal entity name for the buyer\"\n.... ```\nObviously the second prompt can only be better than the first as it provides more accurate information; the tradeoff was in how much impact it has to warrant one more input textbox. In our test the impact is close to none & can be mitigated by enhancing the description.",
+      "time": "08:59",
+      "timestamp": "1712332783.419749",
+      "is_reply": true
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "@Lee the primary goal was to simplify the editing process, remove the need for multiple inputs, and preserve accuracy. We settled on only needing the user to have the following inputs:\n• Field name\n• Field description\nIn most cases as @Kerry pointed out, a good field description provides the same accuracy even if the field name was not meaningful. We believe this interface is much simpler than requiring three values from the user:\n• Display field name \n• Actual field name\n• Field description\nWhen we make this change, it would be great to test on some of the use cases that you're seeing and if we're able to preserve accuracy. The best outcome is simpler field creation experience and high accuracy.",
+      "time": "09:59",
+      "timestamp": "1712336364.352369",
+      "is_reply": true
+    },
+    {
+      "sender": "Bastiane",
+      "user_id": "U046R81BMM4",
+      "message": "@Lee Natasha and I will reach out with the latest design. We can discuss further if you have other feedback",
+      "time": "10:27",
+      "timestamp": "1712338076.971579",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-04-05.json",
+    "message_count": 11,
+    "start_time": "1712317857.233889",
+    "end_time": "1712338076.971579",
+    "is_thread": true
+  }
+}

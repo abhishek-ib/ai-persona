@@ -1,0 +1,493 @@
+{
+  "id": "ch_C06FA6A23_2024-10-08_1728400928.628489_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi all, I'm having trouble building `weaviate` today -- looks like a container registry issue. cc @Cody Boggs\n\n```cs/mattfichman1❯ make build-docker\n/home/owner/instabase/third-party/docker/weaviate/../../../shared-utils/build-utils/shared/build-go-service.mk:63: warning: overriding recipe for target 'run-golint'\n/home/owner/instabase/third-party/docker/weaviate/../../../shared-utils/build-utils/shared/build-go.mk:42: warning: ignoring old recipe for target 'run-golint'\n/home/owner/instabase/third-party/docker/weaviate/../../../shared-utils/build-utils/shared/build-go-service.mk:66: warning: overriding recipe for target 'run-test'\n/home/owner/instabase/third-party/docker/weaviate/../../../shared-utils/build-utils/shared/build-go.mk:75: warning: ignoring old recipe for target 'run-test'\nMakefile:19: warning: overriding recipe for target 'run-docker'\n/home/owner/instabase/third-party/docker/weaviate/../../../shared-utils/build-utils/shared/build-go-service.mk:54: warning: ignoring old recipe for target 'run-docker'\nMakefile:41: warning: overriding recipe for target 'build-docker'\n/home/owner/instabase/third-party/docker/weaviate/../../../shared-utils/build-utils/shared/build-go-service.mk:44: warning: ignoring old recipe for target 'build-docker'\nHost OS is linux\nLoading: 0 packages loaded\nLoading: 0 packages loaded\nINFO: Analyzed target //third-party/docker/weaviate/src/go/src/instabase/weaviate:weaviate-service (0 packages loaded, 0 targets configured).\nINFO: Found 1 target...\nAspect //third-party/bazel/py/rules_mypy:mypy.bzl%mypy_aspect of //third-party/docker/weaviate/src/go/src/instabase/weaviate:weaviate-service up-to-date (nothing to build)\nINFO: Elapsed time: 0.216s, Critical Path: 0.00s\nINFO: 1 process: 1 internal.\nINFO: Build completed successfully, 1 total action\n[+] Building 0.0s (4/4) FINISHED                                                                                      docker:default\n => [internal] load build definition from Dockerfile                                                                            0.0s\n => => transferring dockerfile: 1.38kB                                                                                          0.0s\n => CANCELED [internal] load metadata for gcr.io/instabase-build/container-base-db:24.09.18.07.27.38 (http://gcr.io/instabase-build/container-base-db:24.09.18.07.27.38)                            0.0s\n => ERROR [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13)           0.0s\n => [auth] sharing credentials for 549230430157.dkr.ecr.us-east-2.amazonaws.com (http://549230430157.dkr.ecr.us-east-2.amazonaws.com)                                                 0.0s\n------\n > [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13):\n------\nDockerfile:8\n--------------------\n   6 |     # Build Weaviate server\n   7 |     # TODO(HH): Move this docker build to seperate and download from Container Registry\n   8 | >>> FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13) as server_builder\n   9 |     ENV DEBIAN_FRONTEND=noninteractive\n  10 |     ENV GO111MODULE=on\n--------------------\nERROR: failed to solve: 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13): unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/docker-hub/library/golang/manifests/1.21.13: 403 Forbidden\nmake: *** [Makefile:41: build-docker] Error 1\ncs/mattfichman1❯```\nRebasing didn't work.",
+      "time": "08:22",
+      "timestamp": "1728400928.628489",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "cc @HH as well - I git blamed you :slightly_smiling_face:",
+      "time": "08:23",
+      "timestamp": "1728400998.275409",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "If you're running from your laptop you'll need to be sure to have signed into AWS via SSO, and use the proper AWS profile to auth against `instabase-dev` (account `549230430157`)",
+      "time": "08:23",
+      "timestamp": "1728401010.287639",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I'm running it from a crafting sandbox.",
+      "time": "08:23",
+      "timestamp": "1728401039.979249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```diff --git a/third-party/docker/weaviate/Dockerfile b/third-party/docker/weaviate/Dockerfile\nindex 342a5750fa6..b5b5b03c1f6 100644\n--- a/third-party/docker/weaviate/Dockerfile\n+++ b/third-party/docker/weaviate/Dockerfile\n@@ -5,7 +5,7 @@ ARG BASE_GO_IMAGE_TAG\n\n # Build Weaviate server\n # TODO(HH): Move this docker build to seperate and download from Container Registry\n-FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13 as server_builder\n+FROM golang:1.21.13 as server_builder\n ENV DEBIAN_FRONTEND=noninteractive\n ENV GO111MODULE=on\n RUN apt-get update -yq --fix-missing \\```\nThis worked for now to unblock me^",
+      "time": "08:24",
+      "timestamp": "1728401048.223189",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Interesting\nCrafting should already be auth'd to ECR I thought",
+      "time": "08:24",
+      "timestamp": "1728401084.165669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yep, that's what I thought too.",
+      "time": "08:24",
+      "timestamp": "1728401099.187339",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "pulls fine from mine after an explicit `aws sso login` :man-shrugging::skin-tone-3:",
+      "time": "08:25",
+      "timestamp": "1728401133.849909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I don't have problems with other images -- only this one",
+      "time": "08:25",
+      "timestamp": "1728401143.684219",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Hmm",
+      "time": "08:25",
+      "timestamp": "1728401151.133409",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Wonder if that one hadn't been cached yet. It _should_ allow anyone to do so, but honestly the ECR permissions are so damned convoluted it's hard to say confidently. lol",
+      "time": "08:26",
+      "timestamp": "1728401174.914729",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Edit: I take it back. I _didn't_ have problems with other images, but now I do. Here's celery-app-tasks:\n\n```cs/mattfichman1❯ make build-docker\nmkdir -p /home/owner/instabase/distributed-tasks/celery/app-tasks/build/py\nrm -f /home/owner/instabase/distributed-tasks/celery/app-tasks/build/pydeps.txt\nrm -f /home/owner/instabase/distributed-tasks/celery/app-tasks/build/pythriftdeps.txt\nrm -f /home/owner/instabase/distributed-tasks/celery/app-tasks/build/protodeps.txt\nmake -s list-deps >> /home/owner/instabase/distributed-tasks/celery/app-tasks/build/pydeps.txt\nmake -s list-thrift-deps >> /home/owner/instabase/distributed-tasks/celery/app-tasks/build/pythriftdeps.txt\nmake -s list-proto-deps >> /home/owner/instabase/distributed-tasks/celery/app-tasks/build/protodeps.txt\ncp -r /home/owner/instabase/distributed-tasks/celery/app-tasks/../../../shared-utils/py-utils/thrift-utils/types/src/py/* \\\n    /home/owner/instabase/distributed-tasks/celery/app-tasks/build/py\npython /home/owner/instabase/distributed-tasks/celery/app-tasks/../../../shared-utils/build-utils/shared/src/py/copy_py_deps.py \\\n        --file /home/owner/instabase/distributed-tasks/celery/app-tasks/build/pydeps.txt \\\n        --thrift_file /home/owner/instabase/distributed-tasks/celery/app-tasks/build/pythriftdeps.txt \\\n        --proto_deps_file /home/owner/instabase/distributed-tasks/celery/app-tasks/build/protodeps.txt \\\n        --build_path /home/owner/instabase/distributed-tasks/celery/app-tasks/build/py/ \\\n        --project_dir /home/owner/instabase/distributed-tasks/celery/app-tasks/../../.. \\\n        --skip_pygen=false\nrsync -auh  --link-dest /home/owner/instabase/distributed-tasks/celery/app-tasks/src/py /home/owner/instabase/distributed-tasks/celery/app-tasks/src/py/* /home/owner/instabase/distributed-tasks/celery/app-tasks/build/py\npython /home/owner/instabase/distributed-tasks/celery/app-tasks/../../../shared-utils/build-utils/shared/src/py/create_init.py --root /home/owner/instabase/distributed-tasks/celery/app-tasks/build/py\nrsync -auh  /home/owner/instabase/distributed-tasks/celery/app-tasks/start-celery-local.sh /home/owner/instabase/distributed-tasks/celery/app-tasks/build/py\nrsync -auh  /home/owner/instabase/distributed-tasks/celery/app-tasks/start-celery-local-mprof.sh /home/owner/instabase/distributed-tasks/celery/app-tasks/build/py\ndocker build \\\n--build-arg BASE_PY_IMAGE_TAG=24.09.18.07.27.38 \\\n--build-arg BASE_PY39_IMAGE_TAG=24.09.18.07.27.38 \\\n-f Dockerfile -t instabase/celery-app-tasks .\n[+] Building 0.1s (4/4) FINISHED                                                                                      docker:default\n => [internal] load build definition from Dockerfile                                                                            0.0s\n => => transferring dockerfile: 3.09kB                                                                                          0.0s\n => ERROR [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17)               0.0s\n => CANCELED [internal] load metadata for cgr.dev/chainguard/wolfi-base:latest                                                  0.0s\n => [auth] sharing credentials for 549230430157.dkr.ecr.us-east-2.amazonaws.com (http://549230430157.dkr.ecr.us-east-2.amazonaws.com)                                                 0.0s\n------\n > [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17):\n------\nDockerfile:21\n--------------------\n  19 |\n  20 |\n  21 | >>> FROM 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17)\n  22 |     LABEL maintainer=\"Instabase, Inc.\"\n  23 |     COPY --from=wkhtmltox --chmod=755 /wkhtmltox/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf\n--------------------\nERROR: failed to solve: 549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/instabase-build/python:3.9.17): unexpected status from HEAD request to https://549230430157.dkr.ecr.us-east-2.amazonaws.com/v2/instabase-build/python/manifests/3.9.17: 403 Forbidden\nmake: *** [/home/owner/instabase/distributed-tasks/celery/app-tasks/../../../shared-utils/build-utils/shared/build-python.mk:154: build-docker-py-default] Error 1```",
+      "time": "08:26",
+      "timestamp": "1728401188.769139",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh also\nDo this for me\n`docker buildx ls`",
+      "time": "08:26",
+      "timestamp": "1728401188.923079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mattfichman1❯ docker buildx ls\nNAME/NODE           DRIVER/ENDPOINT     STATUS    BUILDKIT   PLATFORMS\ndefault*            docker\n \\_ default          \\_ default         running   v0.12.5    linux/amd64, linux/amd64/v2, linux/amd64/v3, linux/amd64/v4, linux/386\ndesktop-linux       docker\n \\_ desktop-linux    \\_ desktop-linux   running   v0.12.5    linux/amd64, linux/amd64/v2, linux/amd64/v3, linux/amd64/v4, linux/386```",
+      "time": "08:26",
+      "timestamp": "1728401203.309229",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "uh oh\nwhat the wut\nOk\nI'll see if something went weird with the pull-through cache",
+      "time": "08:27",
+      "timestamp": "1728401224.812479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mattfichman1❯ aws sso login\n\nMissing the following required SSO configuration values: sso_start_url, sso_region. To make sure this profile is properly configured to use SSO, please run: aws configure sso\ncs/mattfichman1❯```\nLooks like the auto-aws sso is broken in this Crafting sandbox at least",
+      "time": "08:27",
+      "timestamp": "1728401245.395719",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "yea I think they just have a stock static credential, but I don't quite remember\nI have too many convenience functions in my shell so I don't know what the stock setup is hehe",
+      "time": "08:28",
+      "timestamp": "1728401281.004629",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Trying it on my other less-fresh sandbox. These errors are happening on a brand-new sandbox that I created yesterday.",
+      "time": "08:28",
+      "timestamp": "1728401331.320319",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Hmm ok",
+      "time": "08:28",
+      "timestamp": "1728401339.042589",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, now both of my sandboxes are broken :slightly_smiling_face:",
+      "time": "08:29",
+      "timestamp": "1728401344.662769",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh good! at least it's consistent :rolling_on_the_floor_laughing:",
+      "time": "08:29",
+      "timestamp": "1728401354.141249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hm",
+      "time": "08:29",
+      "timestamp": "1728401370.754379",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":thonk:\nGetting errors on my terraform plans now too\n`│ Error: operation error STS: AssumeRole, https response error StatusCode: 403, RequestID: 516f9c29-55e7-4740-969c-4b3b319580e4, api error AccessDenied: [...]`",
+      "time": "08:29",
+      "timestamp": "1728401391.952489",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "That's... very new",
+      "time": "08:29",
+      "timestamp": "1728401394.321469",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "So, I'm still getting the error even after I did `aws sso configure` / `aws sso login`\n\n```cs/mattfichman❯ aws configure sso\nSSO session name (Recommended): default\nSSO start URL [None]: https://d-9067ba412e.awsapps.com/start\nSSO region [None]: us-east-1\nSSO registration scopes [sso:account:access]:\nAttempting to automatically open the SSO authorization page in your default browser.\nIf the browser does not open or you wish to use a different device to authorize this request, open the following URL:\n\nhttps://device.sso.us-east-1.amazonaws.com/\n\nThen enter the code:\n\nREDACTED\nThere are 9 AWS accounts available to you.\nUsing the account ID 549230430157\nThere are 2 roles available to you.\nUsing the role name \"aws-readOnlyAccess\"\nCLI default client Region [None]:\nCLI default output format [None]:\nCLI profile name [aws-readOnlyAccess-549230430157]:\n\nTo use this profile, specify the profile name using --profile, as shown:```",
+      "time": "08:31",
+      "timestamp": "1728401494.366019",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Which makes sense, b/c I'm pretty sure I was logged in already.",
+      "time": "08:32",
+      "timestamp": "1728401532.356529",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It doesn't actually look like a permissions error; the error is:\n\n``` => ERROR [internal] load metadata for 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/library/golang:1.21.13)  ```\nCan't load metadata",
+      "time": "08:32",
+      "timestamp": "1728401560.738359",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, `build-docker` was definitely working on Monday",
+      "time": "08:33",
+      "timestamp": "1728401611.986699",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea the weird thing is that I can pull that image URI just fine\n\nI'm starting to suspect that my terraform configs for dev and core-infra are fighting with one another. I'll get it figured out shortly",
+      "time": "08:43",
+      "timestamp": "1728402233.879239",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@mfichman can you do some repro stuff for me?\n```docker pull 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/kiwigrid/k8s-sidecar:1.27.6 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/kiwigrid/k8s-sidecar:1.27.6)```",
+      "time": "08:52",
+      "timestamp": "1728402739.074479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Sure!",
+      "time": "08:55",
+      "timestamp": "1728402918.524069",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mattfichman1❯ docker pull 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/kiwigrid/k8s-sidecar:1.27.6 (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/kiwigrid/k8s-sidecar:1.27.6)\nError response from daemon: pull access denied for 549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/kiwigrid/k8s-sidecar (http://549230430157.dkr.ecr.us-east-2.amazonaws.com/docker-hub/kiwigrid/k8s-sidecar), repository does not exist or may require 'docker login': denied: Your authorization token has expired. Reauthenticate and try again.```",
+      "time": "08:55",
+      "timestamp": "1728402929.944749",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Do you want to log in to my sandbox?",
+      "time": "08:55",
+      "timestamp": "1728402953.590859",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh yea that would be best haha",
+      "time": "08:56",
+      "timestamp": "1728402961.679769",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://instabase.sandboxes.site/sandboxes/mattfichman",
+      "time": "08:56",
+      "timestamp": "1728402967.624669",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Use that one ^ it's also broken",
+      "time": "08:56",
+      "timestamp": "1728402985.934239",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "lol Ok",
+      "time": "09:22",
+      "timestamp": "1728404576.353239",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Your vim config breaks my brain\nlol",
+      "time": "09:25",
+      "timestamp": "1728404740.326499",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@mfichman can you login to sso on that box?\nsorry",
+      "time": "09:26",
+      "timestamp": "1728404819.290409",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Actually a new sandbox of my own should repro just fine, I think. lol",
+      "time": "09:44",
+      "timestamp": "1728405845.205469",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Rats. No dice lol\nWelp",
+      "time": "09:46",
+      "timestamp": "1728405988.790369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I just logged in to SSO",
+      "time": "09:47",
+      "timestamp": "1728406060.098149",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Danke",
+      "time": "09:48",
+      "timestamp": "1728406106.911469",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Run `vim --clean`  :)",
+      "time": "09:48",
+      "timestamp": "1728406107.339179",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "lol ok",
+      "time": "09:48",
+      "timestamp": "1728406111.971179",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Still not playing nice for some reason - am I on the wrong box?\n```cs/mattfichman❯ aws sts get-caller-identity\n\nUnable to locate credentials. You can configure credentials by running \"aws configure\".```",
+      "time": "09:54",
+      "timestamp": "1728406466.348449",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@mfichman I created a new rule that actually might be a better blanker fix for this - can you give it another shot when you have a sec?",
+      "time": "10:10",
+      "timestamp": "1728407406.740369",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let me try again Cody :slightly_smiling_face:",
+      "time": "10:12",
+      "timestamp": "1728407535.525029",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```Missing the following required SSO configuration values: sso_start_url, sso_region. To make sure this profile is properly configured to use SSO, please run: aws configure sso\ncs/mattfichman❯ aws configure sso\nSSO session name (Recommended):\nWARNING: Configuring using legacy format (e.g. without an SSO session).\nConsider re-running \"configure sso\" command and providing a session name.\nSSO start URL [None]: https://d-9067ba412e.awsapps.com/start\nSSO region [None]: us-east-1\nAttempting to automatically open the SSO authorization page in your default browser.\nIf the browser does not open or you wish to use a different device to authorize this request, open the following URL:\n\nhttps://device.sso.us-east-1.amazonaws.com/\n\nThen enter the code:\n\nKQPS-XMFQ\nThere are 9 AWS accounts available to you.\nUsing the account ID 549230430157\nThere are 2 roles available to you.\nUsing the role name \"aws-readOnlyAccess\"\nCLI default client Region [None]:\nCLI default output format [None]:\nCLI profile name [aws-readOnlyAccess-549230430157]:\n\nTo use this profile, specify the profile name using --profile, as shown:\n\naws s3 ls --profile aws-readOnlyAccess-549230430157\ncs/mattfichman❯ aws sts get-caller-identity\n\nUnable to locate credentials. You can configure credentials by running \"aws configure\".\ncs/mattfichman❯```",
+      "time": "10:13",
+      "timestamp": "1728407608.614539",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Did it, didn't work.",
+      "time": "10:13",
+      "timestamp": "1728407618.941169",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ran both `aws configure sso`  and `aws sso login` again, then immediately reran your command. Something is quite broken.",
+      "time": "10:14",
+      "timestamp": "1728407650.027579",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```cs/mattfichman❯ find ~/.aws/\n/home/owner/.aws/\n/home/owner/.aws/config\n/home/owner/.aws/sso\n/home/owner/.aws/sso/cache\n/home/owner/.aws/sso/cache/2582ea2c69d35ee0639f62e60704ace0eb7289d7.json\n/home/owner/.aws/sso/cache/adcfa37528ebec83480233a167d8cabebc369403.json\n/home/owner/.aws/sso/cache/08530bf76cc3dd28a1666d5990136b483e7f32d3.json\n/home/owner/.aws/sso/cache/7505d64a54e061b7acd54ccd58b49dc43500b635.json```",
+      "time": "10:14",
+      "timestamp": "1728407675.519449",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This worked though:\n\n```cs/mattfichman❯ aws sts get-caller-identity --profile aws-readOnlyAccess-549230430157\n{\n    \"UserId\": \"AROAX7YFPI7GSATWZXVZO:matt.fichman@instabase.com\",\n    \"Account\": \"549230430157\",\n    \"Arn\": \"arn:aws:sts::549230430157:assumed-role/AWSReservedSSO_aws-readOnlyAccess_b42bb9fdbff33147/matt.fichman@instabase.com\"\n}\ncs/mattfichman❯```",
+      "time": "10:15",
+      "timestamp": "1728407711.150529",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK, now it's working. I guess that magic :sparkles: was to use `default` for _both_ the SSO session name and the profile name.",
+      "time": "10:16",
+      "timestamp": "1728407807.621829",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I wonder why this broke suddenly though... :shrug:",
+      "time": "10:17",
+      "timestamp": "1728407822.706279",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oooh yea a `default` is needed, I thought it would have added one :upside_down_face:",
+      "time": "10:24",
+      "timestamp": "1728408277.864509",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ok, the pull works now",
+      "time": "10:25",
+      "timestamp": "1728408322.549079",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I _think_ the ECR policy update did the trick - let me know if your builds fail again though, I'm not trusting of it yet. lol",
+      "time": "10:26",
+      "timestamp": "1728408375.731619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": ":ack: :ty: !",
+      "time": "10:30",
+      "timestamp": "1728408656.750979",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-10-08.json",
+    "message_count": 59,
+    "start_time": "1728400928.628489",
+    "end_time": "1728408656.750979",
+    "is_thread": true
+  }
+}

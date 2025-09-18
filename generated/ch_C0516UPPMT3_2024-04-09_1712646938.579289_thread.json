@@ -1,0 +1,69 @@
+{
+  "id": "ch_C0516UPPMT3_2024-04-09_1712646938.579289_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Léo",
+    "Balaram"
+  ],
+  "messages": [
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "It will work for smaller and lesser number of documents. It is a sync call and we have not validated the multi-doc feature with larger number and bigger documents, so we have planned not to add it to the documentation.\n\nDuring the design phase, we had a plan to support multi-doc using this API. With the release Streaming API, this got deprioritised.\n\nTo demonstrate multi-doc, we need to use streaming API. I will work with the team to get a client side script to consume streaming API. @joshbronko has first version of the script ready",
+      "time": "00:15",
+      "timestamp": "1712646938.579289",
+      "is_reply": false
+    },
+    {
+      "sender": "Léo",
+      "user_id": "U05HCCFFDJ7",
+      "message": "Hi @Varun Jain, @Balaram, just to make I undestand correctly, I am currently selling multidoc usecase by API to a customer so I need to be 100% sure it can work :smile: . With the streaming API it will be ok ?",
+      "time": "00:18",
+      "timestamp": "1712647093.044629",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "To summarise: For multi-doc, the recommendation is to use streaming API. cc: @Rakesh @Varun Jain",
+      "time": "00:20",
+      "timestamp": "1712647212.196999",
+      "is_reply": true
+    },
+    {
+      "sender": "Léo",
+      "user_id": "U05HCCFFDJ7",
+      "message": "Ok thanks :slightly_smiling_face: for the infor. @joshbronko do you have the code ?",
+      "time": "00:23",
+      "timestamp": "1712647395.145669",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "`import requests`\n`import json`\n`import time`\n\n`url = 'https://aihub.instabase.com/api/v2/aihub/converse/run_stream'`\n`data = '{\"model_name\":\"ibllm\",\"model_version\":\"2.1.0\",\"model_payload\":{\"custom_request\":{\"task\":\"multi_doc\",\"project_id\":\"aab4fc24-ef34-4e24-84e7-e7b4c421e9a7\",\"user_prompt\":\"extract key value information as json ```json\",\"ibdocs\":[\"ib-internal/josh.bronikowski.aihubprod2_instabase.com/fs/Instabase (http://aihubprod2_instabase.com/fs/Instabase) Drive/aihub/aab4fc24-ef34-4e24-84e7-e7b4c421e9a7/documents/out/US Passport 1_fdcc1d18d06560a01d3d64d9433edbbd43682cce08a85cb7b3c86bebfbd451ad.jpg.ibdoc\"],\"cached_index\":\"IB_AI_LABS_aab4fc24_ef34_4e24_84e7_e7b4c421e9a7\",\"model_name\":\"gpt-3.5-turbo\",\"relative_file_paths\":[\"US Passport 1.jpg\"],\"settings\":{}}}}'`\n`headers = {'Authorization' : 'Bearer 0p9wdBzDTn2RG',`\n           `'Ib-Context': 'ib-internal'}`\n\n\n`def stream():`\n    `start = time.time()`\n    `with requests.Session() as s:`\n        `try:`\n            `response = s.post(url, headers=headers, data=data, stream=True)`\n\n            `for chunk in response.iter_content(None):`\n                `json_data = chunk.decode('utf-8').split('\\n')[1].replace('data:', '', 1)`\n                `try:`\n                    `parsed_data = json.loads(json_data)`\n                    `if parsed_data.get('type') == 'stream_content':`\n                        `print(parsed_data.get('message'), end='', flush=True)`\n                `except json.JSONDecodeError as e:`\n                    `print(f\"Error decoding JSON: {e}\")`\n        `except requests.RequestException as e:`\n            `print(f\"Error making request: {e}\")`\n\n`stream()`\n\ncode from Josh",
+      "time": "00:23",
+      "timestamp": "1712647427.087339",
+      "is_reply": true
+    },
+    {
+      "sender": "Léo",
+      "user_id": "U05HCCFFDJ7",
+      "message": "Cool thanks :slightly_smiling_face:",
+      "time": "00:46",
+      "timestamp": "1712648789.483649",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2024-04-09.json",
+    "message_count": 6,
+    "start_time": "1712646938.579289",
+    "end_time": "1712648789.483649",
+    "is_thread": true
+  }
+}

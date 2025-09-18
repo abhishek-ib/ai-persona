@@ -1,0 +1,169 @@
+{
+  "id": "ch_C06FA6A23_2019-12-06_1575660256.167100_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "dlluncor",
+    "Chetan",
+    "Jonathan Shih",
+    "Aaron Vontell",
+    "Jesika Haria",
+    "Erick"
+  ],
+  "messages": [
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "can i add logs inside a UDF and view them anywhere? or print statements?",
+      "time": "11:24",
+      "timestamp": "1575660256.167100",
+      "is_reply": false
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "What I’ve done in the past is wrap my entire UDF in a try catch, have a variable that holds my logs on the level of the file, and then write the logs to some file on disk when the UDF completes",
+      "time": "11:29",
+      "timestamp": "1575660570.167300",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "@Aaron Vontell has a great `instabase-cli` that is a bit finnicky to set up but is very worth it (I think he may be cleaning it up a bit this week — otherwise I’m happy to do it). It allows you to develop UDFs in VSCode (or anywhere locally), and it’ll automatically upload+run the UDF in a flow, and then it prints any logging messages/errors and the final output to your terminal. https://github.com/instabase/instabase-cli",
+      "time": "11:29",
+      "timestamp": "1575660571.167500",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@Erick I should mention it will show errors, but logging has not been solved yet",
+      "time": "11:30",
+      "timestamp": "1575660602.167900",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "I want to add that soon tho because that would be insanely useful",
+      "time": "11:30",
+      "timestamp": "1575660611.168100",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Ah gotcha",
+      "time": "11:30",
+      "timestamp": "1575660616.168300",
+      "is_reply": true
+    },
+    {
+      "sender": "Erick",
+      "user_id": "ULQK30Z7V",
+      "message": "Another option that works is to “log” everything to a string `log` throughout your UDF, and then instead of a `return x` at the end, add a `raise Exception(\"Returning '{}' with logs {}\".format(x, log))` . You can inspect all the errors in Tools > View Errors by row",
+      "time": "11:33",
+      "timestamp": "1575660811.168500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "cool — good to know. other things that would be useful: mypy type checking, basic unit test support. this would be a useful internal shortcut (until building these into the product is prioritized).",
+      "time": "11:33",
+      "timestamp": "1575660813.168700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "cool thanks @Erick @Aaron Vontell",
+      "time": "11:33",
+      "timestamp": "1575660826.168900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "happy to give you some thoughts on how to do that @Chetan — there should be a way to add the logger, unit-test support if you’re interested.\n\nNeed to think more about the mypy piece — but there is a path to get those 2 features in in a relatively short period of time",
+      "time": "11:41",
+      "timestamp": "1575661285.169100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "haha just adding to the list of features for when it’s prioritized — i don’t think it’s something i could hammer out in a weekend (esp since UI changes would be involved too to expose that information properly). would be useful to understand though once i get back from OOO (end of Dec) though.",
+      "time": "11:51",
+      "timestamp": "1575661891.169300",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "these are some great ideas xD",
+      "time": "12:15",
+      "timestamp": "1575663357.169600",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "Maybe a good intern project",
+      "time": "13:12",
+      "timestamp": "1575666723.170000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "sg — yes let’s see if we could do it for an intern project — or someone coming in — but if anyone has time happy to show them",
+      "time": "14:24",
+      "timestamp": "1575671080.170400",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "Omg yes yes and yes to all of these! Huge fan of logging, unit tests, mypy - in refiner v5 we have in-line documentation for Instabase-supported Refiner functions, so we can even pull that from docstrings for UDFs!\n\nIn general, we’re interested in being able to reuse UDFs across flows, allow discoverability and a core component of that is allowing users to make these UDFs reliable and high quality!",
+      "time": "15:09",
+      "timestamp": "1575673782.170800",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "@Jesika Haria I know you did the work for error propagation / IBError right? How extensible would that be for general purpose logging? Not sure how in error works currently but I imagine would would basically create some iblogging object that would write to redid?",
+      "time": "15:10",
+      "timestamp": "1575673857.172700",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Vontell",
+      "user_id": "UCWNLU6CB",
+      "message": "*redis",
+      "time": "15:11",
+      "timestamp": "1575673861.173000",
+      "is_reply": true
+    },
+    {
+      "sender": "Jesika Haria",
+      "user_id": "UCXUGKXEK",
+      "message": "Logging within our refiner functions or for UDFs? For our refiner functions, yeah, we should be able to use similar pathways. Instead of relying on the exception chain to bubble up errors, we pass them as the second element of the tuple, and then the front-end code parses the iberror object instead of the string",
+      "time": "15:16",
+      "timestamp": "1575674212.173300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-12-06.json",
+    "message_count": 18,
+    "start_time": "1575660256.167100",
+    "end_time": "1575674212.173300",
+    "is_thread": true
+  }
+}

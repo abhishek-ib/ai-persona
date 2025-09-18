@@ -1,0 +1,77 @@
+{
+  "id": "ch_C06FA6A23_2025-06-26_1750955140.047569_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Getting some otel-releated build failures cc @Cody Boggs\n\nhttps://jenkins.instabase.com/blue/rest/organizations/jenkins/pipelines/instabase/branches/PR-71657/runs/3/nodes/31/log/?start=0\n\n```clean build test-changes TRACE_SHELL=true GITHUB_TOKEN=**** PR_NUMBER=instabase/PR-71657 CLEAN=true\n[2025-06-26T15:17:55.477Z] /bin/sh: 1: otel-cli: not found\n[2025-06-26T15:17:55.477Z] make: *** [Makefile:43: docker-pr-merge-check] Error 127\nscript returned exit code 2[2025-06-26T15:17:58.477Z] find: '*c4be4e30aabe51a0e40f6f76bf258a5c*.json': No such file or directory\n[2025-06-26T15:17:58.477Z] find: 'bep-*c4be4e30aabe51a0e40f6f76bf258a5c*.json': No such file or directory```",
+      "time": "09:25",
+      "timestamp": "1750955140.047569",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Yea, have to run with `rebuild` not `restart from stage`\nIt's a mostly useless feature in Jenkins sadly, but when there's only a single stateful stage in a pipeline it can work ok-ish - but adding any additional stages that need to do anything beyond making a remote API call or similar will break it. :disappointed:",
+      "time": "09:31",
+      "timestamp": "1750955488.178019",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ooh there's a flag to disable it in the pipeline DSL. Never could find it in the GUI, didn't think about the pipeline script opts",
+      "time": "09:34",
+      "timestamp": "1750955691.924959",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "What does this have to do with:\n```/bin/sh: 1: otel-cli: not found```\n?",
+      "time": "09:47",
+      "timestamp": "1750956477.511159",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Because it's added in a previous stage, which is skipped when using that feature to skip said stage",
+      "time": "09:49",
+      "timestamp": "1750956549.796209",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Well, I did use rebuild (either that or re-pushed)",
+      "time": "10:00",
+      "timestamp": "1750957250.211309",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "According to the log, you used the restart from stage option: https://jenkins.instabase.com/job/instabase/job/PR-71657/3/console",
+      "time": "10:03",
+      "timestamp": "1750957420.535569",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-06-26.json",
+    "message_count": 7,
+    "start_time": "1750955140.047569",
+    "end_time": "1750957420.535569",
+    "is_thread": true
+  }
+}

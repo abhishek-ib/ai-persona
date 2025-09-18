@@ -1,0 +1,105 @@
+{
+  "id": "dm_D03LK3XUJUA_2025-01-21_1737508255.543569",
+  "type": "dm",
+  "participants": [
+    "Anil",
+    "Abhishek Adupa"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "did you manage to test it?",
+      "time": "17:10",
+      "timestamp": "1737508255.543569",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "No, I run into the following error, I  checked user privileges for db_master, added that host into security group Do you have any suggestions on how to debug further?\n```$ INSTABASE_BACKEND_DB_PARAMS='...' /instabase/bin/dbmigrate-linux-bin\n..\n025/01/21 23:06:21 INFO utils/db/tools/dbmigrate/main.go:57 -- Updating database schema\n2025/01/21 23:06:21 level=ERROR path=utils/db/session/dbsession.go:475 msg=\"SQL DB: Error 1045 (28000): Access denied for user 'db_master'@'10.170.42.239' (using password: YES)\" operation=db/session/DBSessionImpl.Query query=\"SELECT COUNT(*) AS `count` FROM `information_schema`.`tables` WHERE ((`table_schema` = database()) AND (`table_name` = ?))\" query_type=select table=information_schema\n2025/01/21 23:06:21 FATAL utils/db/tools/dbmigrate/main.go:59 -- Error 1045 (28000): Access denied for user 'db_master'@'10.170.42.239' (using password: YES) ```",
+      "time": "17:16",
+      "timestamp": "1737508568.916059",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "I pinged Matt, he didn’t respond yet.",
+      "time": "17:16",
+      "timestamp": "1737508581.666519",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "I was able to push the image and run the container though",
+      "time": "17:16",
+      "timestamp": "1737508611.667589",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Can huddle and try if you are free?",
+      "time": "17:17",
+      "timestamp": "1737508643.609919",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "yup now?",
+      "time": "17:31",
+      "timestamp": "1737509499.767039",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "2 mins, I’ll reproduce the error",
+      "time": "17:32",
+      "timestamp": "1737509521.875919",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "INSTABASE_BACKEND_DB_PARAMS=“--hostname=aihub-sandbox-abhishek-test.ckyp1w23cnkd.us-east-2.rds.amazonaws.com (http://aihub-sandbox-abhishek-test.ckyp1w23cnkd.us-east-2.rds.amazonaws.com) --username=db_master --port=330\n6 --password=uX9VhDfX1PYDDe1Frtbb instabase” /instabase/bin/dbmigrate-linux-bin | tee ~/migrate.log",
+      "time": "17:36",
+      "timestamp": "1737509769.928249",
+      "is_reply": false
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "INSTABASE_BACKEND_DB_PARAMS=“--hostname=aihub-sandbox-abhishek-test.ckyp1w23cnkd.us-east-2.rds.amazonaws.com (http://aihub-sandbox-abhishek-test.ckyp1w23cnkd.us-east-2.rds.amazonaws.com) --username=db_master --port=330\n6 --password=uX9VhDfX1PYDDe1Frtbb instabase” DB_TLS_ENABLE=“true” DB_TLS_SKIP_VERIFY=“true” /instabase/bin/dbmigrate-linux-bin | tee ~/migrate.log",
+      "time": "17:37",
+      "timestamp": "1737509862.144029",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "```2025/01/22 01:40:31 level=ERROR path=utils/db/session/tx.go:79 msg=\"SQL DB: Error 1406 (22001): Data too long for column 'start_key' at row 1\" operation=db/session/TxImpl.Exec query=\"INSERT INTO `data_migration_batches` (`batch_size`, `created_at`, `start_key`, `updated_at`, `version`) VALUES (?, ?, ?, ?, ?)\" query_type=insert table=data_migration_batches\n2025/01/22 01:40:31 ERROR utils/db/accessor/db_accessor.go:1021 -- Failed to create model in table data_migration_batches: Error 1406 (22001): Data too long for column 'start_key' at row 1\n2025/01/22 01:40:31 level=ERROR path=utils/db/session/dbsession.go:475 msg=\"SQL DB: context canceled\" operation=db/session/DBSessionImpl.Query query=\"SELECT `id`, `metadata`, `result_metadata` FROM `jobs` WHERE (`id` > ?) ORDER BY `id` ASC LIMIT ?\" query_type=select table=jobs\n2025/01/22 01:40:31 level=WARNING path=utils/db/session/stats_utils.go:308 msg=\"SQL DB: Slow query\" args_count=2 duration_ms=387 operation=query query=\"SELECT `id`, `metadata`, `result_metadata` FROM `jobs` WHERE (`id` > ?) ORDER BY `id` ASC LIMIT ?\" query_type=select table=jobs\n2025/01/22 01:40:31 FATAL utils/db/tools/dbmigrate/main.go:59 -- failed to migrateOne (nextSchema=platform, prevSchema=platform): writeBatch failed: Error 1406 (22001): Data too long for column 'start_key' at row 1```\nLooking into it.",
+      "time": "17:41",
+      "timestamp": "1737510118.652559",
+      "is_reply": false
+    },
+    {
+      "sender": "Abhishek Adupa",
+      "user_id": "U03JYD51DM2",
+      "message": "Just wanted to update you",
+      "time": "17:42",
+      "timestamp": "1737510126.709839",
+      "is_reply": false
+    }
+  ],
+  "metadata": {
+    "dm_id": "D03LK3XUJUA",
+    "date_file": "2025-01-21.json",
+    "message_count": 11,
+    "start_time": "1737508255.543569",
+    "end_time": "1737510126.709839"
+  }
+}

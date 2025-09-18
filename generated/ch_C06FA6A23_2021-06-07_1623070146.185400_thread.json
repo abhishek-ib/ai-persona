@@ -1,0 +1,238 @@
+{
+  "id": "ch_C06FA6A23_2021-06-07_1623070146.185400_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Shubham Oli",
+    "John St",
+    "sudeep"
+  ],
+  "messages": [
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Hi everyone, I’m wondering if someone familiar with our Jenkins set up can answer a few questions I have.",
+      "time": "05:49",
+      "timestamp": "1623070146.185400",
+      "is_reply": false
+    },
+    {
+      "sender": "sudeep",
+      "user_id": "UCWRN72EP",
+      "message": "cc @Shubham Oli",
+      "time": "05:50",
+      "timestamp": "1623070250.185600",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "Yes I can help.",
+      "time": "05:51",
+      "timestamp": "1623070295.185800",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Alright so I’m trying to set up this job: https://jenkins.instabase.com/view/In%20Development/job/johns-jenkins-testing/configure",
+      "time": "05:57",
+      "timestamp": "1623070637.186000",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "```21:34:45  Still waiting to schedule task\n21:34:45  'Jenkins' is reserved for jobs with matching label expression\n21:34:45  'build-machine-v20-04-22' is reserved for jobs with matching label expression\n21:34:45  'build-machine-v2020-12-04' is reserved for jobs with matching label expression\n21:34:45  'build-machine-v2020-12-05' is reserved for jobs with matching label expression\n21:34:45  'build-machine-v2020-12-06' is reserved for jobs with matching label expression\n21:34:45  'build-machine-v2021-04-25' is reserved for jobs with matching label expression\n21:34:45  'build-machine-v2021-04-26' is reserved for jobs with matching label expression\n21:34:45  'sandbox-provisioner' is reserved for jobs with matching label expression\n21:36:41  Pausing\n22:19:28  Cancelling nested steps due to timeout```",
+      "time": "05:57",
+      "timestamp": "1623070658.186200",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "I’m getting that message. How can I get something like this simple pipeline to work in our current set up?",
+      "time": "05:58",
+      "timestamp": "1623070701.186400",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "Yes it will not work as our build machines only run jobs with some specific label",
+      "time": "05:58",
+      "timestamp": "1623070713.186700",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "We don’t have support for docker agent yet.",
+      "time": "05:59",
+      "timestamp": "1623070743.186900",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "What exactly is a build machine?",
+      "time": "05:59",
+      "timestamp": "1623070762.187100",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "jenkins workers where jobs/pipelines are executed.",
+      "time": "05:59",
+      "timestamp": "1623070783.187300",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "We created these though right?",
+      "time": "06:00",
+      "timestamp": "1623070828.187500",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Can we create a new build machine for node projects?",
+      "time": "06:00",
+      "timestamp": "1623070849.187700",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "Yes we’ve 5 of them right now.",
+      "time": "06:00",
+      "timestamp": "1623070853.187900",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "I guess my actual question is how can I do an npm install inside our webpacked directory? I get `npm command not found`  when trying to do so",
+      "time": "06:02",
+      "timestamp": "1623070936.188100",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "I think we can re-use the existing ones until we are exhausted in terms of compute power.\nWe can configure them to support docker agent.",
+      "time": "06:02",
+      "timestamp": "1623070937.188300",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "> I get `npm command not found`  when trying to do so\nah! got it. We use `nodeenv` to manage our `node` and `npm` version so you have to update  the $PATH to include nodeenv’s node binary.\n\nSomething similar like this https://github.com/instabase/instabase/blob/2f2b787f8fb8e941339ad39dd1403d5fb4183278/tools/releasetools/jenkins/pipelines/tests-js.groovy#L25",
+      "time": "06:05",
+      "timestamp": "1623071109.188600",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "ohhhhh",
+      "time": "06:06",
+      "timestamp": "1623071161.188900",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "no idea that was needed",
+      "time": "06:06",
+      "timestamp": "1623071169.189100",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "let me try that",
+      "time": "06:06",
+      "timestamp": "1623071173.189300",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "yeah that’s needed if your job is executing tasks directly in the VM/build-machine.",
+      "time": "06:07",
+      "timestamp": "1623071230.189600",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "But you’ve to remove `docker` agent and use our `build-machine` label to execute the pipeline.",
+      "time": "06:07",
+      "timestamp": "1623071277.189800",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "I’ll change that then",
+      "time": "06:10",
+      "timestamp": "1623071426.190000",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Okay here is the actual job I was trying to get working: https://jenkins.instabase.com/view/In%20Development/job/johnstew-cypress-testing/ I made those changes :crossed_fingers::skin-tone-4:",
+      "time": "06:11",
+      "timestamp": "1623071503.190200",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "It’s installing deps so that’s a win already :success:",
+      "time": "06:12",
+      "timestamp": "1623071527.190400",
+      "is_reply": true
+    },
+    {
+      "sender": "Shubham Oli",
+      "user_id": "U01CKNF7BSL",
+      "message": "Nice!!\n\nOne suggestion - during testing phase you can remove the slack alerts from the `post` section of the groovy script.",
+      "time": "06:14",
+      "timestamp": "1623071673.190600",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "Will do, so it’s breaking on Cypress stuff now so I can fix that",
+      "time": "06:15",
+      "timestamp": "1623071720.190800",
+      "is_reply": true
+    },
+    {
+      "sender": "John St",
+      "user_id": "USZGMEV6K",
+      "message": "thank you for this",
+      "time": "06:15",
+      "timestamp": "1623071724.191000",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2021-06-07.json",
+    "message_count": 27,
+    "start_time": "1623070146.185400",
+    "end_time": "1623071724.191000",
+    "is_thread": true
+  }
+}

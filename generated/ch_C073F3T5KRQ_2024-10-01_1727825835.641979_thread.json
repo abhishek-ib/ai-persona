@@ -1,0 +1,141 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-10-01_1727825835.641979_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Anil"
+  ],
+  "messages": [
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Hi Team\nDoes anyone know how to access the DB in an AIHub cluster / how to connect to cluster via kubectl?\nI want to access the DB of the UAT cluster - aihub-uat.internal.instabase.com (http://aihub-uat.internal.instabase.com)\n\nI don’t see this environment in console.instabase.com (http://console.instabase.com). So I instead tried for preprod - `aihub.preprod.instabase.com (http://aihub.preprod.instabase.com)`\nhttps://console.instabase.com/customer/AI%20Hub/tenant/aihub-uat/info\n\nI tried powerUser - this can see the cluster but not objects in it. Sandbox kubectl admin doesn’t have access to anything.",
+      "time": "16:37",
+      "timestamp": "1727825835.641979",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I can help! That environment is not a sandbox, it’s in the production/saas console, under the “Internal” customer. You need to use TPAM to get kubectl access, and then start the MySQL client in a one-off pod (kubectl run)",
+      "time": "16:38",
+      "timestamp": "1727825916.891079",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You need to use creds from the instabase-saas-uat AWS account, kubectl role.",
+      "time": "16:39",
+      "timestamp": "1727825967.414629",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ping me tomorrow and I can show you directly.",
+      "time": "16:40",
+      "timestamp": "1727826005.747549",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Is it a cname alias of ib-internal.uat.instabase.com (http://ib-internal.uat.instabase.com) ?",
+      "time": "16:40",
+      "timestamp": "1727826006.342539",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Awesome - thanks will do",
+      "time": "16:40",
+      "timestamp": "1727826012.500839",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yes^",
+      "time": "16:40",
+      "timestamp": "1727826021.206429",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "Last question: `You need to use TPAM to get kubectl access` - what do you mean by this?\nWhat role are you using to access? I can message IT today to get that\nboth `assume-sandbox-kubectl-admin (https://d-9067ba412e.awsapps.com/start/#/console?account_id=591759939757&role_name=assume-sandbox-kubectl-admin)|Access keys\naws-powerUserAccess (https://d-9067ba412e.awsapps.com/start/#/console?account_id=591759939757&role_name=aws-powerUserAccess)|Access keys` don’t have access. - the second I can view the cluster but can’t access the pods, etc",
+      "time": "16:41",
+      "timestamp": "1727826119.609099",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "No, it’s like a weird name for that one. Let me look it up - I’ll get my laptop",
+      "time": "16:42",
+      "timestamp": "1727826159.272319",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "aws-saas-uat-insauat-ib-base-uat-admin",
+      "time": "16:44",
+      "timestamp": "1727826241.006759",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "IDK why :laugh-cry:",
+      "time": "16:44",
+      "timestamp": "1727826250.608389",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This is the link to the stack in cloud console (https://console.instabase.com/customer/Internal/tenant/ib-base-uat/info)",
+      "time": "16:45",
+      "timestamp": "1727826309.116329",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://console.instabase.com/customer/Internal/tenant/ib-base-uat/info <= I guess this is where the name comes from",
+      "time": "16:45",
+      "timestamp": "1727826356.766639",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "To connect I use this:\n\n```kubectl get secret db-backend-params -o json | jq -r '.data | map_values(@base64d) | .db_string'\n\nkubectl run dbg-mysql --image=mirror.gcr.io/mysql:8 (http://mirror.gcr.io/mysql:8) -it --rm --restart=Never -- /usr/bin/bash\n\nmysql ...```",
+      "time": "16:47",
+      "timestamp": "1727826444.085329",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "I see. I think you got `aws-saas-uat-insauat-ib-base-uat-admin` from connect button. I don’t see that either. Let me catch you tomorrow for this.",
+      "time": "16:49",
+      "timestamp": "1727826594.593769",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-10-01.json",
+    "message_count": 15,
+    "start_time": "1727825835.641979",
+    "end_time": "1727826594.593769",
+    "is_thread": true
+  }
+}

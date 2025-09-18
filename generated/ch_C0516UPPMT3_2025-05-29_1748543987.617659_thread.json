@@ -1,0 +1,160 @@
+{
+  "id": "ch_C0516UPPMT3_2025-05-29_1748543987.617659_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "Sayan",
+    "jack.robbins",
+    "Brian",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "*When running apps to create groundtruth datasets, we should be able to run them with runtime configs (keys) (1st screenshot)*\n\nthe two fields (2nd screenshot) are custom functions that rely on using custom keys, but they aren't passed in when the app is run to create a GT dataset.\n\nScreenshot 3 shows the expected custom function output when keys are passed in during execution",
+      "time": "11:39",
+      "timestamp": "1748543987.617659",
+      "is_reply": false
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "cc @Sayan",
+      "time": "12:32",
+      "timestamp": "1748547130.337019",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "@Brian could you share a link to this GT Set?",
+      "time": "12:34",
+      "timestamp": "1748547254.790639",
+      "is_reply": true
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "Will send an invite to the org!\n\nIn the meantime, link to accuracy tests:\nhttps://aihub.instabase.com/hub/apps/a906e36a-47f2-4ebd-8b1f-5fba4a2886e0/accuracy",
+      "time": "13:16",
+      "timestamp": "1748549815.087099",
+      "is_reply": true
+    },
+    {
+      "sender": "Brian",
+      "user_id": "U06U3PWKM0T",
+      "message": "Invite sent to `<mailto:sayan.bhattacharjee+gtm-demo@instabase.com|sayan.bhattacharjee+gtm-demo@instabase.com>`",
+      "time": "13:17",
+      "timestamp": "1748549865.781259",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "@Paul H @Sherif  @Serena it seems that we'll need to scope in some FE work as well here to 1) create a runtime config panel like it's done when creating/running apps / deployments _and_ 2) passing those into the POST https://aihub.instabase.com/api/v2/ground-truth-sets/<int:gt_set_id/creation-run|https://aihub.instabase.com/api/v2/ground-truth-sets/<int:gt_set_id>/creation-run> API. I think the BE will take about 1 day",
+      "time": "14:21",
+      "timestamp": "1748553671.155719",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "@hannah @jack.robbins checking that ground truth sets should behave like app runs where users are prompted to enter in their runtime configs each time",
+      "time": "14:22",
+      "timestamp": "1748553770.424859",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "for the reasons listed in the start of the thread, it definitely makes sense that you should be able to provide runtime configs any time you want to run an app.\n\nI believe the configs would need to be tied with the accuracy test & not the GT dataset? That's where you actually select the app version & hit run.",
+      "time": "14:35",
+      "timestamp": "1748554532.823289",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "Another option is to have these configs in a more 'static' location so the user doesn't need to provide them with each accuracy test, like how you can provide Test values in Build.",
+      "time": "14:38",
+      "timestamp": "1748554733.390269",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "@hannah were there any conversations on how configs would be handled for accuracy tests during development?",
+      "time": "14:41",
+      "timestamp": "1748554901.550719",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Oh there is a configuration tab but it's not taking in the runtime configs right now",
+      "time": "14:52",
+      "timestamp": "1748555561.732339",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "That seems like a natural place to put it, just thinking about how to make it not so cumbersome since accuracy tests are going to be ran quite frequently for the same GT datasets. cc @Jianqi Xing &@alagu",
+      "time": "15:03",
+      "timestamp": "1748556180.520749",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "technically, you are both right\n• when a user creates a ground truth set, they should be able to specify runtime configs\n    ◦ creating a ground truth set also involves running the app, which may rely on runtime configs\n• when a user uses a ground truth set to run an accuracy test, they should also be able to specify runtime configs\n    ◦ obviously running an accuracy test also involves running the app",
+      "time": "15:03",
+      "timestamp": "1748556208.451579",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "> just thinking about how to make it not so cumbersome since accuracy tests are going to be ran quite frequently for the same GT datasets\nhmm that's a good point\n\nactually, i think we should always use the same runtime configs when creating a ground truth set vs using that gt set to run an accuracy test\n\nit doesn't make sense to use different runtime config values for the accuracy test since that may make results diverge from the ground truth set, which would impact accuracy metrics",
+      "time": "15:12",
+      "timestamp": "1748556734.611719",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "anyways i think we need to go to design office hours and jam with design on this! @jack.robbins can you find a design office hours slot and add you, me, and Sayan to that slot?",
+      "time": "15:12",
+      "timestamp": "1748556735.396199",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "also, i changed the ticket Sayan created into an EPD improvement ticket (https://instabase.atlassian.net/browse/EPD-4408) to track this better",
+      "time": "15:13",
+      "timestamp": "1748556839.328829",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "yep will do",
+      "time": "15:25",
+      "timestamp": "1748557533.590849",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-05-29.json",
+    "message_count": 17,
+    "start_time": "1748543987.617659",
+    "end_time": "1748557533.590849",
+    "is_thread": true
+  }
+}

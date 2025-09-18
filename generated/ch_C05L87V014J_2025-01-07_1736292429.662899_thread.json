@@ -1,0 +1,199 @@
+{
+  "id": "ch_C05L87V014J_2025-01-07_1736292429.662899_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Cheryl Zhou",
+    "Kerry",
+    "mfichman",
+    "Goto Tools Go Links"
+  ],
+  "messages": [
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Hi team, I'm getting `env: 'Studio': No such file or directory` for control-plane. Tried refreshing base image/restarting, but no luck. Not sure what this error means -- any idea what's missing for 'Studio' in the environment?",
+      "time": "15:27",
+      "timestamp": "1736292429.662899",
+      "is_reply": false
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "my sandbox link: https://instabase.sandboxes.site/sandboxes/hongrunzhou?cw=dev",
+      "time": "15:28",
+      "timestamp": "1736292486.296949",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@sean.donohoe -- can you help with this soon? this is for testing a relatively urgent bug request",
+      "time": "17:30",
+      "timestamp": "1736299804.628799",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Cheryl Zhou Do you need control plane for your testing? Most people don't. The sandbox should still be usable if all the other services are up (they are).",
+      "time": "19:55",
+      "timestamp": "1736308529.743939",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, I don't think this is a crafting problem; rather it's a control plane problem (`make build-docker run-docker` isn't working). I can take a look tomorrow, or a CP person can if they can get to it first.",
+      "time": "19:56",
+      "timestamp": "1736308580.882519",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://instabase.sandboxes.site/sandboxes/hongrunzhou1?cw=dev I assume you made a new sandbox, but it has the same problem?",
+      "time": "19:57",
+      "timestamp": "1736308634.846879",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Ahh I see, that makes sense! Both sandboxes' UI wasn't loading up at the time I thought it was because of the control plane problem, but I see that they are both up now",
+      "time": "19:58",
+      "timestamp": "1736308710.120719",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "No I didn't need control plane so I'm unblocked now!",
+      "time": "19:58",
+      "timestamp": "1736308726.506249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, the other services might have still been building (?) Anyway, if you look at the Probes section you can see which services are fully initialized.",
+      "time": "19:58",
+      "timestamp": "1736308737.726909",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "",
+      "time": "19:59",
+      "timestamp": "1736308754.905219",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Ahh thanks! I'll know where to look next time",
+      "time": "19:59",
+      "timestamp": "1736308792.014039",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OK :slightly_smiling_face:\n\nI'll look at this in the morning. I just ran `make build-docker run-docker` in your sandbox (manually) and it worked, so something else odd is happening when Crafting tries to do the same. Maybe a bad working dir? Anyway, I'll check it out tomorrow.",
+      "time": "20:00",
+      "timestamp": "1736308837.194929",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, when I run:\n\n```sudo -iu owner make build-docker run-docker -C \"$IB_HOME/core-services/control-plane\"```\nIt breaks, so probably something in the CP Makefile changed so that `make -C` doesn't work anymore.",
+      "time": "20:03",
+      "timestamp": "1736309004.343959",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Thanks for debugging Matt! I'll raise it in the control plane channel tomorrow",
+      "time": "20:04",
+      "timestamp": "1736309093.567719",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Seems to be this line: https://github.com/instabase/instabase/blob/master/core-services/control-plane/Makefile#L55",
+      "time": "20:09",
+      "timestamp": "1736309382.419479",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Commenting it fixes the build",
+      "time": "20:09",
+      "timestamp": "1736309388.901339",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah, might also be b/c your PATH has spaces in it:\n\n```Makefile:55: /usr/local/nodenv/shims:/usr/local/pyenv/shims:/usr/bin:/usr/local/bin:/home/owner/Documents/workspace/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/opt/sandboxd/docker:/usr/local/workspace/go/bin:/usr/local/go/bin:/usr/local/poetry/bin:/usr/local/pyenv/bin:/usr/local/nodenv/bin:/usr/local/nodenv/shims:/usr/sbin:/usr/bin:/sbin:/bin:/opt/sandboxd/bin:/usr/games:/usr/local/games:/snap/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin:/usr/local/opt/go/libexec/bin (http://Code.app/Contents/Resources/app/bin:/usr/local/opt/go/libexec/bin)```\n/applications/Visual Studio Code.app (http://Code.app) is causing the problem",
+      "time": "20:12",
+      "timestamp": "1736309558.406269",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/libexec/bin%7CCode",
+      "time": "20:12",
+      "timestamp": "1736309559.250209",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/opt/sandboxd/docker:/usr/local/workspace/go/bin:/usr/local/go/bin:/usr/local/poetry/bin:/usr/local/pyenv/bin:/usr/local/nodenv/bin:/usr/local/nodenv/shims:/usr/sbin:/usr/bin:/sbin:/bin:/opt/sandboxd/bin:/usr/games:/usr/local/games:/snap/bin:/Applications/Visual",
+      "time": "20:12",
+      "timestamp": "1736309559.266009",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/libexec/bin>```",
+      "time": "20:12",
+      "timestamp": "1736309559.278059",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "However, this also fixes it I think:\n\n```owner@dev:~/instabase/core-services/control-plane$ git diff\ndiff --git a/core-services/control-plane/Makefile b/core-services/control-plane/Makefile\nindex 31f29c82671..45db306f2b8 100644\n--- a/core-services/control-plane/Makefile\n+++ b/core-services/control-plane/Makefile\n@@ -52,7 +52,9 @@ CP_PROTOS = api/v1/spec.proto\n \n # Make tools installed by go available\n # Use the verison of tools installed by go instead of what is installed on the system\n-SHELL := env PATH=$(PATH) $(SHELL)\n+SHELL := env PATH='$(PATH)' $(SHELL)```",
+      "time": "20:13",
+      "timestamp": "1736309602.447709",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "OMG thank you! Yea I removed that line in my bash profile and the command is running now",
+      "time": "20:18",
+      "timestamp": "1736309924.796979",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-01-07.json",
+    "message_count": 22,
+    "start_time": "1736292429.662899",
+    "end_time": "1736309924.796979",
+    "is_thread": true
+  }
+}

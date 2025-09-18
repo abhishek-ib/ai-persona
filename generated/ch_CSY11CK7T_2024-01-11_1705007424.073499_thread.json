@@ -1,0 +1,54 @@
+{
+  "id": "ch_CSY11CK7T_2024-01-11_1705007424.073499_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "CJ",
+    "Weiming Wu",
+    "Jessica"
+  ],
+  "messages": [
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "now that the cypress ci has been up for a while, i've been thinking about how we can make PRs block on making the cypress tests pass.\n\nyou can view the failing tests on cypress dashboard (https://cloud.cypress.io/projects/cfhedy/analytics/top-failures?branches=%5B%5D&browsers=%5B%5D&chartRangeMostCommonErrors=%5B%5D&chartRangeSlowestTests=%5B%5D&chartRangeTopFailures=%5B%5D&committers=%5B%5D&cypressVersions=%5B%5D&flaky=%5B%5D&operatingSystems=%5B%5D&runGroups=%5B%5D&specFiles=%5B%5D&status=%5B%7B%22label%22%3A%22Passed%22%2C%22value%22%3A%22PASSED%22%7D%2C%7B%22label%22%3A%22Failed%22%2C%22value%22%3A%22FAILED%22%7D%5D&tags=%5B%7B%22disabled%22%3Afalse%2C%22label%22%3A%22ci%22%2C%22labelProperties%22%3A%7B%22color%22%3A%22%23dadade%22%7D%2C%22suggested%22%3Afalse%2C%22value%22%3A%22ci%22%7D%5D&timeInterval=WEEK&timeRange=%7B%22startDate%22%3A%222024-01-04%22%2C%22endDate%22%3A%222024-01-11%22%7D&viewBy=TEST_CASE). all the viewapp tests have a near-100% failure rate, along with loginless converse, billing, view-my-hub, drives, etc. these tests would block PRs from merging because they keep failing on crafting. i see two paths forward:\n\n• make these tests pass on crafting: i tried investigating how to make these tests pass on crafting (like loginless converse), but i haven't gotten it all to work yet. i've talked to some test owners about getting tests to work on crafting (along with aihub-sandbox and aihub-uat), but not all. we can try to fix more of these tests, but some seem hard (like getting the doc translation public app)?\n• skip these tests on crafting: i have a PR up that lets us tag Cypress tests as skipped on CI (https://github.com/instabase/instabase/pull/51932) (but not skipped on the jenkins tests that happen every few hours). there's discussion on the PR about whether we should do this, because we could get in the same state as before, where a PR can break something but not get caught by CI.\nguess i wanted to ask people for thoughts—should we keep trying to push for 100% crafting tests before making them blocking? should we skip the tests for now and come back to them later? is the right answer a mix of both, where we fix some tests and skip others?\n\nanother question i wanted to ask: if we make cypress CI blocking, how will responsibility work when a test fails and everything gets blocked? (note that cypress CI won't run on backend PRs, so a backend failure won't appear until the next crafting deploy)",
+      "time": "13:10",
+      "timestamp": "1705007424.073499",
+      "is_reply": false
+    },
+    {
+      "sender": "CJ",
+      "user_id": "U05L4KP9V9P",
+      "message": "test owners with failing tests on cypress ci (see cypress dashboard (https://cloud.cypress.io/projects/cfhedy/analytics/top-failures?branches=%5B%5D&browsers=%5B%5D&chartRangeMostCommonErrors=%5B%5D&chartRangeSlowestTests=%5B%5D&chartRangeTopFailures=%5B%5D&committers=%5B%5D&cypressVersions=%5B%5D&flaky=%5B%5D&operatingSystems=%5B%5D&runGroups=%5B%5D&specFiles=%5B%5D&status=%5B%7B%22label%22%3A%22Passed%22%2C%22value%22%3A%22PASSED%22%7D%2C%7B%22label%22%3A%22Failed%22%2C%22value%22%3A%22FAILED%22%7D%5D&tags=%5B%7B%22disabled%22%3Afalse%2C%22label%22%3A%22ci%22%2C%22labelProperties%22%3A%7B%22color%22%3A%22%23dadade%22%7D%2C%22suggested%22%3Afalse%2C%22value%22%3A%22ci%22%7D%5D&timeInterval=WEEK&timeRange=%7B%22startDate%22%3A%222024-01-04%22%2C%22endDate%22%3A%222024-01-11%22%7D&viewBy=TEST_CASE))\n• @Aayush and @Subash for loginless-chat\n• @Weiming Wu for drives, view-my-hub\n• @danny.lan for apps, view-home-page\n• @Xindi Xu for members-crud\n• @Paul H for collab\n• arjun for aihub-doc-management-aggregate-view (who is ooo), matt for billing (who i don't want to tag because i'm scared)\nhow much crafting setup would it take to make tests work consistently there?",
+      "time": "13:14",
+      "timestamp": "1705007671.317739",
+      "is_reply": true
+    },
+    {
+      "sender": "Weiming Wu",
+      "user_id": "U03DZ9Y4MC2",
+      "message": "From looking at the replays, it looks like:\n• Drives tests are failing because of expired licenses\n• The My Hub tests need 3 projects with \"My Hub\" in the project name",
+      "time": "13:38",
+      "timestamp": "1705009112.814609",
+      "is_reply": true
+    },
+    {
+      "sender": "Jessica",
+      "user_id": "UDEF3M2NP",
+      "message": "> should we keep trying to push for 100% crafting tests before making them blocking?\nI like your approach of skipping them for now and adding them back as they're fixed. I think it's going to be really hard to get to 100% passing without some forcing function, because other things will break in the meantime. We just need to be diligent about untagging them in the next few weeks.\n\n> how will responsibility work when a test fails and everything gets blocked?\nIf the test is failing because of something in the PR, that's easy, the PR author should fix it. There will of course be occasions where it's broken from before and an unlucky person inherits that problem. In that case, it is the responsibility of the owner defined in tests.json. When we do try to get a report generated as part of the github action, maybe there will be a way to show the owner of the test too.\n\nMaybe we can also, for now, add a Github label that will skip the Cypress test run so that if we need to we can get things merged.",
+      "time": "13:47",
+      "timestamp": "1705009629.901489",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2024-01-11.json",
+    "message_count": 4,
+    "start_time": "1705007424.073499",
+    "end_time": "1705009629.901489",
+    "is_thread": true
+  }
+}

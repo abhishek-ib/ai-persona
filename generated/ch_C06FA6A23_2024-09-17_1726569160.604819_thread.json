@@ -1,0 +1,113 @@
+{
+  "id": "ch_C06FA6A23_2024-09-17_1726569160.604819_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Bala",
+    "Prakhar",
+    "Aaron Tami",
+    "Yash Aggarwal",
+    "Abhishek"
+  ],
+  "messages": [
+    {
+      "sender": "Bala",
+      "user_id": "U045MQSQYKB",
+      "message": "It is still resulting in the same error at my end. @Prakhar Are you able to build it?",
+      "time": "03:32",
+      "timestamp": "1726569160.604819",
+      "is_reply": false
+    },
+    {
+      "sender": "Prakhar",
+      "user_id": "U03EMR9SK2T",
+      "message": "Nope, I tried a few things.\n1. Rebasing to latest 24.01\n2. Multiple poetry versions (1.4.1/1.8.2)\n3. Deleting poetry virtual env and reinstalling",
+      "time": "03:36",
+      "timestamp": "1726569381.271719",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "I am seeing this issue with scikit-learn installation on webdriver-tasks as well. Its possible that the issue is not related to a particular package. Python different python versions for now",
+      "time": "07:15",
+      "timestamp": "1726582558.765659",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "build-docker is working fine on my crafting machine with a clean 24.01 branch.  Is this only happening when trying to upgrade something else?",
+      "time": "08:02",
+      "timestamp": "1726585376.335429",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "Yeah. Its just on that particular jenkins image. Probably has to do with pip/setuptools version:\n`docker run -it --user root -v $IB_HOME:/instabase gcr.io/instabase-build/jenkins:23.09.23.12.18.49 (http://gcr.io/instabase-build/jenkins:23.09.23.12.18.49) /bin/bash`\n\nLooks like for some packages, the backend for installation is not specified so they default to `setuptools.build_meta:__legacy__`. Looking for some way to force all packages to use same backend right now...",
+      "time": "08:05",
+      "timestamp": "1726585500.051789",
+      "is_reply": true
+    },
+    {
+      "sender": "Aaron Tami",
+      "user_id": "UGG8PLD2P",
+      "message": "I still don't understand, how can I reproduce this? I have to try upgrading a package?",
+      "time": "08:34",
+      "timestamp": "1726587243.884479",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek",
+      "user_id": "U01T5NS31NE",
+      "message": "Yes, if you run `poetry add tornado==6.4.1` under `webdriver-tasks` then this error will come",
+      "time": "08:38",
+      "timestamp": "1726587510.275879",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhishek",
+      "user_id": "U01T5NS31NE",
+      "message": "Its coming during package upgrade thingy for vuln fixes",
+      "time": "08:38",
+      "timestamp": "1726587536.566539",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "For me, I am seeing this error in 23.07 on running  `make build test` for webdriver tasks inside a jenkins image.\n\n*Edit: I'll create a separate thread to avoid confusion*",
+      "time": "08:49",
+      "timestamp": "1726588177.987659",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "webdriver is built successfully consistently on the build machine; try make build-docker instead of make build",
+      "time": "08:52",
+      "timestamp": "1726588360.222859",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "@Abhishek /@Prakhar can you try regenerating poetry.lock and requirements.txt from inside of a docker container running the build image? That fixed this issue for me on the 23.07 branch\n\nEdit: I reproduced my changes to pyproject.toml on a fresh branch",
+      "time": "11:07",
+      "timestamp": "1726596467.193379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-09-17.json",
+    "message_count": 11,
+    "start_time": "1726569160.604819",
+    "end_time": "1726596467.193379",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "id": "ch_C06FA6A23_2025-07-16_1752690010.939749_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Anil",
+    "Cody Boggs"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "New build problem:\n\n```[2025-07-16T18:09:26.412Z] RUNTEST OUTPUT: INFO: Writing tracer profile to '/tmp/bazel/profile-00-07653e2d4192a72418a53a78745f9288-198b8bfff8e54785-01.json'\n[2025-07-16T18:09:26.412Z] INFO: Invocation ID: 134e21fd-5e0e-442f-9222-4adcc1ca3bf2\n[2025-07-16T18:09:26.412Z] Loading: \n[2025-07-16T18:09:26.412Z] WARNING: Download from https://mirror.bazel.build/github.com/bazelbuild/rules_pkg/releases/download/1.1.0/rules_pkg-1.1.0.tar.gz failed: class java.io.FileNotFoundException GET returned 404 Not Found\n[2025-07-16T18:09:26.412Z] Loading: \n[2025-07-16T18:09:26.412Z] Loading: 0 packages loaded\n[2025-07-16T18:09:26.412Z] ERROR: error loading package 'shared-utils/build-utils/shared/.venv/lib/python3.9/site-packages/torchgen/packaged/autograd': cannot load '//:tools/bazel.bzl': no such file\n[2025-07-16T18:09:26.412Z] ERROR: error loading package 'shared-utils/build-utils/shared/.venv/lib64/python3.9/site-packages/torchgen/packaged/autograd': cannot load '//:tools/bazel.bzl': no such file\n[2025-07-16T18:09:26.412Z] ERROR: error loading package under directory 'shared-utils/build-utils/shared': error loading package 'shared-utils/build-utils/shared/.venv/lib/python3.9/site-packages/torchgen/packaged/autograd': cannot load '//:tools/bazel.bzl': no such file\n[2025-07-16T18:09:26.412Z] INFO: Elapsed time: 0.515s\n[2025-07-16T18:09:26.412Z] INFO: 0 processes.\n[2025-07-16T18:09:26.412Z] FAILED: Build did NOT complete successfully (0 packages loaded)\n[2025-07-16T18:09:26.412Z] ERROR: Couldn't start the build. Unable to run tests\n[2025-07-16T18:09:26.412Z] INFO: Build Event Protocol files produced successfully.\n[2025-07-16T18:09:26.412Z] FAILED: Build did NOT complete successfully (0 packages loaded)```\n^ looks like runtest.go trying to run a package under .venv as one of our Bazel modules",
+      "time": "11:20",
+      "timestamp": "1752690010.939749",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Huh, that `.venv` dir should only be getting created when there is *not* already a `VIRTUAL_ENV` env var set - then `uv` creates one in the current dir. Wonder if that dir doesn't have a `.gitignore` like it should?\n\nOr perhaps Bazel doesn't respect them",
+      "time": "13:25",
+      "timestamp": "1752697515.751899",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@mfichman any job links?\nI can dig that one up pretty quick I think",
+      "time": "13:26",
+      "timestamp": "1752697568.719109",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "~Oh it might just be a command grouping bug, one sec~",
+      "time": "13:29",
+      "timestamp": "1752697760.394019",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Nevermind, red herring, sorry.\n\nIt's weird because `.venv` is already in `.bazelignore` at the repo root :confused_dog:",
+      "time": "13:41",
+      "timestamp": "1752698477.744099",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah, that is weird...",
+      "time": "14:17",
+      "timestamp": "1752700623.065439",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Well, if it recurs I'll look into it.",
+      "time": "14:17",
+      "timestamp": "1752700630.071659",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW, building locally worked -- so :shrug:",
+      "time": "14:17",
+      "timestamp": "1752700639.746279",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "That's...\n:confused_dog:\n:wat:",
+      "time": "14:23",
+      "timestamp": "1752701039.465249",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":homer-disappear:",
+      "time": "14:24",
+      "timestamp": "1752701044.344469",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yeah :laughing:",
+      "time": "14:33",
+      "timestamp": "1752701591.210719",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "https://jenkins.instabase.com/blue/rest/organizations/jenkins/pipelines/instabase/branches/PR-72485/runs/5/nodes/43/log/?start=0\nfrom https://github.com/instabase/instabase/pull/72485\nIt is quite hard to find what failed and why in this log",
+      "time": "15:11",
+      "timestamp": "1752703873.849269",
+      "is_reply": true
+    },
+    {
+      "sender": "Anil",
+      "user_id": "U01BH8XBR55",
+      "message": "cc @tony.shi",
+      "time": "15:11",
+      "timestamp": "1752703878.554009",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-07-16.json",
+    "message_count": 13,
+    "start_time": "1752690010.939749",
+    "end_time": "1752703878.554009",
+    "is_thread": true
+  }
+}

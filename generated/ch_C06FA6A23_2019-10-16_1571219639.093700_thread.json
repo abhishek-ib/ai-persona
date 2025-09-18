@@ -1,0 +1,151 @@
+{
+  "id": "ch_C06FA6A23_2019-10-16_1571219639.093700_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "shaunak",
+    "Kerry",
+    "dlluncor",
+    "Chetan"
+  ],
+  "messages": [
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "Nope, cross cross we saw happen out of the process files step I believe",
+      "time": "02:53",
+      "timestamp": "1571219639.093700",
+      "is_reply": false
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "I don’t believe this is an instance of criss-cross bug as there is not RPC involved in between",
+      "time": "09:22",
+      "timestamp": "1571242947.096300",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i’ll look into this some more and try to debug it — wrapping up some other work now.",
+      "time": "12:50",
+      "timestamp": "1571255440.098000",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "It is not the criss cross bug, i think it’s some code in our flow for `s3_apply_refiner` that modifies the `text` field in a weird way. I don’t think the `text` field for the apply refiner step is ever used in any of our UI - the extracted data are in `refined_phrases`, and Review OCR always shows the `text` field in the process files step.\n@Chetan - it looks to me that `text` is all the extracted fields (including all fields that have `__` in the front) joined by commas. Can you confirm that?",
+      "time": "12:59",
+      "timestamp": "1571255981.098200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "yup that’s what i see too.",
+      "time": "13:01",
+      "timestamp": "1571256061.098500",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "plus an initial part of the actual `\"text\"` data that should exist is gone.",
+      "time": "13:01",
+      "timestamp": "1571256080.098700",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "i.e. the “DEPARTMENT OF DEFENSE” header is gone for ex from the example document above.",
+      "time": "13:01",
+      "timestamp": "1571256088.098900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "oh yep — that is true. the ‘text’ in the apply refiner IBOCR is the concatenated version of all the refined_phrases. It’s been that way forever actually",
+      "time": "13:32",
+      "timestamp": "1571257931.099200",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "aah so maybe the header is gone because we’re seeing some subfield that’s a subsection of the overall OCR text…. 0.o",
+      "time": "13:36",
+      "timestamp": "1571258210.099400",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "next question: why do we overwrite the `text` field with that @dlluncor? it’s unusable (mostly) anyways given that _refiner field names_ are not included.",
+      "time": "13:37",
+      "timestamp": "1571258239.099600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "true yes — it’s not really meant to be a used field currently. It was meant as a placeholder long ago",
+      "time": "13:44",
+      "timestamp": "1571258693.099800",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "@dlluncor thoughts on changing that behavior so apply refiner leaves `\"text\"` alone?",
+      "time": "14:04",
+      "timestamp": "1571259877.102100",
+      "is_reply": true
+    },
+    {
+      "sender": "Chetan",
+      "user_id": "UE3TJAR9U",
+      "message": "happy to scope it out / get it done for nov release unless you see some reason we should absolutely not proceed with it.",
+      "time": "14:11",
+      "timestamp": "1571260292.102300",
+      "is_reply": true
+    },
+    {
+      "sender": "shaunak",
+      "user_id": "UCY6SA014",
+      "message": "@dlluncor , do you remember the context of why we had this type of behaviour?  Do you think it makes sense to rethink the `text` field as is?  The current behaviour might be a bit confusing to our users when they want to process UDF after apply refiner step.",
+      "time": "14:22",
+      "timestamp": "1571260974.105000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "In practice, the text field doesn't have much meaning in the Apply Refiner IBOCR. It was a decision I made way back when I didn't know what value to put in jt",
+      "time": "14:26",
+      "timestamp": "1571261202.105900",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "I'm not aware of customers who depend on that field directly. I don't believe anyone needs to use it",
+      "time": "14:27",
+      "timestamp": "1571261226.106100",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-10-16.json",
+    "message_count": 16,
+    "start_time": "1571219639.093700",
+    "end_time": "1571261226.106100",
+    "is_thread": true
+  }
+}

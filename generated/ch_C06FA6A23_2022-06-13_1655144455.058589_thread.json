@@ -1,0 +1,78 @@
+{
+  "id": "ch_C06FA6A23_2022-06-13_1655144455.058589_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena",
+    "Heymian"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "For some reason, I’m seeing different data in dogfood vs localhost? I don’t have local db set up. Any thoughts?\nFYI, I deleted test_user4 in dogfood and maybe it takes a while to populate the change to localhost?\nI also delete test_user4 in localhost a bit after, but it keeps popping up even after a successful deletion\n\nURL: https://dogfood.instabase.com/apps/admin/spaces/uat-test-space/uat-test-subspace",
+      "time": "11:20",
+      "timestamp": "1655144455.058589",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Request url: https://localhost/api/v1/repos/uat-test-space/uat-test-subspace/acl/principal\nPayload:\n```{\nis_delete: true\nprincipal_name: \"test_user4\"\nprincipal_type: \"user\"\n}```\nResponse:\n```{\napp_errors: null\nfs_errors: null\nstatus: \"OK\"\n}```",
+      "time": "11:26",
+      "timestamp": "1655144795.370029",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "the changes should propagate immediately since both dogfood and your local env are using the same dbs, but it’s possible that something is getting cached in redis in your local env",
+      "time": "11:39",
+      "timestamp": "1655145577.183529",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ok. Let me try restarting redis",
+      "time": "11:40",
+      "timestamp": "1655145631.368829",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "yup correct, only the db and file-system are shared. other persistent storage services like redis, rabbitMQ, PV’s, elastic-search are isolated so you have to restart those in each env.",
+      "time": "11:43",
+      "timestamp": "1655145794.945589",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ok. After recompiling and restarting redis, it was working as expected. I’ll keep an eye on this issue and see if this pops up again",
+      "time": "12:24",
+      "timestamp": "1655148294.585909",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thanks for your help :wink:",
+      "time": "12:25",
+      "timestamp": "1655148306.820739",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-06-13.json",
+    "message_count": 7,
+    "start_time": "1655144455.058589",
+    "end_time": "1655148306.820739",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "id": "ch_C0516UPPMT3_2023-09-26_1695747157.879199_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "Nico",
+    "Rakesh",
+    "Varun Jain",
+    "Tom"
+  ],
+  "messages": [
+    {
+      "sender": "Nico",
+      "user_id": "U032TAS2YAW",
+      "message": "A prospect <mailto:romain@dotfile.com|romain@dotfile.com> or <mailto:romain.minaud@gmail.com|romain.minaud@gmail.com> also just got back to me saying that he's unable to upload their french commercial registers into the platform. Any workaround?",
+      "time": "09:52",
+      "timestamp": "1695747157.879199",
+      "is_reply": false
+    },
+    {
+      "sender": "Varun Jain",
+      "user_id": "U019KDMQL14",
+      "message": "Do we have any information on the type or size of files?",
+      "time": "10:03",
+      "timestamp": "1695747803.071829",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i'm looking into this",
+      "time": "10:05",
+      "timestamp": "1695747957.069189",
+      "is_reply": true
+    },
+    {
+      "sender": "Nico",
+      "user_id": "U032TAS2YAW",
+      "message": "@Varun Jain no - can ask",
+      "time": "10:07",
+      "timestamp": "1695748026.067429",
+      "is_reply": true
+    },
+    {
+      "sender": "Nico",
+      "user_id": "U032TAS2YAW",
+      "message": "@Kerry do you need that info?",
+      "time": "10:07",
+      "timestamp": "1695748063.234709",
+      "is_reply": true
+    },
+    {
+      "sender": "Tom",
+      "user_id": "UUEDM4T9R",
+      "message": "Thanks team",
+      "time": "10:07",
+      "timestamp": "1695748072.950769",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "@Nico I need to know what type of file it is.\n\n@Rakesh -- this is the trace (https://aihub.instabase.com/grafana/explore?orgId=1&left=%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D,%22query%22:%22e9595e958088cad1%22%7D%5D,%22range%22:%7B%22from%22:%22now-3h%22,%22to%22:%22now%22%7D%7D) (id: e9595e958088cad1) in grafana. the input looks to be a PDF, and it's erroring out at the stage\n```\"Failed to fetch attachments for file: romain_dotfile.com/my-repo/fs/Instabase (http://romain_dotfile.com/my-repo/fs/Instabase) Drive/aihub/184829aa-d679-4fb8-9124-3017fa307b2f/documents/out/pre_reader_reduce_udf/Extrait KBIS - SUD TOURISME_d91f11f58d8a6be0a3ed459b18c1f31172b05552017c57911fac488cdb970c95.pdf, err: <_io.BytesIO object at 0x7f92181aef90> (object 2 0, offset 331921): invalid object in page tree\" ```",
+      "time": "10:22",
+      "timestamp": "1695748976.292019",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "it looks like we are trying to fetch attachments for this PDF",
+      "time": "10:23",
+      "timestamp": "1695749016.567409",
+      "is_reply": true
+    },
+    {
+      "sender": "Nico",
+      "user_id": "U032TAS2YAW",
+      "message": "Thanks @Kerry, I've just asked",
+      "time": "10:24",
+      "timestamp": "1695749095.499679",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Our default digitize would fail if extracting an attachment that satisfies allowed file types fail. Do we want to ignore that for aihub in general ? Dont think we process that extracted attachment anyways through queries as such for now.",
+      "time": "10:25",
+      "timestamp": "1695749109.354569",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "it shouldn't fail the main file -- it should behave the same as how we treat email attachments",
+      "time": "10:26",
+      "timestamp": "1695749205.949279",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "If we fail to extract attachments from file, think we still fail. But if we fail to process /digitize extracted attachment - we still pass main file. Need to check back on this one.",
+      "time": "10:28",
+      "timestamp": "1695749290.847409",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i see; i think overall failing the entire file because we can't read an attachement is too aggressive; let's log a warning message in the flow and still process the rest",
+      "time": "10:29",
+      "timestamp": "1695749345.878419",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "should be a quick change",
+      "time": "10:29",
+      "timestamp": "1695749356.143879",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "is there anyway the customer can remove corrupted  attachments from a PDF? (like in Acrobat? somehow to unblock them)",
+      "time": "10:29",
+      "timestamp": "1695749392.454669",
+      "is_reply": true
+    },
+    {
+      "sender": "Rakesh",
+      "user_id": "U01668DGQCE",
+      "message": "Yes I see acrobat Pro / standard edition and some other PDF editors support that. Basic Reader does not have that functionality though.",
+      "time": "10:31",
+      "timestamp": "1695749516.639519",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "let's make a task to handle this more robustly. @Nico -- the short answer is their pdf file has some corrupted attachment that we can't read. we will make a change to relax attachment handling here; meanwhile if they can use Acrobat to remove attachments from the PDF & re-upload the file we should be able to process it. I did a quick google and here's a video on how to do it https://www.youtube.com/watch?v=u_KiP519nc0",
+      "time": "10:44",
+      "timestamp": "1695750257.280349",
+      "is_reply": true
+    },
+    {
+      "sender": "Tom",
+      "user_id": "UUEDM4T9R",
+      "message": "Thanks Kerry. @Nico do you have what you need to respond?",
+      "time": "10:49",
+      "timestamp": "1695750553.328639",
+      "is_reply": true
+    },
+    {
+      "sender": "Nico",
+      "user_id": "U032TAS2YAW",
+      "message": "Many thanks @Kerry! Yes all good",
+      "time": "10:49",
+      "timestamp": "1695750577.796109",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-09-26.json",
+    "message_count": 19,
+    "start_time": "1695747157.879199",
+    "end_time": "1695750577.796109",
+    "is_thread": true
+  }
+}

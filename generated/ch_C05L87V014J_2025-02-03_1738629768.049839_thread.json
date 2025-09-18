@@ -1,0 +1,61 @@
+{
+  "id": "ch_C05L87V014J_2025-02-03_1738629768.049839_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Sayan",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Running into another issue with crafting. A couple days ago, we made a migration (https://github.com/instabase/instabase/blob/ec627e6410d412e0de4ef358dfffdc7ce6e48e7d/shared-utils/go-utils/src/instabase/utils/db/migrations/data/platform/migrations/00000246_0000_create_jobs_metadata.json#L44) where we created a new table. That table is used when we're uploading files. However, running `echo \"use ibdb; show tables;\" | mysql -h mysql -u root | grep job_metadata` doesn't surface the table in crafting and gives the following error when uploading a file to a project :thread:\n\nShould the database migrate automatically or is there a command I can run to apply the most recent migrations?",
+      "time": "16:42",
+      "timestamp": "1738629768.049839",
+      "is_reply": false
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "```Merging staging directory failed. Failures: [AddFileFailure(reason=\"Could not copy testy_test/sayan.bhattacharjee_instabase.com/fs/Instabase Drive/aihub/0194ce58-50e6-7881-9129-61fbd4cc4419/documents/staging/900aa027-5b35-4096-b9cd-8fa2a0637a61/Updated_United_States_Passport_Card.jpg into testy_test/sayan.bhattacharjee_instabase.com/fs/Instabase Drive/aihub/0194ce58-50e6-7881-9129-61fbd4cc4419/documents/input: Failed to create a job entry in the job table. Error: failed to create job metadata: Error 1146 (42S02): Table 'ibdb.job_metadata' doesn't exist\", stage=<FailureStage.STAGING: 0>, document_name='Updated_United_States_Passport_Card.jpg', staging_file_path='testy_test/sayan.bhattacharjee_instabase.com/fs/Instabase Drive/aihub/0194ce58-50e6-7881-9129-61fbd4cc4419/documents/staging/900aa027-5b35-4096-b9cd-8fa2a0637a61/Updated_United_States_Passport_Card.jpg', raw_file_path=None, processed_file_path=None, input_file_id=None, project_doc_id=None)]```",
+      "time": "16:42",
+      "timestamp": "1738629779.134729",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "in answer to the latter question, i've been running the commands here (https://docs.google.com/document/d/1mM32cCbi4NFtphnlu1T8rtsc0lsfj3FZWfNrKmui34M/edit?tab=t.0#heading=h.uigwvfmjos5m) to apply migrations to local database",
+      "time": "16:46",
+      "timestamp": "1738629987.306259",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "Nice! Thanks @ayesha.ali\n\nI'll follow up on the DB doc but the main difference in crafting is the host for  `INSTABASE_BACKEND_DB_PARAMS` is `mysql`  so the command should be\n```export INSTABASE_BACKEND_DB_PARAMS=\"--username=root --host=mysql --database=ibdb --port=3306\"\nbazel run tools/dbmigrate```\nAfter that, I can see the new table in the db",
+      "time": "16:58",
+      "timestamp": "1738630726.580689",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayan",
+      "user_id": "U07TLK5RJBS",
+      "message": "File was uploaded successfully after :slightly_smiling_face:",
+      "time": "17:04",
+      "timestamp": "1738631095.435279",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2025-02-03.json",
+    "message_count": 5,
+    "start_time": "1738629768.049839",
+    "end_time": "1738631095.435279",
+    "is_thread": true
+  }
+}

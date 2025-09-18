@@ -1,0 +1,69 @@
+{
+  "id": "ch_C06FA6A23_2023-09-25_1695658886.137199_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Sayd"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Hi folks! Recording  (https://drive.google.com/file/d/1Mw3Yq3DyIhcy7jrbT4mi3tKZpjb0O5Oj/view?usp=drive_link)and slides (https://docs.google.com/presentation/d/1wIfHBO4FozGCQUw-cn00axAzyXm0n0M3ToD1-fFEpTI/edit?usp=drive_link) for the Database Tech Talk is here. We covered Schema Design and Debugging Tools during the talk. Thanks for tuning in! If you have any questions about the talk, let me know.",
+      "time": "09:21",
+      "timestamp": "1695658886.137199",
+      "is_reply": false
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "Thanks for the talk, very useful! I had a question about how you use `grpcurl` for endpoints that you need to auth for. For example,  this endpoint: `ai_hub_service.AIHubService.CreateProjectClasses`\n\nWhat I tried was including a header with authorization bearer token, but it didn't work.\n```grpcurl --plaintext -H \"Authorization: Bearer bearer-token-generated-in-settings\" -d '{\"classes\": [{\"name\": \"Class Example\", \"project_uuid\": \"d400fabf-fa89-4a84-a31d-8ec9664942a8\", \"description\": \"GRPC endpoint created this class\"}]}' localhost:8600 ai_hub_service.AIHubService.CreateProjectClasses```\nGetting the following:\n```ERROR:\n  Code: Unauthenticated\n  Message: Access denied```",
+      "time": "11:45",
+      "timestamp": "1695667522.105049",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "For most GRPC endpoints, all you need to do is include a username in the `context` field. (the Python layer does authentication; Go does authorization)",
+      "time": "12:22",
+      "timestamp": "1695669766.939649",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```grpcurl --plaintext -d '{\"context\": {\"username\": \"YOUR_NAME\"}, ...<rest of request>}' ...```",
+      "time": "12:23",
+      "timestamp": "1695669791.940619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Sometimes you may also need the `orgname` in the context too.",
+      "time": "12:23",
+      "timestamp": "1695669813.562259",
+      "is_reply": true
+    },
+    {
+      "sender": "Sayd",
+      "user_id": "U03F7QMAU8N",
+      "message": "perfect, thank you",
+      "time": "12:27",
+      "timestamp": "1695670057.260339",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-09-25.json",
+    "message_count": 6,
+    "start_time": "1695658886.137199",
+    "end_time": "1695670057.260339",
+    "is_thread": true
+  }
+}

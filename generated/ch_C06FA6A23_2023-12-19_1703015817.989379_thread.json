@@ -1,0 +1,46 @@
+{
+  "id": "ch_C06FA6A23_2023-12-19_1703015817.989379_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Serena",
+    "abhitaker"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm this breaks running these services locally in Docker and also apparently breaks CI\n\nhttps://instabase.slack.com/archives/C039JKRCE2H/p1703013814047669",
+      "time": "11:56",
+      "timestamp": "1703015817.989379",
+      "is_reply": false
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "This is because the default `build-env-local` and `build-env-docker` targets expect `$(current_dir)/deployment/env/deployment-config.json` to exist.\n\n```build-env-local:\n\tmkdir -p $(current_dir)/tmp\n\tpython $(project_dir)/shared-utils/build-utils/stack-local/get-env-local.py \\\n\t$(current_dir)/deployment/env/deployment-config.json \\\n\t$(project_dir)/shared-utils/build-utils/shared/env-local.json \\\n\t$(current_dir)/deployment/local/docker-env.json > $(current_dir)/tmp/env_local\n\techo \"export LEGACY='$(LEGACY)'\" >> $(current_dir)/tmp/env_local\n\nbuild-env-docker:\n\tmkdir -p $(current_dir)/tmp/hotconfig && touch $(current_dir)/tmp/hotconfig/base-hot-config.yml\n\tCONFIG_NAME=docker-local \\\n\tpython $(project_dir)/shared-utils/build-utils/stack-local/get-env-local.py \\\n\t$(current_dir)/deployment/env/deployment-config.json \\\n\t$(project_dir)/shared-utils/build-utils/shared/env-local.json \\\n\t$(current_dir)/deployment/local/docker-env.json > $(current_dir)/tmp/docker_env_local.list```",
+      "time": "15:15",
+      "timestamp": "1703027705.329929",
+      "is_reply": true
+    },
+    {
+      "sender": "abhitaker",
+      "user_id": "URXC02W58",
+      "message": "Replied in the issue thread - https://instabase.slack.com/archives/C039JKRCE2H/p1703057304071129?thread_ts=1703013814.047669&cid=C039JKRCE2H",
+      "time": "23:29",
+      "timestamp": "1703057370.006879",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-12-19.json",
+    "message_count": 3,
+    "start_time": "1703015817.989379",
+    "end_time": "1703057370.006879",
+    "is_thread": true
+  }
+}

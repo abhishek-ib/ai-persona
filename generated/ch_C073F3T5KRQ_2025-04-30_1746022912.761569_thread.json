@@ -1,0 +1,334 @@
+{
+  "id": "ch_C073F3T5KRQ_2025-04-30_1746022912.761569_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Cody Boggs",
+    "Goto Tools Go Links"
+  ],
+  "messages": [
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The DROP TABLE error messages are red herrings",
+      "time": "07:21",
+      "timestamp": "1746022912.761569",
+      "is_reply": false
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "The real problem is that tests are timing out:\n\n```[2025-04-29T22:29:33.713Z] -- Test timed out at 2025-04-29 22:29:27 UTC --\n[2025-04-29T22:29:33.713Z] Received SIGTERM, printing stack traces of all goroutines:\n[2025-04-29T22:29:33.713Z] goroutine 13 [running]:\n[2025-04-29T22:29:33.713Z] github.com/bazelbuild/rules_go/go/tools/bzltestutil.RegisterTimeoutHandler.func1() (http://github.com/bazelbuild/rules_go/go/tools/bzltestutil.RegisterTimeoutHandler.func1())\n[2025-04-29T22:29:33.713Z] \texternal/io_bazel_rules_go/go/tools/bzltestutil/timeout.go:36 +0x48\n[2025-04-29T22:29:33.713Z] created by github.com/bazelbuild/rules_go/go/tools/bzltestutil.RegisterTimeoutHandler (http://github.com/bazelbuild/rules_go/go/tools/bzltestutil.RegisterTimeoutHandler) in goroutine 1\n[2025-04-29T22:29:33.713Z] \texternal/io_bazel_rules_go/go/tools/bzltestutil/timeout.go:33 +0x96\n[2025-04-29T22:29:33.713Z] \n[2025-04-29T22:29:33.713Z] goroutine 1 [chan receive, 59 minutes]:\n[2025-04-29T22:29:33.713Z] testing.(*T).Run(0xc0002f9a40, {0x1583840?, 0xc0004b5a90?}, 0x16d4ed8)\n[2025-04-29T22:29:33.713Z] \tbazel-out/k8-fastbuild-ST-b33d65c724e6/bin/external/io_bazel_rules_go/stdlib_/src/testing/testing.go:1859 +0x431\n[2025-04-29T22:29:33.713Z] testing.runTests.func1(0xc0002f9a40)\n[2025-04-29T22:29:33.713Z] \tbazel-out/k8-fastbuild-ST-b33d65c724e6/bin/external/io_bazel_rules_go/stdlib_/src/testing/testing.go:2279 +0x37\n[2025-04-29T22:29:33.713Z] testing.tRunner(0xc0002f9a40, 0xc0004b5bd0)\n[2025-04-29T22:29:33.713Z] \tbazel-out/k8-fastbuild-ST-b33d65c724e6/bin/external/io_bazel_rules_go/stdlib_/src/testing/testing.go:1792 +0xf4\n[2025-04-29T22:29:33.713Z] testing.runTests(0xc00037c288, {0x22592a0, 0x1, 0x1}, {0x4151e0?, 0xc0002f9340?, 0x0?})\n[2025-04-29T22:29:33.713Z] \tbazel-out/k8-fastbuild-ST-b33d65c724e6/bin/external/io_bazel_rules_go/stdlib_/src/testing/testing.go:2277 +0x4b4\n[2025-04-29T22:29:33.713Z] testing.(*M).Run(0xc00037b180)\n[2025-04-29T22:29:33.713Z] \tbazel-out/k8-fastbuild-ST-b33d65c724e6/bin/external/io_bazel_rules_go/stdlib_/src/testing/testing.go:2142 +0x64a\n[2025-04-29T22:29:33.713Z] main.main()\n[2025-04-29T22:29:33.713Z] \tbazel-out/k8-fastbuild/bin/shared-utils/go-utils/src/instabase/utils/db/tools/tools_test_/testmain.go:121 +0x265\n[2025-04-29T22:29:33.713Z] \n[2025-04-29T22:29:33.713Z] goroutine 7 [select]:\n[2025-04-29T22:29:33.713Z] go.opencensus.io/stats/view.(*worker).start(0xc0000c5d00) (http://go.opencensus.io/stats/view.(*worker).start(0xc0000c5d00))\n[2025-04-29T22:29:33.713Z] \texternal/io_opencensus_go/stats/view/worker.go:292 +0x9f\n[2025-04-29T22:29:33.713Z] created by go.opencensus.io/stats/view.init.0 (http://go.opencensus.io/stats/view.init.0) in goroutine 1\n[2025-04-29T22:29:33.713Z] \texternal/io_opencensus_go/stats/view/worker.go:34 +0x8d\n[2025-04-29T22:29:33.713Z] \n[2025-04-29T22:29:33.713Z] goroutine 12 [syscall]:\n[2025-04-29T22:29:33.713Z] os/signal.signal_recv()\n[2025-04-29T22:29:33.713Z] \tbazel-out/k8-fastbuild-ST-b33d65c724e6/bin/external/io_bazel_rules_go/stdlib_/src/runtime/sigqueue.go:152 +0x29\n[2025-04-29T22:29:33.713Z] os/signal.loop()\n[2025-04-29T22:29:33.713Z] \tbazel-out/k8-fastbuild-ST-b33d65c724e6/bin/external/io_bazel_rules_go/stdlib_/src/os/signal/signal_unix.go:23 +0x13\n[2025-04-29T22:29:33.713Z] created by os/signal.Notify.func1.1 in goroutine 1\n[2025-04-29T22:29:33.713Z] \tbazel-out/k8-fastbuild-ST-b33d65c724e6/bin/external/io_bazel_rules_go/stdlib_/src/os/signal/signal.go:152 +0x1f\n[2025-04-29T22:29:33.713Z] ```",
+      "time": "07:22",
+      "timestamp": "1746022945.275729",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go/tools/bzltestutil",
+      "time": "07:22",
+      "timestamp": "1746022947.832729",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/stdlib_/src/os/signal/signal_unix",
+      "time": "07:22",
+      "timestamp": "1746022949.009859",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/stdlib_/src/runtime/sigqueue",
+      "time": "07:22",
+      "timestamp": "1746022949.105249",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go/tools/bzltestutil",
+      "time": "07:22",
+      "timestamp": "1746022949.435069",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/stats/view/worker",
+      "time": "07:22",
+      "timestamp": "1746022949.444539",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/stdlib_/src/testing/testing",
+      "time": "07:22",
+      "timestamp": "1746022949.451749",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/stdlib_/src/testing/testing",
+      "time": "07:22",
+      "timestamp": "1746022949.453079",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/stdlib_/src/testing/testing",
+      "time": "07:22",
+      "timestamp": "1746022949.454879",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go/tools/bzltestutil",
+      "time": "07:22",
+      "timestamp": "1746022949.455659",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/stdlib_/src/testing/testing",
+      "time": "07:22",
+      "timestamp": "1746022949.459129",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go/tools/bzltestutil/timeout",
+      "time": "07:22",
+      "timestamp": "1746022949.461589",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go/tools/bzltestutil/timeout",
+      "time": "07:22",
+      "timestamp": "1746022949.462849",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/stdlib_/src/testing/testing",
+      "time": "07:22",
+      "timestamp": "1746022949.462989",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/stats/view/worker",
+      "time": "07:22",
+      "timestamp": "1746022949.465489",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/stdlib_/src/os/signal/signal",
+      "time": "07:22",
+      "timestamp": "1746022949.482169",
+      "is_reply": true
+    },
+    {
+      "sender": "Goto Tools Go Links",
+      "user_id": "U07NAC7GVNY",
+      "message": "https://goto.tools/go/tools/bzltestutil",
+      "time": "07:22",
+      "timestamp": "1746022949.585959",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "It looks like the slow test is:\n\n```[2025-04-29T22:37:21.455Z] instabase/utils/db/tools.(*DBRollbackTestSuite).SetUpTest(0xc00037a480, 0xc000e5c2d0)````\nBut the test itself may not be slow (in fact, I doubt it is -- it's not a super fast test, but it's an old test we haven't had problems with until now). I think it might be a problem w/ the CI DB.",
+      "time": "07:24",
+      "timestamp": "1746023066.014139",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think this gets at my earlier post about CI getting slower lately (https://instabase.slack.com/archives/C06FA6A23/p1745940792757079?thread_ts=1745853940.538359). We still don't have anyone looking into it. If this continues, I'm happy to volunteer to look into it -- but it will delay other work.",
+      "time": "07:25",
+      "timestamp": "1746023118.054979",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Oops, I take it back. @Cody Boggs volunteered to look when he gets back. https://instabase.slack.com/archives/C06FA6A23/p1745943342974149?thread_ts=1745853940.538359&cid=C06FA6A23",
+      "time": "07:28",
+      "timestamp": "1746023286.918609",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I can definitely try to put together some better details on what is slow consistently, but fixing it might well be beyond my know-how. :sweat_smile:\n@mfichman if I can pinpoint any DB-related issues, I'll likely be pestering you for some help to fix",
+      "time": "07:31",
+      "timestamp": "1746023513.697719",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "@Cody Boggs do you know where the CI DB(s) are hosted in RDS? If we can find it, we can turn on advanced perf monitoring and look to see if it's overloaded.",
+      "time": "08:09",
+      "timestamp": "1746025742.493439",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I think they're just pods in an EKS cluster, actually. There's some bizarre history there I'm sure, but yea. I haven't much context on it, I'll track them down",
+      "time": "08:10",
+      "timestamp": "1746025836.037299",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I'll also put on the record, once more - it's super weird to me that our \"unit tests\" use live remote databases. :man-shrugging::skin-tone-3:",
+      "time": "08:11",
+      "timestamp": "1746025873.991169",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "We call them \"unit tests,\" but the DB tests are really integration tests. It's somewhat semantic, since they are testing only the Database Access Layer \"unit.\"",
+      "time": "08:13",
+      "timestamp": "1746026024.694819",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "You have no idea how many bugs we've caught by running all the DB tests against all the dialects...",
+      "time": "08:13",
+      "timestamp": "1746026038.886819",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Cthulhu help us all, here's the list of remote services CI needs apparently\n```MYSQL_HOST=test-mysql.instabase.internal \\\nPOSTGRES_HOST=test-postgres.instabase.internal \\\nORACLE_HOST=test-oracle.instabase.internal \\\nSQLSERVER_HOST=test-sqlserver.instabase.internal \\\nES_HOST=test-elasticsearch.instabase.internal \\\nES_8_HOST=test-elasticsearch-8.instabase.internal \\\nOS_HOST=test-opensearch.instabase.internal \\\nOSV1_HOST=test-opensearch-v1.instabase.internal \\\nAZURITE_HOST=test-azurite.instabase.internal \\```",
+      "time": "08:14",
+      "timestamp": "1746026075.909059",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oh I agree we've caught a ton of bugs, but these running as part of _pre merge_ 'unit' tests means our pre-merge tests are... integration tests. Which is not a thing that makes sense to me when we also apparently expect it to be fast. That's a trade-off I don't think folks are ready to make, despite the vibes",
+      "time": "08:15",
+      "timestamp": "1746026104.737769",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Yarp. I wonder if we can drop testing on all those Elastic variants though.",
+      "time": "08:15",
+      "timestamp": "1746026108.602189",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think we can \"simplify\" down to one supported version at this point. I'll sync w/ Heymian on that.",
+      "time": "08:15",
+      "timestamp": "1746026128.194249",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": ":+1: Yea I imagine so",
+      "time": "08:15",
+      "timestamp": "1746026147.845199",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I _think_ those other DBMS urls are for services running in core-infra, which means they're hair-pinning which is - at a minimum - expensive. I'll see if I can just re-point those to the internal cluster URLs",
+      "time": "08:16",
+      "timestamp": "1746026186.734409",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Are those DBs in the instabase-test AWS account? I can't seem to find them :thinking_face:",
+      "time": "08:19",
+      "timestamp": "1746026374.144109",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I looked in instabase-dev too",
+      "time": "08:20",
+      "timestamp": "1746026438.853789",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "OH maybe they're not running in RDS...?",
+      "time": "08:21",
+      "timestamp": "1746026471.492249",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I forget what Sean did here",
+      "time": "08:21",
+      "timestamp": "1746026490.899569",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "That's what I meant sorry lol I wasn't clear\n\nyea, these are not in RDS, because... :man-shrugging::skin-tone-3:\n\nThey're in `core-infrastructure`, EKS cluster is `core-infra-main`. I don't think you can access it right now, I'll figure out something there shortly hopefully... but for the moment this seems a bit fishy:\n\n```kubectl --namespace test-services get pods\n\nNAME                                  READY   STATUS      RESTARTS   AGE\nazurite-747589c456-7577k              1/1     Running     0          3h21m\nbounce-test-services-29100240-bl2t4   0/1     Completed   0          3h21m\nelasticsearch-77dff7779-gg5zc         1/1     Running     0          3h21m\nelasticsearch-8-f9c95ddd9-jzprj       1/1     Running     0          3h21m\nmysql-6f4f99854b-ptpcb                1/1     Running     0          3h21m\nopensearch-5478b6ff7d-99csl           1/1     Running     0          3h21m\nopensearch-v1-77b56d8f68-8spd2        1/1     Running     0          3h21m\noracle-844f9fd56f-7rcqq               2/2     Running     0          3h21m\npostgres-5964b645f-6wlt9              1/1     Running     0          3h21m\nsqlserver-5d4fd4b59b-m2jcj            1/1     Running     0          3h21m```\nThey all started up at the same time, which makes me thing they share a node and it rolled. I'll see if they're all crowded into one node or some such",
+      "time": "08:22",
+      "timestamp": "1746026556.941289",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Let's continue in <#C08Q53LMNNA|>",
+      "time": "08:27",
+      "timestamp": "1746026843.476019",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2025-04-30.json",
+    "message_count": 39,
+    "start_time": "1746022912.761569",
+    "end_time": "1746026843.476019",
+    "is_thread": true
+  }
+}

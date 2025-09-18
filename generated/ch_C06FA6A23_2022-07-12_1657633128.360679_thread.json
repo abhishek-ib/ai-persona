@@ -1,0 +1,150 @@
+{
+  "id": "ch_C06FA6A23_2022-07-12_1657633128.360679_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "Xindi Xu",
+    "Ashley Sun"
+  ],
+  "messages": [
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "Hi, I'm having a lot of trouble restarting instabase, and I got this error trying to start redis, does anyone know what this could be caused by? (will paste in reply)",
+      "time": "06:38",
+      "timestamp": "1657633128.360679",
+      "is_reply": false
+    },
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "``` make build-docker run-docker\ndocker build --build-arg BASE_PY_IMAGE_TAG=22.06.21.05.20.38 --build-arg PY_VERSION=\"\" \\\n\t--build-arg BUILD_TLS=no -t instabase/redis .\n[+] Building 753.2s (7/15)\n => [internal] load build definition from Dockerfile                                                                                                                    0.1s\n => => transferring dockerfile: 1.24kB                                                                                                                                  0.0s\n => [internal] load .dockerignore                                                                                                                                       0.0s\n => => transferring context: 2B                                                                                                                                         0.0s\n => [internal] load metadata for gcr.io/instabase-build/container-base-py37:22.06.21.05.20.38 (http://gcr.io/instabase-build/container-base-py37:22.06.21.05.20.38)                                                                           2.4s\n => [ 1/22] FROM gcr.io/instabase-build/container-base-py37:22.06.21.05.20.38@sha256:0aa8042d46e9df1d8797a0bdb962abc5d1af773c9189ffe25bd6e7c915900878 (http://gcr.io/instabase-build/container-base-py37:22.06.21.05.20.38@sha256:0aa8042d46e9df1d8797a0bdb962abc5d1af773c9189ffe25bd6e7c915900878)                   0.0s\n => [internal] load build context                                                                                                                                       1.0s\n => => transferring context: 62.27kB                                                                                                                                    0.7s\n => CACHED [ 2/11] WORKDIR /home/ibuser                                                                                                                                 0.0s\n => CACHED [ 3/11] RUN apt-get update -y && apt-get install -y build-essential wget && apt-get install -y libssl-dev &&  wget http://download.redis.io/releases/redis-  0.0s\n => [ 4/11] RUN if [ \"no\" = \"yes\" ] ; then echo \"Building with TLS Support\" && cd redis-6.2.6 && make BUILD_TLS=yes; else echo \"Building without TLS Support\" && cd   750.6s\n => => # checking whether byte ordering is bigendian... no\n => => # checking size of void *... 8\n => => # checking size of int... 4\n => => # checking size of long... 8\n => => # checking size of long long... 8\n => => # checking size of intmax_t...\ninvalid character 'c' looking for beginning of value\nmake: *** [build-docker] Error 1```",
+      "time": "06:39",
+      "timestamp": "1657633161.790049",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Are you seeing this error on master?",
+      "time": "06:51",
+      "timestamp": "1657633878.795909",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "I'm seeing it on my own branch but ill try switching to master and using redis with brew",
+      "time": "06:54",
+      "timestamp": "1657634048.453149",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Well, I’m compiling redis on master and stuck on the same thing:\n`=> [ 4/11] RUN if [ \"no\" = \"yes\" ] ; then echo \"Building with TLS Support\" && cd redis-6.2.6 && make BUILD_TLS=yes; else echo \"Building without TLS Support\" && cd redis-6.  430.4s`\n\nUpdate: it finished:\n`redis compiled in 1017.43 seconds`",
+      "time": "06:55",
+      "timestamp": "1657634111.225829",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Are you able to just run `ppy start redis` (without compiling it)?",
+      "time": "06:59",
+      "timestamp": "1657634346.307149",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "wait where was the comment that you pasted earlier? i dont think i have ppy yet",
+      "time": "07:04",
+      "timestamp": "1657634687.568149",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Ah, my bad. `ppy = python provisioner.py` . You can add this line to your zshrc `ppy() { python provisioner.py \"$@\"; }` to use `ppy …`",
+      "time": "07:05",
+      "timestamp": "1657634727.778229",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "ohh ok thanks",
+      "time": "07:06",
+      "timestamp": "1657634807.402019",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "ah i get this: python provisioner.py start redis\n```ERROR - Could not start service - redis. Error=b\"Unable to find image 'instabase/redis:latest' locally\\ndocker: Error response from daemon: pull access denied for instabase/redis, repository does not exist or may require 'docker login': denied: requested access to the resource is denied.\\nSee 'docker run --help'.\\nmake: *** [run-docker] Error 125\\n\"```",
+      "time": "07:08",
+      "timestamp": "1657634910.016539",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "try `docker login` and log in with your password!",
+      "time": "07:08",
+      "timestamp": "1657634928.172819",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "also check if your docker is running",
+      "time": "07:08",
+      "timestamp": "1657634938.282659",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "okay",
+      "time": "07:09",
+      "timestamp": "1657634954.883549",
+      "is_reply": true
+    },
+    {
+      "sender": "Ashley Sun",
+      "user_id": "U03F7QMCVRU",
+      "message": "my docker is running and i ran docker login successfully i think, but got the same error",
+      "time": "07:09",
+      "timestamp": "1657634982.194369",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hm… okay. I’m not sure if it worth trying out and I’m not sure if this is related\n\nI’ve run into issues with running redis in docker with M1. I ended up run redis locally:\n\n> I was digging thru the error stack trace and a bunch of github issues. It looks like the root cause is this: `qemu: uncaught target signal 11 (Segmentation fault) - core dumped`. Basically qemu doesn’t have a docker image built for M1. I’ve tried building docker against arm64, using redis from redisfab, but none of them provides a consistently working solution.\nFor now, I installed redis with brew with M1 workaround as mentioned in this doc (https://docs.google.com/document/d/1yQOCxOISV_ukUxXdPJDoN-rERtOhdVRe7zv1swF1igw/edit#heading=h.v869954022xp) with `brew install redis`. Then run redis in brew with `brew services start redis`. Then, I ran `ppy start redis` as before.",
+      "time": "07:12",
+      "timestamp": "1657635148.081109",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "you can also try in the docker UI to run the redis container",
+      "time": "07:13",
+      "timestamp": "1657635239.450359",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-07-12.json",
+    "message_count": 16,
+    "start_time": "1657633128.360679",
+    "end_time": "1657635239.450359",
+    "is_thread": true
+  }
+}

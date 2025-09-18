@@ -1,0 +1,102 @@
+{
+  "id": "ch_C06FA6A23_2019-08-09_1565397276.299900_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Kerry",
+    "dlluncor",
+    "Jonathan Shih"
+  ],
+  "messages": [
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "anyone has any idea what this error message could mean when running a flow binary? `Reduce V2 Flow Exception: ibflow is unreadable: workflows/`\nFRB is running a flow we sent them, we tested on prod things seem to all work fine… but they reported this error message\ncc @Jonathan Shih @dlluncor any idea?",
+      "time": "17:34",
+      "timestamp": "1565397276.299900",
+      "is_reply": false
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "# type: (Text, Union[Text, bytes]) -> Tuple[IBFlow, Text]\n    try:\n      ibflow_dict = json.loads(ibflow_txt)\n    except ValueError as e:\n      return None, u’ibflow is unreadable: {}’.format(ibflow_path)\n    return IBFlow(ibflow_path, ibflow_dict), None",
+      "time": "18:11",
+      "timestamp": "1565399507.300600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "for some reason it looks like “workflows/” is being considered a “.ibflow” because we are trying to parse it as JSON",
+      "time": "18:12",
+      "timestamp": "1565399537.300800",
+      "is_reply": true
+    },
+    {
+      "sender": "Jonathan Shih",
+      "user_id": "UGJD45BCP",
+      "message": "@dlluncor i think we figured out the problem. didn’t realize that when things are classified as other, and there is no other.ibflow, it will not skip it",
+      "time": "18:13",
+      "timestamp": "1565399580.301000",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Oh interesting. Why does this specific bug show up though?",
+      "time": "18:32",
+      "timestamp": "1565400772.301200",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "hey i can clarify this ^^\nso the problem seems to be that in an ensemble classifier if we assign a document to a class that doesn’t have a corresponding ibflow, the flow binary will throw an exception & terminate instead of logging it as an error and move on to the next file",
+      "time": "18:33",
+      "timestamp": "1565400795.301400",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "at least we’re able to reproduce this behavior on prod. it is throwing a very different error message (not the `ibflow is unreadable` msg), but that might just be because FRB is on an older version",
+      "time": "18:34",
+      "timestamp": "1565400880.301600",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Oh gotcha.",
+      "time": "18:35",
+      "timestamp": "1565400943.301900",
+      "is_reply": true
+    },
+    {
+      "sender": "Kerry",
+      "user_id": "UCX3VGDJR",
+      "message": "i think the behavior is different from an auto-classifier though - when an auto-classifier assign something to a class that doesn’t have a corresponding ibflow, the binary just moves on to the next file.",
+      "time": "18:37",
+      "timestamp": "1565401065.302100",
+      "is_reply": true
+    },
+    {
+      "sender": "dlluncor",
+      "user_id": "U3UA06MFD",
+      "message": "Classifier is treated as an interface inside of Flow -- so I'd be surprised if there is anything different in the Flow code based on the auto vs ensemble classifier",
+      "time": "18:38",
+      "timestamp": "1565401137.302300",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2019-08-09.json",
+    "message_count": 10,
+    "start_time": "1565397276.299900",
+    "end_time": "1565401137.302300",
+    "is_thread": true
+  }
+}

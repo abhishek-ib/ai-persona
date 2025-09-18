@@ -1,0 +1,54 @@
+{
+  "id": "ch_C06FA6A23_2023-01-05_1672909203.370389_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Dominic Fannjiang",
+    "Franklin Chian",
+    "andy"
+  ],
+  "messages": [
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "Your logic looks correct. It’s the same pattern that exists in more sophisticated `ParsedIBOCR` functions like `split_records_by_page` and `get_joined_records_by_ranges`\n\nWhat are you seeing when you say that you can “never change ibocr metadata”?",
+      "time": "01:00",
+      "timestamp": "1672909203.370389",
+      "is_reply": false
+    },
+    {
+      "sender": "Franklin Chian",
+      "user_id": "U01PESF24HW",
+      "message": "+1 this is the workflow that is done in flow review. happy to hop on a call tomorrow if you want to walk through it in person but within flow correction when we do record remapping we know for a fact that the record's refined phrases get assigned at a later point in the workflow than the record getting split, so you should be able to change metadata.",
+      "time": "01:46",
+      "timestamp": "1672912006.203829",
+      "is_reply": true
+    },
+    {
+      "sender": "Dominic Fannjiang",
+      "user_id": "U02TWH1FSG0",
+      "message": "\"never change ibocr metadata\" <- I mean that it seems like some metadata (e.g. refined phrases - set_refined_phrases isn't changing the refined phrases) that is set by the `set_from_deepcopy_of_record` cannot be changed (but somehow I can successfully change `lines, text` using set_lines, set_text).\n\nit seems like other places in our codebase do `builder = record.as (http://record.as)_builder()` instead of `set_from_deepcopy_of_record` , and this other method allows me to change the refined phrases! although caveat is that for `builder = record.as (http://record.as)_builder()` , changes I make to the builder will reflect in the original `record` object, so I might do a combination of both to effectively create a new record that I can change.",
+      "time": "09:24",
+      "timestamp": "1672939454.821519",
+      "is_reply": true
+    },
+    {
+      "sender": "andy",
+      "user_id": "U0130FUMPN3",
+      "message": "ya `.as_builder()` returns a shallow Builder object. All the internal objects are still shared with the `IBOCRRecord` object. I would try to debug this by using a debugger to see how the record copy is being created. We create a deep copy just by exporting the record as a dict using `as_dict()`, and then we create a new builder object using `build_from_record_dict()`.\n\nThere also isn’t any unique setting logic to `set_refined_phrases()`, so I would also double check that the new refined phrases that you are passing in there are correct.",
+      "time": "17:41",
+      "timestamp": "1672969317.979889",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2023-01-05.json",
+    "message_count": 4,
+    "start_time": "1672909203.370389",
+    "end_time": "1672969317.979889",
+    "is_thread": true
+  }
+}

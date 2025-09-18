@@ -1,0 +1,154 @@
+{
+  "id": "ch_C0516UPPMT3_2025-04-17_1744910876.662119_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "david.lee",
+    "prateek.tenkale",
+    "hannah",
+    "jack.robbins",
+    "Nikolaos Kofinas",
+    "Kaustubh (KD)",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "Hi team,\n\nI'm supporting a Citi team building out a POC to show their customer soon. They were struggling to understand a few things today and got frustrated, so here's some feedback that double as support request. This (https://aihub.instabase.com/build/0196015b-8f67-747e-a558-8f1c7c58c68f) is the link to the project where this feedback is coming from.\n\n1. (SS1 & SS2) Lots of OCR confidence score is unknown. I thought it was related to This ticket (https://instabase.atlassian.net/browse/EPD-3885) but one of the docs with OCR score is actually page 2, so I'm not sure if it's related. \n2. (SS1, SS3, SS4, SS5, SS6) This address extraction returns 1 \"correct value\" (0107 OSLO, NORWAY) and the rest return wrong values. They are struggling to understand how to interpret this, because they all look almost identical. The one with the correct value has 91% model confidence and 90% OCR confidence, while the others have <70% model confidence and unknown OCR confidence.\n3. Is there anything besides the whitepaper that explains how to interpret our model confidence score? Any technical implementation doc I can look at and distill for the customer?\n4. They have a few custom fields that are dependent on other fields that they'd like to rerun after human review, if any of the values change (so this ticket (https://instabase.atlassian.net/browse/EPD-4151)). Is there a way to manually rerun extraction with edited values?\n5. (SS7) They noticed that some values were different between Build and App Run. `Bo Name` (it's not very well defined, but still) is correctly extracted in Build with 89+% confidence, but all of them returned \"No value found\" in the app run. This ticket (https://instabase.atlassian.net/browse/EPD-2900) tracks it\nWith the combination of 2 and 5, they're struggling to see how our results will be reliable. I can find some messaging around 5, but I'd love some product & engineering help with others",
+      "time": "10:27",
+      "timestamp": "1744910876.662119",
+      "is_reply": false
+    },
+    {
+      "sender": "hannah",
+      "user_id": "U01385H7VJL",
+      "message": "This is really good feedback and aligns with a lot of what we’re considering for the roadmap cc @Kaustubh (KD) @jack.robbins for context",
+      "time": "10:54",
+      "timestamp": "1744912450.979769",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "1. Yeah @Serena do we know why the OCR confidence would be unknown? This feels like a bug, but keep me honest if we need better UX treatment.\n2. Are these top 3 and bottom 3 the same docs? cc: @Nikolaos Kofinas for context. @david.lee I would love to play with this project or recreate it. I'm so curious to see how this changes with reasoning fields also\n3. I don't think we have any good material here partly because what we do is just a combination of log-prob calcs and asking the LLM. @Anil since relevant to our discussion as well in roadmap. Anant had feedback and anecdotally our sol eng teams don't have any confidence in confidence scores (no pun intended :disappointed: ). Let's bring this to the problem statement. cc: @margaret.tomaszczuk as well. \n4. Will let @jack.robbins and @andy comment there\n5. @david.lee do you know if these are text extractions only? They behave differently than all other fields (in regards to app vs build). Other fields maintain similar behavior",
+      "time": "11:47",
+      "timestamp": "1744915649.188249",
+      "is_reply": true
+    },
+    {
+      "sender": "jack.robbins",
+      "user_id": "U07AZ2E1BRS",
+      "message": "On 4, not today, we only do re-extraction after a reviewer re-classifies a document. But it's likely something we will start to look at from a design & requirements perspective soon.",
+      "time": "12:09",
+      "timestamp": "1744916988.808279",
+      "is_reply": true
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "@Kaustubh (KD)\n2. Screenshots 3-6 are technically different docs but are almost identical. But they return different results. I can invite you to the citi org if you want to play around with a copy yourself\n3. Understood, thanks. I'll probably just share the whitepaper\n5. Yes, these are text extractions only. So if they use doc reasoning, the results will be more consistent between Build vs. App?",
+      "time": "12:50",
+      "timestamp": "1744919409.382709",
+      "is_reply": true
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "@jack.robbins Okay got it, sounds good. Please let me know when you are, and I'll share some thoughts I have",
+      "time": "12:50",
+      "timestamp": "1744919441.394739",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "@david.lee maybe you and I can run an experiment before we recommend any action. Can I put some time on your calendar?",
+      "time": "12:51",
+      "timestamp": "1744919491.091909",
+      "is_reply": true
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "yes please! @Kaustubh (KD)",
+      "time": "12:52",
+      "timestamp": "1744919521.810459",
+      "is_reply": true
+    },
+    {
+      "sender": "Kaustubh (KD)",
+      "user_id": "U06G3LGPDFW",
+      "message": "Sent",
+      "time": "12:53",
+      "timestamp": "1744919611.366159",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for 1, i see this error in the api-server logs (https://aihub.instabase.com/grafana/goto/izYCT71HR?orgId=1), which comes from this line (https://github.com/instabase/instabase/blob/dedfc3b/shared-utils/py-utils/ocr-client-lib/src/py/instabase/ocr/client/libs/ibocr.py#L4516)\n```Extracted fields JSON was not in expected format```\ni think this is happening bc one of the word poly objects has `start_x` and `start_y` as null\n\n@Nikolaos Kofinas is this expected? how can we avoid `start_x` / `start_y` being null in the provenance objects?\n\n@prateek.tenkale can you look into changing this logic (https://github.com/instabase/instabase/blob/dedfc3b/shared-utils/py-utils/ocr-client-lib/src/py/instabase/ocr/client/libs/ibocr.py#L4507-L4508) to handle invalid values like `null` for `start_x` and `start_y` ?",
+      "time": "13:42",
+      "timestamp": "1744922567.014529",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "hmm is this coming from the OCR? we can add some “cleaning” in the ibllm side to return 0 for all of these fields",
+      "time": "13:43",
+      "timestamp": "1744922623.701289",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i don't think returning 0 for `start_x` and `start_y` is necessarily better\n\ni see a valid `start_x` and `start_y` in the wordpoly objects in the ibdoc -> i think we're unable to get the provenance object bc of the `ø` character in `raw_word`\n\ndo we try to match `raw_word` to the word returned by the LLM? @Nikolaos Kofinas",
+      "time": "13:53",
+      "timestamp": "1744923234.494589",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "yes we are trying to match",
+      "time": "14:21",
+      "timestamp": "1744924886.461019",
+      "is_reply": true
+    },
+    {
+      "sender": "prateek.tenkale",
+      "user_id": "U0817MND9J9",
+      "message": "if `start_x` or `start_y` is null, do we just ignore that provenance object entirely?",
+      "time": "14:23",
+      "timestamp": "1744924993.777399",
+      "is_reply": true
+    },
+    {
+      "sender": "david.lee",
+      "user_id": "U07JFN3TPAA",
+      "message": "is it expected behavior for LLM to substitute `o` for `ø` ?",
+      "time": "14:34",
+      "timestamp": "1744925660.417159",
+      "is_reply": true
+    },
+    {
+      "sender": "Nikolaos Kofinas",
+      "user_id": "U03DWCUEBHT",
+      "message": "typically no since we ask it to return verbatim the text but ….",
+      "time": "15:29",
+      "timestamp": "1744928989.803509",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-04-17.json",
+    "message_count": 16,
+    "start_time": "1744910876.662119",
+    "end_time": "1744928989.803509",
+    "is_thread": true
+  }
+}

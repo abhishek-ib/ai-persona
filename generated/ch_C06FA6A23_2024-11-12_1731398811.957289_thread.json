@@ -1,0 +1,76 @@
+{
+  "id": "ch_C06FA6A23_2024-11-12_1731398811.957289_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "puneet"
+  ],
+  "messages": [
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "Looking into this issue more, I found out that the same trace ID seems to be assigned to multiple traces which is not good as trace ID should be unique. Currently we are using 64 bit trace IDs and it could be the case of collision of trace IDs causing this issue. We have the option of increasing the trace ID to 128 bit which could help avoiding collisions in trace IDs by setting the environment variable `JAEGER_TRACEID_128BIT=true` . I did try this out on aihub and was able to query some traces using the trace ID but I feel there is more to this problem as there were still trace IDs which gave 404 error",
+      "time": "00:06",
+      "timestamp": "1731398811.957289",
+      "is_reply": false
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "Another insight I had is that the same trace ID only occurs in a particular threadpool and it looks like each threadpool after sometime starts repeating the same trace ID - https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22ar7%22:%7B%22d[…]%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1 (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22ar7%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22webapp%5C%22%7D%20%7C~%20%60thread%3D%5C%22ThreadPoolExecutor-0_1%5C%22%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)\n\nI think this would be causing the problem as having the same trace ID for multiple traces would only allow the first trace to be stored as we index based on traceID. Next I am planning to do 2 things -\n1. Increase the traceID to 128 bit from 64 bit.\n2. Investigate why the trace ID is repeated within a threadpool and if a 128 bit traceID could fix it.",
+      "time": "00:13",
+      "timestamp": "1731399216.243189",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "Another hypothesis I have is that the trace is not getting closed properly which could lead to the next request getting the same trace ID assigned to it which could also lead to this problem.",
+      "time": "01:13",
+      "timestamp": "1731402813.630289",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "The reason for this is because we pass the scope.close function to the response object in flask here (https://github.com/instabase/instabase/blob/af2d93202ee95d0c839e4f96e5f4c60bc8460fbe/webserver/shared/src/py/instabase/utils/web/tracing_utils.py#L106), and I think that is not called by flask ever, leading to this issue.",
+      "time": "01:21",
+      "timestamp": "1731403293.239179",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "I tried closing the span directly using `scope.close()` instead of using `response.call_on_close` and it seems to have fixed the issue in my sandbox and I am able to get a unique trace ID for most requests. Here is what is happening -\n1. When a flask request is completed `trace_after_request` function is called which is responsible for closing the root span which was created in `trace_before_request`\n2. We then close the span using response.call_on_close() which is a flask method to add callbacks when response is closed, this was done to avoid closing spans for streaming request.\n3. What I think is happening is either - scope.close is never called by flask, or there is an extra span which never get's closed in the application instrumentation.\n4. This leads to the span staying open, so when a new request comes in it takes the traceID of the older request and this keeps happening for all the request that come after that causing none of the traces to be stored properly.\nCalling scope.close() directly will cause the streaming API traces to not work properly, so I have 2 approaches in mind -\n1. In `trace_before_request` we close any existing spans before starting a new trace to avoid using the same trace ID.\n2. Figure out a better way to close the span and ensure all the spans for the request are closed before the response is sent.",
+      "time": "03:04",
+      "timestamp": "1731409476.146889",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "Confirmed the hypothesis by printing the active span right before we create a new one and we do have an active span as this should print None. this leads to the problem with same trace ID and missing trace ID error we were seeing earlier.",
+      "time": "04:09",
+      "timestamp": "1731413398.518319",
+      "is_reply": true
+    },
+    {
+      "sender": "puneet",
+      "user_id": "U01J76ED68Z",
+      "message": "Jaeger sets the current active span as the parent by default - https://github.com/jaegertracing/jaeger-client-python/blob/5f68f1171c4156fd05675b6782aac1182058e7f4/jaeger_client/tracer.py#L163",
+      "time": "04:12",
+      "timestamp": "1731413541.127139",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2024-11-12.json",
+    "message_count": 7,
+    "start_time": "1731398811.957289",
+    "end_time": "1731413541.127139",
+    "is_thread": true
+  }
+}

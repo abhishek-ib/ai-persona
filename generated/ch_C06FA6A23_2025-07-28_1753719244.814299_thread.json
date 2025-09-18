@@ -1,0 +1,86 @@
+{
+  "id": "ch_C06FA6A23_2025-07-28_1753719244.814299_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Paul H",
+    "William Helmrath",
+    "Abhinav"
+  ],
+  "messages": [
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "Does the BUILD_TIMESTAMP (https://platform.instabase.com/docs/platform-admin/services/env-docs-svc/#build_timestamp) env var serve any purpose? If not, I am going to remove it.\n```Affected services: [apps-server webapp api-server]```",
+      "time": "09:14",
+      "timestamp": "1753719244.814299",
+      "is_reply": false
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "I think in the past we’ve used it to hash file names for CDN, but not sure if we’re doing that anymore",
+      "time": "09:29",
+      "timestamp": "1753720147.132349",
+      "is_reply": true
+    },
+    {
+      "sender": "William Helmrath",
+      "user_id": "U03T41Q3ZTP",
+      "message": "Although I guess that’s a use unrelated to those services",
+      "time": "09:38",
+      "timestamp": "1753720729.004519",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "That env var is definitely being used in `webapp` as our legacy JS bundles (https://github.com/instabase/instabase/blob/master/webserver/webapp/src/py/templates/apps/marketplace-admin/marketplace-admin.html#L15) (aka IB Classic) use `{{cache_version}}` for cache busting (as William mentioned), which is based on BUILD_TIMESTAMP (https://github.com/instabase/instabase/blob/master/webserver/shared/src/py/instabase/utils/web/flask_util.py#L167).",
+      "time": "09:49",
+      "timestamp": "1753721350.159049",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "Does it have to precisely updated with actual Service Build Timestamp at version upgrades? or a later ( ~ current) timestamp is good enough ?",
+      "time": "09:55",
+      "timestamp": "1753721759.943269",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "Any timestamp will work, as long as it's static between deployments. If the timestamp is always updating, then the cache will continuously get busted.",
+      "time": "10:02",
+      "timestamp": "1753722176.458549",
+      "is_reply": true
+    },
+    {
+      "sender": "Paul H",
+      "user_id": "U011UPRAPNV",
+      "message": "I can put in some work to remove these timestamp usages and move to the new cache busting method, which will allow us to remove the BUILD_TIMESTAMP variable from webapp. Do you want to go with that?",
+      "time": "10:04",
+      "timestamp": "1753722250.120949",
+      "is_reply": true
+    },
+    {
+      "sender": "Abhinav",
+      "user_id": "U03V2G5L19A",
+      "message": "sure. sounds good.",
+      "time": "10:33",
+      "timestamp": "1753724032.511249",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-07-28.json",
+    "message_count": 8,
+    "start_time": "1753719244.814299",
+    "end_time": "1753724032.511249",
+    "is_thread": true
+  }
+}

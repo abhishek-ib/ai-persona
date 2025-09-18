@@ -1,0 +1,247 @@
+{
+  "id": "ch_C073F3T5KRQ_2024-06-17_1718639806.024199_thread",
+  "type": "channel",
+  "channel_name": "discuss-backend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "sean.donohoe",
+    "Jeff",
+    "Cheryl Zhou"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Hey team, after pulling the latest master, I can't start `core-platform-service` using PPY on crafting. Anyone seeing the same issue?\n```$ ppya logs -f core-platform-service\n/home/owner/instabase/core-services/core-platform-service/../../shared-utils/build-utils/shared/env-local.json \\\n/home/owner/instabase/core-services/core-platform-service/../../shared-utils/build-utils/shared/env-local-overrides.json \\\n/home/owner/instabase/core-services/core-platform-service/deployment/local/docker-env.json > /home/owner/instabase/core-services/core-platform-service/tmp/env_local \\\necho \"export LEGACY=''\" >> /home/owner/instabase/core-services/core-platform-service/tmp/env_local\ncd /home/owner/instabase/core-services/core-platform-service/src/go/src/instabase/coreplatformservice && \\\nAPP_REGISTRY_PATH=/home/owner/instabase/core-services/core-platform-service/build/apps.json \\\n/bin/bash /home/owner/instabase/core-services/core-platform-service/../../shared-utils/build-utils/shared/start-go-local.sh /home/owner/instabase/core-services/core-platform-service\ngo: instabase/utils/clients/searchclient@v0.0.0 (replaced by ../../../../../../../shared-utils/go-utils/src/instabase/utils/clients/searchclient): reading ../../../../../../../shared-utils/go-utils/src/instabase/utils/clients/searchclient/go.mod: open /home/owner/instabase/shared-utils/go-utils/src/instabase/utils/clients/searchclient/go.mod: no such file or directory\ngo: instabase/utils/clients/searchclient@v0.0.0 (replaced by ../../../../../../../shared-utils/go-utils/src/instabase/utils/clients/searchclient): reading ../../../../../../../shared-utils/go-utils/src/instabase/utils/clients/searchclient/go.mod: open /home/owner/instabase/shared-utils/go-utils/src/instabase/utils/clients/searchclient/go.mod: no such file or directory\nmake: *** [/home/owner/instabase/core-services/core-platform-service/../../shared-utils/build-utils/shared/build-go-service.mk:11: runlocal] Error 1```",
+      "time": "08:56",
+      "timestamp": "1718639806.024199",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "@Jeff do you know if this is related to this PR?\n`instabase/utils/clients/searchclient v0.0.0`  was added to core-platform-service/go.mod but the searchClient doesn't have a `go.mod` file\nhttps://github.com/instabase/instabase/pull/58419/files#diff-017fa50c77ff2879e21798169695b9b27ab995ec87c170bd8517552bdfc122ee",
+      "time": "10:02",
+      "timestamp": "1718643735.558429",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Oh, Sean mentioned that the go.mod is no longer needed. Instead, using `bazel run //core-services/core-platform-service/src/go/src/instabase/coreplatformservice` to build the backend.",
+      "time": "10:03",
+      "timestamp": "1718643829.254559",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "But the provisioner script still uses go.mod files to build the services. If we are going to remove go.mod, we should update the provisioner script :thinking_face:",
+      "time": "10:05",
+      "timestamp": "1718643925.420539",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "cc @sean.donohoe, should I add the mod file back?",
+      "time": "10:06",
+      "timestamp": "1718643986.456039",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Here is the PR https://github.com/instabase/instabase/pull/58753",
+      "time": "10:11",
+      "timestamp": "1718644266.730119",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ah shoot yeah, let's add it back in, sorry about that @Jeff -- I'll work on a non-interrupting transition plan separately",
+      "time": "10:13",
+      "timestamp": "1718644415.767459",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@Xindi Xu if you rebase on master your build should pass now",
+      "time": "10:14",
+      "timestamp": "1718644461.211609",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you both!!",
+      "time": "10:14",
+      "timestamp": "1718644485.517879",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Now i'm getting this:\n```/bin/bash /home/owner/instabase/core-services/core-platform-service/../../shared-utils/build-utils/shared/start-go-local.sh /home/owner/instabase/core-services/core-platform-service\naccount/handler/handler.go:14:2: package instabase/utils/auth/constants is not in GOROOT (/usr/local/go/src/instabase/utils/auth/constants)\nmake: *** [/home/owner/instabase/core-services/core-platform-service/../../shared-utils/build-utils/shared/build-go-service.mk:11: runlocal] Error 1```",
+      "time": "10:15",
+      "timestamp": "1718644555.078029",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": ":melting_face:  ok we need to add a `replace` for `instabase/utils/auth/constants` to https://github.com/instabase/instabase/blob/master/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/go.mod#L154 -- @Xindi Xu could you try that out locally so we can confirm whether that resolves the error? I can put up a PR shortly if so",
+      "time": "10:17",
+      "timestamp": "1718644675.472049",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "```go: instabase/coreplatformservice/account/handler imports\n\tinstabase/utils/auth/constants: module ../../../../../../../shared-utils/go-utils/src/instabase/utils/auth/constants: reading ../../../../../../../shared-utils/go-utils/src/instabase/utils/auth/constants/go.mod: open /home/owner/instabase/shared-utils/go-utils/src/instabase/utils/auth/constants/go.mod: no such file or directory\naccount/handler/handler.go:14:2: module instabase/utils/auth/constants provides package instabase/utils/auth/constants and is replaced but not required; to add it:\n\tgo get instabase/utils/auth/constants```\nI added this\n```\tinstabase/utils/auth/constants => ../../../../../../../shared-utils/go-utils/src/instabase/utils/auth/constants```",
+      "time": "10:19",
+      "timestamp": "1718644787.699009",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ah heck ok one sec, that's likely being referenced by the search client code",
+      "time": "10:20",
+      "timestamp": "1718644840.576899",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "actually nvm I'm wrong, core platform service is definitely the one referencing it -- could you add another entry to its `go.mod` for `instabase/utils/auth/constants` similar to this module (https://github.com/instabase/instabase/blob/master/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/go.mod#L149)?",
+      "time": "10:23",
+      "timestamp": "1718644986.282039",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Yeah, it seems like just a missing entry in the go.mod file",
+      "time": "10:25",
+      "timestamp": "1718645109.243509",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I added this `instabase/utils/auth/constants v0.0.0 // indirect`\nand now i'm getting\n```\tinstabase/utils/datadog imports\n\tgopkg.in/DataDog/dd-trace-go.v1/profiler (http://gopkg.in/DataDog/dd-trace-go.v1/profiler) imports\n\tgopkg.in/DataDog/dd-trace-go.v1/internal/log (http://gopkg.in/DataDog/dd-trace-go.v1/internal/log) imports\n\tgopkg.in/DataDog/dd-trace-go.v1/ddtrace (http://gopkg.in/DataDog/dd-trace-go.v1/ddtrace) tested by\n\tgopkg.in/DataDog/dd-trace-go.v1/ddtrace.test (http://gopkg.in/DataDog/dd-trace-go.v1/ddtrace.test) imports\n\tgopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer (http://gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer) imports\n\tgithub.com/tinylib/msgp/msgp (http://github.com/tinylib/msgp/msgp): instabase/utils/auth/constants@v0.0.0: malformed module path \"instabase/utils/auth/constants\": missing dot in first path element\naccount/handler/handler.go:14:2: missing go.sum entry for module providing package instabase/utils/auth/constants (imported by instabase/coreplatformservice/account/handler); to add:\n\tgo get instabase/coreplatformservice/account/handler\nmake: *** [/home/owner/instabase/core-services/core-platform-service/../../shared-utils/build-utils/shared/build-go-service.mk:11: runlocal] Error 1```",
+      "time": "10:28",
+      "timestamp": "1718645283.127649",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "I can just revert the commit locally for now.",
+      "time": "10:28",
+      "timestamp": "1718645296.714519",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "ah, I think you can also do `go get instabase/utils/auth/constants@v0.0.0`, check that you still have the `replace` rule, then build again -- that should ensure `go.sum` is up to date",
+      "time": "10:33",
+      "timestamp": "1718645614.310199",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "(or even maybe a `go mod tidy`)",
+      "time": "10:33",
+      "timestamp": "1718645625.091239",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Ok. I figured this out. In the go.mod file under core-platform-service, add\n```instabase/utils/auth v0.0.0```\nInstead of\n```instabase/utils/auth/constants```\nand\n```\tinstabase/utils/auth => ../../../../../../../shared-utils/go-utils/src/instabase/utils/auth```",
+      "time": "10:35",
+      "timestamp": "1718645741.003569",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "https://github.com/instabase/instabase/pull/58757",
+      "time": "10:40",
+      "timestamp": "1718646016.572269",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "hey all, sorry i didn't realize this is something we still need to maintain. I just added them in BUILD.bazel. Since I introduced this package in multiple modules I'll put out a PR to add this in all of them",
+      "time": "10:40",
+      "timestamp": "1718646017.999989",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "nah not your fault at all @Cheryl Zhou, these files are kept around as a convenience feature at this point and will be deprecated soon :slightly_smiling_face:",
+      "time": "10:41",
+      "timestamp": "1718646081.049829",
+      "is_reply": true
+    },
+    {
+      "sender": "Jeff",
+      "user_id": "U03N9BPNK32",
+      "message": "Thanks @Cheryl Zhou, then please ignore the PR I put out.",
+      "time": "10:41",
+      "timestamp": "1718646082.052589",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Thank you team!!",
+      "time": "10:45",
+      "timestamp": "1718646330.198289",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "Do we want to retrospectively fix control-plane @sean.donohoe? Getting\n```../../../../../build/go/src/instabase/protos/account_service/account_service.pb.go:11:2: package instabase/protos/config is not in GOROOT (/usr/local/go/src/instabase/protos/config)\nhandler/platform/platform_handler.go:9:2: package instabase/version_metadata is not in GOROOT (/usr/local/go/src/instabase/version_metadata)```",
+      "time": "10:51",
+      "timestamp": "1718646704.815959",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "I think we're probably ok to skip control plane -- those developers are fully on bazel now iirc",
+      "time": "10:57",
+      "timestamp": "1718647060.666519",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "PR for adding back go.mod support: https://github.com/instabase/instabase/pull/58760",
+      "time": "11:01",
+      "timestamp": "1718647268.779549",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C073F3T5KRQ",
+    "channel_name": "discuss-backend",
+    "date_file": "2024-06-17.json",
+    "message_count": 28,
+    "start_time": "1718639806.024199",
+    "end_time": "1718647268.779549",
+    "is_thread": true
+  }
+}

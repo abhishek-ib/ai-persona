@@ -1,0 +1,103 @@
+{
+  "id": "ch_C06FA6A23_2022-01-24_1643040130.175000_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Eric Han",
+    "Heymian",
+    "Sabyasachi Roy",
+    "Junwon Jang"
+  ],
+  "messages": [
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "@Eric Han i think im running into the same thing. which 2 services did you restart? file-tservice and?",
+      "time": "08:02",
+      "timestamp": "1643040130.175000",
+      "is_reply": false
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "all the core-services + file service + webapp + api-server for file operations in addition you probably also want to restart api-server-apps and app-server just in case",
+      "time": "08:03",
+      "timestamp": "1643040189.175200",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "hmm maybe im doing something wrong or its a different issue.. but i stopped conversion-service, api-server, apps-server, core-platform-service, file-tservice, grpc-file-service, and webapp. then started each of them, and im running into the same thing. is this probably a different issue then? the specific error im getting is\n```Mount_point Local Drive. Reason: Could not connect to any of [('127.0.0.1', 9999)]```",
+      "time": "08:11",
+      "timestamp": "1643040707.175400",
+      "is_reply": true
+    },
+    {
+      "sender": "Eric Han",
+      "user_id": "UKPHNU5QE",
+      "message": "which service are you getting this from? is it just displaying on the UI?",
+      "time": "08:38",
+      "timestamp": "1643042296.175700",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "yep in the ui",
+      "time": "08:38",
+      "timestamp": "1643042334.175900",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "if you’re on master you don’t run account repo and mount service anymore. you only start up core-platform-service.",
+      "time": "10:56",
+      "timestamp": "1643050571.183900",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "core platform service gives me the following error when i look in the logs:\n```Prepare statement failed: user=\"\" ConnectString=\"<not-sure-if-its-ok-to-type-this-in-slack>\" stats=busy=3 open=3 max=1000 maxLifetime=1h0m0s timeout=5m0s waitTimeout=30s params={authMode:0 connectionClass:<nil> connectionClassLength:0 purity:0 newPassword:<nil> newPasswordLength:0 appContext:<nil> numAppContext:0 externalAuth:0 externalHandle:<nil> pool:0x6809bd0 tag:<nil> tagLength:0 matchAnyTag:0 outTag:<nil> outTagLength:0 outTagFound:0 shardingKeyColumns:<nil> numShardingKeyColumns:0 superShardingKeyColumns:<nil> numSuperShardingKeyColumns:0 outNewSession:0}: ORA-24459: OCISessionGet() timed out waiting for pool to create new connections\n2022/01/24 11:13:44 ERROR mountservice/handler/mount.go:687 -- Fail: Repo (junwon/my-repo) not found\nsignal: killed```\nBut `ppy status` shows that the service is still running. And the only error i get is that i get the error `Folder does not exist` when trying to access my local drive in file explorer. Is there a config somewhere that I should be changing? I tried running core-platform-service as prebuilt and from local with `make build-docker run-docker` and im seeing the same error",
+      "time": "11:28",
+      "timestamp": "1643052490.184400",
+      "is_reply": true
+    },
+    {
+      "sender": "Heymian",
+      "user_id": "UADQ9V8PK",
+      "message": "Is the `signal: killed` you killing it? @Junwon Jang\n\n@Sabyasachi Roy have you seen these errors before? Any ideas? I’ve seen this db error too after switching to core-platform service, but they seem to go away after some restarts. Wondering if running all three services together impacts the connection pool initialized by each individual service?",
+      "time": "12:24",
+      "timestamp": "1643055863.184600",
+      "is_reply": true
+    },
+    {
+      "sender": "Junwon Jang",
+      "user_id": "U02QFL4RZ2Q",
+      "message": "i dont think `signal: killed` is from me. I just called `python provisioner.py start core-platform-services` and the error is from the service logs",
+      "time": "12:25",
+      "timestamp": "1643055946.184800",
+      "is_reply": true
+    },
+    {
+      "sender": "Sabyasachi Roy",
+      "user_id": "U02ES3B3GQL",
+      "message": "Have not noticed but could be a case of not having looked for it. I will try to repro.\n\nRegarding initialization, I will check. Regarding db connection pool, we use the same for all three. So it is initialized before any of the services and passed along to those (https://github.com/instabase/instabase/blob/master/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/server/main.go#L[…]4 (https://github.com/instabase/instabase/blob/master/core-services/core-platform-service/src/go/src/instabase/coreplatformservice/server/main.go#L268-L274))\n\nI would like to also try the following running each of the services individually on the same setup and point the callers to them and see if similar errors show up there as well. @Junwon Jang could you list the steps you ran when you hit this. I would want to run this locally",
+      "time": "19:47",
+      "timestamp": "1643082433.192500",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-01-24.json",
+    "message_count": 10,
+    "start_time": "1643040130.175000",
+    "end_time": "1643082433.192500",
+    "is_thread": true
+  }
+}

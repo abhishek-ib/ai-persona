@@ -1,0 +1,142 @@
+{
+  "id": "ch_C06FA6A23_2025-07-04_1751631339.143069_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Pramod Munemanik",
+    "Vasu",
+    "Gauti"
+  ],
+  "messages": [
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "Hi team,\nI’m trying to upload a sample to build a project in my crafting sandbox, but it’s stuck at “Adding files” with 0% progress.\nThe file is getting uploaded to the correct location, but after that, it gets stuck. I don’t see any errors.\ncould someone please suggest how to resolve this ?\nCrafting Sandbox : https://https--pramod1-instabase.instabase.site.sandboxes.run",
+      "time": "05:15",
+      "timestamp": "1751631339.143069",
+      "is_reply": false
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Can you check the logs for celery-app-tasks to see whether digitization has started or not?",
+      "time": "05:16",
+      "timestamp": "1751631394.124239",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Or is celery-app-tasks up without any errors?",
+      "time": "05:16",
+      "timestamp": "1751631415.963719",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "I see few errors in celery-app-tasks\n\n```Error: Invalid value for '-A' / '--app': \nUnable to load celery application.\nWhile trying to load the module instabase.registry.tasks the following error occurred:\nTraceback (most recent call last):\n  File \"/usr/local/lib/python3.9/site-packages/celery/app/utils.py\", line 383, in find_app\n    sym = symbol_by_name(app, imp=imp)\n  File \"/usr/local/lib/python3.9/site-packages/kombu/utils/imports.py\", line 64, in symbol_by_name\n    return getattr(module, cls_name) if cls_name else module\nAttributeError: module 'instabase.registry' has no attribute 'tasks'\n\nDuring handling of the above exception, another exception occurred:```\n```Traceback (most recent call last):\n  File \"/usr/local/lib/python3.9/site-packages/celery/bin/celery.py\", line 58, in convert\n    return find_app(value)\n  File \"/usr/local/lib/python3.9/site-packages/celery/app/utils.py\", line 386, in find_app\n    sym = imp(app)\n  File \"/usr/local/lib/python3.9/site-packages/celery/utils/imports.py\", line 109, in import_from_cwd\n    return imp(module, package=package)\n  File \"/usr/local/lib/python3.9/importlib/__init__.py\", line 127, in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n  File \"<frozen importlib._bootstrap>\", line 1030, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1007, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 986, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 680, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 850, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 228, in _call_with_frames_removed\n  File \"/instabase/workers/celery-app-tasks/py/instabase/registry/tasks.py\", line 35, in <module>\n    from instabase.clients_factory_utils import clients_factory\n  File \"/instabase/workers/celery-app-tasks/py/instabase/clients_factory_utils/clients_factory.py\", line 7, in <module>\n    from instabase.flow_datastore.datastore import DataStore\n  File \"/instabase/workers/celery-app-tasks/py/instabase/flow_datastore/datastore.py\", line 12, in <module>\n    from instabase.content.filehandle import ibfile\n  File \"/instabase/workers/celery-app-tasks/py/instabase/content/filehandle/ibfile.py\", line 21, in <module>\n    from instabase.utils.rpc.file_client import (\n  File \"/instabase/workers/celery-app-tasks/py/instabase/utils/rpc/file_client.py\", line 23, in <module>\n    from instabase.utils.grpc.client import execute, execute_without_retries, _is_retriable_error\n  File \"/instabase/workers/celery-app-tasks/py/instabase/utils/grpc/client.py\", line 17, in <module>\n    from instabase.tracing.grpc import intercept_channel_tracing\nImportError: cannot import name 'intercept_channel_tracing' from 'instabase.tracing.grpc' (/instabase/workers/celery-app-tasks/py/instabase/tracing/grpc/__init__.py)```",
+      "time": "05:18",
+      "timestamp": "1751631522.120729",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Try running `cs stop celery-app-tasks` , navigate to the celery-app-tasks directory and run `make clean` . Then start celery-app-tasks again with `cs start celery-app-tasks` .",
+      "time": "05:19",
+      "timestamp": "1751631591.841399",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "Thanks, the above error is resolved, but the file is still getting stuck. I think it’s stuck because digitization is not starting\nHere are latest logs:",
+      "time": "05:28",
+      "timestamp": "1751632087.159119",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "```[2025-07-04 12:23:56,129] [ForkPoolWorker-9/ThreadPoolExecutor-11_0] {/instabase/workers/celery-app-tasks/py/instabase/flow/ocr_utils/ocr_util.py:555} INFO - [trace_id=9e0183bec7884257] - job-id=c135a267-2aa5-4e09-b7fd-483cc427edfa task-id=c135a267-2aa5-4e09-b7fd-483cc427edfa-Stage1 username=pramod.developer_instabase.com (http://pramod.developer_instabase.com) stage-id=Stage1 step=s1 The mean is 3.3396280477326727 and the thresh was 3.0\n[2025-07-04 12:23:56,831] [ForkPoolWorker-9/ThreadPoolExecutor-11_0] {/instabase/workers/celery-app-tasks/py/instabase/flow/ocr_utils/ocr_util.py:468} INFO - [trace_id=9e0183bec7884257] - job-id=c135a267-2aa5-4e09-b7fd-483cc427edfa task-id=c135a267-2aa5-4e09-b7fd-483cc427edfa-Stage1 username=pramod.developer_instabase.com (http://pramod.developer_instabase.com) stage-id=Stage1 step=s1 Page is de-warped successfully!!\n[2025-07-04 12:23:56,832] [ForkPoolWorker-9/ThreadPoolExecutor-11_0] {/instabase/workers/celery-app-tasks/py/instabase/flow/ocr_utils/ocr_util.py:964} INFO - [trace_id=9e0183bec7884257] - job-id=c135a267-2aa5-4e09-b7fd-483cc427edfa task-id=c135a267-2aa5-4e09-b7fd-483cc427edfa-Stage1 username=pramod.developer_instabase.com (http://pramod.developer_instabase.com) stage-id=Stage1 step=s1 OCR request completed - Path=deb0736e-6961-4b5f-9db7-95e8c4a23703__8.jpg TimeTaken=2.73s\n[2025-07-04 12:23:56,833] [ForkPoolWorker-9/ThreadPoolExecutor-11_0] {/instabase/workers/celery-app-tasks/py/instabase/flow/ocr_utils/ocr_util.py:990} INFO - [trace_id=9e0183bec7884257] - job-id=c135a267-2aa5-4e09-b7fd-483cc427edfa task-id=c135a267-2aa5-4e09-b7fd-483cc427edfa-Stage1 username=pramod.developer_instabase.com (http://pramod.developer_instabase.com) stage-id=Stage1 step=s1 Selected best rotation - Path=deb0736e-6961-4b5f-9db7-95e8c4a23703__8.jpg TimeTaken=0.00s\n[2025-07-04 12:23:56,869] [ForkPoolWorker-9/ThreadPoolExecutor-12_0] {/instabase/workers/celery-app-tasks/py/instabase/flow/runnables/process_file/entity_util.py:219} INFO - [trace_id=9e0183bec7884257] - job-id=c135a267-2aa5-4e09-b7fd-483cc427edfa task-id=c135a267-2aa5-4e09-b7fd-483cc427edfa-Stage1 username=pramod.developer_instabase.com (http://pramod.developer_instabase.com) stage-id=Stage1 step=s1 Running Entity Inference: deb0736e-6961-4b5f-9db7-95e8c4a23703__8.jpg\n[2025-07-04 12:23:56,871] [ForkPoolWorker-9/ThreadPoolExecutor-12_1] {/instabase/workers/celery-app-tasks/py/instabase/flow/runnables/process_file/entity_util.py:219} INFO - [trace_id=9e0183bec7884257] - job-id=c135a267-2aa5-4e09-b7fd-483cc427edfa task-id=c135a267-2aa5-4e09-b7fd-483cc427edfa-Stage1 username=pramod.developer_instabase.com (http://pramod.developer_instabase.com) stage-id=Stage1 step=s1 Running Entity Inference: deb0736e-6961-4b5f-9db7-95e8c4a23703__8.jpg```",
+      "time": "05:28",
+      "timestamp": "1751632096.904699",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "No, it has started. This means its trying to download the required models in model-service to run entity inference, therefore, the request keeps waiting. The first time you run it, it takes sometime.",
+      "time": "05:29",
+      "timestamp": "1751632161.339549",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Or you can optionally turn entity inference off too if you're not testing anything specific to entity inference.",
+      "time": "05:29",
+      "timestamp": "1751632192.577489",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "cc @Gauti",
+      "time": "05:30",
+      "timestamp": "1751632244.078189",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "Okay, Thank you.\nHow long does it take the first time we run it?",
+      "time": "05:31",
+      "timestamp": "1751632287.241059",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "@Pramod Munemanik, Model-Service still hasn't booted up properly for your sandbox. Wait for a few more minutes till it gets booted up properly. Digitization will be completed only after that. Even if you turned off the entity, indexing will fail.",
+      "time": "05:53",
+      "timestamp": "1751633616.354429",
+      "is_reply": true
+    },
+    {
+      "sender": "Gauti",
+      "user_id": "U01JA04CX1B",
+      "message": "Aah it stuck for more than 1 hour. Try restarting the model service.",
+      "time": "05:54",
+      "timestamp": "1751633665.239439",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "Thanks.. Let me restart model service",
+      "time": "06:01",
+      "timestamp": "1751634096.480269",
+      "is_reply": true
+    },
+    {
+      "sender": "Pramod Munemanik",
+      "user_id": "U01486CGC2F",
+      "message": "Still not working.",
+      "time": "06:49",
+      "timestamp": "1751636958.441269",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-07-04.json",
+    "message_count": 15,
+    "start_time": "1751631339.143069",
+    "end_time": "1751636958.441269",
+    "is_thread": true
+  }
+}

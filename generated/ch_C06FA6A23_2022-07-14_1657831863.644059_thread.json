@@ -1,0 +1,209 @@
+{
+  "id": "ch_C06FA6A23_2022-07-14_1657831863.644059_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Cheryl Zhou",
+    "cj",
+    "shiqi",
+    "Adam",
+    "Pridhvi Vegesna",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "anyone know why the CI job is taking so long? i have one (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-28520/1/pipeline) that’s been running for over an hour\n\ncc @shiqi",
+      "time": "13:51",
+      "timestamp": "1657831863.644059",
+      "is_reply": false
+    },
+    {
+      "sender": "cj",
+      "user_id": "U03G46LRWSU",
+      "message": "@Cheryl Zhou answered my questions about this the other day; maybe she would know?",
+      "time": "13:53",
+      "timestamp": "1657832021.243059",
+      "is_reply": true
+    },
+    {
+      "sender": "Adam",
+      "user_id": "U028KUTFHBR",
+      "message": "This doesn't look too far out of line with how long mine usually take. I think we just have a lot of python tests to run across `shared-utils`",
+      "time": "13:55",
+      "timestamp": "1657832139.029759",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "I thought we don’t run python tests if no python was changed, though, and this is a frontend-only PR",
+      "time": "13:56",
+      "timestamp": "1657832164.715499",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "for example, this CI job (https://jenkins.instabase.com/blue/organizations/jenkins/instabase/detail/PR-28410/1/pipeline/) for a previous frontend-only PR took only 6 min",
+      "time": "13:57",
+      "timestamp": "1657832264.978199",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "I am not sure how the CI job is setup, looks like it is finally done? my guess is it is ran into competition with other resources (either on the builder or external system)",
+      "time": "14:11",
+      "timestamp": "1657833112.211859",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Did you trigger a rerun from the Jenkins UI? When I did that it ended up running all the unit tests rather than the subset of tests with dependencies on modified code.",
+      "time": "14:13",
+      "timestamp": "1657833231.314729",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "nope it was just the automatically triggered one",
+      "time": "14:14",
+      "timestamp": "1657833252.293339",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Since you've merged the PR I'm going to retrigger CI tests on the PR and see if it happens again",
+      "time": "14:17",
+      "timestamp": "1657833469.717189",
+      "is_reply": true
+    },
+    {
+      "sender": "Pridhvi Vegesna",
+      "user_id": "U0290LSE8KC",
+      "message": "Nvm, can't retrigger CI tests on a merged PR. Not sure of root cause but since this only happens on some runs sometimes adding a dummy commit or maybe even retriggering from the UI can help.\n\n@Cheryl Zhou do you know if a rare, intermittent failure in premerge test logic could cause all tests to run?",
+      "time": "14:21",
+      "timestamp": "1657833689.755779",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "i don't think there has been a rerun actually. it's jus a one-time run that has taken an hour",
+      "time": "14:35",
+      "timestamp": "1657834532.330929",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "i don't quite understand why all of these are being run actually -- the only files that are touched are .tsx and so only the webpacked module should run. @Serena ill try this locally and figure out why this is happening later today",
+      "time": "14:37",
+      "timestamp": "1657834652.426949",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "I don't think it is a code issue, the fact that dummy commit will make a difference basically says it is more of an infra flakiness, we have 4 executors per VM(builder) on our jenkins and if one of them is running a heavy job that may very well affect the others",
+      "time": "14:46",
+      "timestamp": "1657835180.999129",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "@shiqi hmmm could you elaborate on this? from what i understand, we have a get_diffed_files_from_master() that essentially takes in a list of files that are modified. and from there we determine what modules to run. are you saying that this infra flakiness can cause an inaccurate result to the outcome of get_diffed_files()?",
+      "time": "14:52",
+      "timestamp": "1657835532.469179",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "oh boy, I just revisited the code and took a deeper dive than last time, seems we can short circuiting the tests and cheat the CI by putting two dummy commits",
+      "time": "14:58",
+      "timestamp": "1657835928.585559",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "`get_git_diffed_files_to_master` is not the problem, the problem is `get_git_diffed_files_to_previous_commit` , it only compares the head and head -1 commit",
+      "time": "15:00",
+      "timestamp": "1657836022.416129",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "I will test it later but if you have two dummy commits in your branch it could potentially just skip the entire CI",
+      "time": "15:01",
+      "timestamp": "1657836061.335369",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "that :air-quotes: workaround :air-quotes: may just be a cheat :joy:",
+      "time": "15:03",
+      "timestamp": "1657836204.102929",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "ahhh @shiqi super interested in how this works. looks like we only use `get_git_diffed_files_to_previous_commit` when we specify the `--test-all`  flag. does 2 dummy commits somehow trigger the test with the `--test-all` flag?",
+      "time": "15:17",
+      "timestamp": "1657837038.935349",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "not sure, will look into it further later, that part of the code always confuses me, if you have time feel free to dig more.",
+      "time": "15:22",
+      "timestamp": "1657837334.004399",
+      "is_reply": true
+    },
+    {
+      "sender": "shiqi",
+      "user_id": "U034SGEJLQ6",
+      "message": "I thought it was the other way",
+      "time": "15:22",
+      "timestamp": "1657837360.064009",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "okay will do! yeah im pretty confused too -- there's definitely something going on here :joy:",
+      "time": "15:24",
+      "timestamp": "1657837486.439939",
+      "is_reply": true
+    },
+    {
+      "sender": "Cheryl Zhou",
+      "user_id": "U030KCEN6NA",
+      "message": "i think it's this way:",
+      "time": "15:25",
+      "timestamp": "1657837503.802509",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2022-07-14.json",
+    "message_count": 23,
+    "start_time": "1657831863.644059",
+    "end_time": "1657837503.802509",
+    "is_thread": true
+  }
+}

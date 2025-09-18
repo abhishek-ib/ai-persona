@@ -1,0 +1,248 @@
+{
+  "id": "ch_C0516UPPMT3_2023-07-13_1689262784.589719_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "Yash Botadra",
+    "Gwen",
+    "joshbronko",
+    "Serena",
+    "lydia"
+  ],
+  "messages": [
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Hi team, @Gwen has a document that is constantly failing via the Refiner IBLLM with this error in Loki. Not sure what is causing this. Can one help us investigate whats causing this error\n```level=ERROR time=2023-07-13 15:35:35,439 msg=\"User: gwen.wong. Model error: Exception Create class! Unexpected status code: 422, with response body: {'error': [{'message': '\\'{\"message\": \"Unknown node-type None\"}\\' is not a valid class name'}]}.\"  path=\"/instabase-api-server/py/instabase/api_server_apps/handler/api/v2/aihub/inference.py:118\" process=\"MainProcess\" thread=\"ThreadPoolExecutor-0_4\"\n\nweaviate.exceptions.UnexpectedStatusCodeException: Create class! Unexpected status code: 422, with response body: {'error': [{'message': '\\'{\"message\": \"Unknown node-type None\"}\\' is not a valid class name'}]}.\"```",
+      "time": "08:39",
+      "timestamp": "1689262784.589719",
+      "is_reply": false
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "For context, always the same docs; I have 81 files I’m running through and i fails cconstantly on the same ones (approx 5-10)",
+      "time": "08:51",
+      "timestamp": "1689263481.712649",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "@Varun Jain could we have some support from the team as this is a blocker for a POV atm",
+      "time": "08:51",
+      "timestamp": "1689263518.518799",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "what environment is this? sorry, i’m not familiar with the POV you’re working on",
+      "time": "10:05",
+      "timestamp": "1689267955.435479",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "We are calling aihub uat from our refiner",
+      "time": "10:06",
+      "timestamp": "1689267990.004569",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "cc @lydia",
+      "time": "10:14",
+      "timestamp": "1689268484.943409",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "It looks like a weaviate issue itself",
+      "time": "10:15",
+      "timestamp": "1689268501.983929",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "cc @Rafal @vineeth it seems like maybe we’re passing none? @Gwen can you link the Refiner program here?",
+      "time": "10:16",
+      "timestamp": "1689268614.662089",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "",
+      "time": "10:19",
+      "timestamp": "1689268748.711229",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "@Gwen can you log into your aihub.uat at pull the index name for this file from the txt we write",
+      "time": "10:20",
+      "timestamp": "1689268837.694879",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "@Gwen i put in my api key and seems to have worked now. Wondering if the index it created for you is bad",
+      "time": "10:25",
+      "timestamp": "1689269135.595999",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "hmm, i just blew away the index name for @Gwen and it seems to work now. Wonder if the indexing process had an issue at the time",
+      "time": "10:26",
+      "timestamp": "1689269200.458149",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "@Gwen all 81 work now after setting to a brand new folder and having it re-index",
+      "time": "10:27",
+      "timestamp": "1689269249.866119",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "@lydia i take that back, on subsequent request the one we had issues with is now failing. Do we clear the weaviate cache after so many index?",
+      "time": "10:30",
+      "timestamp": "1689269404.749539",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "1 failed, now on rerun 10 are failing. if i change the folder to a brand new index all succeed then subsequent calls fail on some",
+      "time": "10:31",
+      "timestamp": "1689269476.453679",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "@joshbronko can you try this file on dogfood using @pauline.comising’s aihub script (https://dogfood.instabase.com/apps/text-editor/pcomising/my-repo/fs/Instabase%20Drive/aihubhelper/ai_hub.py?%2Fapps%2Ftext-editor%2Fpcomising%2Fmy-repo%2Ffs%2FInstabase+Drive%2Faihubhelper%2Fai_hub.py=) and see if you have the same issue?",
+      "time": "11:02",
+      "timestamp": "1689271335.852869",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I’m wondering if it has something to do with how we’re connecting to aihub.uat",
+      "time": "11:02",
+      "timestamp": "1689271351.848379",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "i can test but it seems like we are dropping indexs in weaviate as it works then it stops working",
+      "time": "11:17",
+      "timestamp": "1689272234.850639",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "I dont think its a file issue more of qty",
+      "time": "11:18",
+      "timestamp": "1689272280.817969",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "pauline’s script handles weaviate indexing, which hopefully would avoid any indexing issues. so I’m wondering if our version of the script might solve this issue",
+      "time": "11:45",
+      "timestamp": "1689273927.275229",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "My question though is how often are we clearing the pv or cache of the index?",
+      "time": "11:46",
+      "timestamp": "1689274007.699419",
+      "is_reply": true
+    },
+    {
+      "sender": "lydia",
+      "user_id": "UJK4LKYSJ",
+      "message": "I don’t think we clear the index automatically. it would be your script",
+      "time": "11:47",
+      "timestamp": "1689274036.090699",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "Odd we use the same index id over and over again so we only index once based on file name",
+      "time": "11:48",
+      "timestamp": "1689274089.535739",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "I’ll have to log the requests to aihub to a file to figure out which section is failing. Let me do some digging",
+      "time": "11:49",
+      "timestamp": "1689274156.584359",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Botadra",
+      "user_id": "U02QEPQ1M7U",
+      "message": "Unless you do a `delete_index` call to ibllm, the index should not be deleted from the PV. There is an LRU cache of weaviate processes on weaviate (one weaviate process per index) but unless you are creating a ton of indexes, these processes should be up. And either way, the files don’t get deleted until you do a delete.",
+      "time": "13:51",
+      "timestamp": "1689281483.844309",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "Sorry @joshbronko is there something I need to show?",
+      "time": "14:09",
+      "timestamp": "1689282558.397679",
+      "is_reply": true
+    },
+    {
+      "sender": "joshbronko",
+      "user_id": "U031T0PNLUS",
+      "message": "No I think I found the issue. Validating now",
+      "time": "14:16",
+      "timestamp": "1689283007.120689",
+      "is_reply": true
+    },
+    {
+      "sender": "Gwen",
+      "user_id": "U02JWMVLH19",
+      "message": "Legend",
+      "time": "14:18",
+      "timestamp": "1689283092.512779",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2023-07-13.json",
+    "message_count": 28,
+    "start_time": "1689262784.589719",
+    "end_time": "1689283092.512779",
+    "is_thread": true
+  }
+}

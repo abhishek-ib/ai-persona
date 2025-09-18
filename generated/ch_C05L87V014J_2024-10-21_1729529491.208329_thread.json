@@ -1,0 +1,109 @@
+{
+  "id": "ch_C05L87V014J_2024-10-21_1729529491.208329_thread",
+  "type": "channel",
+  "channel_name": "ask-crafting",
+  "conversation_type": "thread",
+  "participants": [
+    "Liam Callanan",
+    "sean.donohoe"
+  ],
+  "messages": [
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Hey, just noticed the following on my sandbox (https://instabase.sandboxes.site/sandboxes/liamcallanan?cw=dev) after refreshing the base image:\n```ERROR   Failed to setup webpack {\"error\": \"starting service: running service setup: fetching service image URL from kubernetes: invalid configuration: no configuration has been provided, try setting KUBERNETES_MASTER environment variable\"}```\nAny idea what the issue might be?",
+      "time": "09:51",
+      "timestamp": "1729529491.208329",
+      "is_reply": false
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "could you run ‘touch /usr/local/etc/kubeconfig’ and then try ‘workspace setup’?",
+      "time": "09:55",
+      "timestamp": "1729529719.711799",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Yeah that usually works but didn’t seem to help this time",
+      "time": "09:56",
+      "timestamp": "1729529786.643859",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "Hmm what’s your kubectl context set to?",
+      "time": "09:59",
+      "timestamp": "1729529953.914539",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "It should show up if I run `kubectl config current-context` right? I’m getting:\n```owner@dev:~$ kubectl config current-context\nerror: current-context is not set```",
+      "time": "10:05",
+      "timestamp": "1729530311.281449",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "that's interesting -- did you run `workspace setup` successfully?",
+      "time": "10:11",
+      "timestamp": "1729530691.076229",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "actually @Liam Callanan would you be alright if I ran `workspace update` on your host? I'm not sure why the kubeconfig isn't getting populated, but it does look like `workspace` is out of date",
+      "time": "10:13",
+      "timestamp": "1729530823.989949",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "I haven’t run `workspace setup` on that sandbox recently. Feel free to run `workspace update`",
+      "time": "10:15",
+      "timestamp": "1729530909.647169",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "@Liam Callanan you should be good to go now! I had to manually update your sandbox as it was pretty out of date -- let me know if it's still giving you any trouble and I'll be happy to take a look :slightly_smiling_face:",
+      "time": "10:55",
+      "timestamp": "1729533355.844219",
+      "is_reply": true
+    },
+    {
+      "sender": "Liam Callanan",
+      "user_id": "U03BXSHAK0T",
+      "message": "Looks like that issue is fixed but now I’m seeing some nginx issues, unsure if related to the update:\n```+ '[' 1 = 1 ']'\n+ docker rm -f nginx\n+ exec /var/workspace/daemons/bin/nginx.sh\nError from server (NotFound): configmaps \"nginx-conf-tmpl\" not found```",
+      "time": "11:33",
+      "timestamp": "1729535620.425189",
+      "is_reply": true
+    },
+    {
+      "sender": "sean.donohoe",
+      "user_id": "U04JYSDMV63",
+      "message": "oh whoa, that's new :eyes: it looks like the default namespace isn't being set for the crafting-aihub kubectl context -- if you modify `/usr/local/etc/kubeconfig` with\n```- context:\n    cluster: crafting-aihub\n    namespace: intes-use2-crafting-aihub-instabase\n    user: \"\"\n  name: crafting-aihub\ncurrent-context: crafting-aihub```\nI think that should unblock you. I'll poke around for any related changes",
+      "time": "11:37",
+      "timestamp": "1729535824.964379",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C05L87V014J",
+    "channel_name": "ask-crafting",
+    "date_file": "2024-10-21.json",
+    "message_count": 11,
+    "start_time": "1729529491.208329",
+    "end_time": "1729535824.964379",
+    "is_thread": true
+  }
+}

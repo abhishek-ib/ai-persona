@@ -1,0 +1,247 @@
+{
+  "id": "ch_C0516UPPMT3_2025-03-07_1741346023.853269_thread",
+  "type": "channel",
+  "channel_name": "aihub-feedback",
+  "conversation_type": "thread",
+  "participants": [
+    "mfichman",
+    "Balaram",
+    "Vasu",
+    "Aditi"
+  ],
+  "messages": [
+    {
+      "sender": "Aditi",
+      "user_id": "U01T1DD9YBW",
+      "message": "Team - having issues with AI Hub Search the last two days. I've asked generic IB related questions, but have been getting no answers, and the below error message on the bottom right. Tested again on questions I've definitely gotten answers to before, but have the same issue. Is this something to do with my access?",
+      "time": "03:13",
+      "timestamp": "1741346023.853269",
+      "is_reply": false
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Hi Aditi, could you share which environment are you facing this issue on? And what org you are a part of on that environment? And a couple of queries that you've tried?",
+      "time": "03:18",
+      "timestamp": "1741346339.413739",
+      "is_reply": true
+    },
+    {
+      "sender": "Aditi",
+      "user_id": "U01T1DD9YBW",
+      "message": "PM'ing you Vasu",
+      "time": "04:08",
+      "timestamp": "1741349306.550809",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "I am seeing DEADLINE_EXCEEDED errors from GetItemPerms here (https://aihub.instabase.com/grafana/goto/7pMLiutHg?orgId=1) and App connectors require identity passthrough enabled within Search Service here (https://aihub.instabase.com/grafana/goto/IizriXtNg?orgId=1).\ncc @mfichman @abhijnan",
+      "time": "04:53",
+      "timestamp": "1741351999.475869",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Created a ticket. We don't technically need identity passthrough enabled; in fact, that may be causing the problem. Can we try toggling it off?",
+      "time": "04:55",
+      "timestamp": "1741352103.482499",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I wonder if this was caused by the RDS CPU usage issue -- since it is deadline exceeded, it may have just been load-related",
+      "time": "04:57",
+      "timestamp": "1741352265.745519",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "See: https://instabase.slack.com/archives/C06JPSJEPLK/p1741308269760859",
+      "time": "04:58",
+      "timestamp": "1741352308.408269",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "@Aditi Whenever you get a chance, could you try toggling the `Enable Identity passthrough for Search` option off in Settings > Account > Preview Features > Internal Preview Features. I have it disabled and I am able to successfully use search.",
+      "time": "04:58",
+      "timestamp": "1741352308.585299",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "@mfichman There are a lot of retries happening too on this",
+      "time": "04:59",
+      "timestamp": "1741352354.077279",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I don't see any errors related to this call on the search-service side (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22bme%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22search-tservice%5C%22%7D%20%7C%3D%20%60GetItemPerm%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%221741345500000%22,%22to%22:%221741345859260%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D%7D&orgId=1), so my guess is that a query took a long time and then hit the deadline on the client(caller) side.",
+      "time": "04:59",
+      "timestamp": "1741352378.285229",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "There are a lot of transaction aborts from here (different codepath though) (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22bme%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22search-tservice%5C%22%7D%20%7C%3D%20%60ERR%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%221741345500000%22,%22to%22:%221741345859260%22%7D,%22panelsState%22:%7B%22logs%22:%7B%22logs%22:%7B%22visualisationType%22:%22logs%22%7D%7D%7D%7D%7D&orgId=1) so that points to a general DB perf problem",
+      "time": "05:00",
+      "timestamp": "1741352445.714609",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "I see https://aihub.instabase.com/grafana/goto/IizriXtNg?orgId=1 errors around the same time as the DEADLINE EXCEEDED errors in node agent. My guess is, it kept retrying on the search service side and eventually timed out",
+      "time": "05:00",
+      "timestamp": "1741352447.689659",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "That error message is misleading -- identity passthrough is an optional feature right now",
+      "time": "05:01",
+      "timestamp": "1741352498.087609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "I think we need to toggle off ENABLE_PERMS_ITEM_LEVEL_CHECK until @abhijnan has had a chance to look at this. I can make a patch change for that.",
+      "time": "05:03",
+      "timestamp": "1741352600.263289",
+      "is_reply": true
+    },
+    {
+      "sender": "Vasu",
+      "user_id": "U02RJRBS13R",
+      "message": "Yup, that should resolve it regardless of identity passthrough being enabled or not. Its working for me though with identity passthrough disabled.",
+      "time": "05:05",
+      "timestamp": "1741352714.123989",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "BTW...enable_perms_item_level check is set =true in values.yaml, but the default in Go is false. We should fix this so that local dev environments align with production. cc @abhijnan as well on that one.",
+      "time": "05:05",
+      "timestamp": "1741352721.712959",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Patch here: https://aihub.instabase.com/deployment-manager/configs?targetObject=deployment-search-tservice&patch=1741352819688\n\nRestarting search-service pods next",
+      "time": "05:07",
+      "timestamp": "1741352840.791239",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "My guess is that one of the two app connectors (Confluence or Sharepoint) is misbehaving -- possible performance issue with the HEAD check or database. Hard to tell until someone has had time to dig into it.",
+      "time": "05:08",
+      "timestamp": "1741352910.075609",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Dumping a snapshot of the database perf at the time this occurred (6:15 am ET). Looks sort-of OK; average INSERT latency is a high though.",
+      "time": "05:11",
+      "timestamp": "1741353063.865859",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "This doesn't look so hot",
+      "time": "05:12",
+      "timestamp": "1741353147.885619",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22rb4%22:%7B%22d[…]%22from%22:%22now-3h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1 (https://aihub.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22rb4%22:%7B%22datasource%22:%22loki%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22expr%22:%22%7Bcontainer%3D%5C%22search-tservice%5C%22%7D%20%7C%3D%20%60Slow%20query%60%22,%22queryType%22:%22range%22,%22datasource%22:%7B%22type%22:%22loki%22,%22uid%22:%22loki%22%7D,%22editorMode%22:%22builder%22%7D%5D,%22range%22:%7B%22from%22:%22now-3h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)",
+      "time": "05:14",
+      "timestamp": "1741353245.917699",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "```2025-03-07T13:13:45.057479444Z stdout F 2025/03/07 13:13:45 level=WARNING path=utils/db/session/stats_utils.go:317 msg=\"SQL DB: Slow query\" args_count=1 duration_ms=56249 operation=query query=\"SELECT `access_check_url`, `acl_hash`, `content_key`, `content_size`, `content_type`, `created_at`, `data_source_key`, `data_source_key_digest`, `data_source_url`, `deleted_at`, `failed_at`, `fetched_at`, `id`, `indexed_at`, `invalidated_at`, `last_error`, `lock_uuid`, `locked_until`, `metadata`, `mount_point_id`, `requested_at`, `scanned_at`, `status`, `updated_at`, `uuid` FROM `index_items` WHERE (`id` = ?)\" query_type=select table=index_items trace_id=7a8472f9fa8d66d2```\n^ This query showed up as a slow one, but the query is a very simple pkey lookup. Probably some other DB performance issue (the query itself is fine).",
+      "time": "05:14",
+      "timestamp": "1741353273.308969",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah, I think I know what may have happened. https://instabase.atlassian.net/browse/CS-5880 combined w/ someone mounting the entire company Google Drive (which is v. large) was contributing to some perf degradation. I disabled indexing on that drive for now. Let's see if the performance improves.",
+      "time": "05:23",
+      "timestamp": "1741353822.592589",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Situation seems to be better now. @Aditi --  can you confirm?",
+      "time": "05:49",
+      "timestamp": "1741355399.622679",
+      "is_reply": true
+    },
+    {
+      "sender": "Aditi",
+      "user_id": "U01T1DD9YBW",
+      "message": "Still the same issue - I get a brief glimpse of the search interface, but then the screen goes completely white again",
+      "time": "06:10",
+      "timestamp": "1741356633.089179",
+      "is_reply": true
+    },
+    {
+      "sender": "mfichman",
+      "user_id": "U03DZ9XUE10",
+      "message": "Ah! white screen I think is due to https://instabase.slack.com/archives/C059K24M35E/p1741322041526499?thread_ts=1741291569.025769&cid=C059K24M35E, which has not been fixed yet in prod. cc @Balaram / @Aayush",
+      "time": "06:32",
+      "timestamp": "1741357928.902939",
+      "is_reply": true
+    },
+    {
+      "sender": "Aditi",
+      "user_id": "U01T1DD9YBW",
+      "message": "Ah i see. So basically - once that is resolved I should be up and running, right? No urgent usage need from my side, but thanks for looking into this Vasu and Matt",
+      "time": "06:39",
+      "timestamp": "1741358349.470519",
+      "is_reply": true
+    },
+    {
+      "sender": "Balaram",
+      "user_id": "UJQKL1UCC",
+      "message": "There are two issues:\n\n1. When a user query fails because of the underlying model, we are showing a blank screen. Accessing the same project from the home screen leads to a blank screen. @Aayush had raised a PR to address this.\n2. When executing a user query,  I saw the responses getting populated and then the front-end crashes. This is getting tracked in the other thread. We are not able to replicate this consistently. Any logs or steps to replicate will be helpful. (link (https://instabase.slack.com/archives/C059K24M35E/p1741348680141099?thread_ts=1741120452.069819&cid=C059K24M35E))",
+      "time": "08:01",
+      "timestamp": "1741363318.485639",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C0516UPPMT3",
+    "channel_name": "aihub-feedback",
+    "date_file": "2025-03-07.json",
+    "message_count": 28,
+    "start_time": "1741346023.853269",
+    "end_time": "1741363318.485639",
+    "is_thread": true
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "id": "ch_CSY11CK7T_2025-03-17_1742245349.800819_thread",
+  "type": "channel",
+  "channel_name": "discuss-frontend",
+  "conversation_type": "thread",
+  "participants": [
+    "Xindi Xu",
+    "Serena"
+  ],
+  "messages": [
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": ":cypress-spin: Hey team, `loginless-sample-results.spec.ts` is likely to fall on your PRs. @Paul H had a fix (https://github.com/instabase/instabase/pull/68896) for this (thank you!). I'm going to redeploy api-server for the crafting-cyp sandbox to make this fix effective",
+      "time": "14:02",
+      "timestamp": "1742245349.800819",
+      "is_reply": false
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Well... upgrade completed but now we are seeing a different error\n\nhttps://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22e49%22:%[…]m%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1 (https://crafting-cyp.test.instabase.com/grafana/explore?schemaVersion=1&panes=%7B%22e49%22:%7B%22datasource%22:%22jaeger%22,%22queries%22:%5B%7B%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22jaeger%22,%22uid%22:%22jaeger%22%7D,%22query%22:%22bb0ab00572bb66cc%22%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1)",
+      "time": "14:29",
+      "timestamp": "1742246958.244189",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Something to do with guest user using feature flag. I'll look into this",
+      "time": "14:31",
+      "timestamp": "1742247074.089529",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "hmm it seems that `FeatureFlagState` doesn't handle the case where the user isn't logged in? should we catch this error and just return false whenever `is_feature_enabled` is called in this case?",
+      "time": "14:35",
+      "timestamp": "1742247355.302099",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "It should handle the guest user case. Guest users can still send API requests to fetch feature flags. I think it was used incorrectly",
+      "time": "14:37",
+      "timestamp": "1742247432.225639",
+      "is_reply": true
+    },
+    {
+      "sender": "Serena",
+      "user_id": "U01CZ3LBFU4",
+      "message": "i don't see anything special about this call (https://github.com/instabase/instabase/blob/f1ce60b/webserver/api-server/src/py/instabase/api_server_apps/handler/api/v2/solutions/deployed_solutions.py#L88-L89) of `is_feature_enabled` :confused_dog:",
+      "time": "14:41",
+      "timestamp": "1742247677.105479",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "likely, something to do with changing the username. If username is not the same as IB-context, we'll try to fetch the org tier\nhttps://github.com/instabase/instabase/blob/f1ce60bf9cc21529ea4f68b22cdfbf9a66c7b1[…]/api_server_apps/handler/api/v2/solutions/deployed_solutions.py (https://github.com/instabase/instabase/blob/f1ce60bf9cc21529ea4f68b22cdfbf9a66c7b1de/webserver/api-server/src/py/instabase/api_server_apps/handler/api/v2/solutions/deployed_solutions.py#L244-L248)",
+      "time": "14:42",
+      "timestamp": "1742247735.497879",
+      "is_reply": true
+    },
+    {
+      "sender": "Xindi Xu",
+      "user_id": "U03FT35MAHF",
+      "message": "Fix: https://github.com/instabase/instabase/pull/68909",
+      "time": "15:05",
+      "timestamp": "1742249140.068729",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "CSY11CK7T",
+    "channel_name": "discuss-frontend",
+    "date_file": "2025-03-17.json",
+    "message_count": 8,
+    "start_time": "1742245349.800819",
+    "end_time": "1742249140.068729",
+    "is_thread": true
+  }
+}

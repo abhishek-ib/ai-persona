@@ -1,0 +1,159 @@
+{
+  "id": "ch_C06FA6A23_2025-08-08_1754684773.556089_thread",
+  "type": "channel",
+  "channel_name": "discuss-engineering",
+  "conversation_type": "thread",
+  "participants": [
+    "Victor Zeng",
+    "Cody Boggs",
+    "Yash Aggarwal",
+    "ayesha.ali"
+  ],
+  "messages": [
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "Hi all, seeing this failure with CICD on several PRs with completely unrelated changes\n```[2025-08-08T17:37:16.632Z] instabase_unit_tests/instabase/tasks/apps/test_aihub_tasks.py:1185: error: \"object\" has no attribute \"start\"  [attr-defined]\n[2025-08-08T17:37:16.632Z] instabase_unit_tests/instabase/tasks/apps/test_aihub_tasks.py:1189: error: \"object\" has no attribute \"stop\"  [attr-defined]\n[2025-08-08T17:37:16.632Z] instabase_unit_tests/instabase/tasks/apps/test_aihub_tasks.py:4279: error: \"object\" has no attribute \"start\"  [attr-defined]\n[2025-08-08T17:37:16.632Z] instabase_unit_tests/instabase/tasks/apps/test_aihub_tasks.py:4283: error: \"object\" has no attribute \"stop\"  [attr-defined]```\nThe above failure is in celery-app-tasks tests\nI tried running `make build mypy` on latest pre-merge image manually and the tests passed there.\nDoes someone know what is this about or possibly suggest how else I can debug this..\n\nEdit: Example PR:https://github.com/instabase/instabase/pull/73449",
+      "time": "13:26",
+      "timestamp": "1754684773.556089",
+      "is_reply": false
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@ayesha.ali was seeing similar I believe",
+      "time": "13:27",
+      "timestamp": "1754684863.891479",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "I used this image to try to replicate the CICD's env: 601729033846.dkr.ecr.us-east-2.amazonaws.com/cicd/pre-merge:25.06.04.22.18.32 (http://601729033846.dkr.ecr.us-east-2.amazonaws.com/cicd/pre-merge:25.06.04.22.18.32)\nThis looks correct right?",
+      "time": "13:36",
+      "timestamp": "1754685379.374949",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "I'd suggest a bisect, shouldn't take many iterations I suspect\n```cd distributed-tasks/celery/app-tasks\ngit bisect start\ngit bisect bad\ngit checkout HEAD~50\nmake clean build setup-unit-test #this will run mypy, dunno why it's like this```\nFor every commit you try it on and it fails, run `git bisect bad`\nFor every commit where it passes, run `git bisect good`\n\nYou'll find the breaking commit as iterates",
+      "time": "13:38",
+      "timestamp": "1754685498.668129",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Ah yea trying to replicate the actual CI runtime locally is damn near impossible with all the stuff that has been rammed into it over the years :sweat_smile: Lots of bind mounts, credentials you won't have in the right env vars, inaccessible test DBs for the integration tests, etc.",
+      "time": "13:39",
+      "timestamp": "1754685550.994899",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "Oh yeah, a bisect might work. But the only way I can think of for testing this is by creating a PR against master. I was thinking I'll revert last 50ish commits. If that doesnt trigger the issue, then maybe revert 25 commits and so on..",
+      "time": "13:41",
+      "timestamp": "1754685697.303329",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "It might be due to the same issue here? https://instabase.slack.com/archives/C04TSMWLPAS/p1754661745575609 (https://instabase.slack.com/archives/C04TSMWLPAS/p1754661745575609)",
+      "time": "13:44",
+      "timestamp": "1754685889.872449",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "yeah thanks,  this might be it. I'll check it out",
+      "time": "13:45",
+      "timestamp": "1754685949.063589",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "@Yash Aggarwal I guess I assumed it would fail locally too - does it not?",
+      "time": "13:51",
+      "timestamp": "1754686301.017559",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "> @Yash Aggarwal I guess I assumed it would fail locally too - does it not?\nNope. sorry I guess I wasnt clear on this. Everything works perfectly on local",
+      "time": "14:12",
+      "timestamp": "1754687570.771969",
+      "is_reply": true
+    },
+    {
+      "sender": "Cody Boggs",
+      "user_id": "U037PKN4USZ",
+      "message": "Oooh lame\nThen yea, ignore me :joy:",
+      "time": "14:18",
+      "timestamp": "1754687925.781369",
+      "is_reply": true
+    },
+    {
+      "sender": "ayesha.ali",
+      "user_id": "U058ZCMJ28L",
+      "message": "seems like this was fixed in  victor's pr here https://github.com/instabase/instabase/pull/73514",
+      "time": "14:38",
+      "timestamp": "1754689096.694699",
+      "is_reply": true
+    },
+    {
+      "sender": "Yash Aggarwal",
+      "user_id": "U016JSBAD4K",
+      "message": "oh great. Thanks for the heads up :salute:",
+      "time": "14:39",
+      "timestamp": "1754689162.528719",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "Yep. We recently merged in a fix to the mock type stubs and that is revealing a bunch of broken unit tests. :disappointed:",
+      "time": "14:44",
+      "timestamp": "1754689448.763619",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "For some reason, people were doing `mock.called_with` (which doesn't exist) instead of `mock.assert_called_with` .",
+      "time": "14:44",
+      "timestamp": "1754689494.555959",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": ":facepalm:",
+      "time": "18:18",
+      "timestamp": "1754702315.781219",
+      "is_reply": true
+    },
+    {
+      "sender": "Victor Zeng",
+      "user_id": "U03JT46AUPP",
+      "message": "More fixes here: https://github.com/instabase/instabase/pull/73528 (https://github.com/instabase/instabase/pull/73528)",
+      "time": "19:13",
+      "timestamp": "1754705618.924169",
+      "is_reply": true
+    }
+  ],
+  "metadata": {
+    "channel_id": "C06FA6A23",
+    "channel_name": "discuss-engineering",
+    "date_file": "2025-08-08.json",
+    "message_count": 17,
+    "start_time": "1754684773.556089",
+    "end_time": "1754705618.924169",
+    "is_thread": true
+  }
+}
