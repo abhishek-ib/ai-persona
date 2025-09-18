@@ -32,7 +32,10 @@ def main():
     
     if result['success']:
         print(f"✅ Search successful!")
-        print(f"📝 Response: {result['response']}")
+        print(f"📝 Response:")
+        print("-" * 80)
+        print(result['response'])
+        print("-" * 80)
         print(f"📚 References: {len(result.get('references', []))}")
     else:
         print(f"❌ Search failed: {result.get('error')}")

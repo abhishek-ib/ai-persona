@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 JSON-Based AI Persona Bot
@@ -32,7 +31,7 @@ from gemini_client_json import JSONGeminiClient
 
 
 class AIPersonaBotJSON:
-    def __init__(self, data_dir: str = "data", rebuild_index: bool = False, 
+    def __init__(self, data_dir: str = "data", rebuild_index: bool = False,
                  pinecone_api_key: Optional[str] = None):
         """
         Initialize JSON-based AI Persona Bot
@@ -45,45 +44,45 @@ class AIPersonaBotJSON:
         self.data_dir = data_dir
         self.json_dir = "generated"
         self.gemini_client = None
-        
+
         print("🤖 Initializing JSON-based AI Persona Bot...")
         print("🎯 Using complete conversation JSON files for better context")
-        
+
         # Initialize components
         self._initialize(rebuild_index, pinecone_api_key)
-        
+
         print("✅ JSON-based AI Persona Bot initialized successfully!")
-    
+
     def _initialize(self, rebuild_index: bool, pinecone_api_key: Optional[str]):
         """Initialize all components"""
-        
+
         # Check if we need to normalize data
         if rebuild_index or not os.path.exists(os.path.join(self.json_dir, 'conversation_index.json')):
             print("🔄 Normalizing data into JSON files...")
             normalizer = JSONDataNormalizer(self.data_dir, self.json_dir)
             conversations = normalizer.normalize_all_data()
             print(f"✅ Created {len(conversations)} conversation JSON files")
-        
+
         # Initialize vector store
         print("🔍 Initializing JSON vector store...")
         self.vector_store = JSONVectorStore(
             api_key=pinecone_api_key,
             json_dir=self.json_dir
         )
-        
+
         # Build index if needed
         if rebuild_index:
             print("🔄 Building Pinecone index...")
             self.vector_store.build_index()
-        
+
         # Load available users
         self._load_available_users()
-    
+
     def _load_available_users(self):
         """Load available users from conversation index"""
         try:
             conversations = self.vector_store.load_conversation_index()
-            
+
             # Count conversations per user
             user_stats = {}
             for conv in conversations:
@@ -96,43 +95,43 @@ class AIPersonaBotJSON:
                             'dm_count': 0,
                             'channel_count': 0
                         }
-                    
+
                     user_stats[participant]['conversation_count'] += 1
-                    
+
                     if conv.get('type') == 'dm':
                         user_stats[participant]['dm_count'] += 1
                     elif conv.get('type') == 'channel':
                         user_stats[participant]['channel_count'] += 1
-                    
+
                     if conv.get('conversation_type') == 'thread':
                         user_stats[participant]['thread_count'] += 1
-            
+
             # Filter users with sufficient data (at least 5 conversations)
             self.available_users = {
                 user: stats for user, stats in user_stats.items()
                 if stats['conversation_count'] >= 5
             }
-            
+
             print(f"📋 Found {len(self.available_users)} users with sufficient conversation history:")
-            
+
             # Show top users
             sorted_users = sorted(
                 self.available_users.items(),
                 key=lambda x: x[1]['conversation_count'],
                 reverse=True
             )
-            
+
             for user, stats in sorted_users[:10]:
                 conv_count = stats['conversation_count']
                 thread_count = stats['thread_count']
                 dm_count = stats['dm_count']
                 channel_count = stats['channel_count']
                 print(f"  - {user}: {conv_count} conversations ({thread_count} threads, {dm_count} DMs, {channel_count} channels)")
-            
+
         except Exception as e:
             print(f"Warning: Could not load user statistics: {e}")
             self.available_users = {}
-    
+
     def initialize_gemini(self, api_key: Optional[str] = None):
         """Initialize Gemini client"""
         try:
@@ -141,7 +140,7 @@ class AIPersonaBotJSON:
         except Exception as e:
             print(f"❌ Failed to initialize Gemini: {e}")
             print("   Set GOOGLE_AI_API_KEY environment variable or provide api_key")
-    
+
     def chat(self, query: str, session_id: str = "default", is_first_message: bool = False) -> Dict[str, Any]:
         """
         Generate a helpful coworker response with relevant conversation context
@@ -162,29 +161,29 @@ class AIPersonaBotJSON:
                 'query': query,
                 'timestamp': datetime.now().isoformat()
             }
-        
+
         # Get similar conversations (complete JSON data) - only 1-2 most relevant
         similar_conversations = self.vector_store.search_similar_conversations(query, k=20)
-        
+
         # Prepare dummy target user info for logging
         target_user = {
             'name': 'Helpful Coworker',
             'id': session_id
         }
-        
-        
+
+
         # Log the query and similar conversations before sending to Gemini
         print(f"\n📝 Bot Query Log:")
         print(f"   Query: {query}")
         print(f"   Similar conversations found: {len(similar_conversations)}")
-        
+
         if similar_conversations:
             print(f"   Top similar conversation files:")
             for i, file_info in enumerate(similar_conversations[:3], 1):
                 score = file_info.get('similarity_score', 0)
                 file_name = file_info.get('file_name', 'unknown')
                 print(f"     {i}. [{score:.3f}] {file_name}")
-        
+
         # Generate response using Gemini chat session with attached conversations
         result = self.gemini_client.generate_response(
             target_user=target_user,
@@ -193,9 +192,9 @@ class AIPersonaBotJSON:
             user_conversations=[],  # Not needed for helpful coworker mode
             is_first_message=is_first_message
         )
-        
+
         return result
-    
+
     def search_with_gemini(self, query: str, session_id: str = "search_session") -> Dict[str, Any]:
         """
         Search and generate structured response with references using Gemini chat sessions
@@ -215,10 +214,10 @@ class AIPersonaBotJSON:
                 'query': query,
                 'timestamp': datetime.now().isoformat()
             }
-        
+
         # Get similar conversations (complete JSON data)
         similar_conversations = self.vector_store.search_similar_conversations(query, k=10)
-        
+
         if not similar_conversations:
             return {
                 'success': True,
@@ -227,25 +226,25 @@ class AIPersonaBotJSON:
                 'query': query,
                 'timestamp': datetime.now().isoformat()
             }
-        
+
         # Prepare target user info for search session
         target_user = {
             'name': 'Search Assistant',
             'id': session_id
         }
-        
+
         # Log the query and similar conversations before sending to Gemini
         print(f"\n📝 Search Query Log:")
         print(f"   Query: {query}")
         print(f"   Similar conversations found: {len(similar_conversations)}")
-        
+
         if similar_conversations:
             print(f"   Top similar conversation files:")
             for i, file_info in enumerate(similar_conversations[:5], 1):
                 score = file_info.get('similarity_score', 0)
                 file_name = file_info.get('file_name', 'unknown')
                 print(f"     {i}. [{score:.3f}] {file_name}")
-        
+
         # Use Gemini chat session with search mode for structured responses
         result = self.gemini_client.generate_response(
             target_user=target_user,
@@ -255,14 +254,14 @@ class AIPersonaBotJSON:
             is_first_message=session_id not in self.gemini_client.chat_sessions,
             mode="search"
         )
-        
+
         if result['success']:
             # Parse the structured response from chat session
-            parsed_response = self._parse_structured_response(result['response'], similar_conversations)
+            # parsed_response = self._parse_structured_response(result['response'], similar_conversations)
             return {
                 'success': True,
-                'response': parsed_response['response'],
-                'references': parsed_response['references'],
+                'response': result.get('response', 'No response found'),
+                'references': similar_conversations,
                 'query': query,
                 'timestamp': datetime.now().isoformat(),
                 'session_id': session_id,
@@ -275,34 +274,34 @@ class AIPersonaBotJSON:
                 'query': query,
                 'timestamp': datetime.now().isoformat()
             }
-    
-    
+
+
     def _parse_structured_response(self, response_text: str, conversations: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Parse Gemini's structured response and create references with full details
         """
         import json
         import re
-        
+
         try:
             # Try to extract JSON from the response - look for JSON block
             json_match = re.search(r'\{[\s\S]*\}', response_text)
             if json_match:
                 json_str = json_match.group().strip()
                 parsed = json.loads(json_str)
-                
+
                 # Validate that we have the expected structure
                 if 'response' in parsed and 'references' in parsed:
                     # Build detailed references
                     detailed_references = []
                     referenced_ids = parsed.get('references', [])
-                    
+
                     # Only include conversations that were actually referenced by Gemini
                     for conv in conversations:
                         if conv.get('message_details'):
                             details = conv['message_details']
                             conv_id = details.get('id', '')
-                            
+
                             if conv_id in referenced_ids:
                                 detailed_references.append({
                                     'id': details.get('id'),
@@ -312,25 +311,25 @@ class AIPersonaBotJSON:
                                     'type': details.get('type'),
                                     'channel_name': details.get('channel_name')
                                 })
-                    
+
                     return {
                         'response': parsed.get('response', 'No response found'),
                         'references': detailed_references
                     }
                 else:
                     print("Warning: JSON response missing expected 'response' or 'references' fields")
-            
+
         except (json.JSONDecodeError, AttributeError) as e:
             # Fallback if JSON parsing fails - return response with empty references
             print(f"Warning: Could not parse JSON response from Gemini: {e}")
             print(f"Raw response: {response_text[:200]}...")
-        
+
         # Fallback: return the raw response with empty references since we couldn't parse which ones were actually used
         return {
             'response': response_text,
             'references': []
         }
-    
+
     def summarize_chat(self, conversation_data: Dict[str, Any], session_id: str = "summarize_session") -> Dict[str, Any]:
         """
         Summarize a Slack conversation using Gemini
@@ -349,13 +348,13 @@ class AIPersonaBotJSON:
                 'error': 'Gemini API not initialized. Please provide Google AI API key.',
                 'timestamp': datetime.now().isoformat()
             }
-        
+
         # Prepare target user info for summarize session
         target_user = {
             'name': 'Summarize Assistant',
             'id': session_id
         }
-        
+
         # Create a single conversation file info with the provided data
         conversation_files = [{
             'raw_json_content': json.dumps(conversation_data, indent=2),
@@ -363,14 +362,14 @@ class AIPersonaBotJSON:
             'similarity_score': 1.0,
             'json_path': 'provided_data'
         }]
-        
+
         # Log the summarize request
         print(f"\n📝 Summarize Request Log:")
         print(f"   Conversation ID: {conversation_data.get('id', 'unknown')}")
         print(f"   Main message: {conversation_data.get('text', '')[:100]}...")
         thread_count = len(conversation_data.get('thread', []))
         print(f"   Thread replies: {thread_count}")
-        
+
         # Use Gemini chat session with summarize mode
         result = self.gemini_client.generate_response(
             target_user=target_user,
@@ -380,7 +379,7 @@ class AIPersonaBotJSON:
             is_first_message=session_id not in self.gemini_client.chat_sessions,
             mode="summarize"
         )
-        
+
         if result['success']:
             return {
                 'success': True,
@@ -398,14 +397,14 @@ class AIPersonaBotJSON:
                 'conversation_id': conversation_data.get('id', 'unknown'),
                 'timestamp': datetime.now().isoformat()
             }
-    
+
     def summarize_mode(self):
         """Start summarize mode for summarizing Slack conversations"""
         # Check if Gemini is initialized
         if not self.gemini_client:
             print("❌ Gemini API not initialized. Please provide Google AI API key.")
             return
-        
+
         print("📝 Conversation Summarize Mode")
         print("=" * 60)
         print("🎯 Summarize Slack conversations with AI analysis")
@@ -416,15 +415,15 @@ class AIPersonaBotJSON:
         print("  'quit' - Exit summarize mode")
         print("  'help' - Show this help")
         print("=" * 60)
-        
+
         print(f"\n📝 Summarize Slack conversations")
         print(f"   🤖 AI-powered summaries using Gemini LLM")
         print(f"   📚 Clear, concise summaries focusing on key points")
         print(f"   🧠 Chat session provides context continuity")
-        
+
         # Use consistent session ID for summarize mode
         summarize_session_id = f"summarize_{int(datetime.now().timestamp())}"
-        
+
         while True:
             # Get user input
             try:
@@ -432,10 +431,10 @@ class AIPersonaBotJSON:
             except KeyboardInterrupt:
                 print("\n👋 Goodbye!")
                 break
-            
+
             if not user_input:
                 continue
-            
+
             # Handle commands
             if user_input.lower() == 'quit':
                 break
@@ -455,74 +454,74 @@ class AIPersonaBotJSON:
                 print("  - Or provide conversation ID to find and summarize")
                 print("  - Summaries focus on key points and decisions")
                 continue
-            
+
             # Try to parse as JSON first
             try:
                 conversation_data = json.loads(user_input)
-                
+
                 # Validate the JSON structure
                 if not isinstance(conversation_data, dict):
                     print("❌ Please provide valid JSON conversation data")
                     continue
-                
+
                 if 'text' not in conversation_data:
                     print("❌ JSON must contain 'text' field for the main message")
                     continue
-                
+
                 print(f"📝 Summarizing conversation...")
-                
+
                 # Summarize the conversation
                 result = self.summarize_chat(conversation_data, summarize_session_id)
-                
+
                 if result['success']:
                     print(f"\n📝 Conversation Summary:")
                     print("=" * 60)
                     print(f"{result['summary']}")
-                    
+
                     print(f"\n📋 Summary Details:")
                     print("-" * 60)
                     print(f"   🆔 Conversation ID: {result['conversation_id']}")
                     print(f"   💬 Main Message: {result['main_message'][:100]}...")
                     print(f"   🧵 Thread Replies: {result['thread_count']}")
                     print(f"   ⏰ Timestamp: {result['timestamp']}")
-                    
+
                 else:
                     print(f"\n❌ Error: {result.get('error', 'Unknown error')}")
                     print("💡 Make sure Gemini API is initialized and try again.")
-                
+
             except json.JSONDecodeError:
                 # If not JSON, try to find conversation by ID or search
                 print(f"🔍 Searching for conversation: '{user_input}'...")
-                
+
                 # Search for similar conversations
                 similar_conversations = self.vector_store.search_similar_conversations(user_input, k=5)
-                
+
                 if not similar_conversations:
                     print(f"❌ No conversations found matching '{user_input}'")
                     print("💡 Try providing JSON conversation data directly, or use different search terms")
                     continue
-                
+
                 print(f"📋 Found {len(similar_conversations)} similar conversations:")
                 for i, conv in enumerate(similar_conversations[:3], 1):
                     score = conv.get('similarity_score', 0)
                     file_name = conv.get('file_name', 'unknown')
                     print(f"   {i}. [{score:.3f}] {file_name}")
-                
+
                 # Use the most similar conversation
                 best_match = similar_conversations[0]
                 raw_json = best_match.get('raw_json_content', '')
-                
+
                 try:
                     conversation_data = json.loads(raw_json)
                     print(f"📝 Summarizing best match: {best_match.get('file_name', 'unknown')}")
-                    
+
                     result = self.summarize_chat(conversation_data, summarize_session_id)
-                    
+
                     if result['success']:
                         print(f"\n📝 Conversation Summary:")
                         print("=" * 60)
                         print(f"{result['summary']}")
-                        
+
                         print(f"\n📋 Summary Details:")
                         print("-" * 60)
                         print(f"   🆔 Conversation ID: {result['conversation_id']}")
@@ -530,10 +529,10 @@ class AIPersonaBotJSON:
                         print(f"   💬 Main Message: {result['main_message'][:100]}...")
                         print(f"   🧵 Thread Replies: {result['thread_count']}")
                         print(f"   ⏰ Timestamp: {result['timestamp']}")
-                        
+
                     else:
                         print(f"\n❌ Error: {result.get('error', 'Unknown error')}")
-                        
+
                 except json.JSONDecodeError as e:
                     print(f"❌ Error parsing conversation data: {e}")
                     continue
@@ -544,7 +543,7 @@ class AIPersonaBotJSON:
         if not self.gemini_client:
             print("❌ Gemini API not initialized. Please provide Google AI API key.")
             return
-        
+
         print("🔍 Conversation Search Mode (AI-Powered)")
         print("=" * 60)
         print("🎯 Search through Slack conversations with AI analysis")
@@ -555,16 +554,16 @@ class AIPersonaBotJSON:
         print("  'quit' - Exit search mode")
         print("  'help' - Show this help")
         print("=" * 60)
-        
+
         print(f"\n🔍 Search through {len(self.vector_store.load_conversation_index())} conversations")
         print(f"   🤖 AI-powered responses using Gemini LLM")
         print(f"   📚 Structured output with response and references")
         print(f"   🔍 Hybrid search: exact keyword matches + semantic similarity")
         print(f"   🧠 Chat session provides context continuity across searches")
-        
+
         # Use consistent session ID for search mode
         search_session_id = f"search_{int(datetime.now().timestamp())}"
-        
+
         while True:
             # Get user input
             try:
@@ -572,10 +571,10 @@ class AIPersonaBotJSON:
             except KeyboardInterrupt:
                 print("\n👋 Goodbye!")
                 break
-            
+
             if not user_input:
                 continue
-            
+
             # Handle commands
             if user_input.lower() == 'quit':
                 break
@@ -596,27 +595,27 @@ class AIPersonaBotJSON:
                 print("  - Results show similarity scores (higher = more relevant)")
                 print("  - Search session maintains context across multiple queries")
                 continue
-            
+
             # Perform search with Gemini response
             print(f"🔍 Searching and analyzing: '{user_input}'...")
-            
+
             # Use Gemini to generate structured response with references using chat session
             result = self.search_with_gemini(user_input, search_session_id)
-            
+
             if result['success']:
                 print(f"\n📝 Structured Response:")
                 print("=" * 60)
-                
+
                 # Display the response
                 print(f"\n🤖 AI Response:")
                 print(f"{result['response']}")
-                
+
                 # Display references
                 references = result.get('references', [])
                 if references:
                     print(f"\n📚 References ({len(references)} conversations):")
                     print("-" * 60)
-                    
+
                     for i, ref in enumerate(references, 1):
                         print(f"\n{i}. Reference:")
                         print(f"   🆔 ID: {ref.get('id', 'N/A')}")
@@ -624,13 +623,13 @@ class AIPersonaBotJSON:
                         print(f"   ⏰ Timestamp: {ref.get('timestamp', 'N/A')}")
                         print(f"   📂 Type: {ref.get('type', 'N/A')}")
                         print(f"   📺 Channel: {ref.get('channel_name', 'N/A')}")
-                        
+
                         # Show text preview
                         text = ref.get('text', '')
                         if text:
                             preview = (text[:150] + '...') if len(text) > 150 else text
                             print(f"   📝 Text: {preview}")
-                
+
                 # Show complete JSON output
                 print(f"\n📋 Complete JSON Output:")
                 print("-" * 60)
@@ -640,7 +639,7 @@ class AIPersonaBotJSON:
                     'references': references
                 }
                 print(json.dumps(output_json, indent=2))
-                
+
             else:
                 print(f"\n❌ Error: {result.get('error', 'Unknown error')}")
                 print("💡 Make sure Gemini API is initialized and try again.")
@@ -656,15 +655,15 @@ class AIPersonaBotJSON:
         print("  'clear' - Clear chat session")
         print("  'quit' - Exit")
         print("=" * 60)
-        
+
         session_id = f"session_{int(datetime.now().timestamp())}"
         is_first_message = True
-        
+
         print(f"\n🤖 Hi! I'm your helpful coworker AI.")
         print(f"   📚 I have access to {len(self.vector_store.load_conversation_index())} conversations")
         print(f"   💬 Ask me anything and I'll find relevant discussions to help!")
         print(f"   🚀 Powered by Gemini 2.5 Flash with complete conversation context")
-        
+
         while True:
             # Get user input
             try:
@@ -672,10 +671,10 @@ class AIPersonaBotJSON:
             except KeyboardInterrupt:
                 print("\n👋 Goodbye!")
                 break
-            
+
             if not user_input:
                 continue
-            
+
             # Handle commands
             if user_input.lower() == 'quit':
                 break
@@ -690,27 +689,27 @@ class AIPersonaBotJSON:
                 print("  'clear' - Clear chat session")
                 print("  'quit' - Exit")
                 continue
-            
+
             # Generate response
             if is_first_message:
                 print("🧠 Setting up helpful coworker mode...")
             else:
                 print("🤔 Looking for relevant conversations...")
-            
+
             result = self.chat(user_input, session_id, is_first_message)
-            
+
             if result['success']:
                 response = result['response']
                 print(f"\n🤖 {response}")
-                
+
                 # Show context info
                 context_count = result.get('context_conversations', 0)
-                
+
                 if is_first_message:
                     print(f"   🎯 (Helpful coworker mode initialized)")
                 else:
                     print(f"   📎 (Found {context_count} relevant conversations)")
-                
+
                 is_first_message = False  # Subsequent messages use existing session
             else:
                 print(f"❌ Error: {result.get('error', 'Unknown error')}")
@@ -727,16 +726,16 @@ def main():
     parser.add_argument("--user", help="User to respond as")
     parser.add_argument("--query", help="Query to respond to")
     parser.add_argument("--json-file", help="JSON file containing conversation data to summarize")
-    
+
     args = parser.parse_args()
-    
+
     # Initialize bot
     bot = AIPersonaBotJSON(args.data_dir, args.rebuild_index)
-    
+
     # Initialize Gemini for interactive, search, and summarize modes
     if args.interactive or args.search or args.summarize or args.query or args.json_file:
         bot.initialize_gemini()
-    
+
     if args.interactive:
         bot.interactive_chat()
     elif args.search:
@@ -748,15 +747,15 @@ def main():
         try:
             with open(args.json_file, 'r') as f:
                 conversation_data = json.load(f)
-            
+
             print(f"📝 Summarizing conversation from: {args.json_file}")
             result = bot.summarize_chat(conversation_data)
-            
+
             if result['success']:
                 print(f"\n📝 Conversation Summary:")
                 print("=" * 60)
                 print(f"{result['summary']}")
-                
+
                 print(f"\n📋 Summary Details:")
                 print("-" * 60)
                 print(f"   🆔 Conversation ID: {result['conversation_id']}")
@@ -765,7 +764,7 @@ def main():
                 print(f"   ⏰ Timestamp: {result['timestamp']}")
             else:
                 print(f"❌ Error: {result.get('error', 'Unknown error')}")
-                
+
         except FileNotFoundError:
             print(f"❌ File not found: {args.json_file}")
         except json.JSONDecodeError as e:
