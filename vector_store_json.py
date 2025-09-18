@@ -44,7 +44,7 @@ class JSONVectorStore:
             json_dir: Directory containing conversation JSON files
             enable_logging: Enable query logging
         """
-        self.api_key = api_key or os.getenv('PINECONE_API_KEY')
+        self.api_key = api_key or os.getenv('PINECONE_API_KEY') or ''
         self.model_name = model_name
         self.index_name = index_name
         self.environment = environment
@@ -217,19 +217,79 @@ class JSONVectorStore:
                     with open(json_path, 'r', encoding='utf-8') as f:
                         raw_json_content = f.read()
                     
-                    matches.append({
-                        'file_name': conv['file'],
-                        'similarity_score': 1.0,  # Max score for exact match
-                        'raw_json_content': raw_json_content,
-                        'json_path': json_path,
-                        'match_type': 'exact_keyword',
-                        'conversation_id': conv['id']
-                    })
+                    # Create enhanced result for keyword match
+                    enhanced_result = self._create_enhanced_search_result(
+                        None, conv['file'], 1.0, raw_json_content, json_path, 'exact_keyword'
+                    )
+                    enhanced_result['conversation_id'] = conv['id']
+                    matches.append(enhanced_result)
                 except Exception as e:
                     print(f"Error loading {json_path}: {e}")
                     continue
         
         return matches
+    
+    def _create_enhanced_search_result(self, match, file_name: str, similarity_score: float, 
+                                     raw_json_content: str, json_path: str, match_type: str) -> Dict[str, Any]:
+        """Create enhanced search result with detailed message information"""
+        try:
+            # Parse the JSON content to get message details
+            conv_data = json.loads(raw_json_content)
+            
+            # Get first message details
+            first_message_details = None
+            if conv_data.get('messages'):
+                first_msg = conv_data['messages'][0]
+                
+                # Extract timestamp from the message or use conversation ID
+                timestamp = first_msg.get('timestamp')
+                if timestamp:
+                    # Convert string timestamp to float if needed
+                    try:
+                        timestamp = float(timestamp)
+                    except (ValueError, TypeError):
+                        timestamp = None
+                
+                # Create the detailed message format
+                first_message_details = {
+                    'id': conv_data.get('id', ''),  # Conversation ID as UUID
+                    'text': first_msg.get('message', ''),
+                    'user': first_msg.get('user_id', ''),
+                    'timestamp': timestamp,
+                    'type': conv_data.get('conversation_type', 'single'),
+                    'channel_name': conv_data.get('channel_name', '')
+                }
+            
+            # Enhanced search result format
+            result = {
+                'file_name': file_name,
+                'similarity_score': similarity_score,
+                'raw_json_content': raw_json_content,
+                'json_path': json_path,
+                'match_type': match_type,
+                'conversation_id': conv_data.get('id', ''),
+                
+                # Detailed message information
+                'message_details': first_message_details,
+                
+                # Additional metadata from Pinecone (if available)
+                'metadata': getattr(match, 'metadata', {}) if hasattr(match, 'metadata') else {}
+            }
+            
+            return result
+            
+        except Exception as e:
+            print(f"Error creating enhanced search result for {file_name}: {e}")
+            # Fallback to basic format
+            return {
+                'file_name': file_name,
+                'similarity_score': similarity_score,
+                'raw_json_content': raw_json_content,
+                'json_path': json_path,
+                'match_type': match_type,
+                'message_details': None,
+                'metadata': {}
+            }
     
     def build_index(self, batch_size: int = 100):
         """Build Pinecone index from conversation JSON files"""
@@ -269,14 +329,22 @@ class JSONVectorStore:
                     
                     first_message = conv.get('first_message', '')
                     
-                    # Enhanced metadata with technical indicators
+                    # Enhanced metadata with technical indicators and user IDs
                     metadata = {
+                        'id': conv['id'],  # Add conversation ID
                         'file': conv['file'],
                         'type': conv['type'],
                         'conversation_type': conv.get('conversation_type', 'single'),
                         'participants': conv['participants'][:5],  # Limit for metadata size
                         'message_count': conv['message_count'],
                         'channel_name': conv.get('channel_name', '')[:50] if conv.get('channel_name') else '',
+                        
+                        # User ID information
+                        'participant_user_ids': conv.get('participant_user_ids', [])[:5],  # Original Slack user IDs
+                        'first_message_user_id': conv.get('first_message_user_id'),  # User ID of first message sender
+                        
+                        # First message content (truncated for metadata size limits)
+                        'first_message_text': first_message if first_message else '',  # First 1000 chars
                         
                         # Technical indicators for better filtering
                         'has_error': any(keyword in first_message.lower() for keyword in ['error', 'failed', 'exception', 'fatal']),
@@ -380,14 +448,11 @@ class JSONVectorStore:
                     with open(json_path, 'r', encoding='utf-8') as f:
                         raw_json_content = f.read()
                     
-                    # Return file info with raw JSON content
-                    conversation_files.append({
-                        'file_name': file_name,
-                        'similarity_score': similarity_score,
-                        'raw_json_content': raw_json_content,
-                        'json_path': json_path,
-                        'match_type': 'semantic'
-                    })
+                    # Create enhanced search result with detailed message info
+                    enhanced_result = self._create_enhanced_search_result(
+                        match, file_name, similarity_score, raw_json_content, json_path, 'semantic'
+                    )
+                    conversation_files.append(enhanced_result)
                     
                 except Exception as e:
                     print(f"Error loading {json_path}: {e}")

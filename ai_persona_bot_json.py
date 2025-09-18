@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 """
 JSON-Based AI Persona Bot
@@ -195,20 +196,167 @@ class AIPersonaBotJSON:
         
         return result
     
+    def search_with_gemini(self, query: str, session_id: str = "search_session") -> Dict[str, Any]:
+        """
+        Search and generate structured response with references using Gemini chat sessions
+        
+        Args:
+            query: Search query
+            session_id: Chat session identifier for search mode
+            
+        Returns:
+            Structured response with answer and references
+        """
+        # Check if Gemini is initialized
+        if not self.gemini_client:
+            return {
+                'success': False,
+                'error': 'Gemini API not initialized. Please provide Google AI API key.',
+                'query': query,
+                'timestamp': datetime.now().isoformat()
+            }
+        
+        # Get similar conversations (complete JSON data)
+        similar_conversations = self.vector_store.search_similar_conversations(query, k=10)
+        
+        if not similar_conversations:
+            return {
+                'success': True,
+                'response': f"I couldn't find any relevant conversations about '{query}'. Try different keywords or check the spelling.",
+                'references': [],
+                'query': query,
+                'timestamp': datetime.now().isoformat()
+            }
+        
+        # Prepare target user info for search session
+        target_user = {
+            'name': 'Search Assistant',
+            'id': session_id
+        }
+        
+        # Log the query and similar conversations before sending to Gemini
+        print(f"\n📝 Search Query Log:")
+        print(f"   Query: {query}")
+        print(f"   Similar conversations found: {len(similar_conversations)}")
+        
+        if similar_conversations:
+            print(f"   Top similar conversation files:")
+            for i, file_info in enumerate(similar_conversations[:5], 1):
+                score = file_info.get('similarity_score', 0)
+                file_name = file_info.get('file_name', 'unknown')
+                print(f"     {i}. [{score:.3f}] {file_name}")
+        
+        # Use Gemini chat session with search mode for structured responses
+        result = self.gemini_client.generate_response(
+            target_user=target_user,
+            query=query,
+            similar_conversations=similar_conversations,
+            user_conversations=[],  # Not needed for search mode
+            is_first_message=session_id not in self.gemini_client.chat_sessions,
+            mode="search"
+        )
+        
+        if result['success']:
+            # Parse the structured response from chat session
+            parsed_response = self._parse_structured_response(result['response'], similar_conversations)
+            return {
+                'success': True,
+                'response': parsed_response['response'],
+                'references': parsed_response['references'],
+                'query': query,
+                'timestamp': datetime.now().isoformat(),
+                'session_id': session_id,
+                'context_conversations': len(similar_conversations)
+            }
+        else:
+            return {
+                'success': False,
+                'error': result.get('error', 'Unknown error from Gemini'),
+                'query': query,
+                'timestamp': datetime.now().isoformat()
+            }
+    
+    
+    def _parse_structured_response(self, response_text: str, conversations: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        Parse Gemini's structured response and create references with full details
+        """
+        import json
+        import re
+        
+        try:
+            # Try to extract JSON from the response - look for JSON block
+            json_match = re.search(r'\{[\s\S]*\}', response_text)
+            if json_match:
+                json_str = json_match.group().strip()
+                parsed = json.loads(json_str)
+                
+                # Validate that we have the expected structure
+                if 'response' in parsed and 'references' in parsed:
+                    # Build detailed references
+                    detailed_references = []
+                    referenced_ids = parsed.get('references', [])
+                    
+                    # Only include conversations that were actually referenced by Gemini
+                    for conv in conversations:
+                        if conv.get('message_details'):
+                            details = conv['message_details']
+                            conv_id = details.get('id', '')
+                            
+                            if conv_id in referenced_ids:
+                                detailed_references.append({
+                                    'id': details.get('id'),
+                                    'text': details.get('text'),
+                                    'user': details.get('user'),
+                                    'timestamp': details.get('timestamp'),
+                                    'type': details.get('type'),
+                                    'channel_name': details.get('channel_name')
+                                })
+                    
+                    return {
+                        'response': parsed.get('response', 'No response found'),
+                        'references': detailed_references
+                    }
+                else:
+                    print("Warning: JSON response missing expected 'response' or 'references' fields")
+            
+        except (json.JSONDecodeError, AttributeError) as e:
+            # Fallback if JSON parsing fails - return response with empty references
+            print(f"Warning: Could not parse JSON response from Gemini: {e}")
+            print(f"Raw response: {response_text[:200]}...")
+        
+        # Fallback: return the raw response with empty references since we couldn't parse which ones were actually used
+        return {
+            'response': response_text,
+            'references': []
+        }
+    
     def search_mode(self):
         """Start search mode for finding relevant conversations"""
-        print("🔍 Conversation Search Mode")
+        # Check if Gemini is initialized
+        if not self.gemini_client:
+            print("❌ Gemini API not initialized. Please provide Google AI API key.")
+            return
+        
+        print("🔍 Conversation Search Mode (AI-Powered)")
         print("=" * 60)
-        print("🎯 Search through Slack conversations to find relevant information")
-        print("📚 Get detailed results with conversation context and sources")
+        print("🎯 Search through Slack conversations with AI analysis")
+        print("🤖 Get structured responses with relevant references")
+        print("🧠 Chat session maintains context across multiple searches")
         print("Commands:")
+        print("  'clear' - Clear search session context")
         print("  'quit' - Exit search mode")
         print("  'help' - Show this help")
         print("=" * 60)
         
         print(f"\n🔍 Search through {len(self.vector_store.load_conversation_index())} conversations")
-        print(f"   💡 Enter your search query to find relevant discussions")
-        print(f"   📄 Results will show conversation files and similarity scores")
+        print(f"   🤖 AI-powered responses using Gemini LLM")
+        print(f"   📚 Structured output with response and references")
+        print(f"   🔍 Hybrid search: exact keyword matches + semantic similarity")
+        print(f"   🧠 Chat session provides context continuity across searches")
+        
+        # Use consistent session ID for search mode
+        search_session_id = f"search_{int(datetime.now().timestamp())}"
         
         while True:
             # Get user input
@@ -224,66 +372,71 @@ class AIPersonaBotJSON:
             # Handle commands
             if user_input.lower() == 'quit':
                 break
+            elif user_input.lower() == 'clear':
+                if self.gemini_client:
+                    self.gemini_client.clear_chat_session(search_session_id)
+                    search_session_id = f"search_{int(datetime.now().timestamp())}"  # New session ID
+                    print("🗑️  Search session cleared")
+                continue
             elif user_input.lower() == 'help':
                 print("\nSearch Commands:")
+                print("  'clear' - Clear search session context")
                 print("  'quit' - Exit search mode")
                 print("  'help' - Show this help")
                 print("\nTips:")
                 print("  - Use specific keywords for better results")
                 print("  - Try different phrasings if you don't find what you need")
                 print("  - Results show similarity scores (higher = more relevant)")
+                print("  - Search session maintains context across multiple queries")
                 continue
             
-            # Perform search
-            print(f"🔍 Searching for: '{user_input}'...")
+            # Perform search with Gemini response
+            print(f"🔍 Searching and analyzing: '{user_input}'...")
             
-            # Get similar conversations with higher limit for search mode
-            similar_conversations = self.vector_store.search_similar_conversations(user_input, k=10)
+            # Use Gemini to generate structured response with references using chat session
+            result = self.search_with_gemini(user_input, search_session_id)
             
-            if similar_conversations:
-                print(f"\n📋 Found {len(similar_conversations)} relevant conversations:")
+            if result['success']:
+                print(f"\n📝 Structured Response:")
                 print("=" * 60)
                 
-                for i, file_info in enumerate(similar_conversations, 1):
-                    score = file_info.get('similarity_score', 0)
-                    file_name = file_info.get('file_name', 'unknown')
-                    
-                    # Try to load the JSON to get more details
-                    try:
-                        import json
-                        raw_json = file_info.get('raw_json_content', '')
-                        if raw_json:
-                            conv_data = json.loads(raw_json)
-                            channel_name = conv_data.get('channel_name', 'Unknown')
-                            conv_type = conv_data.get('conversation_type', 'single')
-                            participants = conv_data.get('participants', [])
-                            message_count = len(conv_data.get('messages', []))
-                            
-                            # Get first message preview
-                            messages = conv_data.get('messages', [])
-                            first_msg_preview = ""
-                            if messages:
-                                first_msg = messages[0].get('message', '')
-                                first_msg_preview = (first_msg[:100] + '...') if len(first_msg) > 100 else first_msg
-                            
-                            print(f"\n{i}. [{score:.3f}] {channel_name} - {conv_type}")
-                            print(f"   👥 Participants: {', '.join(participants[:3])}")
-                            print(f"   💬 Messages: {message_count}")
-                            print(f"   📄 File: {file_name}")
-                            if first_msg_preview:
-                                print(f"   📝 Preview: {first_msg_preview}")
-                    except:
-                        # Fallback to basic info if JSON parsing fails
-                        print(f"\n{i}. [{score:.3f}] {file_name}")
+                # Display the response
+                print(f"\n🤖 AI Response:")
+                print(f"{result['response']}")
                 
-                print("\n" + "=" * 60)
-                print(f"💡 Tip: Use these results to ask more specific questions!")
+                # Display references
+                references = result.get('references', [])
+                if references:
+                    print(f"\n📚 References ({len(references)} conversations):")
+                    print("-" * 60)
+                    
+                    for i, ref in enumerate(references, 1):
+                        print(f"\n{i}. Reference:")
+                        print(f"   🆔 ID: {ref.get('id', 'N/A')}")
+                        print(f"   👤 User: {ref.get('user', 'N/A')}")
+                        print(f"   ⏰ Timestamp: {ref.get('timestamp', 'N/A')}")
+                        print(f"   📂 Type: {ref.get('type', 'N/A')}")
+                        print(f"   📺 Channel: {ref.get('channel_name', 'N/A')}")
+                        
+                        # Show text preview
+                        text = ref.get('text', '')
+                        if text:
+                            preview = (text[:150] + '...') if len(text) > 150 else text
+                            print(f"   📝 Text: {preview}")
+                
+                # Show complete JSON output
+                print(f"\n📋 Complete JSON Output:")
+                print("-" * 60)
+                import json
+                output_json = {
+                    'response': result['response'],
+                    'references': references
+                }
+                print(json.dumps(output_json, indent=2))
+                
             else:
-                print(f"\n❌ No conversations found for: '{user_input}'")
-                print("💡 Try:")
-                print("   - Different keywords or phrases")
-                print("   - More general terms")
-                print("   - Check spelling")
+                print(f"\n❌ Error: {result.get('error', 'Unknown error')}")
+                print("💡 Make sure Gemini API is initialized and try again.")
 
     def interactive_chat(self):
         """Start interactive chat as helpful coworker"""
@@ -371,8 +524,8 @@ def main():
     # Initialize bot
     bot = AIPersonaBotJSON(args.data_dir, args.rebuild_index)
     
-    # Initialize Gemini (only if not in search-only mode)
-    if not args.search:
+    # Initialize Gemini for interactive and search modes
+    if args.interactive or args.search or args.query:
         bot.initialize_gemini()
     
     if args.interactive:

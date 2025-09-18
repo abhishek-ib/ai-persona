@@ -267,9 +267,11 @@ class JSONDataNormalizer:
             
             conversation_data['messages'].append({
                 'sender': user_info['clean_name'],
+                'user_id': user_id,  # Add original Slack user ID
                 'message': text,
                 'time': time_str,
-                'timestamp': message.get('ts')
+                'timestamp': message.get('ts'),
+                'is_reply': False
             })
         
         conversation_data['participants'] = list(participants)
@@ -281,15 +283,20 @@ class JSONDataNormalizer:
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(conversation_data, f, indent=2, ensure_ascii=False)
         
-        # Create index entry
+        # Create index entry with user IDs
+        participant_user_ids = [msg.get('user') for msg in messages]
+        unique_user_ids = list(set([uid for uid in participant_user_ids if uid]))
+        
         index_entry = {
             'id': conversation_id,
             'file': json_filename,
             'type': 'dm',
             'participants': conversation_data['participants'],
+            'participant_user_ids': unique_user_ids,  # Add original Slack user IDs
             'message_count': len(messages),
             'summary': f"DM conversation between {', '.join(conversation_data['participants'])}",
-            'first_message': conversation_data['messages'][0]['message'] if conversation_data['messages'] else ""
+            'first_message': conversation_data['messages'][0]['message'] if conversation_data['messages'] else "",
+            'first_message_user_id': messages[0].get('user') if messages else None  # User ID of first message sender
         }
         
         return index_entry
@@ -509,6 +516,7 @@ class JSONDataNormalizer:
                 # Thread reply
                 message_entry = {
                     'sender': user_info['clean_name'],
+                    'user_id': user_id,  # Add original Slack user ID
                     'message': text,
                     'time': time_str,
                     'timestamp': message.get('ts'),
@@ -518,6 +526,7 @@ class JSONDataNormalizer:
                 # Main message or conversational message
                 message_entry = {
                     'sender': user_info['clean_name'],
+                    'user_id': user_id,  # Add original Slack user ID
                     'message': text,
                     'time': time_str,
                     'timestamp': message.get('ts'),
@@ -535,7 +544,10 @@ class JSONDataNormalizer:
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(conversation_data, f, indent=2, ensure_ascii=False)
         
-        # Create index entry
+        # Create index entry with user IDs
+        participant_user_ids = [msg.get('user') for msg in messages]
+        unique_user_ids = list(set([uid for uid in participant_user_ids if uid]))
+        
         index_entry = {
             'id': conversation_id,
             'file': json_filename,
@@ -543,9 +555,11 @@ class JSONDataNormalizer:
             'channel_name': channel_name,
             'conversation_type': conversation_type,
             'participants': conversation_data['participants'],
+            'participant_user_ids': unique_user_ids,  # Add original Slack user IDs
             'message_count': len(messages),
             'summary': f"#{channel_name} {conversation_type} with {', '.join(conversation_data['participants'])}",
-            'first_message': conversation_data['messages'][0]['message'] if conversation_data['messages'] else ""
+            'first_message': conversation_data['messages'][0]['message'] if conversation_data['messages'] else "",
+            'first_message_user_id': messages[0].get('user') if messages else None  # User ID of first message sender
         }
         
         return index_entry

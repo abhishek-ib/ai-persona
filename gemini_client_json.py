@@ -31,7 +31,8 @@ class JSONGeminiClient:
             model_name: Gemini model name
             enable_logging: Enable detailed logging
         """
-        self.api_key = api_key or os.getenv('GOOGLE_AI_API_KEY')
+        self.api_key = api_key or os.getenv(
+            'GOOGLE_AI_API_KEY') or ''
         if not self.api_key:
             raise ValueError("Google AI API key not provided. Set GOOGLE_AI_API_KEY environment variable.")
 
@@ -80,15 +81,15 @@ class JSONGeminiClient:
         self.response_logger.handlers.clear()
         self.response_logger.addHandler(response_handler)
 
-    def get_or_create_chat_session(self, user_name: str) -> Any:
+    def get_or_create_chat_session(self, user_name: str, mode: str = "interactive") -> Any:
         """Get or create a chat session with helpful coworker setup"""
 
         if user_name not in self.chat_sessions:
-            # Create new chat session with helpful coworker context
-            initial_prompt = self._create_initial_prompt()
+            # Create new chat session with context based on mode
+            initial_prompt = self._create_initial_prompt(mode)
 
             try:
-                # Initialize the chat with helpful coworker context using new SDK
+                # Initialize the chat with context using new SDK
                 initial_response = self.client.models.generate_content(
                     model=self.model_name,
                     contents=initial_prompt,
@@ -110,7 +111,8 @@ class JSONGeminiClient:
     def generate_response(self, target_user: Dict[str, Any], query: str,
                          similar_conversations: List[Dict[str, Any]],
                          user_conversations: List[Dict[str, Any]],
-                         is_first_message: bool = False) -> Dict[str, Any]:
+                         is_first_message: bool = False,
+                         mode: str = "interactive") -> Dict[str, Any]:
         """
         Generate response using Gemini chat sessions for context continuity
         
@@ -134,52 +136,109 @@ class JSONGeminiClient:
         try:
             # Get or create chat session for this user
             if is_first_message or user_name not in self.chat_sessions:
-                conversation_history = self.get_or_create_chat_session(user_name)
+                conversation_history = self.get_or_create_chat_session(user_name, mode)
                 if not conversation_history:
                     raise Exception("Failed to create chat session")
             else:
                 conversation_history = self.chat_sessions[user_name]
 
-            # Create message with attached relevant conversations (1-2 most relevant)
-            message_content = self._create_message_with_attachments(
-                query, similar_conversations  # Limit to top 2 for token management
-            )
-            print(f"   [GeminiClient] Query parts: {len(message_content.parts)} parts")
+            # Retry mechanism: start with all conversations, trim if 400 error (too many tokens)
+            max_retries = 3
+            conversations_to_send = similar_conversations
+            response = None
 
-            # Add the new user message to conversation history
-            conversation_history.append(message_content)
+            for attempt in range(max_retries):
+                try:
+                    # Create message with attached relevant conversations
+                    message_content = self._create_message_with_attachments(
+                        query, conversations_to_send
+                    )
+                    print(f"   [GeminiClient] Attempt {attempt + 1}: Query parts: {len(message_content.parts)} parts")
 
-            # Send the conversation history to generate response using new SDK
-            response = self.client.models.generate_content(
-                model=self.model_name,
-                contents=conversation_history,
-                config=self.generation_config
-            )
+                    # Add the new user message to conversation history
+                    conversation_history.append(message_content)
 
-            # Check if response has valid content
-            if hasattr(response, 'text') and response.text:
-                result = {
-                    'success': True,
-                    'response': response.text.strip(),
-                    'user_name': 'Helpful Coworker',
-                    'user_id': target_user['id'],
-                    'query': query,
-                    'timestamp': datetime.now().isoformat(),
-                    'model_used': self.model_name,
-                    'context_conversations': len(similar_conversations),
-                    'user_conversations': len(user_conversations),
-                    'has_session_context': user_name in self.chat_sessions
-                }
+                    # Send the conversation history to generate response using new SDK
+                    response = self.client.models.generate_content(
+                        model=self.model_name,
+                        contents=conversation_history,
+                        config=self.generation_config
+                    )
 
-                # Log successful response
-                if self.enable_logging:
-                    self.response_logger.info(f"JSON_RESPONSE: {json.dumps(result, indent=2)}")
+                    # Check if response has valid content
+                    if hasattr(response, 'text') and response.text:
+                        # If we get here, the request was successful
+                        break
+                    else:
+                        # Response exists but no text - check finish reason
+                        finish_reason = getattr(response, 'finish_reason', 'unknown')
+                        print(f"   [GeminiClient] Attempt {attempt + 1} failed: No valid response text (finish_reason: {finish_reason})")
 
-                return result
-            else:
-                # Handle cases where response is blocked or empty
-                finish_reason = getattr(response, 'finish_reason', 'unknown')
-                raise Exception(f"No valid response text (finish_reason: {finish_reason})")
+                        # Debug: Check candidates for finish reason
+                        if hasattr(response, 'candidates') and response.candidates:
+                            for i, candidate in enumerate(response.candidates):
+                                candidate_finish_reason = getattr(candidate, 'finish_reason', 'unknown')
+                                print(f"   [GeminiClient] Debug: Candidate {i} finish_reason: {candidate_finish_reason}")
+                                if candidate_finish_reason != 'unknown':
+                                    finish_reason = candidate_finish_reason
+
+                        # Check if it's a retryable issue (token limit, safety, or unknown finish reason)
+                        if finish_reason in ['MAX_TOKENS', 'SAFETY'] or (finish_reason == 'unknown' and attempt < max_retries - 1):
+                            # Trim conversations by 1 and retry
+                            if len(conversations_to_send) > 1:
+                                conversations_to_send = conversations_to_send[:-1]
+                                print(f"   [GeminiClient] Trimming conversations to {len(conversations_to_send)} due to {finish_reason}")
+                                # Remove the failed message from conversation history
+                                conversation_history.pop()
+                            else:
+                                print(f"   [GeminiClient] No more conversations to trim, giving up")
+                                raise Exception(f"No valid response text (finish_reason: {finish_reason})")
+                        else:
+                            # Not a retryable error or max retries reached
+                            raise Exception(f"No valid response text (finish_reason: {finish_reason})")
+
+                except Exception as e:
+                    error_str = str(e)
+                    print(f"   [GeminiClient] Attempt {attempt + 1} failed: {error_str}")
+
+                    # Check if it's a 400 error (likely too many tokens)
+                    if "400" in error_str and "INVALID_ARGUMENT" in error_str and attempt < max_retries - 1:
+                        # Trim conversations by 1 and retry
+                        if len(conversations_to_send) > 1:
+                            conversations_to_send = conversations_to_send[:-1]
+                            print(f"   [GeminiClient] Trimming conversations to {len(conversations_to_send)} due to 400 error")
+                            # Remove the failed message from conversation history
+                            conversation_history.pop()
+                        else:
+                            print(f"   [GeminiClient] No more conversations to trim, giving up")
+                            raise e
+                    else:
+                        # Not a 400 error or max retries reached, re-raise
+                        raise e
+
+            if response is None:
+                raise Exception("All retry attempts failed")
+
+            # Response should be valid at this point since we broke out of the retry loop
+            result = {
+                'success': True,
+                'response': response.text.strip(),
+                'user_name': 'Helpful Coworker',
+                'user_id': target_user['id'],
+                'query': query,
+                'timestamp': datetime.now().isoformat(),
+                'model_used': self.model_name,
+                'context_conversations': len(conversations_to_send),  # Show actual conversations used
+                'user_conversations': len(user_conversations),
+                'has_session_context': user_name in self.chat_sessions,
+                'retry_attempts': attempt + 1  # Show how many attempts were needed
+            }
+
+            # Log successful response
+            if self.enable_logging:
+                self.response_logger.info(f"JSON_RESPONSE: {json.dumps(result, indent=2)}")
+
+            return result
 
         except Exception as e:
             error_result = {
@@ -203,10 +262,40 @@ class JSONGeminiClient:
             del self.chat_sessions[user_name]
             print(f"🗑️  Cleared chat session for {user_name}")
 
-    def _create_initial_prompt(self) -> str:
-        """Create initial helpful coworker prompt for chat session"""
+    def _create_initial_prompt(self, mode: str = "interactive") -> str:
+        """Create initial prompt for chat session based on mode"""
 
-        prompt = """Reply like a helpful coworker. For all questions, you will be given attached files of relevant conversations from Slack. Look through these conversations to see if you can find anything helpful and respond accordingly.
+        if mode == "search":
+            prompt = """You are a helpful coworker answering questions based on Slack conversations. For all questions, you will be given attached files of relevant conversations from Slack.
+
+Your task is to analyze the conversations and provide structured responses in this EXACT JSON format:
+
+{
+  "response": "Your helpful answer here based on the conversations",
+  "references": ["<file_name_1>", "<file_name_2>"]
+}
+
+IMPORTANT - How to find conversation IDs:
+- Each conversation JSON file has a file name --- JSON File: <file_name>
+- If you use information from a conversation to build your answer, you MUST include that conversation's file name in the references array
+
+Guidelines:
+- In the references array, include ONLY the conversation file names from conversations that you actually used to form your answer
+- If you can't find relevant information, say so in the response and use an empty references array
+- Look for the file name at the top level of each JSON conversation file
+- Prefer the latest information over older information based on timestamps
+- Keep responses conversational, helpful, and reference the conversations when relevant
+- If information seems outdated based on timestamps, mention that it might be outdated
+
+Example:
+If you use information from a conversation with file name "ch_C05L87V014J_2025-03-07_1741374080.130969_thread", then include "ch_C05L87V014J_2025-03-07_1741374080.130969_thread" in your references array.
+
+Always respond in the EXACT JSON format specified above.
+
+Respond with 'Ready' to confirm you understand."""
+        else:
+            # Default interactive mode prompt
+            prompt = """Reply like a helpful coworker. For all questions, you will be given attached files of relevant conversations from Slack. Look through these conversations to see if you can find anything helpful and respond accordingly.
 
 If you can find relevant information in the conversations, provide a helpful answer based on what you found.
 If you can't find information that answers the question with high degree of certainty, politely say you can't find information on that topic. Each message should also have a timestamp, prefer the latest information over the oldest information, if you feel that the timestamp is old, mention that the information might be outdated. don't mention the timestamp itself, just that the information might be outdated.
@@ -220,27 +309,28 @@ Respond with 'Ready' to confirm you understand."""
     def _create_message_with_attachments(self, query: str,
                                        conversation_files: List[Dict[str, Any]]) -> types.Content:
         """Create message with attached relevant conversations using new SDK types"""
-        
-        
+
+
         # Create parts list starting with the query
         parts = [types.Part.from_text(text=query)]
-        
+
         if conversation_files:
             # Add each JSON file as a separate part
             for i, file_info in enumerate(conversation_files, 1):
                 raw_json = file_info.get('raw_json_content', '')
                 file_name = file_info.get('file_name', 'unknown')
                 similarity_score = file_info.get('similarity_score', 0)
-                
-                # Add a header for each conversation
-                header_text = f"\n--- Conversation {i} (Score: {similarity_score:.3f}, File: {file_name}) ---\n"
-                parts.append(types.Part.from_text(text=header_text))
-                
-                # Add the raw JSON content as a separate part
-                parts.append(types.Part.from_text(text=raw_json))
+
+                # Add the raw JSON content as text with a clear label
+                json_label = f"\n--- JSON File: {file_name} (similarity: {similarity_score:.3f}) ---\n"
+                file_content = types.Part.from_text(
+                    text=json_label + raw_json
+                    )
+
+                parts.append(file_content)
         else:
             parts.append(types.Part.from_text(text="\nNo relevant conversations found."))
-        
+
         # Return the Content object with all parts
         return types.Content(
             role="user",
