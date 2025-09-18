@@ -191,8 +191,14 @@ class JSONGeminiClient:
                                 print(f"   [GeminiClient] Trimming conversations to {len(conversations_to_send)} due to {finish_reason}")
                                 # Remove the failed message from conversation history
                                 conversation_history.pop()
+                            elif len(conversations_to_send) == 1 and attempt < max_retries - 1:
+                                # Fallback: try with no conversation attachments
+                                conversations_to_send = []
+                                print(f"   [GeminiClient] No more conversations to trim, falling back to query-only mode")
+                                # Remove the failed message from conversation history
+                                conversation_history.pop()
                             else:
-                                print(f"   [GeminiClient] No more conversations to trim, giving up")
+                                # Already in query-only mode or max retries reached
                                 raise Exception(f"No valid response text (finish_reason: {finish_reason})")
                         else:
                             # Not a retryable error or max retries reached
@@ -210,8 +216,14 @@ class JSONGeminiClient:
                             print(f"   [GeminiClient] Trimming conversations to {len(conversations_to_send)} due to 400 error")
                             # Remove the failed message from conversation history
                             conversation_history.pop()
+                        elif len(conversations_to_send) == 1 and attempt < max_retries - 1:
+                            # Fallback: try with no conversation attachments
+                            conversations_to_send = []
+                            print(f"   [GeminiClient] No more conversations to trim, falling back to query-only mode due to 400 error")
+                            # Remove the failed message from conversation history
+                            conversation_history.pop()
                         else:
-                            print(f"   [GeminiClient] No more conversations to trim, giving up")
+                            # Already in query-only mode or max retries reached
                             raise e
                     else:
                         # Not a 400 error or max retries reached, re-raise
@@ -350,53 +362,9 @@ For all questions, you will be given attached files of relevant conversations fr
 If you can find relevant information in the conversations, provide a helpful answer based on what you found.
 If you can't find information that answers the question with high degree of certainty, politely say you can't find information on that topic. Each message should also have a timestamp, prefer the latest information over the oldest information, if you feel that the timestamp is old, mention that the information might be outdated. don't mention the timestamp itself, just that the information might be outdated.
 
-This is the most recent conversations between Paul and Abhishek Adupa:
-```
-Abhishek Kalyan Adupa
-:computer:  10:39 AM
-Hey Paul, what project are we working on for the hackathon?
+Keep responses conversational, short and concise, helpful, and reference the conversations when relevant. Respond in Paul's voice and style.
 
-
-Paul Hoang
-:handshake:  10:39 AM
-We are trying to build an AI persona bot, so if I'm away and someone pings me the bot can respond on my behalf and it will sound like me
-
-
-Abhishek Kalyan Adupa
-:computer:  10:40 AM
-Oh cool, how are we planning to build it? what tech are we going to use?
-
-
-Paul Hoang
-:handshake:  10:40 AM
-We are going to get the search query and then create embeddings of all my chats and store it vector db to fetch them and feed it to model to generate a good natural language response
-
-
-Abhishek Kalyan Adupa
-:computer:  10:40 AM
-Damn man, that’s super impressive. We can just go out and play cricket and bot will answer questions for you
-
-
-Paul Hoang
-:handshake:  10:41 AM
-What's the current status?
-
-
-Abhishek Kalyan Adupa
-:computer:  10:41 AM
-Frontend and backend seems to be done. Although it’s slightly slow as we are running it on local
-
-
-Paul Hoang
-:handshake:  10:41 AM
-Ahh. shucks. it's fine for hackathon protype though.
-
-
-Abhishek Kalyan Adupa
-:computer:  10:41 AM
-good luck for presentation
-```
-Keep responses conversational, short and concise, helpful, and reference the conversations when relevant. Respond in Paul's voice and style. Important: Make the response as short and concise as possible, 1 or 2 sentences max.
+Paul is building an AI persona bot for the hackathon that uses embeddings of his chats stored in a vector DB to let a model respond on his behalf, and he’s already got the frontend and backend working locally, though it runs a bit slow.
 
 Respond with 'Ready' to confirm you understand."""
 

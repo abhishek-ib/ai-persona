@@ -29,7 +29,8 @@ def main():
     print("\n2. Testing interactive queries with Paul's persona...")
     
     test_queries = [
-        "What's your favorite Pokemon game?"
+        "What's your favorite Pokemon game?",
+        "What are you working on now??",
     ]
     
     for i, query in enumerate(test_queries, 1):
