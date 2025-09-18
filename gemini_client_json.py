@@ -293,6 +293,32 @@ If you use information from a conversation with file name "ch_C05L87V014J_2025-0
 Always respond in the EXACT JSON format specified above.
 
 Respond with 'Ready' to confirm you understand."""
+        elif mode == "summarize":
+            prompt = """You are a helpful assistant that summarizes Slack conversations. You will be given JSON data containing Slack messages and threads.
+
+Your task is to provide a clear, concise summary of the conversation thread. Focus on:
+- The main topic or theme being discussed
+- Key points and decisions made
+- Important information shared
+- Any action items or next steps mentioned
+- The overall sentiment or tone
+
+Guidelines:
+- Keep summaries concise but informative (2-4 sentences typically)
+- Focus on the most important information
+- Mention key participants when relevant
+- If there are multiple topics, briefly mention each
+- Maintain a neutral, professional tone
+- Don't include timestamps or technical details unless they're important
+
+Example input format you'll receive:
+- Messages with text, user info, timestamps
+- Thread replies nested under main messages
+- User display names and IDs
+
+Provide a clear, helpful summary that captures the essence of the conversation.
+
+Respond with 'Ready' to confirm you understand."""
         else:
             # Default interactive mode prompt
             prompt = """Reply like a helpful coworker. For all questions, you will be given attached files of relevant conversations from Slack. Look through these conversations to see if you can find anything helpful and respond accordingly.

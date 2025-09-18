@@ -331,6 +331,213 @@ class AIPersonaBotJSON:
             'references': []
         }
     
+    def summarize_chat(self, conversation_data: Dict[str, Any], session_id: str = "summarize_session") -> Dict[str, Any]:
+        """
+        Summarize a Slack conversation using Gemini
+        
+        Args:
+            conversation_data: JSON data containing Slack messages and threads
+            session_id: Chat session identifier for summarize mode
+            
+        Returns:
+            Summary response dictionary
+        """
+        # Check if Gemini is initialized
+        if not self.gemini_client:
+            return {
+                'success': False,
+                'error': 'Gemini API not initialized. Please provide Google AI API key.',
+                'timestamp': datetime.now().isoformat()
+            }
+        
+        # Prepare target user info for summarize session
+        target_user = {
+            'name': 'Summarize Assistant',
+            'id': session_id
+        }
+        
+        # Create a single conversation file info with the provided data
+        conversation_files = [{
+            'raw_json_content': json.dumps(conversation_data, indent=2),
+            'file_name': f"conversation_{conversation_data.get('id', 'unknown')}",
+            'similarity_score': 1.0,
+            'json_path': 'provided_data'
+        }]
+        
+        # Log the summarize request
+        print(f"\n📝 Summarize Request Log:")
+        print(f"   Conversation ID: {conversation_data.get('id', 'unknown')}")
+        print(f"   Main message: {conversation_data.get('text', '')[:100]}...")
+        thread_count = len(conversation_data.get('thread', []))
+        print(f"   Thread replies: {thread_count}")
+        
+        # Use Gemini chat session with summarize mode
+        result = self.gemini_client.generate_response(
+            target_user=target_user,
+            query="Please summarize this Slack conversation thread.",
+            similar_conversations=conversation_files,
+            user_conversations=[],  # Not needed for summarize mode
+            is_first_message=session_id not in self.gemini_client.chat_sessions,
+            mode="summarize"
+        )
+        
+        if result['success']:
+            return {
+                'success': True,
+                'summary': result['response'],
+                'conversation_id': conversation_data.get('id', 'unknown'),
+                'main_message': conversation_data.get('text', ''),
+                'thread_count': len(conversation_data.get('thread', [])),
+                'timestamp': datetime.now().isoformat(),
+                'session_id': session_id
+            }
+        else:
+            return {
+                'success': False,
+                'error': result.get('error', 'Unknown error from Gemini'),
+                'conversation_id': conversation_data.get('id', 'unknown'),
+                'timestamp': datetime.now().isoformat()
+            }
+    
+    def summarize_mode(self):
+        """Start summarize mode for summarizing Slack conversations"""
+        # Check if Gemini is initialized
+        if not self.gemini_client:
+            print("❌ Gemini API not initialized. Please provide Google AI API key.")
+            return
+        
+        print("📝 Conversation Summarize Mode")
+        print("=" * 60)
+        print("🎯 Summarize Slack conversations with AI analysis")
+        print("🤖 Get clear, concise summaries of conversation threads")
+        print("🧠 Powered by Gemini 2.5 Flash")
+        print("Commands:")
+        print("  'clear' - Clear summarize session context")
+        print("  'quit' - Exit summarize mode")
+        print("  'help' - Show this help")
+        print("=" * 60)
+        
+        print(f"\n📝 Summarize Slack conversations")
+        print(f"   🤖 AI-powered summaries using Gemini LLM")
+        print(f"   📚 Clear, concise summaries focusing on key points")
+        print(f"   🧠 Chat session provides context continuity")
+        
+        # Use consistent session ID for summarize mode
+        summarize_session_id = f"summarize_{int(datetime.now().timestamp())}"
+        
+        while True:
+            # Get user input
+            try:
+                user_input = input(f"\n[Summarize] > ").strip()
+            except KeyboardInterrupt:
+                print("\n👋 Goodbye!")
+                break
+            
+            if not user_input:
+                continue
+            
+            # Handle commands
+            if user_input.lower() == 'quit':
+                break
+            elif user_input.lower() == 'clear':
+                if self.gemini_client:
+                    self.gemini_client.clear_chat_session(summarize_session_id)
+                    summarize_session_id = f"summarize_{int(datetime.now().timestamp())}"  # New session ID
+                    print("🗑️  Summarize session cleared")
+                continue
+            elif user_input.lower() == 'help':
+                print("\nSummarize Commands:")
+                print("  'clear' - Clear summarize session context")
+                print("  'quit' - Exit summarize mode")
+                print("  'help' - Show this help")
+                print("\nUsage:")
+                print("  - Paste JSON conversation data to summarize")
+                print("  - Or provide conversation ID to find and summarize")
+                print("  - Summaries focus on key points and decisions")
+                continue
+            
+            # Try to parse as JSON first
+            try:
+                conversation_data = json.loads(user_input)
+                
+                # Validate the JSON structure
+                if not isinstance(conversation_data, dict):
+                    print("❌ Please provide valid JSON conversation data")
+                    continue
+                
+                if 'text' not in conversation_data:
+                    print("❌ JSON must contain 'text' field for the main message")
+                    continue
+                
+                print(f"📝 Summarizing conversation...")
+                
+                # Summarize the conversation
+                result = self.summarize_chat(conversation_data, summarize_session_id)
+                
+                if result['success']:
+                    print(f"\n📝 Conversation Summary:")
+                    print("=" * 60)
+                    print(f"{result['summary']}")
+                    
+                    print(f"\n📋 Summary Details:")
+                    print("-" * 60)
+                    print(f"   🆔 Conversation ID: {result['conversation_id']}")
+                    print(f"   💬 Main Message: {result['main_message'][:100]}...")
+                    print(f"   🧵 Thread Replies: {result['thread_count']}")
+                    print(f"   ⏰ Timestamp: {result['timestamp']}")
+                    
+                else:
+                    print(f"\n❌ Error: {result.get('error', 'Unknown error')}")
+                    print("💡 Make sure Gemini API is initialized and try again.")
+                
+            except json.JSONDecodeError:
+                # If not JSON, try to find conversation by ID or search
+                print(f"🔍 Searching for conversation: '{user_input}'...")
+                
+                # Search for similar conversations
+                similar_conversations = self.vector_store.search_similar_conversations(user_input, k=5)
+                
+                if not similar_conversations:
+                    print(f"❌ No conversations found matching '{user_input}'")
+                    print("💡 Try providing JSON conversation data directly, or use different search terms")
+                    continue
+                
+                print(f"📋 Found {len(similar_conversations)} similar conversations:")
+                for i, conv in enumerate(similar_conversations[:3], 1):
+                    score = conv.get('similarity_score', 0)
+                    file_name = conv.get('file_name', 'unknown')
+                    print(f"   {i}. [{score:.3f}] {file_name}")
+                
+                # Use the most similar conversation
+                best_match = similar_conversations[0]
+                raw_json = best_match.get('raw_json_content', '')
+                
+                try:
+                    conversation_data = json.loads(raw_json)
+                    print(f"📝 Summarizing best match: {best_match.get('file_name', 'unknown')}")
+                    
+                    result = self.summarize_chat(conversation_data, summarize_session_id)
+                    
+                    if result['success']:
+                        print(f"\n📝 Conversation Summary:")
+                        print("=" * 60)
+                        print(f"{result['summary']}")
+                        
+                        print(f"\n📋 Summary Details:")
+                        print("-" * 60)
+                        print(f"   🆔 Conversation ID: {result['conversation_id']}")
+                        print(f"   📄 Source File: {best_match.get('file_name', 'unknown')}")
+                        print(f"   💬 Main Message: {result['main_message'][:100]}...")
+                        print(f"   🧵 Thread Replies: {result['thread_count']}")
+                        print(f"   ⏰ Timestamp: {result['timestamp']}")
+                        
+                    else:
+                        print(f"\n❌ Error: {result.get('error', 'Unknown error')}")
+                        
+                except json.JSONDecodeError as e:
+                    print(f"❌ Error parsing conversation data: {e}")
+                    continue
+
     def search_mode(self):
         """Start search mode for finding relevant conversations"""
         # Check if Gemini is initialized
@@ -516,22 +723,55 @@ def main():
     parser.add_argument("--rebuild-index", action="store_true", help="Rebuild index from scratch")
     parser.add_argument("--interactive", action="store_true", help="Start interactive chat")
     parser.add_argument("--search", action="store_true", help="Start search mode")
+    parser.add_argument("--summarize", action="store_true", help="Start summarize mode")
     parser.add_argument("--user", help="User to respond as")
     parser.add_argument("--query", help="Query to respond to")
+    parser.add_argument("--json-file", help="JSON file containing conversation data to summarize")
     
     args = parser.parse_args()
     
     # Initialize bot
     bot = AIPersonaBotJSON(args.data_dir, args.rebuild_index)
     
-    # Initialize Gemini for interactive and search modes
-    if args.interactive or args.search or args.query:
+    # Initialize Gemini for interactive, search, and summarize modes
+    if args.interactive or args.search or args.summarize or args.query or args.json_file:
         bot.initialize_gemini()
     
     if args.interactive:
         bot.interactive_chat()
     elif args.search:
         bot.search_mode()
+    elif args.summarize:
+        bot.summarize_mode()
+    elif args.json_file:
+        # Summarize a specific JSON file
+        try:
+            with open(args.json_file, 'r') as f:
+                conversation_data = json.load(f)
+            
+            print(f"📝 Summarizing conversation from: {args.json_file}")
+            result = bot.summarize_chat(conversation_data)
+            
+            if result['success']:
+                print(f"\n📝 Conversation Summary:")
+                print("=" * 60)
+                print(f"{result['summary']}")
+                
+                print(f"\n📋 Summary Details:")
+                print("-" * 60)
+                print(f"   🆔 Conversation ID: {result['conversation_id']}")
+                print(f"   💬 Main Message: {result['main_message'][:100]}...")
+                print(f"   🧵 Thread Replies: {result['thread_count']}")
+                print(f"   ⏰ Timestamp: {result['timestamp']}")
+            else:
+                print(f"❌ Error: {result.get('error', 'Unknown error')}")
+                
+        except FileNotFoundError:
+            print(f"❌ File not found: {args.json_file}")
+        except json.JSONDecodeError as e:
+            print(f"❌ Invalid JSON in file: {e}")
+        except Exception as e:
+            print(f"❌ Error processing file: {e}")
     elif args.query:
         result = bot.chat(args.query, is_first_message=True)
         if result['success']:
@@ -541,7 +781,7 @@ def main():
     else:
         print("🤖 Helpful Coworker AI")
         print(f"📚 {len(bot.vector_store.load_conversation_index())} conversations available")
-        print("\nUse --interactive for chat mode, --search for search mode, or --help for more options.")
+        print("\nUse --interactive for chat mode, --search for search mode, --summarize for summarize mode, or --help for more options.")
 
 
 if __name__ == "__main__":
