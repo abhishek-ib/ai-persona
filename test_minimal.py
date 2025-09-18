@@ -37,6 +37,7 @@ def main():
         print(result['response'])
         print("-" * 80)
         print(f"📚 References: {len(result.get('references', []))}")
+        print(f"📚 References: {result.get('references', [])}")
     else:
         print(f"❌ Search failed: {result.get('error')}")
     
